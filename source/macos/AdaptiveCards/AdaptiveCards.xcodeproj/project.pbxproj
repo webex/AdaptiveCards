@@ -424,6 +424,7 @@
 		08E4044825B46ABA00C2092A /* AdaptiveCards.h in Sources */ = {isa = PBXBuildFile; fileRef = 08299E3225AF254000799C66 /* AdaptiveCards.h */; };
 		08E4047025B46BDB00C2092A /* AdaptiveCards_bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E4046225B46BDA00C2092A /* AdaptiveCards_bridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		08E4052125B46C3B00C2092A /* SwiftInterfaceHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E402EB25B463D200C2092A /* SwiftInterfaceHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -880,6 +881,7 @@
 		08E4046225B46BDA00C2092A /* AdaptiveCards_bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdaptiveCards_bridge.h; sourceTree = "<group>"; };
 		08E4046325B46BDA00C2092A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08E4054D25B4764400C2092A /* AdaptiveCards-bridge.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "AdaptiveCards-bridge.xcconfig"; sourceTree = "<group>"; };
+		28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputRenderer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1421,6 +1423,7 @@
 			isa = PBXGroup;
 			children = (
 				08B5F91025C924F400A7D37A /* TextBlockRenderer.swift */,
+				28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */,
 				08B5F91825C9272500A7D37A /* AdaptiveCardRenderer.swift */,
 			);
 			path = Renderers;
@@ -1901,6 +1904,7 @@
 				082864FD25C99E300080D767 /* HostConfigUtils.swift in Sources */,
 				08B5F91925C9272500A7D37A /* AdaptiveCardRenderer.swift in Sources */,
 				08D7767A25CC339D0095C1B3 /* RendererManager.swift in Sources */,
+				28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */,
 				08E4044825B46ABA00C2092A /* AdaptiveCards.h in Sources */,
 				08B5F91125C924F400A7D37A /* TextBlockRenderer.swift in Sources */,
 				0801D5EA25C2C3B500AABD6C /* AdaptiveCard.swift in Sources */,

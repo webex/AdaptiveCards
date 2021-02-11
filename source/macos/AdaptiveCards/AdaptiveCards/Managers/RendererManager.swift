@@ -9,6 +9,7 @@ class RendererManager: RendererManagerProtocol {
     func renderer(for elementType: ACSCardElementType) -> BaseCardElementRendererProtocol {
         switch elementType {
         case .textBlock: return TextBlockRenderer.shared
+        case .textInput: return TextInputRenderer.shared
         default: return UnknownElementRenderer.shared
         }
     }
