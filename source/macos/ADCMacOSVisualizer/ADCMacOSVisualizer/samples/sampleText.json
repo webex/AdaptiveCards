@@ -1,0 +1,33 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0",
+  "type": "AdaptiveCard",
+  "speak": "Your flight is confirmed for you and 3 other passengers from San Francisco to Amsterdam on Friday, October 10 8:30 AM",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Your flight is confirmed for you and 3 other passengers from San Francisco to Amsterdam on Friday, October 10 8:30 AM Your flight is confirmed for you and 3 other passengers from San Francisco to Amsterdam on Friday, October 10 8:30 AM",
+      "separator": true,
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Passengers",
+      "weight": "bolder",
+      "isSubtle": false,
+      "wrap": true
+    },
+    {
+        "type": "Input.Text",
+        "placeholder": "Placeholder text",
+        "id": "lol"
+    },
+    {
+        "type": "Input.Text",
+        "placeholder": "Placeholder text",
+        "id": "lol_again",
+        "value": "Mukul Agarwal",
+        "isMultiline": true
+    }
+  ]
+}

@@ -18,7 +18,7 @@ class MainViewController: NSViewController {
     
     // MARK: Actions
     @objc private func handleButtonAction() {
-        let result = AdaptiveCard.from(jsonString: testPayload)
+        let result = AdaptiveCard.from(jsonString: simpleTextPayload)// testPayload)
         guard let card = result.getAdaptiveCard() else {
             print("RENDER FAILED")
             return
@@ -89,6 +89,18 @@ let simpleTextPayload = """
       "weight": "bolder",
       "isSubtle": false,
       "wrap": true
+    },
+    {
+        "type": "Input.Text",
+        "placeholder": "Placeholder text",
+        "id": "lol"
+    },
+    {
+        "type": "Input.Text",
+        "placeholder": "Placeholder text",
+        "id": "lol_again",
+        "value": "Mukul Agarwal",
+        "isMultiline": true
     }
   ]
 }
