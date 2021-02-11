@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  ADCMacOSVisualizer
-//
-//  Created by aksc on 13/01/21.
-//
-
 import Cocoa
 
 class AppDelegate: NSObject, NSApplicationDelegate {

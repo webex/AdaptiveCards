@@ -1,10 +1,3 @@
-//
-//  RootViewController.swift
-//  ADCMacOSVisualizer
-//
-//  Created by Ria Gupta on 04/02/21.
-//
-
 import Cocoa
 
 class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
