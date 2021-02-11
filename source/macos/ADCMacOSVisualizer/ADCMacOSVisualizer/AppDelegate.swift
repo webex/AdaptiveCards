@@ -16,7 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window?.title = "ADCMacOSVisualizer"
         window?.minSize = minWindowSize
         window?.center()
-        window?.contentViewController = MainViewController()
+        window?.contentViewController = RootViewController()
         window?.makeKeyAndOrderFront(nil)
     }
 
