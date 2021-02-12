@@ -50,3 +50,12 @@ enum ACSTextInputStyle: NSUInteger;
 
 @end
 #endif
+//
+//// MARK: Added for maxlength
+//@interface CustomTextFieldFormatter : NSFormatter {
+//  int maxLength;
+//}
+//- (void)setMaximumLength:(int)len;
+//- (int)maximumLength;
+//
+//@end

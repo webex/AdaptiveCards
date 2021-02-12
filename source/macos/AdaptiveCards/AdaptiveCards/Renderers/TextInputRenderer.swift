@@ -21,23 +21,35 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.isBordered = true
         textView.isEditable = true
+//        textView.delegate = self
+        if let maxLen = inputBlock.getMaxLength() {
+            if Int(truncating: maxLen) > 0 {
+                textView.maxLen = Int(maxLen)
+//                textView.on.ac
+//                textView.textDidChang
+//                let lengthCheck = CustomTextFieldFormatter()
+//                lengthCheck.setMaximumLength(Int32(maxLen))
+//                print(lengthCheck.maximumLength())
+            }
+        }
         if inputBlock.getIsMultiline() {
             // Makes text go to next line
             print("check")
             textView.cell?.isScrollable = false
             textView.cell?.wraps = true
+            textView.cell?.usesSingleLineMode = true
 //            textView.maximumNumberOfLines = 2
 //            textView.maximumNumberOfLines =2
 //            textView.cell?.usesSingleLineMode = false
 //            textView.setFrameSize(CGSize(width: 100, height: 200))
             } else {
-            // Makes text scroll horizontally
-                textView.cell?.usesSingleLineMode = true
+            // Makes text remain in 1 line
+            textView.cell?.usesSingleLineMode = true
             textView.maximumNumberOfLines = 1
+            // Make text scroll horizontally
             textView.cell?.isScrollable = true
+            textView.cell?.truncatesLastVisibleLine = true
         }
-        
-//        textView.backgroundColor = NSColor.clear
         var doesPlaceholderExist = false
         var doesValueExist = false
         // Check if placeholder and initial value exist
@@ -60,62 +72,11 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             
             textView.attributedStringValue = attributedInitialValue
             }
-//
-//        let markdownResult = BridgeTextUtils.processText(from: inputBlock, hostConfig: hostConfig)
-//        let attributedString: NSMutableAttributedString
-//        if markdownResult.isHTML, let htmlData = markdownResult.htmlData {
-//            do {
-//                attributedString = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
-//                // Delete trailing newline character
-//                attributedString.deleteCharacters(in: NSRange(location: attributedString.length - 1, length: 1))
-//                textView.isSelectable = true
-//            } catch {
-//                attributedString = NSMutableAttributedString(string: markdownResult.parsedString)
-//            }
-//        } else {
-//            attributedString = NSMutableAttributedString(string: markdownResult.parsedString)
-//            // Delete <p> and </p>
-//            attributedString.deleteCharacters(in: NSRange(location: 0, length: 3))
-//            attributedString.deleteCharacters(in: NSRange(location: attributedString.length - 4, length: 4))
-//        }
-//
-//        textView.isEditable = false
-//        textView.textContainer?.lineFragmentPadding = 0
-//        textView.textContainerInset = .zero
-//        textView.layoutManager?.usesFontLeading = false
-//        textView.setContentHuggingPriority(.required, for: .vertical)
-//
-//        let paragraphStyle = NSMutableParagraphStyle()
-//        paragraphStyle.alignment = ACSHostConfig.getTextBlockAlignment(from: textBlock.getHorizontalAlignment())
-//
-//        attributedString.addAttributes([.paragraphStyle: paragraphStyle], range: NSRange(location: 0, length: attributedString.length))
-//
-//        if let colorHex = hostConfig.getForegroundColor(style, color: textBlock.getTextColor(), isSubtle: textBlock.getIsSubtle()), let textColor = ColorUtils.color(from: colorHex) {
-//            attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
-//        }
-//
-//        textView.textContainer?.lineBreakMode = .byTruncatingTail
-//        textView.textContainer?.maximumNumberOfLines = textBlock.getMaxLines()?.intValue ?? 0
-//        if textView.textContainer?.maximumNumberOfLines == 0 && !textBlock.getWrap() {
-//            // TODO: To revisit
-//            textView.textContainer?.maximumNumberOfLines = 0
-//        }
-//
-//        textView.textStorage?.setAttributedString(attributedString)
-//        textView.font = FontUtils.getFont(for: hostConfig, with: BridgeTextUtils.convertTextBlock(toRichTextElementProperties: textBlock))
-//        textView.textContainer?.widthTracksTextView = true
-//        textView.backgroundColor = .clear
-//
-//        if attributedString.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-//            // Hide accessibility Element
-//        }
-//
-//        return textView
         return textView
     }
 }
 
-class ACRTextInputView: NSTextField {
+class ACRTextInputView: NSTextField, NSTextFieldDelegate {
 //    override var intrinsicContentSize: NSSize {
 //        guard let layoutManager = layoutManager, let textContainer = textContainer else {
 //            return super.intrinsicContentSize
@@ -130,7 +91,39 @@ class ACRTextInputView: NSTextField {
 //        guard let superview = superview else { return }
 //        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
 //    }
+    var maxLen: Int = 0
+    override func textDidChange(_ notification: Notification) {
+//        print("New string")
+
+        if maxLen > 0 {
+            guard let object = notification.object as? NSTextView else {
+                print(notification.object.debugDescription)
+                return
+            }
+                print("Hi")
+                if (object.string.count) > maxLen {
+                    object.string = String(object.string.dropLast())
+            }
+        }
+    }
 }
+
+// Try max charecters
+// viewDidload(){
+//    yourTextFiled.delegate = self
+// }
+//
+// extension NSTextField{
+//    func controlTextDidChange(obj: NSNotification){}
+// }
+// extension YourViewController:NSTextFieldDelegate{
+//    func controlTextDidChange(_ obj: Notification)
+//    {
+//        let object = obj.object as! NSTextField
+//        if object.stringValue.count > yourTextLimit{
+//        object.stringValue = String(object.stringValue.dropLast())
+//    }
+// }
 class AutoGrowingTextField: NSTextField {
     private var placeholderWidth: CGFloat? = 0
 
@@ -221,7 +214,6 @@ class AutoGrowingTextField: NSTextField {
         return newSize
     }
 }
-
 // MARK: Check this later
 //            if let colorHex = hostConfig.getForegroundColor(ACSContainerStyle.good, color: ACSForegroundColor.default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
 //                attributedInitialValue.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedInitialValue.length))
