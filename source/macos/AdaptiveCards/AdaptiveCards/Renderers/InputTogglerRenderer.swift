@@ -12,18 +12,34 @@ class InputTogglerRenderer: NSObject, BaseCardElementRendererProtocol {
     static let shared = InputTogglerRenderer()
      
      func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
-         guard let inputToggler = element as? ACSToggleInput else {
+         guard let inputToggle = element as? ACSToggleInput else {
              logError("Element is not of type ACSToggleInput")
              return NSView()
          }
-        print(inputToggler.getTitle(), "--")
-        let inputToggleView = ACRInputTogglerView(checkboxWithTitle: inputToggler.getTitle() ?? "", target: nil, action: nil)
+        // NSMutableAttributedString for the checkbox title
+        var attributedString: NSMutableAttributedString
+        // NSButton for checkbox
+        let inputToggleView = ACRInputToggleView(checkboxWithTitle: inputToggle.getTitle() ?? "", target: nil, action: nil)
         inputToggleView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let attributedString: NSMutableAttributedString
+        // adding attributes to the string
+        attributedString = NSMutableAttributedString(string: inputToggle.getTitle() ?? "")
+        if let colorHex = hostConfig.getForegroundColor(style, color: ACSForegroundColor.default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
+            attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
+        }
+        var defaultInputToggleStateValue: Int?
+        if inputToggle.getValue() != inputToggle.getValueOn() {
+            defaultInputToggleStateValue = 0
+        } else {
+            defaultInputToggleStateValue = 1
+        }
+        inputToggleView.state = NSControl.StateValue(rawValue: defaultInputToggleStateValue == 0 ? 0 : 1)
+        inputToggleView.attributedTitle = attributedString
         return inputToggleView
      }
 }
 
-class ACRInputTogglerView: NSButton {
+class ACRInputToggleView: NSButton {
+//    override func isAccessibilityElement() -> Bool {
+//        return false
+//    }
 }

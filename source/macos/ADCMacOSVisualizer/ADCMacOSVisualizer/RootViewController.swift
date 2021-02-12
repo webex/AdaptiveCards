@@ -13,6 +13,11 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         let main = Bundle.main
         let filesManager = FileManager.default
         guard let sample = main.resourcePath?.appending("/samples") else { return }
+        // JSON error fix
+        textView.isAutomaticQuoteSubstitutionEnabled = false
+        textView.isAutomaticDashSubstitutionEnabled = false
+        textView.isAutomaticTextReplacementEnabled = false
+        textView.smartInsertDeleteEnabled = false
         do {
             let samples = try filesManager.contentsOfDirectory(atPath: sample)
             items = samples.sorted()
