@@ -15,7 +15,7 @@ namespace RendererQml
         return *this;
     }
 
-    QmlTag& QmlTag::Property(const std::string& name, const std::string& value)
+    QmlTag& QmlTag::Property(const std::string& name, const std::string& value, const bool stringValue)
     {
         auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [name](const auto property) {
             return property.first == name;
@@ -23,10 +23,10 @@ namespace RendererQml
 
         if (iterator != m_properties.end())
         {
-            iterator->second = value;
+            iterator->second = stringValue ? Formatter() << "'" << value << "'" : value;
             return *this;
         }
-        m_properties.emplace_back(name, value);
+        m_properties.emplace_back(name, stringValue ? Formatter() << "'" << value << "'" : value);
         return *this;
     }
 
