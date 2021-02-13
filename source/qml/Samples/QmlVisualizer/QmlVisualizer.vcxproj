@@ -102,7 +102,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AdaptiveCardsModel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <QtRcc Include="qml.qrc" />
@@ -120,7 +119,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="AdaptiveCardsModel.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

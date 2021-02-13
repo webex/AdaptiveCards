@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include <AdaptiveCardQmlRenderer.h>
 #include <RenderedQmlAdaptiveCard.h>
-#include <AdaptiveCardsModel.h>
 
 #include "HostConfig.h"
 #include "QmlTag.h"
@@ -69,8 +68,6 @@ static std::string GenerateQml(std::string card)
 int main(int argc, char* argv[])
 {
     QGuiApplication app(argc, argv);
-
-    qmlRegisterType<AdaptiveCardsModel>("Card", 1, 0, "AdaptiveCardsModel");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
