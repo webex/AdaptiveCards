@@ -428,6 +428,7 @@
 		08E4047025B46BDB00C2092A /* AdaptiveCards_bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E4046225B46BDA00C2092A /* AdaptiveCards_bridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		08E4052125B46C3B00C2092A /* SwiftInterfaceHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E402EB25B463D200C2092A /* SwiftInterfaceHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29050BFE25D59A3F00AF3CA9 /* InputToggleRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */; };
+		29050C4025DA909000AF3CA9 /* FakeInputToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050C3F25DA909000AF3CA9 /* FakeInputToggle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -888,6 +889,7 @@
 		08E4046325B46BDA00C2092A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08E4054D25B4764400C2092A /* AdaptiveCards-bridge.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "AdaptiveCards-bridge.xcconfig"; sourceTree = "<group>"; };
 		29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputToggleRenderer.swift; sourceTree = "<group>"; };
+		29050C3F25DA909000AF3CA9 /* FakeInputToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeInputToggle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1124,6 +1126,7 @@
 			children = (
 				082D912A25D67042000226C4 /* FakeHostConfig.swift */,
 				082D914325D6DC7A000226C4 /* FakeTextBlock.swift */,
+				29050C3F25DA909000AF3CA9 /* FakeInputToggle.swift */,
 			);
 			path = Fakes;
 			sourceTree = "<group>";
@@ -1943,6 +1946,7 @@
 				082D912B25D67042000226C4 /* FakeHostConfig.swift in Sources */,
 				082D914425D6DC7A000226C4 /* FakeTextBlock.swift in Sources */,
 				082D913425D67455000226C4 /* TextBlockRendererTests.swift in Sources */,
+				29050C4025DA909000AF3CA9 /* FakeInputToggle.swift in Sources */,
 				08299E3E25AF254000799C66 /* AdaptiveCardsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
