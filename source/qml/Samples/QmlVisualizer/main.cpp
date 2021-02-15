@@ -16,7 +16,36 @@ const std::string card = R"({
                 "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                 "type" : "AdaptiveCard",
                 "version" : "1.2",
-                "body" : []
+				"body": [
+					{
+						"type": "TextBlock",
+						"text": "This is some text",
+						"size": "large",
+						"isSubtle": true
+					},
+					{
+						"type": "TextBlock",
+						"text": "It doesn't wrap by default",
+						"weight": "bolder"
+					},
+					{
+						"type": "TextBlock",
+						"text": "So set **wrap** to true if you plan on showing a paragraph of text",
+						"wrap": true
+					},
+					{
+						"type": "TextBlock",
+						"text": "You can also use **maxLines** to prevent it from getting out of hand",
+						"wrap": true,
+						"maxLines": 2
+					},
+					{
+						"type": "TextBlock",
+						"text": "You can even draw attention to certain text with color",
+						"wrap": true,
+						"color": "attention"
+					}
+				]
             })";
 
 static std::shared_ptr<AdaptiveCards::HostConfig> GetHostConfig()
