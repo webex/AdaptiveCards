@@ -1,15 +1,8 @@
-//
-//  InputTogglerRendere.swift
-//  AdaptiveCards
-//
-//  Created by rohshar6 on 11/02/21.
-//
-
 import AdaptiveCards_bridge
 import AppKit
 
-class InputTogglerRenderer: NSObject, BaseCardElementRendererProtocol {
-    static let shared = InputTogglerRenderer()
+class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
+    static let shared = InputToggleRenderer()
      
      func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
          guard let inputToggle = element as? ACSToggleInput else {
@@ -28,6 +21,7 @@ class InputTogglerRenderer: NSObject, BaseCardElementRendererProtocol {
         if let colorHex = hostConfig.getForegroundColor(style, color: ACSForegroundColor.default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
         }
+        // check for valueOn or valueOff attributes
         var defaultInputToggleStateValue: Int = 1
         if inputToggle.getValue() != inputToggle.getValueOn() {
             defaultInputToggleStateValue = 0
