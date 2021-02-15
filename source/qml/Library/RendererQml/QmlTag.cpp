@@ -4,8 +4,8 @@
 
 namespace RendererQml
 {
-    QmlTag::QmlTag(const std::string& element, bool allowSelfClose) :
-        m_element(element), m_allowSelfClose(allowSelfClose)
+    QmlTag::QmlTag(const std::string& element) :
+        m_element(element)
     {
     }
 
@@ -54,7 +54,7 @@ namespace RendererQml
             qmlString << QmlUtils::Join(m_properties, ":", ";");
         }
 
-        if (!m_children.empty() || !m_allowSelfClose)
+        if (!m_children.empty())
         {
             for (const auto& child : m_children)
             {
