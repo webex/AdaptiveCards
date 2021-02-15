@@ -33,7 +33,7 @@ namespace RendererQml
 
 		//Mapping values for textblock
 		static std::string GetHorizontalAlignment(std::string aligntype);
-		static std::string GetWeight(int weight);
+		static std::string GetWeight(AdaptiveCards::TextWeight weight);
 
     private:
         Utils() {}

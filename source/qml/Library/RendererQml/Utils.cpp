@@ -267,13 +267,13 @@ namespace RendererQml
 
 	}
 
-	std::string Utils::GetWeight(int weight)
+	std::string Utils::GetWeight(AdaptiveCards::TextWeight weight)
 	{
 		switch (weight)
 		{
-			case 200:
+			case AdaptiveCards::TextWeight::Lighter:
 				return "Font.ExtraLight";
-			case 800:
+			case AdaptiveCards::TextWeight::Bolder:
 				return "Font.Bold";
 			default:
 				return "Font.Normal";

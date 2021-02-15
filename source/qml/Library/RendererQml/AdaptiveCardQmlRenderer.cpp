@@ -43,6 +43,7 @@ namespace RendererQml
 		uiCard->AddImports("import QtQuick.Layouts 1.3");
 		uiCard->Property("id", "adaptiveCard");
 		uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
+		
 		//TODO: Width can be set as config
 		uiCard->Property("width", "600");
 
@@ -64,36 +65,40 @@ namespace RendererQml
 		}
 		columnLayout->AddChild(rectangle);
 
-		AddContainerElements(columnLayout, card->GetBody(), context);
+		AddContainerElements(rectangle, card->GetBody(), context);
 
 		return uiCard;
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextBlockRender(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+		//TODO:Parse markdown in the text
+
+		//TODO: To get the Qml equivalant of monospace fontType and add it to config
 		std::string fontFamily = context->GetConfig()->GetFontFamily(textBlock->GetFontType());
 		int fontSize = context->GetConfig()->GetFontSize(textBlock->GetFontType(), textBlock->GetTextSize());
-		int weight = context->GetConfig()->GetFontWeight(textBlock->GetFontType(), textBlock->GetTextWeight());
-
-		auto uiTextBlock = std::make_shared<QmlTag>("Text", false);
+		
+		auto uiTextBlock = std::make_shared<QmlTag>("Text");
 		std::string textType = textBlock->GetElementTypeString();
 		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(textBlock->GetHorizontalAlignment());
 
-		uiTextBlock->Property("Layout.fillWidth", "true");
+		uiTextBlock->Property("width", "parent.width");
 		uiTextBlock->Property("elide", "Text.ElideRight");
-		uiTextBlock->Property("text", "\""+textBlock->GetText()+ "\"");
+		uiTextBlock->Property("text", "\"" + textBlock->GetText() + "\"");
 
 		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
 
 		std::string color = context->GetColor(textBlock->GetTextColor(), textBlock->GetIsSubtle(), false);
-		color.insert(0,"Qt.");
-		uiTextBlock->Property("color",color);
+		
+		uiTextBlock->Property("color", color);
 
 		//Value based on what is mentioned in the html renderer
 		uiTextBlock->Property("lineHeight", "1.33");
 
 		uiTextBlock->Property("font.pixelSize", std::to_string(fontSize));
-		uiTextBlock->Property("font.weight", Utils::GetWeight(weight));
+
+		//TODO: lighter weight showing same behaviour as default
+		uiTextBlock->Property("font.weight", Utils::GetWeight(textBlock->GetTextWeight()));
 
 		if (!textBlock->GetId().empty())
 		{
@@ -119,27 +124,43 @@ namespace RendererQml
 		{
 			uiTextBlock->Property("font.family", fontFamily);
 		}
-		
+
 		return uiTextBlock;
 
 	}
 
 	void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		for (const auto& cardElement : elements)
+		if (elements.size() == 1)
 		{
-			auto uiElement = context->Render(cardElement);
+			auto cardElement = elements.at(0);
+			auto uiElement= context->Render(cardElement);
 			if (uiElement != nullptr)
 			{
 				uiContainer->AddChild(uiElement);
 			}
 		}
+
+		else if (elements.size() > 1)
+		{
+			auto columnElement = std::make_shared<QmlTag>("Column");
+			columnElement->Property("anchors.fill", "parent");
+			uiContainer->AddChild(columnElement);
+			for (const auto& cardElement : elements)
+			{
+				auto uiElement = context->Render(cardElement);
+				if (uiElement != nullptr)
+				{
+					columnElement->AddChild(uiElement);
+				}
+			}
+		}
 	}
-	
+
 	void AdaptiveCardQmlRenderer::SetObjectTypes()
 	{
-		/*(*GetElementRenderers()).Set<AdaptiveCards::TextBlock>(AdaptiveCardQmlRenderer::TextBlockRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::RichTextBlock>(AdaptiveCardQmlRenderer::RichTextBlockRender);
+		(*GetElementRenderers()).Set<AdaptiveCards::TextBlock>(AdaptiveCardQmlRenderer::TextBlockRender);
+		/*(*GetElementRenderers()).Set<AdaptiveCards::RichTextBlock>(AdaptiveCardQmlRenderer::RichTextBlockRender);
 		(*GetElementRenderers()).Set<AdaptiveCards::Image>(AdaptiveCardQmlRenderer::ImageRender);
 		(*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);
 		(*GetElementRenderers()).Set<AdaptiveCards::Container>(AdaptiveCardQmlRenderer::ContainerRender);
@@ -161,4 +182,4 @@ namespace RendererQml
 		(*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);*/
 	}
 
-
+}
