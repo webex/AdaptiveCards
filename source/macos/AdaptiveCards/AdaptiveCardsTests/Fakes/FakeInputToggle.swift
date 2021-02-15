@@ -55,6 +55,6 @@ extension FakeInputToggle {
         fakeInputToggle.valueOn = valueOn
         fakeInputToggle.valueOff = valueOff
         fakeInputToggle.wrap = wrap
-        return fakeTextBlock
+        return fakeInputToggle
     }
 }

@@ -429,6 +429,7 @@
 		08E4052125B46C3B00C2092A /* SwiftInterfaceHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E402EB25B463D200C2092A /* SwiftInterfaceHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29050BFE25D59A3F00AF3CA9 /* InputToggleRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */; };
 		29050C4025DA909000AF3CA9 /* FakeInputToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050C3F25DA909000AF3CA9 /* FakeInputToggle.swift */; };
+		29050C4225DAAD9300AF3CA9 /* InputToggleRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050C4125DAAD9300AF3CA9 /* InputToggleRendererTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -890,6 +891,7 @@
 		08E4054D25B4764400C2092A /* AdaptiveCards-bridge.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "AdaptiveCards-bridge.xcconfig"; sourceTree = "<group>"; };
 		29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputToggleRenderer.swift; sourceTree = "<group>"; };
 		29050C3F25DA909000AF3CA9 /* FakeInputToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeInputToggle.swift; sourceTree = "<group>"; };
+		29050C4125DAAD9300AF3CA9 /* InputToggleRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputToggleRendererTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1135,6 +1137,7 @@
 			isa = PBXGroup;
 			children = (
 				082D913325D67455000226C4 /* TextBlockRendererTests.swift */,
+				29050C4125DAAD9300AF3CA9 /* InputToggleRendererTests.swift */,
 			);
 			path = Renderers;
 			sourceTree = "<group>";
@@ -1944,6 +1947,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				082D912B25D67042000226C4 /* FakeHostConfig.swift in Sources */,
+				29050C4225DAAD9300AF3CA9 /* InputToggleRendererTests.swift in Sources */,
 				082D914425D6DC7A000226C4 /* FakeTextBlock.swift in Sources */,
 				082D913425D67455000226C4 /* TextBlockRendererTests.swift in Sources */,
 				29050C4025DA909000AF3CA9 /* FakeInputToggle.swift in Sources */,
