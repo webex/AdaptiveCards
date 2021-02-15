@@ -19,7 +19,7 @@ class InputTogglerRenderer: NSObject, BaseCardElementRendererProtocol {
         // NSMutableAttributedString for the checkbox title
         var attributedString: NSMutableAttributedString
         // NSButton for checkbox
-        let inputToggleView = ACRInputToggleView(checkboxWithTitle: inputToggle.getTitle() ?? "", target: nil, action: nil)
+        let inputToggleView = ACRInputToggleView(checkboxWithTitle: inputToggle.getTitle() ?? "", target: self, action: nil)
         inputToggleView.translatesAutoresizingMaskIntoConstraints = false
         // adding attributes to the string
         attributedString = NSMutableAttributedString(string: inputToggle.getTitle() ?? "")
@@ -34,12 +34,18 @@ class InputTogglerRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         inputToggleView.state = NSControl.StateValue(rawValue: defaultInputToggleStateValue == 0 ? 0 : 1)
         inputToggleView.attributedTitle = attributedString
+        // Wrap
+        if inputToggle.getWrap() {
+        }
         return inputToggleView
      }
 }
 
 class ACRInputToggleView: NSButton {
-//    override func isAccessibilityElement() -> Bool {
-//        return false
-//    }
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        // Should look for better solution
+        guard let superview = superview else { return }
+        leadingAnchor.constraint(equalTo: superview.leadingAnchor).isActive = true
+    }
 }
