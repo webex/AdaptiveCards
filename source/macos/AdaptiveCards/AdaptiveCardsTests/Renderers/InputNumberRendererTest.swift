@@ -1,10 +1,3 @@
-//
-//  InputNumberRendererTest.swift
-//  AdaptiveCardsTests
-//
-//  Created by manujai on 15/02/21.
-//
-
 @testable import AdaptiveCards
 import AdaptiveCards_bridge
 import XCTest

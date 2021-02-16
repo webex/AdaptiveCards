@@ -1,10 +1,3 @@
-//
-//  FakeInputNumber.swift
-//  AdaptiveCardsTests
-//
-//  Created by manujai on 15/02/21.
-//
-
 import AdaptiveCards_bridge
 
 class FakeInputNumber: ACSNumberInput {

@@ -1,10 +1,3 @@
-//
-//  InputNumberRenderer.swift
-//  AdaptiveCards
-//
-//  Created by manujai on 12/02/21.
-//
-
 import AdaptiveCards_bridge
 import AppKit
 
