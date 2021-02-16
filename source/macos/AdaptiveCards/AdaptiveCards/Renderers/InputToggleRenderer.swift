@@ -16,7 +16,7 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         inputToggleView.translatesAutoresizingMaskIntoConstraints = false
         // adding attributes to the string
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.firstLineHeadIndent = 11
+        paragraphStyle.firstLineHeadIndent = 10
         attributedString = NSMutableAttributedString(string: inputToggle.getTitle() ?? "", attributes: [.paragraphStyle: paragraphStyle])
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))

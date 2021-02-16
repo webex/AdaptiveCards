@@ -27,45 +27,33 @@ class InputToggleRendererTests: XCTestCase {
         inputToggle = .make(value: value)
         
         var inputToggleView = renderInputToggleView()
-        var buttonState = (inputToggleView.state)
-        var booleanValue : String = buttonState == .on ? "true" : "false"
-        XCTAssertEqual(booleanValue, value)
+        XCTAssertEqual(inputToggleView.state, .on)
         
         inputToggle = .make(value: "false")
         inputToggleView = renderInputToggleView()
-        buttonState = (inputToggleView.state)
-        booleanValue = buttonState == .on ? "true" : "false"
-        XCTAssertEqual(booleanValue, "false")
-    }
-    
-    func testRendererSetsValueOn() {
-        inputToggle = .make(value: "true", valueOn: "false", valueOff: "true")
-        
-        var inputToggleView = renderInputToggleView()
-        var buttonState = (inputToggleView.state)
-        var booleanValue : String = buttonState == .on ? "false" : "true"
-        XCTAssertEqual(booleanValue, "true")
-        
-        inputToggle = .make(value: "false", valueOn: "true", valueOff: "false")
-        inputToggleView = renderInputToggleView()
-        buttonState = inputToggleView.state
-        booleanValue = buttonState == .on ? "true" : "false"
-        XCTAssertEqual(booleanValue, "false")
+        XCTAssertEqual(inputToggleView.state, .off)
     }
     
     func testRendererSetsValueOff() {
+        inputToggle = .make(value: "true", valueOn: "false", valueOff: "true")
+        
+        var inputToggleView = renderInputToggleView()
+        XCTAssertEqual(inputToggleView.state, .off)
+        
+        inputToggle = .make(value: "false", valueOn: "true", valueOff: "false")
+        inputToggleView = renderInputToggleView()
+        XCTAssertEqual(inputToggleView.state, .off)
+    }
+    
+    func testRendererSetsValueOn() {
         inputToggle = .make(value: "true", valueOn: "true", valueOff: "false")
         
         var inputToggleView = renderInputToggleView()
-        var buttonState = (inputToggleView.state)
-        var booleanValue : String = buttonState == .on ? "true" : "false"
-        XCTAssertEqual(booleanValue, "true")
+        XCTAssertEqual(inputToggleView.state, .on)
         
         inputToggle = .make(value: "false", valueOn: "false", valueOff: "true")
         inputToggleView = renderInputToggleView()
-        buttonState = inputToggleView.state
-        booleanValue = buttonState == .on ? "false" : "true"
-        XCTAssertEqual(booleanValue, "false")
+        XCTAssertEqual(inputToggleView.state, .on)
     }
     
     
