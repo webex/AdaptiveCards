@@ -18,15 +18,15 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.firstLineHeadIndent = 10
         attributedString = NSMutableAttributedString(string: inputToggle.getTitle() ?? "", attributes: [.paragraphStyle: paragraphStyle])
-        if let colorHex = hostConfig.getForegroundColor(style, color: ACSForegroundColor.default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
+        if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
         }
         // check for valueOn or valueOff attributes
-        var defaultInputToggleStateValue: Int = 1
+        var defaultInputToggleStateValue: NSControl.StateValue = .on
         if inputToggle.getValue() != inputToggle.getValueOn() {
-            defaultInputToggleStateValue = 0
+            defaultInputToggleStateValue = .off
         }
-        inputToggleView.state = NSControl.StateValue(rawValue: defaultInputToggleStateValue)
+        inputToggleView.state = defaultInputToggleStateValue
         inputToggleView.attributedTitle = attributedString
         // Wrap
         if inputToggle.getWrap() {
