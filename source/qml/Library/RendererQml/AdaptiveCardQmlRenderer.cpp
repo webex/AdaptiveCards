@@ -138,6 +138,7 @@ namespace RendererQml
             auto bodyLayout = std::make_shared<QmlTag>("Column");
             bodyLayout->Property("id", "bodyLayout");
             bodyLayout->Property("width", "parent.width");
+            //TODO: Set spacing from host config
             bodyLayout->Property("spacing", "8");
             uiContainer->Property("Layout.preferredHeight", "bodyLayout.height");
             uiContainer->AddChild(bodyLayout);
