@@ -36,16 +36,17 @@ namespace RendererQml
 		return output;
 	}
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-		auto uiCard = std::make_shared<QmlTag>("Item");
-		uiCard->AddImports("import QtQuick 2.15");
-		uiCard->AddImports("import QtQuick.Layouts 1.3");
-		uiCard->Property("id", "adaptiveCard");
-		uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
-		
-		//TODO: Width can be set as config
-		uiCard->Property("width", "600");
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        auto uiCard = std::make_shared<QmlTag>("Rectangle");
+        uiCard->AddImports("import QtQuick 2.15;");
+        uiCard->AddImports("import QtQuick.Layouts 1.3;");
+        uiCard->AddImports("import QtQuick.Controls 2.15;");
+        uiCard->AddImports("import QtGraphicalEffects 1.15;");
+        uiCard->Property("id", "adaptiveCard");
+        uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
+        //TODO: Width can be set as config
+        uiCard->Property("width", "600");
 
 		auto columnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		columnLayout->Property("id", "adaptiveCardLayout");
