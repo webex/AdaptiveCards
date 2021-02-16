@@ -89,6 +89,7 @@ namespace RendererQml
 
 		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
 
+        //TODO: Need to fix the color calculation
 		std::string color = context->GetColor(textBlock->GetTextColor(), textBlock->GetIsSubtle(), false);
 		
 		uiTextBlock->Property("color", color);
