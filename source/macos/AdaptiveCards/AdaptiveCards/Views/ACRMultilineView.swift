@@ -15,9 +15,11 @@ class ACRMultilineView: NSView {
             setupViews()
             setupConstaints()
         }
+    
     private func setupViews() {
             addSubview(contentView)
         }
+    
     private func setupConstaints() {
             contentView.translatesAutoresizingMaskIntoConstraints = false
             contentView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
@@ -26,9 +28,21 @@ class ACRMultilineView: NSView {
             contentView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
             heightAnchor.constraint(equalToConstant: 50.0).isActive = true
         }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         scrollView.borderType = .lineBorder
+    }
+    
+    func setPlaceholder(placeholder: String) {
+        let attributedPlaceholder = NSMutableAttributedString(string: placeholder)
+        attributedPlaceholder.addAttributes([.foregroundColor: NSColor.lightGray], range: NSRange(location: 0, length: attributedPlaceholder.length))
+        textView.textStorage?.setAttributedString(attributedPlaceholder)
+        }
+    
+    func setValue(value: String) {
+        let attributedValue = NSMutableAttributedString(string: value)
+        textView.textStorage?.setAttributedString(attributedValue)
     }
     
     required init?(coder: NSCoder) {

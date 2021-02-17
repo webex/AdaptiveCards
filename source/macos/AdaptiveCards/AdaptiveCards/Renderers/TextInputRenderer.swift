@@ -9,8 +9,8 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             return NSView()
         }
         let textView = ACRTextInputView()
-        var attributedPlaceHolder: NSMutableAttributedString
-        var attributedInitialValue: NSMutableAttributedString
+        let attributedPlaceHolder: NSMutableAttributedString
+        let attributedInitialValue: NSMutableAttributedString
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.isBordered = true
         textView.isEditable = true
@@ -22,12 +22,17 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         if inputBlock.getIsMultiline() {
             let multiline = ACRMultilineView()
+            if let placeholderString = inputBlock.getPlaceholder() {
+                multiline.setPlaceholder(placeholder: placeholderString)
+            }
+            if let valueString = inputBlock.getValue(), !valueString.isEmpty {
+                multiline.setValue(value: valueString)
+            }
             return multiline
             // Makes text go to next line
-
-            textView.cell?.isScrollable = false
-            textView.cell?.wraps = true
-            textView.cell?.usesSingleLineMode = false
+//            textView.cell?.isScrollable = false
+//            textView.cell?.wraps = true
+//            textView.cell?.usesSingleLineMode = false
             } else {
             // Makes text remain in 1 line
             textView.cell?.usesSingleLineMode = true
@@ -37,18 +42,16 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             textView.cell?.truncatesLastVisibleLine = true
             textView.cell?.lineBreakMode = .byTruncatingTail
         }
-        let doesPlaceholderExist = inputBlock.getPlaceholder() != nil
-        let doesValueExist = inputBlock.getValue() != nil
         // Create placeholder and initial value string if they exist
-        if doesPlaceholderExist {
-            attributedPlaceHolder = NSMutableAttributedString(string: inputBlock.getPlaceholder() ?? "")
+        if let placeholderString = inputBlock.getPlaceholder() {
+            attributedPlaceHolder = NSMutableAttributedString(string: placeholderString)
             if let colorHex = hostConfig.getForegroundColor(style, color: ACSForegroundColor.default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
                 attributedPlaceHolder.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedPlaceHolder.length))
             }
             textView.placeholderAttributedString = attributedPlaceHolder
         }
-        if doesValueExist {
-            attributedInitialValue = NSMutableAttributedString(string: inputBlock.getValue() ?? "")
+        if let valueString = inputBlock.getValue() {
+            attributedInitialValue = NSMutableAttributedString(string: valueString)
             textView.attributedStringValue = attributedInitialValue
             }
         return textView
