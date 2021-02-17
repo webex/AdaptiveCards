@@ -211,7 +211,7 @@ const std::string card_InputText = R"({
       "type": "Input.Text",
       "id": "multilineInputId",
       "placeholder": "enter comment",
-      "maxLength": 500,
+      "maxLength": 50,
       "isMultiline": true
     },
     {
