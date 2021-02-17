@@ -199,7 +199,9 @@ namespace RendererQml
             scrollViewTag->Property("ScrollBar.vertical.interactive", "true");
 
             uiTextInput = std::make_shared<QmlTag>("TextArea");
+            uiTextInput->Property("id", input->GetId());
             uiTextInput->Property("wrapMode", "Text.Wrap");
+            uiTextInput->Property("padding", "10");
 
             if (input->GetMaxLength() > 0)
             {
@@ -211,6 +213,7 @@ namespace RendererQml
         else
         {
             uiTextInput = std::make_shared<QmlTag>("TextField");
+            uiTextInput->Property("id", input->GetId());
             uiTextInput->Property("width", "parent.width");
 
             if (input->GetMaxLength() > 0)
@@ -218,8 +221,7 @@ namespace RendererQml
                 uiTextInput->Property("maximumLength", std::to_string(input->GetMaxLength()));
             }
         }
-
-        uiTextInput->Property("id", input->GetId());
+        
         uiTextInput->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
 
         auto glowTag = std::make_shared<QmlTag>("Glow");
