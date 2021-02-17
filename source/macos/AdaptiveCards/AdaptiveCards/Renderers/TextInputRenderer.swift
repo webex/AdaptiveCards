@@ -21,6 +21,8 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             }
         }
         if inputBlock.getIsMultiline() {
+            let multiline = ACRMultilineView()
+            return multiline
             // Makes text go to next line
 
             textView.cell?.isScrollable = false
