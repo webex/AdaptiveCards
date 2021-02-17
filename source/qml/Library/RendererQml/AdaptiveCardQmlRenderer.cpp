@@ -189,20 +189,7 @@ namespace RendererQml
         //TODO: Add inline action
 
         std::shared_ptr<QmlTag> uiTextInput;
-        std::shared_ptr<QmlTag> scrollViewTag;
-
-        auto glowTag = std::make_shared<QmlTag>("Glow");
-        glowTag->Property("samples", "25");
-        glowTag->Property("color", "'skyblue'");
-
-        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-        backgroundTag->Property("radius", "5");
-        //TODO: These color styling should come from css
-        backgroundTag->Property("color", "parent.hovered ? 'lightgray' : 'white'");
-        backgroundTag->Property("border.color", "parent.activeFocus? 'black' : 'grey'");
-        backgroundTag->Property("border.width", "1");
-        backgroundTag->Property("layer.enabled", "parent.activeFocus ? true : false");
-        backgroundTag->Property("layer.effect", glowTag->ToString());
+        std::shared_ptr<QmlTag> scrollViewTag;        
 
         if (input->GetIsMultiline())
         {
@@ -234,6 +221,19 @@ namespace RendererQml
 
         uiTextInput->Property("id", input->GetId());
         uiTextInput->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
+
+        auto glowTag = std::make_shared<QmlTag>("Glow");
+        glowTag->Property("samples", "25");
+        glowTag->Property("color", "'skyblue'");
+
+        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
+        backgroundTag->Property("radius", "5");
+        //TODO: These color styling should come from css
+        backgroundTag->Property("color", Formatter() << input->GetId() <<".hovered ? 'lightgray' : 'white'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        backgroundTag->Property("border.width", "1");
+        backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
+        backgroundTag->Property("layer.effect", glowTag->ToString());
         uiTextInput->Property("background", backgroundTag->ToString());
 
         if (!input->GetValue().empty())
