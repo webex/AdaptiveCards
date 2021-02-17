@@ -184,6 +184,52 @@ namespace RendererQml
 
 	}
 
+	/*std::shared_ptr<QmlTag> RichTextBlockRender(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+
+	}*/
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextRunRender(std::shared_ptr<AdaptiveCards::TextRun> textRun, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		const std::string fontFamily = context->GetConfig()->GetFontFamily(textRun->GetFontType());
+		const int fontSize = context->GetConfig()->GetFontSize(textRun->GetFontType(), textRun->GetTextSize());
+
+		auto uiTextRun = std::make_shared<QmlTag>("Text");
+		std::string textType = textRun->GetInlineTypeString();
+
+		//TODO: Need to fix the color calculation
+		std::string color = context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), false);
+		uiTextRun->Property("color", color);
+
+		//Value based on what is mentioned in the html renderer
+		uiTextRun->Property("lineHeight", "1.33");
+
+		uiTextRun->Property("font.pixelSize", std::to_string(fontSize));
+
+		//TODO: lighter weight showing same behaviour as default
+		uiTextRun->Property("font.weight", Utils::GetWeight(textRun->GetTextWeight()));
+
+		uiTextRun->Property("text" , "\"" + TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang()) + "\"");
+
+		if (textRun->GetItalic())
+		{
+			uiTextRun->Property("font.italic", "true");
+		}
+
+		if (textRun->GetStrikethrough())
+		{
+			uiTextRun->Property("font.strikeout","true");
+		}
+
+		//TODO: Highlight text
+		if (textRun->GetHighlight())
+		{
+			//uiTextRun->Style("background-color", context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), true));
+		}
+
+		return uiTextRun;
+	}
+
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextInputRender(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
         //TODO: Add inline action
