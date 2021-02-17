@@ -10,15 +10,13 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         let textView = ACRTextInputView()
         let attributedPlaceHolder: NSMutableAttributedString
-        let attributedInitialValue: NSMutableAttributedString
+        var attributedInitialValue: NSMutableAttributedString
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.isBordered = true
         textView.isEditable = true
 
-        if let maxLen = inputBlock.getMaxLength() {
-            if Int(truncating: maxLen) > 0 {
+        if let maxLen = inputBlock.getMaxLength(), Int(truncating: maxLen) > 0 {
                 textView.maxLen = Int(truncating: maxLen)
-            }
         }
         if inputBlock.getIsMultiline() {
             let multiline = ACRMultilineView()
@@ -52,6 +50,9 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         if let valueString = inputBlock.getValue() {
             attributedInitialValue = NSMutableAttributedString(string: valueString)
+            if let maxLen = inputBlock.getMaxLength(), Int(truncating: maxLen) > 0, attributedInitialValue.string.count > Int(truncating: maxLen) {
+                attributedInitialValue = NSMutableAttributedString(string: String(attributedInitialValue.string.dropLast(attributedInitialValue.string.count - Int(truncating: maxLen))))
+                }
             textView.attributedStringValue = attributedInitialValue
             }
         return textView
@@ -63,5 +64,8 @@ class ACRTextInputView: NSTextField, NSTextFieldDelegate {
         guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
         guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
         textView.string = String(textView.string.dropLast())
+        if textView.string.count > maxLen {
+            textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
+        }
     }
 }

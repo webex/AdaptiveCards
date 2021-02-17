@@ -433,6 +433,7 @@
 		2871B12F25DD292A0040AB27 /* InputNumberRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B12E25DD292A0040AB27 /* InputNumberRenderer.swift */; };
 		2871B13725DD41C60040AB27 /* FakeInputNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B13625DD41C60040AB27 /* FakeInputNumber.swift */; };
 		2871B13F25DD41D80040AB27 /* InputNumberRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B13E25DD41D80040AB27 /* InputNumberRendererTest.swift */; };
+		2871B15025DD4C4D0040AB27 /* TextInputRedererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B14F25DD4C4D0040AB27 /* TextInputRedererTest.swift */; };
 		28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */; };
 		29050BFE25D59A3F00AF3CA9 /* InputToggleRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */; };
 		29050C4025DA909000AF3CA9 /* FakeInputToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050C3F25DA909000AF3CA9 /* FakeInputToggle.swift */; };
@@ -902,6 +903,7 @@
 		2871B12E25DD292A0040AB27 /* InputNumberRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputNumberRenderer.swift; sourceTree = "<group>"; };
 		2871B13625DD41C60040AB27 /* FakeInputNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeInputNumber.swift; sourceTree = "<group>"; };
 		2871B13E25DD41D80040AB27 /* InputNumberRendererTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputNumberRendererTest.swift; sourceTree = "<group>"; };
+		2871B14F25DD4C4D0040AB27 /* TextInputRedererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputRedererTest.swift; sourceTree = "<group>"; };
 		28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputRenderer.swift; sourceTree = "<group>"; };
 		29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputToggleRenderer.swift; sourceTree = "<group>"; };
 		29050C3F25DA909000AF3CA9 /* FakeInputToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeInputToggle.swift; sourceTree = "<group>"; };
@@ -1154,6 +1156,7 @@
 			children = (
 				082D913325D67455000226C4 /* TextBlockRendererTests.swift */,
 				2871B13E25DD41D80040AB27 /* InputNumberRendererTest.swift */,
+				2871B14F25DD4C4D0040AB27 /* TextInputRedererTest.swift */,
 				29050C4125DAAD9300AF3CA9 /* InputToggleRendererTests.swift */,
 			);
 			path = Renderers;
@@ -1974,6 +1977,7 @@
 				2871B13725DD41C60040AB27 /* FakeInputNumber.swift in Sources */,
 				082D912B25D67042000226C4 /* FakeHostConfig.swift in Sources */,
 				29050C4225DAAD9300AF3CA9 /* InputToggleRendererTests.swift in Sources */,
+				2871B15025DD4C4D0040AB27 /* TextInputRedererTest.swift in Sources */,
 				082D914425D6DC7A000226C4 /* FakeTextBlock.swift in Sources */,
 				082D913425D67455000226C4 /* TextBlockRendererTests.swift in Sources */,
 				2871B11825DD20A30040AB27 /* FakeTextInput.swift in Sources */,

@@ -1,6 +1,6 @@
 import AdaptiveCards_bridge
 
-class FakeInputNumber: ACSTextInput {
+class FakeInputText: ACSTextInput {
     public var placeholderString: String?
     public var value: String?
     public var isMultiline: Bool = false
@@ -10,15 +10,15 @@ class FakeInputNumber: ACSTextInput {
     public var regexString: String?
     
     override func getPlaceholder() -> String? {
-        return self.placeholderString
+        return placeholderString
     }
     
     override func setPlaceholder(_ value: String) {
-        self.placeholderString = value
+        placeholderString = value
     }
     
     override func getValue() -> String? {
-        return self.value
+        return value
     }
     
     override func setValue(_ value: String) {
@@ -26,43 +26,57 @@ class FakeInputNumber: ACSTextInput {
     }
     
     override func getIsMultiline() -> Bool {
-        return self.isMultiline
+        return isMultiline
     }
     
-    override func getMax() -> NSNumber? {
-        return max
+    override func setIsMultiline(_ value: Bool) {
+        isMultiline = value
     }
     
-    override func setMax(_ value: NSNumber?) {
-        max = value
+    override func getMaxLength() -> NSNumber? {
+        return maxLength
     }
     
-    override func getMin() -> NSNumber? {
-        return min
+    override func setMaxLength(_ value: NSNumber) {
+        maxLength = value
     }
     
-    override func setMin(_ value: NSNumber?) {
-        min = value
+    override func getStyle() -> ACSTextInputStyle {
+        return style
     }
     
-    override func getIsVisible() -> Bool {
-        return isVisible ?? true
+    override func setTextInputStyle(_ value: ACSTextInputStyle) {
+        style = value
     }
     
-    override func setIsVisible(_ value: Bool) {
-        isVisible = value
+    override func getInlineAction() -> ACSBaseActionElement? {
+        return inlineAction
+    }
+    
+    override func setInlineAction(_ action: ACSBaseActionElement) {
+        inlineAction = action
+    }
+    
+    override func getRegex() -> String? {
+        return regexString
+    }
+    
+    override func setRegex(_ value: String) {
+        regexString = value
     }
 }
 
-extension FakeInputNumber {
-    static func make(value: NSNumber? = 0, placeholder: String? = "", max: NSNumber? = 0, min: NSNumber = 0, visible: Bool? = true) -> FakeInputNumber {
-        let fakeInputNumber = FakeInputNumber()
-        fakeInputNumber.value = value
-        fakeInputNumber.placeholder = placeholder
-        fakeInputNumber.max = max
-        fakeInputNumber.min = min
-        fakeInputNumber.isVisible = visible
-        return fakeInputNumber
+extension FakeInputText {
+    static func make(placeholderString: String? = "", value: String? = "", isMultiline: Bool = false, maxLength: NSNumber? = 0, style: ACSTextInputStyle = .text, inlineAction: ACSBaseActionElement? = .none, regexString: String? = "") -> FakeInputText {
+        let fakeInputText = FakeInputText()
+        fakeInputText.placeholderString = placeholderString
+        fakeInputText.value = value
+        fakeInputText.isMultiline = isMultiline
+        fakeInputText.maxLength = maxLength
+        fakeInputText.style = style
+        fakeInputText.inlineAction = inlineAction
+        fakeInputText.regexString = regexString
+        return fakeInputText
     }
 }
 
