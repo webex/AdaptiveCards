@@ -1,0 +1,8 @@
+osx_image: xcode12.4
+language: swift
+branches:
+ only:
+ - master
+script:
+- set -o pipefail && xcodebuild -workspace AdaptiveCards.xcworkspace -scheme ADCMacOSVisualizer clean build | xcpretty
+- set -o pipefail && xcodebuild -workspace AdaptiveCards.xcworkspace -scheme AdaptiveCards test | xcpretty
