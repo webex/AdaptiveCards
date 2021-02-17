@@ -66,6 +66,8 @@ namespace RendererQml
 		}
 		columnLayout->AddChild(rectangle);
 
+        //TODO: Add card vertical content alignment
+
 		AddContainerElements(rectangle, card->GetBody(), context);
 
 		return uiCard;
@@ -149,6 +151,8 @@ namespace RendererQml
 
                 if (uiElement != nullptr)
                 {
+                    //TODO: Add separator
+                    //TODO: Add collection element
                     bodyLayout->AddChild(uiElement);
                 }
             }
