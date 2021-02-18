@@ -65,8 +65,8 @@ namespace RendererQml
     void AdaptiveCardQmlRenderer::SetObjectTypes()
     {
         (*GetElementRenderers()).Set<AdaptiveCards::TextBlock>(AdaptiveCardQmlRenderer::TextBlockRender);
-        /*(*GetElementRenderers()).Set<AdaptiveCards::RichTextBlock>(AdaptiveCardQmlRenderer::RichTextBlockRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::Image>(AdaptiveCardQmlRenderer::ImageRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::RichTextBlock>(AdaptiveCardQmlRenderer::RichTextBlockRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::Image>(AdaptiveCardQmlRenderer::ImageRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Container>(AdaptiveCardQmlRenderer::ContainerRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Column>(AdaptiveCardQmlRenderer::ColumnRender);
@@ -184,52 +184,6 @@ namespace RendererQml
 
 	}
 
-	/*std::shared_ptr<QmlTag> RichTextBlockRender(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-
-	}*/
-
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextRunRender(std::shared_ptr<AdaptiveCards::TextRun> textRun, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-		const std::string fontFamily = context->GetConfig()->GetFontFamily(textRun->GetFontType());
-		const int fontSize = context->GetConfig()->GetFontSize(textRun->GetFontType(), textRun->GetTextSize());
-
-		auto uiTextRun = std::make_shared<QmlTag>("Text");
-		std::string textType = textRun->GetInlineTypeString();
-
-		//TODO: Need to fix the color calculation
-		std::string color = context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), false);
-		uiTextRun->Property("color", color);
-
-		//Value based on what is mentioned in the html renderer
-		uiTextRun->Property("lineHeight", "1.33");
-
-		uiTextRun->Property("font.pixelSize", std::to_string(fontSize));
-
-		//TODO: lighter weight showing same behaviour as default
-		uiTextRun->Property("font.weight", Utils::GetWeight(textRun->GetTextWeight()));
-
-		uiTextRun->Property("text" , "\"" + TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang()) + "\"");
-
-		if (textRun->GetItalic())
-		{
-			uiTextRun->Property("font.italic", "true");
-		}
-
-		if (textRun->GetStrikethrough())
-		{
-			uiTextRun->Property("font.strikeout","true");
-		}
-
-		//TODO: Highlight text
-		if (textRun->GetHighlight())
-		{
-			//uiTextRun->Style("background-color", context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), true));
-		}
-
-		return uiTextRun;
-	}
-
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextInputRender(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
         //TODO: Add inline action
@@ -308,4 +262,87 @@ namespace RendererQml
 
         return uiTextInput;
     }
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::RichTextBlockRender(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		auto uiTextBlock = std::make_shared<QmlTag>("TextEdit");
+		std::string textType = richTextBlock->GetElementTypeString();
+		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(richTextBlock->GetHorizontalAlignment());
+
+		uiTextBlock->Property("textFormat", "Text.RichText");
+		uiTextBlock->Property("wrapMode", "Text.WordWrap");
+		uiTextBlock->Property("width", "parent.width");
+
+		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
+		std::string textrun_all = "\"";
+
+		if (!richTextBlock->GetIsVisible())
+		{
+			uiTextBlock->Property("visible", "false");
+		}
+
+		for (const auto& inlineRun : richTextBlock->GetInlines())
+		{
+			if (Utils::IsInstanceOfSmart<AdaptiveCards::TextRun>(inlineRun))
+			{
+				auto textRun = std::dynamic_pointer_cast<AdaptiveCards::TextRun>(inlineRun);
+				textrun_all.append(TextRunRender(textRun, context));
+			}
+		}
+		textrun_all = textrun_all.append("\"");
+		uiTextBlock->Property("text", textrun_all);
+
+		return uiTextBlock;
+
+	}
+
+	std::string AdaptiveCardQmlRenderer::TextRunRender(std::shared_ptr<AdaptiveCards::TextRun> textRun, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		const std::string fontFamily = context->GetConfig()->GetFontFamily(textRun->GetFontType());
+		const int fontSize = context->GetConfig()->GetFontSize(textRun->GetFontType(), textRun->GetTextSize());
+		const int weight = context->GetConfig()->GetFontWeight(textRun->GetFontType(), textRun->GetTextWeight());
+
+		//Value based on what is mentioned in the html renderer
+		const auto lineHeight = fontSize * 1.33;
+
+		std::string uiTextRun = "<span style='";
+		std::string textType = textRun->GetInlineTypeString();
+
+		//TODO: Add font to hostconfig
+		uiTextRun.append("font-family:" + std::string("\\\"") + fontFamily + std::string("\\\"") + ";");
+
+		//TODO: Need to fix the color calculation
+		std::string color = context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), false).substr(3);
+		uiTextRun.append("color:" + color + ";");
+
+		std::string lineheight = Formatter() << std::fixed << std::setprecision(2) << lineHeight << "px";
+		uiTextRun.append("line-height:" + lineheight + ";");
+		
+		uiTextRun.append("font-size:" + std::to_string(fontSize) + "px" + ";");
+
+		uiTextRun.append("font-weight:" + std::to_string(weight) + ";");
+
+		//TODO: Exact calculation for background color
+		if (textRun->GetHighlight())
+		{
+			uiTextRun.append("background-color:" + Utils::GetTextHighlightColor(color) + ";");
+		}
+
+		if (textRun->GetItalic())
+		{
+			uiTextRun.append("font-style:" + std::string("italic") + ";");
+		}
+
+		if (textRun->GetStrikethrough())
+		{
+			uiTextRun.append("text-decoration:" + std::string("line-through") + ";");
+		}
+
+		uiTextRun.append("'>");
+		uiTextRun.append(TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang()));
+		uiTextRun.append("</span>");
+
+		return uiTextRun;
+	}
 }
+
