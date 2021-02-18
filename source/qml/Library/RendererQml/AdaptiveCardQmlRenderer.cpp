@@ -332,7 +332,7 @@ namespace RendererQml
     }
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::RichTextBlockRender(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		auto uiTextBlock = std::make_shared<QmlTag>("TextEdit");
+		auto uiTextBlock = std::make_shared<QmlTag>("Text");
 		std::string textType = richTextBlock->GetElementTypeString();
 		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(richTextBlock->GetHorizontalAlignment());
 

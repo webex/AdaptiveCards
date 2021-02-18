@@ -438,7 +438,7 @@ int main(int argc, char* argv[])
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
 
-    const std::string qmlString = GenerateQml(card_InputNumber);
+    const std::string qmlString = GenerateQml(card_richText);
 
 	context->setContextProperty("_aQmlCard", QString::fromStdString(qmlString));
 
