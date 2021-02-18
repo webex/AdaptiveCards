@@ -1,5 +1,7 @@
 import AppKit
-let PLACEHOLDERTEXT = "Sample Placeholder"
+
+// let PLACEHOLDERTEXT: String
+
 class ACRMultilineView: NSView, NSTextViewDelegate {
     @IBOutlet var contentView: NSView!
     @IBOutlet var scrollView: NSScrollView!
@@ -26,20 +28,25 @@ class ACRMultilineView: NSView, NSTextViewDelegate {
             contentView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
             contentView.topAnchor.constraint(equalTo: topAnchor).isActive = true
             contentView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-            heightAnchor.constraint(equalToConstant: 50.0).isActive = true
+            heightAnchor.constraint(equalToConstant: 45.0).isActive = true
         }
     
     override func awakeFromNib() {
         super.awakeFromNib()
         scrollView.borderType = .lineBorder
+        scrollView.autohidesScrollers = true
         textView.delegate = self
     }
+    
+    var placeholderValue = ""
     
     func setPlaceholder(placeholder: String) {
 //        let attributedPlaceholder = NSMutableAttributedString(string: placeholder)
 //        attributedPlaceholder.addAttributes([.foregroundColor: NSColor.lightGray], range: NSRange(location: 0, length: attributedPlaceholder.length))
 //        textView.textStorage?.setAttributedString(attributedPlaceholder)
-        applyPlaceholderStyle(textView, PLACEHOLDERTEXT)
+        
+        applyPlaceholderStyle(textView, placeholder)
+        placeholderValue = placeholder
     }
     
     func setValue(value: String) {
@@ -61,7 +68,7 @@ class ACRMultilineView: NSView, NSTextViewDelegate {
     }
     
     func textViewShouldBeginEditing(aTextView: NSTextView) -> Bool {
-        if aTextView == textView && aTextView.string == PLACEHOLDERTEXT {
+        if aTextView == textView && aTextView.string == placeholderValue {
             moveCursorToStart(aTextView)
         }
         return true
@@ -79,7 +86,7 @@ class ACRMultilineView: NSView, NSTextViewDelegate {
         {
           // check if the only text is the placeholder and remove it if needed
           // unless they've hit the delete button with the placeholder displayed
-            if self.textView == textView && self.textView.string == PLACEHOLDERTEXT {
+            if self.textView == textView && self.textView.string == placeholderValue {
                 if ((text?.utf16.count) == 0)// they hit the back button
             {
               return false // ignore it
@@ -87,48 +94,23 @@ class ACRMultilineView: NSView, NSTextViewDelegate {
                 applyNonPlaceholderStyle(self.textView)
                 textView.string = text ?? ""
           }
+            applyNonPlaceholderStyle(self.textView)
           return true
         } else { // no text, so show the placeholder
-            applyPlaceholderStyle(self.textView, PLACEHOLDERTEXT)
+            applyPlaceholderStyle(self.textView, placeholderValue)
             moveCursorToStart(textView)
           return false
         }
       }
+    
+    var maxLen: Int = 0
+    
+    func textDidChange(_ notification: Notification) {
+            guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
+            guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
+            textView.string = String(textView.string.dropLast())
+            if textView.string.count > maxLen {
+                textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
+            }
+    }
 }
-// class TextViewWithPlaceholder {
-//    static NSAttributedString *placeHolderString;
-//
-//    @implementation TextViewWithPlaceHolder
-//
-//    +(void)initialize
-//    {
-//    static BOOL initialized = NO;
-//    if (!initialized)
-//    {
-//    NSColor *txtColor = [NSColor grayColor];
-//    NSDictionary *txtDict = [NSDictionary dictionaryWithObjectsAndKeys:txtColor, NSForegroundColorAttributeName, nil];
-//    placeHolderString = [[NSAttributedString alloc] initWithString:@"This is my placeholder text" attributes:txtDict];
-//    }
-//    }
-//
-//    - (BOOL)becomeFirstResponder
-//    {
-//      [self setNeedsDisplay:YES];
-//      return [super becomeFirstResponder];
-//    }
-//
-//    - (void)drawRect:(NSRect)rect
-//    {
-//    [super drawRect:rect];
-//    if ([[self string] isEqualToString:@""] && self != [[self window] firstResponder])
-//    [placeHolderString drawAtPoint:NSMakePoint(0,0)];
-//    }
-//
-//    - (BOOL)resignFirstResponder
-//    {
-//      [self setNeedsDisplay:YES];
-//      return [super resignFirstResponder];
-//    }
-//
-//    @end
-// }

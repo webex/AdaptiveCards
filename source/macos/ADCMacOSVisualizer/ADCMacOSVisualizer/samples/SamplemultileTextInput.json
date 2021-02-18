@@ -22,6 +22,14 @@
             "isMultiline": true,
             "id": "ml3",
             "maxLength": 20
+        },
+        {
+            "type": "Input.Text",
+            "placeholder": "Placeholder exists",
+            "id": "ml4",
+            "isMultiline": true,
+            "maxLength": 15,
+            "value": "Value exists"
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

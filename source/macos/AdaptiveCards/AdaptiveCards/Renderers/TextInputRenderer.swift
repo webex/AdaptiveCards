@@ -26,6 +26,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             if let valueString = inputBlock.getValue(), !valueString.isEmpty {
                 multiline.setValue(value: valueString)
             }
+            multiline.maxLen = inputBlock.getMaxLength() as? Int ?? 0
             return multiline
             // Makes text go to next line
 //            textView.cell?.isScrollable = false
