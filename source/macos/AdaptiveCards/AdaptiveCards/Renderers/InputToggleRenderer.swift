@@ -17,7 +17,8 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         let inputToggleView = ACRInputToggleView(checkboxWithTitle: resolvedTitle, target: self, action: nil)
         inputToggleView.translatesAutoresizingMaskIntoConstraints = false
         // adding attributes to the string
-        attributedString = NSMutableAttributedString(string: resolvedTitle)
+        let paragraphStyle = NSMutableParagraphStyle()
+        attributedString = NSMutableAttributedString(string: resolvedTitle, attributes: [.paragraphStyle: paragraphStyle])
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
         }
