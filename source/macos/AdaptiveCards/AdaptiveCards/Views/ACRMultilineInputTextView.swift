@@ -15,7 +15,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
             logError("Bundle is nil")
             return
         }
-        bundle.loadNibNamed("ACRMultilineView", owner: self, topLevelObjects: nil)
+        bundle.loadNibNamed("ACRMultilineInputTextView", owner: self, topLevelObjects: nil)
         setupViews()
         setupConstaints()
     }

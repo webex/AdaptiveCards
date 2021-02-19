@@ -428,8 +428,8 @@
 		08E4047025B46BDB00C2092A /* AdaptiveCards_bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E4046225B46BDA00C2092A /* AdaptiveCards_bridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		08E4052125B46C3B00C2092A /* SwiftInterfaceHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E402EB25B463D200C2092A /* SwiftInterfaceHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2871B11825DD20A30040AB27 /* FakeTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B11725DD20A30040AB27 /* FakeTextInput.swift */; };
-		2871B11D25DD225C0040AB27 /* ACRMultilineView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2871B11C25DD225C0040AB27 /* ACRMultilineView.xib */; };
-		2871B12A25DD27F10040AB27 /* ACRMultilineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B12925DD27F10040AB27 /* ACRMultilineView.swift */; };
+		2871B11D25DD225C0040AB27 /* ACRMultilineInputTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2871B11C25DD225C0040AB27 /* ACRMultilineInputTextView.xib */; };
+		2871B12A25DD27F10040AB27 /* ACRMultilineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */; };
 		2871B12F25DD292A0040AB27 /* InputNumberRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B12E25DD292A0040AB27 /* InputNumberRenderer.swift */; };
 		2871B13725DD41C60040AB27 /* FakeInputNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B13625DD41C60040AB27 /* FakeInputNumber.swift */; };
 		2871B13F25DD41D80040AB27 /* InputNumberRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B13E25DD41D80040AB27 /* InputNumberRendererTest.swift */; };
@@ -899,8 +899,8 @@
 		08E4046325B46BDA00C2092A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08E4054D25B4764400C2092A /* AdaptiveCards-bridge.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "AdaptiveCards-bridge.xcconfig"; sourceTree = "<group>"; };
 		2871B11725DD20A30040AB27 /* FakeTextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeTextInput.swift; sourceTree = "<group>"; };
-		2871B11C25DD225C0040AB27 /* ACRMultilineView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ACRMultilineView.xib; sourceTree = "<group>"; };
-		2871B12925DD27F10040AB27 /* ACRMultilineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACRMultilineView.swift; sourceTree = "<group>"; };
+		2871B11C25DD225C0040AB27 /* ACRMultilineInputTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ACRMultilineInputTextView.xib; sourceTree = "<group>"; };
+		2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACRMultilineInputTextView.swift; sourceTree = "<group>"; };
 		2871B12E25DD292A0040AB27 /* InputNumberRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputNumberRenderer.swift; sourceTree = "<group>"; };
 		2871B13625DD41C60040AB27 /* FakeInputNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeInputNumber.swift; sourceTree = "<group>"; };
 		2871B13E25DD41D80040AB27 /* InputNumberRendererTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputNumberRendererTest.swift; sourceTree = "<group>"; };
@@ -1506,8 +1506,8 @@
 			isa = PBXGroup;
 			children = (
 				08D9547425D17FF9001442D3 /* ACRView.swift */,
-				2871B11C25DD225C0040AB27 /* ACRMultilineView.xib */,
-				2871B12925DD27F10040AB27 /* ACRMultilineView.swift */,
+				2871B11C25DD225C0040AB27 /* ACRMultilineInputTextView.xib */,
+				2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1912,7 +1912,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				08299F9E25AF279E00799C66 /* AdaptiveCards.xcconfig in Resources */,
-				2871B11D25DD225C0040AB27 /* ACRMultilineView.xib in Resources */,
+				2871B11D25DD225C0040AB27 /* ACRMultilineInputTextView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1966,7 +1966,7 @@
 				08D7767A25CC339D0095C1B3 /* RendererManager.swift in Sources */,
 				28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */,
 				08E4044825B46ABA00C2092A /* AdaptiveCards.h in Sources */,
-				2871B12A25DD27F10040AB27 /* ACRMultilineView.swift in Sources */,
+				2871B12A25DD27F10040AB27 /* ACRMultilineInputTextView.swift in Sources */,
 				29050BFE25D59A3F00AF3CA9 /* InputToggleRenderer.swift in Sources */,
 				08B5F91125C924F400A7D37A /* TextBlockRenderer.swift in Sources */,
 				0801D5EA25C2C3B500AABD6C /* AdaptiveCard.swift in Sources */,
