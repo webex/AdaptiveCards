@@ -1,10 +1,13 @@
 import AdaptiveCards_bridge
 import AppKit
 
-class ACRMultilineView: NSView, NSTextViewDelegate {
+class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     @IBOutlet var contentView: NSView!
     @IBOutlet var scrollView: NSScrollView!
     @IBOutlet var textView: ACRTextView!
+    
+    private var placeholderAttrString: NSAttributedString?
+    var maxLen: Int = 0
     
     init() {
         super.init(frame: .zero)
@@ -41,9 +44,6 @@ class ACRMultilineView: NSView, NSTextViewDelegate {
         textView.delegate = self
     }
     
-    fileprivate var placeholderAttrString: NSAttributedString?
-    var maxLen: Int = 0
-    
     func setPlaceholder(placeholder: String) {
         let placeholderValue = NSMutableAttributedString(string: placeholder)
         placeholderValue.addAttributes([.foregroundColor: NSColor.placeholderTextColor], range: NSRange(location: 0, length: placeholderValue.length))
@@ -60,11 +60,13 @@ class ACRMultilineView: NSView, NSTextViewDelegate {
     }
     
     func textDidChange(_ notification: Notification) {
-            guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
-            guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
-            textView.string = String(textView.string.dropLast())
-            if textView.string.count > maxLen {
-                textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
-            }
+        guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
+        // This stops the user from exceeding the maxLength property of Inut.Text if prroperty was set
+        guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
+        textView.string = String(textView.string.dropLast())
+        // Below check added to ensure prefilled value doesn't exceede the maxLength property if set
+        if textView.string.count > maxLen {
+            textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
+        }
     }
 }

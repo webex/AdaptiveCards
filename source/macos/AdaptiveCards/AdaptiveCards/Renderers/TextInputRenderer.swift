@@ -18,19 +18,19 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.isEditable = true
 
         if let maxLen = inputBlock.getMaxLength(), Int(truncating: maxLen) > 0 {
-                textView.maxLen = Int(truncating: maxLen)
+            textView.maxLen = Int(truncating: maxLen)
         }
         
         if inputBlock.getIsMultiline() {
-            let multiline = ACRMultilineView()
+            let multilineView = ACRMultilineInputTextView()
             if let placeholderString = inputBlock.getPlaceholder() {
-                multiline.setPlaceholder(placeholder: placeholderString)
+                multilineView.setPlaceholder(placeholder: placeholderString)
             }
             if let valueString = inputBlock.getValue(), !valueString.isEmpty {
-                multiline.setValue(value: valueString, maximumLen: inputBlock.getMaxLength())
+                multilineView.setValue(value: valueString, maximumLen: inputBlock.getMaxLength())
             }
-            multiline.maxLen = inputBlock.getMaxLength() as? Int ?? 0
-            return multiline
+            multilineView.maxLen = inputBlock.getMaxLength() as? Int ?? 0
+            return multilineView
         } else {
             // Makes text remain in 1 line
             textView.cell?.usesSingleLineMode = true
@@ -60,8 +60,10 @@ class ACRTextInputView: NSTextField, NSTextFieldDelegate {
     
     override func textDidChange(_ notification: Notification) {
         guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
+        // This stops the user from exceeding the maxLength property of Inut.Text if prroperty was set
         guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
         textView.string = String(textView.string.dropLast())
+        // Below check added to ensure prefilled value doesn't exceede the maxLength property if set
         if textView.string.count > maxLen {
             textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
         }
