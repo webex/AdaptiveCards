@@ -428,8 +428,8 @@ namespace RendererQml
 		uiCheckboxInput->Property("width", "parent.width");
 
 		auto uiOuterRectangle = std::make_shared<QmlTag>("Rectangle");
-		uiOuterRectangle->Property("implicitWidth", "26");
-		uiOuterRectangle->Property("implicitHeight", "26");
+		uiOuterRectangle->Property("width", id + ".font.pixelSize");
+		uiOuterRectangle->Property("height", id + ".font.pixelSize");
 		uiOuterRectangle->Property("x", id + ".leftPadding");
 		uiOuterRectangle->Property("y", "parent.height / 2 - height / 2");
 		uiOuterRectangle->Property("radius", "3");
@@ -437,10 +437,10 @@ namespace RendererQml
 
 		//To be replaced with image of checkmark.
 		auto uiInnerRectangle = std::make_shared<QmlTag>("Rectangle");
-		uiInnerRectangle->Property("width", "14");
-		uiInnerRectangle->Property("height", "14");
-		uiInnerRectangle->Property("x", "6");
-		uiInnerRectangle->Property("y", "6");
+		uiInnerRectangle->Property("width", "parent.width/2");
+		uiInnerRectangle->Property("height", "parent.height/2");
+		uiInnerRectangle->Property("x", "width/2");
+		uiInnerRectangle->Property("y", "height/2");
 		uiInnerRectangle->Property("radius", "2");
 		uiInnerRectangle->Property("color", id + ".down ? '#ffffff' : '#0075FF'");
 		uiInnerRectangle->Property("visible", id + ".checked");
@@ -467,7 +467,7 @@ namespace RendererQml
 		{
 			uiCheckboxInput->Property("visible", "false");
 		}
-		//TO DO - height 
+		//TODO: Add Height
 		
 		return uiCheckboxInput;
 	}

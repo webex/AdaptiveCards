@@ -387,27 +387,27 @@ const std::string card_richText = R"({
 
 const std::string card_CheckboxInput = R"({
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-  "type" : "AdaptiveCard",
-  "version" : "1.0",
-  "body" : [
-	{
-	  "type": "TextBlock",
-	  "text" : "Toggle Input"
-	},
-	{
-	  "type": "Input.Toggle",
-	  "id" : "acceptTerms",
-	  "title" : "I accept the terms and agreements",
-	  "value" : "true",
-	  "valueOn" : "true",
-	  "valueOff" : "false"
-	}
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Toggle Input"
+    },
+    {
+      "type": "Input.Toggle",
+      "id": "acceptTerms",
+      "title": "I accept the terms and agreements",
+      "value": "true",
+      "valueOn": "true",
+      "valueOff": "false"
+    }
   ],
   "actions": [
-	{
-	  "type": "Action.Submit",
-	  "title" : "OK"
-	}
+    {
+      "type": "Action.Submit",
+      "title": "OK"
+    }
   ]
 })";
 
