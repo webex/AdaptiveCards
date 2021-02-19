@@ -83,4 +83,23 @@ class ACRTextView: NSTextView {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
     }
+    
+    override func becomeFirstResponder() -> Bool {
+        self.needsDisplay = true
+        return super.becomeFirstResponder()
+    }
+    
+    var placeholderAttrString: NSAttributedString?
+
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+
+        guard string.isEmpty else { return }
+        placeholderAttrString?.draw(in: dirtyRect.offsetBy(dx: 5, dy: 0))
+    }
+    
+    override func resignFirstResponder() -> Bool {
+        self.needsDisplay = true
+        return super.resignFirstResponder()
+    }
 }

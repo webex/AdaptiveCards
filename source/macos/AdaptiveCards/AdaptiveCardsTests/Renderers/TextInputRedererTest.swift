@@ -19,7 +19,7 @@ class TextInputRendererTest: XCTestCase {
         inputText = .make(placeholderString: placeholderString)
         
         let inputTextField = renderTextInput()
-        XCTAssertEqual(inputTextField.placeholderAttributedString , NSAttributedString(string: placeholderString))
+        XCTAssertEqual(inputTextField.placeholderString , placeholderString)
     }
     
     func testRendersValue() throws {
@@ -28,7 +28,6 @@ class TextInputRendererTest: XCTestCase {
         
         let inputTextField = renderTextInput()
         XCTAssertEqual(inputTextField.stringValue, valueString)
-        
     }
     
     func testMaxLengthinInitialValue() throws {
@@ -37,7 +36,6 @@ class TextInputRendererTest: XCTestCase {
         
         let inputTextField = renderTextInput()
         XCTAssertEqual(inputTextField.stringValue, "a long str")
-        
     }
     
     private func renderTextInput() -> ACRTextInputView {
