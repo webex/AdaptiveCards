@@ -439,6 +439,7 @@
 		29050BFE25D59A3F00AF3CA9 /* InputToggleRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */; };
 		29050C4025DA909000AF3CA9 /* FakeInputToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050C3F25DA909000AF3CA9 /* FakeInputToggle.swift */; };
 		29050C4225DAAD9300AF3CA9 /* InputToggleRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29050C4125DAAD9300AF3CA9 /* InputToggleRendererTests.swift */; };
+		29BA82D725E265F4000B7578 /* ChoiceSetInputRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29BA82D625E265F4000B7578 /* ChoiceSetInputRenderer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -910,6 +911,7 @@
 		29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputToggleRenderer.swift; sourceTree = "<group>"; };
 		29050C3F25DA909000AF3CA9 /* FakeInputToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeInputToggle.swift; sourceTree = "<group>"; };
 		29050C4125DAAD9300AF3CA9 /* InputToggleRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputToggleRendererTests.swift; sourceTree = "<group>"; };
+		29BA82D625E265F4000B7578 /* ChoiceSetInputRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceSetInputRenderer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1481,6 +1483,7 @@
 				2871B12E25DD292A0040AB27 /* InputNumberRenderer.swift */,
 				08B5F91825C9272500A7D37A /* AdaptiveCardRenderer.swift */,
 				29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */,
+				29BA82D625E265F4000B7578 /* ChoiceSetInputRenderer.swift */,
 			);
 			path = Renderers;
 			sourceTree = "<group>";
@@ -1970,6 +1973,7 @@
 				29050BFE25D59A3F00AF3CA9 /* InputToggleRenderer.swift in Sources */,
 				08B5F91125C924F400A7D37A /* TextBlockRenderer.swift in Sources */,
 				0801D5EA25C2C3B500AABD6C /* AdaptiveCard.swift in Sources */,
+				29BA82D725E265F4000B7578 /* ChoiceSetInputRenderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
