@@ -12,9 +12,9 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
 //        let factSetView = ACRFactSetView()
         let factArray = factSet.getFacts()
 //        let view1 = [ACRFactSetElement()]
-        let columnStack = CustomStackView()
-//        columnStack.orientation = .vertical
-//        columnStack.translatesAutoresizingMaskIntoConstraints = false
+        let columnStack = NSStackView()
+        columnStack.orientation = .vertical
+        columnStack.translatesAutoresizingMaskIntoConstraints = false
 //        columnStack.alignment = .centerX
 //        columnStack.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
 //        columnStack.heightAnchor.constraint(equalToConstant: 200.0).isActive = true
@@ -28,15 +28,15 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
                 view.labelText.textColor = textColor
                 view.valueText.textColor = textColor
             }
-            view.labelText.preferredMaxLayoutWidth = columnStack.stackView.frame.width / 2
-            view.valueText.preferredMaxLayoutWidth = columnStack.stackView.frame.width / 2
+            view.labelText.preferredMaxLayoutWidth = columnStack.frame.width / 2
+            view.valueText.preferredMaxLayoutWidth = columnStack.frame.width / 2
 //            return view
-            columnStack.stackView.addView(view, in: .bottom)
+            columnStack.addView(view, in: .bottom)
         }
 //        columnStack.layout()
-        columnStack.setupConstraints()
+//        columnStack.setupConstraints()
 //        columnStack.stackView.heightAnchor.constraint(equalToConstant: 200).isActive = true
-        return columnStack.stackView
+        return columnStack
     }
 }
 

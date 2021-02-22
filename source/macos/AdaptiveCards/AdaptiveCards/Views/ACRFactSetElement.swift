@@ -46,13 +46,13 @@ class ACRFactSetElement: NSView {
         labelText.trailingAnchor.constraint(equalTo: verticalLine.leadingAnchor).isActive = true
         labelText.maximumNumberOfLines = 0
         labelText.setContentCompressionResistancePriority(.required, for: .vertical)
-        valueText.setContentCompressionResistancePriority(.required, for: .vertical)
 
         valueText.leadingAnchor.constraint(equalTo: verticalLine.trailingAnchor).isActive = true
         valueText.topAnchor.constraint(equalTo: topAnchor).isActive = true
         valueText.bottomAnchor.constraint(equalTo: horizontalLine.topAnchor).isActive = true
         valueText.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         valueText.maximumNumberOfLines = 0
+        valueText.setContentCompressionResistancePriority(.required, for: .vertical)
         
         verticalLine.topAnchor.constraint(equalTo: topAnchor).isActive = true
         verticalLine.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
