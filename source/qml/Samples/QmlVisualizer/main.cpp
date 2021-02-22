@@ -410,7 +410,6 @@ const std::string card_richText = R"({
 		  "type": "Input.Date",
 		  "id": "sample2",
 		  "placeholder": "Enter a date",
-		  "value": "2017-10-12",
 		  "min":"1900-01-01",
 		  "max":"2030-01-01"
 		}

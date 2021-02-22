@@ -462,10 +462,21 @@ namespace RendererQml
 		auto imageTag = std::make_shared<QmlTag>("Image");
 		imageTag->Property("anchors.fill", "parent");
 		imageTag->Property("anchors.margins", "5");
-		imageTag->Property("source", "calendar.png");
+
+		//Finding absolute Path at runtime
+		std::string file_path = __FILE__;
+		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+		dir_path.append("\\Images\\calendarIcon.png");
+		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+		imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+
+		//Relative wrt main.qml not working
+		//imageTag->Property("source", "\"" + std::string("file:/../../Library/RendererQml/Images/calendarIcon.png") + "\"");
+
 
 		auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 
+		mouseAreaTag->AddChild(imageTag);
 		mouseAreaTag->Property("height", "parent.height");
 		mouseAreaTag->Property("width", "height");
 		mouseAreaTag->Property("anchors.right", "parent.right");
