@@ -392,6 +392,18 @@ const std::string card_ToggleInput = R"({
   "body": [
     {
       "type": "TextBlock",
+      "text": "Input Number"
+    },
+    {
+      "type": "Input.Number",
+      "id": "number",
+      "placeholder": "Enter a number",
+      "min": 1,
+      "max": 10,
+      "value": 3
+    },
+    {
+      "type": "TextBlock",
       "text": "Toggle Input"
     },
     {
@@ -401,6 +413,16 @@ const std::string card_ToggleInput = R"({
       "value": "true",
       "valueOn": "true",
       "valueOff": "false"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Default text input"
+    },
+    {
+      "type": "Input.Text",
+      "id": "defaultInputId",
+      "placeholder": "enter comment",
+      "maxLength": 500
     }
   ],
   "actions": [

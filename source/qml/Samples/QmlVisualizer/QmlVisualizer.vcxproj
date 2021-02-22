@@ -104,10 +104,12 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <None Include="SampleCardListView.qml" />
     <QtRcc Include="qml.qrc" />
     <None Include="AdaptiveCardItemDelegate.qml" />
     <None Include="CardComponent.qml" />
     <None Include="CardContent.qml" />
+    <None Include="CardEditor.qml" />
     <None Include="main.qml" />
   </ItemGroup>
   <ItemGroup>

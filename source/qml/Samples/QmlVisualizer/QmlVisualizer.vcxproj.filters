@@ -48,5 +48,11 @@
     <None Include="CardContent.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="CardEditor.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SampleCardListView.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
