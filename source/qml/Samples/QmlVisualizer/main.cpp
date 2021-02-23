@@ -1,19 +1,242 @@
+#include "stdafx.h"
+#include <AdaptiveCardQmlRenderer.h>
+#include <RenderedQmlAdaptiveCard.h>
+#include "samplecardmodel.h"
+#include "samplecardlist.h"
+
+#include "HostConfig.h"
+#include "QmlTag.h"
+
 #include <QGuiApplication>
 #include <QQuickView>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQmlContext>
 
-#include "samplecardmodel.h"
-#include "samplecardlist.h"
+using namespace RendererQml;
 
-int main(int argc, char *argv[])
-{
-    QGuiApplication app(argc, argv);
+const std::string card_TextBlock = R"({
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "This is some text",
+      "size": "large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "It doesn't wrap by default",
+      "weight": "bolder"
+    },
+    {
+      "type": "TextBlock",
+      "text": "So set **wrap** to true if you plan on showing a paragraph of text",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "You can also use **maxLines** to prevent it from getting out of hand",
+      "wrap": true,
+      "maxLines": 2
+    },
+    {
+      "type": "TextBlock",
+      "text": "You can even draw attention to certain text with color",
+      "wrap": true,
+      "color": "attention"
+    },
+    {
+      "type": "TextBlock",
+      "text": "color: default",
+      "color": "default"
+    },
+    {
+      "type": "TextBlock",
+      "text": "color: accent",
+      "color": "accent"
+    },
+    {
+      "type": "TextBlock",
+      "text": "color: good",
+      "color": "good"
+    },
+    {
+      "type": "TextBlock",
+      "text": "color: warning",
+      "color": "warning"
+    },
+    {
+      "type": "TextBlock",
+      "text": "color: attention",
+      "color": "attention"
+    },
+    {
+      "type": "TextBlock",
+      "text": "color: light",
+      "color": "light"
+    },
+    {
+      "type": "TextBlock",
+      "text": "color: dark",
+      "color": "dark"
+    },
+    {
+      "type": "TextBlock",
+      "text": "**horizontalAlignment:left**",
+      "horizontalAlignment": "left"
+    },
+    {
+      "type": "TextBlock",
+      "text": "**horizontalAlignment:center**",
+      "horizontalAlignment": "center"
+    },
+    {
+      "type": "TextBlock",
+      "text": "**horizontalAlignment:right**",
+      "horizontalAlignment": "right"
+    },
+    {
+      "type": "TextBlock",
+      "text": "isSubtle:false",
+      "isSubtle": false
+    },
+    {
+      "type": "TextBlock",
+      "text": "isSubtle:true",
+      "isSubtle": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "wrap": true,
+      "maxLines": 1
+    },
+    {
+      "type": "TextBlock",
+      "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "wrap": true,
+      "maxLines": 2
+    },
+    {
+      "type": "TextBlock",
+      "text": "size:default"
+    },
+    {
+      "type": "TextBlock",
+      "text": "size:small",
+      "size": "small"
+    },
+    {
+      "type": "TextBlock",
+      "text": "size:default",
+      "size": "default"
+    },
+    {
+      "type": "TextBlock",
+      "text": "size:medium",
+      "size": "medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "size:large",
+      "size": "large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "size:extraLarge",
+      "size": "extraLarge"
+    },
+    {
+      "type": "TextBlock",
+      "text": "weight: lighter",
+      "weight": "lighter"
+    },
+    {
+      "type": "TextBlock",
+      "text": "weight: default",
+      "weight": "default"
+    },
+    {
+      "type": "TextBlock",
+      "text": "weight: bolder",
+      "weight": "bolder"
+    },
+    {
+      "type": "TextBlock",
+      "text": "**wrap: false** Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
+      "wrap": false
+    },
+    {
+      "type": "TextBlock",
+      "text": "**wrap: true** Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Font type not set."
+    },
+    {
+      "type": "TextBlock",
+      "text": "Font type set to *default*.",
+      "fontType": "default"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Font type set to *monospace*.",
+      "fontType": "monospace"
+    }
+  ]
+}
+)";
 
-    qmlRegisterType<SampleCardModel>("SampleCard", 1, 0, "SampleCardModel");
-    qmlRegisterUncreatableType<SampleCardList>("SampleCard", 1, 0, "SampleCardList",
-        QStringLiteral("SampleCardList should not be created in QML"));
+const std::string card_InputText = R"({
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Default text input"
+    },
+    {
+      "type": "Input.Text",
+      "id": "defaultInputId",
+      "placeholder": "enter comment",
+      "maxLength": 500
+    },
+    {
+      "type": "TextBlock",
+      "text": "Multiline text input"
+    },
+    {
+      "type": "Input.Text",
+      "id": "multilineInputId",
+      "placeholder": "enter comment",
+      "maxLength": 50,
+      "isMultiline": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Pre-filled value"
+    },
+    {
+      "type": "Input.Text",
+      "id": "prefilledInputId",
+      "placeholder": "enter comment",
+      "maxLength": 500,
+      "isMultiline": true,
+      "value": "This value was pre-filled"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "OK"
+    }
+  ]
+})";
 
 	const std::string card_InputNumber = R"({
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -294,12 +517,20 @@ int main(int argc, char* argv[])
 {
     QGuiApplication app(argc, argv);
 
+    qmlRegisterType<SampleCardModel>("SampleCard", 1, 0, "SampleCardModel");
+    qmlRegisterUncreatableType<SampleCardList>("SampleCard", 1, 0, "SampleCardList",
+        QStringLiteral("SampleCardList should not be created in QML"));
+
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
 
-    const std::string qmlString = "import QtQuick 2.15; import QtQuick.Layouts 1.3; import QtQuick.Controls 2.15; import QtGraphicalEffects 1.15; Rectangle{ id:adaptiveCard; implicitHeight:adaptiveCardLayout.implicitHeight; width:600; ColumnLayout{ id:adaptiveCardLayout; width:parent.width; Rectangle{ id:adaptiveCardRectangle; color:Qt.rgba(255, 255, 255, 1.00); Layout.margins:15; Layout.fillWidth:true; Layout.preferredHeight:bodyLayout.height; Column{ id:bodyLayout; width:parent.width; spacing:8; Text{ width:parent.width; elide:Text.ElideRight; text:\"Default text input\"; horizontalAlignment:Text.AlignLeft; color:Qt.rgba(0, 0, 0, 1.00); lineHeight:1.33; font.pixelSize:14; font.weight:Font.Normal; } TextField{ width:parent.width; maximumLength:500; id:defaultInputId; font.pixelSize:14; background:Rectangle{ radius:5; color:defaultInputId.hovered ? 'lightgray' : 'white'; border.color:defaultInputId.activeFocus? 'black' : 'grey'; border.width:1; layer.enabled:defaultInputId.activeFocus ? true : false; layer.effect:Glow{ samples:25; color:'skyblue'; } } placeholderText:\"enter comment\"; } Text{ width:parent.width; elide:Text.ElideRight; text:\"Multiline text input\"; horizontalAlignment:Text.AlignLeft; color:Qt.rgba(0, 0, 0, 1.00); lineHeight:1.33; font.pixelSize:14; font.weight:Font.Normal; } ScrollView{ width:parent.width; height:50; ScrollBar.vertical.interactive:true; TextArea{ wrapMode:Text.Wrap; onTextChanged:remove(500, length); id:multilineInputId; font.pixelSize:14; background:Rectangle{ radius:5; color:multilineInputId.hovered ? 'lightgray' : 'white'; border.color:multilineInputId.activeFocus? 'black' : 'grey'; border.width:1; layer.enabled:multilineInputId.activeFocus ? true : false; layer.effect:Glow{ samples:25; color:'skyblue'; } } placeholderText:\"enter comment\"; } } Text{ width:parent.width; elide:Text.ElideRight; text:\"Pre-filled value\"; horizontalAlignment:Text.AlignLeft; color:Qt.rgba(0, 0, 0, 1.00); lineHeight:1.33; font.pixelSize:14; font.weight:Font.Normal; } ScrollView{ width:parent.width; height:50; ScrollBar.vertical.interactive:true; TextArea{ wrapMode:Text.Wrap; onTextChanged:remove(50, length); padding: 10; id:prefilledInputId; font.pixelSize:14; background:Rectangle{ radius:5; color:prefilledInputId.hovered ? 'lightgray' : 'white'; border.color:prefilledInputId.activeFocus? 'black' : 'grey'; border.width:1; layer.enabled:prefilledInputId.activeFocus ? true : false; layer.effect:Glow{ samples:25; color:'skyblue'; } } text:\"This value was pre-filled\"; placeholderText:\"enter comment\"; } } } } } }";
+    SampleCardList cardList;
+    SampleCardModel model;
+    model.setList(&cardList);
 
-    context->setContextProperty("_aQmlCard", QString::fromStdString(qmlString));
+    const std::string qmlString = GenerateQml(card_TextBlock);
+
+	context->setContextProperty("_aQmlCard", QString::fromStdString(qmlString));
     context->setContextProperty("_aModel", &model);
 
     view.setSource(QUrl("qrc:main.qml"));
