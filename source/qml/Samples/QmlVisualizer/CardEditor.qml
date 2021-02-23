@@ -8,6 +8,7 @@ Rectangle{
     id: cardEditor
     width: 400
     height: 800
+    color: 'lightblue'
     border.color: 'black'
     border.width: 2
     radius: 8

@@ -444,7 +444,7 @@ const std::string card_ToggleInput = R"({
 		},
 		{
 		  "type": "Input.Date",
-		  "id": "sample",
+		  "id": "date",
 		  "placeholder": "Enter a date",
 		  "value": "2017-10-12",
 		  "min":"1900-01-01",
