@@ -3,6 +3,7 @@ import QtQuick.Window 2.15
 import Qt.labs.qmlmodels 1.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.15
+import SampleCard 1.0
 
 
 Frame{
@@ -30,7 +31,7 @@ Frame{
                 id: txt
                 width: parent.width
                 padding: 5
-                text: qsTr("text")
+                text: model.CardName
                 font.pixelSize: 15
 
                 MouseArea{
@@ -46,7 +47,8 @@ Frame{
         width: parent.width
         height: parent.height
         clip: true
-        model: 100
+        model: _aModel
+
         delegate: cardDelegate
     }
 }
