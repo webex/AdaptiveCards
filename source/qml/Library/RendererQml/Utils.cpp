@@ -315,7 +315,9 @@ namespace RendererQml
 			d.push_back(substr);
 		}
 		if (MiniumDate_MaximumDate == true)
+		{
 			return "new Date(" + d[0] + "," + d[1] + "," + d[2] + ")";
+		}
 		return d[1] + "-" + d[2] + "-" + d[0];
 	}
 }
