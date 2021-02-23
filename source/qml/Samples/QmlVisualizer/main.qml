@@ -26,7 +26,7 @@ Row{
         color: 'lightblue'
         radius: 8
         border.width: 2
-        border.color: 'black'
+        border.color: 'black'        
 
         ListModel{
             id: cardModel
