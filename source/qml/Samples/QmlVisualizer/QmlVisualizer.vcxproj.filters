@@ -46,6 +46,9 @@
     <ClInclude Include="samplecardlist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SampleCardJson.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="AdaptiveCardItemDelegate.qml">
