@@ -443,7 +443,7 @@ namespace RendererQml
 		std::string calendar_box_id = input->GetId() + "_cal_box";
 
 		uiDateInput->Property("inputMask", "text!=\"\"?\"00-00-0000;0\":\"\"");
-		uiDateInput->Property("onFocusChanged", "{if (activeFocus==false){ z=0; if( " + calendar_box_id + ".visible==true) " + calendar_box_id + ".visible=false}}");
+		uiDateInput->Property("onFocusChanged", "{if(activeFocus === false){ z=0; if( " + calendar_box_id + ".visible === true){ " + calendar_box_id + ".visible=false}}}");
 
 		auto glowTag = std::make_shared<QmlTag>("Glow");
 		glowTag->Property("samples", "25");
