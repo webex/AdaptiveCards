@@ -308,7 +308,8 @@ namespace RendererQml
 
 		std::stringstream ss(date);
 
-		while (ss.good()) {
+		while (ss.good()) 
+		{
 			std::string substr;
 			getline(ss, substr, '-');
 			d.push_back(substr);
