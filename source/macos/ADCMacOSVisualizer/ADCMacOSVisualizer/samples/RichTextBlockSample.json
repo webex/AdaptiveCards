@@ -69,6 +69,11 @@
                     "type": "TextRun",
                     "text": "Monospace too!",
                     "fontType": "Monospace"
+                },
+                    {
+                    "type": "TextRun",
+                    "text": "and Underlined",
+                    "underline": true
                 }
             ]
         },
