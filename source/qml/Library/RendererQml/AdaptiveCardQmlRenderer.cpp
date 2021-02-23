@@ -424,7 +424,7 @@ namespace RendererQml
 		uiDateInput->Property("font.pixelSize",  std::to_string(fontSize));
 
 
-		uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\""+input->GetPlaceholder()+ "\"": "\"mm-dd-yyyy\"") );
+		uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() + "\"" : "\"mm-dd-yyyy\""));
 
 		if (!input->GetValue().empty())
 		{
