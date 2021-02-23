@@ -420,7 +420,7 @@ namespace RendererQml
 		uiDateInput->Property("width", "parent.width");
 		const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
 
-		uiDateInput->Property("font.family","\""+ context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default)+"\"");
+		uiDateInput->Property("font.family", "\""+ context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default)+"\"");
 		uiDateInput->Property("font.pixelSize",  std::to_string(fontSize));
 
 
@@ -508,4 +508,3 @@ namespace RendererQml
 	}
 
 }
-
