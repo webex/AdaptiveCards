@@ -188,7 +188,7 @@ const std::string card_TextBlock = R"({
 }
 )";
 
-	const std::string card_InputText = R"({
+const std::string card_InputText = R"({
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
   "type": "AdaptiveCard",
   "version": "1.0",
@@ -381,6 +381,32 @@ const std::string card_richText = R"({
           "text": "Rich text blocks also support right alignment. Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor "
         }
       ]
+    }
+  ]
+})";
+
+const std::string card_CheckboxInput = R"({
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Toggle Input"
+    },
+    {
+      "type": "Input.Toggle",
+      "id": "acceptTerms",
+      "title": "I accept the terms and agreements",
+      "value": "true",
+      "valueOn": "true",
+      "valueOff": "false"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "OK"
     }
   ]
 })";
