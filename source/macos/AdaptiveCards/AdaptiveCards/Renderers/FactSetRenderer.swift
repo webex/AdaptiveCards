@@ -22,9 +22,10 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
                 view.labelText.textColor = textColor
                 view.valueText.textColor = textColor
             }
-            view.labelText.preferredMaxLayoutWidth = columnStack.frame.width / 2
-            view.valueText.preferredMaxLayoutWidth = columnStack.frame.width / 2
-            columnStack.addView(view, in: .bottom)
+            
+//            view.labelText.preferredMaxLayoutWidth = columnStack.frame.width / 2
+//            view.valueText.preferredMaxLayoutWidth = columnStack.frame.width / 2
+            columnStack.addArrangedSubview(view)
         }
         return columnStack
     }

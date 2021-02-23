@@ -50,7 +50,9 @@ class ACRFactSetElement: NSView {
         // This property enables us to wrap and increase the window size to fit text
 //        labelText.maximumNumberOfLines = 0
         labelText.setContentCompressionResistancePriority(.required, for: .vertical)
-//        labelText.setContentCompressionResistancePriority(.required, for: .horizontal)
+        labelText.font = NSFont.boldSystemFont(ofSize: 12)
+//        labelText.font = hostConfig.fac
+        labelText.setContentCompressionResistancePriority(.required, for: .horizontal)
 //        labelText.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 //        labelText.cell?.wraps = true
 //        labelText.cell?.usesSingleLineMode = false
@@ -80,7 +82,9 @@ class ACRFactSetElement: NSView {
         horizontalLine.isTransparent = true
         
 //        labelText.widthAnchor.constraint(equalTo: valueText.widthAnchor).isActive = true
-        valueText.widthAnchor.constraint(equalToConstant: contentView.frame.width / 2).isActive = true
+        // Do this to fix allignment when title is nil
+//        valueText.widthAnchor.constraint(equalToConstant: contentView.frame.width / 2).isActive = true
+        valueText.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.7).isActive = true
         
         // Customize the look to add bold for label etc
         labelText.alignment = .natural
@@ -88,9 +92,9 @@ class ACRFactSetElement: NSView {
     }
     
     func setLabel( string: String?) {
-        let randomString = NSMutableAttributedString(string: string ?? "")
-        randomString.addAttributes([.font: NSFont.boldSystemFont(ofSize: 12 )], range: NSRange(location: 0, length: randomString.length))
-        labelText.attributedStringValue = randomString
+//        let randomString = NSMutableAttributedString(string: string ?? "")
+//        randomString.addAttributes([.font: NSFont.boldSystemFont(ofSize: 12 )], range: NSRange(location: 0, length: randomString.length))
+        labelText.stringValue = string ?? ""
 //        labelText.stringValue = string ?? ""
     }
     
