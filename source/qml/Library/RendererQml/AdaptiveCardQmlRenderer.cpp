@@ -428,7 +428,7 @@ namespace RendererQml
 
 		if (!input->GetValue().empty())
 		{
-			uiDateInput->Property("text", "\""+Utils::GetDate(input->GetValue(),false)+"\"");
+			uiDateInput->Property("text", "\"" + Utils::GetDate(input->GetValue(),false) + "\"");
 		}
 
 		//TODO: Add stretch property
