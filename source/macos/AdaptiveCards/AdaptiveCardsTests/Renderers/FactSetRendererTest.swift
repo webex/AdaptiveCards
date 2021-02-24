@@ -14,14 +14,21 @@ class FactSetRendererTest: XCTestCase {
     }
     
     func testSetsFacts() {
-        fact.setTitle("Test title")
-        fact.setValue("Test value")
-        let factArray = [fact]
-        
+        factSet.fakeFact.setTitle("Title")
+        factSet.fakeFact.setValue("Value")
+        var factArray: [FakeFacts] = []
+        factArray.append(factSet.fakeFact)
+        factArray.append(factSet.fakeFact)
         factSet = .make(factArray: factArray)
         
         let factView = renderFactSet()
-        XCTAssertEqual(factView.arr, fact)
+        let renderedFacts = factView.arrangedSubviews
+        guard let test = renderedFacts.first as? ACRFactSetElement else { return }
+        
+//        for renderedFact in renderedFacts {
+//            renderedFact.labelText.stringValue
+//        }
+//        XCTAssertEqual(factView.arr, fact)
     }
     
     private func renderFactSet() -> NSStackView {
