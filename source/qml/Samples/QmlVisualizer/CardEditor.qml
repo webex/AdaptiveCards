@@ -13,6 +13,8 @@ Rectangle{
     border.width: 2
     radius: 8
 
+    property string cardJson: ""
+
     Column{
         id: cardEditorLayout
         anchors.fill: parent
@@ -37,6 +39,7 @@ Rectangle{
 
                 }
 
+                text: cardJson
                 placeholderText:"enter card json";
             }
         }
@@ -48,5 +51,9 @@ Rectangle{
 
             text: "Render"
         }
+    }
+
+    function setCardEditor(index, json){
+        cardJson = json;
     }
 }

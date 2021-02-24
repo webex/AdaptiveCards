@@ -54,4 +54,7 @@ Row{
         }
     }
 
+    Component.onCompleted: {
+        cardListViewLoader.item.listItemClicked.connect(cardEditorLoader.item.setCardEditor)
+    }
 }

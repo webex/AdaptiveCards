@@ -17,6 +17,8 @@ Frame{
         radius: 8
     }
 
+    signal listItemClicked(var index, var cardJson);
+
     Component{
         id: cardDelegate
         Rectangle{
@@ -36,7 +38,10 @@ Frame{
 
                 MouseArea{
                     anchors.fill: parent
-                    onClicked: cardListView.currentIndex = index
+                    onClicked: {
+                        cardListView.currentIndex = index;
+                        listItemClicked(index, model.CardJson);
+                    }
                 }
             }
         }
