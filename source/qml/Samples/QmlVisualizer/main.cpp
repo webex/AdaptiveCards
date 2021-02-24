@@ -442,6 +442,25 @@ const std::string card_CheckboxInput = R"({
 	]
 })";
 
+  const std::string card_timeInput = R"({
+	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+	"type": "AdaptiveCard",
+	"version": "1.0",
+	"body": [
+		{
+		  "type": "TextBlock",
+		  "text": "What time do you want to meet?"
+		},
+		{
+		  "type": "Input.Time",
+		  "id": "time",
+		  "min": "09:00",
+		  "max": "17:00",
+		  "value": "15:30"
+		}
+	]
+})";
+
 static std::shared_ptr<AdaptiveCards::HostConfig> GetHostConfig()
 {
     std::shared_ptr<AdaptiveCards::HostConfig> hostConfig = std::make_shared<AdaptiveCards::HostConfig>();
@@ -495,7 +514,7 @@ int main(int argc, char* argv[])
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
 
-    const std::string qmlString = GenerateQml(card_dateInput);
+    const std::string qmlString = GenerateQml(card_timeInput);
 
 	context->setContextProperty("_aQmlCard", QString::fromStdString(qmlString));
 
