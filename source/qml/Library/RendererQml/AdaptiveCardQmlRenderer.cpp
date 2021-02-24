@@ -77,10 +77,12 @@ namespace RendererQml
         (*GetElementRenderers()).Set<AdaptiveCards::ChoiceSetInput>(AdaptiveCardQmlRenderer::ChoiceSetRender);*/
         (*GetElementRenderers()).Set<AdaptiveCards::TextInput>(AdaptiveCardQmlRenderer::TextInputRender);
         (*GetElementRenderers()).Set<AdaptiveCards::NumberInput>(AdaptiveCardQmlRenderer::NumberInputRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::DateInput>(AdaptiveCardQmlRenderer::DateInputRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::TimeInput>(AdaptiveCardQmlRenderer::TimeInputRender);
         /*(*GetElementRenderers()).Set<AdaptiveCards::DateInput>(AdaptiveCardQmlRenderer::DateInputRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::TimeInput>(AdaptiveCardQmlRenderer::TimeInputRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::TimeInput>(AdaptiveCardQmlRenderer::TimeInputRender);*/
         (*GetElementRenderers()).Set<AdaptiveCards::ToggleInput>(AdaptiveCardQmlRenderer::ToggleInputRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::OpenUrlAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ShowCardAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ToggleVisibilityAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
@@ -330,6 +332,7 @@ namespace RendererQml
 
         return uiNumberInput;
     }
+
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::RichTextBlockRender(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto uiTextBlock = std::make_shared<QmlTag>("Text");
@@ -362,7 +365,7 @@ namespace RendererQml
 		return uiTextBlock;
 
 	}
-
+	
 	std::string AdaptiveCardQmlRenderer::TextRunRender(std::shared_ptr<AdaptiveCards::TextRun> textRun, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		const std::string fontFamily = context->GetConfig()->GetFontFamily(textRun->GetFontType());
@@ -412,5 +415,180 @@ namespace RendererQml
 		return uiTextRun;
 	}
 
-}
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ToggleInputRender(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		const auto id = input->GetId();
+		const auto valueOn = !input->GetValueOn().empty() ? input->GetValueOn() : "true";
+		const auto valueOff = !input->GetValueOff().empty() ? input->GetValueOff() : "false";
+		const bool isChecked = input->GetValue().compare(valueOn) == 0 ? "true" : "false";
+		
+		auto uiCheckboxInput = std::make_shared<QmlTag>("CheckBox");
 
+		uiCheckboxInput->Property("readonly property string valueOn", "\"" + valueOn + "\"");
+		uiCheckboxInput->Property("readonly property string valueOff", "\"" + valueOff + "\"");
+
+		CustomCheckboxParams Parameters = {
+			input->GetId(),
+			input->GetTitle(),
+			context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default),
+			isChecked,
+			input->GetWrap() };
+
+		GetCheckbox(uiCheckboxInput, Parameters);
+
+		if (!input->GetIsVisible())
+		{
+			uiCheckboxInput->Property("visible", "false");
+		}
+		//TODO: Add Height
+		
+		return uiCheckboxInput;
+	}
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCheckbox(std::shared_ptr<QmlTag> uiCheckboxInput, CustomCheckboxParams& params)
+	{
+		uiCheckboxInput->Property("id", params.id);
+		uiCheckboxInput->Property("text", "\"" + params.text + "\"");
+		uiCheckboxInput->Property("width", "parent.width");
+
+		if (params.isChecked)
+		{
+			uiCheckboxInput->Property("checked", "true");
+		}
+
+		auto uiOuterRectangle = std::make_shared<QmlTag>("Rectangle");
+		uiOuterRectangle->Property("width", "parent.font.pixelSize");
+		uiOuterRectangle->Property("height", "parent.font.pixelSize");
+		uiOuterRectangle->Property("y", "parent.topPadding + (parent.availableHeight - height) / 2");
+		uiOuterRectangle->Property("radius", "3");
+		uiOuterRectangle->Property("border.color", params.id + ".checkState === Qt.Checked ? '#0075FF' : '767676'");
+
+		//To be replaced with image of checkmark.
+		auto uiInnerRectangle = std::make_shared<QmlTag>("Rectangle");
+		uiInnerRectangle->Property("width", "parent.width/2");
+		uiInnerRectangle->Property("height", "parent.height/2");
+		uiInnerRectangle->Property("anchors.centerIn", "parent");
+		uiInnerRectangle->Property("radius", "2");
+		uiInnerRectangle->Property("color", params.id + ".down ? '#ffffff' : '#0075FF'");
+		uiInnerRectangle->Property("visible", params.id + ".checked");
+
+		uiOuterRectangle->AddChild(uiInnerRectangle);
+
+		uiCheckboxInput->Property("indicator", uiOuterRectangle->ToString());
+
+		auto uiText = std::make_shared<QmlTag>("Text");
+		uiText->Property("text", "parent.text");
+		uiText->Property("font", "parent.font");
+		uiText->Property("horizontalAlignment", "Text.AlignLeft");
+		uiText->Property("verticalAlignment", "Text.AlignVCenter");
+		uiText->Property("leftPadding", "parent.indicator.width + parent.spacing");
+
+		if (params.isWrap)
+		{
+			uiText->Property("wrapMode", "Text.Wrap");
+		}
+		else
+		{
+			uiText->Property("elide", "Text.ElideRight");
+		}
+
+		uiCheckboxInput->Property("contentItem", uiText->ToString());
+
+		return uiCheckboxInput;
+	}
+
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        auto uiDateInput = std::make_shared<QmlTag>("TextField");
+
+        uiDateInput->Property("id", input->GetId());
+        uiDateInput->Property("width", "parent.width");
+        const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
+
+        uiDateInput->Property("font.family", "\"" + context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default) + "\"");
+        uiDateInput->Property("font.pixelSize", std::to_string(fontSize));
+
+
+        uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() + "\"" : "\"mm-dd-yyyy\""));
+
+        if (!input->GetValue().empty())
+        {
+            uiDateInput->Property("text", "\"" + Utils::GetDate(input->GetValue(), false) + "\"");
+        }
+
+        //TODO: Add stretch property
+
+        if (!input->GetIsVisible())
+        {
+            uiDateInput->Property("visible", "false");
+        }
+
+        uiDateInput->Property("validator", "RegExpValidator { regExp: /^(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])-(\\d{4})$/}");
+
+        std::string calendar_box_id = input->GetId() + "_cal_box";
+
+        uiDateInput->Property("inputMask", "text != \"\" ? \"00-00-0000;0\" : \"\"");
+        uiDateInput->Property("onFocusChanged", "{if(activeFocus === false){ z=0; if( " + calendar_box_id + ".visible === true){ " + calendar_box_id + ".visible=false}}}");
+
+        auto glowTag = std::make_shared<QmlTag>("Glow");
+        glowTag->Property("samples", "25");
+        glowTag->Property("color", "'skyblue'");
+
+        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
+        backgroundTag->Property("radius", "5");
+        //TODO: These color styling should come from css
+        backgroundTag->Property("color", Formatter() << input->GetId() << ".hovered ? 'lightgray' : 'white'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        backgroundTag->Property("border.width", "1");
+        backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
+        backgroundTag->Property("layer.effect", glowTag->ToString());
+        uiDateInput->Property("background", backgroundTag->ToString());
+
+        auto imageTag = std::make_shared<QmlTag>("Image");
+        imageTag->Property("anchors.fill", "parent");
+        imageTag->Property("anchors.margins", "5");
+
+        //Finding absolute Path at runtime
+        std::string file_path = __FILE__;
+        std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+        dir_path.append("\\Images\\calendarIcon.png");
+        std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+        imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+
+        //Relative wrt main.qml not working
+        //imageTag->Property("source", "\"" + std::string("file:/../../Library/RendererQml/Images/calendarIcon.png") + "\"");
+
+
+        auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
+
+        mouseAreaTag->AddChild(imageTag);
+        mouseAreaTag->Property("height", "parent.height");
+        mouseAreaTag->Property("width", "height");
+        mouseAreaTag->Property("anchors.right", "parent.right");
+        mouseAreaTag->Property("enabled", "true");
+
+        std::string onClicked_value = "{ parent.focus=true; " + calendar_box_id + ".visible=!" + calendar_box_id + ".visible; parent.z=" + calendar_box_id + ".visible?1:0; }";
+        mouseAreaTag->Property("onClicked", onClicked_value);
+
+        uiDateInput->AddChild(mouseAreaTag);
+
+        auto calendarTag = std::make_shared<QmlTag>("Calendar");
+        calendarTag->AddImports("import QtQuick.Controls 1.4");
+        calendarTag->Property("anchors.fill", "parent");
+        calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(), true) : "new Date(1900,1,1)");
+        calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");
+        calendarTag->Property("onReleased", "{parent.visible=false; " + input->GetId() + ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"MM-dd-yyyy\")}");
+
+        auto calendarBoxTag = std::make_shared<QmlTag>("Rectangle");
+        calendarBoxTag->Property("id", calendar_box_id);
+        calendarBoxTag->Property("visible", "false");
+        calendarBoxTag->Property("anchors.left", "parent.left");
+        calendarBoxTag->Property("anchors.top", "parent.bottom");
+        calendarBoxTag->Property("width", "275");
+        calendarBoxTag->Property("height", "275");
+        calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
+        uiDateInput->AddChild(calendarBoxTag);
+
+        return uiDateInput;
+    }
+}
