@@ -118,8 +118,10 @@ class ACRFactSetElement: NSView {
         valueText.stringValue = string ?? ""
     }
     
-    func titleEmpty() {
-        labelText.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.1).isActive = true
+    func titleIsEmpty() {
+//        labelText.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.01).isActive = true
+        labelText.isHidden = true
+        valueText.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
     }
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()

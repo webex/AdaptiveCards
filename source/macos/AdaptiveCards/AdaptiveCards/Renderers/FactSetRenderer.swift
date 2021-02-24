@@ -22,20 +22,24 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         rowStack.orientation = NSUserInterfaceLayoutOrientation.horizontal
 //        rowStack.alignment = .right
 //        rowStack.translatesAutoresizingMaskIntoConstraints = false
-        var titleEmpty = false
+        var titleExists = false
         for fact in factArray {
             if fact.getTitle() != "" {
-                titleEmpty = true
+                titleExists = true
             }
         }
-        print(titleEmpty)
+//        print(titleEmpty)
         for fact in factArray {
             let view = ACRFactSetElement()
+//            if titleExists { view.setLabel(string: fact.getTitle()) }
             view.setLabel(string: fact.getTitle())
             view.setValue(string: fact.getValue())
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
                 view.labelText.textColor = textColor
                 view.valueText.textColor = textColor
+            }
+            if !titleExists {
+                view.titleIsEmpty()
             }
             
             let titleLabel: NSTextField = .init(string: fact.getTitle() ?? "")
