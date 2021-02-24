@@ -26,29 +26,34 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         let defaultParsedValues = parseChoiceSetInputDefaultValues(value: choiceSetInput.getValue() ?? "")
         let isMultiSelect = choiceSetInput.getIsMultiSelect()
         let view = ACRChoiceSetFieldView()
-        var buttons: [NSButton] = []
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
-            let choiceButton: NSButton
+            var choiceButton = ACRButton()
             if isMultiSelect {
                 // checkbox
-                choiceButton = NSButton(checkboxWithTitle: title, target: self, action: Selector(("onclickButton")))
+                choiceButton.labelValue = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
+                choiceButton.setType = .switch
+//                choiceButton.action = Selector(("test"))
+                choiceButton.wrap = choiceSetInput.getWrap()
+                choiceButton.title = ""
             } else {
                 // radio box
-                choiceButton = NSButton(radioButtonWithTitle: title, target: self, action: Selector(("onclickButton")))
+                choiceButton.labelValue = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
+                choiceButton.setType = .radio
+//                choiceButton.action = Selector(("test"))
+                choiceButton.wrap = choiceSetInput.getWrap()
+                choiceButton.title = ""
             }
-            choiceButton.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
-            choiceButton.keyEquivalent = choice.getValue() ?? ""
+            choiceButton.backGroundColor = hostConfig.getBackgroundColor(for: style) ?? .clear
             if defaultParsedValues.contains(choice.getValue() ?? "") {
                 choiceButton.state = .on
             }
-            buttons.append(choiceButton)
+            view.addArrangedSubview(choiceButton)
         }
-        view.stackView = NSStackView(views: buttons)
-        view.addSubview(view.stackView)
         view.setupConstraints()
         return view
     }
+    
     func parseChoiceSetInputDefaultValues(value: String) -> [String] {
         let parsedValues = value.components(separatedBy: ",")
         return parsedValues
@@ -81,9 +86,10 @@ extension ChoiceSetInputRenderer {
         }
         return choiceSetFieldCompactView
     }
+    
     func getAttributedString(title: String, with hostConfig: ACSHostConfig, style: ACSContainerStyle, wrap: Bool) -> NSMutableAttributedString {
         let attributedString: NSMutableAttributedString
-        let resolvedTitle = wrap ? title + "\n" : title
+        let resolvedTitle = wrap ? title : title
         let paragraphStyle = NSMutableParagraphStyle()
         attributedString = NSMutableAttributedString(string: resolvedTitle, attributes: [.paragraphStyle: paragraphStyle])
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
@@ -94,9 +100,16 @@ extension ChoiceSetInputRenderer {
 }
 // MARK: ACRChoiceSetFieldView
 class ACRChoiceSetFieldView: NSView {
-    public var stackView = NSStackView()
+    public var stack = NSStackView()
+    private var stackView = NSStackView()
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
+        addSubview(stackView)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -105,9 +118,15 @@ class ACRChoiceSetFieldView: NSView {
         self.stackView.orientation = .vertical
         self.stackView.alignment = .leading
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
+        self.stack.orientation = .vertical
+        self.stack.alignment = .leading
+        self.stack.translatesAutoresizingMaskIntoConstraints = false
     }
     override var intrinsicContentSize: NSSize {
-        return NSSize(width: super.intrinsicContentSize.width, height: self.stackView.fittingSize.height)
+        return NSSize(width: self.stackView.fittingSize.width, height: self.stackView.fittingSize.height)
+    }
+    public func addArrangedSubview(_ subview: NSView) {
+        stackView.addArrangedSubview(subview)
     }
 }
 // MARK: ACRChoiceSetFieldCompactView
