@@ -55,6 +55,7 @@ class ACRFactSetElement: NSView {
         // This property enables us to wrap and increase the window size to fit text
 //        labelText.maximumNumberOfLines = 0
         labelText.setContentCompressionResistancePriority(.required, for: .vertical)
+//        labelText.setContentHuggingPriority(.required, for: .horizontal)
         // TODO: Make this Dynamic
         labelText.font = NSFont.boldSystemFont(ofSize: 12)
 //        labelText.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -93,7 +94,7 @@ class ACRFactSetElement: NSView {
         
 //        labelText.widthAnchor.constraint(equalToConstant: 100).isActive = true
         
-        labelText.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.3).isActive = true
+//        labelText.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.3).isActive = true
 //        valueText.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.5).isActive = true
 //        labelText.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.5).isActive = true
 //        labelText.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.4).isActive = true
@@ -123,6 +124,10 @@ class ACRFactSetElement: NSView {
         labelText.isHidden = true
         valueText.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
     }
+    
+    func setTitleWidth(width: NSNumber?) {
+        labelText.widthAnchor.constraint(lessThanOrEqualToConstant: CGFloat(truncating: width ?? 150)).isActive = true
+    }
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
         // Should look for better solution
@@ -130,11 +135,11 @@ class ACRFactSetElement: NSView {
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
     }
 }
-class ACRFactSetStackView: NSStackView {
-    override func viewDidMoveToSuperview() {
-        super.viewDidMoveToSuperview()
-        // Should look for better solution
-        guard let superview = superview else { return }
-        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
-    }
-}
+// class ACRFactSetStackView: NSStackView {
+//    override func viewDidMoveToSuperview() {
+//        super.viewDidMoveToSuperview()
+//        // Should look for better solution
+//        guard let superview = superview else { return }
+//        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
+//    }
+// }
