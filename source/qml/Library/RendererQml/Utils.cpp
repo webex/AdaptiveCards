@@ -320,4 +320,32 @@ namespace RendererQml
 		}
 		return d[1] + "-" + d[2] + "-" + d[0];
 	}
+
+	bool Utils::isValidTime(std::string time)
+	{
+		//24 hour format check
+		std::vector<std::string> date_split;
+
+		std::stringstream ss(time);
+		try
+		{
+			while (ss.good())
+			{
+				std::string substr;
+				getline(ss, substr, ':');
+				date_split.push_back(substr);
+			}
+			if (stoi(date_split[0]) >= 0 && stoi(date_split[0]) <= 23)
+			{
+				if(stoi(date_split[1]) >= 0 && stoi(date_split[1]) <= 23)
+				return true;
+			}
+			return false;
+		}
+		catch(...)
+		{
+			return false;
+		}
+	}
+
 }

@@ -453,10 +453,17 @@ const std::string card_CheckboxInput = R"({
 		},
 		{
 		  "type": "Input.Time",
-		  "id": "time",
+		  "id": "time1",
 		  "min": "09:00",
 		  "max": "17:00",
 		  "value": "15:30"
+		},
+		{
+		  "type": "Input.Time",
+		  "id": "time2",
+		  "min": "09:00",
+		  "max": "17:00",
+		  "value": "25:30"
 		}
 	]
 })";

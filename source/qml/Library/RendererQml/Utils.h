@@ -39,6 +39,8 @@ namespace RendererQml
 		static std::string AddCSSProperty(std::string property,std::string value);
 
 		static std::string GetDate(std::string date, bool MinimumorMaximum);
+		static bool isValidTime(std::string time);
+
 
     private:
         Utils() {}

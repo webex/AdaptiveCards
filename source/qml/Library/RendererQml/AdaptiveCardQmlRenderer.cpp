@@ -600,13 +600,27 @@ namespace RendererQml
 		uiTimeInput->Property("id", id);
 		uiTimeInput->Property("width", "parent.width");
 		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "\"Select time in 24 hour format\"");
-		uiTimeInput->Property("inputMask", "activeFocus?\"00:00;0\":\"\"");
+		uiTimeInput->Property("inputMask", "text != \"\"?\"00:00;0\":\"\"");
 
 		uiTimeInput->Property("validator", "RegExpValidator { regExp: /^([01][0-9]|2[0-3]):([0-5][0-9])$/}");
 
+		if (!input->GetValue().empty() && Utils::isValidTime(input->GetValue()))
+		{
+			uiTimeInput->Property("text", Formatter() << "\"" << input->GetValue() << "\"" );
+		}
+
+		if (!input->GetIsVisible())
+		{
+			uiTimeInput->Property("visibile", "false");
+		}
+
+		//TODO: Height Property
+
 		std::string listViewHours_id = id + "_hours";
 		std::string listViewMin_id = id + "_min";
-		std::string timeBox_id = id + "timeBox";
+		std::string timeBox_id = id + "_timeBox";
+
+		uiTimeInput->Property("onFocusChanged", Formatter() << "{ if(activeFocus==false){ z=0;" << "if("<<timeBox_id << ".visible==true)" << timeBox_id << ".visible=false ;" << "}}");
 
 		uiTimeInput->Property("onTextChanged", Formatter()<<"{"<<listViewHours_id<<".currentIndex=parseInt(getText(0,2));"<<listViewMin_id<<".currentIndex=parseInt(getText(3,5))"<<"}");
 
@@ -631,7 +645,7 @@ namespace RendererQml
 		//Finding absolute Path at runtime
 		std::string file_path = __FILE__;
 		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-		dir_path.append("\\Images\\calendarIcon.png");
+		dir_path.append("\\Images\\clockIcon.png");
 		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
 		imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
 
@@ -646,7 +660,7 @@ namespace RendererQml
 		mouseAreaTag->Property("anchors.right", "parent.right");
 		mouseAreaTag->Property("enabled", "true");
 
-		mouseAreaTag->Property("onClicked", Formatter()<< "{parent.focus=true;" << timeBox_id << ".visible=!" << timeBox_id << ".visible;" << "parent.z=" << timeBox_id << ".visible?1:0;" << "}" );
+		mouseAreaTag->Property("onClicked", Formatter()<< "{" << id <<".forceActiveFocus();" << timeBox_id << ".visible=!" << timeBox_id << ".visible;" << "parent.z=" << timeBox_id << ".visible?1:0;" << "}" );
 
 		uiTimeInput->AddChild(mouseAreaTag);
 
@@ -678,14 +692,14 @@ namespace RendererQml
 		ListViewHoursTag->Property("clip", "true");
 
 
-		//Elements inside delegate Rectangle{ Text{} MouseArea{} }
+		//Elements inside delegate: Rectangle{ Text{} MouseArea{} }
 		std::string HoursMouseArea_id = listViewHours_id + "mouseArea";
 		auto HoursMouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 		HoursMouseAreaTag->Property("id", HoursMouseArea_id);
 		HoursMouseAreaTag->Property("anchors.fill", "parent");
 		HoursMouseAreaTag->Property("enabled", "true");
 		HoursMouseAreaTag->Property("hoverEnabled", "true" );
-		HoursMouseAreaTag->Property("onClicked", Formatter() << "{" << listViewHours_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0');" << id << ".insert(0,x);" << "}");
+		HoursMouseAreaTag->Property("onClicked", Formatter() << "{" << listViewHours_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0') ;" << id << ".insert(0,x);" << "}");
 
 		auto HoursTextTag = std::make_shared<QmlTag>("Text");
 		HoursTextTag->Property("text", "String(index).padStart(2, '0')");
@@ -720,14 +734,14 @@ namespace RendererQml
 		ListViewMinTag->Property("clip", "true");
 
 
-		//Elements inside delegate Rectangle{ Text{} MouseArea{} }
+		//Elements inside delegate: Rectangle{ Text{} MouseArea{} }
 		std::string MinMouseArea_id = listViewMin_id + "mouseArea";
 		auto MinMouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 		MinMouseAreaTag->Property("id", MinMouseArea_id);
 		MinMouseAreaTag->Property("anchors.fill", "parent");
 		MinMouseAreaTag->Property("enabled", "true");
 		MinMouseAreaTag->Property("hoverEnabled", "true");
-		MinMouseAreaTag->Property("onClicked", Formatter() << "{" << listViewMin_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0');" << id << ".insert(0,x);" << "}");
+		MinMouseAreaTag->Property("onClicked", Formatter() << "{" << listViewMin_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0');" << id << ".insert(3,x);" << "}");
 
 		auto MinTextTag = std::make_shared<QmlTag>("Text");
 		MinTextTag->Property("text", "String(index).padStart(2, '0')");
