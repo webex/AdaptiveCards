@@ -47,16 +47,6 @@ class ACRFactTextField: NSView {
         labelText.stringValue = string ?? ""
     }
     
-    func titleIsEmpty() {
-//        labelText.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.01).isActive = true
-        labelText.isHidden = true
-//        valueText.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-    }
-    
-    func setTitleWidth(width: NSNumber?) {
-        labelText.widthAnchor.constraint(lessThanOrEqualToConstant: CGFloat(truncating: width ?? 150)).isActive = true
-    }
-    
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
         // Should look for better solution
@@ -65,6 +55,7 @@ class ACRFactTextField: NSView {
     }
 }
 
+// MARK: Class required for Horizontal Stack View
 class ACRFactSetStackView: NSStackView {
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()

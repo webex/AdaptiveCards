@@ -437,8 +437,6 @@
 		2871B16625DF722A0040AB27 /* MultilineInputTextRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B16525DF72290040AB27 /* MultilineInputTextRendererTest.swift */; };
 		28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */; };
 		28CE1A4425DFD64B00BFCFD9 /* FactSetRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A4325DFD64B00BFCFD9 /* FactSetRenderer.swift */; };
-		28CE1A4925DFDF8300BFCFD9 /* ACRFactSetElement.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28CE1A4825DFDF8200BFCFD9 /* ACRFactSetElement.xib */; };
-		28CE1A5E25DFE35800BFCFD9 /* ACRFactSetElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A5D25DFE35800BFCFD9 /* ACRFactSetElement.swift */; };
 		28CE1A6B25E4B67B00BFCFD9 /* FakeFactSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A6A25E4B67B00BFCFD9 /* FakeFactSet.swift */; };
 		28CE1A7025E4B96300BFCFD9 /* FactSetRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A6F25E4B96300BFCFD9 /* FactSetRendererTest.swift */; };
 		28CE1A7525E4F24F00BFCFD9 /* FakeFacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A7425E4F24F00BFCFD9 /* FakeFacts.swift */; };
@@ -916,8 +914,6 @@
 		2871B16525DF72290040AB27 /* MultilineInputTextRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineInputTextRendererTest.swift; sourceTree = "<group>"; };
 		28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputRenderer.swift; sourceTree = "<group>"; };
 		28CE1A4325DFD64B00BFCFD9 /* FactSetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactSetRenderer.swift; sourceTree = "<group>"; };
-		28CE1A4825DFDF8200BFCFD9 /* ACRFactSetElement.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ACRFactSetElement.xib; sourceTree = "<group>"; };
-		28CE1A5D25DFE35800BFCFD9 /* ACRFactSetElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACRFactSetElement.swift; sourceTree = "<group>"; };
 		28CE1A6A25E4B67B00BFCFD9 /* FakeFactSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeFactSet.swift; sourceTree = "<group>"; };
 		28CE1A6F25E4B96300BFCFD9 /* FactSetRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactSetRendererTest.swift; sourceTree = "<group>"; };
 		28CE1A7425E4F24F00BFCFD9 /* FakeFacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeFacts.swift; sourceTree = "<group>"; };
@@ -1528,8 +1524,6 @@
 				08D9547425D17FF9001442D3 /* ACRView.swift */,
 				2871B11C25DD225C0040AB27 /* ACRMultilineInputTextView.xib */,
 				2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */,
-				28CE1A4825DFDF8200BFCFD9 /* ACRFactSetElement.xib */,
-				28CE1A5D25DFE35800BFCFD9 /* ACRFactSetElement.swift */,
 				28CE1A7C25E7553600BFCFD9 /* ACRFactTextField.xib */,
 				28CE1A8125E7557400BFCFD9 /* ACRFactTextField.swift */,
 			);
@@ -1935,7 +1929,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28CE1A4925DFDF8300BFCFD9 /* ACRFactSetElement.xib in Resources */,
 				08299F9E25AF279E00799C66 /* AdaptiveCards.xcconfig in Resources */,
 				28CE1A7D25E7553700BFCFD9 /* ACRFactTextField.xib in Resources */,
 				2871B11D25DD225C0040AB27 /* ACRMultilineInputTextView.xib in Resources */,
@@ -1990,7 +1983,6 @@
 				082864FD25C99E300080D767 /* HostConfigUtils.swift in Sources */,
 				08B5F91925C9272500A7D37A /* AdaptiveCardRenderer.swift in Sources */,
 				08D7767A25CC339D0095C1B3 /* RendererManager.swift in Sources */,
-				28CE1A5E25DFE35800BFCFD9 /* ACRFactSetElement.swift in Sources */,
 				28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */,
 				28CE1A8225E7557400BFCFD9 /* ACRFactTextField.swift in Sources */,
 				28CE1A4425DFD64B00BFCFD9 /* FactSetRenderer.swift in Sources */,
