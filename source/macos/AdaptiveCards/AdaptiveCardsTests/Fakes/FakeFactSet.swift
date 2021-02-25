@@ -1,21 +1,17 @@
 import AdaptiveCards_bridge
 
 class FakeFactSet: ACSFactSet {
-    public var fakeFact = FakeFacts()
-    
-    public var factArray: [FakeFacts]?
-//    var fact = ACSFact()
+    public var factArray: [FakeFacts] = []
     
     override func getFacts() -> [ACSFact] {
-//        fakeFactElement = .make()
-        return factArray ?? [fakeFact]
+        return factArray
     }
 }
 
 extension FakeFactSet {
-    static func make(factArray: [FakeFacts]? = nil) -> FakeFactSet {
+    static func make(factArray: [FakeFacts] = []) -> FakeFactSet {
         let fakeFactSet = FakeFactSet()
-        fakeFactSet.factArray = factArray ?? [fakeFactSet.fakeFact]
+        fakeFactSet.factArray = factArray
         return fakeFactSet
     }
 }

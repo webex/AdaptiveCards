@@ -13,22 +13,100 @@ class FactSetRendererTest: XCTestCase {
         factSetRenderer = FactSetRenderer()
     }
     
-    func testSetsFacts() {
-        factSet.fakeFact.setTitle("Title")
-        factSet.fakeFact.setValue("Value")
+    func testSingleFact() {
         var factArray: [FakeFacts] = []
-        factArray.append(factSet.fakeFact)
-        factArray.append(factSet.fakeFact)
+        let fakeFact = FakeFacts()
+        fakeFact.setTitle("Title Exists")
+        fakeFact.setValue("Value Exists too")
+        factArray.append(fakeFact)
         factSet = .make(factArray: factArray)
+        let factsRendered = factSet.getFacts()
         
         let factView = renderFactSet()
         let renderedFacts = factView.arrangedSubviews
-        guard let test = renderedFacts.first as? ACRFactSetElement else { return }
+        guard let titleStack = renderedFacts[0] as? NSStackView else { return }
+        guard let valueStack = renderedFacts[1] as? NSStackView else { return }
         
-//        for renderedFact in renderedFacts {
-//            renderedFact.labelText.stringValue
-//        }
-//        XCTAssertEqual(factView.arr, fact)
+        for (index, elem) in titleStack.arrangedSubviews.enumerated() {
+            guard let titleView = elem as? ACRFactTextField else { return }
+            let valueArray = valueStack.arrangedSubviews
+            guard let valueView = valueArray[index] as? ACRFactTextField else { return }
+            XCTAssertEqual(factsRendered[index].getTitle(), titleView.labelText.stringValue)
+            XCTAssertEqual(factsRendered[index].getValue(), valueView.labelText.stringValue)
+        }
+    }
+    
+    func testOnlyTitle() {
+        var factArray: [FakeFacts] = []
+        let fakeFact = FakeFacts()
+        fakeFact.setTitle("Only Title")
+        factArray.append(fakeFact)
+        factSet = .make(factArray: factArray)
+        let factsRendered = factSet.getFacts()
+        
+        let factView = renderFactSet()
+        let renderedFacts = factView.arrangedSubviews
+        guard let titleStack = renderedFacts[0] as? NSStackView else { return }
+        guard let valueStack = renderedFacts[1] as? NSStackView else { return }
+        
+        for (index, elem) in titleStack.arrangedSubviews.enumerated() {
+            guard let titleView = elem as? ACRFactTextField else { return }
+            let valueArray = valueStack.arrangedSubviews
+            guard let valueView = valueArray[index] as? ACRFactTextField else { return }
+            XCTAssertEqual(factsRendered[index].getTitle(), titleView.labelText.stringValue)
+            XCTAssertEqual("", valueView.labelText.stringValue)
+        }
+    }
+    
+    func testOnlyValue() {
+        var factArray: [FakeFacts] = []
+        let fakeFact = FakeFacts()
+        fakeFact.setValue("Value Only")
+        factArray.append(fakeFact)
+        factSet = .make(factArray: factArray)
+        let factsRendered = factSet.getFacts()
+        
+        let factView = renderFactSet()
+        let renderedFacts = factView.arrangedSubviews
+        guard let titleStack = renderedFacts[0] as? NSStackView else { return }
+        guard let valueStack = renderedFacts[1] as? NSStackView else { return }
+        
+        for (index, elem) in titleStack.arrangedSubviews.enumerated() {
+            guard let titleView = elem as? ACRFactTextField else { return }
+            let valueArray = valueStack.arrangedSubviews
+            guard let valueView = valueArray[index] as? ACRFactTextField else { return }
+            XCTAssertEqual("", titleView.labelText.stringValue)
+            XCTAssertEqual(factsRendered[index].getValue(), valueView.labelText.stringValue)
+        }
+    }
+    
+    func testMultipleFacts() {
+        var factArray: [FakeFacts] = []
+        //First Fact
+        let fakeFact1 = FakeFacts()
+        fakeFact1.setTitle("Title1")
+        fakeFact1.setValue("Value1")
+        factArray.append(fakeFact1)
+        // Second Fact
+        let fakeFact2 = FakeFacts()
+        fakeFact2.setTitle("Title2")
+        fakeFact2.setValue("Value2")
+        factArray.append(fakeFact2)
+        factSet = .make(factArray: factArray)
+        let factsRendered = factSet.getFacts()
+        
+        let factView = renderFactSet()
+        let renderedFacts = factView.arrangedSubviews
+        guard let titleStack = renderedFacts[0] as? NSStackView else { return }
+        guard let valueStack = renderedFacts[1] as? NSStackView else { return }
+        
+        for (index, elem) in titleStack.arrangedSubviews.enumerated() {
+            guard let titleView = elem as? ACRFactTextField else { return }
+            let valueArray = valueStack.arrangedSubviews
+            guard let valueView = valueArray[index] as? ACRFactTextField else { return }
+            XCTAssertEqual(factsRendered[index].getTitle(), titleView.labelText.stringValue)
+            XCTAssertEqual(factsRendered[index].getValue(), valueView.labelText.stringValue)
+        }
     }
     
     private func renderFactSet() -> NSStackView {
