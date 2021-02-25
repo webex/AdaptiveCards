@@ -25,32 +25,29 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         // Parse input default values for multi-select
         let defaultParsedValues = parseChoiceSetInputDefaultValues(value: choiceSetInput.getValue() ?? "")
         let isMultiSelect = choiceSetInput.getIsMultiSelect()
-        let view = ACRChoiceSetFieldView()
+        let view = ACRChoiceSetView()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
-            var choiceButton = ACRButton()
+            let choiceButton = ACRButton()
             if isMultiSelect {
                 // checkbox
-                choiceButton.labelValue = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
-                choiceButton.setType = .switch
-//                choiceButton.action = Selector(("test"))
-                choiceButton.wrap = choiceSetInput.getWrap()
-                choiceButton.title = ""
+                choiceButton.type = .switch
             } else {
                 // radio box
-                choiceButton.labelValue = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
-                choiceButton.setType = .radio
-//                choiceButton.action = Selector(("test"))
-                choiceButton.wrap = choiceSetInput.getWrap()
-                choiceButton.title = ""
+                view.isRadioGroup = true
+                choiceButton.type = .radio
             }
-            choiceButton.backGroundColor = hostConfig.getBackgroundColor(for: style) ?? .clear
+            choiceButton.labelAttributedString = getAttributedString(title: title, with: hostConfig, style: style)
+            choiceButton.wrap = choiceSetInput.getWrap()
+            choiceButton.backgroundColor = hostConfig.getBackgroundColor(for: style) ?? .clear
+            choiceButton.isHidden = !choiceSetInput.getIsVisible()
+            choiceButton.value = choice.getValue() ?? ""
             if defaultParsedValues.contains(choice.getValue() ?? "") {
                 choiceButton.state = .on
+                view.previousButton = choiceButton
             }
-            view.addArrangedSubview(choiceButton)
+            view.addChoiceButton(choiceButton)
         }
-        view.setupConstraints()
         return view
     }
     
@@ -78,7 +75,7 @@ extension ChoiceSetInputRenderer {
             choiceSetFieldCompactView.addItem(withTitle: "")
             let item = choiceSetFieldCompactView.item(at: index)
             item?.title = title
-            item?.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
+            // item?.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
             if choiceSetInput.getValue() == choice.getValue() {
                 choiceSetFieldCompactView.select(item)
             }
@@ -87,52 +84,12 @@ extension ChoiceSetInputRenderer {
         return choiceSetFieldCompactView
     }
     
-    func getAttributedString(title: String, with hostConfig: ACSHostConfig, style: ACSContainerStyle, wrap: Bool) -> NSMutableAttributedString {
+    func getAttributedString(title: String, with hostConfig: ACSHostConfig, style: ACSContainerStyle) -> NSMutableAttributedString {
         let attributedString: NSMutableAttributedString
-        let resolvedTitle = wrap ? title : title
-        let paragraphStyle = NSMutableParagraphStyle()
-        attributedString = NSMutableAttributedString(string: resolvedTitle, attributes: [.paragraphStyle: paragraphStyle])
+        attributedString = NSMutableAttributedString(string: title)
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
         }
         return attributedString
-    }
-}
-// MARK: ACRChoiceSetFieldView
-class ACRChoiceSetFieldView: NSView {
-    public var stack = NSStackView()
-    private var stackView = NSStackView()
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-        addSubview(stackView)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-    }
-    public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    public func setupConstraints() {
-        self.stackView.orientation = .vertical
-        self.stackView.alignment = .leading
-        self.stackView.translatesAutoresizingMaskIntoConstraints = false
-        self.stack.orientation = .vertical
-        self.stack.alignment = .leading
-        self.stack.translatesAutoresizingMaskIntoConstraints = false
-    }
-    override var intrinsicContentSize: NSSize {
-        return NSSize(width: self.stackView.fittingSize.width, height: self.stackView.fittingSize.height)
-    }
-    public func addArrangedSubview(_ subview: NSView) {
-        stackView.addArrangedSubview(subview)
-    }
-}
-// MARK: ACRChoiceSetFieldCompactView
-class ACRChoiceSetFieldCompactView: NSPopUpButton {
-    override func viewDidMoveToSuperview() {
-        guard let superview = superview else { return }
-        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
     }
 }

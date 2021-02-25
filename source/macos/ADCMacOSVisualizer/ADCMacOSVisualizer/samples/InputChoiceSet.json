@@ -37,7 +37,6 @@
       "id": "myColor2",
       "style": "expanded",
       "isMultiSelect": false,
-      "value": "1",
       "wrap": true,
       "choices": [
         {

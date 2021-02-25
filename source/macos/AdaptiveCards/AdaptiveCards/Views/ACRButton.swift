@@ -1,6 +1,14 @@
 import AppKit
 
+protocol ACRButtonDelegate: NSObjectProtocol {
+    func acrButtonDidSelect(_ button: ACRButton)
+}
+
 class ACRButton: NSView, NSTextFieldDelegate {
+    weak var delegate: ACRButtonDelegate?
+    public var value: String?
+    public var buttonType: NSButton.ButtonType = .switch
+    
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setupViews()
@@ -10,10 +18,6 @@ class ACRButton: NSView, NSTextFieldDelegate {
     
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func validateProposedFirstResponder(_ responder: NSResponder, for event: NSEvent?) -> Bool {
-        return true
     }
     
     // Label
@@ -30,30 +34,31 @@ class ACRButton: NSView, NSTextFieldDelegate {
     // Button
     private lazy var button: NSButton = {
         let view = NSButton()
+        view.title = ""
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.action = "test"
         return view
     }()
     
     // Click on Text to change state
     override func mouseDown(with event: NSEvent) {
         self.state = self.state == .on ? .off : .on
+        if self.state == .on {
+            handleButtonAction()
+        }
     }
     
-    func setupViews() {
+    private func setupViews() {
         addSubview(button)
         addSubview(label)
     }
     
-    override func mouseEntered(with event: NSEvent) {
-        print("entered")
-    }
-    
-    func setupActions() {
+    private func setupActions() {
         // random action
+        button.target = self
+        button.action = #selector(handleButtonAction)
     }
     
-    func setupConstraints() {
+    private func setupConstraints() {
         button.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         button.topAnchor.constraint(equalTo: topAnchor).isActive = true
         button.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -63,17 +68,13 @@ class ACRButton: NSView, NSTextFieldDelegate {
         label.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
     }
     
-    var labelValue: NSAttributedString {
-        get { label.attributedStringValue }
-        set {
-            label.attributedStringValue = newValue
-        }
+    @objc private func handleButtonAction() {
+        delegate?.acrButtonDidSelect(self)
     }
-    override func touchesBegan(with event: NSEvent) {
-        super.touchesBegan(with: event)
-        print("test")
-    }
-    var backGroundColor: NSColor {
+}
+// MARK: EXTENSION
+extension ACRButton {
+    var backgroundColor: NSColor {
         get { label.backgroundColor ?? .clear }
         set {
             label.backgroundColor = newValue
@@ -94,46 +95,25 @@ class ACRButton: NSView, NSTextFieldDelegate {
         }
     }
     
-    var wrap: Bool {
-        get { ((label.cell?.wraps) != nil) }
+    var wrap: Bool? {
+        get { ((label.cell?.wraps) ) }
         set {
-            label.cell?.wraps = newValue
+            label.cell?.wraps = newValue ?? false
         }
     }
     
-    var setType: NSButton.ButtonType {
-        get { .switch }
+    var type: NSButton.ButtonType {
+        get { buttonType }
         set {
             button.setButtonType(newValue)
+            buttonType = newValue
         }
     }
     
     var title: String {
-        get { button.title }
+        get { label.stringValue }
         set {
-            button.title = newValue
-        }
-    }
-    
-//    var action: Selector? {
-//        get { button.action }
-//        set {
-//            button.action = "test"
-//        }
-//    }
-    var isEnabled: Bool = true {
-        didSet {
-            updatebutton()
-        }
-    }
-    var isChecked: Bool = true {
-        didSet {
-            updatebutton()
-        }
-    }
-    fileprivate func updatebutton() {
-        if self.setType == .radio {
-            // other buttons false
+            label.stringValue = newValue
         }
     }
 }
