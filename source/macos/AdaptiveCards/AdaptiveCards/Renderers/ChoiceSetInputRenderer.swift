@@ -26,22 +26,19 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         let defaultParsedValues = parseChoiceSetInputDefaultValues(value: choiceSetInput.getValue() ?? "")
         let isMultiSelect = choiceSetInput.getIsMultiSelect()
         let view = ACRChoiceSetView()
+        view.isRadioGroup = !isMultiSelect
+        view.wrap = choiceSetInput.getWrap()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
-            let choiceButton = ACRButton()
+            let choiceButton = view.setupButton(attributedString: getAttributedString(title: title, with: hostConfig, style: style), value: choice.getValue())
             if isMultiSelect {
                 // checkbox
                 choiceButton.type = .switch
             } else {
                 // radio box
-                view.isRadioGroup = true
                 choiceButton.type = .radio
             }
-            choiceButton.labelAttributedString = getAttributedString(title: title, with: hostConfig, style: style)
-            choiceButton.wrap = choiceSetInput.getWrap()
             choiceButton.backgroundColor = hostConfig.getBackgroundColor(for: style) ?? .clear
-            choiceButton.isHidden = !choiceSetInput.getIsVisible()
-            choiceButton.value = choice.getValue() ?? ""
             if defaultParsedValues.contains(choice.getValue() ?? "") {
                 choiceButton.state = .on
                 view.previousButton = choiceButton
@@ -60,7 +57,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
 extension ChoiceSetInputRenderer {
     func choiceSetCompactRenderInternal (choiceSetInput: ACSChoiceSetInput, with hostConfig: ACSHostConfig, style: ACSContainerStyle) -> NSView {
         // compact button renderer
-        let choiceSetFieldCompactView = ACRChoiceSetFieldCompactView()
+        let choiceSetFieldCompactView = ACRChoiceSetCompactView()
         choiceSetFieldCompactView.autoenablesItems = false
         var index = 0
         if choiceSetInput.getPlaceholder() != "" {

@@ -1,12 +1,13 @@
 import AdaptiveCards_bridge
 import AppKit
 
-// MARK: ACRChoiceSetFieldView
+// MARK: ACRChoiceSetView
 class ACRChoiceSetView: NSView {
     private var stackview = NSStackView()
     
     public var isRadioGroup: Bool = false
     public var previousButton: ACRButton?
+    public var wrap: Bool = false
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -28,11 +29,11 @@ class ACRChoiceSetView: NSView {
         stackview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     
-    private func handleClickAction(_ abutton: ACRButton) {
+    private func handleClickAction(_ clickedButton: ACRButton) {
         guard isRadioGroup else { return }
-        if previousButton?.value != abutton.value {
+        if previousButton?.value != clickedButton.value {
             previousButton?.state = .off
-            previousButton = abutton
+            previousButton = clickedButton
         }
     }
     
@@ -40,17 +41,24 @@ class ACRChoiceSetView: NSView {
         choiceButton.delegate = self
         stackview.addArrangedSubview(choiceButton)
     }
+    public func setupButton(attributedString: NSMutableAttributedString, value: String?) -> ACRButton {
+        let newButton = ACRButton()
+        newButton.labelAttributedString = attributedString
+        newButton.wrap = self.wrap
+        newButton.value = value
+        return newButton
+    }
 }
 // MARK: Extension
 extension ACRChoiceSetView: ACRButtonDelegate {
     func acrButtonDidSelect(_ button: ACRButton) {
-        print("Clicked!!")
         handleClickAction(button)
     }
 }
 
 // MARK: ACRChoiceSetFieldCompactView
-class ACRChoiceSetFieldCompactView: NSPopUpButton {
+class ACRChoiceSetCompactView: NSPopUpButton {
+    public let type: ACSChoiceSetStyle = .compact
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
