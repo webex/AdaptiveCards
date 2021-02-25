@@ -36,68 +36,70 @@ namespace RendererQml
 		return output;
 	}
 
-	void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-		if (!elements.empty())
-		{
-			auto bodyLayout = std::make_shared<QmlTag>("Column");
-			bodyLayout->Property("id", "bodyLayout");
-			bodyLayout->Property("width", "parent.width");
-			//TODO: Set spacing from host config
-			bodyLayout->Property("spacing", "8");
-			uiContainer->Property("Layout.preferredHeight", "bodyLayout.height");
-			uiContainer->AddChild(bodyLayout);
+    void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        if (!elements.empty())
+        {
+            auto bodyLayout = std::make_shared<QmlTag>("Column");
+            bodyLayout->Property("id", "bodyLayout");
+            bodyLayout->Property("width", "parent.width");
+            //TODO: Set spacing from host config
+            bodyLayout->Property("spacing", "8");
+            uiContainer->Property("Layout.preferredHeight", "bodyLayout.height");
+            uiContainer->AddChild(bodyLayout);
 
-			for (const auto& cardElement : elements)
-			{
-				auto uiElement = context->Render(cardElement);
+            for (const auto& cardElement : elements)
+            {
+                auto uiElement = context->Render(cardElement);
 
-				if (uiElement != nullptr)
-				{
-					//TODO: Add separator
-					//TODO: Add collection element
-					bodyLayout->AddChild(uiElement);
-				}
-			}
-		}
-	}
+                if (uiElement != nullptr)
+                {
+                    //TODO: Add separator
+                    //TODO: Add collection element
+                    bodyLayout->AddChild(uiElement);
+                }
+            }
+        }
+    }
 
-	void AdaptiveCardQmlRenderer::SetObjectTypes()
-	{
-		(*GetElementRenderers()).Set<AdaptiveCards::TextBlock>(AdaptiveCardQmlRenderer::TextBlockRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::RichTextBlock>(AdaptiveCardQmlRenderer::RichTextBlockRender);
-		/*(*GetElementRenderers()).Set<AdaptiveCards::Image>(AdaptiveCardQmlRenderer::ImageRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::Container>(AdaptiveCardQmlRenderer::ContainerRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::Column>(AdaptiveCardQmlRenderer::ColumnRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::ColumnSet>(AdaptiveCardQmlRenderer::ColumnSetRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::FactSet>(AdaptiveCardQmlRenderer::FactSetRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::ImageSet>(AdaptiveCardQmlRenderer::ImageSetRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::ActionSet>(AdaptiveCardQmlRenderer::ActionSetRender);*/
-		(*GetElementRenderers()).Set<AdaptiveCards::ChoiceSetInput>(AdaptiveCardQmlRenderer::ChoiceSetRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::TextInput>(AdaptiveCardQmlRenderer::TextInputRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::NumberInput>(AdaptiveCardQmlRenderer::NumberInputRender);
-		/*(*GetElementRenderers()).Set<AdaptiveCards::DateInput>(AdaptiveCardQmlRenderer::DateInputRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::TimeInput>(AdaptiveCardQmlRenderer::TimeInputRender);*/
-		(*GetElementRenderers()).Set<AdaptiveCards::ToggleInput>(AdaptiveCardQmlRenderer::ToggleInputRender);
-		/*(*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::OpenUrlAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::ShowCardAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::ToggleVisibilityAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
-		(*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);*/
-	}
+    void AdaptiveCardQmlRenderer::SetObjectTypes()
+    {
+        (*GetElementRenderers()).Set<AdaptiveCards::TextBlock>(AdaptiveCardQmlRenderer::TextBlockRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::RichTextBlock>(AdaptiveCardQmlRenderer::RichTextBlockRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::Image>(AdaptiveCardQmlRenderer::ImageRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::Container>(AdaptiveCardQmlRenderer::ContainerRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::Column>(AdaptiveCardQmlRenderer::ColumnRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::ColumnSet>(AdaptiveCardQmlRenderer::ColumnSetRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::FactSet>(AdaptiveCardQmlRenderer::FactSetRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::ImageSet>(AdaptiveCardQmlRenderer::ImageSetRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::ActionSet>(AdaptiveCardQmlRenderer::ActionSetRender);*/
+        (*GetElementRenderers()).Set<AdaptiveCards::ChoiceSetInput>(AdaptiveCardQmlRenderer::ChoiceSetRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::TextInput>(AdaptiveCardQmlRenderer::TextInputRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::NumberInput>(AdaptiveCardQmlRenderer::NumberInputRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::DateInput>(AdaptiveCardQmlRenderer::DateInputRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::TimeInput>(AdaptiveCardQmlRenderer::TimeInputRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::DateInput>(AdaptiveCardQmlRenderer::DateInputRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::TimeInput>(AdaptiveCardQmlRenderer::TimeInputRender);*/
+        (*GetElementRenderers()).Set<AdaptiveCards::ToggleInput>(AdaptiveCardQmlRenderer::ToggleInputRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::OpenUrlAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::ShowCardAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::ToggleVisibilityAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);*/
+    }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-		auto uiCard = std::make_shared<QmlTag>("Rectangle");
-		uiCard->AddImports("import QtQuick 2.15");
-		uiCard->AddImports("import QtQuick.Layouts 1.3");
-		uiCard->AddImports("import QtQuick.Controls 2.15");
-		uiCard->AddImports("import QtGraphicalEffects 1.15");
-		uiCard->Property("id", "adaptiveCard");
-		uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
-		//TODO: Width can be set as config
-		uiCard->Property("width", "600");
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        auto uiCard = std::make_shared<QmlTag>("Rectangle");
+        uiCard->AddImports("import QtQuick 2.15");
+        uiCard->AddImports("import QtQuick.Layouts 1.3");
+        uiCard->AddImports("import QtQuick.Controls 2.15");
+        uiCard->AddImports("import QtGraphicalEffects 1.15");
+        uiCard->Property("id", "adaptiveCard");
+        uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
+        //TODO: Width can be set as config
+        uiCard->Property("width", "600");
 
 		auto columnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		columnLayout->Property("id", "adaptiveCardLayout");
@@ -706,5 +708,101 @@ namespace RendererQml
 	
 		return uiButton;
 	}
+    
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        auto uiDateInput = std::make_shared<QmlTag>("TextField");
+
+        uiDateInput->Property("id", input->GetId());
+        uiDateInput->Property("width", "parent.width");
+        const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
+
+        uiDateInput->Property("font.family", "\"" + context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default) + "\"");
+        uiDateInput->Property("font.pixelSize", std::to_string(fontSize));
+
+
+        uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() + "\"" : "\"mm-dd-yyyy\""));
+
+        if (!input->GetValue().empty())
+        {
+            uiDateInput->Property("text", "\"" + Utils::GetDate(input->GetValue(), false) + "\"");
+        }
+
+        //TODO: Add stretch property
+
+        if (!input->GetIsVisible())
+        {
+            uiDateInput->Property("visible", "false");
+        }
+
+        uiDateInput->Property("validator", "RegExpValidator { regExp: /^(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])-(\\d{4})$/}");
+
+        std::string calendar_box_id = input->GetId() + "_cal_box";
+
+        uiDateInput->Property("inputMask", "text != \"\" ? \"00-00-0000;0\" : \"\"");
+        uiDateInput->Property("onFocusChanged", "{if(activeFocus === false){ z=0; if( " + calendar_box_id + ".visible === true){ " + calendar_box_id + ".visible=false}}}");
+
+        auto glowTag = std::make_shared<QmlTag>("Glow");
+        glowTag->Property("samples", "25");
+        glowTag->Property("color", "'skyblue'");
+
+        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
+        backgroundTag->Property("radius", "5");
+        //TODO: These color styling should come from css
+        backgroundTag->Property("color", Formatter() << input->GetId() << ".hovered ? 'lightgray' : 'white'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        backgroundTag->Property("border.width", "1");
+        backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
+        backgroundTag->Property("layer.effect", glowTag->ToString());
+        uiDateInput->Property("background", backgroundTag->ToString());
+
+        auto imageTag = std::make_shared<QmlTag>("Image");
+        imageTag->Property("anchors.fill", "parent");
+        imageTag->Property("anchors.margins", "5");
+
+        //Finding absolute Path at runtime
+        std::string file_path = __FILE__;
+        std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+        dir_path.append("\\Images\\calendarIcon.png");
+        std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+        imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+
+        //Relative wrt main.qml not working
+        //imageTag->Property("source", "\"" + std::string("file:/../../Library/RendererQml/Images/calendarIcon.png") + "\"");
+
+
+        auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
+
+        mouseAreaTag->AddChild(imageTag);
+        mouseAreaTag->Property("height", "parent.height");
+        mouseAreaTag->Property("width", "height");
+        mouseAreaTag->Property("anchors.right", "parent.right");
+        mouseAreaTag->Property("enabled", "true");
+
+        std::string onClicked_value = "{ parent.focus=true; " + calendar_box_id + ".visible=!" + calendar_box_id + ".visible; parent.z=" + calendar_box_id + ".visible?1:0; }";
+        mouseAreaTag->Property("onClicked", onClicked_value);
+
+        uiDateInput->AddChild(mouseAreaTag);
+
+        auto calendarTag = std::make_shared<QmlTag>("Calendar");
+        calendarTag->AddImports("import QtQuick.Controls 1.4");
+        calendarTag->Property("anchors.fill", "parent");
+        calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(), true) : "new Date(1900,1,1)");
+        calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");
+        calendarTag->Property("onReleased", "{parent.visible=false; " + input->GetId() + ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"MM-dd-yyyy\")}");
+
+        auto calendarBoxTag = std::make_shared<QmlTag>("Rectangle");
+        calendarBoxTag->Property("id", calendar_box_id);
+        calendarBoxTag->Property("visible", "false");
+        calendarBoxTag->Property("anchors.left", "parent.left");
+        calendarBoxTag->Property("anchors.top", "parent.bottom");
+        calendarBoxTag->Property("width", "275");
+        calendarBoxTag->Property("height", "275");
+        calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
+        uiDateInput->AddChild(calendarBoxTag);
+
+        return uiDateInput;
+    }
+
 }
 	

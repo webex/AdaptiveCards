@@ -411,6 +411,37 @@ const std::string card_ToggleInput = R"({
   ]
 })";
 
+  const std::string card_dateInput = R"({
+	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+	"type": "AdaptiveCard",
+	"version": "1.0",
+	"body": [
+		{
+		  "type": "TextBlock",
+		  "text": "Date Format: MM/DD/YYYY"
+		},
+		{
+		  "type": "Input.Date",
+		  "id": "sample",
+		  "placeholder": "Enter a date",
+		  "value": "2017-10-12",
+		  "min":"1900-01-01",
+		  "max":"2030-01-01"
+		},
+	    {
+		  "type": "TextBlock",
+		  "text": "Date Input Test"
+		},
+		{
+		  "type": "Input.Date",
+		  "id": "sample2",
+		  "placeholder": "Enter a date",
+		  "min":"1900-01-01",
+		  "max":"2030-01-01"
+		}
+	]
+})";
+
 const std::string card_ChoiceSetInput = R"({
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
   "type": "AdaptiveCard",
