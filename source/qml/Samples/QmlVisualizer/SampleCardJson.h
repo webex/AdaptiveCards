@@ -185,7 +185,7 @@ namespace Samples
     }
     )";
 
-        const std::string card_InputText = R"({
+    const std::string card_InputText = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -232,7 +232,7 @@ namespace Samples
       ]
     })";
 
-        const std::string card_InputNumber = R"({
+    const std::string card_InputNumber = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -279,7 +279,7 @@ namespace Samples
       ]
     })";
 
-        const std::string card_richText = R"({
+    const std::string card_richText = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -382,7 +382,7 @@ namespace Samples
       ]
     })";
 
-        const std::string card_CheckboxInput = R"({
+    const std::string card_CheckboxInput = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -430,34 +430,148 @@ namespace Samples
       ]
     })";
 
-        const std::string card_dateInput = R"({
-	    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-	    "type": "AdaptiveCard",
-	    "version": "1.0",
-	    "body": [
-		    {
-		      "type": "TextBlock",
-		      "text": "Date Format: MM/DD/YYYY"
-		    },
-		    {
-		      "type": "Input.Date",
-		      "id": "date",
-		      "placeholder": "Enter a date",
-		      "value": "2017-10-12",
-		      "min":"1900-01-01",
-		      "max":"2030-01-01"
-		    },
-	        {
-		      "type": "TextBlock",
-		      "text": "Date Input Test"
-		    },
-		    {
-		      "type": "Input.Date",
-		      "id": "sample2",
-		      "placeholder": "Enter a date",
-		      "min":"1900-01-01",
-		      "max":"2030-01-01"
-		    }
-	    ]
+    const std::string card_dateInput = R"({
+	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+	"type": "AdaptiveCard",
+	"version": "1.0",
+	"body": [
+		{
+		    "type": "TextBlock",
+		    "text": "Date Format: MM/DD/YYYY"
+		},
+		{
+		    "type": "Input.Date",
+		    "id": "date",
+		    "placeholder": "Enter a date",
+		    "value": "2017-10-12",
+		    "min":"1900-01-01",
+		    "max":"2030-01-01"
+		},
+	    {
+		    "type": "TextBlock",
+		    "text": "Date Input Test"
+		},
+		{
+		    "type": "Input.Date",
+		    "id": "sample2",
+		    "placeholder": "Enter a date",
+		    "min":"1900-01-01",
+		    "max":"2030-01-01"
+		}
+	]
+    })";
+
+    const std::string card_ChoiceSetInput = R"({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.0",
+      "body": [
+        {
+          "type": "TextBlock",
+          "text": "What color do you want? *(isMultiSelect:false, style:compact)*"
+        },
+        {
+          "type": "Input.ChoiceSet",
+          "id": "myColor",
+          "style": "compact",
+          "isMultiSelect": false,
+          "value": "2",
+          "choices": [
+            {
+              "title": "Red",
+              "value": "1"
+            },
+            {
+              "title": "Green",
+              "value": "2"
+            },
+            {
+              "title": "Blue",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "text": "What color do you want? *(isMultiSelect:false, style:expanded)*"
+        },
+        {
+          "type": "Input.ChoiceSet",
+          "id": "myColor2",
+          "style": "expanded",
+          "isMultiSelect": false,
+          "value": "1",
+          "choices": [
+            {
+              "title": "Red",
+              "value": "1"
+            },
+            {
+              "title": "Green",
+              "value": "2"
+            },
+            {
+              "title": "Blue",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "text": "What colors do you want? *(isMultiSelect:true, style:compact)*"
+        },
+        {
+          "type": "Input.ChoiceSet",
+          "id": "myColor3",
+          "isMultiSelect": true,
+          "value": "1,3",
+          "style": "compact",
+          "choices": [
+            {
+              "title": "Red",
+              "value": "1"
+            },
+            {
+              "title": "Green",
+              "value": "2"
+            },
+            {
+              "title": "Blue",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "text": "What colors do you want? *(isMultiSelect:true, style:expanded)*"
+        },
+        {
+          "type": "Input.ChoiceSet",
+          "id": "myColor4",
+          "isMultiSelect": true,
+          "value": "1",
+          "style": "expanded",
+          "choices": [
+            {
+              "title": "Red",
+              "value": "1"
+            },
+            {
+              "title": "Green",
+              "value": "2"
+            },
+            {
+              "title": "Blue",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "OK"
+        }
+      ]
     })";
 }

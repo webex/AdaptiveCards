@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
     SampleCardModel model;
     model.setList(&cardList);
 
-    const std::string qmlString = GenerateQml(Samples::card_InputText);
+    const std::string qmlString = GenerateQml(Samples::card_dateInput);
 
 	context->setContextProperty("_aQmlCard", QString::fromStdString(qmlString));
     context->setContextProperty("_aModel", &model);
