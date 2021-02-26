@@ -556,6 +556,53 @@ const std::string card_ChoiceSetInput = R"({
   ]
 })";
 
+  const std::string card_Image = R"({
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "Image",
+      "url": "https://adaptivecards.io/content/cats/1.png",
+      "id": "img",
+      "size": "Small",
+      "horizontalAlignment":"Right",
+	  "backgroundColor": "#FF0000FF"
+    },
+	{
+      "type": "Image",
+      "url": "https://adaptivecards.io/content/cats/1.png",
+      "id": "img1",
+      "size": "Medium",
+      "horizontalAlignment":"Center"
+    },
+    
+	{
+      "type": "Image",
+      "url": "https://adaptivecards.io/content/cats/1.png",
+      "id": "img2",
+      "size": "Large",
+      "style": "person",
+      "horizontalAlignment":"Left",
+      "backgroundColor": "#FF0000FF"
+    },
+    {
+      "type": "Image",
+      "url": "https://adaptivecards.io/content/cats/1.png",
+      "id": "img3",
+	  "backgroundColor": "#FF0000FF",
+      "height": "200px"
+    },
+	{
+      "type": "Image",
+      "url": "https://adaptivecards.io/content/cats/1.png",
+      "id": "img4",
+	  "backgroundColor": "#FF0000FF",
+	  "size":"Auto"
+    }
+  ]
+})";
+
 static std::shared_ptr<AdaptiveCards::HostConfig> GetHostConfig()
 {
     std::shared_ptr<AdaptiveCards::HostConfig> hostConfig = std::make_shared<AdaptiveCards::HostConfig>();
@@ -609,7 +656,7 @@ int main(int argc, char* argv[])
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
 
-    const std::string qmlString = GenerateQml(card_ChoiceSetInput);
+    const std::string qmlString = GenerateQml(card_Image);
 
 	context->setContextProperty("_aQmlCard", QString::fromStdString(qmlString));
 
