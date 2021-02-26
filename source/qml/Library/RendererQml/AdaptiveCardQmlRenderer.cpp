@@ -845,7 +845,8 @@ namespace RendererQml
 					uiImage->Property("fillMode", "height < implicitHeight ? Image.PreserveAspectFit : Image.NoOption");
 					uiRectangle->Property("width", Formatter() << image->GetId() << ".width");
 				}
-				else {
+				else
+				{
 					uiImage->RemoveProperty("fillMode");
 				}
 			}
@@ -854,7 +855,6 @@ namespace RendererQml
 		{
 			switch (image->GetImageSize())
 			{
-
 			case AdaptiveCards::ImageSize::None:
 			case AdaptiveCards::ImageSize::Auto:
 				uiRectangle->Property("width", "parent.width");

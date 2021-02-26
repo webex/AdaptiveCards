@@ -561,44 +561,64 @@ const std::string card_ChoiceSetInput = R"({
   "type": "AdaptiveCard",
   "version": "1.0",
   "body": [
-    {
+	{
+      "type": "TextBlock",
+      "text": "size: small, alignment: right with background-color set"
+    },
+	{
       "type": "Image",
       "url": "https://adaptivecards.io/content/cats/1.png",
       "id": "img",
       "size": "Small",
-      "horizontalAlignment":"Right",
+      "horizontalAlignment": "Right",
 	  "backgroundColor": "#FF0000FF"
+    },
+	{
+      "type": "TextBlock",
+      "text": "size: medium, alignment: center"
     },
 	{
       "type": "Image",
       "url": "https://adaptivecards.io/content/cats/1.png",
       "id": "img1",
       "size": "Medium",
-      "horizontalAlignment":"Center"
+      "horizontalAlignment": "Center"
     },
-    
+    {
+      "type": "TextBlock",
+      "text": "size: large, style: person, alignment: left with background-color set"
+    },
 	{
       "type": "Image",
       "url": "https://adaptivecards.io/content/cats/1.png",
       "id": "img2",
       "size": "Large",
       "style": "person",
-      "horizontalAlignment":"Left",
+      "horizontalAlignment": "Left",
       "backgroundColor": "#FF0000FF"
     },
-    {
+	{
+      "type": "TextBlock",
+      "text": "height,width and background-color are set"
+    },
+	{
       "type": "Image",
       "url": "https://adaptivecards.io/content/cats/1.png",
       "id": "img3",
 	  "backgroundColor": "#FF0000FF",
-      "height": "200px"
+      "height": "200px",
+	  "width": "300px"
+    },
+	{
+      "type": "TextBlock",
+      "text": "height and background-color set"
     },
 	{
       "type": "Image",
       "url": "https://adaptivecards.io/content/cats/1.png",
       "id": "img4",
 	  "backgroundColor": "#FF0000FF",
-	  "size":"Auto"
+	  "height": "80px"
     }
   ]
 })";
