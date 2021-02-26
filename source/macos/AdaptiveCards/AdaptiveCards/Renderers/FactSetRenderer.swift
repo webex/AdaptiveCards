@@ -76,7 +76,7 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
     }
 }
 
-// MARK: Extend ACRFactTextField to Make title bold
+// MARK: Class for Title Properties
 class TitleFact: ACRFactTextField {
     var titleText = ACRFactTextField()
     

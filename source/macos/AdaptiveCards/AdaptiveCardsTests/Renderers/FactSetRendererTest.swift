@@ -40,6 +40,7 @@ class FactSetRendererTest: XCTestCase {
         var factArray: [FakeFacts] = []
         let fakeFact = FakeFacts()
         fakeFact.setTitle("Only Title")
+        fakeFact.setValue("")
         factArray.append(fakeFact)
         factSet = .make(factArray: factArray)
         let factsRendered = factSet.getFacts()
@@ -54,13 +55,14 @@ class FactSetRendererTest: XCTestCase {
             let valueArray = valueStack.arrangedSubviews
             guard let valueView = valueArray[index] as? ACRFactTextField else { return }
             XCTAssertEqual(factsRendered[index].getTitle(), titleView.labelText.stringValue)
-            XCTAssertEqual("", valueView.labelText.stringValue)
+            XCTAssertEqual(factsRendered[index].getValue(), valueView.labelText.stringValue)
         }
     }
     
     func testOnlyValue() {
         var factArray: [FakeFacts] = []
         let fakeFact = FakeFacts()
+        fakeFact.setTitle("")
         fakeFact.setValue("Value Only")
         factArray.append(fakeFact)
         factSet = .make(factArray: factArray)
@@ -75,7 +77,7 @@ class FactSetRendererTest: XCTestCase {
             guard let titleView = elem as? ACRFactTextField else { return }
             let valueArray = valueStack.arrangedSubviews
             guard let valueView = valueArray[index] as? ACRFactTextField else { return }
-            XCTAssertEqual("", titleView.labelText.stringValue)
+            XCTAssertEqual(factsRendered[index].getTitle(), titleView.labelText.stringValue)
             XCTAssertEqual(factsRendered[index].getValue(), valueView.labelText.stringValue)
         }
     }
