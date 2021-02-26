@@ -23,7 +23,6 @@ class ACRButton: NSView, NSTextFieldDelegate {
     // Label
     private lazy var label: NSTextField = {
         let view = NSTextField()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.isEditable = false
         view.delegate = self
         view.isBordered = false
@@ -35,7 +34,6 @@ class ACRButton: NSView, NSTextFieldDelegate {
     private lazy var button: NSButton = {
         let view = NSButton()
         view.title = ""
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -59,9 +57,11 @@ class ACRButton: NSView, NSTextFieldDelegate {
     }
     
     private func setupConstraints() {
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         button.topAnchor.constraint(equalTo: topAnchor).isActive = true
         button.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.leadingAnchor.constraint(equalTo: button.trailingAnchor).isActive = true
         label.topAnchor.constraint(equalTo: topAnchor).isActive = true
         label.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true

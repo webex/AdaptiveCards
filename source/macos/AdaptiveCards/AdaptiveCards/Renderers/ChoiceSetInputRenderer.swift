@@ -30,7 +30,8 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         view.wrap = choiceSetInput.getWrap()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
-            let choiceButton = view.setupButton(attributedString: getAttributedString(title: title, with: hostConfig, style: style), value: choice.getValue())
+            let attributedString = getAttributedString(title: title, with: hostConfig, style: style)
+            let choiceButton = view.setupButton(attributedString: attributedString, value: choice.getValue())
             if isMultiSelect {
                 // checkbox
                 choiceButton.type = .switch

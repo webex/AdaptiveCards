@@ -41,6 +41,7 @@ class ACRChoiceSetView: NSView {
         choiceButton.delegate = self
         stackview.addArrangedSubview(choiceButton)
     }
+    
     public func setupButton(attributedString: NSMutableAttributedString, value: String?) -> ACRButton {
         let newButton = ACRButton()
         newButton.labelAttributedString = attributedString
