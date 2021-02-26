@@ -2,8 +2,8 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRFactTextField: NSView {
-    @IBOutlet var contentView: NSView!
-    @IBOutlet var labelText: NSTextField!
+    @IBOutlet private var contentView: NSView!
+    @IBOutlet private var labelTextField: NSTextField!
     
     init() {
         super.init(frame: .zero)
@@ -25,26 +25,40 @@ class ACRFactTextField: NSView {
     }
     
     private func setupConstraints() {
-        // TranslateAutoresizingMaskIntoConstaints as false
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        labelText.translatesAutoresizingMaskIntoConstraints = false
+        labelTextField.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         contentView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         contentView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         contentView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
-        labelText.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        labelText.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        labelText.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        labelText.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        labelTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        labelTextField.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        labelTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        labelTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         
-        labelText.setContentCompressionResistancePriority(.required, for: .vertical)
-        labelText.alignment = .left
+        labelTextField.setContentCompressionResistancePriority(.required, for: .vertical)
+        labelTextField.alignment = .left
     }
     
-    func setLabel( string: String?) {
-        labelText.stringValue = string ?? ""
+    func setupTitle() {
+        // TODO: Make it get all properties from host config
+        labelTextField.font = NSFont.boldSystemFont(ofSize: 12)
+    }
+    
+    var isEmpty: Bool {
+        return labelTextField.stringValue.isEmpty
+    }
+    
+    var textColor: NSColor {
+        get { return labelTextField.textColor ?? .black }
+        set { labelTextField.textColor = newValue }
+    }
+    
+    var textValue: String? {
+        get { return labelTextField.stringValue }
+        set { labelTextField.stringValue = newValue ?? "" }
     }
     
     override func viewDidMoveToSuperview() {
@@ -56,7 +70,7 @@ class ACRFactTextField: NSView {
 }
 
 // MARK: Class required for Horizontal Stack View
-class ACRFactSetStackView: NSStackView {
+class ACRFactSetView: NSView {
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
         // Should look for better solution

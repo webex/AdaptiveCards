@@ -12,10 +12,8 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         let factArray = factSet.getFacts()
         let factsetConfig = hostConfig.getFactSet()
         
-        // Create horizontal Stack to add both views
-        let horizontalStack = ACRFactSetStackView()
-        horizontalStack.orientation = NSUserInterfaceLayoutOrientation.horizontal
-        horizontalStack.translatesAutoresizingMaskIntoConstraints = false
+        let mainFactView = ACRFactSetView()
+        mainFactView.translatesAutoresizingMaskIntoConstraints = false
         
         // Create stacks to hold title and value of FactSet
         let titleStack = NSStackView()
@@ -27,70 +25,48 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         
         // Main loop to iterate over Array of facts
         for fact in factArray {
-            let titleView = TitleFact()
+            let titleView = ACRFactTextField()
             let valueView = ACRFactTextField()
-            titleView.titleText.setLabel(string: fact.getTitle())
-            valueView.setLabel(string: fact.getValue())
+            titleView.textValue = fact.getTitle()
+            valueView.textValue = fact.getValue()
             
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
-                titleView.titleText.labelText.textColor = textColor
-                valueView.labelText.textColor = textColor
+                titleView.textColor = textColor
+                valueView.textColor = textColor
             }
             
-            if !(titleView.titleText.labelText.stringValue.isEmpty) || !(valueView.labelText.stringValue.isEmpty) {
-                titleStack.addArrangedSubview(titleView.titleText)
+            if !(titleView.isEmpty) || !(valueView.isEmpty) {
+                titleStack.addArrangedSubview(titleView)
                 valueStack.addArrangedSubview(valueView)
             }
         }
         
         // Add both elements into the Horizontal Stack
-        horizontalStack.addArrangedSubview(titleStack)
-        horizontalStack.addArrangedSubview(valueStack)
+        mainFactView.addSubview(titleStack)
+        mainFactView.addSubview(valueStack)
         
-        // Add constraints once all the views are in the same view heirarchy
-        let horizontalStackViews = horizontalStack.arrangedSubviews
-        guard let titleStackagain = horizontalStackViews[0] as? NSStackView else { return NSView() }
-        guard let valueStackagain = horizontalStackViews[1] as? NSStackView else { return NSView() }
-        
-        titleStackagain.leadingAnchor.constraint(equalTo: horizontalStack.leadingAnchor).isActive = true
-        titleStackagain.topAnchor.constraint(equalTo: horizontalStack.topAnchor).isActive = true
-        titleStackagain.bottomAnchor.constraint(equalTo: horizontalStack.bottomAnchor).isActive = true
+        titleStack.leadingAnchor.constraint(equalTo: mainFactView.leadingAnchor).isActive = true
+        titleStack.topAnchor.constraint(equalTo: mainFactView.topAnchor).isActive = true
+        titleStack.bottomAnchor.constraint(equalTo: mainFactView.bottomAnchor).isActive = true
         // Spacing between title and value in the horizontal Stack
-        titleStackagain.trailingAnchor.constraint(equalTo: valueStackagain.leadingAnchor, constant: -10).isActive = true
+        titleStack.trailingAnchor.constraint(equalTo: valueStack.leadingAnchor, constant: -10).isActive = true
         // Getting Max width from Host config if it exists
-        titleStackagain.widthAnchor.constraint(lessThanOrEqualToConstant: CGFloat(truncating: factsetConfig?.title.maxWidth ?? 150)).isActive = true
+        titleStack.widthAnchor.constraint(lessThanOrEqualToConstant: CGFloat(truncating: factsetConfig?.title.maxWidth ?? 150)).isActive = true
 
-        valueStackagain.trailingAnchor.constraint(equalTo: horizontalStack.trailingAnchor).isActive = true
-        valueStackagain.topAnchor.constraint(equalTo: horizontalStack.topAnchor).isActive = true
-        valueStackagain.bottomAnchor.constraint(equalTo: horizontalStack.bottomAnchor).isActive = true
+        valueStack.trailingAnchor.constraint(equalTo: mainFactView.trailingAnchor).isActive = true
+        valueStack.topAnchor.constraint(equalTo: mainFactView.topAnchor).isActive = true
+        valueStack.bottomAnchor.constraint(equalTo: mainFactView.bottomAnchor).isActive = true
 
         // Make the height of each title and value equal
-        for (index, elem) in titleStackagain.arrangedSubviews.enumerated() {
-            guard let titleView = elem as? ACRFactTextField else { return ACRFactTextField() }
-            let valueArray = valueStackagain.arrangedSubviews
-            guard let valueView = valueArray[index] as? ACRFactTextField else { return ACRFactTextField() }
+        for (index, elem) in titleStack.arrangedSubviews.enumerated() {
+            let valueArray = valueStack.arrangedSubviews
+            guard let titleView = elem as? ACRFactTextField, let valueView = valueArray[index] as? ACRFactTextField else {
+                 logError("Element inside FactSetStack is not of type ACRFactTextField")
+                 continue
+            }
             titleView.heightAnchor.constraint(equalTo: valueView.heightAnchor).isActive = true
         }
         
-        return horizontalStack
-    }
-}
-
-// MARK: Class for Title Properties
-class TitleFact: ACRFactTextField {
-    var titleText = ACRFactTextField()
-    
-    override init() {
-        super.init()
-        setupTitle()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func setupTitle() {
-        // TODO: Make it get all properties from host config
-        titleText.labelText.font = NSFont.boldSystemFont(ofSize: 12)
+        return mainFactView
     }
 }

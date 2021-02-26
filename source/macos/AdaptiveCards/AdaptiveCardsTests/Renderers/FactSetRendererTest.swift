@@ -23,7 +23,7 @@ class FactSetRendererTest: XCTestCase {
         let factsRendered = factSet.getFacts()
         
         let factView = renderFactSet()
-        let renderedFacts = factView.arrangedSubviews
+        let renderedFacts = factView.subviews
         guard let titleStack = renderedFacts[0] as? NSStackView else { return }
         guard let valueStack = renderedFacts[1] as? NSStackView else { return }
         
@@ -31,8 +31,8 @@ class FactSetRendererTest: XCTestCase {
             guard let titleView = elem as? ACRFactTextField else { return }
             let valueArray = valueStack.arrangedSubviews
             guard let valueView = valueArray[index] as? ACRFactTextField else { return }
-            XCTAssertEqual(factsRendered[index].getTitle(), titleView.labelText.stringValue)
-            XCTAssertEqual(factsRendered[index].getValue(), valueView.labelText.stringValue)
+            XCTAssertEqual(factsRendered[index].getTitle(), titleView.textValue)
+            XCTAssertEqual(factsRendered[index].getValue(), valueView.textValue)
         }
     }
     
@@ -46,7 +46,7 @@ class FactSetRendererTest: XCTestCase {
         let factsRendered = factSet.getFacts()
         
         let factView = renderFactSet()
-        let renderedFacts = factView.arrangedSubviews
+        let renderedFacts = factView.subviews
         guard let titleStack = renderedFacts[0] as? NSStackView else { return }
         guard let valueStack = renderedFacts[1] as? NSStackView else { return }
         
@@ -54,8 +54,8 @@ class FactSetRendererTest: XCTestCase {
             guard let titleView = elem as? ACRFactTextField else { return }
             let valueArray = valueStack.arrangedSubviews
             guard let valueView = valueArray[index] as? ACRFactTextField else { return }
-            XCTAssertEqual(factsRendered[index].getTitle(), titleView.labelText.stringValue)
-            XCTAssertEqual(factsRendered[index].getValue(), valueView.labelText.stringValue)
+            XCTAssertEqual(factsRendered[index].getTitle(), titleView.textValue)
+            XCTAssertEqual(factsRendered[index].getValue(), valueView.textValue)
         }
     }
     
@@ -69,7 +69,7 @@ class FactSetRendererTest: XCTestCase {
         let factsRendered = factSet.getFacts()
         
         let factView = renderFactSet()
-        let renderedFacts = factView.arrangedSubviews
+        let renderedFacts = factView.subviews
         guard let titleStack = renderedFacts[0] as? NSStackView else { return }
         guard let valueStack = renderedFacts[1] as? NSStackView else { return }
         
@@ -77,8 +77,8 @@ class FactSetRendererTest: XCTestCase {
             guard let titleView = elem as? ACRFactTextField else { return }
             let valueArray = valueStack.arrangedSubviews
             guard let valueView = valueArray[index] as? ACRFactTextField else { return }
-            XCTAssertEqual(factsRendered[index].getTitle(), titleView.labelText.stringValue)
-            XCTAssertEqual(factsRendered[index].getValue(), valueView.labelText.stringValue)
+            XCTAssertEqual(factsRendered[index].getTitle(), titleView.textValue)
+            XCTAssertEqual(factsRendered[index].getValue(), valueView.textValue)
         }
     }
     
@@ -98,7 +98,7 @@ class FactSetRendererTest: XCTestCase {
         let factsRendered = factSet.getFacts()
         
         let factView = renderFactSet()
-        let renderedFacts = factView.arrangedSubviews
+        let renderedFacts = factView.subviews
         guard let titleStack = renderedFacts[0] as? NSStackView else { return }
         guard let valueStack = renderedFacts[1] as? NSStackView else { return }
         
@@ -106,16 +106,14 @@ class FactSetRendererTest: XCTestCase {
             guard let titleView = elem as? ACRFactTextField else { return }
             let valueArray = valueStack.arrangedSubviews
             guard let valueView = valueArray[index] as? ACRFactTextField else { return }
-            XCTAssertEqual(factsRendered[index].getTitle(), titleView.labelText.stringValue)
-            XCTAssertEqual(factsRendered[index].getValue(), valueView.labelText.stringValue)
+            XCTAssertEqual(factsRendered[index].getTitle(), titleView.textValue)
+            XCTAssertEqual(factsRendered[index].getValue(), valueView.textValue)
         }
     }
     
-    private func renderFactSet() -> NSStackView {
+    private func renderFactSet() -> NSView {
         let view = factSetRenderer.render(element: factSet, with: hostConfig, style: .default, rootView: NSView(), parentView: NSView(), inputs: [])
         
-        XCTAssert(view is NSStackView)
-        guard let factSet = view as? NSStackView else { fatalError() }
-        return factSet
+        return view
     }
 }
