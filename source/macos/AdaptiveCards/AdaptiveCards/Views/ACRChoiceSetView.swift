@@ -3,10 +3,16 @@ import AppKit
 
 // MARK: ACRChoiceSetView
 class ACRChoiceSetView: NSView {
-    private var stackview = NSStackView()
+    private lazy var stackview: NSStackView = {
+        let view = NSStackView()
+        view.orientation = .vertical
+        view.alignment = .leading
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     public var isRadioGroup: Bool = false
-    public var previousButton: ACRButton?
+    public var previousButton: ACRChoiceButton?
     public var wrap: Bool = false
     
     override init(frame frameRect: NSRect) {
@@ -20,16 +26,13 @@ class ACRChoiceSetView: NSView {
     }
     
     private func setupConstraints() {
-        stackview.orientation = .vertical
-        stackview.alignment = .leading
-        stackview.translatesAutoresizingMaskIntoConstraints = false
         stackview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         stackview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackview.topAnchor.constraint(equalTo: topAnchor).isActive = true
         stackview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     
-    private func handleClickAction(_ clickedButton: ACRButton) {
+    private func handleClickAction(_ clickedButton: ACRChoiceButton) {
         guard isRadioGroup else { return }
         if previousButton?.value != clickedButton.value {
             previousButton?.state = .off
@@ -37,13 +40,13 @@ class ACRChoiceSetView: NSView {
         }
     }
     
-    public func addChoiceButton(_ choiceButton: ACRButton) {
+    public func addChoiceButton(_ choiceButton: ACRChoiceButton) {
         choiceButton.delegate = self
         stackview.addArrangedSubview(choiceButton)
     }
     
-    public func setupButton(attributedString: NSMutableAttributedString, value: String?) -> ACRButton {
-        let newButton = ACRButton()
+    public func setupButton(attributedString: NSMutableAttributedString, value: String?) -> ACRChoiceButton {
+        let newButton = ACRChoiceButton()
         newButton.labelAttributedString = attributedString
         newButton.wrap = self.wrap
         newButton.value = value
@@ -51,8 +54,8 @@ class ACRChoiceSetView: NSView {
     }
 }
 // MARK: Extension
-extension ACRChoiceSetView: ACRButtonDelegate {
-    func acrButtonDidSelect(_ button: ACRButton) {
+extension ACRChoiceSetView: ACRChoiceButtonDelegate {
+    func acrChoiceButtonDidSelect(_ button: ACRChoiceButton) {
         handleClickAction(button)
     }
 }

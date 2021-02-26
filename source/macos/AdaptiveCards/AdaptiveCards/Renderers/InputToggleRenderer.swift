@@ -13,7 +13,7 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         let attributedString: NSMutableAttributedString
         // NSButton for checkbox
         let title = inputToggle.getTitle() ?? ""
-        let inputToggleView = ACRButton()
+        let inputToggleView = ACRChoiceButton()
         inputToggleView.type = .switch
         // adding attributes to the string
         attributedString = NSMutableAttributedString(string: title)

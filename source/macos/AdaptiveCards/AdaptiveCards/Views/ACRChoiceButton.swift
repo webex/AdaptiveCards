@@ -1,11 +1,11 @@
 import AppKit
 
-protocol ACRButtonDelegate: NSObjectProtocol {
-    func acrButtonDidSelect(_ button: ACRButton)
+protocol ACRChoiceButtonDelegate: NSObjectProtocol {
+    func acrChoiceButtonDidSelect(_ button: ACRChoiceButton)
 }
 
-class ACRButton: NSView, NSTextFieldDelegate {
-    weak var delegate: ACRButtonDelegate?
+class ACRChoiceButton: NSView, NSTextFieldDelegate {
+    weak var delegate: ACRChoiceButtonDelegate?
     public var value: String?
     public var buttonType: NSButton.ButtonType = .switch
     
@@ -27,6 +27,8 @@ class ACRButton: NSView, NSTextFieldDelegate {
         view.delegate = self
         view.isBordered = false
         view.isHighlighted = false
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
         return view
     }()
     
@@ -34,13 +36,14 @@ class ACRButton: NSView, NSTextFieldDelegate {
     private lazy var button: NSButton = {
         let view = NSButton()
         view.title = ""
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     // Click on Text to change state
     override func mouseDown(with event: NSEvent) {
-        self.state = self.state == .on ? .off : .on
-        if self.state == .on {
+        state = state == .on ? .off : .on
+        if  state == .on {
             handleButtonAction()
         }
     }
@@ -57,11 +60,9 @@ class ACRButton: NSView, NSTextFieldDelegate {
     }
     
     private func setupConstraints() {
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         button.topAnchor.constraint(equalTo: topAnchor).isActive = true
         button.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.leadingAnchor.constraint(equalTo: button.trailingAnchor).isActive = true
         label.topAnchor.constraint(equalTo: topAnchor).isActive = true
         label.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -69,11 +70,11 @@ class ACRButton: NSView, NSTextFieldDelegate {
     }
     
     @objc private func handleButtonAction() {
-        delegate?.acrButtonDidSelect(self)
+        delegate?.acrChoiceButtonDidSelect(self)
     }
 }
 // MARK: EXTENSION
-extension ACRButton {
+extension ACRChoiceButton {
     var backgroundColor: NSColor {
         get { label.backgroundColor ?? .clear }
         set {

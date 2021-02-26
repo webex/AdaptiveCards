@@ -67,11 +67,11 @@ class InputToggleRendererTests: XCTestCase {
         XCTAssertEqual(inputToggleView.wrap, true)
     }
     
-    private func renderInputToggleView() -> ACRButton {
+    private func renderInputToggleView() -> ACRChoiceButton {
         let view = inputToggleRenderer.render(element: inputToggle, with: hostConfig, style: .default, rootView: NSView(), parentView: NSView(), inputs: [])
         
-        XCTAssertTrue(view is ACRButton)
-        guard let inputToggleView = view as? ACRButton else { fatalError() }
+        XCTAssertTrue(view is ACRChoiceButton)
+        guard let inputToggleView = view as? ACRChoiceButton else { fatalError() }
         return inputToggleView
     }
 }
