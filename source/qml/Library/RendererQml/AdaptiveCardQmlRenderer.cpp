@@ -845,10 +845,6 @@ namespace RendererQml
 
 			auto uiValue = context->Render(factValue);
 
-			if (factValue->GetWrap())
-			{
-				uiValue->Property("wrapMode", "Text.Wrap");
-			}
 			uiRow->AddChild(uiTitle);
 			uiRow->AddChild(uiValue);
 			uiFactSet->AddChild(uiRow);
