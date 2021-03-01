@@ -15,7 +15,7 @@ Item {
     GridLayout{
         id: mainLayout        
 
-        readonly property int margins: 10
+        readonly property int margins: 0
         width: parent.width
         columns: 1
 

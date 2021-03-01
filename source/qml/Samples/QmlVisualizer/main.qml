@@ -20,42 +20,51 @@ Row{
     }
 
     Rectangle{
-        id: cardRoot        
+        id: cardRoot
+
         height: 800
         width: 700
         color: 'lightblue'
         radius: 8
         border.width: 2
         border.color: 'black'
-        clip: true
 
-        ListModel{
-            id: cardModel
-            Component.onCompleted: {
-                append({"CardString": _aQmlCard });
-            }
-        }
+        Rectangle{
+            height: 780
+            width: 680
+            radius: 8
+            x: 10;y: 10
+            color: "transparent"
 
-        Component{
-            id: delegate
-            Loader{
-                id: loader
-                source: "AdaptiveCardItemDelegate.qml"
 
-                onLoaded: {
-                    cardEditorLoader.item.reloadCard.connect(loader.item.reloadCard)
-                    cardListViewLoader.item.reloadCard.connect(loader.item.reloadCard)
+            ListModel{
+                id: cardModel
+                Component.onCompleted: {
+                    append({"CardString": _aQmlCard });
                 }
             }
-        }
 
-        ListView{
-            id: cardsList
-            anchors.fill: parent
-            cacheBuffer: 10000
-            delegate: delegate
-            model: cardModel
-            clip: true
+            Component{
+                id: delegate
+                Loader{
+                    id: loader
+                    source: "AdaptiveCardItemDelegate.qml"
+
+                    onLoaded: {
+                        cardEditorLoader.item.reloadCard.connect(loader.item.reloadCard)
+                        cardListViewLoader.item.reloadCard.connect(loader.item.reloadCard)
+                    }
+                }
+            }
+
+            ListView{
+                id: cardsList
+                anchors.fill: parent
+                cacheBuffer: 10000
+                delegate: delegate
+                model: cardModel
+                clip: true
+            }
         }
     }
 
