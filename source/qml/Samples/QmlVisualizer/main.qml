@@ -42,7 +42,10 @@ Row{
                 id: loader
                 source: "AdaptiveCardItemDelegate.qml"
 
-                onLoaded: cardEditorLoader.item.reloadCard.connect(loader.item.reloadCard)
+                onLoaded: {
+                    cardEditorLoader.item.reloadCard.connect(loader.item.reloadCard)
+                    cardListViewLoader.item.reloadCard.connect(loader.item.reloadCard)
+                }
             }
         }
 

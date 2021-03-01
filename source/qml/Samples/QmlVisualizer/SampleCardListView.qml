@@ -18,6 +18,7 @@ Frame{
     }
 
     signal listItemClicked(var index, var cardJson);
+    signal reloadCard(var card)
 
     Component{
         id: cardDelegate
@@ -41,6 +42,7 @@ Frame{
                     onClicked: {
                         cardListView.currentIndex = index;
                         listItemClicked(index, model.CardJson);
+                        reloadCard(_aModel.generateQml(model.CardJson))
                     }
                 }
             }
