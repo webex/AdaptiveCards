@@ -15,6 +15,8 @@ Rectangle{
 
     property string cardJson: ""
 
+    signal reloadCard(var card)
+
     Column{
         id: cardEditorLayout
         anchors.fill: parent
@@ -50,6 +52,10 @@ Rectangle{
             width: 390
 
             text: "Render"
+
+            onClicked: {
+                reloadCard(_aModel.generateQml(multilineInputId.text))
+            }
         }
     }
 

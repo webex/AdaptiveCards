@@ -1,6 +1,9 @@
 #ifndef SAMPLECARDMODEL_H
 #define SAMPLECARDMODEL_H
 
+#include <AdaptiveCardQmlRenderer.h>
+#include <RenderedQmlAdaptiveCard.h>
+
 #include <QAbstractListModel>
 
 class SampleCardList;
@@ -27,6 +30,10 @@ public:
 
     SampleCardList *list() const;
     void setList(SampleCardList *list);
+
+    std::shared_ptr<AdaptiveCards::HostConfig> getHostConfig();
+
+    Q_INVOKABLE QString generateQml(const QString& cardQml);
 
 private:
     SampleCardList *mList;

@@ -7,11 +7,13 @@ Item {
     id: delegate
     readonly property var listView: parent.ListView.view
 
+    signal reloadCard(var card)
+
     height: mainLayout.height
     width: listView.width
 
     GridLayout{
-        id: mainLayout
+        id: mainLayout        
 
         readonly property int margins: 10
         width: parent.width
@@ -35,6 +37,8 @@ Item {
                     Layout.fillWidth: true
                     Layout.margins: 5
                     Layout.preferredHeight: item ? item.height : 25
+
+                    onLoaded: reloadCard.connect(item.reload)
                 }
             }
         }

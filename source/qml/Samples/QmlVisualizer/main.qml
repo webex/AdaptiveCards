@@ -20,7 +20,7 @@ Row{
     }
 
     Rectangle{
-        id: cardRoot
+        id: cardRoot        
         height: 800
         width: 700
         color: 'lightblue'
@@ -32,7 +32,7 @@ Row{
         ListModel{
             id: cardModel
             Component.onCompleted: {
-                append({"CardString": _aQmlCard});
+                append({"CardString": _aQmlCard });
             }
         }
 
@@ -41,6 +41,8 @@ Row{
             Loader{
                 id: loader
                 source: "AdaptiveCardItemDelegate.qml"
+
+                onLoaded: cardEditorLoader.item.reloadCard.connect(loader.item.reloadCard)
             }
         }
 
@@ -55,6 +57,6 @@ Row{
     }
 
     Component.onCompleted: {
-        cardListViewLoader.item.listItemClicked.connect(cardEditorLoader.item.setCardEditor)
+        cardListViewLoader.item.listItemClicked.connect(cardEditorLoader.item.setCardEditor)        
     }
 }
