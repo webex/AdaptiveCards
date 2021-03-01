@@ -574,4 +574,100 @@ namespace Samples
         }
       ]
     })";
+
+    const std::string card_FactSet = R"({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.0",
+      "body": [
+        {
+          "type": "FactSet",
+          "facts": [
+            {
+              "title": "Fact 1",
+              "value": "Value 1"
+            },
+            {
+              "title": "Fact 2",
+              "value": "Value 2"
+            },
+            {
+              "title": "Fact 3",
+              "value": "Value 3"
+            },
+            {
+              "title": "Fact 4",
+              "value": "Value 5"
+            }
+          ]
+        }
+      ]
+    })";
+
+    const std::string card_Image = R"({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.0",
+      "body": [
+	    {
+          "type": "TextBlock",
+          "text": "size: small, alignment: right with background-color set"
+        },
+	    {
+          "type": "Image",
+          "url": "https://adaptivecards.io/content/cats/1.png",
+          "id": "img",
+          "size": "Small",
+          "horizontalAlignment": "Right",
+	      "backgroundColor": "#FF0000FF"
+        },
+	    {
+          "type": "TextBlock",
+          "text": "size: medium, alignment: center"
+        },
+	    {
+          "type": "Image",
+          "url": "https://adaptivecards.io/content/cats/1.png",
+          "id": "img1",
+          "size": "Medium",
+          "horizontalAlignment": "Center"
+        },
+        {
+          "type": "TextBlock",
+          "text": "size: large, style: person, alignment: left with background-color set"
+        },
+	    {
+          "type": "Image",
+          "url": "https://adaptivecards.io/content/cats/1.png",
+          "id": "img2",
+          "size": "Large",
+          "style": "person",
+          "horizontalAlignment": "Left",
+          "backgroundColor": "#FF0000FF"
+        },
+	    {
+          "type": "TextBlock",
+          "text": "height,width and background-color are set"
+        },
+	    {
+          "type": "Image",
+          "url": "https://adaptivecards.io/content/cats/1.png",
+          "id": "img3",
+	      "backgroundColor": "#FF0000FF",
+          "height": "200px",
+	      "width": "300px"
+        },
+	    {
+          "type": "TextBlock",
+          "text": "height and background-color set"
+        },
+	    {
+          "type": "Image",
+          "url": "https://adaptivecards.io/content/cats/1.png",
+          "id": "img4",
+	      "backgroundColor": "#FF0000FF",
+	      "height": "80px"
+       }
+      ]
+    })";
 }

@@ -13,7 +13,7 @@ Item {
     width: listView.width
 
     GridLayout{
-        id: mainLayout        
+        id: mainLayout
 
         readonly property int margins: 0
         width: parent.width
