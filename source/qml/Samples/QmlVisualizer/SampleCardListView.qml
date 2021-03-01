@@ -17,6 +17,8 @@ Frame{
         radius: 8
     }
 
+    property string defaultCard: ""
+
     signal listItemClicked(var index, var cardJson);
     signal reloadCard(var card)
 
@@ -45,6 +47,11 @@ Frame{
                         reloadCard(_aModel.generateQml(model.CardJson))
                     }
                 }
+            }
+            Component.onCompleted: {
+                if(index === 0)
+                    defaultCard = model.CardJson
+                    listItemClicked(index, defaultCard)
             }
         }
     }
