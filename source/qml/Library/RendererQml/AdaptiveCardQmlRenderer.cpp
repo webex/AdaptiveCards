@@ -1012,7 +1012,7 @@ namespace RendererQml
 
 		uiColumnLayout->Property("anchors.fill", "parent");
 
-		uiContainer->Property("implicitHeight", "(minHeight > clayout_"+ id +".implicitHeight)? minHeight : clayout_"+ id +".implicitHeight");
+		uiContainer->Property("implicitHeight", "(minHeight > clayout_" + id + ".implicitHeight) ? minHeight : clayout_" + id + ".implicitHeight");
 
 		uiContainer->Property("padding", "0");
 		uiColumnLayout->Property("spacing", std::to_string(spacing));
@@ -1278,4 +1278,3 @@ namespace RendererQml
 	}
 }
 	
-
