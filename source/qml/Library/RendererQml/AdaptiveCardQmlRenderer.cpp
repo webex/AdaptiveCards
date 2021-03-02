@@ -1119,7 +1119,6 @@ namespace RendererQml
 		ListViewTag->Property("anchors.top", "parent.top");
 		ListViewTag->Property("flickableDirection", "Flickable.VerticalFlick");
 		ListViewTag->Property("boundsBehavior", "Flickable.StopAtBounds");
-		ListViewTag->Property("model", "24");
 		ListViewTag->Property("clip", "true");
 
 
@@ -1146,11 +1145,11 @@ namespace RendererQml
 
 		std::map<std::string, std::map<std::string, std::string>>::iterator outer_iterator;
 		std::map<std::string, std::string>::iterator inner_iterator;
-		std::shared_ptr<QmlTag> propertyTag;
-
-
+		
 		for (outer_iterator = properties.begin(); outer_iterator != properties.end(); outer_iterator++)
 		{
+			std::shared_ptr<QmlTag> propertyTag;
+
 			if (outer_iterator->first.compare("ListView") == 0)
 			{
 				propertyTag = ListViewTag;
