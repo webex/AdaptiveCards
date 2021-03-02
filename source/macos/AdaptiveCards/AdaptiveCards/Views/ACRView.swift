@@ -34,13 +34,21 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     }
     
     func addSeperator(thickness: NSNumber, color: String) {
-        let seperator = NSBox()
-        seperator.boxType = .custom
-        seperator.heightAnchor.constraint(equalToConstant: CGFloat(truncating: thickness)).isActive = true
-        seperator.borderColor = ColorUtils.color(from: color) ?? .black
+        let seperatorView = NSBox()
+        seperatorView.boxType = .custom
+        seperatorView.heightAnchor.constraint(equalToConstant: CGFloat(truncating: thickness)).isActive = true
+        seperatorView.borderColor = ColorUtils.color(from: color) ?? .black
 //        seperator.fillColor = ColorUtils.color(from: color) ?? .black
-        stackView.spacing = 3
-        stackView.addArrangedSubview(seperator)
+        stackView.addArrangedSubview(seperatorView)
+        stackView.setCustomSpacing(3, after: seperatorView)
+    }
+    
+    func addSpacing(spacing: CGFloat) {
+        let spacingView = NSBox()
+        spacingView.boxType = .custom
+        spacingView.heightAnchor.constraint(equalToConstant: spacing).isActive = true
+        spacingView.borderColor = .clear
+        stackView.addArrangedSubview(spacingView)
     }
     
     private lazy var stackView: NSStackView = {
@@ -48,7 +56,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.orientation = .vertical
         view.alignment = .leading
-        view.spacing = 8 // TODO: Must be set by hostconfig
+        view.spacing = 0 // TODO: Must be set by hostconfig
         return view
     }()
     

@@ -30,10 +30,7 @@ class AdaptiveCardRenderer {
                 continue
             }
             
-            var isFirstElement: Bool = false
-            if index == 0 {
-                isFirstElement = true
-            }
+            let isFirstElement = index == 0
             
             let renderer = RendererManager.shared.renderer(for: element.getType())
             let view = renderer.render(element: element, with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [])
