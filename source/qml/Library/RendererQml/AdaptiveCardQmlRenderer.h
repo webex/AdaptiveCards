@@ -80,5 +80,7 @@ namespace RendererQml
 		//static std::shared_ptr<QmlTag> GetRadioButton(std::shared_ptr<QmlTag> uiRadioButton, CustomRadioButtonParams& params);
 		static std::string GenerateButtonId(enum CheckBoxType ButtonType, int ButtonNumber);
 		static std::string GetModel(std::vector<Checkbox>& Choices);
+		static std::shared_ptr<QmlTag> ListViewTagforTimeInput(std::string& parent_id, std::string& id, std::map < std::string, std::map<std::string, std::string>>& properties);
+
     };
 }
