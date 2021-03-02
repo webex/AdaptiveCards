@@ -993,7 +993,7 @@ namespace RendererQml
 				image->SetImageSize(image->GetImageSize());
 			}
 
-			uiFlow->AddChild(ImageRender(image, context));
+			uiFlow->AddChild(context->Render(image));
 		}
 
 		return uiFlow;
