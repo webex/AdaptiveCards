@@ -22,7 +22,9 @@ namespace Samples
         {
           "type": "TextBlock",
           "text": "It doesn't wrap by default",
-          "weight": "bolder"
+          "weight": "bolder",
+		  "spacing":"large",
+		  "seperator":true
         },
         {
           "type": "TextBlock",

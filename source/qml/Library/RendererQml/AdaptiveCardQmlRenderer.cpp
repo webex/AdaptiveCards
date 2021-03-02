@@ -54,6 +54,7 @@ namespace RendererQml
 
                 if (uiElement != nullptr)
                 {
+					AdaptiveCardQmlRenderer::AddSeparator(bodyLayout, cardElement, context);
                     //TODO: Add separator
                     //TODO: Add collection element
                     bodyLayout->AddChild(uiElement);
@@ -61,6 +62,25 @@ namespace RendererQml
             }
         }
     }
+
+	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		if (!adaptiveElement->GetSeparator() && adaptiveElement->GetSpacing() == AdaptiveCards::Spacing::None)
+		{
+			return;
+		}
+
+		int spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), adaptiveElement->GetSpacing());
+
+		if (adaptiveElement->GetSeparator() && adaptiveElement->GetIsVisible())
+		{
+			auto uiSep = std::make_shared<QmlTag>("Rectangle");
+			uiSep->Property("width", "parent.width");
+			uiSep->Property("height", std::to_string(spacing) );
+			uiContainer->AddChild(uiSep);
+
+		}
+	}
 
     void AdaptiveCardQmlRenderer::SetObjectTypes()
     {
