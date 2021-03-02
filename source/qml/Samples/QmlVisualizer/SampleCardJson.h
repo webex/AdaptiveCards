@@ -672,10 +672,10 @@ namespace Samples
     })";
 
 	const std::string card_Container = R"({
-  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-  "type": "AdaptiveCard",
-  "version": "1.0",
-  "body": [
+	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+	"type": "AdaptiveCard",
+	"version": "1.0",
+	"body": [
     {
       "type": "Container",
       "items": [
@@ -685,12 +685,12 @@ namespace Samples
         },
         {
           "type": "Image",
-	  "id": "image1",
+	      "id": "image1",
           "url": "https://adaptivecards.io/content/cats/1.png"
         }
       ]
     },
-{
+	{
       "type": "Container",
       "style": "accent",
       "items": [
@@ -707,7 +707,7 @@ namespace Samples
         {
           "type": "Container",
           "style": "default",
-	  "bleed": true,
+	      "bleed": true,
           "items": [
             {
               "type": "TextBlock",
@@ -728,7 +728,7 @@ namespace Samples
         {
           "type": "Container",
           "style": "warning",
-	  "bleed": true,
+	      "bleed": true,
           "items": [
             {
               "type": "TextBlock",
@@ -749,7 +749,7 @@ namespace Samples
         {
           "type": "Container",
           "style": "accent",
-	  "bleed": true,
+		  "bleed": true,
           "items": [
             {
               "type": "TextBlock",
@@ -759,7 +759,7 @@ namespace Samples
         }
       ]
     },
-{
+	{
       "type": "TextBlock",
       "text": "I'm a regular TextBlock..."
     },
@@ -774,7 +774,6 @@ namespace Samples
         },
         {
           "type": "Container",
-          "height": "stretch",
           "style": "accent",
           "verticalContentAlignment": "center",
           "items": [
@@ -797,17 +796,16 @@ namespace Samples
       ]
     },
 	{
-				"type": "Container",
-				"minHeight": "150px",
-				"backgroundImage": "C:/Users/ggovardh/Desktop/Cont1/3.jpg",
-				"items": [
-					{
-						"type": "TextBlock",
-						"text": "What a beautiful background"
-					}
-				]
-			}
+	  "type": "Container",
+	  "minHeight": "150px",
+	  "backgroundImage": "https://adaptivecards.io/content/AlkiBeach.jpg",
+	  "items": [
+		{
+		  "type": "TextBlock",
+		  "text": "What a beautiful background"
+		}
+		]
+	  }
 	  ]
-	}
-	)";
+	})";
 }

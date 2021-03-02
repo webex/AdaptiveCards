@@ -3,6 +3,8 @@
 
 namespace RendererQml
 {
+	int AdaptiveCardQmlRenderer::containerCounter = 0;
+
 	AdaptiveCardQmlRenderer::AdaptiveCardQmlRenderer()
 		: AdaptiveCardQmlRenderer(std::make_shared<AdaptiveCards::HostConfig>())
 	{
@@ -978,10 +980,7 @@ namespace RendererQml
 		if (container->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Top) {
 			uiColumn->Property("Layout.alignment", "Qt.AlignTop");
 		}
-		else if (container->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Center) {
-			uiColumn->Property("Layout.alignment", "Qt.AlignVCenter");
-		}
-		else {
+		else if (container->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Bottom) {
 			uiColumn->Property("Layout.alignment", "Qt.AlignBottom");
 		}
 
@@ -990,9 +989,15 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::ContainerRender(std::shared_ptr<AdaptiveCards::Container> container, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		const auto margin = std::to_string(context->GetConfig()->GetSpacing().paddingSpacing);
+		const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
 		const auto spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), container->GetSpacing());
-		const auto id = (!container->GetId().empty() ? container->GetId() : "container_"+std::to_string(rand()));
+
+		if (container->GetId().empty())
+		{
+			container->SetId(Formatter() << "container_auto_" << ++containerCounter);
+		}
+
+		const auto id = container->GetId();
 
 		std::shared_ptr<QmlTag> uiContainer;
 		std::shared_ptr<QmlTag> uiColumnLayout;
@@ -1002,7 +1007,6 @@ namespace RendererQml
 		uiColumnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		uiContainer->AddChild(uiColumnLayout);
 
-		uiContainer->Property("readonly property int bleedmargin", margin);
 		uiContainer->Property("readonly property int minHeight", std::to_string(container->GetMinHeight()));
 
 		uiContainer->Property("id", id);
@@ -1015,50 +1019,35 @@ namespace RendererQml
 		uiContainer->Property("padding", "0");
 		uiColumnLayout->Property("spacing", std::to_string(spacing));
 
-
+		//TODO : Stretch property.
 		for (const auto& containerElement : container->GetItems())
 		{
 			auto uiContainerElement = context->Render(containerElement);
 			if (uiContainerElement != nullptr)
 			{
-				if (containerElement->GetElementTypeString() == "Container" && containerElement->GetHeight() == AdaptiveCards::HeightType::Stretch)
-				{
-					uiColumnLayout->AddChild(uiColumn);
-					uiColumn = NULL;
-					uiColumn = GetNewColumn(container,context);
-					uiContainerElement->Property("Layout.fillHeight", "true");
-					uiContainerElement->Property("Layout.fillWidth", "true");
-					uiColumnLayout->AddChild(uiContainerElement);
-				}
-				else
-				{
-					uiColumn->AddChild(uiContainerElement);
-				}
+				uiColumn->AddChild(uiContainerElement);
 			}
 		}
 
 		uiColumnLayout->AddChild(uiColumn);
 
 		if (container->GetBleed() && container->GetCanBleed()) {
-			uiContainer->Property("x", "-bleedmargin");
-			uiContainer->Property("width", "parent.width + 2*bleedmargin");
+			uiContainer->Property("x", Formatter() << "-" << std::to_string(margin));
+			uiContainer->Property("width", "parent.width + " + std::to_string(2*margin));
 		}
 		else {
 			uiContainer->Property("width", "parent.width");
 		}
 
-		if (container->GetHeight() == AdaptiveCards::HeightType::Stretch) {
-			uiContainer->Property("Layout.fillHeight", "true");
-		}
-
 		if (container->GetBackgroundImage()) {
 			auto url = container->GetBackgroundImage()->GetUrl();
-			if (url.substr(0, 4) != "http")
-			{
-				url = "file:/" + url;
-			}
 
-			uiContainer->Property("background", "Image{source:\""+url+"\"}");
+			std::string file_path = __FILE__;
+			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+			dir_path.append("\\Images\\Cat.png");
+			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+
+			uiContainer->Property("background", "Image { source: \"" + std::string("file:/") + dir_path + "\"}");
 		}
 		else {
 			if (container->GetStyle() != AdaptiveCards::ContainerStyle::None) {
@@ -1066,7 +1055,7 @@ namespace RendererQml
 				uiContainer->Property("background", "Rectangle{anchors.fill:parent;border.width:0;color:\"" + color + "\";}");
 			}
 			else {
-				uiContainer->Property("background", "Rectangle{border.width : 0;opacity: 0;}");
+				uiContainer->Property("background", "Rectangle{border.width : 0;}");
 			}
 		}
 

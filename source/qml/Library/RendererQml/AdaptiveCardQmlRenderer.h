@@ -80,5 +80,6 @@ namespace RendererQml
 		static std::string GenerateButtonId(enum CheckBoxType ButtonType, int ButtonNumber);
 		static std::string GetModel(std::vector<Checkbox>& Choices);
 		static std::shared_ptr<QmlTag> GetNewColumn(std::shared_ptr<AdaptiveCards::Container> container, std::shared_ptr<AdaptiveRenderContext> context);
+		static int containerCounter;
     };
 }
