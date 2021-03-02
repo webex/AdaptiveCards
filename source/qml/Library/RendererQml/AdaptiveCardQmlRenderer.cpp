@@ -66,13 +66,13 @@ namespace RendererQml
     {
         (*GetElementRenderers()).Set<AdaptiveCards::TextBlock>(AdaptiveCardQmlRenderer::TextBlockRender);
         (*GetElementRenderers()).Set<AdaptiveCards::RichTextBlock>(AdaptiveCardQmlRenderer::RichTextBlockRender);
-        /*(*GetElementRenderers()).Set<AdaptiveCards::Image>(AdaptiveCardQmlRenderer::ImageRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::Image>(AdaptiveCardQmlRenderer::ImageRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Container>(AdaptiveCardQmlRenderer::ContainerRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Column>(AdaptiveCardQmlRenderer::ColumnRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::ColumnSet>(AdaptiveCardQmlRenderer::ColumnSetRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::ColumnSet>(AdaptiveCardQmlRenderer::ColumnSetRender);*/
         (*GetElementRenderers()).Set<AdaptiveCards::FactSet>(AdaptiveCardQmlRenderer::FactSetRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::ImageSet>(AdaptiveCardQmlRenderer::ImageSetRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::ImageSet>(AdaptiveCardQmlRenderer::ImageSetRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ActionSet>(AdaptiveCardQmlRenderer::ActionSetRender);*/
         (*GetElementRenderers()).Set<AdaptiveCards::ChoiceSetInput>(AdaptiveCardQmlRenderer::ChoiceSetRender);
         (*GetElementRenderers()).Set<AdaptiveCards::TextInput>(AdaptiveCardQmlRenderer::TextInputRender);
@@ -803,6 +803,165 @@ namespace RendererQml
         return uiDateInput;
     }
 
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::FactSetRender(std::shared_ptr<AdaptiveCards::FactSet> factSet, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		auto uiFactSet = std::make_shared<QmlTag>("Column");
+
+		if (!factSet->GetIsVisible())
+		{
+			uiFactSet->Property("visible", "false");
+		}
+
+		for (const auto fact : factSet->GetFacts())
+		{
+			auto uiRow = std::make_shared<QmlTag>("RowLayout");
+
+			auto factTitle = std::make_shared<AdaptiveCards::TextBlock>();
+
+			factTitle->SetText(fact->GetTitle());
+			factTitle->SetTextSize(context->GetConfig()->GetFactSet().title.size);
+			factTitle->SetTextColor(context->GetConfig()->GetFactSet().title.color);
+			factTitle->SetTextWeight(context->GetConfig()->GetFactSet().title.weight);
+			factTitle->SetIsSubtle(context->GetConfig()->GetFactSet().title.isSubtle);
+			factTitle->SetWrap(context->GetConfig()->GetFactSet().title.wrap);
+
+			//TODO: cpp Object Model does not support max width.
+			//factTitle->SetMaxWidth(context->GetConfig()->GetFactSet().title.maxWidth);
+
+			auto uiTitle = context->Render(factTitle);
+
+			//uiTitle->Property("spacing", std::to_string(context->GetConfig()->GetFactSet().spacing));
+			
+			auto factValue = std::make_shared<AdaptiveCards::TextBlock>();
+
+			factValue->SetText(fact->GetValue());
+			factValue->SetTextSize(context->GetConfig()->GetFactSet().value.size);
+			factValue->SetTextColor(context->GetConfig()->GetFactSet().value.color);
+			factValue->SetTextWeight(context->GetConfig()->GetFactSet().value.weight);
+			factValue->SetIsSubtle(context->GetConfig()->GetFactSet().value.isSubtle);
+			factValue->SetWrap(context->GetConfig()->GetFactSet().value.wrap);
+			// MaxWidth is not supported on the Value of FactSet. Do not set it.
+
+			auto uiValue = context->Render(factValue);
+
+			uiRow->AddChild(uiTitle);
+			uiRow->AddChild(uiValue);
+			uiFactSet->AddChild(uiRow);
+		}
+
+		return uiFactSet;
+	}
+  
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ImageRender(std::shared_ptr<AdaptiveCards::Image> image, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		//TODO: Height(Stretch/Automatic)
+
+		std::shared_ptr<QmlTag> maskTag;
+		auto uiRectangle = std::make_shared<QmlTag>("Rectangle");
+		auto uiImage = std::make_shared<QmlTag>("Image");
+
+		std::string file_path = __FILE__;
+		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+		dir_path.append("\\Images\\Cat.png");
+		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+
+		uiImage->Property("id", image->GetId());
+		uiImage->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+		uiImage->Property("width", "parent.width");
+		uiImage->Property("fillMode", "Image.PreserveAspectFit");
+		
+		uiRectangle->Property("height", Formatter() << image->GetId() << ".implicitHeight");
+		
+		if (!image->GetIsVisible())
+		{
+			uiRectangle->Property("visible", "false");
+		}
+
+		if (image->GetPixelWidth() != 0 || image->GetPixelHeight() != 0)
+		{
+			if (image->GetPixelWidth() != 0)
+			{
+				uiRectangle->Property("width",  Formatter() << "Math.min(" << image->GetPixelWidth() << ", parent.width)");
+			}
+			if (image->GetPixelHeight() != 0)
+			{
+				uiRectangle->Property("height", Formatter() << image->GetPixelHeight());
+				uiImage->Property("height", "parent.height");
+
+				if (image->GetPixelWidth() == 0)
+				{
+					uiImage->RemoveProperty("width");
+					uiImage->Property("fillMode", "height < implicitHeight ? Image.PreserveAspectFit : Image.NoOption");
+					uiRectangle->Property("width", Formatter() << image->GetId() << ".width");
+				}
+				else
+				{
+					uiImage->RemoveProperty("fillMode");
+				}
+			}
+		}
+		else
+		{
+			switch (image->GetImageSize())
+			{
+			case AdaptiveCards::ImageSize::None:
+			case AdaptiveCards::ImageSize::Auto:
+				uiRectangle->Property("width", "parent.width");
+				uiImage->RemoveProperty("fillMode");
+				break;
+			case AdaptiveCards::ImageSize::Small:
+				uiRectangle->Property("width", Formatter() << context->GetConfig()->GetImageSizes().smallSize);
+				break;
+			case AdaptiveCards::ImageSize::Medium:
+				uiRectangle->Property("width", Formatter() << context->GetConfig()->GetImageSizes().mediumSize);
+				break;
+			case AdaptiveCards::ImageSize::Large:
+				uiRectangle->Property("width", Formatter() << context->GetConfig()->GetImageSizes().largeSize);
+				break;
+			case AdaptiveCards::ImageSize::Stretch:
+				uiRectangle->Property("width", "parent.width");
+				uiImage->RemoveProperty("fillMode");
+				break;
+			}
+		}
+
+		if (!image->GetBackgroundColor().empty())
+		{
+			uiRectangle->Property("color", context->GetRGBColor(image->GetBackgroundColor()));
+		}
+
+		switch (image->GetHorizontalAlignment())
+		{
+		case AdaptiveCards::HorizontalAlignment::Left:
+			uiRectangle->Property("anchors.left", "parent.left");
+			break;
+		case AdaptiveCards::HorizontalAlignment::Center:
+			uiRectangle->Property("anchors.horizontalCenter", "parent.horizontalCenter");
+			break;
+		case AdaptiveCards::HorizontalAlignment::Right:
+			uiRectangle->Property("anchors.right", "parent.right");
+			break;
+		}
+
+		//TODO:calculation to get oval object
+		switch (image->GetImageStyle())
+		{
+		case AdaptiveCards::ImageStyle::Default:
+			break;
+		case AdaptiveCards::ImageStyle::Person:
+			maskTag = std::make_shared<QmlTag>("OpacityMask");
+			maskTag->Property("maskSource", "parent");
+			uiImage->Property("layer.enabled", "true");
+			uiImage->Property("layer.effect", maskTag->ToString());
+			uiRectangle->Property("radius", "width/2");
+			break;
+		}
+
+		uiRectangle->AddChild(uiImage);
+
+		return uiRectangle;
+	}
+
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TimeInputRender(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		bool is12hour = true;
@@ -812,7 +971,7 @@ namespace RendererQml
 		uiTimeInput->Property("id", id);
 		uiTimeInput->Property("width", "parent.width");
 		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "\"Select time\"");
-		
+
 		uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
 
 		std::string value = input->GetValue();
@@ -823,9 +982,9 @@ namespace RendererQml
 			{
 				defaultTime = Utils::defaultTimeto12hour(defaultTime);
 			}
-			uiTimeInput->Property("text", Formatter() << "\"" << defaultTime << "\"" );
+			uiTimeInput->Property("text", Formatter() << "\"" << defaultTime << "\"");
 		}
-		
+
 		if (!input->GetIsVisible())
 		{
 			uiTimeInput->Property("visibile", "false");
@@ -838,10 +997,10 @@ namespace RendererQml
 		std::string listViewtt_id = id + "_tt";
 		std::string timeBox_id = id + "_timeBox";
 
-		uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus==true) inputMask=\"xx:xx;-\";" << " if(activeFocus==false){ z=0;" << "if("<<timeBox_id << ".visible==true)" << timeBox_id << ".visible=false ;" << "}}");
+		uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus==true) inputMask=\"xx:xx;-\";" << " if(activeFocus==false){ z=0;" << "if(" << timeBox_id << ".visible==true)" << timeBox_id << ".visible=false ;" << "}}");
 
-		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << "}" );
-		
+		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << "}");
+
 		auto glowTag = std::make_shared<QmlTag>("Glow");
 		glowTag->Property("samples", "25");
 		glowTag->Property("color", "'skyblue'");
@@ -879,7 +1038,7 @@ namespace RendererQml
 		mouseAreaTag->Property("enabled", "true");
 
 		mouseAreaTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n" << "}");
-		
+
 		uiTimeInput->AddChild(mouseAreaTag);
 
 		//Rectangle that contains the hours and min ListViews 
@@ -908,7 +1067,7 @@ namespace RendererQml
 			uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2))-1;" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));"
 				<< "var tt_index=3;" << "switch(getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}" << listViewtt_id << ".currentIndex=tt_index;" << "}");
 			mouseAreaTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2))-1;\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n"
-				<< "var tt_index=3;" << "switch(parent.getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}"<< listViewtt_id << ".currentIndex=tt_index;" << "}");
+				<< "var tt_index=3;" << "switch(parent.getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}" << listViewtt_id << ".currentIndex=tt_index;" << "}");
 
 
 			ListViewHoursProperties["Text"].insert(std::pair<std::string, std::string>("text", "String(index+1).padStart(2, '0')"));
@@ -931,7 +1090,7 @@ namespace RendererQml
 		ListViewHoursProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{" << listViewHours_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0') ;" << id << ".insert(0,x);" << "}"));
 
 		auto ListViewHoursTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewHours_id, ListViewHoursProperties);
-		
+
 		ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("anchors.left", listViewHours_id + ".right"));
 		ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("model", "60"));
 		ListViewMinProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{" << listViewMin_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0') ;" << id << ".insert(2,x);" << "}"));
@@ -1020,3 +1179,4 @@ namespace RendererQml
 	}
 }
 	
+
