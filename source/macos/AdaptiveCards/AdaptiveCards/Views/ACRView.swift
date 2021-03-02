@@ -38,7 +38,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         seperatorView.boxType = .custom
         seperatorView.heightAnchor.constraint(equalToConstant: CGFloat(truncating: thickness)).isActive = true
         seperatorView.borderColor = ColorUtils.color(from: color) ?? .black
-//        seperator.fillColor = ColorUtils.color(from: color) ?? .black
         stackView.addArrangedSubview(seperatorView)
         stackView.setCustomSpacing(3, after: seperatorView)
     }
@@ -74,9 +73,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
     }
     
+    // TODO: Figure out a way to set constraints without this method to avoid conflicts
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
-        // Should look for better solution
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
     }

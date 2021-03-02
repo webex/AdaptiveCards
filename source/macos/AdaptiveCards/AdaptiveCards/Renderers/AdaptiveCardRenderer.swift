@@ -36,7 +36,6 @@ class AdaptiveCardRenderer {
             let view = renderer.render(element: element, with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [])
             let viewWithInheritedProperties = BaseCardElementRenderer().updateView(view: view, element: element, style: style, hostConfig: hostConfig, isfirstElement: isFirstElement)
             rootView.addArrangedSubview(viewWithInheritedProperties)
-//            rootView.addArrangedSubview(view)
         }
         
         rootView.appearance = NSAppearance(named: .aqua)
