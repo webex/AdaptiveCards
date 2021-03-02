@@ -33,6 +33,16 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         stackViewBottomConstraint?.constant = -padding
     }
     
+    func addSeperator(thickness: NSNumber, color: String) {
+        let seperator = NSBox()
+        seperator.boxType = .custom
+        seperator.heightAnchor.constraint(equalToConstant: CGFloat(truncating: thickness)).isActive = true
+        seperator.borderColor = ColorUtils.color(from: color) ?? .black
+//        seperator.fillColor = ColorUtils.color(from: color) ?? .black
+        stackView.spacing = 3
+        stackView.addArrangedSubview(seperator)
+    }
+    
     private lazy var stackView: NSStackView = {
         let view = NSStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -54,6 +64,13 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         
         guard let leading = stackViewLeadingConstraint, let trailing = stackViewTrailingConstraint, let top = stackViewTopConstraint, let bottom = stackViewBottomConstraint else { return }
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
+    }
+    
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        // Should look for better solution
+        guard let superview = superview else { return }
+        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
     }
 }
 
