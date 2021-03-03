@@ -15,7 +15,7 @@ namespace RendererQml
         return *this;
     }
 
-    QmlTag& QmlTag::SetProperty(const std::string& name, const std::string& value)
+    QmlTag& QmlTag::Property(const std::string& name, const std::string& value)
     {
         auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [name](const auto property) {
             return property.first == name;
