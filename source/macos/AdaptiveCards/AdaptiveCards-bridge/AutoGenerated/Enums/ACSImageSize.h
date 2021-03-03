@@ -13,7 +13,8 @@ typedef NS_ENUM(NSUInteger, ACSImageSize) {
     ACSImageSizeStretch,
     ACSImageSizeSmall,
     ACSImageSizeMedium,
-    ACSImageSizeLarge
+    ACSImageSizeLarge,
+    ACSImageSizeExplicit
 };
 
 #endif
