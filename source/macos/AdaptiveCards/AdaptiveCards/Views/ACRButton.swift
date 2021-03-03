@@ -36,7 +36,7 @@ class ACRButton: FlatButton {
         buttonColor = hoverBackgroundColor
         borderColor = hoverBackgroundColor
         if mouseDown {
-            setOn(state == .on ? false : true)
+            setOn(state != .on)
         }
     }
     
