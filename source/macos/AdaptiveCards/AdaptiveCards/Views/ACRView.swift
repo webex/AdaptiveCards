@@ -88,18 +88,14 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
 class ACRColumnView: ACRContentStackView { }
 
 class ACRView: ACRColumnView {
-    init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
-        super.init(frame: .zero)
-        wantsLayer = true
-        if let bgColor = hostConfig.getBackgroundColor(for: style) {
-            layer?.backgroundColor = bgColor.cgColor
-        }
+    override init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
+        super.init(style: style, hostConfig: hostConfig)
         if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing, let padding = CGFloat(exactly: paddingSpace) {
             applyPadding(padding)
         }
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
     }
 }
