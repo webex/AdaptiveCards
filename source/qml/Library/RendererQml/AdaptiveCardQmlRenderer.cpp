@@ -205,9 +205,7 @@ namespace RendererQml
 			scrollViewTag->Property("ScrollBar.vertical.interactive", "true");
 
 			uiTextInput = std::make_shared<QmlTag>("TextArea");
-            
 			uiTextInput->Property("id", input->GetId());
-
 			uiTextInput->Property("wrapMode", "Text.Wrap");
 			uiTextInput->Property("padding", "10");
 
