@@ -44,7 +44,7 @@ class ACRButton: FlatButton {
         buttonColor = NSColor.systemTeal
         borderColor = NSColor.systemTeal
         if mouseDown {
-            setOn(state == .on ? false : true)
+            setOn(state != .on)
             mouseDown = false
         }
     }
