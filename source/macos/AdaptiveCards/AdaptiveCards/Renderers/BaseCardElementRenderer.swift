@@ -3,6 +3,11 @@ import AppKit
 
 class BaseCardElementRenderer {
     func updateView(view: NSView, element: ACSBaseCardElement, style: ACSContainerStyle, hostConfig: ACSHostConfig, isfirstElement: Bool) -> NSView {
+        // Can't do this as updatedView needed for spacing when no property set
+//        if isfirstElement || !element.getSeparator() {
+//            return view
+//        }
+        
         let updatedView = ACRContentStackView()
         
         // For Spacing
