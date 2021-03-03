@@ -160,6 +160,7 @@ namespace RendererQml
 
 		if (!textBlock->GetId().empty())
 		{
+            textBlock->SetId(Utils::ConvertToLowerIdValue(textBlock->GetId()));
 			uiTextBlock->SetProperty("id", textBlock->GetId());
 		}
 
@@ -194,6 +195,8 @@ namespace RendererQml
 		std::shared_ptr<QmlTag> uiTextInput;
 		std::shared_ptr<QmlTag> scrollViewTag;
 
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+
 		if (input->GetIsMultiline())
 		{
 			scrollViewTag = std::make_shared<QmlTag>("ScrollView");
@@ -202,7 +205,9 @@ namespace RendererQml
 			scrollViewTag->SetProperty("ScrollBar.vertical.interactive", "true");
 
 			uiTextInput = std::make_shared<QmlTag>("TextArea");
+            
 			uiTextInput->SetProperty("id", input->GetId());
+
 			uiTextInput->SetProperty("wrapMode", "Text.Wrap");
 			uiTextInput->SetProperty("padding", "10");
 
@@ -268,6 +273,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::NumberInputRender(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 		const auto inputId = input->GetId();
 
 		auto glowTag = std::make_shared<QmlTag>("Glow");
@@ -418,6 +424,8 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ToggleInputRender(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+
 		const auto valueOn = !input->GetValueOn().empty() ? input->GetValueOn() : "true";
 		const auto valueOff = !input->GetValueOff().empty() ? input->GetValueOff() : "false";
 		const bool isChecked = input->GetValue().compare(valueOn) == 0 ? true : false;
@@ -438,6 +446,8 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ChoiceSetRender(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+
 		int ButtonNumber = 0;
 		RendererQml::Checkboxes choices;
 		const std::string id = input->GetId();
@@ -712,8 +722,9 @@ namespace RendererQml
     
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
-        auto uiDateInput = std::make_shared<QmlTag>("TextField");
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
+        auto uiDateInput = std::make_shared<QmlTag>("TextField");
         uiDateInput->SetProperty("id", input->GetId());
         uiDateInput->SetProperty("width", "parent.width");
         const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
@@ -870,6 +881,10 @@ namespace RendererQml
 		{
 			image->SetId(Formatter() << "image_auto_" << ++imageCounter);
 		}
+        else
+        {
+            image->SetId(Utils::ConvertToLowerIdValue(image->GetId()));
+        }
 
 		uiImage->SetProperty("id", image->GetId());
 		uiImage->SetProperty("source", "\"" + std::string("file:/") + dir_path + "\"");
@@ -1003,6 +1018,10 @@ namespace RendererQml
 		{
 			container->SetId(Formatter() << "container_auto_" << ++containerCounter);
 		}
+        else
+        {
+            container->SetId(Utils::ConvertToLowerIdValue(container->GetId()));
+        }
 
 		const auto id = container->GetId();
 
@@ -1076,6 +1095,8 @@ namespace RendererQml
 	{
 		//TODO: Fetch System Time Format 
 		bool is12hour = true;
+
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
 		std::string id = input->GetId();

@@ -98,7 +98,7 @@ namespace RendererQml
         }
 
         return qmlString.str();
-    }    
+    }
 
     std::string QmlUtils::Join(const std::vector<std::pair<std::string, std::string>>& vectorPairs, const std::string& kvSeparator, const std::string& itemSeparator)
     {
