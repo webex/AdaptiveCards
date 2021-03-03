@@ -44,6 +44,12 @@ namespace RendererQml
 		return *this;
 	}
 
+	QmlTag& QmlTag::AddFunctions(const std::string& function)
+	{
+		m_functions.emplace_back(function);
+		return *this;
+	}
+
     void QmlTag::AddChild(const std::shared_ptr<QmlTag>& child)
     {
         m_children.emplace_back(child);
@@ -67,6 +73,11 @@ namespace RendererQml
         {
             qmlString << QmlUtils::Join(m_properties, ":", "\n");
         }
+
+		for (const auto function : m_functions)
+		{
+			qmlString << function << "\n";
+		}
 
         if (!m_children.empty())
         {
