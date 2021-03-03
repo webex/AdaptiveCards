@@ -15,7 +15,7 @@ namespace RendererQml
         return *this;
     }
 
-    QmlTag& QmlTag::Property(const std::string& name, const std::string& value)
+    QmlTag& QmlTag::SetProperty(const std::string& name, const std::string& value)
     {
         auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [name](const auto property) {
             return property.first == name;
@@ -43,6 +43,20 @@ namespace RendererQml
 		}
 		return *this;
 	}
+
+    const std::string QmlTag::GetId() const
+    {
+        auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [](const auto property) {
+            return property.first == "id";
+        });
+
+        if (iterator != m_properties.end())
+        {
+            return iterator->second;
+        }
+
+        return std::string();
+    }
 
     void QmlTag::AddChild(const std::shared_ptr<QmlTag>& child)
     {
@@ -84,7 +98,7 @@ namespace RendererQml
         }
 
         return qmlString.str();
-    }
+    }    
 
     std::string QmlUtils::Join(const std::vector<std::pair<std::string, std::string>>& vectorPairs, const std::string& kvSeparator, const std::string& itemSeparator)
     {
