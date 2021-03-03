@@ -2,10 +2,10 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRContentHoldingView: NSView {
-    private weak var _imageView: NSImageView?
     private weak var _viewgroup: ACRContentStackView?
     private weak var _imageViewHeightConstraint: NSLayoutConstraint?
     private weak var _heightConstraint: NSLayoutConstraint?
+    weak var imageView: NSImageView?
     var imageProperties: ACRImageProperties?
     
     var isImageSet: Bool = true
@@ -26,7 +26,7 @@ class ACRContentHoldingView: NSView {
         super.init(frame: frame)
         needsLayout = true
         self.imageProperties = imageProperties
-        _imageView = imageView
+        self.imageView = imageView
         _viewgroup = viewgroup
         addSubview(imageView)
     }
