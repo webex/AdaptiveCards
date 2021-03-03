@@ -3,9 +3,6 @@
 #include "samplecardlist.h"
 #include "SampleCardJson.h"
 
-#include "HostConfig.h"
-#include "QmlTag.h"
-
 #include <QGuiApplication>
 #include <QQuickView>
 #include <QQmlContext>
@@ -27,7 +24,7 @@ int main(int argc, char* argv[])
     SampleCardModel model;
     model.setList(&cardList);
 
-    const QString qmlString = model.generateQml(QString::fromStdString(Samples::card_TextBlock));
+    const QString qmlString = model.generateQml(QString::fromStdString(Samples::card_Empty));
 
 	context->setContextProperty("_aQmlCard", qmlString);
     context->setContextProperty("_aModel", &model);

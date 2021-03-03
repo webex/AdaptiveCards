@@ -3,13 +3,13 @@
 
 namespace Samples
 {
-    const std::string card_Empty = R"({
+	const std::string card_Empty = R"({
     "type": "AdaptiveCard",
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "version": "1.3"
     })";
 
-    const std::string card_TextBlock = R"({
+	const std::string card_TextBlock = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -187,7 +187,7 @@ namespace Samples
     }
     )";
 
-    const std::string card_InputText = R"({
+	const std::string card_InputText = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -234,7 +234,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_InputNumber = R"({
+	const std::string card_InputNumber = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -281,7 +281,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_richText = R"({
+	const std::string card_richText = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -384,7 +384,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_CheckboxInput = R"({
+	const std::string card_CheckboxInput = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -432,7 +432,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_dateInput = R"({
+	const std::string card_dateInput = R"({
 	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 	"type": "AdaptiveCard",
 	"version": "1.0",
@@ -463,7 +463,7 @@ namespace Samples
 	]
     })";
 
-    const std::string card_ChoiceSetInput = R"({
+	const std::string card_ChoiceSetInput = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -577,7 +577,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_FactSet = R"({
+	const std::string card_FactSet = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -606,7 +606,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_Image = R"({
+	const std::string card_Image = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -670,6 +670,68 @@ namespace Samples
 	      "backgroundColor": "#FF0000FF",
 	      "height": "80px"
        }
+      ]
+    })";
+
+	const std::string card_sep = R"({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.0",
+      "body": [
+	    {
+          "type": "TextBlock",
+          "text": "Demo for Spacing and Separator",
+          "size": "Large"
+        },
+        {
+          "type": "TextBlock",
+          "text": "Spacing: None",
+          "wrap": true,
+          "separator": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "Spacing: small",
+          "wrap": true,
+          "separator": true,
+          "spacing": "small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "Spacing:default",
+          "wrap": true,
+          "separator": true,
+          "spacing": "default"
+        },
+        {
+          "type": "TextBlock",
+          "text": "Spacing: medium",
+          "wrap": true,
+          "separator": true,
+          "spacing": "medium"
+        },
+        {
+          "type": "TextBlock",
+          "text": "Spacing: large",
+          "wrap": true,
+          "separator": true,
+          "spacing": "large"
+        },
+        {
+          "type": "TextBlock",
+          "text": "Spacing: extraLarge",
+          "wrap": true,
+          "separator": true,
+          "spacing": "extraLarge"
+        },
+        {
+          "type": "TextBlock",
+          "text": "Spacing: padding",
+          "wrap": true,
+          "separator": true,
+          "spacing": "padding"
+        }
       ]
     })";
 }

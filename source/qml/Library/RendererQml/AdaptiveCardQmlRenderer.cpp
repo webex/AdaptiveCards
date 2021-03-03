@@ -43,8 +43,6 @@ namespace RendererQml
             auto bodyLayout = std::make_shared<QmlTag>("Column");
             bodyLayout->Property("id", "bodyLayout");
             bodyLayout->Property("width", "parent.width");
-            //TODO: Set spacing from host config
-            bodyLayout->Property("spacing", "8");
             uiContainer->Property("Layout.preferredHeight", "bodyLayout.height");
             uiContainer->AddChild(bodyLayout);
 
@@ -54,8 +52,11 @@ namespace RendererQml
 
                 if (uiElement != nullptr)
                 {
-					AdaptiveCardQmlRenderer::AddSeparator(bodyLayout, cardElement, context);
-                    //TODO: Add separator
+					if (!bodyLayout->GetChildren().empty())
+					{
+						AddSeparator(bodyLayout, cardElement, context);
+					}
+					
                     //TODO: Add collection element
                     bodyLayout->AddChild(uiElement);
                 }
@@ -72,14 +73,27 @@ namespace RendererQml
 
 		int spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), adaptiveElement->GetSpacing());
 
+		AdaptiveCards::SeparatorConfig sep = context->GetConfig()->GetSeparator();
+
+		auto uiSep = std::make_shared<QmlTag>("Rectangle");
+		uiSep->Property("width", "parent.width");
+		uiSep->Property("height", std::to_string(spacing == 0 ? sep.lineThickness : spacing));
+		//Hardcoded the base card id to get its color
+		uiSep->Property("color", "adaptiveCard.color");
+		uiSep->Property("visible", adaptiveElement->GetIsVisible()?"true":"false" );
+
 		if (adaptiveElement->GetSeparator() && adaptiveElement->GetIsVisible())
 		{
-			auto uiSep = std::make_shared<QmlTag>("Rectangle");
-			uiSep->Property("width", "parent.width");
-			uiSep->Property("height", std::to_string(spacing) );
-			uiContainer->AddChild(uiSep);
+			auto uiLine = std::make_shared<QmlTag>("Rectangle");
+			uiLine->Property("width", "parent.width");
+			uiLine->Property("height", std::to_string(sep.lineThickness));
+			uiLine->Property("anchors.centerIn", "parent");
+			uiLine->Property("color", Formatter() << "\"" << sep.lineColor << "\"");
 
+			uiSep->AddChild(uiLine);
 		}
+
+		uiContainer->AddChild(uiSep);
 	}
 
     void AdaptiveCardQmlRenderer::SetObjectTypes()
