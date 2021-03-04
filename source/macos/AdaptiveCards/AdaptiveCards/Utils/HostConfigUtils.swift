@@ -106,11 +106,4 @@ class ColorUtils {
             return nil
         }
     }
-    
-    static func getCGColor(from nsColor: NSColor) -> CGColor {
-        return CGColor(red: nsColor.redComponent,
-                       green: nsColor.greenComponent,
-                       blue: nsColor.blueComponent,
-                       alpha: nsColor.alphaComponent)
-    }
 }

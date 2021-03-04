@@ -48,7 +48,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         if let backgroundColor = imageElement.getBackgroundColor() {
             imageView.wantsLayer = true
             if let color = ColorUtils.color(from: backgroundColor) {
-                imageView.layer?.backgroundColor = ColorUtils.getCGColor(from: color)
+                imageView.layer?.backgroundColor = color.cgColor
             }
         }
     

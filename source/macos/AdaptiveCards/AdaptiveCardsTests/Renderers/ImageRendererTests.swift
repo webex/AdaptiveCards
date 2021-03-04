@@ -30,7 +30,7 @@ class ImageRendererTests: XCTestCase {
         let contentView = renderImageView()
         let imageView = contentView.imageView
         let colorHex = ColorUtils.color(from: color) ?? NSColor.black
-        XCTAssertEqual(imageView?.layer?.backgroundColor, ColorUtils.getCGColor(from: colorHex))
+        XCTAssertEqual(imageView?.layer?.backgroundColor, colorHex.cgColor)
     }
     
     func testRendererSetsImageStyle() {

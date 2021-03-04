@@ -283,7 +283,7 @@ namespace AdaptiveSharedNamespace
         Stretch,
         Small,
         Medium,
-        Large
+        Large,
     };
     DECLARE_ADAPTIVECARD_ENUM(ImageSize);
 
