@@ -5,7 +5,6 @@ import Foundation
 
 class ImageUtils {
     static func getImageSizeAsCGSize(imageSize: ACSImageSize, width: CGFloat, height: CGFloat, with config: ACSHostConfig, explicitDimensions: Bool) -> CGSize {
-        
         if explicitDimensions {
             var isAspectRatioNeeded = false
             var imageSizeAsCGSize = CGSize.zero

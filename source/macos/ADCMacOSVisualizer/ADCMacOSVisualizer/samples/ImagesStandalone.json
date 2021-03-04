@@ -1,8 +1,13 @@
 {
     "type": "AdaptiveCard",
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "version": "1.3",
+    "version": "1.2",
     "body": [
+        {
+            "type": "TextBlock",
+            "text": "Left Aligned, Size Auto",
+            "wrap": true
+        },
         {
             "type": "Image",
             "url": "https://adaptivecards.io/content/cats/2.png",
@@ -10,17 +15,30 @@
             "style": "Person"
         },
         {
-            "type": "Image",
-            "url": "https://messagecardplayground.azurewebsites.net/assets/TxP_Flight.png",
-            "backgroundColor": "#FFFFAA",
+            "type": "TextBlock",
+            "text": "Center Aligned, Size Medium",
+            "wrap": true,
             "horizontalAlignment": "Center"
         },
         {
             "type": "Image",
-            "url": "https://adaptivecards.io/content/cats/3.png",
-            "backgroundColor": "#FFCFAA",
+            "url": "https://adaptivecards.io/content/cats/2.png",
+            "backgroundColor": "#FFFFAA",
             "horizontalAlignment": "Center",
-            "size": "Stretch"
+            "size": "Medium"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Right Aligned, Size Large",
+            "wrap": true,
+            "horizontalAlignment": "Right"
+        },
+        {
+            "type": "Image",
+            "url": "https://adaptivecards.io/content/cats/1.png",
+            "backgroundColor": "#FFCFAA",
+            "horizontalAlignment": "Right",
+            "size": "Large"
         }
     ]
 }

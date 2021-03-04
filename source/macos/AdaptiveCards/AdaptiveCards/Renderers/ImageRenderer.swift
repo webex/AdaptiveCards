@@ -10,12 +10,6 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSImage")
             return NSView()
         }
-
-//        public var alignment: NSLayoutConstraint.Attribute {
-//            get { return stackView.alignment }
-//            set { stackView.alignment = newValue }
-//        }
-        
         // Fetching images from remote URL for testing purposes (Blocks main thread)
         // This will be removed and changed to Resource Resolver or similar mechanism to resolve content
         // swiftlint:disable force_cast
@@ -28,7 +22,10 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         let cgsize = imageProperties.contentSize
 
         // Setting up ImageView based on Image Properties
-        let imageView = NSImageView(frame: NSRect(x: 0, y: 0, width: cgsize.width, height: cgsize.height))
+        let imageView = NSImageView(image: image)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer?.masksToBounds = true
+        
         if imageProperties.isAspectRatioNeeded {
             // when either width or height px is available
             // this will provide content aspect fill scaling
@@ -37,7 +34,6 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             // content aspect fit behaviour
             imageView.imageScaling = .scaleAxesIndependently
         }
-        imageView.image = image
         
         guard let parent = rootView as? ACRContentStackView else {
             logError("Parent is not of type ACRContentStackView")
@@ -46,6 +42,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
     
         // Setting up content holder view
         let wrappingView = ACRContentHoldingView(imageProperties: imageProperties, imageView: imageView, viewgroup: parent)
+        wrappingView.translatesAutoresizingMaskIntoConstraints = false
     
         // Background color attribute
         if let backgroundColor = imageElement.getBackgroundColor() {
@@ -55,29 +52,31 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             }
         }
     
-        // Person style effect
-        if imageElement.getStyle() == .person {
-            let radius: CGFloat = imageView.bounds.size.width / 2.0
-            imageView.layer?.cornerRadius = radius
-            imageView.layer?.masksToBounds = true
-        }
-        
-        // parent.addArrangedSubview(wrappingView)
         wrappingView.addSubview(imageView)
         
-        // parent.translatesAutoresizingMaskIntoConstraints = false
-        wrappingView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.translatesAutoresizingMaskIntoConstraints = true
-        // imageView.translatesAutoresizingMaskIntoConstraints = true
+        // Image View anchors
+        imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
+        imageView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
+        imageView.topAnchor.constraint(equalTo: wrappingView.topAnchor).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: wrappingView.bottomAnchor).isActive = true
         
-//        wrappingView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        wrappingView.wantsLayer = true
-        wrappingView.layer?.backgroundColor = NSColor.red.cgColor
-        wrappingView.resizeSubviews(withOldSize: wrappingView.fittingSize)
-        
+        var radius: CGFloat = 0
         if imageProperties.acsImageSize == ACSImageSize.stretch {
             wrappingView.widthAnchor.constraint(equalToConstant: parent.fittingSize.width).isActive = true
-            wrappingView.heightAnchor.constraint(equalToConstant: parent.fittingSize.height).isActive = true
+            wrappingView.heightAnchor.constraint(equalTo: wrappingView.widthAnchor, multiplier: ImageUtils.getAspectRatio(from: cgsize).width).isActive = true
+            radius = parent.fittingSize.width / 2.0
+        } else if imageProperties.hasExplicitDimensions {
+            wrappingView.widthAnchor.constraint(equalToConstant: imageProperties.pixelWidth).isActive = true
+            wrappingView.heightAnchor.constraint(equalToConstant: imageProperties.pixelHeight).isActive = true
+            radius = imageProperties.pixelWidth / 2.0
+        } else {
+            wrappingView.widthAnchor.constraint(equalToConstant: cgsize.width).isActive = true
+            wrappingView.heightAnchor.constraint(equalToConstant: cgsize.height).isActive = true
+            radius = cgsize.width / 2.0
+        }
+        
+        if imageElement.getStyle() == .person {
+            imageView.layer?.cornerRadius = radius
         }
         
         return wrappingView
