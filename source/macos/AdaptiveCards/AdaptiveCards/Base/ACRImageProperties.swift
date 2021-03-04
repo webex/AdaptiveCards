@@ -31,20 +31,13 @@ class ACRImageProperties: NSObject {
         if acsImageSize == ACSImageSize.none {
             acsImageSize = ACSImageSize.auto
         }
-        if hasExplicitDimensions {
-            acsImageSize = ACSImageSize.explicit
-        }
-        
+  
         contentSize = ImageUtils.getImageSizeAsCGSize(imageSize: acsImageSize,
                                                       width: pixelWidth,
                                                       height: pixelHeight,
-                                                      with: config)
+                                                      with: config,
+                                                      explicitDimensions: hasExplicitDimensions)
         updateContentSize(size: image.size)
-        if acsImageSize == .stretch {
-            // set the content size of parent's because of stretch property
-            contentSize.width = parentView.fittingSize.width
-            contentSize.height = parentView.fittingSize.height
-        }
         acsHorizontalAlignment = imageElement.getHorizontalAlignment()
     }
     

@@ -26,8 +26,6 @@
       return ACSImageSize::ACSImageSizeMedium;
     case AdaptiveCards::ImageSize::Large:
       return ACSImageSize::ACSImageSizeLarge;
-    case AdaptiveCards::ImageSize::Explicit:
-      return ACSImageSize::ACSImageSizeExplicit;
   }
 }
 
@@ -48,8 +46,6 @@
       return AdaptiveCards::ImageSize::Medium;
     case ACSImageSize::ACSImageSizeLarge:
       return AdaptiveCards::ImageSize::Large;
-    case ACSImageSize::ACSImageSizeExplicit:
-      return AdaptiveCards::ImageSize::Explicit;
   }
 }
 

@@ -4,22 +4,9 @@ import CoreGraphics
 import Foundation
 
 class ImageUtils {
-    static func getImageSizeAsCGSize(imageSize: ACSImageSize, width: CGFloat, height: CGFloat, with config: ACSHostConfig) -> CGSize {
-        var sz: Float = 0.0
-        switch imageSize {
-        case ACSImageSize.large:
-            if let size = config.getImageSizes()?.largeSize {
-                sz = size.floatValue
-            }
-        case ACSImageSize.medium:
-            if let size = config.getImageSizes()?.mediumSize {
-                sz = size.floatValue
-            }
-        case ACSImageSize.small:
-            if let size = config.getImageSizes()?.smallSize {
-                sz = size.floatValue
-            }
-        case ACSImageSize.explicit:
+    static func getImageSizeAsCGSize(imageSize: ACSImageSize, width: CGFloat, height: CGFloat, with config: ACSHostConfig, explicitDimensions: Bool) -> CGSize {
+        
+        if explicitDimensions {
             var isAspectRatioNeeded = false
             var imageSizeAsCGSize = CGSize.zero
             if !(width > 0 && height > 0) {
@@ -38,6 +25,22 @@ class ImageUtils {
                 }
             }
             return imageSizeAsCGSize
+        }
+        
+        var sz: Float = 0.0
+        switch imageSize {
+        case ACSImageSize.large:
+            if let size = config.getImageSizes()?.largeSize {
+                sz = size.floatValue
+            }
+        case ACSImageSize.medium:
+            if let size = config.getImageSizes()?.mediumSize {
+                sz = size.floatValue
+            }
+        case ACSImageSize.small:
+            if let size = config.getImageSizes()?.smallSize {
+                sz = size.floatValue
+            }
         case ACSImageSize.auto, ACSImageSize.stretch, ACSImageSize.none:
             return CGSize.zero
         default:

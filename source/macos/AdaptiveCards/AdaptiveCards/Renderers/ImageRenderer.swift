@@ -10,6 +10,11 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSImage")
             return NSView()
         }
+
+//        public var alignment: NSLayoutConstraint.Attribute {
+//            get { return stackView.alignment }
+//            set { stackView.alignment = newValue }
+//        }
         
         // Fetching images from remote URL for testing purposes (Blocks main thread)
         // This will be removed and changed to Resource Resolver or similar mechanism to resolve content
@@ -43,46 +48,37 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         let wrappingView = ACRContentHoldingView(imageProperties: imageProperties, imageView: imageView, viewgroup: parent)
     
         // Background color attribute
-        if imageElement.getBackgroundColor() != nil {
+        if let backgroundColor = imageElement.getBackgroundColor() {
             imageView.wantsLayer = true
-            if let color = ColorUtils.color(from: imageElement.getBackgroundColor() ?? "") {
+            if let color = ColorUtils.color(from: backgroundColor) {
                 imageView.layer?.backgroundColor = ColorUtils.getCGColor(from: color)
             }
         }
     
         // Person style effect
-        if imageElement.getStyle() == ACSImageStyle.person {
-            let radius: CGFloat = image.size.width / 2.0
+        if imageElement.getStyle() == .person {
+            let radius: CGFloat = imageView.bounds.size.width / 2.0
             imageView.layer?.cornerRadius = radius
             imageView.layer?.masksToBounds = true
         }
         
-        parent.addArrangedSubview(wrappingView)
+        // parent.addArrangedSubview(wrappingView)
+        wrappingView.addSubview(imageView)
         
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        // parent.translatesAutoresizingMaskIntoConstraints = false
         wrappingView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.translatesAutoresizingMaskIntoConstraints = true
+        // imageView.translatesAutoresizingMaskIntoConstraints = true
         
-        // Setting up constraints for alignment
-        // Need a better way than using anchors
-        switch imageProperties.acsHorizontalAlignment {
-        case .center:
-            imageView.centerXAnchor.constraint(equalTo: parent.centerXAnchor).isActive = true
-        case .left:
-            imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
-        case .right:
-            imageView.trailingAnchor.constraint(equalTo: parent.trailingAnchor).isActive = true
-        default:
-            imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
+//        wrappingView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        wrappingView.wantsLayer = true
+        wrappingView.layer?.backgroundColor = NSColor.red.cgColor
+        wrappingView.resizeSubviews(withOldSize: wrappingView.fittingSize)
+        
+        if imageProperties.acsImageSize == ACSImageSize.stretch {
+            wrappingView.widthAnchor.constraint(equalToConstant: parent.fittingSize.width).isActive = true
+            wrappingView.heightAnchor.constraint(equalToConstant: parent.fittingSize.height).isActive = true
         }
-        
-//        // wrappingView.heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
-//        if imageProperties.acsImageSize == ACSImageSize.stretch {
-//            parent.widthAnchor.constraint(equalTo: wrappingView.widthAnchor).isActive = true
-//            imageView.heightAnchor.constraint(equalTo: parent.heightAnchor).isActive = true
-//        } else {
-//        }
-//
-//         imageView.topAnchor.constraint(equalTo: wrappingView.topAnchor).isActive = true
         
         return wrappingView
     }

@@ -28,7 +28,6 @@ class ACRContentHoldingView: NSView {
         self.imageProperties = imageProperties
         self.imageView = imageView
         _viewgroup = viewgroup
-        addSubview(imageView)
     }
     
     override var intrinsicContentSize: NSSize {
@@ -88,7 +87,7 @@ class ACRContentHoldingView: NSView {
 //
 //    private func setImageViewHeightConstraint() {
 //        // set new height anchor to the height of new intrinsic contentsize
-//        _imageViewHeightConstraint = setHeightConstraintUtil(heightAnchor: _imageView?.heightAnchor ?? NSLayoutDimension())
+//        _imageViewHeightConstraint = setHeightConstraintUtil(heightAnchor: self.imageView?.heightAnchor ?? NSLayoutDimension())
 //    }
 //
 //    private func setHeightConstraintUtil(heightAnchor: NSLayoutDimension) -> NSLayoutConstraint {
