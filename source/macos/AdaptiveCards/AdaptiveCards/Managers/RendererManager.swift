@@ -15,6 +15,7 @@ class RendererManager: RendererManagerProtocol {
         case .textInput: return TextInputRenderer.shared
         case .choiceSetInput: return ChoiceSetInputRenderer.shared
         case .factSet: return FactSetRenderer.shared
+        case .imageSet: return ImageSetRenderer.shared
         default: return UnknownElementRenderer.shared
         }
     }
