@@ -46,6 +46,8 @@ namespace RendererQml
             auto bodyLayout = std::make_shared<QmlTag>("Column");
             bodyLayout->Property("id", "bodyLayout");
             bodyLayout->Property("width", "parent.width");
+			//TODO: Set spacing from host config
+			bodyLayout->Property("spacing", "8");
             uiContainer->Property("Layout.preferredHeight", "bodyLayout.height");
             uiContainer->AddChild(bodyLayout);
 
@@ -69,6 +71,7 @@ namespace RendererQml
 
 	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+		//Returns only when seperator=false and spacing=none
 		if (!adaptiveElement->GetSeparator() && adaptiveElement->GetSpacing() == AdaptiveCards::Spacing::None)
 		{
 			return;
@@ -76,22 +79,21 @@ namespace RendererQml
 
 		int spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), adaptiveElement->GetSpacing());
 
-		AdaptiveCards::SeparatorConfig sep = context->GetConfig()->GetSeparator();
+		AdaptiveCards::SeparatorConfig separator = context->GetConfig()->GetSeparator();
 
 		auto uiSep = std::make_shared<QmlTag>("Rectangle");
 		uiSep->Property("width", "parent.width");
-		uiSep->Property("height", std::to_string(spacing == 0 ? sep.lineThickness : spacing));
-		//Hardcoded the base card id to get its color
-		uiSep->Property("color", "adaptiveCard.color");
+		uiSep->Property("height", std::to_string(spacing == 0 ? separator.lineThickness : spacing));
+		uiSep->Property("color", "\"transparent\"");
 		uiSep->Property("visible", adaptiveElement->GetIsVisible()?"true":"false" );
 
 		if (adaptiveElement->GetSeparator() && adaptiveElement->GetIsVisible())
 		{
 			auto uiLine = std::make_shared<QmlTag>("Rectangle");
 			uiLine->Property("width", "parent.width");
-			uiLine->Property("height", std::to_string(sep.lineThickness));
+			uiLine->Property("height", std::to_string(separator.lineThickness));
 			uiLine->Property("anchors.centerIn", "parent");
-			uiLine->Property("color", Formatter() << "\"" << sep.lineColor << "\"");
+			uiLine->Property("color", Formatter() << "\"" << separator.lineColor << "\"");
 
 			uiSep->AddChild(uiLine);
 		}
@@ -337,6 +339,15 @@ namespace RendererQml
 		uiNumberInput->Property("stepSize", "1");
 		uiNumberInput->Property("editable", "true");
 		uiNumberInput->Property("validator", doubleValidatorTag->ToString());
+
+		if (input->GetMin() == std::nullopt)
+		{
+			input->SetMin(INT_MIN);
+		}
+		if (input->GetMax() == std::nullopt)
+		{
+			input->SetMax(INT_MAX);
+		}
 
 		if ((input->GetMin() == input->GetMax() && input->GetMin() == 0) || input->GetMin() > input->GetMax())
 		{

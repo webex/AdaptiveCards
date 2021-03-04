@@ -885,54 +885,134 @@ namespace Samples
           "size": "Large"
         },
         {
-          "type": "TextBlock",
+          "type": "Image",
+          "url": "https://adaptivecards.io/content/cats/1.png",
+          "id": "img4",
+	      "backgroundColor": "#FF0000FF",
+	      "height": "80px",
+          "spacing": "small",
+          "separator":true
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:Small, Separator:true"
+        },
+        {
+          "type": "Input.Date",
+          "id": "defaultDateid",
           "text": "Spacing: None",
           "wrap": true,
-          "separator": true,
-          "spacing": "None"
-        },
-        {
-          "type": "TextBlock",
-          "text": "Spacing: small",
-          "wrap": true,
-          "separator": true,
-          "spacing": "small"
-        },
-        {
-          "type": "TextBlock",
-          "text": "Spacing:default",
-          "wrap": true,
-          "separator": true,
+          "separator": false,
           "spacing": "default"
         },
         {
-          "type": "TextBlock",
-          "text": "Spacing: medium",
-          "wrap": true,
-          "separator": true,
-          "spacing": "medium"
+           "type":"TextBlock",
+           "text":"Spacing:default, Separator:false"
         },
         {
-          "type": "TextBlock",
-          "text": "Spacing: large",
+          "type": "Input.Time",
+          "id": "defaulttimeid",
           "wrap": true,
           "separator": true,
-          "spacing": "large"
+          "spacing": "none"
         },
         {
-          "type": "TextBlock",
-          "text": "Spacing: extraLarge",
-          "wrap": true,
-          "separator": true,
-          "spacing": "extraLarge"
+           "type":"TextBlock",
+           "text":"Spacing:None, Separator:true"
         },
         {
-          "type": "TextBlock",
-          "text": "Spacing: padding",
-          "wrap": true,
-          "separator": true,
-          "spacing": "padding"
-        }
+          "type": "FactSet",
+          "spacing":"large",
+          "separator":true,
+          "facts": [
+            {
+              "title": "Fact 1",
+              "value": "Value 1"
+            },
+            {
+              "title": "Fact 2",
+              "value": "Value 2"
+            },
+            {
+              "title": "Fact 3",
+              "value": "Value 3"
+            },
+            {
+              "title": "Fact 4",
+              "value": "Value 5"
+            }
+          ]
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:Large, Separator:true"
+        },
+        {
+          "type": "Input.ChoiceSet",
+          "id": "myColor2",
+          "style": "expanded",
+          "isMultiSelect": false,
+          "value": "1",
+          "choices": [
+            {
+              "title": "Red",
+              "value": "1"
+            },
+            {
+              "title": "Green",
+              "value": "2"
+            },
+            {
+              "title": "Blue",
+              "value": "3"
+            }
+          ],
+          "spacing": "extraLarge",
+          "separator": true
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:extraLarge, Separator:true"
+        },
+        {
+          "type": "Input.Toggle",
+          "id": "acceptTerms",
+          "title": "I accept the terms and agreements",
+          "value": "true",
+          "valueOn": "true",
+          "valueOff": "false",
+          "spacing": "padding",
+          "separator": true 
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:padding, Separator:true"
+        },
+        {
+          "type": "Input.Text",
+          "id": "defaultInputId",
+          "placeholder": "enter comment",
+          "maxLength": 500,
+          "spacing": "extraLarge",
+          "separator":false
+       },
+       {
+           "type":"TextBlock",
+           "text":"Spacing:extraLarge, Separator:false"
+        },
+       {
+          "type": "Input.Number",
+          "id": "defaultNumberId",
+          "placeholder": "enter comment",
+          "value": 0,
+          "spacing": "none",
+          "separator":false
+       },
+       {
+           "type":"TextBlock",
+           "text":"Spacing:none, Separator:false"
+       }
       ]
     })";
 }
+
