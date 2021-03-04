@@ -39,13 +39,9 @@ class BaseCardElementRenderer {
         view.identifier = .init(element.getId() ?? "")
         updatedView.isHidden = !element.getIsVisible()
         
-        guard let inputElement = element as? ACSBaseInputElement else {
-            updatedView.addArrangedSubview(view)
-            return updatedView
-        }
-        if let label = inputElement.getLabel(), !label.isEmpty {
-            let attributedString: NSMutableAttributedString
-            attributedString = NSMutableAttributedString(string: label)
+        // Input label handling
+        if let inputElement = element as? ACSBaseInputElement, let label = inputElement.getLabel(), !label.isEmpty {
+            let attributedString = NSMutableAttributedString(string: label)
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
                 attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
             }
