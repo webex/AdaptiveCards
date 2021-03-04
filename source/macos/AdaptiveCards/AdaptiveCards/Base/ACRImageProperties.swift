@@ -53,6 +53,7 @@ class ACRImageProperties: NSObject {
                 newSize.width = pixelWidth
                 if pixelHeight == 0 {
                     newSize.height = pixelWidth * heightToWidthRatio
+                    pixelHeight = newSize.height
                 }
             }
             
@@ -60,6 +61,7 @@ class ACRImageProperties: NSObject {
                 newSize.height = pixelHeight
                 if pixelWidth == 0 {
                     newSize.width = pixelHeight * widthToHeightRatio
+                    pixelWidth = newSize.width
                 }
             }
             contentSize = newSize
