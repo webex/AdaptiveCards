@@ -31,8 +31,7 @@ class UnknownElementRenderer: BaseCardElementRendererProtocol {
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.red.cgColor
         view.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        view.setContentCompressionResistancePriority(.fittingSizeCompression, for: .horizontal)
-        view.setContentHuggingPriority(.required, for: .horizontal)
+        view.widthAnchor.constraint(equalToConstant: 20).isActive = true
         return view
     }
 }

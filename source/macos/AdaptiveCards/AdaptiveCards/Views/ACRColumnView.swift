@@ -12,6 +12,32 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     private (set) var stackViewTopConstraint: NSLayoutConstraint?
     private (set) var stackViewBottomConstraint: NSLayoutConstraint?
     
+    public var orientation: NSUserInterfaceLayoutOrientation {
+        get { return stackView.orientation }
+        set {
+            stackView.orientation = newValue
+            stackView.alignment = newValue == .horizontal ? .top : .leading
+        }
+    }
+    
+    public var distribution: NSStackView.Distribution {
+        get { return stackView.distribution }
+        set { stackView.distribution = newValue }
+    }
+    
+    public var arrangedSubviews: [NSView] {
+        return stackView.arrangedSubviews
+    }
+    
+    private (set) lazy var stackView: NSStackView = {
+        let view = NSStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.orientation = .vertical
+        view.alignment = .leading
+        view.spacing = 0
+        return view
+    }()
+    
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
         super.init(frame: .zero)
         initialize()
@@ -54,19 +80,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     func addSpacing(spacing: CGFloat) {
         let spacingView = NSBox()
         spacingView.boxType = .custom
-        spacingView.heightAnchor.constraint(equalToConstant: spacing).isActive = true
+        let anchor = orientation == .horizontal ? spacingView.widthAnchor : spacingView.heightAnchor
+        anchor.constraint(equalToConstant: spacing).isActive = true
         spacingView.borderColor = .clear
         stackView.addArrangedSubview(spacingView)
     }
-    
-    private (set) lazy var stackView: NSStackView = {
-        let view = NSStackView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.orientation = .vertical
-        view.alignment = .leading
-        view.spacing = 0
-        return view
-    }()
     
     private func setupViews() {
         addSubview(stackView)
@@ -81,13 +99,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         guard let leading = stackViewLeadingConstraint, let trailing = stackViewTrailingConstraint, let top = stackViewTopConstraint, let bottom = stackViewBottomConstraint else { return }
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
     }
-    
-//    // TODO: Figure out a way to set constraints without this method to avoid conflicts
-//    override func viewDidMoveToSuperview() {
-//        super.viewDidMoveToSuperview()
-//        guard let superview = superview else { return }
-//        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
-//    }
 }
 
 enum ColumnWidth: Equatable {
@@ -97,6 +108,14 @@ enum ColumnWidth: Equatable {
         switch self {
         case .weighted: return true
         default: return false
+        }
+    }
+    
+    var huggingPriority: NSLayoutConstraint.Priority {
+        switch self {
+        case .auto: return .init(252)
+        case .stretch: return .init(249)
+        default: return .defaultLow
         }
     }
     
@@ -129,6 +148,7 @@ class ACRColumnView: ACRContentStackView {
     }
     
     private lazy var widthConstraint = widthAnchor.constraint(equalToConstant: Constants.minWidth)
+    private var columnWidth: ColumnWidth = .weighted(1)
     
     override init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
         super.init(style: style, hostConfig: hostConfig)
@@ -147,17 +167,34 @@ class ACRColumnView: ACRContentStackView {
         minWidthConstraint.isActive = true
     }
     
+    override func addArrangedSubview(_ subview: NSView) {
+        manageWidth(of: subview)
+        super.addArrangedSubview(subview)
+    }
+    
     func setWidth(_ width: ColumnWidth) {
-        switch width {
+        columnWidth = width
+        manageWidth(of: self)
+        manageWidth(of: stackView)
+    }
+    
+    private func manageWidth(of view: NSView) {
+        switch columnWidth {
         case .fixed(let widthSize):
             widthConstraint.constant = widthSize
             widthConstraint.isActive = true
             
         case .auto:
-            setContentCompressionResistancePriority(.required, for: .horizontal)
+            view.setContentHuggingPriority(columnWidth.huggingPriority, for: .horizontal)
+            view.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
             widthConstraint.isActive = false
             
-        case .stretch, .weighted:
+        case .stretch:
+            view.setContentHuggingPriority(columnWidth.huggingPriority, for: .horizontal)
+            view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+            widthConstraint.isActive = false
+            
+        case .weighted:
             widthConstraint.isActive = false
         }
     }
