@@ -86,6 +86,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         stackView.addArrangedSubview(spacingView)
     }
     
+    func setCustomSpacing(spacing: CGFloat, view: NSView) {
+        stackView.setCustomSpacing(spacing, after: view)
+    }
+    
     private func setupViews() {
         addSubview(stackView)
     }
