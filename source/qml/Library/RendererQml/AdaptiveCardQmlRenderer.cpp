@@ -39,68 +39,6 @@ namespace RendererQml
 		return output;
 	}
 
-    void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context)
-    {
-        if (!elements.empty())
-        {
-            auto bodyLayout = std::make_shared<QmlTag>("Column");
-            bodyLayout->Property("id", "bodyLayout");
-            bodyLayout->Property("width", "parent.width");
-			//TODO: Set spacing from host config
-			bodyLayout->Property("spacing", "8");
-            uiContainer->Property("Layout.preferredHeight", "bodyLayout.height");
-            uiContainer->AddChild(bodyLayout);
-
-            for (const auto& cardElement : elements)
-            {
-                auto uiElement = context->Render(cardElement);
-
-                if (uiElement != nullptr)
-                {
-					if (!bodyLayout->GetChildren().empty())
-					{
-						AddSeparator(bodyLayout, cardElement, context);
-					}
-					
-                    //TODO: Add collection element
-                    bodyLayout->AddChild(uiElement);
-                }
-            }
-        }
-    }
-
-	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-		//Returns only when seperator=false and spacing=none
-		if (!adaptiveElement->GetSeparator() && adaptiveElement->GetSpacing() == AdaptiveCards::Spacing::None)
-		{
-			return;
-		}
-
-		int spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), adaptiveElement->GetSpacing());
-
-		AdaptiveCards::SeparatorConfig separator = context->GetConfig()->GetSeparator();
-
-		auto uiSep = std::make_shared<QmlTag>("Rectangle");
-		uiSep->Property("width", "parent.width");
-		uiSep->Property("height", std::to_string(spacing == 0 ? separator.lineThickness : spacing));
-		uiSep->Property("color", "\"transparent\"");
-		uiSep->Property("visible", adaptiveElement->GetIsVisible()?"true":"false" );
-
-		if (adaptiveElement->GetSeparator() && adaptiveElement->GetIsVisible())
-		{
-			auto uiLine = std::make_shared<QmlTag>("Rectangle");
-			uiLine->Property("width", "parent.width");
-			uiLine->Property("height", std::to_string(separator.lineThickness));
-			uiLine->Property("anchors.centerIn", "parent");
-			uiLine->Property("color", Formatter() << "\"" << separator.lineColor << "\"");
-
-			uiSep->AddChild(uiLine);
-		}
-
-		uiContainer->AddChild(uiSep);
-	}
-
     void AdaptiveCardQmlRenderer::SetObjectTypes()
     {
         (*GetElementRenderers()).Set<AdaptiveCards::TextBlock>(AdaptiveCardQmlRenderer::TextBlockRender);
@@ -163,6 +101,36 @@ namespace RendererQml
 		return uiCard;
 	}
 
+    void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        if (!elements.empty())
+        {
+            auto bodyLayout = std::make_shared<QmlTag>("Column");
+            bodyLayout->Property("id", "bodyLayout");
+            bodyLayout->Property("width", "parent.width");
+            //TODO: Set spacing from host config
+            bodyLayout->Property("spacing", "8");
+            uiContainer->Property("Layout.preferredHeight", "bodyLayout.height");
+            uiContainer->AddChild(bodyLayout);
+
+            for (const auto& cardElement : elements)
+            {
+                auto uiElement = context->Render(cardElement);
+
+                if (uiElement != nullptr)
+                {
+					if (!bodyLayout->GetChildren().empty())
+					{
+						AddSeparator(bodyLayout, cardElement, context);
+					}
+
+                    //TODO: Add collection element
+                    bodyLayout->AddChild(uiElement);
+                }
+            }
+        }
+    }
+
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextBlockRender(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		//TODO:Parse markdown in the text
@@ -196,6 +164,7 @@ namespace RendererQml
 
 		if (!textBlock->GetId().empty())
 		{
+            textBlock->SetId(Utils::ConvertToLowerIdValue(textBlock->GetId()));
 			uiTextBlock->Property("id", textBlock->GetId());
 		}
 
@@ -211,7 +180,7 @@ namespace RendererQml
 
 		if (textBlock->GetWrap())
 		{
-			uiTextBlock->Property("wrapMode", "Text.WordWrap");
+			uiTextBlock->Property("wrapMode", "Text.Wrap");
 		}
 
 		if (!fontFamily.empty())
@@ -229,6 +198,8 @@ namespace RendererQml
 
 		std::shared_ptr<QmlTag> uiTextInput;
 		std::shared_ptr<QmlTag> scrollViewTag;
+
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		if (input->GetIsMultiline())
 		{
@@ -304,6 +275,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::NumberInputRender(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 		const auto inputId = input->GetId();
 
 		auto glowTag = std::make_shared<QmlTag>("Glow");
@@ -386,7 +358,7 @@ namespace RendererQml
 		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(richTextBlock->GetHorizontalAlignment());
 
 		uiTextBlock->Property("textFormat", "Text.RichText");
-		uiTextBlock->Property("wrapMode", "Text.WordWrap");
+		uiTextBlock->Property("wrapMode", "Text.Wrap");
 		uiTextBlock->Property("width", "parent.width");
 
 		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
@@ -463,6 +435,8 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ToggleInputRender(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+
 		const auto valueOn = !input->GetValueOn().empty() ? input->GetValueOn() : "true";
 		const auto valueOff = !input->GetValueOff().empty() ? input->GetValueOff() : "false";
 		const bool isChecked = input->GetValue().compare(valueOn) == 0 ? true : false;
@@ -483,6 +457,8 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ChoiceSetRender(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+
 		int ButtonNumber = 0;
 		RendererQml::Checkboxes choices;
 		const std::string id = input->GetId();
@@ -757,8 +733,9 @@ namespace RendererQml
     
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
-        auto uiDateInput = std::make_shared<QmlTag>("TextField");
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
+        auto uiDateInput = std::make_shared<QmlTag>("TextField");
         uiDateInput->Property("id", input->GetId());
         uiDateInput->Property("width", "parent.width");
         const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
@@ -851,7 +828,11 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::FactSetRender(std::shared_ptr<AdaptiveCards::FactSet> factSet, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		auto uiFactSet = std::make_shared<QmlTag>("Column");
+		auto uiFactSet = std::make_shared<QmlTag>("GridLayout");
+		uiFactSet->Property("columns", "2");
+		uiFactSet->Property("rows", std::to_string(factSet->GetFacts().size()));
+		uiFactSet->Property("property int titleWidth", "0");
+		uiFactSet->AddFunctions("function setTitleWidth(item){	if (item.width > titleWidth){ titleWidth = item.width }}");
 
 		if (!factSet->GetIsVisible())
 		{
@@ -860,8 +841,6 @@ namespace RendererQml
 
 		for (const auto fact : factSet->GetFacts())
 		{
-			auto uiRow = std::make_shared<QmlTag>("RowLayout");
-
 			auto factTitle = std::make_shared<AdaptiveCards::TextBlock>();
 
 			factTitle->SetText(fact->GetTitle());
@@ -875,6 +854,8 @@ namespace RendererQml
 			//factTitle->SetMaxWidth(context->GetConfig()->GetFactSet().title.maxWidth);
 
 			auto uiTitle = context->Render(factTitle);
+			uiTitle->Property("Layout.maximumWidth", std::to_string(context->GetConfig()->GetFactSet().title.maxWidth));
+			uiTitle->Property("Component.onCompleted", "parent.setTitleWidth(this)");
 
 			//uiTitle->Property("spacing", std::to_string(context->GetConfig()->GetFactSet().spacing));
 			
@@ -889,10 +870,10 @@ namespace RendererQml
 			// MaxWidth is not supported on the Value of FactSet. Do not set it.
 
 			auto uiValue = context->Render(factValue);
+			uiValue->Property("Layout.preferredWidth", "parent.parent.width - parent.titleWidth");
 
-			uiRow->AddChild(uiTitle);
-			uiRow->AddChild(uiValue);
-			uiFactSet->AddChild(uiRow);
+			uiFactSet->AddChild(uiTitle);
+			uiFactSet->AddChild(uiValue);
 		}
 
 		return uiFactSet;
@@ -915,6 +896,10 @@ namespace RendererQml
 		{
 			image->SetId(Formatter() << "image_auto_" << ++imageCounter);
 		}
+        else
+        {
+            image->SetId(Utils::ConvertToLowerIdValue(image->GetId()));
+        }
 
 		uiImage->Property("id", image->GetId());
 		uiImage->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
@@ -1048,6 +1033,10 @@ namespace RendererQml
 		{
 			container->SetId(Formatter() << "container_auto_" << ++containerCounter);
 		}
+        else
+        {
+            container->SetId(Utils::ConvertToLowerIdValue(container->GetId()));
+        }
 
 		const auto id = container->GetId();
 
@@ -1121,6 +1110,8 @@ namespace RendererQml
 	{
 		//TODO: Fetch System Time Format 
 		bool is12hour = true;
+
+        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
 		std::string id = input->GetId();
@@ -1361,6 +1352,38 @@ namespace RendererQml
 		}
 
 		return uiFlow;
+	}
+
+	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		//Returns only when seperator=false and spacing=none
+		if (!adaptiveElement->GetSeparator() && adaptiveElement->GetSpacing() == AdaptiveCards::Spacing::None)
+		{
+			return;
+		}
+
+		int spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), adaptiveElement->GetSpacing());
+
+		AdaptiveCards::SeparatorConfig separator = context->GetConfig()->GetSeparator();
+
+		auto uiSep = std::make_shared<QmlTag>("Rectangle");
+		uiSep->Property("width", "parent.width");
+		uiSep->Property("height", std::to_string(spacing == 0 ? separator.lineThickness : spacing));
+		uiSep->Property("color", "\"transparent\"");
+		uiSep->Property("visible", adaptiveElement->GetIsVisible() ? "true" : "false");
+
+		if (adaptiveElement->GetSeparator() && adaptiveElement->GetIsVisible())
+		{
+			auto uiLine = std::make_shared<QmlTag>("Rectangle");
+			uiLine->Property("width", "parent.width");
+			uiLine->Property("height", std::to_string(separator.lineThickness));
+			uiLine->Property("anchors.centerIn", "parent");
+			uiLine->Property("color", Formatter() << "\"" << separator.lineColor << "\"");
+
+			uiSep->AddChild(uiLine);
+		}
+
+		uiContainer->AddChild(uiSep);
 	}
 }
 	

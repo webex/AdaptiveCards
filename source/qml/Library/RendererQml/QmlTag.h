@@ -22,13 +22,17 @@ namespace RendererQml
         QmlTag& AddImports(const std::string& import);
         QmlTag& Property(const std::string& name, const std::string& value);
 		QmlTag& RemoveProperty(const std::string& name);
+		QmlTag& AddFunctions(const std::string& function);
         void AddChild(const std::shared_ptr<QmlTag>& child);
         std::string ToString();
 		const std::vector<std::shared_ptr<QmlTag>>& GetChildren();
 
 
+        const std::string GetId() const;
+
     private:
         std::string m_element;
+		std::vector<std::string> m_functions;
         std::vector<std::string> m_imports;
         std::vector<std::pair<std::string, std::string>> m_properties;
         std::vector<std::shared_ptr<QmlTag>> m_children;

@@ -44,6 +44,26 @@ namespace RendererQml
 		return *this;
 	}
 
+	QmlTag& QmlTag::AddFunctions(const std::string& function)
+	{
+		m_functions.emplace_back(function);
+		return *this;
+	}
+
+    const std::string QmlTag::GetId() const
+    {
+        auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [](const auto property) {
+            return property.first == "id";
+        });
+
+        if (iterator != m_properties.end())
+        {
+            return iterator->second;
+        }
+
+        return std::string();
+    }
+
     void QmlTag::AddChild(const std::shared_ptr<QmlTag>& child)
     {
         m_children.emplace_back(child);
@@ -67,6 +87,11 @@ namespace RendererQml
         {
             qmlString << QmlUtils::Join(m_properties, ":", "\n");
         }
+
+		for (const auto function : m_functions)
+		{
+			qmlString << function << "\n";
+		}
 
         if (!m_children.empty())
         {
