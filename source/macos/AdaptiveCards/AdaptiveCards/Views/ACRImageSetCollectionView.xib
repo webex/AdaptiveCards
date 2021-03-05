@@ -10,7 +10,7 @@
             <connections>
                 <outlet property="collectionView" destination="kVW-xv-qvC" id="4in-Ny-ncC"/>
                 <outlet property="contentView" destination="c22-O7-iKe" id="svL-ga-tXQ"/>
-                <outlet property="scrollView" destination="7g8-Sa-Y1P" id="pht-lS-MYN"/>
+                <outlet property="scrollView" destination="7g8-Sa-Y1P" id="2Ao-LW-mzO"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -33,6 +33,9 @@
                                     <size key="itemSize" width="50" height="50"/>
                                 </collectionViewFlowLayout>
                                 <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="-2" id="Dh0-JA-yAt"/>
+                                </connections>
                             </collectionView>
                         </subviews>
                     </clipView>
