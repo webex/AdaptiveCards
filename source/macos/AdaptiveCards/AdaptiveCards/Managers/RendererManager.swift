@@ -18,6 +18,7 @@ class RendererManager: RendererManagerProtocol {
         case .columnSet: return ColumnSetRenderer.shared
         case .column: return ColumnRenderer.shared
         case .image: return ImageRenderer.shared
+        case .container: return ContainerRenderer.shared
         default: return UnknownElementRenderer.shared
         }
     }

@@ -9,6 +9,10 @@ class ACRView: ACRColumnView {
         }
     }
     
+    override init(style: ACSContainerStyle, parentStyle: ACSContainerStyle, hostConfig: ACSHostConfig, superview: NSView) {
+        super.init(style: style, parentStyle: parentStyle, hostConfig: hostConfig, superview: superview)
+    }
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }

@@ -47,8 +47,30 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         super.init(frame: .zero)
         initialize()
         wantsLayer = true
-        if let bgColor = hostConfig.getBackgroundColor(for: style) {
+        if style != .none, let bgColor = hostConfig.getBackgroundColor(for: style) {
             layer?.backgroundColor = bgColor.cgColor
+        }
+    }
+    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle, hostConfig: ACSHostConfig, superview: NSView) {
+        super.init(frame: .zero)
+        initialize()
+        wantsLayer = true
+        if style != .none {
+            if let bgColor = hostConfig.getBackgroundColor(for: style) {
+                layer?.backgroundColor = bgColor.cgColor
+            }
+            // set border color
+            if let borderColor = hostConfig.getBorderColor(style) {
+                layer?.borderColor = CGColor(gray: 1, alpha: 1)
+            }
+            // set border width
+            if let borderWidth = hostConfig.getBorderThickness(style) {
+                layer?.borderWidth = CGFloat(truncating: borderWidth)
+            }
+            // add padding
+            if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing, let padding = CGFloat(exactly: paddingSpace) {
+                applyPadding(padding)
+            }
         }
     }
     
@@ -164,6 +186,11 @@ class ACRColumnView: ACRContentStackView {
         initialize()
     }
     
+    override init(style: ACSContainerStyle, parentStyle: ACSContainerStyle, hostConfig: ACSHostConfig, superview: NSView) {
+        super.init(style: style, parentStyle: parentStyle, hostConfig: hostConfig, superview: superview)
+        initialize()
+    }
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         initialize()
@@ -206,5 +233,12 @@ class ACRColumnView: ACRContentStackView {
         case .weighted:
             widthConstraint.isActive = false
         }
+    }
+    func addPadding() -> NSView {
+        let blankTrailingSpace = NSView()
+        blankTrailingSpace.translatesAutoresizingMaskIntoConstraints = false
+        blankTrailingSpace.setContentHuggingPriority(NSLayoutConstraint.Priority.defaultLow - 10, for: .vertical)
+        addArrangedSubview(blankTrailingSpace)
+        return blankTrailingSpace
     }
 }
