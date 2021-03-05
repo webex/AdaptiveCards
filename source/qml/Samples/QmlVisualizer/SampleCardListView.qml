@@ -20,22 +20,17 @@ Frame{
     property string defaultCard: ""
     
     signal listItemClicked(var index, var cardJson);
-    signal reloadCard(var card);
+    signal reloadCard(var card)
     Column {
         width: parent.width
         spacing: 15
         Row{
             spacing: 10
-            Rectangle {
-                color: "#8fbc8f"
+            Text {
+                font.weight: Font.DemiBold
+                text: "Select theme:"
+                font.pointSize:   10
                 anchors.verticalCenter: parent.verticalCenter
-                Text {
-                    font.weight: Font.DemiBold
-                    text: "Select theme:"
-                    font.pointSize:  8
-                }
-                width: childrenRect.width
-                height: childrenRect.height
             }
             ComboBox {
                 id : comboId
