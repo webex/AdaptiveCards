@@ -3,9 +3,6 @@
 
 namespace RendererQml
 {
-	int AdaptiveCardQmlRenderer::containerCounter = 0;
-	int AdaptiveCardQmlRenderer::imageCounter = 0;
-
 	AdaptiveCardQmlRenderer::AdaptiveCardQmlRenderer()
 		: AdaptiveCardQmlRenderer(std::make_shared<AdaptiveCards::HostConfig>())
 	{
@@ -895,7 +892,7 @@ namespace RendererQml
 
 		if (image->GetId().empty())
 		{
-			image->SetId(Formatter() << "image_auto_" << ++imageCounter);
+			image->SetId(Formatter() << "image_auto_" << context->getImageCounter());
 		}
         else
         {
@@ -1032,7 +1029,7 @@ namespace RendererQml
 
 		if (container->GetId().empty())
 		{
-			container->SetId(Formatter() << "container_auto_" << ++containerCounter);
+			container->SetId(Formatter() << "container_auto_" << context->getContainerCounter());
 		}
         else
         {

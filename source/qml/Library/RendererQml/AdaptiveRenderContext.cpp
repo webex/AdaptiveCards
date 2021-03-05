@@ -198,4 +198,14 @@ namespace RendererQml
     {
         return m_onClickFunction;
     }
+
+    const int AdaptiveRenderContext::getContainerCounter()
+    {
+        return ++m_ContainerCounter;
+    }
+
+    const int AdaptiveRenderContext::getImageCounter()
+    {
+        return ++m_ImageCounter;
+    }
 }

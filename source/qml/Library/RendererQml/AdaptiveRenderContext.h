@@ -33,6 +33,9 @@ namespace RendererQml
         void SetOnClickFunction(AdaptiveCardDependency::OnClickFunction onClickFunction);
         AdaptiveCardDependency::OnClickFunction& GetOnClickFunction();
 
+        const int getContainerCounter();
+        const int getImageCounter();
+
     private:
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
@@ -42,5 +45,7 @@ namespace RendererQml
         std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
         std::string m_lang;
         AdaptiveCardDependency::OnClickFunction m_onClickFunction;
+        int m_ContainerCounter{ 0 };
+        int m_ImageCounter{ 0 };
     };
 }
