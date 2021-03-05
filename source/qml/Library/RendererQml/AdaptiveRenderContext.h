@@ -23,9 +23,9 @@ namespace RendererQml
 
         std::shared_ptr<AdaptiveCards::HostConfig> GetConfig();
 
-        std::string GetRGBColor(const std::string& color);
+        std::string GetRGBColor(const std::string& color, bool isQml = 1);
 
-		std::string GetColor(const AdaptiveCards::ForegroundColor color, bool isSubtle, bool isHighlight);
+		std::string GetColor(const AdaptiveCards::ForegroundColor color, bool isSubtle, bool isHighlight, bool isQml = 1);
 
         std::string GetLang();
         void SetLang(const std::string& lang);

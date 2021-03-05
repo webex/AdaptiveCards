@@ -398,7 +398,7 @@ namespace RendererQml
 		uiTextRun.append("font-family:" + std::string("\\\"") + fontFamily + std::string("\\\"") + ";");
 
 		//TODO: Need to fix the color calculation
-		std::string color = context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), false).substr(3);
+		std::string color = context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), false, false);
 		uiTextRun.append("color:" + color + ";");
 
 		std::string lineheight = Formatter() << std::fixed << std::setprecision(2) << lineHeight << "px";
@@ -408,10 +408,9 @@ namespace RendererQml
 
 		uiTextRun.append("font-weight:" + std::to_string(weight) + ";");
 
-		//TODO: Exact calculation for background color
 		if (textRun->GetHighlight())
 		{
-			uiTextRun.append("background-color:" + Utils::GetTextHighlightColor(color) + ";");
+			uiTextRun.append("background-color:" + context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), true, false) + ";");
 		}
 
 		if (textRun->GetItalic())
