@@ -150,4 +150,12 @@ class ACRCollectionViewDatasource: NSObject, NSCollectionViewDataSource {
 
 extension ACRCollectionViewDatasource: NSCollectionViewDelegate { }
 
+<<<<<<< HEAD
 extension ACRCollectionViewDatasource: NSCollectionViewDelegateFlowLayout { }
+=======
+extension ACRCollectionViewDatasource: NSCollectionViewDelegateFlowLayout {
+    private func collectionView(collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> NSSize {
+        return NSSize(width: 40, height: 30)
+    }
+}
+>>>>>>> f4cfcbfa15fd9be7b771fc01c8361f77cbf2818b

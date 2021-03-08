@@ -6,6 +6,8 @@ class ACRCollectionViewItemView: NSView {
     
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
+
+        // Drawing code here.
     }
     
     override init(frame frameRect: NSRect) {
