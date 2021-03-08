@@ -12,7 +12,9 @@ class ImageSetRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         let newFrame = NSRect(x: 0, y: 0, width: 50, height: 50)
 //        let colView = ACRCollectionView(frame: newFrame)
-        let colView = CustomClass().collectionView
+//        colView.setupVaribles(imageSet: imageSet, hostConfig: hostConfig)
+        let colView = ACRCollectionView(frame: newFrame, imageSet: imageSet, hostConfig: hostConfig)
+//        let colView = CustomClass().collectionView
         let mainView = NSView()
         mainView.translatesAutoresizingMaskIntoConstraints = false
         colView.translatesAutoresizingMaskIntoConstraints = false
