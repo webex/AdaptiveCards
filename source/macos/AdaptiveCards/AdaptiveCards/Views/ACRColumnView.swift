@@ -60,8 +60,8 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
                 layer?.backgroundColor = bgColor.cgColor
             }
             // set border color
-            if let borderColor = hostConfig.getBorderColor(style) {
-                layer?.borderColor = CGColor(gray: 1, alpha: 1)
+            if let borderColorHex = hostConfig.getBorderColor(style), let borderColor = ColorUtils.color(from: borderColorHex) {
+                layer?.borderColor = borderColor.cgColor
             }
             // set border width
             if let borderWidth = hostConfig.getBorderThickness(style) {
@@ -206,6 +206,9 @@ class ACRColumnView: ACRContentStackView {
     override func addArrangedSubview(_ subview: NSView) {
         manageWidth(of: subview)
         super.addArrangedSubview(subview)
+        if subview is ACRContentStackView {
+            subview.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
+        }
     }
     
     func setWidth(_ width: ColumnWidth) {
