@@ -19,6 +19,8 @@ class RendererManager: RendererManagerProtocol {
         case .column: return ColumnRenderer.shared
         case .image: return ImageRenderer.shared
         case .container: return ContainerRenderer.shared
+        case .dateInput: return InputDateRenderer.shared
+        case .timeInput: return InputTimeRenderer.shared
         default: return UnknownElementRenderer.shared
         }
     }
