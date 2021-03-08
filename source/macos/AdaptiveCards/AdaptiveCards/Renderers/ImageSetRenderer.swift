@@ -10,15 +10,12 @@ class ImageSetRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSImageSet")
             return NSView()
         }
-        let newFrame = NSRect(x: 0, y: 0, width: 50, height: 50)
+//        let newFrame = NSRect(x: 0, y: 0, width: 335, height: 50)
 //        let colView = ACRCollectionView(frame: newFrame)
 //        colView.setupVaribles(imageSet: imageSet, hostConfig: hostConfig)
-        let colView = ACRCollectionView(frame: newFrame, imageSet: imageSet, hostConfig: hostConfig)
+        let colView = ACRCollectionView(frame: .zero, imageSet: imageSet, hostConfig: hostConfig)
 //        let colView = CustomClass().collectionView
-        let mainView = NSView()
-        mainView.translatesAutoresizingMaskIntoConstraints = false
         colView.translatesAutoresizingMaskIntoConstraints = false
-        collectionViewDataSource.setupView(colView)
         colView.dataSource = collectionViewDataSource
         colView.delegate = collectionViewDataSource
         
@@ -29,9 +26,9 @@ class ImageSetRenderer: NSObject, BaseCardElementRendererProtocol {
 //        let totalHeight: CGFloat = (2 * spacing) + (totalNumberOfRows - 1) * spacing
 //        colView.newIntrinsicContentSize()
         
-        let height = collectionViewDataSource.getHeightOfView()
+//        let height = collectionViewDataSource.getHeightOfView()
         
-        colView.heightAnchor.constraint(equalToConstant: height).isActive = true
+//        colView.heightAnchor.constraint(equalToConstant: height).isActive = true
 //        mainView.addSubview(colView)
 //        colView.topAnchor.constraint(equalTo: mainView.topAnchor).isActive = true
 //        colView.bottomAnchor.constraint(equalTo: mainView.bottomAnchor).isActive = true
