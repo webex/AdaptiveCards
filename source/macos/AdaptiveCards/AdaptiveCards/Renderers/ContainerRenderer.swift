@@ -38,7 +38,6 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             trailingBlankSpace = containerView.addPadding()
         }
         containerView.wantsLayer = true
-        containerView.layer?.masksToBounds = false
         
         if let minHeight = container.getMinHeight(), minHeight.isGreaterThan(0) {
             NSLayoutConstraint(item: containerView, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: CGFloat(truncating: minHeight)).isActive = true
