@@ -13,16 +13,10 @@ open class InputTimeRenderer: NSObject, BaseCardElementRendererProtocol {
         // setting up basic properties for Input.Time Field
         let inputField: ACRDateField = {
             let view = ACRDateField()
+            let timeValue = valueByAppendingMissingSeconds(timeElement.getValue() ?? "")
+            let timeMin = valueByAppendingMissingSeconds(timeElement.getMin() ?? "")
+            let timeMax = valueByAppendingMissingSeconds(timeElement.getMax() ?? "")
             view.isTimeMode = true
-            let values: [String] = (timeElement.getValue() ?? "").components(separatedBy: ":")
-            let timeValue: String = appendSecondsIfMissing(value: values)
-            
-            let minvalues: [String] = (timeElement.getMin() ?? "").components(separatedBy: ":")
-            let timeMin: String = appendSecondsIfMissing(value: minvalues)
-            
-            let maxvalues: [String] = (timeElement.getMax() ?? "").components(separatedBy: ":")
-            let timeMax: String = appendSecondsIfMissing(value: maxvalues)
-            
             view.translatesAutoresizingMaskIntoConstraints = false
             view.maxDateValue = timeMax
             view.minDateValue = timeMin
@@ -33,9 +27,9 @@ open class InputTimeRenderer: NSObject, BaseCardElementRendererProtocol {
         return inputField
     }
     // if input time doesn't have seconds then this function appends seconds' value as 00
-    func appendSecondsIfMissing(value: [String]) -> String {
-        var time: [String] = value
-        if value.count == 2 {
+    private func valueByAppendingMissingSeconds(_ value: String) -> String {
+        var time = value.components(separatedBy: ":")
+        if time.count == 2 {
             time.append("00")
         }
         return time.joined(separator: ":")
