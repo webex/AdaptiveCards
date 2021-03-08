@@ -110,6 +110,10 @@ namespace RendererQml
 
         static std::string ConvertToLowerIdValue(const std::string& value);
 
+		static bool isSystemTime12Hour();
+
+		static std::vector<std::string> splitString(std::string& string, char delimiter);
+
     private:
         Utils() {}
     };
