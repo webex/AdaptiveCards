@@ -3,6 +3,7 @@ import Cocoa
 class ACRCollectionViewItemView: NSView {
     var label: NSTextView?
     var box: NSView?
+//    var elemHeight: CGFloat?
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
@@ -25,6 +26,7 @@ class ACRCollectionViewItemView: NSView {
         box = NSView(frame: newFrame)
         box?.wantsLayer = true
         box?.layer?.backgroundColor = .init(red: 1, green: 0, blue: 0, alpha: 1)
+//        elemHeight = 50
         
 //        label = NSTextView(frame: NSMakeRect(0, 0, 40, 30))
 //        label.string = "Label"
