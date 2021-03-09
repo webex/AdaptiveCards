@@ -51,7 +51,8 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         } else if numberOfAutoItems == totalColumns {
             columnSetView.distribution = .gravityAreas
         } else {
-            guard columnSetView.arrangedSubviews.count == totalColumns else {
+            let arrangedSubviews = columnSetView.arrangedSubviews
+            guard arrangedSubviews.count == totalColumns else {
                 logError("ArrangedSubViews count mismatch")
                 return columnSetView
             }
@@ -63,7 +64,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             
             for (index, column) in columnSet.getColumns().enumerated() {
                 guard let width = column.getWidth(), let weighted = Int(width) else { continue }
-                weightedColumnViews.append(columnSetView.arrangedSubviews[index])
+                weightedColumnViews.append(arrangedSubviews[index])
                 guard let baseWeight = firstWeightedValue else {
                     firstWeightedValue = CGFloat(weighted)
                     weightedValues.append(1)
@@ -77,14 +78,27 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                     weightedColumnViews[index].widthAnchor.constraint(equalTo: weightedColumnViews[0].widthAnchor, multiplier: weightedValues[index]).isActive = true
                 }
             }
+            
+            if numberOfStretchItems > 1 {
+                let stretchColumnIndices = getIndicesOfStretchedColumns(of: columnSet)
+                guard numberOfStretchItems == stretchColumnIndices.count else {
+                    logError("indices count must be equal to numberOfStretchItems here")
+                    return columnSetView
+                }
+                
+                for index in (1 ..< stretchColumnIndices.count) {
+                    arrangedSubviews[stretchColumnIndices[index]].widthAnchor.constraint(equalTo: arrangedSubviews[stretchColumnIndices[0]].widthAnchor).isActive = true
+                }
+            }
         }
         
         return columnSetView
     }
     
-    private func getTotalAvailableWeight(from columns: [ACSColumn]) -> Int {
-        let weights = columns.compactMap { $0.getWidth() }
-        let weighteds = weights.compactMap { Int($0) }
-        return weighteds.reduce(0) { $0 + $1 }
+    private func getIndicesOfStretchedColumns(of columnSet: ACSColumnSet) -> [Int] {
+        return columnSet.getColumns().enumerated().compactMap { index, column in
+            let width = ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth())
+            return width == .stretch ? index : nil
+        }
     }
 }

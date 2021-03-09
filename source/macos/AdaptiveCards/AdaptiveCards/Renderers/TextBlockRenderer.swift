@@ -71,7 +71,7 @@ class ACRTextView: NSTextView {
         }
         layoutManager.ensureLayout(for: textContainer)
         let size = layoutManager.usedRect(for: textContainer).size
-        let width = size.width + 10
+        let width = size.width + 2
         return NSSize(width: width, height: size.height)
     }
     
