@@ -46,18 +46,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         // Only one is weighted and others are stretch
         let isSpecialAllStretch = numberOfWeightedItems == 1 && numberOfStretchItems == totalColumns - 1
         
-        let totalAvailableWeight = getTotalAvailableWeight(from: columnSet.getColumns())
-        if numberOfWeightedItems == totalColumns {
-            columnSetView.distribution = .fill
-            for (index, column) in columnSet.getColumns().enumerated() {
-                guard let width = column.getWidth(), let weight = Int(width), index < columnSetView.arrangedSubviews.count else {
-                    logError("Expected a weighted column here.")
-                    continue
-                }
-                let columnView = columnSetView.arrangedSubviews[index]
-                columnView.widthAnchor.constraint(equalTo: columnSetView.widthAnchor, multiplier: CGFloat(weight) / CGFloat(totalAvailableWeight)).isActive = true
-            }
-        } else if numberOfStretchItems == totalColumns || isSpecialAllStretch {
+        if numberOfStretchItems == totalColumns || isSpecialAllStretch {
             columnSetView.distribution = .fillEqually
         } else if numberOfAutoItems == totalColumns {
             columnSetView.distribution = .gravityAreas
