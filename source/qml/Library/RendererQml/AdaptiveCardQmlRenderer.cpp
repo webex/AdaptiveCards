@@ -183,8 +183,8 @@ namespace RendererQml
 
 		if (!fontFamily.empty())
 		{
-			uiTextBlock->Property("font.family", fontFamily);
-		}
+            uiTextBlock->Property("font.family", Formatter() << "\"" << fontFamily << "\"");
+        }
 
 		return uiTextBlock;
 
