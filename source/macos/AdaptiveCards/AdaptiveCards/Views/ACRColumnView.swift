@@ -54,28 +54,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
             layer?.backgroundColor = bgColor.cgColor
         }
     }
-    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle, hostConfig: ACSHostConfig, superview: NSView) {
-        super.init(frame: .zero)
-        initialize()
-        wantsLayer = true
-        if style != .none {
-            if let bgColor = hostConfig.getBackgroundColor(for: style) {
-                layer?.backgroundColor = bgColor.cgColor
-            }
-            // set border color
-            if let borderColorHex = hostConfig.getBorderColor(style), let borderColor = ColorUtils.color(from: borderColorHex) {
-                layer?.borderColor = borderColor.cgColor
-            }
-            // set border width
-            if let borderWidth = hostConfig.getBorderThickness(style) {
-                layer?.borderWidth = CGFloat(truncating: borderWidth)
-            }
-            // add padding
-            if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing, let padding = CGFloat(exactly: paddingSpace) {
-                applyPadding(padding)
-            }
-        }
-    }
     
     init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
         self.hostConfig = hostConfig
@@ -241,11 +219,6 @@ class ACRColumnView: ACRContentStackView {
         initialize()
     }
     
-    override init(style: ACSContainerStyle, parentStyle: ACSContainerStyle, hostConfig: ACSHostConfig, superview: NSView) {
-        super.init(style: style, parentStyle: parentStyle, hostConfig: hostConfig, superview: superview)
-        initialize()
-    }
-    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         initialize()
@@ -270,22 +243,6 @@ class ACRColumnView: ACRContentStackView {
         columnWidth = width
         manageWidth(of: self)
         manageWidth(of: stackView)
-    }
-    
-    func setStyle(_ style: ACSContainerStyle, parentStyle: ACSContainerStyle?) {
-        guard style != .none, style != parentStyle else { return }
-        if let bgColor = hostConfig.getBackgroundColor(for: style) {
-            layer?.backgroundColor = bgColor.cgColor
-        }
-        if let borderColor = hostConfig.getBorderColor(for: style) {
-            layer?.borderColor = borderColor.cgColor
-        }
-        if let borderWidth = hostConfig.getBorderThickness(for: style) {
-            layer?.borderWidth = borderWidth
-        }
-        if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing, let padding = CGFloat(exactly: paddingSpace) {
-            applyPadding(padding)
-        }
     }
     
     private func manageWidth(of view: NSView) {
