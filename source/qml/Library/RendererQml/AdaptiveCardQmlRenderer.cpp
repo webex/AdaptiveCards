@@ -496,8 +496,7 @@ namespace RendererQml
 			input->GetChoiceSetStyle(),
 			parsedValues,
 			choices,
-			input->GetPlaceholder(),
-            textColor);
+			input->GetPlaceholder());
 
 		if (CheckBoxType::ComboBox == type)
 		{
@@ -546,7 +545,6 @@ namespace RendererQml
 		uiItemDelegate_Text->Property("text", "modelData.text");
 		uiItemDelegate_Text->Property("font", "parent.font");
 		uiItemDelegate_Text->Property("verticalAlignment", "Text.AlignVCenter");
-        uiItemDelegate_Text->Property("color", choiceset.textColor);
 
 		if (choiceset.choices[0].isWrap)
 		{
@@ -567,7 +565,6 @@ namespace RendererQml
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
 		uiContentItem_Text->Property("leftPadding", "parent.font.pixelSize + parent.spacing");
 		uiContentItem_Text->Property("elide", "Text.ElideRight");
-        uiContentItem_Text->Property("color", choiceset.textColor);
 				
 		uiComboBox->Property("contentItem", uiContentItem_Text->ToString());
 				
