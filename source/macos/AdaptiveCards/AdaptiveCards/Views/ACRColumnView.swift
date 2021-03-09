@@ -77,6 +77,30 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         }
     }
     
+    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
+        self.hostConfig = hostConfig
+        super.init(frame: .zero)
+        initialize()
+        wantsLayer = true
+        if style != .none {
+            if let bgColor = hostConfig.getBackgroundColor(for: style) {
+                layer?.backgroundColor = bgColor.cgColor
+            }
+            // set border color
+            if let borderColorHex = hostConfig.getBorderColor(style), let borderColor = ColorUtils.color(from: borderColorHex) {
+                layer?.borderColor = borderColor.cgColor
+            }
+            // set border width
+            if let borderWidth = hostConfig.getBorderThickness(style) {
+                layer?.borderWidth = CGFloat(truncating: borderWidth)
+            }
+            // add padding
+            if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing, let padding = CGFloat(exactly: paddingSpace) {
+                applyPadding(padding)
+            }
+        }
+    }
+    
     required init?(coder: NSCoder) {
         self.hostConfig = ACSHostConfig() // TODO: This won't work
         super.init(coder: coder)
@@ -210,10 +234,10 @@ class ACRColumnView: ACRContentStackView {
     }
     
     private lazy var widthConstraint = widthAnchor.constraint(equalToConstant: Constants.minWidth)
-    private var columnWidth: ColumnWidth = .weighted(1)
+    private (set) var columnWidth: ColumnWidth = .weighted(1)
     
-    override init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
-        super.init(style: style, hostConfig: hostConfig)
+    override init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
+        super.init(style: style, parentStyle: parentStyle, hostConfig: hostConfig, superview: superview)
         initialize()
     }
     

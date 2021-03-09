@@ -2,8 +2,8 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRView: ACRColumnView {
-    override init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
-        super.init(style: style, hostConfig: hostConfig)
+    init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
+        super.init(style: style, parentStyle: nil, hostConfig: hostConfig, superview: nil)
         setStyle(style, parentStyle: nil)
     }
     
