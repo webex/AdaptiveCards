@@ -110,7 +110,7 @@ namespace RendererQml
 
 		static bool isSystemTime12Hour();
 
-		static std::vector<std::string> splitString(std::string& string, char delimiter);
+		static std::vector<std::string> splitString(const std::string& string, char delimiter);
 
     private:
         Utils() {}

@@ -337,25 +337,23 @@ namespace RendererQml
 
 	bool Utils::isSystemTime12Hour()
 	{
-		SYSTEMTIME t;
-		int result;
-		char buffer[30];
+		char dateTimeBuffer[80];
+		struct tm newtime;
+		time_t now = time(0);
+		localtime_s(&newtime, &now);
+		setlocale(LC_TIME, "");
+		strftime(dateTimeBuffer, 80, "%c", &newtime);
 
-		GetLocalTime(&t);
+		std::vector<std::string> time_split = Utils::splitString( std::string(dateTimeBuffer), ' ');
 
-		result = GetTimeFormat(LOCALE_USER_DEFAULT, 0, &t, NULL, (LPTSTR)buffer, sizeof(buffer));
-
-		std::string s = buffer;
-		std::vector<std::string> time_split = Utils::splitString(s, ' ');
-
-		if (result>0 && time_split.size()==1)
+		if (time_split.size() == 2)
 		{
 			return false;
 		}
 		return true;
 	}
 
-	std::vector<std::string> Utils::splitString(std::string& string, char delimiter)
+	std::vector<std::string> Utils::splitString(const std::string& string, char delimiter)
 	{
 		std::vector<std::string> splitElements;
 		std::stringstream ss(string);
