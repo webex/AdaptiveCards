@@ -13,12 +13,18 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
         let columnView = ACRColumnView(style: style, hostConfig: hostConfig)
         columnView.translatesAutoresizingMaskIntoConstraints = false
         columnView.setWidth(ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth()))
+//        columnView.setStyle(column.getStyle(), parentStyle: style)
         
         for item in column.getItems() {
             let renderer = RendererManager.shared.renderer(for: item.getType())
             let view = renderer.render(element: item, with: hostConfig, style: style, rootView: rootView, parentView: columnView, inputs: [])
             columnView.addArrangedSubview(view)
         }
+        
+        if let height = column.getMinHeight(), let heightPt = CGFloat(exactly: height), heightPt > 0 {
+            columnView.heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
+        }
+        
         return columnView
     }
 }

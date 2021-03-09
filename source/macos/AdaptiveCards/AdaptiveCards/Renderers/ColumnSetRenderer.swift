@@ -9,26 +9,38 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             logError("Element is not of type ACSColumnSet")
             return NSView()
         }
-        let columnSetView = ACRStackView()
+        let columnSetView = ACRContentStackView(style: columnSet.getStyle(), hostConfig: hostConfig)
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
         columnSetView.orientation = .horizontal
         columnSetView.distribution = .fillEqually
-        columnSetView.alignment = .top
-        columnSetView.spacing = 0
         
         var numberOfAutoItems = 0
         var numberOfStretchItems = 0
         var numberOfWeightedItems = 0
         let totalColumns = columnSet.getColumns().count
-        for column in columnSet.getColumns() {
+        for (index, column) in columnSet.getColumns().enumerated() {
             let width = ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth())
             
             if width.isWeighted { numberOfWeightedItems += 1 }
             if width == .stretch { numberOfStretchItems += 1 }
             if width == .auto { numberOfAutoItems += 1 }
             
-            let columnView = ColumnRenderer.shared.render(element: column, with: hostConfig, style: style, rootView: rootView, parentView: columnSetView, inputs: [])
-            columnSetView.addArrangedSubview(columnView)
+            let columnView = ColumnRenderer.shared.render(element: column, with: hostConfig, style: columnSet.getStyle(), rootView: rootView, parentView: columnSetView, inputs: [])
+            
+            // Check if has extra properties else add column view
+            guard index > 0, column.getSpacing() != .none, !column.getSeparator() else {
+                columnSetView.addArrangedSubview(columnView)
+                continue
+            }
+            let wrappingView = ACRContentStackView(style: column.getStyle(), hostConfig: hostConfig)
+            wrappingView.translatesAutoresizingMaskIntoConstraints = false
+            wrappingView.orientation = .horizontal
+            wrappingView.addSpacing(column.getSpacing())
+            wrappingView.addSeperator(column.getSeparator())
+            
+            wrappingView.addArrangedSubview(columnView)
+            columnView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
+            columnSetView.addArrangedSubview(wrappingView)
         }
         
         // Only one is weighted and others are stretch
@@ -85,14 +97,5 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         let weights = columns.compactMap { $0.getWidth() }
         let weighteds = weights.compactMap { Int($0) }
         return weighteds.reduce(0) { $0 + $1 }
-    }
-}
-
-class ACRStackView: NSStackView {
-    override func viewDidMoveToSuperview() {
-        super.viewDidMoveToSuperview()
-        // Should look for better solution
-        guard let superview = superview else { return }
-        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
     }
 }
