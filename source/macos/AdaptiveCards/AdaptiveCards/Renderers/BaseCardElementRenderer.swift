@@ -3,7 +3,7 @@ import AppKit
 
 class BaseCardElementRenderer {
     func updateView(view: NSView, element: ACSBaseCardElement, style: ACSContainerStyle, hostConfig: ACSHostConfig, isfirstElement: Bool) -> NSView {
-        let updatedView = ACRContentStackView()
+        let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig)
         
         // For Spacing
         if !isfirstElement {
@@ -24,8 +24,19 @@ class BaseCardElementRenderer {
                 spaceAdded = spacingConfig?.extraLargeSpacing ?? 40
             case .padding:
                 spaceAdded = spacingConfig?.paddingSpacing ?? 20
+            @unknown default:
+                logError("Unknown padding!")
+                spaceAdded = 0
             }
             updatedView.addSpacing(spacing: CGFloat(truncating: spaceAdded))
+        }
+        
+        if let elem = element as? ACSImage {
+            switch elem.getHorizontalAlignment() {
+            case .center: updatedView.alignment = .centerX
+            case .right: updatedView.alignment = .trailing
+            default: updatedView.alignment = .leading
+            }
         }
         
         // For seperator

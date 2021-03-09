@@ -16,12 +16,48 @@ Frame{
         border.width: 2
         radius: 8
     }
-
+    
     property string defaultCard: ""
-
+    
     signal listItemClicked(var index, var cardJson);
     signal reloadCard(var card)
-
+    Column {
+        width: parent.width
+        spacing: 15
+        Row{
+            width: parent.width
+            Text {
+                width: parent.width/2
+                font.weight: Font.DemiBold
+                text: "Select theme:"
+                font.pointSize: 9
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            ComboBox {
+                id : comboId
+                width: parent.width/2
+                model: ListModel {
+                    id: cbItems
+                    ListElement { text: "Light"}
+                    ListElement { text: "Dark"}
+                }
+                onActivated: {
+                    _aModel.setTheme(cbItems.get(currentIndex).text)
+                    
+                }
+            }
+        }
+        ListView{
+            id: cardListView
+            width: parent.width
+            height: parent.parent.height - comboId.height - parent.spacing
+            clip: true
+            model: _aModel
+            
+            delegate: cardDelegate
+        }
+    }
+    
     Component{
         id: cardDelegate
         Rectangle{
@@ -31,14 +67,14 @@ Frame{
             radius: 5
             border.width: 1
             border.color: 'black'
-
+            
             Text {
                 id: txt
                 width: parent.width
                 padding: 5
                 text: model.CardName
                 font.pixelSize: 15
-
+                
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
@@ -51,19 +87,8 @@ Frame{
             Component.onCompleted: {
                 if(index === 0)
                     defaultCard = model.CardJson
-                    listItemClicked(index, defaultCard)
+                listItemClicked(index, defaultCard)
             }
         }
     }
-
-    ListView{
-        id: cardListView
-        width: parent.width
-        height: parent.height
-        clip: true
-        model: _aModel
-
-        delegate: cardDelegate
-    }
 }
-
