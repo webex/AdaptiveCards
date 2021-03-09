@@ -715,8 +715,8 @@ namespace RendererQml
 		{
 			uiInnerSegment = std::make_shared<QmlTag>("Image");
 			uiInnerSegment->Property("anchors.centerIn", "parent");
-			uiInnerSegment->Property("width", "parent.width-3");
-			uiInnerSegment->Property("height", "parent.height-3");
+			uiInnerSegment->Property("width", "parent.width - 3");
+			uiInnerSegment->Property("height", "parent.height - 3");
 			uiInnerSegment->Property("visible", checkbox.id + ".checked");
 
 			//Finding absolute Path at runtime
