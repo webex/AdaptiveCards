@@ -18,10 +18,11 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         // add background Image
         renderBackgroundImage(backgroundImage: container.getBackgroundImage(), view: containerView, rootview: rootView)
         
-        var leadingBlankSpace: NSView?, trailingBlankSpace: NSView?
-        
+        var leadingBlankSpace: NSView?
         if container.getVerticalContentAlignment() == .center || container.getVerticalContentAlignment() == .bottom {
-            leadingBlankSpace = containerView.addPadding()
+            let view = NSView()
+            containerView.addArrangedSubview(view)
+            leadingBlankSpace = view
         }
         
         for (index, item) in container.getItems().enumerated() {
@@ -34,16 +35,17 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         
         let verticalAlignment = container.getVerticalContentAlignment()
         // Dont add the trailing space if the vertical content alignment is top/default
-        if verticalAlignment == .center {
-            trailingBlankSpace = containerView.addPadding()
+        if verticalAlignment == .center, let topView = leadingBlankSpace {
+            let view = NSView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            leadingBlankSpace?.translatesAutoresizingMaskIntoConstraints = false
+            containerView.addArrangedSubview(view)
+            view.heightAnchor.constraint(equalTo: topView.heightAnchor).isActive = true
         }
         containerView.wantsLayer = true
         
-        if let minHeight = container.getMinHeight(), minHeight.isGreaterThan(0) {
-            NSLayoutConstraint(item: containerView, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: CGFloat(truncating: minHeight)).isActive = true
-        }
-        if leadingBlankSpace != nil, trailingBlankSpace != nil {
-            NSLayoutConstraint(item: leadingBlankSpace as Any, attribute: .height, relatedBy: .equal, toItem: trailingBlankSpace, attribute: .height, multiplier: 1.0, constant: 0).isActive = true
+        if let minHeight = container.getMinHeight(), let heightPt = CGFloat(exactly: minHeight), heightPt > 0 {
+            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
         }
         return containerView
     }

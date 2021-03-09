@@ -237,11 +237,4 @@ class ACRColumnView: ACRContentStackView {
             widthConstraint.isActive = false
         }
     }
-    func addPadding() -> NSView {
-        let blankTrailingSpace = NSView()
-        blankTrailingSpace.translatesAutoresizingMaskIntoConstraints = false
-        blankTrailingSpace.setContentHuggingPriority(NSLayoutConstraint.Priority.defaultLow - 10, for: .vertical)
-        addArrangedSubview(blankTrailingSpace)
-        return blankTrailingSpace
-    }
 }
