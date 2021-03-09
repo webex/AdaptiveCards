@@ -31,9 +31,10 @@ class ACRContentHoldingView: NSView {
         self.addSubview(imageView)
     }
     
-// Commented code to be used when integration with image set, columns and other containers
+ // Commented code to be used when integration with image set, columns and other containers
     override func layout() {
         super.layout()
+        
         if isPersonStyle {
             let subview = self.subviews[0]
             let radius = subview.bounds.size.width / 2
@@ -41,6 +42,7 @@ class ACRContentHoldingView: NSView {
             subview.layer?.cornerRadius = radius
             subview.layer?.masksToBounds = true
         }
+        
         var shouldUpdate = false
         if !(imageProperties?.hasExplicitDimensions ?? false) && _heightConstraint == nil {
             setHeightConstraint()
@@ -70,8 +72,8 @@ class ACRContentHoldingView: NSView {
     private func updateIntrinsicContentSizeOfSelfAndViewGroup() {
         var width = imageProperties?.contentSize.width ?? 0
         if width > 0 {
-            if imageProperties?.acsImageSize == ACSImageSize.stretch || width > frame.size.width {
-                width = frame.size.width
+            if imageProperties?.acsImageSize == ACSImageSize.stretch || (width > self.frame.size.width) {
+                width = self.frame.size.width
             }
         }
 
@@ -94,7 +96,7 @@ class ACRContentHoldingView: NSView {
     }
 
     private func setHeightConstraintUtil(heightAnchor: NSLayoutDimension) -> NSLayoutConstraint {
-        let constraint = heightAnchor.constraint(equalTo: heightAnchor, constant: imageProperties?.contentSize.height ?? 0)
+        let constraint = heightAnchor.constraint(equalToConstant: imageProperties?.contentSize.height ?? 0)
         constraint.priority = NSLayoutConstraint.Priority(rawValue: 999)
         constraint.isActive = true
         return constraint

@@ -53,7 +53,6 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             }
         }
     
-        parent.addArrangedSubview(wrappingView)
         // wrappingView.addSubview(imageView)
         
         // Image View anchors
@@ -84,7 +83,17 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
 //            imageView.layer?.cornerRadius = radius
 //        }
         
-        // iOS Implementation Line 97
+        parent.addArrangedSubview(wrappingView)
+        
+        switch imageProperties.acsHorizontalAlignment {
+        case .center:
+            imageView.centerXAnchor.constraint(equalTo: wrappingView.centerXAnchor).isActive = true
+        case .right:
+            imageView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
+        default:
+            imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
+        }
+        
         wrappingView.heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
         if imageProperties.acsImageSize == ACSImageSize.stretch {
             wrappingView.widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
