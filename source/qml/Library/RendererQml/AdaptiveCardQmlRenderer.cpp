@@ -242,7 +242,7 @@ namespace RendererQml
 		backgroundTag->Property("radius", "5");
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
-        backgroundTag->Property("color", "'transparent'");
+        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
 		backgroundTag->Property("border.width", "1");
 		backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
@@ -780,7 +780,7 @@ namespace RendererQml
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         //TODO: ADD hover effect
-        backgroundTag->Property("color", "'transparent'");
+        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
         backgroundTag->Property("border.width", "1");
         backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
@@ -1072,8 +1072,9 @@ namespace RendererQml
 		}
 		else
 		{
-			uiContainer->Property("background", "Rectangle{border.width : 0; color: \"transparent\" }");
-		}
+            const auto color = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
+            uiContainer->Property("background", "Rectangle{border.width : 0; color: " + color + " }");
+        }
 
 		return uiContainer;
 	}
@@ -1159,7 +1160,7 @@ namespace RendererQml
 		backgroundTag->Property("radius", "5");
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
-        backgroundTag->Property("color", "'transparent'");
+        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
 		backgroundTag->Property("border.width", "1");
 		backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
@@ -1372,8 +1373,8 @@ namespace RendererQml
 		auto uiSep = std::make_shared<QmlTag>("Rectangle");
 		uiSep->Property("width", "parent.width");
 		uiSep->Property("height", std::to_string(spacing == 0 ? separator.lineThickness : spacing));
-		uiSep->Property("color", "\"transparent\"");
-		uiSep->Property("visible", adaptiveElement->GetIsVisible() ? "true" : "false");
+        uiSep->Property("color", "\"transparent\"");
+        uiSep->Property("visible", adaptiveElement->GetIsVisible() ? "true" : "false");
 
 		if (adaptiveElement->GetSeparator() && adaptiveElement->GetIsVisible())
 		{
