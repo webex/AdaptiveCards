@@ -3,6 +3,7 @@ import AppKit
 
 class ImageSetRenderer: NSObject, BaseCardElementRendererProtocol {
     static let shared = ImageSetRenderer()
+    // Has to be defined outside the render function
     let collectionViewDataSource = ACRCollectionViewDatasource()
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
@@ -10,31 +11,11 @@ class ImageSetRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSImageSet")
             return NSView()
         }
-//        let newFrame = NSRect(x: 0, y: 0, width: 335, height: 50)
-//        let colView = ACRCollectionView(frame: newFrame)
-//        colView.setupVaribles(imageSet: imageSet, hostConfig: hostConfig)
+        
         let colView = ACRCollectionView(frame: .zero, imageSet: imageSet, hostConfig: hostConfig)
-//        let colView = CustomClass().collectionView
         colView.translatesAutoresizingMaskIntoConstraints = false
         colView.dataSource = collectionViewDataSource
         colView.delegate = collectionViewDataSource
-        
-//        let numberOfSections = colView.numberOfSections
-//        let numberOfItems = colView.numberOfItems(inSection: 0)
-//        let numberOfItemsInRow: CGFloat = 8
-//        let totalNumberOfRows = Int(ceil(Double(numberOfItems / numberOfItemsInRow))) * numberOfSections
-//        let totalHeight: CGFloat = (2 * spacing) + (totalNumberOfRows - 1) * spacing
-//        colView.newIntrinsicContentSize()
-        
-//        let height = collectionViewDataSource.getHeightOfView()
-        
-//        colView.heightAnchor.constraint(equalToConstant: height).isActive = true
-//        mainView.addSubview(colView)
-//        colView.topAnchor.constraint(equalTo: mainView.topAnchor).isActive = true
-//        colView.bottomAnchor.constraint(equalTo: mainView.bottomAnchor).isActive = true
-//        colView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor).isActive = true
-//        colView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor).isActive = true
-//        print(colView.collectionViewLayout?.collectionViewContentSize)
         return colView
     }
 }
