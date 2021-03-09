@@ -18,7 +18,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         // add background Image
         renderBackgroundImage(backgroundImage: container.getBackgroundImage(), view: containerView, rootview: rootView)
         
-        var leadingBlankSpace: NSView? = nil, trailingBlankSpace: NSView? = nil
+        var leadingBlankSpace: NSView?, trailingBlankSpace: NSView?
         
         if container.getVerticalContentAlignment() == .center || container.getVerticalContentAlignment() == .bottom {
             leadingBlankSpace = containerView.addPadding()
@@ -42,7 +42,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         if let minHeight = container.getMinHeight(), minHeight.isGreaterThan(0) {
             NSLayoutConstraint(item: containerView, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: CGFloat(truncating: minHeight)).isActive = true
         }
-        if leadingBlankSpace != nil && trailingBlankSpace != nil {
+        if leadingBlankSpace != nil, trailingBlankSpace != nil {
             NSLayoutConstraint(item: leadingBlankSpace as Any, attribute: .height, relatedBy: .equal, toItem: trailingBlankSpace, attribute: .height, multiplier: 1.0, constant: 0).isActive = true
         }
         return containerView
