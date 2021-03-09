@@ -7,21 +7,9 @@ class ACRCollectionViewItem: NSCollectionViewItem {
     }
     
     override func loadView() {
-//        let redBox = NSView(frame: .zero)
-//        redBox.wantsLayer = true
-//        redBox.layer?.backgroundColor = .init(red: 1, green: 0, blue: 0, alpha: 1)
-//        view = redBox
         let imageView = NSImageView()
         imageView.wantsLayer = true
-        imageView.layer?.backgroundColor = .init(red: 1, green: 0, blue: 0, alpha: 1)
-        imageView.image = myImage
+        imageView.layer?.backgroundColor = .clear
         view = imageView
-//        view = NSView()
-//        view.addSubview(imageView)
     }
 }
-// guard let newImageView = self.myImageView else { view = NSView()
-//    return }
-// newImageView.wantsLayer = true
-// newImageView.layer?.backgroundColor = .init(red: 1, green: 0, blue: 0, alpha: 1)
-// view = newImageView
