@@ -27,10 +27,13 @@ class ACRCollectionView: NSCollectionView {
         // TODO: Change minimumLineSpacing to 0 after adding images
         layout.minimumLineSpacing = spacing
         layout.minimumInteritemSpacing = spacing
+        layout.estimatedItemSize = .zero
         layout.itemSize = ImageUtils.getImageSizeAsCGSize(imageSize: self.imageSize ?? .medium, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
         collectionViewLayout = layout
         
         register(ACRCollectionViewItem.self, forItemWithIdentifier: NSUserInterfaceItemIdentifier(rawValue: "MyItem"))
+//        register(NSCollectionViewItem.self, forItemWithIdentifier: NSUserInterfaceItemIdentifier("MyItem"))
+//        register(NSCollectionViewItem(), forItemWithIdentifier: NSUserInterfaceItemIdentifier(rawValue: "MyItem"))
     }
     
     func newIntrinsicContentSize() -> CGSize {
@@ -68,9 +71,51 @@ class ACRCollectionView: NSCollectionView {
 // MARK: DataSource for CollectionView
 class ACRCollectionViewDatasource: NSObject, NSCollectionViewDataSource {
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        guard let collectionView = collectionView as? ACRCollectionView else { return NSCollectionViewItem() }
+        guard let collectionView = collectionView as? ACRCollectionView, let hostConfig = collectionView.hostConfig else { return NSCollectionViewItem() }
         let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "MyItem"), for: indexPath)
-        return item
+        guard let collectionViewItem = item as? ACRCollectionViewItem else { return item }
+        print(indexPath.item)
+        let sample = "https://messagecardplayground.azurewebsites.net/assets/TxP_Flight.png"
+        guard let imageSet = collectionView.imageSet else { return item }
+        let imageArray = imageSet.getImages()
+        let urlString = imageArray[indexPath.item].getUrl() ?? sample
+        guard let url = URL(string: urlString) else { return item }
+//        let image = NSImage(byReferencing: url)
+//        let imageView = NSImageView(image: image)
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+        let imageView = NSImageView()
+        DispatchQueue.global().async {
+            guard let data = try? Data(contentsOf: url) else { return }
+            DispatchQueue.main.async {
+                guard let image = NSImage(data: data) else { return }
+                image.size = ImageUtils.getImageSizeAsCGSize(imageSize: collectionView.imageSize ?? .medium, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
+                imageView.image = image
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+            }
+        }
+//        imageView.layer?.masksToBounds = true
+//        imageView.setFrameSize(ImageUtils.getImageSizeAsCGSize(imageSize: collectionView.imageSize ?? .medium, width: 0, height: 0, with: hostConfig, explicitDimensions: false))
+//        imageView.image?.size = ImageUtils.getImageSizeAsCGSize(imageSize: collectionView.imageSize ?? .medium, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
+//        let blueBox = NSView(frame: .zero)
+//        blueBox.wantsLayer = true
+//        blueBox.layer?.backgroundColor = .init(red: 0, green: 0, blue: 1, alpha: 1)
+//        let newItem: ACRCollectionViewItem = collectionViewItem
+//        newItem.view = imageView
+//        collectionViewItem.myImage = image
+//        collectionViewItem.view.addSubview(imageView)
+//        collectionViewItem.imageView = imageView
+//        collectionViewItem.view = blueBox
+//        collectionViewItem.view = imageView
+        collectionViewItem.view.addSubview(imageView)
+        print(imageView)
+//        collectionViewItem.myImage = image
+        
+//        collectionViewItem.view.layer?.backgroundColor = .init(red: 0, green: 0, blue: 1, alpha: 1)
+//        guard var myImageView = collectionViewItem.view as? NSImageView else { return item }
+        return collectionViewItem
+//        return newItem
+//        let cell = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "MyItem"), for: indexPath)
+        
     }
     
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
