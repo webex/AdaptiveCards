@@ -1,7 +1,6 @@
 #include "AdaptiveCardQmlRenderer.h"
 #include "pch.h"
 #include <windows.h>
-//#include <time.h>
 
 namespace RendererQml
 {
@@ -133,12 +132,85 @@ namespace RendererQml
     {
         if (context->GetConfig()->GetSupportsInteractivity())
         {
+            std::shared_ptr<QmlTag> uiButtonStrip;
             auto actionsConfig = context->GetConfig()->GetActions();
+
+            std::vector<std::shared_ptr<QmlTag>> showCards;
 
             if (actionsConfig.actionsOrientation == AdaptiveCards::ActionsOrientation::Horizontal)
             {
-                
+                uiButtonStrip = std::make_shared<QmlTag>("Flow");
+                uiButtonStrip->Property("width", "parent.width");
+                uiButtonStrip->Property("spacing", std::to_string(actionsConfig.buttonSpacing));
+
+                switch (actionsConfig.actionAlignment)
+                {
+                case AdaptiveCards::ActionAlignment::Right:
+                    uiButtonStrip->Property("layoutDirection", "Qt.RightToLeft");
+                    break;
+                case AdaptiveCards::ActionAlignment::Center: //TODO: implement for centre alignment
+                default:
+                    uiButtonStrip->Property("layoutDirection", "Qt.LeftToRight");
+                    break;
+                }
             }
+            else
+            {
+                //TODO: Implement AdaptiveCards::ActionsOrientation::Vertical
+                uiButtonStrip = std::make_shared<QmlTag>("Column");
+                uiButtonStrip->Property("width", "parent.width");
+                uiButtonStrip->Property("spacing", std::to_string(actionsConfig.buttonSpacing));
+            }
+
+            const unsigned int maxActions = std::min<unsigned int>(actionsConfig.maxActions, (unsigned int)actions.size());
+            // See if all actions have icons, otherwise force the icon placement to the left
+            const auto oldConfigIconPlacement = actionsConfig.iconPlacement;
+            bool allActionsHaveIcons = true;
+            for (const auto& action : actions)
+            {
+                if (action->GetIconUrl().empty())
+                {
+                    allActionsHaveIcons = false;
+                    break;
+                }
+            }
+
+            if (!allActionsHaveIcons)
+            {
+                actionsConfig.iconPlacement = AdaptiveCards::IconPlacement::LeftOfTitle;
+                context->GetConfig()->SetActions(actionsConfig);
+            }
+
+            for (unsigned int i = 0; i < maxActions; i++)
+            {
+                // add actions
+                auto uiAction = context->Render(actions[i]);
+
+                if (uiAction != nullptr)
+                {
+                    if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
+                    {
+                        const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
+                        //TODO: Add show card logic
+                    }
+
+                    uiButtonStrip->AddChild(uiAction);
+                }
+            }
+
+            if (!uiButtonStrip->GetChildren().empty())
+            {
+                AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
+                uiContainer->AddChild(uiButtonStrip);
+            }
+
+            for (const auto& showCard : showCards)
+            {
+                uiContainer->AddChild(showCard);
+            }
+
+            // Restore the iconPlacement for the context.
+            actionsConfig.iconPlacement = oldConfigIconPlacement;
         }
     }
 
