@@ -38,7 +38,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         if verticalAlignment == .center, let topView = leadingBlankSpace {
             let view = NSView()
             view.translatesAutoresizingMaskIntoConstraints = false
-            leadingBlankSpace?.translatesAutoresizingMaskIntoConstraints = false
+            topView.translatesAutoresizingMaskIntoConstraints = false
             containerView.addArrangedSubview(view)
             view.heightAnchor.constraint(equalTo: topView.heightAnchor).isActive = true
         }
