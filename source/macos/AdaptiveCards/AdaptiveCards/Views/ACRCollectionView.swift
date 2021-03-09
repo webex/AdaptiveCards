@@ -27,15 +27,12 @@ class ACRCollectionView: NSCollectionView {
         // TODO: Change minimumLineSpacing to 0 after adding images
         layout.minimumLineSpacing = spacing
         layout.minimumInteritemSpacing = spacing
-        layout.estimatedItemSize = .zero
         layout.itemSize = ImageUtils.getImageSizeAsCGSize(imageSize: self.imageSize ?? .medium, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
         collectionViewLayout = layout
         
         self.backgroundColors = [.clear]
         
         register(ACRCollectionViewItem.self, forItemWithIdentifier: NSUserInterfaceItemIdentifier(rawValue: "MyItem"))
-//        register(NSCollectionViewItem.self, forItemWithIdentifier: NSUserInterfaceItemIdentifier("MyItem"))
-//        register(NSCollectionViewItem(), forItemWithIdentifier: NSUserInterfaceItemIdentifier(rawValue: "MyItem"))
     }
     
     func newIntrinsicContentSize() -> CGSize {
