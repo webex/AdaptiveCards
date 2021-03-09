@@ -698,7 +698,7 @@ namespace RendererQml
 			uiInnerSegment->Property("x", "width/2");
 			uiInnerSegment->Property("y", "height/2");
 			uiInnerSegment->Property("radius", "height/2");
-			uiInnerSegment->Property("color", checkbox.id + ".checked ? '#ffffff' : 'transparent'");
+			uiInnerSegment->Property("color", checkbox.id + ".checked ? '#ffffff' : 'defaultPalette.backgroundColor'");
 			uiInnerSegment->Property("visible", checkbox.id + ".checked");
 		}
 		else
