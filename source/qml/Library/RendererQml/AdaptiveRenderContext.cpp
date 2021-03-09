@@ -219,4 +219,14 @@ namespace RendererQml
 	{
 		return ++m_ColumnCounter;
 	}
+
+    void AdaptiveRenderContext::setCardRootId(const std::string& rootId)
+    {
+        m_CardRootId = rootId;
+    }
+
+    const std::string AdaptiveRenderContext::getCardRootId()
+    {
+        return m_CardRootId;
+    }
 }

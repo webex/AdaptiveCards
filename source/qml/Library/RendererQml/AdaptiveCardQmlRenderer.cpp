@@ -43,7 +43,7 @@ namespace RendererQml
         (*GetElementRenderers()).Set<AdaptiveCards::TextBlock>(AdaptiveCardQmlRenderer::TextBlockRender);
         (*GetElementRenderers()).Set<AdaptiveCards::RichTextBlock>(AdaptiveCardQmlRenderer::RichTextBlockRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Image>(AdaptiveCardQmlRenderer::ImageRender);
-        /*(*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);*/
+        (*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Container>(AdaptiveCardQmlRenderer::ContainerRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Column>(AdaptiveCardQmlRenderer::ColumnRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ColumnSet>(AdaptiveCardQmlRenderer::ColumnSetRender);
@@ -56,8 +56,7 @@ namespace RendererQml
         (*GetElementRenderers()).Set<AdaptiveCards::DateInput>(AdaptiveCardQmlRenderer::DateInputRender);
         (*GetElementRenderers()).Set<AdaptiveCards::TimeInput>(AdaptiveCardQmlRenderer::TimeInputRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ToggleInput>(AdaptiveCardQmlRenderer::ToggleInputRender);
-        /*(*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::OpenUrlAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
+        /*(*GetElementRenderers()).Set<AdaptiveCards::OpenUrlAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ShowCardAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ToggleVisibilityAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);*/
@@ -71,6 +70,8 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick.Controls 2.15");
         uiCard->AddImports("import QtGraphicalEffects 1.15");
         uiCard->Property("id", "adaptiveCard");
+        context->setCardRootId(uiCard->GetId());
+        uiCard->AddFunctions("signal buttonClick(var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
         //TODO: Width can be set as config
         uiCard->Property("width", "600");
@@ -95,17 +96,16 @@ namespace RendererQml
 		columnLayout->AddChild(rectangle);
 
 		//TODO: Add card vertical content alignment
-		if (!card->GetBody().empty())
-		{
-			auto bodyLayout = std::make_shared<QmlTag>("Column");
-			bodyLayout->Property("id", "bodyLayout");
-			bodyLayout->Property("width", "parent.width");
-			//TODO: Set spacing from host config
-			bodyLayout->Property("spacing", "8");
-			rectangle->Property("Layout.preferredHeight", "bodyLayout.height");
-			rectangle->AddChild(bodyLayout);
-			AddContainerElements(bodyLayout, card->GetBody(), context);
-		}
+        auto bodyLayout = std::make_shared<QmlTag>("Column");
+        bodyLayout->Property("id", "bodyLayout");
+        bodyLayout->Property("width", "parent.width");
+        //TODO: Set spacing from host config
+        bodyLayout->Property("spacing", "8");
+        rectangle->Property("Layout.preferredHeight", "bodyLayout.height");
+        rectangle->AddChild(bodyLayout);
+
+        AddContainerElements(bodyLayout, card->GetBody(), context);
+        AddActions(bodyLayout, card->GetActions(), context);
 
 		return uiCard;
 	}
@@ -127,6 +127,19 @@ namespace RendererQml
 				uiContainer->AddChild(uiElement);
 			}
 		}
+    }
+
+    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        if (context->GetConfig()->GetSupportsInteractivity())
+        {
+            auto actionsConfig = context->GetConfig()->GetActions();
+
+            if (actionsConfig.actionsOrientation == AdaptiveCards::ActionsOrientation::Horizontal)
+            {
+                
+            }
+        }
     }
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextBlockRender(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, std::shared_ptr<AdaptiveRenderContext> context)
@@ -1576,5 +1589,10 @@ namespace RendererQml
 
 		return uiContainer;
 	}
+
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::MediaRender(std::shared_ptr<AdaptiveCards::Media> media, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        return std::make_shared<QmlTag>("Rectangle");
+    }
 }
 	

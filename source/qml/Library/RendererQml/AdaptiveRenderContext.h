@@ -38,6 +38,9 @@ namespace RendererQml
 		const int getColumnSetCounter();
 		const int getColumnCounter();
 
+        void setCardRootId(const std::string& rootId);
+        const std::string getCardRootId();
+
     private:
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
@@ -47,6 +50,7 @@ namespace RendererQml
         std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
         std::string m_lang;
         AdaptiveCardDependency::OnClickFunction m_onClickFunction;
+        std::string m_CardRootId;
         int m_ContainerCounter{ 0 };
         int m_ImageCounter{ 0 };
 		int m_ColumnSetCounter{ 0 };
