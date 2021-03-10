@@ -554,7 +554,7 @@ namespace RendererQml
         backgroundTag->Property("color", choiceset.backgroundColor);
         backgroundTag->Property("border.color", "'grey'");
         backgroundTag->Property("border.width", "1");
-		backgroundTag->Property("implicitHeight", "35"); //TODO: To be replaced from value hostconfig
+		backgroundTag->Property("implicitHeight", "35"); //TODO: To be replaced from hostconfig value 
         uiComboBox->Property("background", backgroundTag->ToString());
 
 		if (!choiceset.placeholder.empty())
