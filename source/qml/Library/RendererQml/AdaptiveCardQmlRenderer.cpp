@@ -565,7 +565,14 @@ namespace RendererQml
 		uiContentItem_Text->Property("font", "parent.font");
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
 		uiContentItem_Text->Property("leftPadding", "parent.font.pixelSize + parent.spacing");
-		uiContentItem_Text->Property("elide", "Text.ElideRight");
+		if (choiceset.choices[0].isWrap)
+		{
+			uiContentItem_Text->Property("wrapMode", "Text.Wrap");
+		}
+		else
+		{
+			uiContentItem_Text->Property("elide", "Text.ElideRight"); 
+		}
 				
 		uiComboBox->Property("contentItem", uiContentItem_Text->ToString());
 				
@@ -670,7 +677,7 @@ namespace RendererQml
 
 		uiButton->Property("id", checkbox.id);
 		uiButton->Property("text", "\"" + checkbox.text + "\"");
-		uiButton->Property("width", "parent.width");
+		uiButton->Property("Layout.maximumWidth", "parent.parent.parent.width");
 		uiButton->Property("font.pixelSize", std::to_string(checkbox.fontSize));
 
 		if (!checkbox.isVisible)
