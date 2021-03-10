@@ -557,6 +557,7 @@ namespace RendererQml
 		const bool isVisible = input->GetIsVisible();
 		bool isChecked;
         const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
+        const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
 
 		std::vector<std::string> parsedValues;
 		parsedValues = Utils::ParseChoiceSetInputDefaultValues(input->GetValue());
@@ -580,7 +581,8 @@ namespace RendererQml
 			input->GetChoiceSetStyle(),
 			parsedValues,
 			choices,
-			input->GetPlaceholder());
+			input->GetPlaceholder(),
+            backgroundColor);
 
 		if (CheckBoxType::ComboBox == type)
 		{
@@ -605,8 +607,18 @@ namespace RendererQml
 		uiComboBox->Property("width", "parent.width");
 		//TODO : Add Height
 				
-		uiComboBox->Property("model", GetModel(choiceset.choices)); 
+		uiComboBox->Property("model", GetModel(choiceset.choices));
 
+        const auto textColor = choiceset.choices[0].textColor;
+
+        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
+        backgroundTag->Property("radius", "5");
+        //TODO: These color styling should come from css
+        //TODO: Add hover effect
+        backgroundTag->Property("color", choiceset.backgroundColor);
+        backgroundTag->Property("border.color", "'grey'");
+        backgroundTag->Property("border.width", "1");
+        uiComboBox->Property("background", backgroundTag->ToString());
 		if (!choiceset.placeholder.empty())
 		{
 			uiComboBox->Property("currentIndex", "-1");
@@ -624,12 +636,21 @@ namespace RendererQml
 		
 		auto uiItemDelegate = std::make_shared<QmlTag>("ItemDelegate");
 		uiItemDelegate->Property("width", "parent.width");
-		
+
+        auto backgroundTagDelegate = std::make_shared<QmlTag>("Rectangle");
+        backgroundTag->Property("radius", "5");
+        //TODO: These color styling should come from css
+        //TODO: Add hover effect
+        backgroundTagDelegate->Property("color", choiceset.backgroundColor);
+        backgroundTagDelegate->Property("border.color", "'grey'");
+        backgroundTagDelegate->Property("border.width", "1");
+        uiItemDelegate->Property("background", backgroundTagDelegate->ToString());
 		auto uiItemDelegate_Text = std::make_shared<QmlTag>("Text");
 		uiItemDelegate_Text->Property("text", "modelData.text");
 		uiItemDelegate_Text->Property("font", "parent.font");
 		uiItemDelegate_Text->Property("verticalAlignment", "Text.AlignVCenter");
-
+    uiItemDelegate_Text->Property("color", textColor);
+    
 		if (choiceset.choices[0].isWrap)
 		{
 			uiItemDelegate_Text->Property("wrapMode", "Text.Wrap");
@@ -649,7 +670,8 @@ namespace RendererQml
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
 		uiContentItem_Text->Property("leftPadding", "parent.font.pixelSize + parent.spacing");
 		uiContentItem_Text->Property("elide", "Text.ElideRight");
-				
+    uiContentItem_Text->Property("color", textColor);
+
 		uiComboBox->Property("contentItem", uiContentItem_Text->ToString());
 				
 		return uiComboBox;
@@ -753,7 +775,7 @@ namespace RendererQml
 
 		uiButton->Property("id", checkbox.id);
 		uiButton->Property("text", "\"" + checkbox.text + "\"");
-		uiButton->Property("width", "parent.width");
+		uiButton->Property("Layout.maximumWidth", "parent.parent.parent.width");
 		uiButton->Property("font.pixelSize", std::to_string(checkbox.fontSize));
 
 		if (!checkbox.isVisible)
@@ -838,6 +860,8 @@ namespace RendererQml
     
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
+		//TODO: ids which are qml keywords would result in undefined behaviour
+
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
         auto uiDateInput = std::make_shared<QmlTag>("TextField");
@@ -887,17 +911,25 @@ namespace RendererQml
         auto imageTag = std::make_shared<QmlTag>("Image");
         imageTag->Property("anchors.fill", "parent");
         imageTag->Property("anchors.margins", "5");
+		imageTag->Property("fillMode", "Image.PreserveAspectFit");
+		imageTag->Property("mipmap", "true");
 
         //Finding absolute Path at runtime
         std::string file_path = __FILE__;
         std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-        dir_path.append("\\Images\\calendarIcon.png");
+        dir_path.append("\\Images\\calendarIcon.svg");
         std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
         imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
 
         //Relative wrt main.qml not working
         //imageTag->Property("source", "\"" + std::string("file:/../../Library/RendererQml/Images/calendarIcon.png") + "\"");
 
+		auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
+		ColorOverlayTag->Property("anchors.fill", "parent");
+		ColorOverlayTag->Property("source", "parent");
+		ColorOverlayTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+
+		imageTag->AddChild(ColorOverlayTag);
 
         auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 
@@ -1266,16 +1298,25 @@ namespace RendererQml
 		auto imageTag = std::make_shared<QmlTag>("Image");
 		imageTag->Property("anchors.fill", "parent");
 		imageTag->Property("anchors.margins", "5");
+		imageTag->Property("fillMode", "Image.PreserveAspectFit");
+		imageTag->Property("mipmap", "true");
 
 		//Finding absolute Path at runtime
 		std::string file_path = __FILE__;
 		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-		dir_path.append("\\Images\\clockIcon.png");
+		dir_path.append("\\Images\\clockIcon.svg");
 		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
 		imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
 
 		//Relative wrt main.qml not working
 		//imageTag->Property("source", "\"" + std::string("file:/../../Library/RendererQml/Images/calendarIcon.png") + "\"");
+
+		auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
+		ColorOverlayTag->Property("anchors.fill", "parent");
+		ColorOverlayTag->Property("source", "parent");
+		ColorOverlayTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+
+		imageTag->AddChild(ColorOverlayTag);
 
 		auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 
