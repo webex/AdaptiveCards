@@ -26,13 +26,36 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         valueStack.orientation = .vertical
         valueStack.alignment = .leading
         
+        // init content
+        let content = NSMutableAttributedString()
+        
         // Main loop to iterate over Array of facts
         for fact in factArray {
+            let textRunContent: NSMutableAttributedString
+            
+            let markdownResult = BridgeTextUtils.processText(fromFacts: fact, hostConfig: hostConfig)
+            if markdownResult.isHTML, let htmlData = markdownResult.htmlData {
+                do {
+                    textRunContent = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+                    // Delete trailing newline character
+                    textRunContent.deleteCharacters(in: NSRange(location: textRunContent.length - 1, length: 1))
+//                    textView.isSelectable = true
+                } catch {
+                    textRunContent = NSMutableAttributedString(string: markdownResult.parsedString)
+                }
+            } else {
+                textRunContent = NSMutableAttributedString(string: markdownResult.parsedString)
+                // Delete <p> and </p>
+                textRunContent.deleteCharacters(in: NSRange(location: 0, length: 3))
+                textRunContent.deleteCharacters(in: NSRange(location: textRunContent.length - 4, length: 4))
+            }
+            
             let titleView = ACRFactTextField(hostConfig: hostConfig)
             let valueView = ACRFactTextField(hostConfig: hostConfig)
-            titleView.textValue = fact.getTitle()
+            titleView.textValue = NSAttributedString(string: fact.getTitle() ?? "")
             titleView.setupTitle()
-            valueView.textValue = fact.getValue()
+            valueView.textValue = textRunContent
+//            valueView.textValue = fact.getValue()
             
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
                 titleView.textColor = textColor

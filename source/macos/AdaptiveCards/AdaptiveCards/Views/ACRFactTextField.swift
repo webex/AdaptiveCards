@@ -58,10 +58,18 @@ class ACRFactTextField: NSView {
         set { labelTextField.textColor = newValue }
     }
     
-    var textValue: String? {
-        get { return labelTextField.stringValue }
+//    var textValue: String? {
+//        get { return labelTextField.stringValue }
+//        set {
+//            labelTextField.stringValue = newValue ?? ""
+//        }
+//    }
+    var textValue: NSAttributedString? {
+        get { return labelTextField.attributedStringValue }
         set {
-            labelTextField.stringValue = newValue ?? ""
+            labelTextField.attributedStringValue = newValue ?? NSAttributedString(string: "")
+        }
+    }
 //            let markdownResult = BridgeTextUtils.processText(from: labelTextField, hostConfig: hostConfig)
 //            let attributedString: NSMutableAttributedString
 //            if markdownResult.isHTML, let htmlData = markdownResult.htmlData {
@@ -79,8 +87,8 @@ class ACRFactTextField: NSView {
 //                attributedString.deleteCharacters(in: NSRange(location: 0, length: 3))
 //                attributedString.deleteCharacters(in: NSRange(location: attributedString.length - 4, length: 4))
 //            }
-        }
-    }
+//        }
+//    }
 }
 
 // MARK: Class required for Horizontal Stack View
