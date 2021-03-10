@@ -565,14 +565,8 @@ namespace RendererQml
 		uiContentItem_Text->Property("font", "parent.font");
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
 		uiContentItem_Text->Property("leftPadding", "parent.font.pixelSize + parent.spacing");
-		if (choiceset.choices[0].isWrap)
-		{
-			uiContentItem_Text->Property("wrapMode", "Text.Wrap");
-		}
-		else
-		{
-			uiContentItem_Text->Property("elide", "Text.ElideRight"); 
-		}
+		uiContentItem_Text->Property("elide", "Text.ElideRight"); 
+		
 				
 		uiComboBox->Property("contentItem", uiContentItem_Text->ToString());
 				
