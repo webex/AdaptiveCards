@@ -91,34 +91,20 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         
         let priority = getImageViewLayoutPriority(superView)
         
-        let constraints = NSMutableArray()
-        constraints.addObjects(from: [
-                                       NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: cgSize.width),
-                                       NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: cgSize.height)
-               ])
-
-               if let cons = constraints[0] as? NSLayoutConstraint {
-                   cons.priority = priority
-               }
-               if let cons = constraints[1] as? NSLayoutConstraint {
-                   cons.priority = priority
-               }
-
-               constraints.addObjects(from: [
-                                       NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .width, multiplier: cgSize.height / cgSize.width, constant: 0),
-                                       NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: cgSize.width / cgSize.height, constant: 0)
-                                       ])
-
-               if let cons = constraints[2] as? NSLayoutConstraint {
-                   cons.priority = priority + 2
-               }
-               if let cons = constraints[3] as? NSLayoutConstraint {
-                   cons.priority = priority + 2
-               }
+        var cons: [NSLayoutConstraint] = []
         
-        if let constraint = constraints as? [NSLayoutConstraint] {
-                  NSLayoutConstraint.activate(constraint)
-              }
+        cons.append(imageView.widthAnchor.constraint(equalToConstant: cgSize.width))
+        cons.append(imageView.heightAnchor.constraint(equalToConstant: cgSize.height))
+        cons[0].priority = priority
+        cons[1].priority = priority
+        
+        cons.append(imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: cgSize.width / cgSize.height, constant: 0))
+        cons.append(imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: cgSize.height / cgSize.width, constant: 0))
+        cons[2].priority = priority + 2
+        cons[3].priority = priority + 2
+        
+        NSLayoutConstraint.activate(cons)
+                    
         superView.invalidateIntrinsicContentSize()
     }
     
