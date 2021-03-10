@@ -567,6 +567,7 @@ namespace RendererQml
 		uiItemDelegate_Text->Property("font", "parent.font");
 		uiItemDelegate_Text->Property("verticalAlignment", "Text.AlignVCenter");
     uiItemDelegate_Text->Property("color", textColor);
+    
 		if (choiceset.choices[0].isWrap)
 		{
 			uiItemDelegate_Text->Property("wrapMode", "Text.Wrap");
@@ -584,7 +585,7 @@ namespace RendererQml
 		uiContentItem_Text->Property("text", "parent.displayText");
 		uiContentItem_Text->Property("font", "parent.font");
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
-		uiContentItem_Text->Property("leftPadding", "parent.font.pixelSize + parent.spacing");		
+		uiContentItem_Text->Property("leftPadding", "parent.font.pixelSize + parent.spacing");
 		uiContentItem_Text->Property("elide", "Text.ElideRight");
     uiContentItem_Text->Property("color", textColor);
 
