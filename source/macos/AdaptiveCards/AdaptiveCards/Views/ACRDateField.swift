@@ -9,7 +9,7 @@ class ACRDateField: NSView {
     }()
     private lazy var dateFormatterOut: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = isTimeMode ? "hh:mm:ss a" : "yyyy/MM/dd"
+        formatter.dateFormat = isTimeMode ? (isTime12HourFormat() ? "hh:mm:ss a" : "HH:mm:ss") : "yyyy/MM/dd"
         return formatter
     }()
     private let datepicker = NSDatePicker()
@@ -58,6 +58,12 @@ class ACRDateField: NSView {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
+    private func isTime12HourFormat() -> Bool {
+        let locale = Locale.current
+        let dateFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale)
+        return dateFormat?.contains("a") ?? false
+    }
     
     private func setupViews() {
         addSubview(textField)
