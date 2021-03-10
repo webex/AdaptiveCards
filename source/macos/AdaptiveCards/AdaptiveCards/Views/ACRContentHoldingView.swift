@@ -31,7 +31,6 @@ class ACRContentHoldingView: NSView {
         self.addSubview(imageView)
     }
     
- // Commented code to be used when integration with image set, columns and other containers
     override func layout() {
         super.layout()
         
