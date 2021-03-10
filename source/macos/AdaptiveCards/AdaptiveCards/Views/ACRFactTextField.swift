@@ -4,9 +4,11 @@ import AppKit
 class ACRFactTextField: NSView {
     @IBOutlet private var contentView: NSView!
     @IBOutlet private var labelTextField: NSTextField!
+    var hostConfig: ACSHostConfig?
     
-    init() {
+    init(hostConfig: ACSHostConfig) {
         super.init(frame: .zero)
+        self.hostConfig = hostConfig
         guard let bundle = Bundle(identifier: "com.test.test.AdaptiveCards") else {
             logError("Bundle is nil")
             return
@@ -58,7 +60,26 @@ class ACRFactTextField: NSView {
     
     var textValue: String? {
         get { return labelTextField.stringValue }
-        set { labelTextField.stringValue = newValue ?? "" }
+        set {
+            labelTextField.stringValue = newValue ?? ""
+//            let markdownResult = BridgeTextUtils.processText(from: labelTextField, hostConfig: hostConfig)
+//            let attributedString: NSMutableAttributedString
+//            if markdownResult.isHTML, let htmlData = markdownResult.htmlData {
+//                do {
+//                    attributedString = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+//                    // Delete trailing newline character
+//                    attributedString.deleteCharacters(in: NSRange(location: attributedString.length - 1, length: 1))
+//                    textView.isSelectable = true
+//                } catch {
+//                    attributedString = NSMutableAttributedString(string: markdownResult.parsedString)
+//                }
+//            } else {
+//                attributedString = NSMutableAttributedString(string: markdownResult.parsedString)
+//                // Delete <p> and </p>
+//                attributedString.deleteCharacters(in: NSRange(location: 0, length: 3))
+//                attributedString.deleteCharacters(in: NSRange(location: attributedString.length - 4, length: 4))
+//            }
+        }
     }
 }
 

@@ -28,8 +28,8 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         
         // Main loop to iterate over Array of facts
         for fact in factArray {
-            let titleView = ACRFactTextField()
-            let valueView = ACRFactTextField()
+            let titleView = ACRFactTextField(hostConfig: hostConfig)
+            let valueView = ACRFactTextField(hostConfig: hostConfig)
             titleView.textValue = fact.getTitle()
             titleView.setupTitle()
             valueView.textValue = fact.getValue()
