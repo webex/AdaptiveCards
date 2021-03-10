@@ -91,19 +91,19 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         
         let priority = getImageViewLayoutPriority(superView)
         
-        var cons: [NSLayoutConstraint] = []
+        var constraints: [NSLayoutConstraint] = []
         
-        cons.append(imageView.widthAnchor.constraint(equalToConstant: cgSize.width))
-        cons.append(imageView.heightAnchor.constraint(equalToConstant: cgSize.height))
-        cons[0].priority = priority
-        cons[1].priority = priority
+        constraints.append(imageView.widthAnchor.constraint(equalToConstant: cgSize.width))
+        constraints.append(imageView.heightAnchor.constraint(equalToConstant: cgSize.height))
+        constraints[0].priority = priority
+        constraints[1].priority = priority
         
-        cons.append(imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: cgSize.width / cgSize.height, constant: 0))
-        cons.append(imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: cgSize.height / cgSize.width, constant: 0))
-        cons[2].priority = priority + 2
-        cons[3].priority = priority + 2
+        constraints.append(imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: cgSize.width / cgSize.height, constant: 0))
+        constraints.append(imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: cgSize.height / cgSize.width, constant: 0))
+        constraints[2].priority = priority + 2
+        constraints[3].priority = priority + 2
         
-        NSLayoutConstraint.activate(cons)
+        NSLayoutConstraint.activate(constraints)
                     
         superView.invalidateIntrinsicContentSize()
     }
