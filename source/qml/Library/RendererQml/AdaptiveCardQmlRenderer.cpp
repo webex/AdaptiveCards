@@ -1798,10 +1798,47 @@ namespace RendererQml
 
             //TODO: Add logic for toggle visiblity
 
+            //Add onclick event
+            std::string onClickedFunction;
+
+            if (action->GetElementTypeString() == "Action.OpenUrl")
+            {
+                onClickedFunction = getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action), context);
+            }
+            else if (action->GetElementTypeString() == "Action.ShowCard")
+            {
+
+            }
+            else if (action->GetElementTypeString() == "Action.ToggleVisibility")
+            {
+
+            }
+            else if (action->GetElementTypeString() == "Action.Submit")
+            {
+
+            }
+            else
+            {
+                onClickedFunction = "";
+            }
+
+            buttonElement->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "\n}");
+
             return buttonElement;
         }
 
         return nullptr;
+    }
+
+    const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(std::shared_ptr<AdaptiveCards::OpenUrlAction> action, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        // Sample signal to emit on click
+        //adaptiveCard.buttonClick(var type, var data);
+        //adaptiveCard.buttonClick("Action.OpenUrl", "https://adaptivecards.io");
+        std::ostringstream function;
+        function << context->getCardRootId() << ".buttonClick(\"" << action->GetElementTypeString() << "\", \"" << action->GetUrl() << "\");";
+
+        return function.str();
     }
 }
 	
