@@ -523,7 +523,26 @@ namespace RendererQml
 		uiComboBox->Property("valueRole", "'value'");
 		uiComboBox->Property("width", "parent.width");
 		//TODO : Add Height
-				
+
+		auto dropIcon = std::make_shared<QmlTag>("Image");
+		std::string file_path = __FILE__;
+		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+		if (choiceset.backgroundColor == "'#FFFFFF'")
+		{
+			//Finding absolute Path at runtime
+			dir_path.append("\\Images\\arrowdownIcon.svg");
+		}
+		else
+		{
+			dir_path.append("\\Images\\arrowdownIcon_w.svg");
+		}
+		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+		dropIcon->Property("source", Formatter() << "\"" << std::string("file:/") << dir_path << "\"");
+		dropIcon->Property("anchors.right", "parent.right");
+		dropIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
+		dropIcon->Property("anchors.margins", "5");
+
+		uiComboBox->Property("indicator", dropIcon->ToString());
 		uiComboBox->Property("model", GetModel(choiceset.choices));
 
         const auto textColor = choiceset.choices[0].textColor;
@@ -535,7 +554,9 @@ namespace RendererQml
         backgroundTag->Property("color", choiceset.backgroundColor);
         backgroundTag->Property("border.color", "'grey'");
         backgroundTag->Property("border.width", "1");
+		backgroundTag->Property("implicitHeight", "35"); //TODO: To be replaced from value hostconfig
         uiComboBox->Property("background", backgroundTag->ToString());
+
 		if (!choiceset.placeholder.empty())
 		{
 			uiComboBox->Property("currentIndex", "-1");
@@ -562,11 +583,12 @@ namespace RendererQml
         backgroundTagDelegate->Property("border.color", "'grey'");
         backgroundTagDelegate->Property("border.width", "1");
         uiItemDelegate->Property("background", backgroundTagDelegate->ToString());
+
 		auto uiItemDelegate_Text = std::make_shared<QmlTag>("Text");
 		uiItemDelegate_Text->Property("text", "modelData.text");
 		uiItemDelegate_Text->Property("font", "parent.font");
 		uiItemDelegate_Text->Property("verticalAlignment", "Text.AlignVCenter");
-    uiItemDelegate_Text->Property("color", textColor);
+		uiItemDelegate_Text->Property("color", textColor);
     
 		if (choiceset.choices[0].isWrap)
 		{
@@ -587,7 +609,7 @@ namespace RendererQml
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
 		uiContentItem_Text->Property("leftPadding", "parent.font.pixelSize + parent.spacing");
 		uiContentItem_Text->Property("elide", "Text.ElideRight");
-    uiContentItem_Text->Property("color", textColor);
+		uiContentItem_Text->Property("color", textColor);
 
 		uiComboBox->Property("contentItem", uiContentItem_Text->ToString());
 				
