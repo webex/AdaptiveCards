@@ -53,54 +53,18 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             }
         }
     
-        // wrappingView.addSubview(imageView)
-        
-        // Image View anchors
-//        imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
-//        imageView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
-//        imageView.topAnchor.constraint(equalTo: wrappingView.topAnchor).isActive = true
-//        imageView.bottomAnchor.constraint(equalTo: wrappingView.bottomAnchor).isActive = true
-        
-//        var radius: CGFloat = 0
-//        if imageProperties.acsImageSize == ACSImageSize.stretch {
-//            wrappingView.widthAnchor.constraint(equalToConstant: parent.fittingSize.width).isActive = true
-//            wrappingView.heightAnchor.constraint(equalTo: wrappingView.widthAnchor, multiplier: ImageUtils.getAspectRatio(from: cgsize).height).isActive = true
-//            radius = parent.fittingSize.width / 2.0
-//        } else if imageProperties.hasExplicitDimensions {
-//            wrappingView.widthAnchor.constraint(equalToConstant: imageProperties.pixelWidth).isActive = true
-//            wrappingView.heightAnchor.constraint(equalToConstant: imageProperties.pixelHeight).isActive = true
-//            radius = imageProperties.pixelWidth / 2.0
-//        } else if imageProperties.acsImageSize == ACSImageSize.auto {
-//            // wrappingView.widthAnchor.constraint(equalToConstant: parent.fittingSize.width).isActive = true
-//            // wrappingView.heightAnchor.constraint(equalTo: wrappingView.widthAnchor, multiplier: ImageUtils.getAspectRatio(from: cgsize).height).isActive = true
-//        } else {
-//            wrappingView.widthAnchor.constraint(equalToConstant: cgsize.width).isActive = true
-//            wrappingView.heightAnchor.constraint(equalToConstant: cgsize.height).isActive = true
-//            radius = cgsize.width / 2.0
-//        }
-//
-//        if imageElement.getStyle() == .person {
-//            imageView.layer?.cornerRadius = radius
-//        }
-        
-        parent.addArrangedSubview(wrappingView)
-        
         switch imageProperties.acsHorizontalAlignment {
-        case .center:
-            imageView.centerXAnchor.constraint(equalTo: wrappingView.centerXAnchor).isActive = true
-        case .right:
-            imageView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
-        default:
-            imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
+        case .center: imageView.centerXAnchor.constraint(equalTo: wrappingView.centerXAnchor).isActive = true
+        case .right: imageView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
+        default: imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
         }
         
         wrappingView.heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
         if imageProperties.acsImageSize == ACSImageSize.stretch {
-            wrappingView.widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
-        } else {
             wrappingView.widthAnchor.constraint(greaterThanOrEqualTo: imageView.widthAnchor).isActive = true
+        } else {
+            wrappingView.widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
         }
-        imageView.topAnchor.constraint(equalTo: wrappingView.topAnchor).isActive = true
         
         let imagePriority = getImageViewLayoutPriority(wrappingView)
         if imageProperties.acsImageSize != ACSImageSize.stretch {
@@ -112,6 +76,10 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         
         configUpdateForImage(element: imageElement, with: hostConfig, image: image, imageView: imageView, contendHoldingView: wrappingView)
         
+        if imageElement.getStyle() == .person {
+            wrappingView.isPersonStyle = true
+        }
+        
         return wrappingView
     }
     
@@ -122,43 +90,41 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         let cgSize = imageProperties?.contentSize ?? CGSize.zero
         
         let priority = getImageViewLayoutPriority(superView)
+        
         let constraints = NSMutableArray()
-        
         constraints.addObjects(from: [
-                                NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: cgSize.width),
-                                NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: cgSize.height)
-        ])
-        
-        if let cons = constraints[0] as? NSLayoutConstraint {
-            cons.priority = priority
-        }
-        if let cons = constraints[1] as? NSLayoutConstraint {
-            cons.priority = priority
-        }
-        
-        constraints.addObjects(from: [
-                                NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .width, multiplier: cgSize.height / cgSize.width, constant: 0),
-                                NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: cgSize.width / cgSize.height, constant: 0)
-                                ])
-    
-        if let cons = constraints[2] as? NSLayoutConstraint {
-            cons.priority = priority + 2
-        }
-        if let cons = constraints[3] as? NSLayoutConstraint {
-            cons.priority = priority + 2
-        }
+                                       NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: cgSize.width),
+                                       NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: cgSize.height)
+               ])
+
+               if let cons = constraints[0] as? NSLayoutConstraint {
+                   cons.priority = priority
+               }
+               if let cons = constraints[1] as? NSLayoutConstraint {
+                   cons.priority = priority
+               }
+
+               constraints.addObjects(from: [
+                                       NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .width, multiplier: cgSize.height / cgSize.width, constant: 0),
+                                       NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: cgSize.width / cgSize.height, constant: 0)
+                                       ])
+
+               if let cons = constraints[2] as? NSLayoutConstraint {
+                   cons.priority = priority + 2
+               }
+               if let cons = constraints[3] as? NSLayoutConstraint {
+                   cons.priority = priority + 2
+               }
         
         if let constraint = constraints as? [NSLayoutConstraint] {
-            NSLayoutConstraint.activate(constraint)
-        }
-        
+                  NSLayoutConstraint.activate(constraint)
+              }
         superView.invalidateIntrinsicContentSize()
     }
     
     func getImageViewLayoutPriority(_ wrappingView: NSView) -> NSLayoutConstraint.Priority {
         let ACRColumnWidthPriorityStretch = 249
-        // let ACRColumnWidthPriorityStretchAuto = 251
         let priority = wrappingView.contentHuggingPriority(for: .horizontal)
-        return (wrappingView == nil || (Int(priority.rawValue) > ACRColumnWidthPriorityStretch)) ? NSLayoutConstraint.Priority.defaultHigh : priority
+        return (Int(priority.rawValue) > ACRColumnWidthPriorityStretch) ? NSLayoutConstraint.Priority.defaultHigh : priority
     }
 }
