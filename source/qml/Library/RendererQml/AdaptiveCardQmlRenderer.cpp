@@ -55,10 +55,10 @@ namespace RendererQml
         (*GetElementRenderers()).Set<AdaptiveCards::DateInput>(AdaptiveCardQmlRenderer::DateInputRender);
         (*GetElementRenderers()).Set<AdaptiveCards::TimeInput>(AdaptiveCardQmlRenderer::TimeInputRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ToggleInput>(AdaptiveCardQmlRenderer::ToggleInputRender);
-        /*(*GetElementRenderers()).Set<AdaptiveCards::OpenUrlAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::OpenUrlAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ShowCardAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ToggleVisibilityAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);*/
+        (*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
     }
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
@@ -1694,6 +1694,55 @@ namespace RendererQml
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::MediaRender(std::shared_ptr<AdaptiveCards::Media> media, std::shared_ptr<AdaptiveRenderContext> context)
     {
         return std::make_shared<QmlTag>("Rectangle");
+    }
+
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveActionRender(std::shared_ptr<AdaptiveCards::BaseActionElement> action, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        if (context->GetConfig()->GetSupportsInteractivity())
+        {
+            const auto config = context->GetConfig();
+            const auto actionsConfig = config->GetActions();
+            const std::string buttonId = Formatter() << "button_auto_" << context->getButtonCounter();
+            const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
+
+            auto buttonElement = std::make_shared<QmlTag>("Button");
+            buttonElement->Property("id", buttonId);
+
+            if (isShowCardButton)
+            {
+                buttonElement->Property("property bool showCard", "false");
+            }
+
+            //Add button background
+            auto bgRectangle = std::make_shared<QmlTag>("Rectangle");
+            bgRectangle->Property("id", Formatter() << buttonId << "_bg");
+            bgRectangle->Property("anchors.fill", "parent");
+            bgRectangle->Property("radius", Formatter() << buttonId << ".height / 2");
+            bgRectangle->Property("border.width", "1");
+            // Add border color and style: default/positive/destructive
+            buttonElement->Property("background", bgRectangle->ToString());
+
+            const bool hasTitle = !action->GetTitle().empty();
+
+            //Add button content item
+            auto contentItem = std::make_shared<QmlTag>("Item");
+            auto contentLayout = std::make_shared<QmlTag>("Row");
+            contentLayout->Property("id", Formatter() << buttonId << "_row");
+            contentLayout->Property("spacing", "5");
+            contentLayout->Property("leftPadding", "5");
+            contentLayout->Property("rightPadding", "5");
+
+            contentItem->AddChild(contentLayout);
+            contentItem->Property("implicitHeight", Formatter() << contentLayout->GetId() << ".implicitHeight");
+            contentItem->Property("implicitHeight", Formatter() << contentLayout->GetId() << ".implicitHeight");
+
+            if (!action->GetIconUrl().empty())
+            {
+
+            }
+        }
+
+        return nullptr;
     }
 }
 	

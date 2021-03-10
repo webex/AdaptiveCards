@@ -37,6 +37,7 @@ namespace RendererQml
         const int getImageCounter();
 		const int getColumnSetCounter();
 		const int getColumnCounter();
+        const int getButtonCounter();
 
         void setCardRootId(const std::string& rootId);
         const std::string getCardRootId();
@@ -55,5 +56,6 @@ namespace RendererQml
         int m_ImageCounter{ 0 };
 		int m_ColumnSetCounter{ 0 };
 		int m_ColumnCounter{ 0 };
+        int m_ButtonCounter{ 0 };
     };
 }
