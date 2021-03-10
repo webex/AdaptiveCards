@@ -32,7 +32,7 @@ class ACRCollectionView: NSCollectionView {
         
         self.backgroundColors = [.clear]
         
-        register(ACRCollectionViewItem.self, forItemWithIdentifier: NSUserInterfaceItemIdentifier(rawValue: "MyItem"))
+        register(ACRCollectionViewItem.self, forItemWithIdentifier: ACRCollectionViewItem.identifier)
     }
     
     func newIntrinsicContentSize() -> CGSize {
@@ -70,34 +70,10 @@ class ACRCollectionView: NSCollectionView {
 // MARK: DataSource for CollectionView
 class ACRCollectionViewDatasource: NSObject, NSCollectionViewDataSource {
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        guard let collectionView = collectionView as? ACRCollectionView, let hostConfig = collectionView.hostConfig else { return NSCollectionViewItem() }
-        let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "MyItem"), for: indexPath)
-        guard let collectionViewItem = item as? ACRCollectionViewItem else { return item }
-        let sample = "https://messagecardplayground.azurewebsites.net/assets/TxP_Flight.png"
-        guard let imageSet = collectionView.imageSet else { return item }
-        let imageArray = imageSet.getImages()
-        let urlString = imageArray[indexPath.item].getUrl() ?? sample
-        guard let url = URL(string: urlString) else { return item }
-        let imageView = NSImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        DispatchQueue.global().async {
-            guard let data = try? Data(contentsOf: url) else { return }
-            DispatchQueue.main.async {
-                guard let image = NSImage(data: data) else { return }
-                // Add
-                let imageRatio = ImageUtils.getAspectRatio(from: image.size)
-                var maxImageSize = ImageUtils.getImageSizeAsCGSize(imageSize: collectionView.imageSize ?? .medium, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
-                if imageRatio.height < 1 {
-                    maxImageSize.height *= imageRatio.height
-                }
-                image.size = maxImageSize
-                imageView.image = image
-                imageView.heightAnchor.constraint(equalToConstant: maxImageSize.width).isActive = true
-                imageView.imageAlignment = .alignCenter
-            }
-        }
-        collectionViewItem.view.addSubview(imageView)
-        return collectionViewItem
+        guard let collectionView = collectionView as? ACRCollectionView, let hostConfig = collectionView.hostConfig, let item = collectionView.makeItem(withIdentifier: ACRCollectionViewItem.identifier, for: indexPath) as? ACRCollectionViewItem else { return NSCollectionViewItem() }
+        guard let imageSet = collectionView.imageSet, let urlString = imageSet.getImages()[indexPath.item].getUrl() else { return item }
+        item.setupItem(with: urlString, hostConfig: hostConfig, imageSize: collectionView.imageSize ?? .medium)
+        return item
     }
     
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
