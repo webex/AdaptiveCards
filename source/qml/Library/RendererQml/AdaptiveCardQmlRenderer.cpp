@@ -1701,7 +1701,10 @@ namespace RendererQml
             const auto config = context->GetConfig();
             const auto actionsConfig = config->GetActions();
             const std::string buttonId = Formatter() << "button_auto_" << context->getButtonCounter();
+            const auto fontSize = config->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default);
             const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
+            const bool isIconLeftOfTitle = actionsConfig.iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle;
+            std::shared_ptr<QmlTag> showCardIcon;
 
             auto buttonElement = std::make_shared<QmlTag>("Button");
             buttonElement->Property("id", buttonId);
@@ -1717,27 +1720,85 @@ namespace RendererQml
             bgRectangle->Property("anchors.fill", "parent");
             bgRectangle->Property("radius", Formatter() << buttonId << ".height / 2");
             bgRectangle->Property("border.width", "1");
-            // Add border color and style: default/positive/destructive
+            //TODO: Add border color and style: default/positive/destructive
             buttonElement->Property("background", bgRectangle->ToString());
-
-            const bool hasTitle = !action->GetTitle().empty();
 
             //Add button content item
             auto contentItem = std::make_shared<QmlTag>("Item");
-            auto contentLayout = std::make_shared<QmlTag>("Row");
-            contentLayout->Property("id", Formatter() << buttonId << "_row");
+            auto contentLayout = std::make_shared<QmlTag>(isIconLeftOfTitle ? "Row" : "Column");
+            contentLayout->Property("id", Formatter() << buttonId << (isIconLeftOfTitle ? "_row" : "_col"));
             contentLayout->Property("spacing", "5");
             contentLayout->Property("leftPadding", "5");
             contentLayout->Property("rightPadding", "5");
 
             contentItem->AddChild(contentLayout);
             contentItem->Property("implicitHeight", Formatter() << contentLayout->GetId() << ".implicitHeight");
-            contentItem->Property("implicitHeight", Formatter() << contentLayout->GetId() << ".implicitHeight");
+            contentItem->Property("implicitWidth", Formatter() << contentLayout->GetId() << ".implicitWidth");
 
+            //Add button icon
             if (!action->GetIconUrl().empty())
             {
+                auto contentImage = std::make_shared<QmlTag>("Image");
+                contentImage->Property("id", Formatter() << buttonId << "_img");
+                contentImage->Property("height", Formatter() << fontSize);
+                contentImage->Property("width", Formatter() << fontSize);
+                contentImage->Property("fillMode", "Image.PreserveAspectFit");
 
+                if (isIconLeftOfTitle)
+                {
+                    contentImage->Property("anchors.verticalCenter", "parent.verticalCenter");
+                }
+                else
+                {
+                    contentImage->Property("anchors.horizontalCenter", "parent.horizontalCenter");
+                }
+
+                //TODO: Adding dummy image. This should be replaced!
+                std::string file_path = __FILE__;
+                std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+                dir_path.append("\\Images\\Cat.png");
+                std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+                contentImage->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+
+                contentLayout->AddChild(contentImage);
             }
+
+            //Add content Text
+            auto textLayout = std::make_shared<QmlTag>("Row");
+            textLayout->Property("spacing", "5");
+
+            auto contentText = std::make_shared<QmlTag>("Text");
+            if (!action->GetTitle().empty())
+            {
+                contentText->Property("text", "\"" + action->GetTitle() + "\"");
+            }
+            contentText->Property("font.pixelSize", Formatter() << fontSize);
+            textLayout->AddChild(contentText);
+
+            if (isShowCardButton)
+            {
+                showCardIcon = std::make_shared<QmlTag>("Image");
+                showCardIcon->Property("id", Formatter() << buttonId << "_dd");
+                showCardIcon->Property("height", Formatter() << fontSize);
+                showCardIcon->Property("width", Formatter() << fontSize);
+                showCardIcon->Property("fillMode", "Image.PreserveAspectFit");
+                showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
+
+                std::string file_path = __FILE__;
+                std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+                dir_path.append("\\Images\\arrow-down_12.svg");
+                std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+                showCardIcon->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+
+                textLayout->AddChild(showCardIcon);
+            }
+
+            contentLayout->AddChild(textLayout);
+            buttonElement->Property("contentItem", contentItem->ToString());
+
+            //TODO: Add logic for toggle visiblity
+
+            return buttonElement;
         }
 
         return nullptr;
