@@ -12,6 +12,8 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     private (set) var stackViewTopConstraint: NSLayoutConstraint?
     private (set) var stackViewBottomConstraint: NSLayoutConstraint?
     
+    let hostConfig: ACSHostConfig
+    
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
         set {
@@ -44,15 +46,41 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     }()
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
+        self.hostConfig = hostConfig
         super.init(frame: .zero)
         initialize()
         wantsLayer = true
-        if let bgColor = hostConfig.getBackgroundColor(for: style) {
+        if style != .none, let bgColor = hostConfig.getBackgroundColor(for: style) {
             layer?.backgroundColor = bgColor.cgColor
         }
     }
     
+    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
+        self.hostConfig = hostConfig
+        super.init(frame: .zero)
+        initialize()
+        wantsLayer = true
+        if style != .none {
+            if let bgColor = hostConfig.getBackgroundColor(for: style) {
+                layer?.backgroundColor = bgColor.cgColor
+            }
+            // set border color
+            if let borderColorHex = hostConfig.getBorderColor(style), let borderColor = ColorUtils.color(from: borderColorHex) {
+                layer?.borderColor = borderColor.cgColor
+            }
+            // set border width
+            if let borderWidth = hostConfig.getBorderThickness(style) {
+                layer?.borderWidth = CGFloat(truncating: borderWidth)
+            }
+            // add padding
+            if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing, let padding = CGFloat(exactly: paddingSpace) {
+                applyPadding(padding)
+            }
+        }
+    }
+    
     required init?(coder: NSCoder) {
+        self.hostConfig = ACSHostConfig() // TODO: This won't work
         super.init(coder: coder)
         initialize()
     }
@@ -73,26 +101,53 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         stackViewBottomConstraint?.constant = -padding
     }
     
-    func addSeperator(thickness: NSNumber, color: String) {
+    func addSeperator(_ separator: Bool) {
+        guard separator else { return }
+        let seperatorConfig = hostConfig.getSeparator()
+        let lineThickness = seperatorConfig?.lineThickness
+        let lineColor = seperatorConfig?.lineColor
+        addSeperator(thickness: lineThickness ?? 1, color: lineColor ?? "#EEEEEE")
+    }
+    
+    func addSpacing(_ spacing: ACSSpacing) {
+        let spacingConfig = hostConfig.getSpacing()
+        let spaceAdded: NSNumber
+        switch spacing {
+        case .default: spaceAdded = spacingConfig?.defaultSpacing ?? 0
+        case .none: spaceAdded = 0
+        case .small: spaceAdded = spacingConfig?.smallSpacing ?? 3
+        case .medium: spaceAdded = spacingConfig?.mediumSpacing ?? 20
+        case .large: spaceAdded = spacingConfig?.largeSpacing ?? 30
+        case .extraLarge: spaceAdded = spacingConfig?.extraLargeSpacing ?? 40
+        case .padding: spaceAdded = spacingConfig?.paddingSpacing ?? 20
+        @unknown default:
+            logError("Unknown padding!")
+            spaceAdded = 0
+        }
+        addSpacing(spacing: CGFloat(truncating: spaceAdded))
+    }
+    
+    func setCustomSpacing(spacing: CGFloat, after view: NSView) {
+        stackView.setCustomSpacing(spacing, after: view)
+    }
+    
+    private func addSeperator(thickness: NSNumber, color: String) {
         let seperatorView = NSBox()
         seperatorView.boxType = .custom
-        seperatorView.heightAnchor.constraint(equalToConstant: CGFloat(truncating: thickness)).isActive = true
+        let anchor = orientation == .horizontal ? seperatorView.widthAnchor : seperatorView.heightAnchor
+        anchor.constraint(equalToConstant: CGFloat(truncating: thickness)).isActive = true
         seperatorView.borderColor = ColorUtils.color(from: color) ?? .black
         stackView.addArrangedSubview(seperatorView)
         stackView.setCustomSpacing(3, after: seperatorView)
     }
     
-    func addSpacing(spacing: CGFloat) {
+    private func addSpacing(spacing: CGFloat) {
         let spacingView = NSBox()
         spacingView.boxType = .custom
         let anchor = orientation == .horizontal ? spacingView.widthAnchor : spacingView.heightAnchor
         anchor.constraint(equalToConstant: spacing).isActive = true
         spacingView.borderColor = .clear
         stackView.addArrangedSubview(spacingView)
-    }
-    
-    func setCustomSpacing(spacing: CGFloat, view: NSView) {
-        stackView.setCustomSpacing(spacing, after: view)
     }
     
     private func setupViews() {
@@ -157,10 +212,10 @@ class ACRColumnView: ACRContentStackView {
     }
     
     private lazy var widthConstraint = widthAnchor.constraint(equalToConstant: Constants.minWidth)
-    private var columnWidth: ColumnWidth = .weighted(1)
+    private (set) var columnWidth: ColumnWidth = .weighted(1)
     
-    override init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
-        super.init(style: style, hostConfig: hostConfig)
+    override init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
+        super.init(style: style, parentStyle: parentStyle, hostConfig: hostConfig, superview: superview)
         initialize()
     }
     
@@ -179,6 +234,9 @@ class ACRColumnView: ACRContentStackView {
     override func addArrangedSubview(_ subview: NSView) {
         manageWidth(of: subview)
         super.addArrangedSubview(subview)
+        if subview is ACRContentStackView {
+            subview.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
+        }
     }
     
     func setWidth(_ width: ColumnWidth) {
