@@ -1445,5 +1445,24 @@ namespace Samples
     }
   ]
 })";
+
+    const std::string card_Action_OpenUrl = R"({
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "type": "AdaptiveCard",
+        "version": "1.0",
+        "body": [
+        {
+            "type": "TextBlock",
+            "text": "This card's action will open a URL"
+        }
+        ],
+        "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Action.OpenUrl",
+            "url": "https://adaptivecards.io"
+        }
+        ]
+    })";
 }
 
