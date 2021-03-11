@@ -41,6 +41,7 @@ public:
 
 signals:
     void reloadCardOnThemeChange();
+    void sendCardResponseToQml(const QString& output);
 
 private:
     SampleCardList *mList;

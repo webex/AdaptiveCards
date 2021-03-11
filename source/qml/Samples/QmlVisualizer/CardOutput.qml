@@ -6,6 +6,9 @@ import QtQuick.Controls 2.15
 
 Popup {
     id: popup
+
+    property string output: ""
+
     x: 300
     y: 100
     width: 300
@@ -51,6 +54,7 @@ Popup {
                     enabled: false
 
                     placeholderText:"Card output window!";
+                    text: output
                 }
             }
         }

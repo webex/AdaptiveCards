@@ -78,6 +78,14 @@ Row{
         cardListViewLoader.item.listItemClicked.connect(cardEditorLoader.item.setCardEditor)        
     }
 
+    Connections {
+        target: _aModel
+
+        onSendCardResponseToQml: {
+            cardOutputLoader.item.output = output
+        }
+    }
+
     function onAdaptiveCardButtonClicked(title, type, data){
         _aModel.onAdaptiveCardButtonClicked(title, type, data)
         cardOutputLoader.item.open()

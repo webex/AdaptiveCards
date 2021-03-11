@@ -156,5 +156,12 @@ void SampleCardModel::onAdaptiveCardButtonClicked(const QString& title, const QS
 
 void SampleCardModel::actionButtonClicked(const QString& title, const QString& type, const QString& data)
 {
+    QString output;
+    output.append("Title: " + title + "\n");
+    output.append("Type: " + type + "\n");
+    output.append("Url: " + data);
+    emit sendCardResponseToQml(output);
+
+    // Open url in default browser
     ShellExecute(0, 0, toWString(data.toStdString()).c_str(), 0, 0, SW_SHOW);
 }
