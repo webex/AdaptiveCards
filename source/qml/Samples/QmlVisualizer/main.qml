@@ -23,7 +23,7 @@ Row{
         id: cardRoot
 
         height: 800
-        width: 700
+        width: 650
         color: 'lightblue'
         radius: 8
         border.width: 2
@@ -31,7 +31,7 @@ Row{
 
         Rectangle{
             height: 780
-            width: 680
+            width: 630
             radius: 8
             x: 10;y: 10
             color: "transparent"
@@ -67,6 +67,11 @@ Row{
                 clip: true
             }
         }
+    }
+
+    Loader{
+        id: cardOutputLoader
+        source: "CardOutput.qml"
     }
 
     Component.onCompleted: {
