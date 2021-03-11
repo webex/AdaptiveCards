@@ -37,6 +37,7 @@ public:
 
     Q_INVOKABLE QString generateQml(const QString& cardQml);
     Q_INVOKABLE void setTheme(const QString& theme);
+    Q_INVOKABLE void onAdaptiveCardButtonClicked(const QString& type, const QString& data);
 
 signals:
     void reloadCardOnThemeChange();

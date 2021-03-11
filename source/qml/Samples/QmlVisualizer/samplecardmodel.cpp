@@ -124,3 +124,9 @@ void SampleCardModel::setTheme(const QString& theme)
     renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig));
     emit reloadCardOnThemeChange();
 }
+
+void SampleCardModel::onAdaptiveCardButtonClicked(const QString& type, const QString& data)
+{
+    auto t = type;
+    auto d = data;
+}

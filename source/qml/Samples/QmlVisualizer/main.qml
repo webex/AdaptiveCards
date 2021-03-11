@@ -53,6 +53,7 @@ Row{
                     onLoaded: {
                         cardEditorLoader.item.reloadCard.connect(loader.item.reloadCard)
                         cardListViewLoader.item.reloadCard.connect(loader.item.reloadCard)
+                        loader.item.adaptiveCardButtonClicked.connect(root.onAdaptiveCardButtonClicked)
                     }
                 }
             }
@@ -70,5 +71,9 @@ Row{
 
     Component.onCompleted: {
         cardListViewLoader.item.listItemClicked.connect(cardEditorLoader.item.setCardEditor)        
+    }
+
+    function onAdaptiveCardButtonClicked(type, data){
+        _aModel.onAdaptiveCardButtonClicked(type, data)
     }
 }
