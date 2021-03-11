@@ -5,7 +5,7 @@ ColumnLayout{
     id: cardComponent
 
     property var card
-    signal adaptiveCardButtonClicked(var type, var data)
+    signal adaptiveCardButtonClicked(var title, var type, var data)
 
     Component.onCompleted: reload(CardString);
 

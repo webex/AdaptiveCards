@@ -70,7 +70,7 @@ namespace RendererQml
         uiCard->AddImports("import QtGraphicalEffects 1.15");
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
-        uiCard->AddFunctions("signal buttonClicked(var type, var data)");
+        uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
         //TODO: Width can be set as config
         uiCard->Property("width", "600");
@@ -1877,7 +1877,7 @@ namespace RendererQml
         //adaptiveCard.buttonClick(var type, var data);
         //adaptiveCard.buttonClick("Action.OpenUrl", "https://adaptivecards.io");
         std::ostringstream function;
-        function << context->getCardRootId() << ".buttonClicked(\"" << action->GetElementTypeString() << "\", \"" << action->GetUrl() << "\");";
+        function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", \"" << action->GetUrl() << "\");";
 
         return function.str();
     }

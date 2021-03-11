@@ -146,15 +146,15 @@ std::wstring SampleCardModel::toWString(const std::string& input)
 #endif
 }
 
-void SampleCardModel::onAdaptiveCardButtonClicked(const QString& type, const QString& data)
+void SampleCardModel::onAdaptiveCardButtonClicked(const QString& title, const QString& type, const QString& data)
 {
     if (type == "Action.OpenUrl")
     {
-        actionButtonClicked(data);
+        actionButtonClicked(title, type, data);
     }
 }
 
-void SampleCardModel::actionButtonClicked(const QString& data)
+void SampleCardModel::actionButtonClicked(const QString& title, const QString& type, const QString& data)
 {
     ShellExecute(0, 0, toWString(data.toStdString()).c_str(), 0, 0, SW_SHOW);
 }

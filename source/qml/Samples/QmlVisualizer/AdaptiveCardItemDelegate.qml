@@ -8,7 +8,7 @@ Item {
     readonly property var listView: parent.ListView.view
 
     signal reloadCard(var card)
-    signal adaptiveCardButtonClicked(var type, var data)
+    signal adaptiveCardButtonClicked(var title, var type, var data)
 
     height: mainLayout.height
     width: listView.width

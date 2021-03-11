@@ -78,7 +78,7 @@ Row{
         cardListViewLoader.item.listItemClicked.connect(cardEditorLoader.item.setCardEditor)        
     }
 
-    function onAdaptiveCardButtonClicked(type, data){
-        _aModel.onAdaptiveCardButtonClicked(type, data)
+    function onAdaptiveCardButtonClicked(title, type, data){
+        _aModel.onAdaptiveCardButtonClicked(title, type, data)
     }
 }
