@@ -474,7 +474,7 @@ namespace RendererQml
 		const bool isVisible = input->GetIsVisible();
 		bool isChecked;
         const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
-        const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
+		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
 
 		std::vector<std::string> parsedValues;
 		parsedValues = Utils::ParseChoiceSetInputDefaultValues(input->GetValue());
@@ -527,25 +527,24 @@ namespace RendererQml
 		auto dropIcon = std::make_shared<QmlTag>("Image");
 		std::string file_path = __FILE__;
 		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-		if (choiceset.backgroundColor == "'#FFFFFF'")
-		{
-			//Finding absolute Path at runtime
-			dir_path.append("\\Images\\arrowdownIcon.svg");
-		}
-		else
-		{
-			dir_path.append("\\Images\\arrowdownIcon_w.svg");
-		}
+		dir_path.append("\\Images\\arrowdownIcon.svg");
 		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
 		dropIcon->Property("source", Formatter() << "\"" << std::string("file:/") << dir_path << "\"");
 		dropIcon->Property("anchors.right", "parent.right");
 		dropIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
 		dropIcon->Property("anchors.margins", "5");
 
+		const auto textColor = choiceset.choices[0].textColor;
+
+		auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
+		ColorOverlayTag->Property("anchors.fill", "parent");
+		ColorOverlayTag->Property("source", "parent");
+		ColorOverlayTag->Property("color", textColor);
+
+		dropIcon->AddChild(ColorOverlayTag);
+
 		uiComboBox->Property("indicator", dropIcon->ToString());
 		uiComboBox->Property("model", GetModel(choiceset.choices));
-
-        const auto textColor = choiceset.choices[0].textColor;
 
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("radius", "5");
