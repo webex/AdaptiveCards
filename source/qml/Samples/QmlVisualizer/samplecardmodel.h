@@ -45,6 +45,9 @@ signals:
 private:
     SampleCardList *mList;
     std::shared_ptr<AdaptiveCardQmlRenderer> renderer_ptr;
+
+    static std::wstring toWString(const std::string& input);
+    void actionButtonClicked(const QString& data);
 };
 
 #endif // SAMPLECARDMODEL_H

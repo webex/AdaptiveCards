@@ -3,6 +3,9 @@
 #include "adaptivecard_light_config.h"
 #include "adaptivecard_dark_config.h"
 
+#include <windows.h>
+#include <shellapi.h>
+
 using namespace RendererQml;
 
 SampleCardModel::SampleCardModel(QObject *parent)
@@ -125,8 +128,33 @@ void SampleCardModel::setTheme(const QString& theme)
     emit reloadCardOnThemeChange();
 }
 
+std::wstring SampleCardModel::toWString(const std::string& input)
+{
+#ifdef _WIN32
+    // Convert UTF-8 to UTF-16
+    if (!input.empty())
+    {
+        int size_needed = MultiByteToWideChar(CP_UTF8, 0, &input[0], static_cast<int>(input.length()), nullptr, 0);
+        std::wstring utf16String(size_needed, 0);
+        MultiByteToWideChar(CP_UTF8, 0, &input[0], static_cast<int>(input.length()), &utf16String[0], size_needed);
+        return utf16String;
+    }
+
+    return std::wstring();
+#else
+    return converterToString->from_bytes(input);
+#endif
+}
+
 void SampleCardModel::onAdaptiveCardButtonClicked(const QString& type, const QString& data)
 {
-    auto t = type;
-    auto d = data;
+    if (type == "Action.OpenUrl")
+    {
+        actionButtonClicked(data);
+    }
+}
+
+void SampleCardModel::actionButtonClicked(const QString& data)
+{
+    ShellExecute(0, 0, toWString(data.toStdString()).c_str(), 0, 0, SW_SHOW);
 }
