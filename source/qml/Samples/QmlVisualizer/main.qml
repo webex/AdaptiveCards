@@ -80,5 +80,6 @@ Row{
 
     function onAdaptiveCardButtonClicked(title, type, data){
         _aModel.onAdaptiveCardButtonClicked(title, type, data)
+        cardOutputLoader.item.open()
     }
 }
