@@ -558,7 +558,7 @@ namespace RendererQml
 		for (const auto& choice : input->GetChoices())
 		{
 			isChecked = (std::find(parsedValues.begin(), parsedValues.end(), choice->GetValue()) != parsedValues.end() && (input->GetIsMultiSelect() || parsedValues.size() == 1)) ? true : false;
-			choices.emplace_back(RendererQml::Checkbox(id + GenerateButtonId(type, ButtonNumber++),
+			choices.emplace_back(RendererQml::Checkbox(id + GenerateChoiceSetButtonId(type, ButtonNumber++),
 				type,
 				choice->GetTitle(),
 				choice->GetValue(),
@@ -716,7 +716,7 @@ namespace RendererQml
 		return parsedValues;
 	}
 
-	std::string AdaptiveCardQmlRenderer::GenerateButtonId(enum CheckBoxType ButtonType, int  ButtonNumber)
+	std::string AdaptiveCardQmlRenderer::GenerateChoiceSetButtonId(enum CheckBoxType ButtonType, int  ButtonNumber)
 	{
 		
 		return "_" + std::to_string(ButtonType) + "_" + std::to_string(ButtonNumber);
