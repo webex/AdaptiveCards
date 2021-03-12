@@ -600,11 +600,7 @@ namespace RendererQml
 		//TODO : Add Height
 
 		auto dropIcon = std::make_shared<QmlTag>("Image");
-		std::string file_path = __FILE__;
-		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-		dir_path.append("\\Images\\arrowdownIcon.svg");
-		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-		dropIcon->Property("source", Formatter() << "\"" << std::string("file:/") << dir_path << "\"");
+		dropIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
 		dropIcon->Property("anchors.right", "parent.right");
 		dropIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
 		dropIcon->Property("anchors.margins", "5");
