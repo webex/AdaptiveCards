@@ -16,11 +16,10 @@ namespace RendererQml
 		SetHostConfig(hostConfig);
 	}
 
-	std::shared_ptr<RenderedQmlAdaptiveCard> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, AdaptiveCardDependency::OnClickFunction onClick)
+	std::shared_ptr<RenderedQmlAdaptiveCard> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card)
 	{
 		std::shared_ptr<RenderedQmlAdaptiveCard> output;
 		auto context = std::make_shared<AdaptiveRenderContext>(GetHostConfig(), GetElementRenderers());
-		context->SetOnClickFunction(onClick);
 		std::shared_ptr<QmlTag> tag;
 
 		try
@@ -1853,6 +1852,7 @@ namespace RendererQml
                 showCardIcon->Property("height", Formatter() << fontSize);
                 showCardIcon->Property("width", Formatter() << fontSize);
                 showCardIcon->Property("fillMode", "Image.PreserveAspectFit");
+                showCardIcon->Property("mipmap", "true");
                 showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
 
                 std::string file_path = __FILE__;
