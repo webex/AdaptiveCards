@@ -1869,7 +1869,7 @@ namespace RendererQml
             }
             else if (action->GetElementTypeString() == "Action.Submit")
             {
-
+                onClickedFunction = getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action), context);
             }
             else
             {
@@ -1887,10 +1887,37 @@ namespace RendererQml
     const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(std::shared_ptr<AdaptiveCards::OpenUrlAction> action, std::shared_ptr<AdaptiveRenderContext> context)
     {
         // Sample signal to emit on click
-        //adaptiveCard.buttonClick(var type, var data);
-        //adaptiveCard.buttonClick("Action.OpenUrl", "https://adaptivecards.io");
+        //adaptiveCard.buttonClick(var title, var type, var data);
+        //adaptiveCard.buttonClick("title", "Action.OpenUrl", "https://adaptivecards.io");
         std::ostringstream function;
         function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", \"" << action->GetUrl() << "\");";
+
+        return function.str();
+    }
+
+    const std::string AdaptiveCardQmlRenderer::getActionSubmitClickFunc(std::shared_ptr<AdaptiveCards::SubmitAction> action, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        // Sample signal to emit on click
+        //adaptiveCard.buttonClick(var title, var type, var data);
+        //adaptiveCard.buttonClick("title", "Action.Submit", "{"x":13,"firstName":"text1","lastName":"text2"}");
+        std::ostringstream function;
+
+        std::string submitDataJson = action->GetDataJson();
+        submitDataJson = Utils::Trim(submitDataJson);
+
+        function << "var paramJson = {};\n";
+
+        if (!submitDataJson.empty())
+        {
+            submitDataJson = Utils::Replace(submitDataJson, "\"", "\\\"");
+            function << "var parmStr = \"" << submitDataJson << "\";\n";
+            function << "paramJson = JSON.parse(parmStr);\n";
+        }
+
+        //TODO: Add value in recursive mode
+
+        function << "var paramslist = JSON.stringify(paramJson);\n";
+        function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\n";
 
         return function.str();
     }
