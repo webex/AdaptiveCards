@@ -124,7 +124,7 @@ class ColorUtils {
     }
 }
 
-class MarkdownUtils {
+class TextUtils {
     static func getMarkdownString(parserResult: ACSMarkdownParserResult) -> NSMutableAttributedString {
         let content: NSMutableAttributedString
         if parserResult.isHTML, let htmlData = parserResult.htmlData {
