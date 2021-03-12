@@ -32,7 +32,6 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         // Main loop to iterate over Array of facts
         for fact in factArray {
             let textRunContent: NSMutableAttributedString
-            
             let markdownResult = BridgeTextUtils.processText(fromFacts: fact, hostConfig: hostConfig)
             if markdownResult.isHTML, let htmlData = markdownResult.htmlData {
                 do {
@@ -52,14 +51,23 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
             
             let titleView = ACRFactTextField(hostConfig: hostConfig)
             let valueView = ACRFactTextField(hostConfig: hostConfig)
-            titleView.textValue = NSAttributedString(string: fact.getTitle() ?? "")
+//            titleView.textValue = NSAttributedString(string: fact.getTitle() ?? "")
+            titleView.textValueString = fact.getTitle()
             titleView.setupTitle()
+            if !markdownResult.isHTML {
+                valueView.textValueString = fact.getValue()
+            } else {
             valueView.textValue = textRunContent
+            }
 //            valueView.textValue = fact.getValue()
             
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
                 titleView.textColor = textColor
                 valueView.textColor = textColor
+                if markdownResult.isHTML {
+                    textRunContent.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: textRunContent.length))
+                    valueView.textValue = textRunContent
+                }
             }
             
             if !(titleView.isEmpty) || !(valueView.isEmpty) {

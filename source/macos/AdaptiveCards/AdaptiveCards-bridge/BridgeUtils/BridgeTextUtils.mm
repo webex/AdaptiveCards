@@ -79,9 +79,16 @@
     auto language = [BridgeConverter getStringCpp:[facts getLanguage]];
     auto textProperties = [BridgeTextUtils convertFactsToRichTextElementProperties:facts];
     std::shared_ptr<MarkDownParser> markDownParser = std::make_shared<MarkDownParser>([BridgeTextUtils getLocalizedDate:text language:language]);
+    
+    NSString *parsedString = [NSString stringWithCString:markDownParser->TransformToHtml().c_str() encoding:NSUTF8StringEncoding];
+    if (markDownParser->HasHtmlTags() || markDownParser->IsEscaped()) {
+        NSString *fontFamilyName = nil;
+//        NSString *fontFamilyName = @"'-apple-system',  'San Francisco'";
+    
+        fontFamilyName = [config getFontFamily: ACSFontTypeDefault];
 //
 //    // MarkDownParser transforms text with MarkDown to a html string
-    NSString *parsedString = [NSString stringWithCString:markDownParser->TransformToHtml().c_str() encoding:NSUTF8StringEncoding];
+
 
 //    NSString *fontFamilyName = nil;
 //    if (![config getFontFamily:[textRun getFontType]]) {
@@ -96,11 +103,18 @@
 
 //    NSString *font_style = [textProperties getItalic] ? @"italic" : @"normal";
     // Font and text size are applied as CSS style by appending it to the html string
-//    parsedString = [parsedString stringByAppendingString:[NSString stringWithFormat:@"<style>body{font-family: %@; font-size:%@px; font-weight: %@; font-style: %@;}</style>", fontFamilyName, [config getFontSize:[textRun getFontType] size:[textRun getTextSize]], [config getFontWeight:[textRun getFontType] weight:[textRun getTextWeight]], font_style]];
+//        parsedString = [parsedString stringByAppendingString:[NSString stringWithFormat:@"<style>body{font-family: %@;}</style>", fontFamilyName]];
+        parsedString = [parsedString stringByAppendingString:[NSString stringWithFormat:@"<style>body{font-family: %@; font-size:%@px; font-weight: %@;}</style>", fontFamilyName, [config getFontSize:ACSFontTypeDefault size:ACSTextSizeDefault], [config getFontWeight:ACSFontTypeDefault weight:ACSTextWeightDefault]]];
+
+        
     
+//        parsedString = [parsedString ]
     NSData *htmlData = [parsedString dataUsingEncoding:NSUTF16StringEncoding];
     
     return [[ACSMarkdownParserResult alloc] initWithParsedString:parsedString htmlData:htmlData];
+    }
+    return [[ACSMarkdownParserResult alloc] initWithParsedString:parsedString htmlData:nil];
+
 }
 
 + (ACSRichTextElementProperties * _Nonnull)convertTextRunToRichTextElementProperties:(ACSTextRun * _Nonnull)textRun

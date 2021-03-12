@@ -42,12 +42,19 @@ class ACRFactTextField: NSView {
         
         labelTextField.setContentCompressionResistancePriority(.required, for: .vertical)
         labelTextField.alignment = .left
+//        labelTextField.isSelectable = true
+//        labelTextField.allowsEditingTextAttributes = true
     }
     
     func setupTitle() {
         // TODO: Make it get all properties from host config
+//        labelTextField.allowsEditingTextAttributes = false
         labelTextField.font = NSFont.boldSystemFont(ofSize: 12)
     }
+    
+//    func setLabelProperty() {
+//        labelTextField.allowsEditingTextAttributes = true
+//    }
     
     var isEmpty: Bool {
         return labelTextField.stringValue.isEmpty
@@ -58,18 +65,21 @@ class ACRFactTextField: NSView {
         set { labelTextField.textColor = newValue }
     }
     
-//    var textValue: String? {
-//        get { return labelTextField.stringValue }
-//        set {
-//            labelTextField.stringValue = newValue ?? ""
-//        }
-//    }
+    var textValueString: String? {
+        get { return labelTextField.stringValue }
+        set {
+            labelTextField.allowsEditingTextAttributes = false
+            labelTextField.stringValue = newValue ?? ""
+        }
+    }
     var textValue: NSAttributedString? {
         get { return labelTextField.attributedStringValue }
         set {
+            labelTextField.allowsEditingTextAttributes = true
             labelTextField.attributedStringValue = newValue ?? NSAttributedString(string: "")
         }
     }
+    
 //            let markdownResult = BridgeTextUtils.processText(from: labelTextField, hostConfig: hostConfig)
 //            let attributedString: NSMutableAttributedString
 //            if markdownResult.isHTML, let htmlData = markdownResult.htmlData {
