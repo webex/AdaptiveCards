@@ -95,15 +95,12 @@
     <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ImageDataURI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Images\calendarIcon.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Images\Cat.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Images\clockIcon.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Images\sampleImage.jpg">

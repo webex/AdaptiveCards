@@ -1,9 +1,5 @@
-#pragma once
-#include "stdafx.h"
-
-namespace DarkConfig
+let sampleHostConfig = """
 {
-    const std::string darkConfig = R"({
     "hostCapabilities": {
         "capabilities": null
     },
@@ -43,200 +39,200 @@ namespace DarkConfig
         "default": {
             "foregroundColors": {
                 "default": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "dark": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "light": {
-                    "default": "#B4B6B8",
+                    "default": "#535759",
                     "subtle": "#929596"
                 },
                 "accent": {
-                    "default": "#1DC4F2",
+                    "default": "#007EA8",
                     "subtle": "#00A0D1"
                 },
                 "good": {
-                    "default": "#44CF50",
-                    "subtle": "#7FEB86"
+                    "default": "#1B8728",
+                    "subtle": "#24AB31"
                 },
                 "warning": {
-                    "default": "#FF5C4A",
+                    "default": "#D93829",
                     "subtle": "#FF5C4A"
                 },
                 "attention": {
-                    "default": "#FF5C4A",
-                    "subtle": "#FF5C4A"
+                    "default": "#C74F0E",
+                    "subtle": "#F26B1D"
                 }
             },
-            "backgroundColor": "#24282B"
+            "backgroundColor": "#FFFFFF"
         },
         "emphasis": {
             "foregroundColors": {
                 "default": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "dark": {
-                    "default": " #FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "light": {
-                    "default": "#B4B6B8",
-                    "subtle": "#929596"
+                    "default": "#383C40",
+                    "subtle": "#737678"
                 },
                 "accent": {
-                    "default": "#1DC4F2",
+                    "default": "#007EA8",
                     "subtle": "#00A0D1"
                 },
                 "good": {
-                    "default": "#44CF50",
-                    "subtle": "#7FEB86"
+                    "default": "#1B8728",
+                    "subtle": "#24AB31"
                 },
                 "warning": {
-                    "default": "#FF5C4A",
-                    "subtle": "#FF9987"
+                    "default": "#D93829",
+                    "subtle": "#FF5C4A"
                 },
                 "attention": {
-                    "default": "#FF9D52",
-                    "subtle": "#FFCA99"
+                    "default": "#C74F0E",
+                    "subtle": "#F26B1D"
                 }
             },
-            "backgroundColor": "#535759"
+            "backgroundColor": "#F2F4F5"
         },
         "good": {
             "foregroundColors": {
                 "default": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "dark": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "light": {
-                    "default": "#B4B6B8",
+                    "default": "#535759",
                     "subtle": "#929596"
                 },
                 "accent": {
-                    "default": "#1DC4F2",
+                    "default": "#007EA8",
                     "subtle": "#00A0D1"
                 },
                 "good": {
-                    "default": "#44CF50",
-                    "subtle": "#7FEB86"
+                    "default": "#1B8728",
+                    "subtle": "#24AB31"
                 },
                 "warning": {
-                    "default": "#FF5C4A",
+                    "default": "#D93829",
                     "subtle": "#FF5C4A"
                 },
                 "attention": {
-                    "default": "#FF5C4A",
-                    "subtle": "#FF5C4A"
+                    "default": "#C74F0E",
+                    "subtle": "#F26B1D"
                 }
             },
-            "backgroundColor": "#17451E"
+            "backgroundColor": "#E8FAE9"
         },
         "accent": {
             "foregroundColors": {
                 "default": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "dark": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "light": {
-                    "default": "#B4B6B8",
+                    "default": "#535759",
                     "subtle": "#929596"
                 },
                 "accent": {
-                    "default": "#1DC4F2",
+                    "default": "#007EA8",
                     "subtle": "#00A0D1"
                 },
                 "good": {
-                    "default": "#44CF50",
-                    "subtle": "#7FEB86"
+                    "default": "#1B8728",
+                    "subtle": "#24AB31"
                 },
                 "warning": {
-                    "default": "#FF5C4A",
+                    "default": "#D93829",
                     "subtle": "#FF5C4A"
                 },
                 "attention": {
-                    "default": "#FF5C4A",
-                    "subtle": "#FF5C4A"
+                    "default": "#C74F0E",
+                    "subtle": "#F26B1D"
                 }
             },
-            "backgroundColor": "#124052"
+            "backgroundColor": "#E6F9FC"
         },
         "warning": {
             "foregroundColors": {
                 "default": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "dark": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "light": {
-                    "default": "#B4B6B8",
+                    "default": "#535759",
                     "subtle": "#929596"
                 },
                 "accent": {
-                    "default": "#1DC4F2",
+                    "default": "#007EA8",
                     "subtle": "#00A0D1"
                 },
                 "good": {
-                    "default": "#44CF50",
-                    "subtle": "#7FEB86"
+                    "default": "#1B8728",
+                    "subtle": "#24AB31"
                 },
                 "warning": {
-                    "default": "#FF5C4A",
+                    "default": "#D93829",
                     "subtle": "#FF5C4A"
                 },
                 "attention": {
-                    "default": "#FF5C4A",
-                    "subtle": "#FF5C4A"
+                    "default": "#C74F0E",
+                    "subtle": "#F26B1D"
                 }
             },
-            "backgroundColor": "#632926"
+            "backgroundColor": "#FFE1D9"
         },
         "attention": {
             "foregroundColors": {
                 "default": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "dark": {
-                    "default": "#FFFFFF",
-                    "subtle": "#E6E8E8"
+                    "default": "#171B1F",
+                    "subtle": "#535759"
                 },
                 "light": {
-                    "default": "#B4B6B8",
+                    "default": "#535759",
                     "subtle": "#929596"
                 },
                 "accent": {
-                    "default": "#1DC4F2",
+                    "default": "#007EA8",
                     "subtle": "#00A0D1"
                 },
                 "good": {
-                    "default": "#44CF50",
-                    "subtle": "#7FEB86"
+                    "default": "#1B8728",
+                    "subtle": "#24AB31"
                 },
                 "warning": {
-                    "default": "#FF5C4A",
+                    "default": "#D93829",
                     "subtle": "#FF5C4A"
                 },
                 "attention": {
-                    "default": "#FF5C4A",
-                    "subtle": "#FF5C4A"
+                    "default": "#C74F0E",
+                    "subtle": "#F26B1D"
                 }
             },
-            "backgroundColor": "#543511"
+            "backgroundColor": "#FCF4E1"
         }
     },
     "actions": {
@@ -249,8 +245,8 @@ namespace DarkConfig
         },
         "style": "emphasis",
         "preExpandSingleShowCardAction": false,
-        "actionsOrientation": "Horizontal",
-        "actionAlignment": "Left"
+        "actionsOrientation": "Vertical",
+        "actionAlignment": "stretch"
     },
     "adaptiveCard": {
         "allowCustomStyle": false
@@ -279,5 +275,5 @@ namespace DarkConfig
         "spacing": 10
     },
     "cssClassNamePrefix": null
-})";
 }
+"""
