@@ -29,7 +29,7 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         // Main loop to iterate over Array of facts
         for fact in factArray {
             let markdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig)
-            let attributedContent = getMarkdownString(parserResult: markdownParserResult)
+            let attributedContent = MarkdownUtils.getMarkdownString(parserResult: markdownParserResult)
             let titleView = ACRFactTextField(hostConfig: hostConfig)
             let valueView = ACRFactTextField(hostConfig: hostConfig)
             titleView.plainTextValue = fact.getTitle()
@@ -38,7 +38,7 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
             if !markdownParserResult.isHTML {
                 valueView.plainTextValue = fact.getValue()
             } else {
-            valueView.attributedTextValue = attributedContent
+                valueView.attributedTextValue = attributedContent
             }
             
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
@@ -83,25 +83,5 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         return mainFactView
-    }
-    
-    func getMarkdownString(parserResult: ACSMarkdownParserResult) -> NSMutableAttributedString {
-        let content: NSMutableAttributedString
-        if parserResult.isHTML, let htmlData = parserResult.htmlData {
-            do {
-                content = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
-                // Delete trailing newline character
-                content.deleteCharacters(in: NSRange(location: content.length - 1, length: 1))
-//                    textView.isSelectable = true
-            } catch {
-                content = NSMutableAttributedString(string: parserResult.parsedString)
-            }
-        } else {
-            content = NSMutableAttributedString(string: parserResult.parsedString)
-            // Delete <p> and </p>
-            content.deleteCharacters(in: NSRange(location: 0, length: 3))
-            content.deleteCharacters(in: NSRange(location: content.length - 4, length: 4))
-        }
-        return content
     }
 }

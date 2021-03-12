@@ -46,7 +46,11 @@ class ACRFactTextField: NSView {
     
     func setupTitleString() {
 //         TODO: Make it get all properties from host config
-        labelTextField.font = NSFont.boldSystemFont(ofSize: hostConfig?.getFontSize(.default, size: .default) as? CGFloat ?? 12)
+        if let fontSize = hostConfig?.getFontSize(.default, size: .default) as? CGFloat {
+            labelTextField.font = NSFont.boldSystemFont(ofSize: fontSize)
+        } else {
+            labelTextField.font = NSFont.boldSystemFont(ofSize: 12)
+        }
     }
     
     var isEmpty: Bool {
