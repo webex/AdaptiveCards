@@ -533,6 +533,8 @@ namespace RendererQml
 		dropIcon->Property("anchors.right", "parent.right");
 		dropIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
 		dropIcon->Property("anchors.margins", "5");
+		dropIcon->Property("fillMode", "Image.PreserveAspectFit");
+		dropIcon->Property("mipmap", "true");
 
 		const auto textColor = choiceset.choices[0].textColor;
 
