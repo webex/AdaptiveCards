@@ -276,6 +276,7 @@ namespace RendererQml
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextInputRender(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		//TODO: Add inline action
+        const std::string origionalElementId = input->GetId();
 
 		std::shared_ptr<QmlTag> uiTextInput;
 		std::shared_ptr<QmlTag> scrollViewTag;
@@ -300,7 +301,7 @@ namespace RendererQml
 				uiTextInput->Property("onTextChanged", Formatter() << "remove(" << input->GetMaxLength() << ", length)");
 			}
 
-			scrollViewTag->AddChild(uiTextInput);
+			scrollViewTag->AddChild(uiTextInput);            
 		}
 		else
 		{
@@ -354,11 +355,14 @@ namespace RendererQml
 			return scrollViewTag;
 		}
 
+        context->addToInputElementList(origionalElementId, (uiTextInput->GetId() + ".text"));
+
 		return uiTextInput;
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::NumberInputRender(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        const std::string origionalElementId = input->GetId();
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 		const auto inputId = input->GetId();
 
@@ -434,6 +438,8 @@ namespace RendererQml
 		}
 
 		uiNumberInput->Property("contentItem", contentItemTag->ToString());
+
+        context->addToInputElementList(origionalElementId, (contentItemTag->GetId() + ".text"));
 
 		return uiNumberInput;
 	}
@@ -1876,7 +1882,7 @@ namespace RendererQml
                 onClickedFunction = "";
             }
            
-            buttonElement->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "\n}");
+            buttonElement->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}\n");
 
             return buttonElement;
         }
@@ -1914,7 +1920,10 @@ namespace RendererQml
             function << "paramJson = JSON.parse(parmStr);\n";
         }
 
-        //TODO: Add value in recursive mode
+        for(const auto& element : context->getInputElementList())
+        {
+            function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
+        }
 
         function << "var paramslist = JSON.stringify(paramJson);\n";
         function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\n";
