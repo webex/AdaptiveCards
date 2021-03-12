@@ -1524,7 +1524,7 @@ namespace RendererQml
 					bleedFlag = true;
 					if (width == "stretch" || width == "auto")
 					{
-						uiElement->Property("width", "row_" + columnSet->GetId() + ".getColumnWidth(\"\")");
+						uiElement->Property("width", "row_" + columnSet->GetId() + ".getColumnWidth('')");
 					}
 					else
 					{
