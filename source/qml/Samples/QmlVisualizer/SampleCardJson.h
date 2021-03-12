@@ -1513,5 +1513,36 @@ namespace Samples
             }
         ]
     })";
+
+    const std::string card_Action_Submit = R"({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.0",
+      "body": [
+        {
+          "type": "TextBlock",
+          "text": "Present a form and submit it back to the originator"
+        },
+        {
+          "type": "Input.Text",
+          "id": "firstName",
+          "placeholder": "What is your first name?"
+        },
+        {
+          "type": "Input.Text",
+          "id": "lastName",
+          "placeholder": "What is your last name?"
+        }
+      ],
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "Action.Submit",
+          "data": {
+            "x": 13
+          }
+        }
+      ]
+    })";
 }
 
