@@ -26,47 +26,27 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         valueStack.orientation = .vertical
         valueStack.alignment = .leading
         
-        // init content
-        let content = NSMutableAttributedString()
-        
         // Main loop to iterate over Array of facts
         for fact in factArray {
-            let textRunContent: NSMutableAttributedString
-            let markdownResult = BridgeTextUtils.processText(fromFacts: fact, hostConfig: hostConfig)
-            if markdownResult.isHTML, let htmlData = markdownResult.htmlData {
-                do {
-                    textRunContent = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
-                    // Delete trailing newline character
-                    textRunContent.deleteCharacters(in: NSRange(location: textRunContent.length - 1, length: 1))
-//                    textView.isSelectable = true
-                } catch {
-                    textRunContent = NSMutableAttributedString(string: markdownResult.parsedString)
-                }
-            } else {
-                textRunContent = NSMutableAttributedString(string: markdownResult.parsedString)
-                // Delete <p> and </p>
-                textRunContent.deleteCharacters(in: NSRange(location: 0, length: 3))
-                textRunContent.deleteCharacters(in: NSRange(location: textRunContent.length - 4, length: 4))
-            }
-            
+            let markdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig)
+            let attributedContent = getMarkdownString(parserResult: markdownParserResult)
             let titleView = ACRFactTextField(hostConfig: hostConfig)
             let valueView = ACRFactTextField(hostConfig: hostConfig)
-//            titleView.textValue = NSAttributedString(string: fact.getTitle() ?? "")
-            titleView.textValueString = fact.getTitle()
-            titleView.setupTitle()
-            if !markdownResult.isHTML {
-                valueView.textValueString = fact.getValue()
+            titleView.plainTextValue = fact.getTitle()
+            titleView.setupTitleString()
+            // If not markdown use plain text
+            if !markdownParserResult.isHTML {
+                valueView.plainTextValue = fact.getValue()
             } else {
-            valueView.textValue = textRunContent
+            valueView.attributedTextValue = attributedContent
             }
-//            valueView.textValue = fact.getValue()
             
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
                 titleView.textColor = textColor
                 valueView.textColor = textColor
-                if markdownResult.isHTML {
-                    textRunContent.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: textRunContent.length))
-                    valueView.textValue = textRunContent
+                if markdownParserResult.isHTML {
+                    attributedContent.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedContent.length))
+                    valueView.attributedTextValue = attributedContent
                 }
             }
             
@@ -103,5 +83,25 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         return mainFactView
+    }
+    
+    func getMarkdownString(parserResult: ACSMarkdownParserResult) -> NSMutableAttributedString {
+        let content: NSMutableAttributedString
+        if parserResult.isHTML, let htmlData = parserResult.htmlData {
+            do {
+                content = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+                // Delete trailing newline character
+                content.deleteCharacters(in: NSRange(location: content.length - 1, length: 1))
+//                    textView.isSelectable = true
+            } catch {
+                content = NSMutableAttributedString(string: parserResult.parsedString)
+            }
+        } else {
+            content = NSMutableAttributedString(string: parserResult.parsedString)
+            // Delete <p> and </p>
+            content.deleteCharacters(in: NSRange(location: 0, length: 3))
+            content.deleteCharacters(in: NSRange(location: content.length - 4, length: 4))
+        }
+        return content
     }
 }

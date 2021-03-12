@@ -42,19 +42,12 @@ class ACRFactTextField: NSView {
         
         labelTextField.setContentCompressionResistancePriority(.required, for: .vertical)
         labelTextField.alignment = .left
-//        labelTextField.isSelectable = true
-//        labelTextField.allowsEditingTextAttributes = true
     }
     
-    func setupTitle() {
-        // TODO: Make it get all properties from host config
-//        labelTextField.allowsEditingTextAttributes = false
-        labelTextField.font = NSFont.boldSystemFont(ofSize: 12)
+    func setupTitleString() {
+//         TODO: Make it get all properties from host config
+        labelTextField.font = NSFont.boldSystemFont(ofSize: hostConfig?.getFontSize(.default, size: .default) as? CGFloat ?? 12)
     }
-    
-//    func setLabelProperty() {
-//        labelTextField.allowsEditingTextAttributes = true
-//    }
     
     var isEmpty: Bool {
         return labelTextField.stringValue.isEmpty
@@ -65,40 +58,20 @@ class ACRFactTextField: NSView {
         set { labelTextField.textColor = newValue }
     }
     
-    var textValueString: String? {
+    var plainTextValue: String? {
         get { return labelTextField.stringValue }
         set {
             labelTextField.allowsEditingTextAttributes = false
             labelTextField.stringValue = newValue ?? ""
         }
     }
-    var textValue: NSAttributedString? {
+    var attributedTextValue: NSAttributedString? {
         get { return labelTextField.attributedStringValue }
         set {
             labelTextField.allowsEditingTextAttributes = true
             labelTextField.attributedStringValue = newValue ?? NSAttributedString(string: "")
         }
     }
-    
-//            let markdownResult = BridgeTextUtils.processText(from: labelTextField, hostConfig: hostConfig)
-//            let attributedString: NSMutableAttributedString
-//            if markdownResult.isHTML, let htmlData = markdownResult.htmlData {
-//                do {
-//                    attributedString = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
-//                    // Delete trailing newline character
-//                    attributedString.deleteCharacters(in: NSRange(location: attributedString.length - 1, length: 1))
-//                    textView.isSelectable = true
-//                } catch {
-//                    attributedString = NSMutableAttributedString(string: markdownResult.parsedString)
-//                }
-//            } else {
-//                attributedString = NSMutableAttributedString(string: markdownResult.parsedString)
-//                // Delete <p> and </p>
-//                attributedString.deleteCharacters(in: NSRange(location: 0, length: 3))
-//                attributedString.deleteCharacters(in: NSRange(location: attributedString.length - 4, length: 4))
-//            }
-//        }
-//    }
 }
 
 // MARK: Class required for Horizontal Stack View
