@@ -1,4 +1,5 @@
 #include "AdaptiveCardQmlRenderer.h"
+#include "ImageDataURI.h"
 #include "pch.h"
 #include <windows.h>
 
@@ -823,12 +824,7 @@ namespace RendererQml
 			uiInnerSegment->Property("height", "parent.height - 3");
 			uiInnerSegment->Property("visible", checkbox.id + ".checked");
 
-			//Finding absolute Path at runtime
-			std::string file_path = __FILE__;
-			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-			dir_path.append("\\Images\\checkmarkIcon.svg");
-			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-			uiInnerSegment->Property("source", Formatter() << "\"" << std::string("file:/") << dir_path << "\"");
+			uiInnerSegment->Property("source", Formatter() << "\"" << RendererQml::check_icon_12 << "\"");
 		}
 			
 		uiOuterRectangle->AddChild(uiInnerSegment);
@@ -912,16 +908,7 @@ namespace RendererQml
         imageTag->Property("anchors.margins", "5");
 		imageTag->Property("fillMode", "Image.PreserveAspectFit");
 		imageTag->Property("mipmap", "true");
-
-        //Finding absolute Path at runtime
-        std::string file_path = __FILE__;
-        std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-        dir_path.append("\\Images\\calendarIcon.svg");
-        std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-        imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
-
-        //Relative wrt main.qml not working
-        //imageTag->Property("source", "\"" + std::string("file:/../../Library/RendererQml/Images/calendarIcon.png") + "\"");
+        imageTag->Property("source", Formatter() << "\"" << RendererQml::calendar_icon_32 << "\"");
 
 		auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
 		ColorOverlayTag->Property("anchors.fill", "parent");
@@ -1299,16 +1286,7 @@ namespace RendererQml
 		imageTag->Property("anchors.margins", "5");
 		imageTag->Property("fillMode", "Image.PreserveAspectFit");
 		imageTag->Property("mipmap", "true");
-
-		//Finding absolute Path at runtime
-		std::string file_path = __FILE__;
-		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-		dir_path.append("\\Images\\clockIcon.svg");
-		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-		imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
-
-		//Relative wrt main.qml not working
-		//imageTag->Property("source", "\"" + std::string("file:/../../Library/RendererQml/Images/calendarIcon.png") + "\"");
+        imageTag->Property("source", Formatter() << "\"" << RendererQml::clock_icon_30 << "\"");
 
 		auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
 		ColorOverlayTag->Property("anchors.fill", "parent");
@@ -1854,12 +1832,7 @@ namespace RendererQml
                 showCardIcon->Property("fillMode", "Image.PreserveAspectFit");
                 showCardIcon->Property("mipmap", "true");
                 showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
-
-                std::string file_path = __FILE__;
-                std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-                dir_path.append("\\Images\\arrow-down_12.svg");
-                std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-                showCardIcon->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+                showCardIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
 
                 textLayout->AddChild(showCardIcon);
             }
