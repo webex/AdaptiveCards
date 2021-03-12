@@ -460,7 +460,13 @@ namespace Samples
 		    "min":"1900-01-01",
 		    "max":"2030-01-01"
 		}
-	]
+	],
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "OK"
+        }
+      ]
     })";
 
 	const std::string card_ChoiceSetInput = R"({

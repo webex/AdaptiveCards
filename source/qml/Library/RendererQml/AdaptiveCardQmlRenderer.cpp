@@ -872,7 +872,7 @@ namespace RendererQml
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
 		//TODO: ids which are qml keywords would result in undefined behaviour
-
+        const std::string origionalElementId = input->GetId();
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
         auto uiDateInput = std::make_shared<QmlTag>("TextField");
@@ -890,6 +890,8 @@ namespace RendererQml
         {
             uiDateInput->Property("text", "\"" + Utils::GetDate(input->GetValue(), false) + "\"");
         }
+
+        uiDateInput->Property("property string selectedDate", "\"" + input->GetValue() + "\"");
 
         //TODO: Add stretch property
 
@@ -951,7 +953,10 @@ namespace RendererQml
         calendarTag->Property("anchors.fill", "parent");
         calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(), true) : "new Date(1900,1,1)");
         calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");
-        calendarTag->Property("onReleased", "{parent.visible=false; " + input->GetId() + ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"MM-dd-yyyy\")}");
+
+        const auto dateText = input->GetId() + ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"MM-dd-yyyy\");";
+        const auto selectedDate = input->GetId() + ".selectedDate=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"yyyy-MM-dd\");";
+        calendarTag->Property("onReleased", "{parent.visible=false; " + dateText + selectedDate + "}");
 
         auto calendarBoxTag = std::make_shared<QmlTag>("Rectangle");
         calendarBoxTag->Property("id", calendar_box_id);
@@ -962,6 +967,8 @@ namespace RendererQml
         calendarBoxTag->Property("height", "275");
         calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
         uiDateInput->AddChild(calendarBoxTag);
+
+        context->addToInputElementList(origionalElementId, (uiDateInput->GetId() + ".selectedDate"));
 
         return uiDateInput;
     }
@@ -1913,7 +1920,7 @@ namespace RendererQml
 
         function << "var paramJson = {};\n";
 
-        if (!submitDataJson.empty())
+        if (!submitDataJson.empty() && submitDataJson != "null")
         {
             submitDataJson = Utils::Replace(submitDataJson, "\"", "\\\"");
             function << "var parmStr = \"" << submitDataJson << "\";\n";
