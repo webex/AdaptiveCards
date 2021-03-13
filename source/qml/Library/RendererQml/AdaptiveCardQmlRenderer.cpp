@@ -955,6 +955,7 @@ namespace RendererQml
         calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");
 
         const auto dateText = input->GetId() + ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"MM-dd-yyyy\");";
+        //TODO: fix this and move to text field text changed
         const auto selectedDate = input->GetId() + ".selectedDate=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"yyyy-MM-dd\");";
         calendarTag->Property("onReleased", "{parent.visible=false; " + dateText + selectedDate + "}");
 
@@ -1938,7 +1939,7 @@ namespace RendererQml
         }
 
         function << "var paramslist = JSON.stringify(paramJson);\n";
-        function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\n";
+        function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\nconsole.log(paramslist);\n";
 
         return function.str();
     }
