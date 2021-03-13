@@ -527,6 +527,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ToggleInputRender(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        const std::string origionalElementId = input->GetId();
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		const auto valueOn = !input->GetValueOn().empty() ? input->GetValueOn() : "true";
@@ -534,8 +535,8 @@ namespace RendererQml
 		const bool isChecked = input->GetValue().compare(valueOn) == 0 ? true : false;
 
 		//TODO: Add Height
-		return GetCheckBox(RendererQml::Checkbox(input->GetId(),
-			CheckBoxType::Toggle,
+		const auto checkbox = GetCheckBox(RendererQml::Checkbox(input->GetId(),
+            CheckBoxType::Toggle,
 			input->GetTitle(),
 			input->GetValue(),
 			valueOn,
@@ -544,6 +545,8 @@ namespace RendererQml
 			input->GetIsVisible(),
 			isChecked), context);
 
+        context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
+        return checkbox;
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ChoiceSetRender(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<AdaptiveRenderContext> context)
@@ -790,6 +793,7 @@ namespace RendererQml
 		}
 
 		uiButton->Property("id", checkbox.id);
+        uiButton->Property("property string value", "checked ? valueOn : valueOff");
 		uiButton->Property("text", "\"" + checkbox.text + "\"");
 		uiButton->Property("Layout.maximumWidth", "parent.parent.parent.width");
 		uiButton->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default)));
