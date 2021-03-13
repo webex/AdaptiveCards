@@ -292,7 +292,7 @@ namespace RendererQml
 		return date_split[1] + "-" + date_split[2] + "-" + date_split[0];
 	}
 
-	bool Utils::isValidTime(std::string& time)
+	bool Utils::isValidTime(const std::string& time)
 	{
 		//24 hour format check
 		try

@@ -1249,21 +1249,22 @@ namespace RendererQml
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TimeInputRender(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
         const std::string origionalElementId = input->GetId();
-		bool is12hour = Utils::isSystemTime12Hour();
+		const bool is12hour = Utils::isSystemTime12Hour();
 		
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
-		std::string id = input->GetId();
+		const std::string id = input->GetId();
+        const std::string value = input->GetValue();
 
 		uiTimeInput->Property("id", id);
+        uiTimeInput->Property("property string selectedTime", "\"""\"");
 		uiTimeInput->Property("width", "parent.width");
 		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "\"Select time\"");
         uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 		uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
 
-		std::string value = input->GetValue();
 		if (!input->GetValue().empty() && Utils::isValidTime(value))
 		{
 			std::string defaultTime = value;
@@ -1272,6 +1273,7 @@ namespace RendererQml
 				defaultTime = Utils::defaultTimeto12hour(defaultTime);
 			}
 			uiTimeInput->Property("text", Formatter() << "\"" << defaultTime << "\"");
+            uiTimeInput->Property("property string selectedTime", Formatter() << "\"" << value << "\"");
 		}
 
 		if (!input->GetIsVisible())
@@ -1288,7 +1290,7 @@ namespace RendererQml
 
 		uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus==true) inputMask=\"xx:xx;-\";" << " if(activeFocus==false){ z=0;" << "if(" << timeBox_id << ".visible==true)" << timeBox_id << ".visible=false ;" << "}}");
 
-		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << "}");
+		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << id << ".selectedTime=" << id << ".text;}");
 
 		auto glowTag = std::make_shared<QmlTag>("Glow");
 		glowTag->Property("samples", "25");
@@ -1391,11 +1393,13 @@ namespace RendererQml
 		timeBoxTag->AddChild(ListViewMinTag);
 		uiTimeInput->AddChild(timeBoxTag);
 
+        context->addToInputElementList(origionalElementId, (uiTimeInput->GetId() + ".selectedTime"));
+
 		return uiTimeInput;
 
 	}
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ListViewTagforTimeInput(std::string& parent_id, std::string& listView_id, std::map < std::string, std::map<std::string, std::string>>& properties)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ListViewTagforTimeInput(const std::string& parent_id, const std::string& listView_id, std::map<std::string, std::map<std::string, std::string>>& properties)
 	{
 		auto ListViewTag = std::make_shared<QmlTag>("ListView");
 		ListViewTag->Property("id", listView_id);
