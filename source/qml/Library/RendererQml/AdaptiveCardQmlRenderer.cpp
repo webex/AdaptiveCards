@@ -287,7 +287,7 @@ namespace RendererQml
 		{
 			scrollViewTag = std::make_shared<QmlTag>("ScrollView");
 			scrollViewTag->Property("width", "parent.width");
-			scrollViewTag->Property("height", "50");
+			scrollViewTag->Property("height", "100");
 			scrollViewTag->Property("ScrollBar.vertical.interactive", "true");
 
 			uiTextInput = std::make_shared<QmlTag>("TextArea");
@@ -301,7 +301,7 @@ namespace RendererQml
 				uiTextInput->Property("onTextChanged", Formatter() << "remove(" << input->GetMaxLength() << ", length)");
 			}
 
-			scrollViewTag->AddChild(uiTextInput);            
+			scrollViewTag->AddChild(uiTextInput);
 		}
 		else
 		{
@@ -350,12 +350,12 @@ namespace RendererQml
 			uiTextInput->Property("visible", "false");
 		}
 
+        context->addToInputElementList(origionalElementId, (uiTextInput->GetId() + ".text"));
+
 		if (input->GetIsMultiline())
 		{
 			return scrollViewTag;
-		}
-
-        context->addToInputElementList(origionalElementId, (uiTextInput->GetId() + ".text"));
+		}        
 
 		return uiTextInput;
 	}
@@ -1248,6 +1248,7 @@ namespace RendererQml
   
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TimeInputRender(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        const std::string origionalElementId = input->GetId();
 		bool is12hour = Utils::isSystemTime12Hour();
 		
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));

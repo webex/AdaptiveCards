@@ -839,7 +839,13 @@ namespace Samples
 		  "max": "17:00",
 		  "value": "25:30"
 		}
-	   ]
+	   ],
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "OK"
+        }
+      ]
 	})";
 
 	const std::string card_ImageSet = R"({
