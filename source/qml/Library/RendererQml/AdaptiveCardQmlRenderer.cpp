@@ -1357,7 +1357,7 @@ namespace RendererQml
 			uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01]-|0\\d|1[0-2]):(--|[0-5]-|[0-5]\\d)\\s(--|A-|AM|P-|PM)$/}");
 			uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus==true) inputMask=\"xx:xx >xx;-\";" << " if(activeFocus==false){ z=0;" << "if(" << timeBox_id << ".visible==true)" << timeBox_id << ".visible=false ;" << "}}");
 			uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2))-1;" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));"
-				<< "var tt_index=3;" << "switch(getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}" << listViewtt_id << ".currentIndex=tt_index;" << "}");
+				<< "var tt_index=3;var hh = getText(0,2);" << "switch(getText(6,8)){ case 'PM':tt_index = 1; if(parseInt(getText(0,2))!==12){hh=parseInt(getText(0,2))+12;} break;case 'AM':tt_index = 0; if(parseInt(getText(0,2))===12){hh=parseInt(getText(0,2))-12;} break;}" << listViewtt_id << ".currentIndex=tt_index;" << id << ".selectedTime = hh + \":\" + getText(3,5);}");
 			mouseAreaTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2))-1;\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n"
 				<< "var tt_index=3;" << "switch(parent.getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}" << listViewtt_id << ".currentIndex=tt_index;" << "}");
 
