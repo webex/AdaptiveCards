@@ -551,6 +551,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ChoiceSetRender(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        const std::string origionalElementId = input->GetId();
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		int ButtonNumber = 0;
@@ -561,13 +562,12 @@ namespace RendererQml
 		const bool isVisible = input->GetIsVisible();
 		bool isChecked;
 
-		std::vector<std::string> parsedValues;
-		parsedValues = Utils::ParseChoiceSetInputDefaultValues(input->GetValue());
+        const std::vector<std::string> parsedValues = Utils::splitString(input->GetValue(), ',');
 
 		for (const auto& choice : input->GetChoices())
 		{
 			isChecked = (std::find(parsedValues.begin(), parsedValues.end(), choice->GetValue()) != parsedValues.end() && (input->GetIsMultiSelect() || parsedValues.size() == 1)) ? true : false;
-			choices.emplace_back(RendererQml::Checkbox(id + GenerateChoiceSetButtonId(type, ButtonNumber++),
+			choices.emplace_back(RendererQml::Checkbox(GenerateChoiceSetButtonId(id, type, ButtonNumber++),
 				type,
 				choice->GetTitle(),
 				choice->GetValue(),
@@ -583,9 +583,11 @@ namespace RendererQml
 			choices,
 			input->GetPlaceholder());
 
-		if (CheckBoxType::ComboBox == type)
+		if (type == CheckBoxType::ComboBox)
 		{
-			return GetComboBox(choiceSet,context);
+			const auto comboBox = GetComboBox(choiceSet,context);
+            context->addToInputElementList(origionalElementId, (comboBox->GetId() + ".currentValue"));
+            return comboBox;
 		}
 		else
 		{
@@ -641,12 +643,12 @@ namespace RendererQml
 			uiComboBox->Property("currentIndex", "-1");
 			uiComboBox->Property("displayText", "currentIndex === -1 ? '" + choiceset.placeholder + "' : currentText");
 		}
-		else if (choiceset.values.size() ==1)
+		else if (choiceset.values.size() == 1)
 		{
-			std::string target = choiceset.values[0];
+			const std::string target = choiceset.values[0];
 			auto index = std::find_if(choiceset.choices.begin(), choiceset.choices.end(), [target](const Checkbox& options) {
 				return options.value == target;
-				}) - choiceset.choices.begin();
+			}) - choiceset.choices.begin();
 			uiComboBox->Property("currentIndex", std::to_string(index));
 			uiComboBox->Property("displayText", "currentText");
 		}
@@ -708,27 +710,10 @@ namespace RendererQml
 		return model.str();
 	}
 
-	// Default values are specified by a comma separated string
-	std::vector<std::string> Utils::ParseChoiceSetInputDefaultValues(const std::string& value)
-	{
-		std::vector<std::string> parsedValues;
-		std::string element;
-		std::stringstream ss(value);
-		while (std::getline(ss, element, ','))
-		{
-			Utils::Trim(element);		
-			if (!element.empty())
-			{
-				parsedValues.push_back(element);
-			}
-		}
-		return parsedValues;
-	}
-
-	std::string AdaptiveCardQmlRenderer::GenerateChoiceSetButtonId(enum CheckBoxType ButtonType, int  ButtonNumber)
+	std::string AdaptiveCardQmlRenderer::GenerateChoiceSetButtonId(const std::string& id, enum CheckBoxType ButtonType, const int& ButtonNumber)
 	{
 		
-		return "_" + std::to_string(ButtonType) + "_" + std::to_string(ButtonNumber);
+		return id + "_" + std::to_string(ButtonType) + "_" + std::to_string(ButtonNumber);
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetButtonGroup(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
@@ -786,14 +771,15 @@ namespace RendererQml
 			uiButton = std::make_shared<QmlTag>("CheckBox");
 		}
 
+        uiButton->Property("id", checkbox.id);
+
 		if (checkbox.type == CheckBoxType::Toggle)
 		{
 			uiButton->Property("readonly property string valueOn", "\"" + checkbox.valueOn + "\"");
 			uiButton->Property("readonly property string valueOff", "\"" + checkbox.valueOff + "\"");
+            uiButton->Property("property string value", "checked ? valueOn : valueOff");
 		}
-
-		uiButton->Property("id", checkbox.id);
-        uiButton->Property("property string value", "checked ? valueOn : valueOff");
+		        
 		uiButton->Property("text", "\"" + checkbox.text + "\"");
 		uiButton->Property("Layout.maximumWidth", "parent.parent.parent.width");
 		uiButton->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default)));
