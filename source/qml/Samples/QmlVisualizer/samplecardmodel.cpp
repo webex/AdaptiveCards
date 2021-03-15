@@ -109,6 +109,40 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 
     std::shared_ptr<RenderedQmlAdaptiveCard> result = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard());
     const auto generatedQml = result->GetResult();
+
+	generatedQml->Transform([](QmlTag& genQml)
+	{
+		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
+		{
+			std::string file_path = __FILE__;
+			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+			dir_path.append("\\Images\\sampleImage.jpg");
+			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+
+			genQml.Property("background", "Image { source: \"" + std::string("file:/") + dir_path + "\" }");
+		}
+		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
+		{
+			std::string file_path = __FILE__;
+			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+			dir_path.append("\\Images\\Cat.png");
+			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+
+			genQml.Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+		}
+		else if (genQml.GetElement() == "Button" && genQml.HasProperty("readonly property bool hasIconUrl"))
+		{
+			std::string file_path = __FILE__;
+			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+			dir_path.append("\\Images\\Cat.png");
+			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+
+			std::string str = genQml.GetProperty("contentItem");
+
+			genQml.Property("contentItem", std::regex_replace(str, std::regex("source.*\n"), "source:\"" + std::string("file:/") + dir_path + "\"\n"));
+		}
+	});
+
     const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
 }

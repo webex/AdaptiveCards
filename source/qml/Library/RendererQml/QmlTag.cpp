@@ -69,6 +69,31 @@ namespace RendererQml
         m_children.emplace_back(child);
     }
 
+	void QmlTag::Transform(Customizer tagCustomization)
+	{
+		if (tagCustomization)
+		{
+			tagCustomization(*this);
+		}
+		for (const auto& child : m_children)
+		{
+			child->Transform(tagCustomization);
+		}
+	}
+
+	bool QmlTag::HasProperty(const std::string& name)
+	{
+		auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [name](const auto property) {
+			return property.first == name;
+		});
+
+		if (iterator != m_properties.end())
+		{
+			return true;
+		}
+		return false;
+	}
+
     std::string QmlTag::ToString()
     {
         std::ostringstream qmlString;
@@ -110,6 +135,29 @@ namespace RendererQml
 
         return qmlString.str();
     }
+
+	const std::string QmlTag::GetElement()
+	{
+		return m_element;
+	}
+
+	std::string QmlTag::GetProperty(const std::string& name)
+	{
+		auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [name](const auto property) {
+			return property.first == name;
+		});
+
+		if (iterator != m_properties.end())
+		{
+			return iterator->second;
+		}
+		return std::string();
+	}
+
+	const std::vector<std::pair<std::string, std::string>>& QmlTag::GetProperties()
+	{
+		return  m_properties;
+	}
 
 	const std::vector<std::shared_ptr<QmlTag>>& QmlTag::GetChildren()
 	{

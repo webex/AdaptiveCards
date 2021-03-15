@@ -24,7 +24,12 @@ namespace RendererQml
 		QmlTag& RemoveProperty(const std::string& name);
 		QmlTag& AddFunctions(const std::string& function);
         void AddChild(const std::shared_ptr<QmlTag>& child);
+		void Transform(Customizer tagCustomization);
+		bool HasProperty(const std::string& name);
         std::string ToString();
+		const std::string GetElement();
+		std::string GetProperty(const std::string& name);
+		const std::vector<std::pair<std::string, std::string>>& GetProperties();
 		const std::vector<std::shared_ptr<QmlTag>>& GetChildren();
 
 
