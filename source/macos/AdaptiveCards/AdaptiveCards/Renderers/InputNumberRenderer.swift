@@ -143,6 +143,27 @@ extension ACRNumericTextField {
     func stepperShouldWrapValues(_ shouldWrap: Bool) {
         stepper.valueWraps = shouldWrap
     }
+    
+    override open func viewDidMoveToSuperview() {
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
+    }
+    
+//    override open func awakeFromNib() {
+//        super.awakeFromNib()
+//        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+//        addTrackingArea(trackingArea)
+//    }
+    
+    override open func mouseEntered(with event: NSEvent) {
+        guard let contentView = event.trackingArea?.owner as? ACRNumericTextField else { return }
+        contentView.textField.backgroundColor = .windowBackgroundColor
+    }
+    
+    override open func mouseExited(with event: NSEvent) {
+        guard let contentView = event.trackingArea?.owner as? ACRNumericTextField else { return }
+        contentView.textField.backgroundColor = .textBackgroundColor
+    }
 }
 
 // MARK: - Numeric Formatter

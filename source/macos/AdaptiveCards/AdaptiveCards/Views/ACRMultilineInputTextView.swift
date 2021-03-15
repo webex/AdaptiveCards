@@ -44,6 +44,8 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         scrollView.borderType = NSBorderType.bezelBorder
         scrollView.autohidesScrollers = true
         textView.delegate = self
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
     }
     
     func setPlaceholder(placeholder: String) {
@@ -70,5 +72,40 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         if textView.string.count > maxLen {
             textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
         }
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        guard let contentView = event.trackingArea?.owner as? ACRMultilineInputTextView else { return }
+//        if #available(OSX 10.14, *) {
+//            textView.backgroundColor = .unemphasizedSelectedTextBackgroundColor
+//        } else {
+//            // Fallback on earlier versions
+//        }
+        contentView.textView.backgroundColor = .windowBackgroundColor
+    }
+    
+//    override func mouseDown(with event: NSEvent) {
+//        guard let textView = event.trackingArea?.owner as? ACRMultilineInputTextView else { return }
+//        if #available(OSX 10.14, *) {
+//            textView.textView.backgroundColor = .unemphasizedSelectedTextBackgroundColor
+//        } else {
+//            // Fallback on earlier versions
+//        }
+//    }
+    var isFocused: Bool = false
+    override func becomeFirstResponder() -> Bool {
+        isFocused = true
+//        textView.textColor = .windowBackgroundColor
+        return super.becomeFirstResponder()
+    }
+    
+    override func resignFirstResponder() -> Bool {
+        isFocused = false
+        return super.resignFirstResponder()
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        guard !isFocused, let contentView = event.trackingArea?.owner as? ACRMultilineInputTextView else { return }
+        contentView.textView.backgroundColor = .textBackgroundColor
     }
 }

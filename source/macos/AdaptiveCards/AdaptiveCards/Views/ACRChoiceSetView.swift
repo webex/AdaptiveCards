@@ -52,6 +52,21 @@ class ACRChoiceSetView: NSView {
         newButton.value = value
         return newButton
     }
+    
+//    override open func viewDidMoveToSuperview() {
+//        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+//        addTrackingArea(trackingArea)
+//    }
+    
+//    override open func mouseEntered(with event: NSEvent) {
+//        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetView else { return }
+//        contentView.previousButton?.backgroundColor = .windowBackgroundColor
+//    }
+
+//    override open func mouseExited(with event: NSEvent) {
+//        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetView else { return }
+//        contentView.previousButton?.backgroundColor = .textBackgroundColor
+//    }
 }
 // MARK: Extension
 extension ACRChoiceSetView: ACRChoiceButtonDelegate {
@@ -66,5 +81,24 @@ class ACRChoiceSetCompactView: NSPopUpButton {
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
+        if #available(OSX 10.14, *) {
+            contentView.isHighlighted = true
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+    override func mouseExited(with event: NSEvent) {
+        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
+        if #available(OSX 10.14, *) {
+            contentView.isHighlighted = false
+        } else {
+            // Fallback on earlier versions
+        }
     }
 }

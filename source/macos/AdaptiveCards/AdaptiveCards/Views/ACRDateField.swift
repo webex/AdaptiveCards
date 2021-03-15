@@ -78,6 +78,15 @@ class ACRDateField: NSView {
         testButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
     
+    override func mouseEntered(with event: NSEvent) {
+        guard let contentView = event.trackingArea?.owner as? ACRDateField else { return }
+        contentView.textField.backgroundColor = .windowBackgroundColor
+    }
+    override func mouseExited(with event: NSEvent) {
+        guard let contentView = event.trackingArea?.owner as? ACRDateField else { return }
+        contentView.textField.backgroundColor = .textBackgroundColor
+    }
+    
     // MARK: Actions
     @objc private func handleButtonAction() {
         let frame = isTimeMode ? NSRect(x: 0, y: 0, width: 122, height: 122) : NSRect(x: 0, y: 0, width: 138, height: 147)
@@ -109,6 +118,8 @@ class ACRDateField: NSView {
         // Should look for better solution
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
     }
 }
 

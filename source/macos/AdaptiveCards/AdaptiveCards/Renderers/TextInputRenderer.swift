@@ -125,4 +125,35 @@ class ACRTextInputView: NSTextField, NSTextFieldDelegate {
             textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
         }
     }
+    
+    override func viewDidMoveToSuperview() {
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        guard let textView = event.trackingArea?.owner as? ACRTextInputView else { return }
+//        if #available(OSX 10.14, *) {
+//            textView.backgroundColor = .unemphasizedSelectedTextBackgroundColor
+//        } else {
+//            // Fallback on earlier versions
+//        }
+        textView.backgroundColor = .windowBackgroundColor
+    }
+    
+//    override func mouseDown(with event: NSEvent) {
+//        guard let textView = ev as? ACRTextInputView else { return }
+//        if #available(OSX 10.14, *) {
+//            textView.backgroundColor = .unemphasizedSelectedTextBackgroundColor
+//        } else {
+//            // Fallback on earlier versions
+//        }
+//        backgroundColor = .windowBackgroundColor
+//    }
+    
+    override func mouseExited(with event: NSEvent) {
+        guard let textView = event.trackingArea?.owner as? ACRTextInputView else { return }
+        
+        textView.backgroundColor = .textBackgroundColor
+    }
 }

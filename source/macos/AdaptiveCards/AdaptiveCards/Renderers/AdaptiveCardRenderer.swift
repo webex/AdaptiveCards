@@ -30,7 +30,11 @@ class AdaptiveCardRenderer {
             rootView.addArrangedSubview(view)
         }
         
-        rootView.appearance = NSAppearance(named: .aqua)
+        if #available(OSX 10.14, *) {
+            rootView.appearance = NSAppearance(named: .aqua)
+        } else {
+            // Fallback on earlier versions
+        }
         rootView.layoutSubtreeIfNeeded()
         return rootView
     }
