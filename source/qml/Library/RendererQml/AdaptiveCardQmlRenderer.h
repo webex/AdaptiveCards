@@ -78,6 +78,7 @@ namespace RendererQml
 		static std::shared_ptr<QmlTag> GetButtonGroup(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context);
 		static std::shared_ptr<QmlTag> GetCheckBox(Checkbox checkbox, std::shared_ptr<AdaptiveRenderContext> context);
 		static std::string GenerateChoiceSetButtonId(const std::string& id, enum CheckBoxType ButtonType, const int& ButtonNumber);
+        static const std::string getChoiceSetSelectedValuesFunc(const std::shared_ptr<QmlTag>& btnGroup, const bool isMultiselect);
 		static std::string GetModel(std::vector<Checkbox>& Choices);
 
 		template <typename CardElement>

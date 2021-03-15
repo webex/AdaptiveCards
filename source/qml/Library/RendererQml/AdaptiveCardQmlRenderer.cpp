@@ -592,7 +592,7 @@ namespace RendererQml
 		else
 		{
             uiChoiceSet = GetButtonGroup(choiceSet, context);
-            context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".selectedValues"));
+            context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
 		}
 
 		return uiChoiceSet;
@@ -718,8 +718,6 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetButtonGroup(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        std::string selectedValues;
-
 		auto uiColumn = std::make_shared<QmlTag>("Column");
         uiColumn->Property("id", choiceset.id);
 	
@@ -742,37 +740,50 @@ namespace RendererQml
 	
 		if (choiceset.isMultiSelect)
 		{
-			uiInnerColumn->Property("id", choiceset.id + "_checkbox");
-            for (const auto& choice : choiceset.choices)
-            {
-                const auto cb = GetCheckBox(choice, context);
-                uiInnerColumn->AddChild(cb);
-            }
-            selectedValues.append("\"\"");
+			uiInnerColumn->Property("id", choiceset.id + "_checkbox");            
 		}
 		else
 		{
-			uiInnerColumn->Property("id", choiceset.id + "_radio");            
-            int isFirstElement = true;
-            for (const auto& choice : choiceset.choices)
-            {
-                const auto cb = GetCheckBox(choice, context);
+			uiInnerColumn->Property("id", choiceset.id + "_radio");                        
+		}
 
-                if (!isFirstElement)
-                {
-                    selectedValues.append("+");
-                }
-                selectedValues.append(Formatter() << cb->GetId() << ".value");
-                uiInnerColumn->AddChild(cb);
-                isFirstElement = false;
-            }
-		}		
+        // render as a series of buttons
+        for (const auto& choice : choiceset.choices)
+        {
+            uiInnerColumn->AddChild(GetCheckBox(choice, context));
+        }
 	
 		uiColumn->AddChild(uiInnerColumn);
-        uiColumn->Property("property string selectedValues", selectedValues);
+        uiColumn->AddFunctions(getChoiceSetSelectedValuesFunc(uiButtonGroup, choiceset.isMultiSelect));
 		return uiColumn;
 	}
 
+    const std::string AdaptiveCardQmlRenderer::getChoiceSetSelectedValuesFunc(const std::shared_ptr<QmlTag>& btnGroup, const bool isMultiselect)
+    {
+        std::ostringstream function;
+        function << "function getSelectedValues(isMultiselect){\n";
+        function << "var values = \"\";\n";
+        if (isMultiselect)
+        {
+            function << "for (var i = 0; i < " << btnGroup->GetId() << ".buttons.length; ++i) {\n";
+            function << "if(i !== 0 && " << btnGroup->GetId() << ".buttons[i].value !== \"\" && values !== \"\"){\n";
+            function << "values += \",\";\n";
+            function << "}\n";
+            function << "values += " << btnGroup->GetId() << ".buttons[i].value;\n";
+            function << "}\n";
+        }
+        else
+        {
+            function << "for (var i = 0; i < " << btnGroup->GetId() << ".buttons.length; ++i) {\n";
+            function << "if(" << btnGroup->GetId() << ".buttons[i].value !== \"\"){\n";
+            function << "values += " << btnGroup->GetId() << ".buttons[i].value;\n";
+            function << "break;\n";
+            function << "}\n}\n";
+        }
+        function << "return values;\n";
+        function << "}\n";
+        return function.str();
+    }
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCheckBox(Checkbox checkbox, std::shared_ptr<AdaptiveRenderContext> context)
 	{
