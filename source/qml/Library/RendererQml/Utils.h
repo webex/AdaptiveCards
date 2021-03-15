@@ -115,7 +115,7 @@ namespace RendererQml
 
 		static bool isSystemTime12Hour();
 
-		static int GetSystemDateFormat();
+		static RendererQml::DateFormat GetSystemDateFormat();
 
 		static std::vector<std::string> splitString(const std::string& string, char delimiter);
 

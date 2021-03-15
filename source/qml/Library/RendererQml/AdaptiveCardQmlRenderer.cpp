@@ -778,6 +778,7 @@ namespace RendererQml
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
 		//TODO: ids which are qml keywords would result in undefined behaviour
+
 		input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
         auto uiDateInput = std::make_shared<QmlTag>("TextField");
@@ -865,23 +866,24 @@ namespace RendererQml
         calendarBoxTag->Property("visible", "false");
         calendarBoxTag->Property("anchors.left", "parent.left");
         calendarBoxTag->Property("anchors.top", "parent.bottom");
-        calendarBoxTag->Property("width", "275");
-        calendarBoxTag->Property("height", "275");
+        calendarBoxTag->Property("width", "300");
+        calendarBoxTag->Property("height", "300");
         
 		auto EnumDateFormat = Utils::GetSystemDateFormat();
 		auto StringDateFormat = "MM-dd-yyyy";
 		auto inputMask = "00-00-0000;0";
 		auto DateRegex = "/^(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])-(\\d{4})$/";
+
 		switch (EnumDateFormat)
 		{
-			case 0:
+			case RendererQml::DateFormat::ddmmyy:
 			{
 				StringDateFormat = "dd-MM-yyyy";
 				DateRegex = "/^(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(\\d{4})$/";
 				break;
 			}
 
-			case 1:
+			case RendererQml::DateFormat::yymmdd:
 			{
 				StringDateFormat = "yyyy-MM-dd";
 				inputMask = "0000-00-00;0";
@@ -889,13 +891,15 @@ namespace RendererQml
 				break;
 			}
 
-			case 2:
+			case RendererQml::DateFormat::yyddmm:
 			{
 				StringDateFormat = "yyyy-dd-MM";
 				inputMask = "0000-00-00;0";
 				DateRegex = "/^(\\d{4})-(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])$/";
 				break;
 			}
+
+			//Default case: mm-dd-yyyy
 			default:
 			{
 				break;

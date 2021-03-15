@@ -298,15 +298,17 @@ namespace RendererQml
 
 		switch (dateFormat)
 		{
-		case 0:
-			return Formatter() << day << "-" << month << "-" << year;
-		case 1:
-			return Formatter() << year << "-" << month << "-" << day;
-		case 2:
-			return Formatter() << year << "-" << day << "-" << month;
+			case RendererQml::DateFormat::ddmmyy:
+				return Formatter() << day << "-" << month << "-" << year;
 
-		default:
-			return Formatter() << month << "-" << day << "-" << year;
+			case RendererQml::DateFormat::yymmdd:
+				return Formatter() << year << "-" << month << "-" << day;
+
+			case RendererQml::DateFormat::yyddmm:
+				return Formatter() << year << "-" << day << "-" << month;
+
+			default:
+				return Formatter() << month << "-" << day << "-" << year;
 		}
 		
 	}
@@ -382,10 +384,8 @@ namespace RendererQml
 		return true;
 	}
 
-	int Utils::GetSystemDateFormat()
+	RendererQml::DateFormat Utils::GetSystemDateFormat()
 	{
-		std::time_get<char>::dateorder order = std::use_facet<std::time_get<char> >(std::locale("")).date_order();
-
 		std::string SystemDateFormat = "%x";
 		std::string SystemDateBuffer = FetchSystemDateTime(SystemDateFormat);
 
@@ -393,6 +393,14 @@ namespace RendererQml
 		if (SystemDateBuffer.find('/') != std::string::npos)
 		{
 			dateSeperator = '/';
+		}
+		else if (SystemDateBuffer.find('\\') != std::string::npos)
+		{
+			dateSeperator = '\\';
+		}
+		else if (SystemDateBuffer.find('.') != std::string::npos)
+		{
+			dateSeperator = '.';
 		}
 
 		std::string ddmmyyFormat = Formatter() << "%d" << dateSeperator << "%m" << dateSeperator << "%Y";
@@ -407,22 +415,24 @@ namespace RendererQml
 		std::string yyddmmFormat = Formatter() << "%Y" << dateSeperator << "%d" << dateSeperator << "%m";
 		std::string yyddmmBuffer = FetchSystemDateTime(yyddmmFormat);
 
-		//TODO: make enum
 		if (SystemDateBuffer.compare(ddmmyyBuffer) == 0)
 		{
-			return 0;
+			return RendererQml::DateFormat::ddmmyy;
 		}
+
 		else if (SystemDateBuffer.compare(yymmddBuffer) == 0)
 		{
-			return 1;
+			return RendererQml::DateFormat::yymmdd;
 		}
+
 		else if (SystemDateBuffer.compare(yyddmmBuffer) == 0)
 		{
-			return 2;
+			return RendererQml::DateFormat::yyddmm;
 		}
+
 		else
 		{
-			return 3;
+			return RendererQml::DateFormat::mmddyy;
 		}
 	}
 
