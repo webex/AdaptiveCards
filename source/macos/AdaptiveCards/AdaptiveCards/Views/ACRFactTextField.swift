@@ -4,11 +4,9 @@ import AppKit
 class ACRFactTextField: NSView {
     @IBOutlet private var contentView: NSView!
     @IBOutlet private var labelTextField: NSTextField!
-    var hostConfig: ACSHostConfig?
     
-    init(hostConfig: ACSHostConfig) {
+    init() {
         super.init(frame: .zero)
-        self.hostConfig = hostConfig
         guard let bundle = Bundle(identifier: "com.test.test.AdaptiveCards") else {
             logError("Bundle is nil")
             return
@@ -44,13 +42,8 @@ class ACRFactTextField: NSView {
         labelTextField.alignment = .left
     }
     
-    func setupTitleString() {
-//         TODO: Make it get all properties from host config
-        if let fontSize = hostConfig?.getFontSize(.default, size: .default) as? CGFloat {
-            labelTextField.font = NSFont.boldSystemFont(ofSize: fontSize)
-        } else {
-            labelTextField.font = NSFont.boldSystemFont(ofSize: 12)
-        }
+    func setupTitleString(with fontSize: NSNumber?) {
+        labelTextField.font = NSFont.boldSystemFont(ofSize: CGFloat(truncating: fontSize ?? 12))
     }
     
     var isEmpty: Bool {

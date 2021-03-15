@@ -30,10 +30,10 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         for fact in factArray {
             let markdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig)
             let attributedContent = TextUtils.getMarkdownString(parserResult: markdownParserResult)
-            let titleView = ACRFactTextField(hostConfig: hostConfig)
-            let valueView = ACRFactTextField(hostConfig: hostConfig)
+            let titleView = ACRFactTextField()
+            let valueView = ACRFactTextField()
             titleView.plainTextValue = fact.getTitle()
-            titleView.setupTitleString()
+            titleView.setupTitleString(with: hostConfig.getFontSize(.default, size: .default))
             // If not markdown use plain text
             if !markdownParserResult.isHTML {
                 valueView.plainTextValue = fact.getValue()
