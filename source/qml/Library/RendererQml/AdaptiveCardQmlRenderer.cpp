@@ -562,6 +562,7 @@ namespace RendererQml
 		const bool isVisible = input->GetIsVisible();
 		bool isChecked;
 
+        std::shared_ptr<QmlTag> uiChoiceSet;
         const std::vector<std::string> parsedValues = Utils::splitString(input->GetValue(), ',');
 
 		for (const auto& choice : input->GetChoices())
@@ -585,17 +586,16 @@ namespace RendererQml
 
 		if (type == CheckBoxType::ComboBox)
 		{
-			const auto comboBox = GetComboBox(choiceSet,context);
-            context->addToInputElementList(origionalElementId, (comboBox->GetId() + ".currentValue"));
-            return comboBox;
+            uiChoiceSet = GetComboBox(choiceSet,context);
+            context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".currentValue"));
 		}
 		else
 		{
-			return GetButtonGroup(choiceSet, context);
+            uiChoiceSet = GetButtonGroup(choiceSet, context);
+            context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".selectedValues"));
 		}
 
-		std::shared_ptr<QmlTag> uiColumn;
-		return uiColumn;
+		return uiChoiceSet;
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComboBox(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
@@ -718,11 +718,13 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetButtonGroup(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        std::string selectedValues;
+
 		auto uiColumn = std::make_shared<QmlTag>("Column");
+        uiColumn->Property("id", choiceset.id);
 	
 		auto uiButtonGroup = std::make_shared<QmlTag>("ButtonGroup");
-	
-		uiButtonGroup->Property("id", choiceset.id);
+		uiButtonGroup->Property("id", choiceset.id + "_btngrp");
 	
 		if (choiceset.isMultiSelect)
 		{
@@ -741,19 +743,33 @@ namespace RendererQml
 		if (choiceset.isMultiSelect)
 		{
 			uiInnerColumn->Property("id", choiceset.id + "_checkbox");
+            for (const auto& choice : choiceset.choices)
+            {
+                const auto cb = GetCheckBox(choice, context);
+                uiInnerColumn->AddChild(cb);
+            }
+            selectedValues.append("\"\"");
 		}
 		else
 		{
-			uiInnerColumn->Property("id", choiceset.id + "_radio");
-		}
-	
-		// render as a series of buttons
-		for (const auto& choice : choiceset.choices)
-		{
-			uiInnerColumn->AddChild(GetCheckBox(choice, context));
-		}
+			uiInnerColumn->Property("id", choiceset.id + "_radio");            
+            int isFirstElement = true;
+            for (const auto& choice : choiceset.choices)
+            {
+                const auto cb = GetCheckBox(choice, context);
+
+                if (!isFirstElement)
+                {
+                    selectedValues.append("+");
+                }
+                selectedValues.append(Formatter() << cb->GetId() << ".value");
+                uiInnerColumn->AddChild(cb);
+                isFirstElement = false;
+            }
+		}		
 	
 		uiColumn->AddChild(uiInnerColumn);
+        uiColumn->Property("property string selectedValues", selectedValues);
 		return uiColumn;
 	}
 
@@ -779,6 +795,10 @@ namespace RendererQml
 			uiButton->Property("readonly property string valueOff", "\"" + checkbox.valueOff + "\"");
             uiButton->Property("property string value", "checked ? valueOn : valueOff");
 		}
+        else
+        {
+            uiButton->Property("property string value", Formatter() << "checked ? \"" << checkbox.value << "\" : \"\"");
+        }
 		        
 		uiButton->Property("text", "\"" + checkbox.text + "\"");
 		uiButton->Property("Layout.maximumWidth", "parent.parent.parent.width");
