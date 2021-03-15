@@ -710,10 +710,10 @@ namespace RendererQml
 		return model.str();
 	}
 
-	std::string AdaptiveCardQmlRenderer::GenerateChoiceSetButtonId(const std::string& id, enum CheckBoxType ButtonType, const int& ButtonNumber)
+	std::string AdaptiveCardQmlRenderer::GenerateChoiceSetButtonId(const std::string& parentId, enum CheckBoxType ButtonType, const int& ButtonNumber)
 	{
 		
-		return id + "_" + std::to_string(ButtonType) + "_" + std::to_string(ButtonNumber);
+		return parentId + "_" + std::to_string(ButtonType) + "_" + std::to_string(ButtonNumber);
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetButtonGroup(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
