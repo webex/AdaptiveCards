@@ -740,7 +740,7 @@ namespace RendererQml
 	
 		if (choiceset.isMultiSelect)
 		{
-			uiInnerColumn->Property("id", choiceset.id + "_checkbox");   
+			uiInnerColumn->Property("id", choiceset.id + "_checkbox");
 		}
 		else
 		{
