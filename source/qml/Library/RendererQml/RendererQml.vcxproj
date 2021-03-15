@@ -186,6 +186,7 @@
     <ClInclude Include="AdaptiveRenderContext.h" />
     <ClInclude Include="AdaptiveWarning.h" />
     <ClInclude Include="Formatter.h" />
+    <ClInclude Include="ImageDataURI.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QmlTag.h" />
     <ClInclude Include="RenderedQmlAdaptiveCardBase.h" />
@@ -200,9 +201,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Images\calendarIcon.png" />
     <Image Include="Images\Cat.png" />
-    <Image Include="Images\clockIcon.png" />
     <Image Include="Images\sampleImage.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

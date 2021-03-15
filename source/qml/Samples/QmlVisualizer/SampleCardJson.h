@@ -1442,8 +1442,76 @@ namespace Samples
           "separator": true
         }
       ]
+    },
+	{
+      "type": "TextBlock",
+      "text": "Weighted Width"
+    },
+    {
+      "type": "ColumnSet",
+      "style": "emphasis",
+      "columns": [
+        {
+          "type": "Column",
+          "width": 30,
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "WeightedWidth:30%"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": 70,
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "WeightedWidth:70%"
+            }
+          ]
+        }
+      ]
     }
   ]
 })";
+
+    const std::string card_Action_OpenUrl = R"({
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "type": "AdaptiveCard",
+        "version": "1.0",
+        "body": [
+        {
+            "type": "TextBlock",
+            "text": "This card's action will open a URL"
+        }
+        ],
+        "actions": [
+            {
+                "type": "Action.OpenUrl",
+                "title": "Action.OpenUrl",
+                "url": "https://adaptivecards.io"
+            },
+            {
+                "type": "Action.OpenUrl",
+                "title": "Action.OpenUrl.icon",
+                "url": "https://adaptivecards.io",
+                "iconUrl": "https://adaptivecards.io/content/cats/1.png"
+            },
+            {
+                "type": "Action.OpenUrl",
+                "title": "Action.OpenUrl",
+                "url": "https://adaptivecards.io",
+                "style": "destructive"
+            },
+            {
+                "type": "Action.OpenUrl",
+                "title": "Action.OpenUrl.icon",
+                "url": "https://adaptivecards.io",
+                "iconUrl": "https://adaptivecards.io/content/cats/1.png",
+                "style": "positive"
+            }
+        ]
+    })";
 }
 

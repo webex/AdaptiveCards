@@ -10,6 +10,38 @@ namespace DarkConfig
     "choiceSetInputValueSeparator": ",",
     "supportsInteractivity": true,
     "fontFamily": "CiscoSans",
+    "fontTypes":{
+        "default":{
+            "fontFamily":"Segoe UI",
+            "fontSizes":{
+                "small":12,
+                "default":14,
+                "medium":17,
+                "large":21,
+                "extraLarge":26
+            },
+            "fontWeights":{
+                "lighter":200,
+                "default":400,
+                "bolder":600
+            }
+        },
+        "monospace":{
+            "fontFamily":"'Courier New', Courier, monospace",
+            "fontSizes":{
+                "small":12,
+                "default":14,
+                "medium":17,
+                "large":21,
+                "extraLarge":26
+            },
+            "fontWeights":{
+                "lighter":200,
+                "default":400,
+                "bolder":600
+            }
+        }
+	},
     "spacing": {
         "small": 4,
         "default": 12,
@@ -249,8 +281,8 @@ namespace DarkConfig
         },
         "style": "emphasis",
         "preExpandSingleShowCardAction": false,
-        "actionsOrientation": "Vertical",
-        "actionAlignment": "stretch"
+        "actionsOrientation": "Horizontal",
+        "actionAlignment": "Left"
     },
     "adaptiveCard": {
         "allowCustomStyle": false
