@@ -967,12 +967,7 @@ namespace RendererQml
         calendarTag->AddImports("import QtQuick.Controls 1.4");
         calendarTag->Property("anchors.fill", "parent");
         calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(), true) : "new Date(1900,1,1)");
-        calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");
-
-        const auto dateText = input->GetId() + ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"MM-dd-yyyy\");";
-        //TODO: fix this and move to text field text changed
-        const auto selectedDate = input->GetId() + ".selectedDate=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"yyyy-MM-dd\");";
-        calendarTag->Property("onReleased", "{parent.visible=false; " + dateText + selectedDate + "}");
+        calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");        
 
         auto calendarBoxTag = std::make_shared<QmlTag>("Rectangle");
         calendarBoxTag->Property("id", calendar_box_id);
@@ -1018,7 +1013,11 @@ namespace RendererQml
 		uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() : "\"Select date") << " in " << Utils::ConvertToLowerIdValue(StringDateFormat) << "\"");
 		uiDateInput->Property("validator", Formatter() << "RegExpValidator { regExp: " << DateRegex << "}");
 		uiDateInput->Property("onFocusChanged", Formatter() << "{" << "if(focus==true) inputMask=\"" << inputMask << "\";" << "if(activeFocus === false){ z=0; if( " << calendar_box_id << ".visible === true){ " << calendar_box_id << ".visible=false}}} ");
-		calendarTag->Property("onReleased", Formatter() << "{parent.visible=false; " << input->GetId() << ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\")," << "\"" << StringDateFormat << "\")}");
+
+        const auto dateText = input->GetId() + ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"" + StringDateFormat + "\");";
+        //TODO: fix this and move to text field text changed
+        const auto selectedDate = input->GetId() + ".selectedDate=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"" + StringDateFormat + "\");";
+        calendarTag->Property("onReleased", "{parent.visible=false; " + dateText + selectedDate + "}");
 
 		calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
 		uiDateInput->AddChild(calendarBoxTag);
