@@ -50,6 +50,9 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
                 let view = renderer.render(action: action, with: hostConfig, style: style, rootView: curView, parentView: rootView, inputs: [])
                 
                 actionSetView.addArrangedSubView(view)
+                if actionSetView.orientation == .vertical {
+                    view.widthAnchor.constraint(equalTo: actionSetView.widthAnchor).isActive = true
+                }
                 accumulatedWidth += Int(view.intrinsicContentSize.width)
                 accumulatedHeight += Int(view.intrinsicContentSize.height)
                 maxWidth = max(maxWidth, Int(view.intrinsicContentSize.width))

@@ -47,6 +47,12 @@ class ACRActionSetView: NSView {
         }
     }
     
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        guard let view = superview else { return }
+        widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+    }
+    
     private func customLayout() {
         print("@running custom layout")
         // first empty the stackview and remove all the views
