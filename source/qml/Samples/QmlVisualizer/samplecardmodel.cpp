@@ -109,6 +109,25 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 
     std::shared_ptr<RenderedQmlAdaptiveCard> result = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard());
     const auto generatedQml = result->GetResult();
+
+	generatedQml->Transform([](QmlTag& genQml)
+	{
+		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
+		{
+			genQml.Property("background", "Image { source: \"" + getImagePath("Frame") + "\" }");
+		}
+		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
+		{
+			genQml.Property("source", "\"" + getImagePath("Image") + "\"");
+		}
+		else if (genQml.GetElement() == "Button" && genQml.HasProperty("readonly property bool hasIconUrl"))
+		{
+			std::string str = genQml.GetProperty("contentItem");
+
+			genQml.Property("contentItem", std::regex_replace(str, std::regex("source.*\n"), "source:\"" + getImagePath("Button") + "\"\n"));
+		}
+	});
+
     const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
 }
@@ -177,4 +196,22 @@ void SampleCardModel::actionSubmitButtonClicked(const QString& title, const QStr
     output.append("Type: " + type + "\n");
     output.append("data: " + data);
     emit sendCardResponseToQml(output);
+}
+
+const std::string SampleCardModel::getImagePath(const std::string& m_element)
+{
+	std::string file_path = __FILE__;
+	std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+	if (m_element == "Frame")
+	{
+		dir_path.append("\\Images\\sampleImage.jpg");
+	}
+	else
+	{
+		dir_path.append("\\Images\\Cat.png");
+	}
+	std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+	dir_path = std::string("file:/") + dir_path;
+
+	return dir_path;
 }

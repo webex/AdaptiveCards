@@ -50,6 +50,8 @@ private:
     static std::wstring toWString(const std::string& input);
     void actionOpenUrlButtonClicked(const QString& title, const QString& type, const QString& data);
     void actionSubmitButtonClicked(const QString& title, const QString& type, const QString& data);
+
+	static const std::string getImagePath(const std::string& m_element);
 };
 
 #endif // SAMPLECARDMODEL_H

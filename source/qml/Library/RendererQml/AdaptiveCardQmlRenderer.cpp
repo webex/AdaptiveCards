@@ -905,8 +905,6 @@ namespace RendererQml
         uiDateInput->Property("font.pixelSize", std::to_string(fontSize));
         uiDateInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-        uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() + "\"" : "\"mm-dd-yyyy\""));
-
         if (!input->GetValue().empty())
         {
             uiDateInput->Property("text", "\"" + Utils::GetDate(input->GetValue(), false) + "\"");
@@ -921,11 +919,7 @@ namespace RendererQml
             uiDateInput->Property("visible", "false");
         }
 
-        uiDateInput->Property("validator", "RegExpValidator { regExp: /^(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])-(\\d{4})$/}");
-
         std::string calendar_box_id = input->GetId() + "_cal_box";
-
-        uiDateInput->Property("onFocusChanged", Formatter() << "{" << "if(focus==true) inputMask=\"00-00-0000;0\";" << "if(activeFocus === false){ z=0; if( " << calendar_box_id << ".visible === true){ " << calendar_box_id << ".visible=false}}} ");
 
         auto glowTag = std::make_shared<QmlTag>("Glow");
         glowTag->Property("samples", "25");
@@ -985,10 +979,49 @@ namespace RendererQml
         calendarBoxTag->Property("visible", "false");
         calendarBoxTag->Property("anchors.left", "parent.left");
         calendarBoxTag->Property("anchors.top", "parent.bottom");
-        calendarBoxTag->Property("width", "275");
-        calendarBoxTag->Property("height", "275");
-        calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
-        uiDateInput->AddChild(calendarBoxTag);
+        calendarBoxTag->Property("width", "300");
+        calendarBoxTag->Property("height", "300");
+        
+		auto EnumDateFormat = Utils::GetSystemDateFormat();
+		auto StringDateFormat = "MM-dd-yyyy";
+		auto inputMask = "00-00-0000;0";
+		auto DateRegex = "/^(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])-(\\d{4})$/";
+
+		switch (EnumDateFormat)
+		{
+			case RendererQml::DateFormat::ddmmyy:
+			{
+				StringDateFormat = "dd-MM-yyyy";
+				DateRegex = "/^(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(\\d{4})$/";
+				break;
+			}
+			case RendererQml::DateFormat::yymmdd:
+			{
+				StringDateFormat = "yyyy-MM-dd";
+				inputMask = "0000-00-00;0";
+				DateRegex = "/^(\\d{4})-(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])$/";
+				break;
+			}
+			case RendererQml::DateFormat::yyddmm:
+			{
+				StringDateFormat = "yyyy-dd-MM";
+				inputMask = "0000-00-00;0";
+				DateRegex = "/^(\\d{4})-(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])$/";
+				break;
+			}
+			//Default case: mm-dd-yyyy
+			default:
+			{
+				break;
+			}
+		}
+		uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() : "\"Select date") << " in " << Utils::ConvertToLowerIdValue(StringDateFormat) << "\"");
+		uiDateInput->Property("validator", Formatter() << "RegExpValidator { regExp: " << DateRegex << "}");
+		uiDateInput->Property("onFocusChanged", Formatter() << "{" << "if(focus==true) inputMask=\"" << inputMask << "\";" << "if(activeFocus === false){ z=0; if( " << calendar_box_id << ".visible === true){ " << calendar_box_id << ".visible=false}}} ");
+		calendarTag->Property("onReleased", Formatter() << "{parent.visible=false; " << input->GetId() << ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\")," << "\"" << StringDateFormat << "\")}");
+
+		calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
+		uiDateInput->AddChild(calendarBoxTag);
 
         context->addToInputElementList(origionalElementId, (uiDateInput->GetId() + ".selectedDate"));
 
@@ -1056,11 +1089,6 @@ namespace RendererQml
 		auto uiRectangle = std::make_shared<QmlTag>("Rectangle");
 		auto uiImage = std::make_shared<QmlTag>("Image");
 
-		std::string file_path = __FILE__;
-		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-		dir_path.append("\\Images\\Cat.png");
-		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-
 		if (image->GetId().empty())
 		{
 			image->SetId(Formatter() << "image_auto_" << context->getImageCounter());
@@ -1071,7 +1099,8 @@ namespace RendererQml
         }
 
 		uiImage->Property("id", image->GetId());
-		uiImage->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+		uiImage->Property("readonly property bool isImage", "true");
+		uiImage->Property("source", "\"" + image->GetUrl() + "\"");
 		uiImage->Property("anchors.fill", "parent");
 
 		if (!image->GetIsVisible())
@@ -1217,12 +1246,8 @@ namespace RendererQml
 		{
 			auto url = cardElement->GetBackgroundImage()->GetUrl();
 
-			std::string file_path = __FILE__;
-			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-			dir_path.append("\\Images\\sampleImage.jpg");
-			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-
-			uiContainer->Property("background", "Image { source: \"" + std::string("file:/") + dir_path + "\"}");
+			uiContainer->Property("background", "Image { source: \"" + url + "\" }");
+			uiContainer->Property("readonly property bool hasBackgroundImage", "true");
 		}
 		else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
 		{
@@ -1805,6 +1830,8 @@ namespace RendererQml
             //Add button icon
             if (!action->GetIconUrl().empty())
             {
+				buttonElement->Property("readonly property bool hasIconUrl", "true");
+
                 auto contentImage = std::make_shared<QmlTag>("Image");
                 contentImage->Property("id", Formatter() << buttonId << "_img");
                 contentImage->Property("height", Formatter() << fontSize);
@@ -1820,12 +1847,7 @@ namespace RendererQml
                     contentImage->Property("anchors.horizontalCenter", "parent.horizontalCenter");
                 }
 
-                //TODO: Adding dummy image. This should be replaced!
-                std::string file_path = __FILE__;
-                std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-                dir_path.append("\\Images\\Cat.png");
-                std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-                contentImage->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+                contentImage->Property("source", "\"" + action->GetIconUrl() + "\"");
 
                 contentLayout->AddChild(contentImage);
             }
