@@ -23,15 +23,21 @@ namespace RendererQml
 
         std::shared_ptr<AdaptiveCards::HostConfig> GetConfig();
 
-        std::string GetRGBColor(const std::string& color);
+        std::string GetRGBColor(const std::string& color, bool isQml = 1);
 
-		std::string GetColor(const AdaptiveCards::ForegroundColor color, bool isSubtle, bool isHighlight);
+		std::string GetColor(const AdaptiveCards::ForegroundColor color, bool isSubtle, bool isHighlight, bool isQml = 1);
 
         std::string GetLang();
         void SetLang(const std::string& lang);
 
-        void SetOnClickFunction(AdaptiveCardDependency::OnClickFunction onClickFunction);
-        AdaptiveCardDependency::OnClickFunction& GetOnClickFunction();
+        const int getContainerCounter();
+        const int getImageCounter();
+		const int getColumnSetCounter();
+		const int getColumnCounter();
+        const int getButtonCounter();
+
+        void setCardRootId(const std::string& rootId);
+        const std::string getCardRootId();
 
     private:
         std::vector<AdaptiveWarning> m_warnings;
@@ -41,6 +47,11 @@ namespace RendererQml
         AdaptiveCards::FeatureRegistration m_featureRegistration;
         std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
         std::string m_lang;
-        AdaptiveCardDependency::OnClickFunction m_onClickFunction;
+        std::string m_CardRootId;
+        int m_ContainerCounter{ 0 };
+        int m_ImageCounter{ 0 };
+		int m_ColumnSetCounter{ 0 };
+		int m_ColumnCounter{ 0 };
+        int m_ButtonCounter{ 0 };
     };
 }

@@ -13,22 +13,7 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.translatesAutoresizingMaskIntoConstraints = false
         
         let markdownResult = BridgeTextUtils.processText(from: textBlock, hostConfig: hostConfig)
-        let attributedString: NSMutableAttributedString
-        if markdownResult.isHTML, let htmlData = markdownResult.htmlData {
-            do {
-                attributedString = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
-                // Delete trailing newline character
-                attributedString.deleteCharacters(in: NSRange(location: attributedString.length - 1, length: 1))
-                textView.isSelectable = true
-            } catch {
-                attributedString = NSMutableAttributedString(string: markdownResult.parsedString)
-            }
-        } else {
-            attributedString = NSMutableAttributedString(string: markdownResult.parsedString)
-            // Delete <p> and </p>
-            attributedString.deleteCharacters(in: NSRange(location: 0, length: 3))
-            attributedString.deleteCharacters(in: NSRange(location: attributedString.length - 4, length: 4))
-        }
+        let attributedString = TextUtils.getMarkdownString(parserResult: markdownResult)
         
         textView.isEditable = false
         textView.textContainer?.lineFragmentPadding = 0
@@ -45,7 +30,7 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
         }
         
-        textView.textContainer?.lineBreakMode = .byTruncatingTail
+        textView.textContainer?.lineBreakMode = .byWordWrapping
         let resolvedMaxLines = textBlock.getMaxLines()?.intValue ?? 0
         textView.textContainer?.maximumNumberOfLines = textBlock.getWrap() ? resolvedMaxLines : 1
     
@@ -70,7 +55,9 @@ class ACRTextView: NSTextView {
             return super.intrinsicContentSize
         }
         layoutManager.ensureLayout(for: textContainer)
-        return layoutManager.usedRect(for: textContainer).size
+        let size = layoutManager.usedRect(for: textContainer).size
+        let width = size.width + 2
+        return NSSize(width: width, height: size.height)
     }
     
     override func viewDidMoveToSuperview() {
@@ -79,6 +66,7 @@ class ACRTextView: NSTextView {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
     }
+    
     // This point onwards adds placeholder funcunality to TextView
     override func becomeFirstResponder() -> Bool {
         self.needsDisplay = true

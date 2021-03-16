@@ -113,13 +113,13 @@ namespace RendererQml
         return m_hostConfig;
     }
 
-    std::string AdaptiveRenderContext::GetRGBColor(const std::string& color)
+    std::string AdaptiveRenderContext::GetRGBColor(const std::string& color, bool isQml)
     {
         if (color.length() > 1 && color[0] == '#')
         {
             if (color.length() == 7)
             {
-                return Formatter() << "'" << color << "'";
+                return isQml ? Formatter() << "'" << color << "'" : color;
             }
             if (color.length() == 9)
             {
@@ -129,18 +129,18 @@ namespace RendererQml
                     const int r = Utils::HexStrToInt(color.substr(3, 2));
                     const int g = Utils::HexStrToInt(color.substr(5, 2));
                     const int b = Utils::HexStrToInt(color.substr(7, 2));
-                    return Formatter() << "Qt.rgba(" << r << ", " << g << ", " << b << ", " << std::fixed << std::setprecision(2) << opacity << ")";
+                    return isQml ? Formatter() << "Qt.rgba(" << r << ", " << g << ", " << b << ", " << std::fixed << std::setprecision(2) << opacity << ")" : Formatter() << "rgba(" << r << ", " << g << ", " << b << ", " << std::fixed << std::setprecision(2) << opacity << ")";
                 }
                 catch (const std::exception&)
                 {
-                    return Formatter() << "'" << color << "'";
+                    return isQml ? Formatter() << "'" << color << "'" : color;
                 }
             }
         }
-        return Formatter() << "'" << color << "'";
+        return isQml ? Formatter() << "'" << color << "'" : color;
     }
 
-	std::string AdaptiveRenderContext::GetColor(const AdaptiveCards::ForegroundColor color, bool isSubtle, bool isHighlight)
+	std::string AdaptiveRenderContext::GetColor(const AdaptiveCards::ForegroundColor color, bool isSubtle, bool isHighlight, bool isQml)
 	{
 
 		AdaptiveCards::ColorConfig colorConfig;
@@ -169,14 +169,15 @@ namespace RendererQml
 			break;
 		}
 
-		if (isHighlight)
-		{
-			return GetRGBColor(isSubtle ? colorConfig.highlightColors.subtleColor : colorConfig.highlightColors.defaultColor);
-		}
-		else
-		{
-			return GetRGBColor(isSubtle ? colorConfig.subtleColor : colorConfig.defaultColor);
-		}
+        if (isHighlight)
+        {
+            return GetRGBColor(isSubtle ? colorConfig.highlightColors.subtleColor : colorConfig.highlightColors.defaultColor, isQml);
+        }
+        else
+        {
+            return GetRGBColor(isSubtle ? colorConfig.subtleColor : colorConfig.defaultColor, isQml);
+        }
+		
 	}
 
     std::string AdaptiveRenderContext::GetLang()
@@ -189,13 +190,38 @@ namespace RendererQml
         m_lang = lang;
     }
 
-    void AdaptiveRenderContext::SetOnClickFunction(AdaptiveCardDependency::OnClickFunction onClickFunction)
+    const int AdaptiveRenderContext::getContainerCounter()
     {
-        m_onClickFunction = onClickFunction;
+        return ++m_ContainerCounter;
     }
 
-    AdaptiveCardDependency::OnClickFunction& AdaptiveRenderContext::GetOnClickFunction()
+    const int AdaptiveRenderContext::getImageCounter()
     {
-        return m_onClickFunction;
+        return ++m_ImageCounter;
+    }
+
+	const int AdaptiveRenderContext::getColumnSetCounter()
+	{
+		return ++m_ColumnSetCounter;
+	}
+
+	const int AdaptiveRenderContext::getColumnCounter()
+	{
+		return ++m_ColumnCounter;
+	}
+
+    const int AdaptiveRenderContext::getButtonCounter()
+    {
+        return ++m_ButtonCounter;
+    }
+
+    void AdaptiveRenderContext::setCardRootId(const std::string& rootId)
+    {
+        m_CardRootId = rootId;
+    }
+
+    const std::string AdaptiveRenderContext::getCardRootId()
+    {
+        return m_CardRootId;
     }
 }

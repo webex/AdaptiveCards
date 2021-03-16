@@ -1,5 +1,10 @@
 #include "samplecardmodel.h"
 #include "samplecardlist.h"
+#include "adaptivecard_light_config.h"
+#include "adaptivecard_dark_config.h"
+
+#include <windows.h>
+#include <shellapi.h>
 
 using namespace RendererQml;
 
@@ -7,6 +12,9 @@ SampleCardModel::SampleCardModel(QObject *parent)
     : QAbstractListModel(parent)
     , mList(nullptr)
 {
+
+    std::shared_ptr<AdaptiveSharedNamespace::HostConfig> hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(LightConfig::lightConfig));
+    renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig));
 }
 
 int SampleCardModel::rowCount(const QModelIndex &parent) const
@@ -99,12 +107,61 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 {
     std::shared_ptr<AdaptiveCards::ParseResult> mainCard = AdaptiveCards::AdaptiveCard::DeserializeFromString(cardQml.toStdString(), "2.0");
 
-    std::shared_ptr<AdaptiveCards::HostConfig> hostConfig = getHostConfig();
-
-    AdaptiveCardQmlRenderer renderer = AdaptiveCardQmlRenderer(hostConfig);
-    std::shared_ptr<RenderedQmlAdaptiveCard> result = renderer.RenderCard(mainCard->GetAdaptiveCard(), nullptr);
-
+    std::shared_ptr<RenderedQmlAdaptiveCard> result = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard());
     const auto generatedQml = result->GetResult();
     const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
+}
+
+void SampleCardModel::setTheme(const QString& theme)
+{
+    std::shared_ptr<AdaptiveSharedNamespace::HostConfig> hostConfig;
+    if(theme.toStdString() == "Light")
+    {
+        hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(LightConfig::lightConfig));
+    }
+    else
+    {
+        hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
+    }
+    renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig));
+    emit reloadCardOnThemeChange();
+}
+
+std::wstring SampleCardModel::toWString(const std::string& input)
+{
+#ifdef _WIN32
+    // Convert UTF-8 to UTF-16
+    if (!input.empty())
+    {
+        int size_needed = MultiByteToWideChar(CP_UTF8, 0, &input[0], static_cast<int>(input.length()), nullptr, 0);
+        std::wstring utf16String(size_needed, 0);
+        MultiByteToWideChar(CP_UTF8, 0, &input[0], static_cast<int>(input.length()), &utf16String[0], size_needed);
+        return utf16String;
+    }
+
+    return std::wstring();
+#else
+    return converterToString->from_bytes(input);
+#endif
+}
+
+void SampleCardModel::onAdaptiveCardButtonClicked(const QString& title, const QString& type, const QString& data)
+{
+    if (type == "Action.OpenUrl")
+    {
+        actionButtonClicked(title, type, data);
+    }
+}
+
+void SampleCardModel::actionButtonClicked(const QString& title, const QString& type, const QString& data)
+{
+    QString output;
+    output.append("Title: " + title + "\n");
+    output.append("Type: " + type + "\n");
+    output.append("Url: " + data);
+    emit sendCardResponseToQml(output);
+
+    // Open url in default browser
+    ShellExecute(0, 0, toWString(data.toStdString()).c_str(), 0, 0, SW_SHOW);
 }

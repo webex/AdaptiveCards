@@ -1,11 +1,10 @@
 #include "AdaptiveCardQmlRenderer.h"
+#include "ImageDataURI.h"
 #include "pch.h"
+#include <windows.h>
 
 namespace RendererQml
 {
-	int AdaptiveCardQmlRenderer::containerCounter = 0;
-	int AdaptiveCardQmlRenderer::imageCounter = 0;
-
 	AdaptiveCardQmlRenderer::AdaptiveCardQmlRenderer()
 		: AdaptiveCardQmlRenderer(std::make_shared<AdaptiveCards::HostConfig>())
 	{
@@ -18,11 +17,10 @@ namespace RendererQml
 		SetHostConfig(hostConfig);
 	}
 
-	std::shared_ptr<RenderedQmlAdaptiveCard> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, AdaptiveCardDependency::OnClickFunction onClick)
+	std::shared_ptr<RenderedQmlAdaptiveCard> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card)
 	{
 		std::shared_ptr<RenderedQmlAdaptiveCard> output;
 		auto context = std::make_shared<AdaptiveRenderContext>(GetHostConfig(), GetElementRenderers());
-		context->SetOnClickFunction(onClick);
 		std::shared_ptr<QmlTag> tag;
 
 		try
@@ -37,17 +35,17 @@ namespace RendererQml
 		}
 
 		return output;
-	}    
+	}
 
     void AdaptiveCardQmlRenderer::SetObjectTypes()
     {
         (*GetElementRenderers()).Set<AdaptiveCards::TextBlock>(AdaptiveCardQmlRenderer::TextBlockRender);
         (*GetElementRenderers()).Set<AdaptiveCards::RichTextBlock>(AdaptiveCardQmlRenderer::RichTextBlockRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Image>(AdaptiveCardQmlRenderer::ImageRender);
-        /*(*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);*/
+        (*GetElementRenderers()).Set<AdaptiveCards::Media>(AdaptiveCardQmlRenderer::MediaRender);
         (*GetElementRenderers()).Set<AdaptiveCards::Container>(AdaptiveCardQmlRenderer::ContainerRender);
-        /*(*GetElementRenderers()).Set<AdaptiveCards::Column>(AdaptiveCardQmlRenderer::ColumnRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::ColumnSet>(AdaptiveCardQmlRenderer::ColumnSetRender);*/
+        (*GetElementRenderers()).Set<AdaptiveCards::Column>(AdaptiveCardQmlRenderer::ColumnRender);
+        (*GetElementRenderers()).Set<AdaptiveCards::ColumnSet>(AdaptiveCardQmlRenderer::ColumnSetRender);
         (*GetElementRenderers()).Set<AdaptiveCards::FactSet>(AdaptiveCardQmlRenderer::FactSetRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ImageSet>(AdaptiveCardQmlRenderer::ImageSetRender);
         /*(*GetElementRenderers()).Set<AdaptiveCards::ActionSet>(AdaptiveCardQmlRenderer::ActionSetRender);*/
@@ -57,11 +55,10 @@ namespace RendererQml
         (*GetElementRenderers()).Set<AdaptiveCards::DateInput>(AdaptiveCardQmlRenderer::DateInputRender);
         (*GetElementRenderers()).Set<AdaptiveCards::TimeInput>(AdaptiveCardQmlRenderer::TimeInputRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ToggleInput>(AdaptiveCardQmlRenderer::ToggleInputRender);
-        /*(*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::OpenUrlAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ShowCardAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
         (*GetElementRenderers()).Set<AdaptiveCards::ToggleVisibilityAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
-        (*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);*/
+        (*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
     }
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
@@ -72,9 +69,12 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick.Controls 2.15");
         uiCard->AddImports("import QtGraphicalEffects 1.15");
         uiCard->Property("id", "adaptiveCard");
+        context->setCardRootId(uiCard->GetId());
+        uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
         //TODO: Width can be set as config
         uiCard->Property("width", "600");
+        uiCard->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
 		auto columnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		columnLayout->Property("id", "adaptiveCardLayout");
@@ -95,35 +95,120 @@ namespace RendererQml
 		columnLayout->AddChild(rectangle);
 
 		//TODO: Add card vertical content alignment
+        auto bodyLayout = std::make_shared<QmlTag>("Column");
+        bodyLayout->Property("id", "bodyLayout");
+        bodyLayout->Property("width", "parent.width");
+        rectangle->Property("Layout.preferredHeight", "bodyLayout.height");
+        rectangle->AddChild(bodyLayout);
 
-		AddContainerElements(rectangle, card->GetBody(), context);
+        AddContainerElements(bodyLayout, card->GetBody(), context);
+        AddActions(bodyLayout, card->GetActions(), context);
 
 		return uiCard;
 	}
 
     void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context)
     {
-        if (!elements.empty())
+		for (const auto& cardElement : elements)
+		{
+			auto uiElement = context->Render(cardElement);
+
+			if (uiElement != nullptr)
+			{
+				if (!uiContainer->GetChildren().empty())
+				{
+					AddSeparator(uiContainer, cardElement, context);
+				}
+
+				//TODO: Add collection element
+				uiContainer->AddChild(uiElement);
+			}
+		}
+    }
+
+    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        if (context->GetConfig()->GetSupportsInteractivity())
         {
-            auto bodyLayout = std::make_shared<QmlTag>("Column");
-            bodyLayout->Property("id", "bodyLayout");
-            bodyLayout->Property("width", "parent.width");
-            //TODO: Set spacing from host config
-            bodyLayout->Property("spacing", "8");
-            uiContainer->Property("Layout.preferredHeight", "bodyLayout.height");
-            uiContainer->AddChild(bodyLayout);
+            std::shared_ptr<QmlTag> uiButtonStrip;
+            auto actionsConfig = context->GetConfig()->GetActions();
 
-            for (const auto& cardElement : elements)
+            std::vector<std::shared_ptr<QmlTag>> showCards;
+
+            if (actionsConfig.actionsOrientation == AdaptiveCards::ActionsOrientation::Horizontal)
             {
-                auto uiElement = context->Render(cardElement);
+                uiButtonStrip = std::make_shared<QmlTag>("Flow");
+                uiButtonStrip->Property("width", "parent.width");
+                uiButtonStrip->Property("spacing", std::to_string(actionsConfig.buttonSpacing));
 
-                if (uiElement != nullptr)
+                switch (actionsConfig.actionAlignment)
                 {
-                    //TODO: Add separator
-                    //TODO: Add collection element
-                    bodyLayout->AddChild(uiElement);
+                case AdaptiveCards::ActionAlignment::Right:
+                    uiButtonStrip->Property("layoutDirection", "Qt.RightToLeft");
+                    break;
+                case AdaptiveCards::ActionAlignment::Center: //TODO: implement for centre alignment
+                default:
+                    uiButtonStrip->Property("layoutDirection", "Qt.LeftToRight");
+                    break;
                 }
             }
+            else
+            {
+                //TODO: Implement AdaptiveCards::ActionsOrientation::Vertical
+                uiButtonStrip = std::make_shared<QmlTag>("Column");
+                uiButtonStrip->Property("width", "parent.width");
+                uiButtonStrip->Property("spacing", std::to_string(actionsConfig.buttonSpacing));
+            }
+
+            const unsigned int maxActions = std::min<unsigned int>(actionsConfig.maxActions, (unsigned int)actions.size());
+            // See if all actions have icons, otherwise force the icon placement to the left
+            const auto oldConfigIconPlacement = actionsConfig.iconPlacement;
+            bool allActionsHaveIcons = true;
+            for (const auto& action : actions)
+            {
+                if (action->GetIconUrl().empty())
+                {
+                    allActionsHaveIcons = false;
+                    break;
+                }
+            }
+
+            if (!allActionsHaveIcons)
+            {
+                actionsConfig.iconPlacement = AdaptiveCards::IconPlacement::LeftOfTitle;
+                context->GetConfig()->SetActions(actionsConfig);
+            }
+
+            for (unsigned int i = 0; i < maxActions; i++)
+            {
+                // add actions
+                auto uiAction = context->Render(actions[i]);
+
+                if (uiAction != nullptr)
+                {
+                    if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
+                    {
+                        const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
+                        //TODO: Add show card logic
+                    }
+
+                    uiButtonStrip->AddChild(uiAction);
+                }
+            }
+
+            if (!uiButtonStrip->GetChildren().empty())
+            {
+                AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
+                uiContainer->AddChild(uiButtonStrip);
+            }
+
+            for (const auto& showCard : showCards)
+            {
+                uiContainer->AddChild(showCard);
+            }
+
+            // Restore the iconPlacement for the context.
+            actionsConfig.iconPlacement = oldConfigIconPlacement;
         }
     }
 
@@ -181,8 +266,8 @@ namespace RendererQml
 
 		if (!fontFamily.empty())
 		{
-			uiTextBlock->Property("font.family", fontFamily);
-		}
+            uiTextBlock->Property("font.family", Formatter() << "\"" << fontFamily << "\"");
+        }
 
 		return uiTextBlock;
 
@@ -208,6 +293,7 @@ namespace RendererQml
 			uiTextInput->Property("id", input->GetId());
 			uiTextInput->Property("wrapMode", "Text.Wrap");
 			uiTextInput->Property("padding", "10");
+            uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 			if (input->GetMaxLength() > 0)
 			{
@@ -221,6 +307,7 @@ namespace RendererQml
 			uiTextInput = std::make_shared<QmlTag>("TextField");
 			uiTextInput->Property("id", input->GetId());
 			uiTextInput->Property("width", "parent.width");
+            uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 			if (input->GetMaxLength() > 0)
 			{
@@ -237,8 +324,9 @@ namespace RendererQml
 		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
 		backgroundTag->Property("radius", "5");
 		//TODO: These color styling should come from css
-		backgroundTag->Property("color", Formatter() << input->GetId() << ".hovered ? 'lightgray' : 'white'");
-		backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        //TODO: Add hover effect
+        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
 		backgroundTag->Property("border.width", "1");
 		backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
 		backgroundTag->Property("layer.effect", glowTag->ToString());
@@ -281,7 +369,9 @@ namespace RendererQml
 		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
 		backgroundTag->Property("radius", "5");
 		//TODO: These color styling should come from css
-		backgroundTag->Property("color", Formatter() << inputId + "_contentItem" << ".hovered ? 'lightgray' : 'white'");
+        //TODO: Add hover effect
+        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+
 		backgroundTag->Property("layer.enabled", Formatter() << inputId + "_contentItem" << ".activeFocus ? true : false");
 		backgroundTag->Property("layer.effect", glowTag->ToString());
 
@@ -298,6 +388,7 @@ namespace RendererQml
 			contentItemTag->Property("placeholderText", "\"" + input->GetPlaceholder() + "\"");
 		}
 		contentItemTag->Property("background", backgroundTag->ToString());
+        contentItemTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 		auto doubleValidatorTag = std::make_shared<QmlTag>("DoubleValidator");
 
@@ -307,6 +398,15 @@ namespace RendererQml
 		uiNumberInput->Property("stepSize", "1");
 		uiNumberInput->Property("editable", "true");
 		uiNumberInput->Property("validator", doubleValidatorTag->ToString());
+
+		if (input->GetMin() == std::nullopt)
+		{
+			input->SetMin(INT_MIN);
+		}
+		if (input->GetMax() == std::nullopt)
+		{
+			input->SetMax(INT_MAX);
+		}
 
 		if ((input->GetMin() == input->GetMax() && input->GetMin() == 0) || input->GetMin() > input->GetMax())
 		{
@@ -387,7 +487,7 @@ namespace RendererQml
 		uiTextRun.append("font-family:" + std::string("\\\"") + fontFamily + std::string("\\\"") + ";");
 
 		//TODO: Need to fix the color calculation
-		std::string color = context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), false).substr(3);
+		std::string color = context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), false, false);
 		uiTextRun.append("color:" + color + ";");
 
 		std::string lineheight = Formatter() << std::fixed << std::setprecision(2) << lineHeight << "px";
@@ -397,10 +497,9 @@ namespace RendererQml
 
 		uiTextRun.append("font-weight:" + std::to_string(weight) + ";");
 
-		//TODO: Exact calculation for background color
 		if (textRun->GetHighlight())
 		{
-			uiTextRun.append("background-color:" + Utils::GetTextHighlightColor(color) + ";");
+			uiTextRun.append("background-color:" + context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), true, false) + ";");
 		}
 
 		if (textRun->GetItalic())
@@ -435,10 +534,9 @@ namespace RendererQml
 			input->GetValue(),
 			valueOn,
 			valueOff,
-			context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default),
 			input->GetWrap(),
 			input->GetIsVisible(),
-			isChecked));
+			isChecked), context);
 
 	}
 
@@ -450,7 +548,6 @@ namespace RendererQml
 		RendererQml::Checkboxes choices;
 		const std::string id = input->GetId();
 		enum CheckBoxType type = !input->GetIsMultiSelect() && input->GetChoiceSetStyle() == AdaptiveCards::ChoiceSetStyle::Compact ? ComboBox : input->GetIsMultiSelect() ? CheckBox : RadioButton;
-		const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
 		const bool isWrap = input->GetWrap();
 		const bool isVisible = input->GetIsVisible();
 		bool isChecked;
@@ -465,7 +562,6 @@ namespace RendererQml
 				type,
 				choice->GetTitle(),
 				choice->GetValue(),
-				fontSize,
 				isWrap,
 				isVisible,
 				isChecked));
@@ -480,29 +576,57 @@ namespace RendererQml
 
 		if (CheckBoxType::ComboBox == type)
 		{
-			return GetComboBox(choiceSet);
+			return GetComboBox(choiceSet,context);
 		}
 		else
 		{
-			return GetButtonGroup(choiceSet);
+			return GetButtonGroup(choiceSet, context);
 		}
 
 		std::shared_ptr<QmlTag> uiColumn;
 		return uiColumn;
 	}
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComboBox(ChoiceSet choiceset)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComboBox(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto uiComboBox = std::make_shared<QmlTag>("ComboBox");
-				
+		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
+		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
+
 		uiComboBox->Property("id",choiceset.id);
 		uiComboBox->Property("textRole", "'text'");
 		uiComboBox->Property("valueRole", "'value'");
 		uiComboBox->Property("width", "parent.width");
 		//TODO : Add Height
-				
-		uiComboBox->Property("model", GetModel(choiceset.choices)); 
-				
+
+		auto dropIcon = std::make_shared<QmlTag>("Image");
+		dropIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
+		dropIcon->Property("anchors.right", "parent.right");
+		dropIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
+		dropIcon->Property("anchors.margins", "5");
+		dropIcon->Property("fillMode", "Image.PreserveAspectFit");
+		dropIcon->Property("mipmap", "true");
+
+		
+		auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
+		ColorOverlayTag->Property("anchors.fill", "parent");
+		ColorOverlayTag->Property("source", "parent");
+		ColorOverlayTag->Property("color", textColor);
+
+		dropIcon->AddChild(ColorOverlayTag);
+
+		uiComboBox->Property("indicator", dropIcon->ToString());
+		uiComboBox->Property("model", GetModel(choiceset.choices));
+
+        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
+        backgroundTag->Property("radius", "5");
+        //TODO: These color styling should come from css
+        //TODO: Add hover effect
+        backgroundTag->Property("color", backgroundColor);
+        backgroundTag->Property("border.color", "'grey'");
+        backgroundTag->Property("border.width", "1");
+		uiComboBox->Property("background", backgroundTag->ToString());
+
 		if (!choiceset.placeholder.empty())
 		{
 			uiComboBox->Property("currentIndex", "-1");
@@ -520,12 +644,22 @@ namespace RendererQml
 		
 		auto uiItemDelegate = std::make_shared<QmlTag>("ItemDelegate");
 		uiItemDelegate->Property("width", "parent.width");
-		
+
+        auto backgroundTagDelegate = std::make_shared<QmlTag>("Rectangle");
+        backgroundTag->Property("radius", "5");
+        //TODO: These color styling should come from css
+        //TODO: Add hover effect
+        backgroundTagDelegate->Property("color", backgroundColor);
+        backgroundTagDelegate->Property("border.color", "'grey'");
+        backgroundTagDelegate->Property("border.width", "1");
+        uiItemDelegate->Property("background", backgroundTagDelegate->ToString());
+
 		auto uiItemDelegate_Text = std::make_shared<QmlTag>("Text");
 		uiItemDelegate_Text->Property("text", "modelData.text");
 		uiItemDelegate_Text->Property("font", "parent.font");
 		uiItemDelegate_Text->Property("verticalAlignment", "Text.AlignVCenter");
-
+		uiItemDelegate_Text->Property("color", textColor);
+		
 		if (choiceset.choices[0].isWrap)
 		{
 			uiItemDelegate_Text->Property("wrapMode", "Text.Wrap");
@@ -543,9 +677,11 @@ namespace RendererQml
 		uiContentItem_Text->Property("text", "parent.displayText");
 		uiContentItem_Text->Property("font", "parent.font");
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
-		uiContentItem_Text->Property("leftPadding", "parent.font.pixelSize + parent.spacing");
+		uiContentItem_Text->Property("padding", std::to_string(context->GetConfig()->GetSpacing().paddingSpacing));
 		uiContentItem_Text->Property("elide", "Text.ElideRight");
-				
+		uiContentItem_Text->Property("color", textColor);
+
+
 		uiComboBox->Property("contentItem", uiContentItem_Text->ToString());
 				
 		return uiComboBox;
@@ -586,7 +722,7 @@ namespace RendererQml
 		return "_" + std::to_string(ButtonType) + "_" + std::to_string(ButtonNumber);
 	}
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetButtonGroup(ChoiceSet choiceset)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetButtonGroup(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto uiColumn = std::make_shared<QmlTag>("Column");
 	
@@ -620,7 +756,7 @@ namespace RendererQml
 		// render as a series of buttons
 		for (const auto& choice : choiceset.choices)
 		{
-			uiInnerColumn->AddChild(GetCheckBox(choice));
+			uiInnerColumn->AddChild(GetCheckBox(choice, context));
 		}
 	
 		uiColumn->AddChild(uiInnerColumn);
@@ -628,7 +764,7 @@ namespace RendererQml
 	}
 
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCheckBox(Checkbox checkbox)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCheckBox(Checkbox checkbox, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		std::shared_ptr<QmlTag> uiButton;
 
@@ -649,8 +785,8 @@ namespace RendererQml
 
 		uiButton->Property("id", checkbox.id);
 		uiButton->Property("text", "\"" + checkbox.text + "\"");
-		uiButton->Property("width", "parent.width");
-		uiButton->Property("font.pixelSize", std::to_string(checkbox.fontSize));
+		uiButton->Property("Layout.maximumWidth", "parent.parent.parent.width");
+		uiButton->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default)));
 
 		if (!checkbox.isVisible)
 		{
@@ -675,25 +811,33 @@ namespace RendererQml
 			uiOuterRectangle->Property("radius", "3");
 		}
 		uiOuterRectangle->Property("border.color", checkbox.id + ".checked ? '#0075FF' : '767676'");
-	
-		//To be replaced with image of checkmark.
-		auto uiInnerRectangle = std::make_shared<QmlTag>("Rectangle");
-		uiInnerRectangle->Property("width", "parent.width/2");
-		uiInnerRectangle->Property("height", "parent.height/2");
-		uiInnerRectangle->Property("x", "width/2");
-		uiInnerRectangle->Property("y", "height/2");
+		uiOuterRectangle->Property("color", checkbox.id + ".checked ? '#0075FF' : '#ffffff'");
+
+		std::shared_ptr<QmlTag> uiInnerSegment;
+
 		if (checkbox.type == CheckBoxType::RadioButton)
 		{
-			uiInnerRectangle->Property("radius", "height/2");
+			uiInnerSegment = std::make_shared<QmlTag>("Rectangle");
+			uiInnerSegment->Property("width", "parent.width/2");
+			uiInnerSegment->Property("height", "parent.height/2");
+			uiInnerSegment->Property("x", "width/2");
+			uiInnerSegment->Property("y", "height/2");
+			uiInnerSegment->Property("radius", "height/2");
+			uiInnerSegment->Property("color", checkbox.id + ".checked ? '#ffffff' : 'defaultPalette.backgroundColor'");
+			uiInnerSegment->Property("visible", checkbox.id + ".checked");
 		}
 		else
 		{
-			uiInnerRectangle->Property("radius", "2"); 
+			uiInnerSegment = std::make_shared<QmlTag>("Image");
+			uiInnerSegment->Property("anchors.centerIn", "parent");
+			uiInnerSegment->Property("width", "parent.width - 3");
+			uiInnerSegment->Property("height", "parent.height - 3");
+			uiInnerSegment->Property("visible", checkbox.id + ".checked");
+
+			uiInnerSegment->Property("source", Formatter() << "\"" << RendererQml::check_icon_12 << "\"");
 		}
-		uiInnerRectangle->Property("color", checkbox.id + ".down ? '#ffffff' : '#0075FF'");
-		uiInnerRectangle->Property("visible", checkbox.id + ".checked");
-	
-		uiOuterRectangle->AddChild(uiInnerRectangle);
+			
+		uiOuterRectangle->AddChild(uiInnerSegment);
 	
 		uiButton->Property("indicator", uiOuterRectangle->ToString());
 	
@@ -703,6 +847,7 @@ namespace RendererQml
 		uiText->Property("horizontalAlignment", "Text.AlignLeft");
 		uiText->Property("verticalAlignment", "Text.AlignVCenter");
 		uiText->Property("leftPadding", "parent.indicator.width + parent.spacing");
+        uiText->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 	
 		if (checkbox.isWrap)
 		{
@@ -720,6 +865,8 @@ namespace RendererQml
     
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
+		//TODO: ids which are qml keywords would result in undefined behaviour
+
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
         auto uiDateInput = std::make_shared<QmlTag>("TextField");
@@ -729,7 +876,7 @@ namespace RendererQml
 
         uiDateInput->Property("font.family", "\"" + context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default) + "\"");
         uiDateInput->Property("font.pixelSize", std::to_string(fontSize));
-
+        uiDateInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
         uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() + "\"" : "\"mm-dd-yyyy\""));
 
@@ -758,7 +905,8 @@ namespace RendererQml
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
-        backgroundTag->Property("color", Formatter() << input->GetId() << ".hovered ? 'lightgray' : 'white'");
+        //TODO: ADD hover effect
+        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
         backgroundTag->Property("border.width", "1");
         backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
@@ -768,17 +916,16 @@ namespace RendererQml
         auto imageTag = std::make_shared<QmlTag>("Image");
         imageTag->Property("anchors.fill", "parent");
         imageTag->Property("anchors.margins", "5");
+		imageTag->Property("fillMode", "Image.PreserveAspectFit");
+		imageTag->Property("mipmap", "true");
+        imageTag->Property("source", Formatter() << "\"" << RendererQml::calendar_icon_32 << "\"");
 
-        //Finding absolute Path at runtime
-        std::string file_path = __FILE__;
-        std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-        dir_path.append("\\Images\\calendarIcon.png");
-        std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-        imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+		auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
+		ColorOverlayTag->Property("anchors.fill", "parent");
+		ColorOverlayTag->Property("source", "parent");
+		ColorOverlayTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-        //Relative wrt main.qml not working
-        //imageTag->Property("source", "\"" + std::string("file:/../../Library/RendererQml/Images/calendarIcon.png") + "\"");
-
+		imageTag->AddChild(ColorOverlayTag);
 
         auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 
@@ -881,7 +1028,7 @@ namespace RendererQml
 
 		if (image->GetId().empty())
 		{
-			image->SetId(Formatter() << "image_auto_" << ++imageCounter);
+			image->SetId(Formatter() << "image_auto_" << context->getImageCounter());
 		}
         else
         {
@@ -890,11 +1037,8 @@ namespace RendererQml
 
 		uiImage->Property("id", image->GetId());
 		uiImage->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
-		uiImage->Property("width", "parent.width");
-		uiImage->Property("fillMode", "Image.PreserveAspectFit");
-		
-		uiRectangle->Property("height", Formatter() << image->GetId() << ".implicitHeight");
-		
+		uiImage->Property("anchors.fill", "parent");
+
 		if (!image->GetIsVisible())
 		{
 			uiRectangle->Property("visible", "false");
@@ -904,22 +1048,20 @@ namespace RendererQml
 		{
 			if (image->GetPixelWidth() != 0)
 			{
-				uiRectangle->Property("width",  Formatter() << "Math.min(" << image->GetPixelWidth() << ", parent.width)");
+				uiRectangle->Property("width", Formatter() << "Math.min(" << image->GetPixelWidth() << ", parent.width)");
+
+				if (image->GetPixelHeight() == 0)
+				{
+					uiRectangle->Property("height", Formatter() << image->GetId() << ".implicitHeight / " << image->GetId() << ".implicitWidth * width");
+				}
 			}
 			if (image->GetPixelHeight() != 0)
 			{
 				uiRectangle->Property("height", Formatter() << image->GetPixelHeight());
-				uiImage->Property("height", "parent.height");
 
 				if (image->GetPixelWidth() == 0)
 				{
-					uiImage->RemoveProperty("width");
-					uiImage->Property("fillMode", "height < implicitHeight ? Image.PreserveAspectFit : Image.NoOption");
-					uiRectangle->Property("width", Formatter() << image->GetId() << ".width");
-				}
-				else
-				{
-					uiImage->RemoveProperty("fillMode");
+					uiRectangle->Property("width", Formatter() << "Math.min(" << image->GetId() << ".implicitWidth / " << image->GetId() << ".implicitHeight * height, parent.width)");
 				}
 			}
 		}
@@ -930,7 +1072,6 @@ namespace RendererQml
 			case AdaptiveCards::ImageSize::None:
 			case AdaptiveCards::ImageSize::Auto:
 				uiRectangle->Property("width", "parent.width");
-				uiImage->RemoveProperty("fillMode");
 				break;
 			case AdaptiveCards::ImageSize::Small:
 				uiRectangle->Property("width", Formatter() << context->GetConfig()->GetImageSizes().smallSize);
@@ -943,9 +1084,10 @@ namespace RendererQml
 				break;
 			case AdaptiveCards::ImageSize::Stretch:
 				uiRectangle->Property("width", "parent.width");
-				uiImage->RemoveProperty("fillMode");
 				break;
 			}
+
+			uiRectangle->Property("height", Formatter() << image->GetId() << ".implicitHeight / " << image->GetId() << ".implicitWidth * width");
 		}
 
 		if (!image->GetBackgroundColor().empty())
@@ -984,94 +1126,61 @@ namespace RendererQml
 		return uiRectangle;
 	}
 
-	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetNewColumn(std::shared_ptr<AdaptiveCards::Container> container, std::shared_ptr<AdaptiveRenderContext> context)
+	template<typename CardElement>
+	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetNewColumn(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		const auto margin = std::to_string(context->GetConfig()->GetSpacing().paddingSpacing);
-		const auto spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), container->GetSpacing());
+		const auto spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), cardElement->GetSpacing());
 
 		std::shared_ptr<QmlTag> uiColumn = std::make_shared<QmlTag>("Column");
 
-		if (container->GetPadding())
-        {
+		if (cardElement->GetPadding())
+		{
 			uiColumn->Property("Layout.margins", margin);
 		}
 
 		uiColumn->Property("Layout.fillWidth", "true");
-		uiColumn->Property("spacing", std::to_string(spacing));
 
-		if (container->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Top)
-        {
+		if (cardElement->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Top)
+		{
 			uiColumn->Property("Layout.alignment", "Qt.AlignTop");
 		}
-		else if (container->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Bottom)
-        {
+		else if (cardElement->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Bottom)
+		{
 			uiColumn->Property("Layout.alignment", "Qt.AlignBottom");
 		}
 
 		return uiColumn;
 	}
 
-	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::ContainerRender(std::shared_ptr<AdaptiveCards::Container> container, std::shared_ptr<AdaptiveRenderContext> context)
+	template<typename CardElement>
+	inline std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetNewContainer(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
-		const auto spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), container->GetSpacing());
-
-		if (container->GetId().empty())
-		{
-			container->SetId(Formatter() << "container_auto_" << ++containerCounter);
-		}
-        else
-        {
-            container->SetId(Utils::ConvertToLowerIdValue(container->GetId()));
-        }
-
-		const auto id = container->GetId();
+		const auto id = cardElement->GetId();
 
 		std::shared_ptr<QmlTag> uiContainer;
 		std::shared_ptr<QmlTag> uiColumnLayout;
-		std::shared_ptr<QmlTag> uiColumn = GetNewColumn(container,context);
+		std::shared_ptr<QmlTag> uiColumn = GetNewColumn(cardElement, context);
 
 		uiContainer = std::make_shared<QmlTag>("Frame");
 		uiColumnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		uiContainer->AddChild(uiColumnLayout);
-
-		uiContainer->Property("readonly property int minHeight", std::to_string(container->GetMinHeight()));
 
 		uiContainer->Property("id", id);
 		uiColumnLayout->Property("id", "clayout_" + id);
 
 		uiColumnLayout->Property("anchors.fill", "parent");
 
-		uiContainer->Property("implicitHeight", "(minHeight > clayout_" + id + ".implicitHeight) ? minHeight : clayout_" + id + ".implicitHeight");
-
 		uiContainer->Property("padding", "0");
-		uiColumnLayout->Property("spacing", std::to_string(spacing));
 
 		//TODO : Stretch property.
-		for (const auto& containerElement : container->GetItems())
-		{
-			auto uiContainerElement = context->Render(containerElement);
-			if (uiContainerElement != nullptr)
-			{
-				uiColumn->AddChild(uiContainerElement);
-			}
-		}
+		AddContainerElements(uiColumn, cardElement->GetItems(), context);
 
 		uiColumnLayout->AddChild(uiColumn);
 
-		if (container->GetBleed() && container->GetCanBleed())
-        {
-			uiContainer->Property("x", Formatter() << "-" << std::to_string(margin));
-			uiContainer->Property("width", "parent.width + " + std::to_string(2*margin));
-		}
-		else
-        {
-			uiContainer->Property("width", "parent.width");
-		}
-
-		if (container->GetBackgroundImage())
-        {
-			auto url = container->GetBackgroundImage()->GetUrl();
+		if (cardElement->GetBackgroundImage())
+		{
+			auto url = cardElement->GetBackgroundImage()->GetUrl();
 
 			std::string file_path = __FILE__;
 			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
@@ -1080,24 +1189,54 @@ namespace RendererQml
 
 			uiContainer->Property("background", "Image { source: \"" + std::string("file:/") + dir_path + "\"}");
 		}
-		else if(container->GetStyle() != AdaptiveCards::ContainerStyle::None)
-        {
-			const auto color = context->GetConfig()->GetBackgroundColor(container->GetStyle());
-			uiContainer->Property("background", "Rectangle{anchors.fill:parent;border.width:0;color:\"" + color + "\";}");
+		else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
+		{
+			const auto color = context->GetConfig()->GetBackgroundColor(cardElement->GetStyle());
+			uiContainer->Property("background", "Rectangle{border.width:0;color:\"" + color + "\";}");
 		}
-        else
-        {
-            uiContainer->Property("background", "Rectangle{border.width : 0;}");
+		else
+		{
+            const auto color = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
+            uiContainer->Property("background", "Rectangle{border.width : 0; color: " + color + " }");
         }
 
 		return uiContainer;
-  }
+	}
+
+	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::ContainerRender(std::shared_ptr<AdaptiveCards::Container> container, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
+
+		if (container->GetId().empty())
+		{
+			container->SetId(Formatter() << "container_auto_" << context->getContainerCounter());
+		}
+		else
+		{
+			container->SetId(Utils::ConvertToLowerIdValue(container->GetId()));
+		}
+
+		std::shared_ptr<QmlTag> uiContainer = GetNewContainer(container, context);
+
+		uiContainer->Property("implicitHeight", "Math.max(" + std::to_string(container->GetMinHeight()) + ", clayout_" + container->GetId() + ".implicitHeight)");
+
+		if (container->GetBleed() && container->GetCanBleed())
+		{
+			uiContainer->Property("x", Formatter() << "-" << std::to_string(margin));
+			uiContainer->Property("width", "parent.width + " + std::to_string(2 * margin));
+		}
+		else
+		{
+			uiContainer->Property("width", "parent.width");
+		}
+
+		return uiContainer;
+	}
   
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TimeInputRender(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		//TODO: Fetch System Time Format 
-		bool is12hour = true;
-
+		bool is12hour = Utils::isSystemTime12Hour();
+		
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
@@ -1106,6 +1245,7 @@ namespace RendererQml
 		uiTimeInput->Property("id", id);
 		uiTimeInput->Property("width", "parent.width");
 		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "\"Select time\"");
+        uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 		uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
 
@@ -1126,7 +1266,7 @@ namespace RendererQml
 		}
 
 		//TODO: Height Property, Spacing Property
-
+		// Time Format: hh:mm tt -> 03:30 AM or hh:mm -> 15:30 
 		std::string listViewHours_id = id + "_hours";
 		std::string listViewMin_id = id + "_min";
 		std::string listViewtt_id = id + "_tt";
@@ -1143,8 +1283,9 @@ namespace RendererQml
 		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
 		backgroundTag->Property("radius", "5");
 		//TODO: These color styling should come from css
-		backgroundTag->Property("color", Formatter() << input->GetId() << ".hovered ? 'lightgray' : 'white'");
-		backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        //TODO: Add hover effect
+        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
 		backgroundTag->Property("border.width", "1");
 		backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
 		backgroundTag->Property("layer.effect", glowTag->ToString());
@@ -1153,16 +1294,16 @@ namespace RendererQml
 		auto imageTag = std::make_shared<QmlTag>("Image");
 		imageTag->Property("anchors.fill", "parent");
 		imageTag->Property("anchors.margins", "5");
+		imageTag->Property("fillMode", "Image.PreserveAspectFit");
+		imageTag->Property("mipmap", "true");
+        imageTag->Property("source", Formatter() << "\"" << RendererQml::clock_icon_30 << "\"");
 
-		//Finding absolute Path at runtime
-		std::string file_path = __FILE__;
-		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-		dir_path.append("\\Images\\clockIcon.png");
-		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-		imageTag->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+		auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
+		ColorOverlayTag->Property("anchors.fill", "parent");
+		ColorOverlayTag->Property("source", "parent");
+		ColorOverlayTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-		//Relative wrt main.qml not working
-		//imageTag->Property("source", "\"" + std::string("file:/../../Library/RendererQml/Images/calendarIcon.png") + "\"");
+		imageTag->AddChild(ColorOverlayTag);
 
 		auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 
@@ -1340,5 +1481,418 @@ namespace RendererQml
 
 		return uiFlow;
 	}
+
+	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		//Returns only when seperator=false and spacing=none
+		if (!adaptiveElement->GetSeparator() && adaptiveElement->GetSpacing() == AdaptiveCards::Spacing::None)
+		{
+			return;
+		}
+
+		int spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), adaptiveElement->GetSpacing());
+
+		AdaptiveCards::SeparatorConfig separator = context->GetConfig()->GetSeparator();
+
+		auto uiSep = std::make_shared<QmlTag>("Rectangle");
+		if (adaptiveElement->GetElementTypeString() == "Column")
+		{
+			uiSep->Property("width", std::to_string(spacing == 0 ? separator.lineThickness : spacing));
+			uiSep->Property("height", "parent.height");
+		}
+		else
+		{
+			uiSep->Property("width", "parent.width");
+			uiSep->Property("height", std::to_string(spacing == 0 ? separator.lineThickness : spacing));
+		}
+		
+		uiSep->Property("color", "\"transparent\"");
+		uiSep->Property("visible", adaptiveElement->GetIsVisible() ? "true" : "false");
+
+		if (adaptiveElement->GetSeparator() && adaptiveElement->GetIsVisible())
+		{
+			auto uiLine = std::make_shared<QmlTag>("Rectangle");
+
+			if (adaptiveElement->GetElementTypeString() == "Column")
+			{
+				uiLine->Property("width", std::to_string(separator.lineThickness));
+				uiLine->Property("height", "parent.height");
+			}
+			else
+			{
+				uiLine->Property("width", "parent.width");
+				uiLine->Property("height", std::to_string(separator.lineThickness));
+			}
+			
+			uiLine->Property("anchors.centerIn", "parent");
+			uiLine->Property("color", Formatter() << "\"" << separator.lineColor << "\"");
+
+			uiSep->AddChild(uiLine);
+		}
+
+		uiContainer->AddChild(uiSep);
+	}
+
+	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::ColumnSetRender(std::shared_ptr<AdaptiveCards::ColumnSet> columnSet, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		const int margin = context->GetConfig()->GetSpacing().paddingSpacing;
+		const int spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), columnSet->GetSpacing());
+		const int no_of_columns = int(columnSet->GetColumns().size());
+		auto columns = columnSet->GetColumns();
+		std::string heightString = "";
+		int usedWidth = 0;
+		int widthElements = 0;
+		bool bleedFlag = false;
+		int marginReleased = 0;
+		int weightedWidth = 0;
+		int weigthedWidthCount = 0;
+
+		if (columnSet->GetId().empty())
+		{
+			columnSet->SetId(Formatter() << "columnSet_auto_" << context->getColumnSetCounter());
+		}
+		else
+		{
+			columnSet->SetId(Utils::ConvertToLowerIdValue(columnSet->GetId()));
+		}
+
+		const auto id = columnSet->GetId();
+
+		std::shared_ptr<QmlTag> uiFrame;
+		std::shared_ptr<QmlTag> uiRowLayout;
+		std::shared_ptr<QmlTag> uiRow;
+
+		uiFrame = std::make_shared<QmlTag>("Frame");
+		uiRowLayout = std::make_shared<QmlTag>("RowLayout");
+		uiRow = std::make_shared<QmlTag>("Row");
+
+		uiFrame->AddChild(uiRowLayout);
+		uiRowLayout->AddChild(uiRow);
+
+		if (columnSet->GetPadding())
+		{
+			uiRow->Property("Layout.topMargin", std::to_string(margin));
+			uiRow->Property("Layout.bottomMargin", std::to_string(margin));
+			uiRow->Property("Layout.leftMargin", std::to_string(margin));
+			uiRow->Property("Layout.rightMargin", std::to_string(margin));
+		}
+
+		//TODO: Add Horizontal Alignment
+
+		uiFrame->Property("readonly property int minHeight", std::to_string(columnSet->GetMinHeight()));
+
+		uiFrame->Property("id", id);
+		uiRowLayout->Property("id", "rlayout_" + id);
+		uiRow->Property("id", "row_" + id);
+
+		uiRowLayout->Property("width", "parent.width");
+
+		uiFrame->Property("implicitHeight", "Math.max( minHeight, rlayout_" + id + ".implicitHeight)");
+
+		uiFrame->Property("padding", "0");
+
+		if (columnSet->GetStyle() != AdaptiveCards::ContainerStyle::None)
+		{
+			const auto color = context->GetConfig()->GetBackgroundColor(columnSet->GetStyle());
+			uiFrame->Property("background", "Rectangle{border.width:0; color : \"" + color + "\";}");
+		}
+		else
+		{
+			uiFrame->Property("background", "Rectangle{border.width : 0; color : \"transparent\"}");
+		}
+
+		//TODO : Auto and Stretch property.
+
+		for (int i = 0; i < no_of_columns; i++)
+		{
+			auto cardElement = columns[i];
+
+			auto uiElement = context->Render(cardElement);
+
+			if (uiElement != nullptr)
+			{
+				if (!uiRow->GetChildren().empty())
+				{
+					AddSeparator(uiRow, cardElement, context);
+					usedWidth += Utils::GetSpacing(context->GetConfig()->GetSpacing(), cardElement->GetSpacing());
+				}
+
+				//TODO: Add collection element
+				heightString += ("clayout_" + cardElement->GetId() + ".implicitHeight, " + cardElement->GetId() + ".minHeight, ");
+				uiElement->Property("implicitHeight", columnSet->GetId() + ".getColumnHeight()");
+				uiRow->AddChild(uiElement);
+
+				const auto width = cardElement->GetWidth();
+				
+				if (width.size() > 2 && width.substr(width.size() - 3, 2) == "px")
+				{
+					uiElement->Property("width", width.substr(0, width.size() - 2));
+					usedWidth += std::stoi(width.substr(0, width.size() - 2));
+					widthElements++;
+				}
+				else
+				{
+					bleedFlag = true;
+					if (width == "stretch" || width == "auto")
+					{
+						uiElement->Property("width", "row_" + columnSet->GetId() + ".getColumnWidth('')");
+					}
+					else
+					{
+						weightedWidth += std::stoi(width);
+						uiElement->Property("width", "row_" + columnSet->GetId() + ".getColumnWidth(" + width + ")");
+						weigthedWidthCount++;
+					}
+				}
+
+				if (i == 0 && cardElement->GetBleed() && cardElement->GetCanBleed())
+				{
+					uiRow->RemoveProperty("Layout.leftMargin");
+					marginReleased += margin;
+					if (!columnSet->GetPadding())
+					{
+						uiRowLayout->Property("x", Formatter() << "-" << margin);
+					}
+				}
+
+				if (i == no_of_columns - 1 && cardElement->GetBleed() && cardElement->GetCanBleed())
+				{
+					uiRow->RemoveProperty("Layout.rightMargin");
+					marginReleased += margin;
+				}
+			}
+		}
+
+		if (!columnSet->GetPadding())
+		{
+			marginReleased += (2 * margin);
+		}
+
+		uiRowLayout->Property("width", "parent.width + " + std::to_string(marginReleased));
+
+		uiFrame->AddFunctions(Formatter() << "function getColumnHeight(){return Math.max(minHeight," << heightString.substr(0, heightString.size() - 2) << ")}");
+
+		uiRow->AddFunctions(Formatter() << "function getColumnWidth(width) { var calculatedWidth =  (parent.width - (" << usedWidth + (2 * margin) << ")) / " << no_of_columns - widthElements << "; if(width === ''){ return calculatedWidth} else { return (" << weigthedWidthCount << " * calculatedWidth * width)/ " << weightedWidth << "}}");
+
+		if (columnSet->GetBleed() && columnSet->GetCanBleed())
+		{
+			uiFrame->Property("x", Formatter() << "-" << std::to_string(margin));
+			uiFrame->Property("width", "parent.width + " + std::to_string(2 * margin));
+		}
+		else
+		{
+			uiFrame->Property("width", "parent.width");
+		}
+		return uiFrame;
+	}
+
+	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::ColumnRender(std::shared_ptr<AdaptiveCards::Column> column, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
+		const auto width = column->GetWidth();
+
+		if (column->GetId().empty())
+		{
+			column->SetId(Formatter() << "column_auto_" << context->getColumnCounter());
+		}
+		else
+		{
+			column->SetId(Utils::ConvertToLowerIdValue(column->GetId()));
+		}
+
+		std::shared_ptr<QmlTag> uiContainer = GetNewContainer(column, context);
+		uiContainer->Property("readonly property int minHeight", std::to_string(column->GetMinHeight()));
+
+		uiContainer->Property("implicitHeight", "Math.max(" + std::to_string(column->GetMinHeight()) + ", clayout_" + column->GetId() + ".implicitHeight)");
+
+		//Todo Stretch Property for Width
+		if (width != "stretch" && width != "auto" && width != "")
+		{
+			uiContainer->Property("width", width.substr(0, width.size() - 2));
+		}
+		else
+		{
+			uiContainer->Property("width", "parent.width");
+		}
+
+		return uiContainer;
+	}
+
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::MediaRender(std::shared_ptr<AdaptiveCards::Media> media, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        return std::make_shared<QmlTag>("Rectangle");
+    }
+
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveActionRender(std::shared_ptr<AdaptiveCards::BaseActionElement> action, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        if (context->GetConfig()->GetSupportsInteractivity())
+        {
+            const auto config = context->GetConfig();
+            const auto actionsConfig = config->GetActions();
+            const std::string buttonId = Formatter() << "button_auto_" << context->getButtonCounter();
+            const auto fontSize = config->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default);
+            const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
+            const bool isIconLeftOfTitle = actionsConfig.iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle;
+            std::shared_ptr<QmlTag> showCardIcon;
+
+            auto buttonElement = std::make_shared<QmlTag>("Button");
+            buttonElement->Property("id", buttonId);
+
+            if (isShowCardButton)
+            {
+                buttonElement->Property("property bool showCard", "false");
+            }
+
+            //Add button background
+            auto bgRectangle = std::make_shared<QmlTag>("Rectangle");
+            bgRectangle->Property("id", Formatter() << buttonId << "_bg");
+            bgRectangle->Property("anchors.fill", "parent");
+            bgRectangle->Property("radius", Formatter() << buttonId << ".height / 2");
+            bgRectangle->Property("border.width", "1");                                   
+
+            //Add button content item
+            auto contentItem = std::make_shared<QmlTag>("Item");
+            auto contentLayout = std::make_shared<QmlTag>(isIconLeftOfTitle ? "Row" : "Column");
+            contentLayout->Property("id", Formatter() << buttonId << (isIconLeftOfTitle ? "_row" : "_col"));
+            contentLayout->Property("spacing", "5");
+            contentLayout->Property("leftPadding", "5");
+            contentLayout->Property("rightPadding", "5");
+
+            contentItem->AddChild(contentLayout);
+            contentItem->Property("implicitHeight", Formatter() << contentLayout->GetId() << ".implicitHeight");
+            contentItem->Property("implicitWidth", Formatter() << contentLayout->GetId() << ".implicitWidth");
+
+            //Add button icon
+            if (!action->GetIconUrl().empty())
+            {
+                auto contentImage = std::make_shared<QmlTag>("Image");
+                contentImage->Property("id", Formatter() << buttonId << "_img");
+                contentImage->Property("height", Formatter() << fontSize);
+                contentImage->Property("width", Formatter() << fontSize);
+                contentImage->Property("fillMode", "Image.PreserveAspectFit");
+
+                if (isIconLeftOfTitle)
+                {
+                    contentImage->Property("anchors.verticalCenter", "parent.verticalCenter");
+                }
+                else
+                {
+                    contentImage->Property("anchors.horizontalCenter", "parent.horizontalCenter");
+                }
+
+                //TODO: Adding dummy image. This should be replaced!
+                std::string file_path = __FILE__;
+                std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+                dir_path.append("\\Images\\Cat.png");
+                std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+                contentImage->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+
+                contentLayout->AddChild(contentImage);
+            }
+
+            //Add content Text
+            auto textLayout = std::make_shared<QmlTag>("Row");
+            textLayout->Property("spacing", "5");
+
+            auto contentText = std::make_shared<QmlTag>("Text");
+            if (!action->GetTitle().empty())
+            {
+                contentText->Property("text", "\"" + action->GetTitle() + "\"");
+            }
+            contentText->Property("font.pixelSize", Formatter() << fontSize);
+
+            //TODO: Add border color and style: default/positive/destructive
+            if (!Utils::IsNullOrWhitespace(action->GetStyle()) && !Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
+            {
+                if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
+                {
+                    bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#196323' : '#1B8728'");
+                    bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#196323' : " << buttonId << ".hovered ? '#1B8728' : 'white'");
+                    contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
+                }
+                else if (Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
+                {
+                    bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#A12C23' : '#D93829'");
+                    bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#A12C23' : " << buttonId << ".hovered ? '#D93829' : 'white'");
+                    contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
+                }
+                else
+                {
+                    bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
+                    bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
+                    contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+                }
+            }
+            else
+            {
+                bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
+                bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
+                contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+            }
+
+            textLayout->AddChild(contentText);
+            buttonElement->Property("background", bgRectangle->ToString());
+
+            if (isShowCardButton)
+            {
+                showCardIcon = std::make_shared<QmlTag>("Image");
+                showCardIcon->Property("id", Formatter() << buttonId << "_dd");
+                showCardIcon->Property("height", Formatter() << fontSize);
+                showCardIcon->Property("width", Formatter() << fontSize);
+                showCardIcon->Property("fillMode", "Image.PreserveAspectFit");
+                showCardIcon->Property("mipmap", "true");
+                showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
+                showCardIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
+
+                textLayout->AddChild(showCardIcon);
+            }
+
+            contentLayout->AddChild(textLayout);
+            buttonElement->Property("contentItem", contentItem->ToString());
+
+            //TODO: Add logic for toggle visiblity
+
+            //Add onclick event
+            std::string onClickedFunction;
+
+            if (action->GetElementTypeString() == "Action.OpenUrl")
+            {
+                onClickedFunction = getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action), context);
+            }
+            else if (action->GetElementTypeString() == "Action.ShowCard")
+            {
+
+            }
+            else if (action->GetElementTypeString() == "Action.ToggleVisibility")
+            {
+
+            }
+            else if (action->GetElementTypeString() == "Action.Submit")
+            {
+
+            }
+            else
+            {
+                onClickedFunction = "";
+            }
+           
+            buttonElement->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "\n}");
+
+            return buttonElement;
+        }
+
+        return nullptr;
+    }
+
+    const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(std::shared_ptr<AdaptiveCards::OpenUrlAction> action, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        // Sample signal to emit on click
+        //adaptiveCard.buttonClick(var type, var data);
+        //adaptiveCard.buttonClick("Action.OpenUrl", "https://adaptivecards.io");
+        std::ostringstream function;
+        function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", \"" << action->GetUrl() << "\");";
+
+        return function.str();
+    }
 }
 	

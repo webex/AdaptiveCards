@@ -106,6 +106,7 @@
     <ClCompile Include="samplecardlist.cpp" />
     <ClCompile Include="samplecardmodel.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <None Include="CardOutput.qml" />
     <None Include="SampleCardListView.qml" />
     <QtRcc Include="qml.qrc" />
     <None Include="AdaptiveCardItemDelegate.qml" />
@@ -123,6 +124,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="adaptivecard_dark_config.h" />
+    <ClInclude Include="adaptivecard_light_config.h" />
     <ClInclude Include="SampleCardJson.h" />
     <ClInclude Include="samplecardlist.h" />
     <QtMoc Include="samplecardmodel.h" />

@@ -6,6 +6,8 @@
 
 #include <QAbstractListModel>
 
+using namespace RendererQml;
+
 class SampleCardList;
 
 class SampleCardModel : public QAbstractListModel
@@ -34,9 +36,19 @@ public:
     std::shared_ptr<AdaptiveCards::HostConfig> getHostConfig();
 
     Q_INVOKABLE QString generateQml(const QString& cardQml);
+    Q_INVOKABLE void setTheme(const QString& theme);
+    Q_INVOKABLE void onAdaptiveCardButtonClicked(const QString& title, const QString& type, const QString& data);
+
+signals:
+    void reloadCardOnThemeChange();
+    void sendCardResponseToQml(const QString& output);
 
 private:
     SampleCardList *mList;
+    std::shared_ptr<AdaptiveCardQmlRenderer> renderer_ptr;
+
+    static std::wstring toWString(const std::string& input);
+    void actionButtonClicked(const QString& title, const QString& type, const QString& data);
 };
 
 #endif // SAMPLECARDMODEL_H

@@ -3,13 +3,13 @@
 
 namespace Samples
 {
-    const std::string card_Empty = R"({
+	const std::string card_Empty = R"({
     "type": "AdaptiveCard",
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "version": "1.3"
     })";
 
-    const std::string card_TextBlock = R"({
+	const std::string card_TextBlock = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -22,7 +22,9 @@ namespace Samples
         {
           "type": "TextBlock",
           "text": "It doesn't wrap by default",
-          "weight": "bolder"
+          "weight": "bolder",
+		  "spacing":"large",
+		  "seperator":true
         },
         {
           "type": "TextBlock",
@@ -185,7 +187,7 @@ namespace Samples
     }
     )";
 
-    const std::string card_InputText = R"({
+	const std::string card_InputText = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -232,7 +234,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_InputNumber = R"({
+	const std::string card_InputNumber = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -279,7 +281,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_richText = R"({
+	const std::string card_richText = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -382,7 +384,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_CheckboxInput = R"({
+	const std::string card_CheckboxInput = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -430,7 +432,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_dateInput = R"({
+	const std::string card_dateInput = R"({
 	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 	"type": "AdaptiveCard",
 	"version": "1.0",
@@ -441,7 +443,7 @@ namespace Samples
 		},
 		{
 		    "type": "Input.Date",
-		    "id": "date",
+		    "id": "date1",
 		    "placeholder": "Enter a date",
 		    "value": "2017-10-12",
 		    "min":"1900-01-01",
@@ -461,7 +463,7 @@ namespace Samples
 	]
     })";
 
-    const std::string card_ChoiceSetInput = R"({
+	const std::string card_ChoiceSetInput = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -575,7 +577,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_FactSet = R"({
+	const std::string card_FactSet = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -604,7 +606,7 @@ namespace Samples
       ]
     })";
 
-    const std::string card_Image = R"({
+	const std::string card_Image = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.0",
@@ -872,4 +874,644 @@ namespace Samples
       ]
 	})";
 
+	const std::string card_Separator = R"({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.0",
+      "body": [
+	    {
+          "type": "TextBlock",
+          "text": "Demo for Spacing and Separator",
+          "size": "Large"
+        },
+        {
+          "type": "Image",
+          "url": "https://adaptivecards.io/content/cats/1.png",
+          "id": "img4",
+	      "backgroundColor": "#FF0000FF",
+	      "height": "80px",
+          "spacing": "small",
+          "separator":true
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:Small, Separator:true"
+        },
+        {
+          "type": "Input.Date",
+          "id": "defaultDateid",
+          "text": "Spacing: None",
+          "wrap": true,
+          "separator": false,
+          "spacing": "default"
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:default, Separator:false"
+        },
+        {
+          "type": "Input.Time",
+          "id": "defaulttimeid",
+          "wrap": true,
+          "separator": true,
+          "spacing": "none"
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:None, Separator:true"
+        },
+        {
+          "type": "FactSet",
+          "spacing":"large",
+          "separator":true,
+          "facts": [
+            {
+              "title": "Fact 1",
+              "value": "Value 1"
+            },
+            {
+              "title": "Fact 2",
+              "value": "Value 2"
+            },
+            {
+              "title": "Fact 3",
+              "value": "Value 3"
+            },
+            {
+              "title": "Fact 4",
+              "value": "Value 5"
+            }
+          ]
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:Large, Separator:true"
+        },
+        {
+          "type": "Input.ChoiceSet",
+          "id": "myColor2",
+          "style": "expanded",
+          "isMultiSelect": false,
+          "value": "1",
+          "choices": [
+            {
+              "title": "Red",
+              "value": "1"
+            },
+            {
+              "title": "Green",
+              "value": "2"
+            },
+            {
+              "title": "Blue",
+              "value": "3"
+            }
+          ],
+          "spacing": "extraLarge",
+          "separator": true
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:extraLarge, Separator:true"
+        },
+        {
+          "type": "Input.Toggle",
+          "id": "acceptTerms",
+          "title": "I accept the terms and agreements",
+          "value": "true",
+          "valueOn": "true",
+          "valueOff": "false",
+          "spacing": "padding",
+          "separator": true 
+        },
+        {
+           "type":"TextBlock",
+           "text":"Spacing:padding, Separator:true"
+        },
+        {
+          "type": "Input.Text",
+          "id": "defaultInputId",
+          "placeholder": "enter comment",
+          "maxLength": 500,
+          "spacing": "extraLarge",
+          "separator":false
+       },
+       {
+           "type":"TextBlock",
+           "text":"Spacing:extraLarge, Separator:false"
+        },
+       {
+          "type": "Input.Number",
+          "id": "defaultNumberId",
+          "placeholder": "enter comment",
+          "value": 0,
+          "spacing": "none",
+          "separator":false
+       },
+       {
+           "type":"TextBlock",
+           "text":"Spacing:none, Separator:false"
+       }
+      ]
+    })";
+
+	const std::string card_columnSet = R"({
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Simple ColumnSet"
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 1"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "width": "auto"
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 2"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "width": "auto"
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 3"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "width": "auto"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "ColumnSet with bleed property"
+    },
+    {
+      "type": "ColumnSet",
+      "style": "good",
+      "bleed": true,
+      "columns": [
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 1"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "style": "default",
+          "width": "auto",
+          "bleed": true
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 2"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "width": "auto"
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 3"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "width": "auto",
+          "style": "attention",
+          "bleed": true
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "MinHeight"
+    },
+    {
+      "type": "ColumnSet",
+      "style": "good",
+      "bleed": true,
+      "minHeight": "300px",
+      "columns": [
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Aligned Top"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "style": "default",
+          "width": "auto"
+        },
+        {
+          "type": "Column",
+          "verticalContentAlignment": "Center",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Aligned Center"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "width": "auto",
+          "style": "warning"
+        },
+        {
+          "type": "Column",
+          "verticalContentAlignment": "Bottom",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Aligned Bottom"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "width": "auto",
+          "style": "accent"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "BackGround Image"
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "minHeight": "50px",
+          "backgroundImage": "https://adaptivecards.io/content/AlkiBeach.jpg",
+          "width": "auto",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Background Image"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Bleed left"
+    },
+    {
+      "type": "ColumnSet",
+      "style": "emphasis",
+      "columns": [
+        {
+          "type": "Column",
+          "style": "good",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 1"
+            }
+          ],
+          "bleed": true,
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "style": "attention",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 2"
+            }
+          ],
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "style": "warning",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 3"
+            }
+          ],
+          "width": "stretch"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Bleed center"
+    },
+    {
+      "type": "ColumnSet",
+      "style": "emphasis",
+      "columns": [
+        {
+          "type": "Column",
+          "style": "good",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 1"
+            }
+          ],
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "style": "attention",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 2"
+            }
+          ],
+          "bleed": true,
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "style": "warning",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 3"
+            }
+          ],
+          "width": "stretch"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Bleed right"
+    },
+    {
+      "type": "ColumnSet",
+      "style": "emphasis",
+      "columns": [
+        {
+          "type": "Column",
+          "style": "good",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 1"
+            }
+          ],
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "style": "attention",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 2"
+            }
+          ],
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "style": "warning",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 3"
+            }
+          ],
+          "bleed": true,
+          "width": "stretch"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Bleed all"
+    },
+    {
+      "type": "ColumnSet",
+      "style": "emphasis",
+      "columns": [
+        {
+          "type": "Column",
+          "style": "good",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 1"
+            }
+          ],
+          "bleed": true,
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "style": "attention",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 2"
+            }
+          ],
+          "bleed": true,
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "style": "warning",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 3"
+            }
+          ],
+          "bleed": true,
+          "width": "stretch"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Columns With Seperator"
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 1"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "spacing": "ExtraLarge",
+          "width": "auto",
+          "separator": true
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 2 Large Spacing"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "width": "auto",
+          "spacing": "ExtraLarge",
+          "separator": true
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 3 Small Spacing"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ],
+          "width": "auto",
+          "spacing": "small",
+          "separator": true
+        }
+      ]
+    },
+	{
+      "type": "TextBlock",
+      "text": "Weighted Width"
+    },
+    {
+      "type": "ColumnSet",
+      "style": "emphasis",
+      "columns": [
+        {
+          "type": "Column",
+          "width": 30,
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "WeightedWidth:30%"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": 70,
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "WeightedWidth:70%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+})";
+
+    const std::string card_Action_OpenUrl = R"({
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "type": "AdaptiveCard",
+        "version": "1.0",
+        "body": [
+        {
+            "type": "TextBlock",
+            "text": "This card's action will open a URL"
+        }
+        ],
+        "actions": [
+            {
+                "type": "Action.OpenUrl",
+                "title": "Action.OpenUrl",
+                "url": "https://adaptivecards.io"
+            },
+            {
+                "type": "Action.OpenUrl",
+                "title": "Action.OpenUrl.icon",
+                "url": "https://adaptivecards.io",
+                "iconUrl": "https://adaptivecards.io/content/cats/1.png"
+            },
+            {
+                "type": "Action.OpenUrl",
+                "title": "Action.OpenUrl",
+                "url": "https://adaptivecards.io",
+                "style": "destructive"
+            },
+            {
+                "type": "Action.OpenUrl",
+                "title": "Action.OpenUrl.icon",
+                "url": "https://adaptivecards.io",
+                "iconUrl": "https://adaptivecards.io/content/cats/1.png",
+                "style": "positive"
+            }
+        ]
+    })";
 }
+

@@ -42,9 +42,8 @@ class ACRFactTextField: NSView {
         labelTextField.alignment = .left
     }
     
-    func setupTitle() {
-        // TODO: Make it get all properties from host config
-        labelTextField.font = NSFont.boldSystemFont(ofSize: 12)
+    func setupTitleString(with fontSize: NSNumber?) {
+        labelTextField.font = NSFont.boldSystemFont(ofSize: CGFloat(truncating: fontSize ?? 12))
     }
     
     var isEmpty: Bool {
@@ -56,16 +55,19 @@ class ACRFactTextField: NSView {
         set { labelTextField.textColor = newValue }
     }
     
-    var textValue: String? {
+    var plainTextValue: String? {
         get { return labelTextField.stringValue }
-        set { labelTextField.stringValue = newValue ?? "" }
+        set {
+            labelTextField.allowsEditingTextAttributes = false
+            labelTextField.stringValue = newValue ?? ""
+        }
     }
-    
-    override func viewDidMoveToSuperview() {
-        super.viewDidMoveToSuperview()
-        // Should look for better solution
-        guard let superview = superview else { return }
-        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
+    var attributedTextValue: NSAttributedString? {
+        get { return labelTextField.attributedStringValue }
+        set {
+            labelTextField.allowsEditingTextAttributes = true
+            labelTextField.attributedStringValue = newValue ?? NSAttributedString(string: "")
+        }
     }
 }
 

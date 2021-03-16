@@ -21,30 +21,27 @@ namespace RendererQml
 		const std::string value;
 		const std::string valueOn;
 		const std::string valueOff;
-		const int fontSize;
 		const bool isWrap;
 		const bool isVisible;
 		const bool isChecked;
 
-		Checkbox(std::string id, CheckBoxType type, const std::string text, const std::string value, const std::string valueOn, const std::string valueOff, const int fontSize, const bool isWrap, const bool isVisible, const bool isChecked)
+		Checkbox(std::string id, CheckBoxType type, const std::string text, const std::string value, const std::string valueOn, const std::string valueOff, const bool isWrap, const bool isVisible, const bool isChecked)
 			: id(id),
 			type(type),
 			text(text),
 			value(value),
 			valueOn(valueOn),
 			valueOff(valueOff),
-			fontSize(fontSize),
 			isWrap(isWrap),
 			isVisible(isVisible),
 			isChecked(isChecked)
 		{}
 
-		Checkbox(std::string id, CheckBoxType type, const std::string text, const std::string value, const int fontSize, const bool isWrap, const bool isVisible, const bool isChecked)
+		Checkbox(std::string id, CheckBoxType type, const std::string text, const std::string value, const bool isWrap, const bool isVisible, const bool isChecked)
 			: id(id),
 			type(type),
 			text(text),
 			value(value),
-			fontSize(fontSize),
 			isWrap(isWrap),
 			isVisible(isVisible),
 			isChecked(isChecked)
@@ -101,14 +98,16 @@ namespace RendererQml
 		static std::string GetHorizontalAlignment(std::string aligntype);
 		static std::string GetWeight(AdaptiveCards::TextWeight weight);
 
-		static std::string GetTextHighlightColor(std::string textColor);
-
 		static std::string GetDate(std::string date, bool MinimumorMaximum);   
 		static std::vector<std::string> ParseChoiceSetInputDefaultValues(const std::string& value);
 		static bool isValidTime(std::string& time);
 		static std::string defaultTimeto12hour(std::string& defaultTime);
 
         static std::string ConvertToLowerIdValue(const std::string& value);
+
+		static bool isSystemTime12Hour();
+
+		static std::vector<std::string> splitString(const std::string& string, char delimiter);
 
     private:
         Utils() {}
