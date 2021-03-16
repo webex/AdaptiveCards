@@ -26,7 +26,22 @@
                 },
                 {
                     "type": "Action.OpenUrl",
-                    "title": "OpenUrlvfvhvhfvjsdvsdjv",
+                    "title": "OpenUrl test",
+                    "url": "https://adaptivecards.io"
+                },
+                {
+                    "type": "Action.OpenUrl",
+                    "title": "OpenUrl Two",
+                    "url": "https://adaptivecards.io"
+                },
+                {
+                    "type": "Action.OpenUrl",
+                    "title": "OpenUrl Three",
+                    "url": "https://adaptivecards.io"
+                },
+                {
+                    "type": "Action.OpenUrl",
+                    "title": "OpenUrl Four",
                     "url": "https://adaptivecards.io"
                 }
             ]
