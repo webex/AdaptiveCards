@@ -70,6 +70,8 @@ namespace RendererQml
         uiCard->AddImports("import QtGraphicalEffects 1.15");
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
+		context->setCardRootElement(uiCard);
+		uiCard->Property("readonly property int margins", std::to_string(context->GetConfig()->GetSpacing().paddingSpacing));
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
         //TODO: Width can be set as config
@@ -84,7 +86,7 @@ namespace RendererQml
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
 		rectangle->Property("id", "adaptiveCardRectangle");
 		rectangle->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-		rectangle->Property("Layout.margins", std::to_string(context->GetConfig()->GetSpacing().paddingSpacing));
+		rectangle->Property("Layout.margins", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
 		rectangle->Property("Layout.preferredHeight", "40");
 
@@ -133,7 +135,7 @@ namespace RendererQml
             std::shared_ptr<QmlTag> uiButtonStrip;
             auto actionsConfig = context->GetConfig()->GetActions();
 
-            std::vector<std::shared_ptr<QmlTag>> showCards;
+            std::vector<std::pair<std::shared_ptr<QmlTag>,std::string>> showCards;
 
             if (actionsConfig.actionsOrientation == AdaptiveCards::ActionsOrientation::Horizontal)
             {
@@ -189,7 +191,16 @@ namespace RendererQml
                     if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
                     {
                         const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
-                        //TODO: Add show card logic
+                        
+						auto subContext = std::make_shared<AdaptiveRenderContext>(context->GetConfig(), context->GetElementRenderers());
+						auto uiCard = subContext->Render(showCardAction->GetCard(), &AdaptiveCardRender);
+
+						if (uiCard != nullptr)
+						{
+							uiCard->Property("readonly property int margins", "0");
+							uiCard->Property("width", Formatter() << "600 - " << std::to_string(context->GetConfig()->GetSpacing().paddingSpacing*2));
+							showCards.push_back({ uiCard, uiAction->GetId()});
+						}
                     }
 
                     uiButtonStrip->AddChild(uiAction);
@@ -202,15 +213,52 @@ namespace RendererQml
                 uiContainer->AddChild(uiButtonStrip);
             }
 
-            for (const auto& showCard : showCards)
+			const auto uiCardRootElement = context->getCardRootElement();
+			
+			for (const auto& showCard : showCards)
             {
-                uiContainer->AddChild(showCard);
+				auto uiLoader = GetLoader(showCard.second);
+				auto uiComponent = GetComponent(showCard.first, showCard.second);
+
+				uiContainer->AddChild(uiLoader);
+				uiCardRootElement->AddChild(uiComponent);
             }
 
             // Restore the iconPlacement for the context.
             actionsConfig.iconPlacement = oldConfigIconPlacement;
         }
     }
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetLoader(const std::string buttonId)
+	{
+		auto uiLoader = std::make_shared<QmlTag>("Loader");
+		uiLoader->Property("id", Formatter() << buttonId << "_loader");
+		uiLoader->Property("sourceComponent", Formatter() << buttonId << "_component");
+		uiLoader->Property("visible", "false");
+
+		return uiLoader;
+	}
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::shared_ptr<QmlTag> uiCard, const std::string buttonId)
+	{
+		auto uiComponent = std::make_shared<QmlTag>("Component");
+		uiComponent->Property("id", Formatter() << buttonId << "_component");
+
+		const std::string layoutId = Formatter() << buttonId << "_component_layout";
+		std::string uiCard_string = uiCard->ToString();
+		std::replace(uiCard_string.begin(), uiCard_string.end(), '"', '\'');
+
+		auto uiColumn = std::make_shared<QmlTag>("ColumnLayout");
+		uiColumn->Property("id", layoutId);
+		uiColumn->AddFunctions("property var card");
+		uiColumn->Property("property string showCard", "\"" + uiCard_string + "\"");
+		uiColumn->Property("Component.onCompleted", "reload(showCard)");
+		uiColumn->AddFunctions( Formatter() << "function reload(mCard)\n{\nif (card)\n{\ncard.destroy()\n}\ncard = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\ncard.buttonClicked.connect(adaptiveCard.buttonClicked)\n}");
+
+		uiComponent->AddChild(uiColumn);
+
+		return uiComponent;
+	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextBlockRender(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, std::shared_ptr<AdaptiveRenderContext> context)
 	{
@@ -1861,7 +1909,7 @@ namespace RendererQml
             }
             else if (action->GetElementTypeString() == "Action.ShowCard")
             {
-
+				onClickedFunction = getActionShowCardClickFunc(buttonId);
             }
             else if (action->GetElementTypeString() == "Action.ToggleVisibility")
             {
@@ -1894,5 +1942,13 @@ namespace RendererQml
 
         return function.str();
     }
+
+	const std::string AdaptiveCardQmlRenderer::getActionShowCardClickFunc(std::string buttonId)
+	{
+		std::ostringstream function;
+		function << buttonId << "_loader.visible = !" << buttonId << "_loader.visible";
+
+		return function.str();
+	}
 }
 	

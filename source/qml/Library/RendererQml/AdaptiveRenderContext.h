@@ -23,6 +23,8 @@ namespace RendererQml
 
         std::shared_ptr<AdaptiveCards::HostConfig> GetConfig();
 
+		std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> GetElementRenderers();
+
         std::string GetRGBColor(const std::string& color, bool isQml = 1);
 
 		std::string GetColor(const AdaptiveCards::ForegroundColor color, bool isSubtle, bool isHighlight, bool isQml = 1);
@@ -39,6 +41,9 @@ namespace RendererQml
         void setCardRootId(const std::string& rootId);
         const std::string getCardRootId();
 
+		void setCardRootElement(const std::shared_ptr<QmlTag>);
+		const std::shared_ptr<QmlTag> getCardRootElement();
+
     private:
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
@@ -48,6 +53,7 @@ namespace RendererQml
         std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
         std::string m_lang;
         std::string m_CardRootId;
+		std::shared_ptr<QmlTag> m_CardRootElement;
         int m_ContainerCounter{ 0 };
         int m_ImageCounter{ 0 };
 		int m_ColumnSetCounter{ 0 };

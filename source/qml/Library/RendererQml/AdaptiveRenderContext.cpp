@@ -113,6 +113,11 @@ namespace RendererQml
         return m_hostConfig;
     }
 
+	std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> AdaptiveRenderContext::GetElementRenderers()
+	{
+		return m_elementRenderers;
+	}
+
     std::string AdaptiveRenderContext::GetRGBColor(const std::string& color, bool isQml)
     {
         if (color.length() > 1 && color[0] == '#')
@@ -224,4 +229,14 @@ namespace RendererQml
     {
         return m_CardRootId;
     }
+
+	void AdaptiveRenderContext::setCardRootElement(const std::shared_ptr<QmlTag> rootElement)
+	{
+		m_CardRootElement = rootElement;
+	}
+
+	const std::shared_ptr<QmlTag> AdaptiveRenderContext::getCardRootElement()
+	{
+		return m_CardRootElement;
+	}
 }

@@ -79,6 +79,8 @@ namespace RendererQml
 		static std::shared_ptr<QmlTag> GetCheckBox(Checkbox checkbox, std::shared_ptr<AdaptiveRenderContext> context);
 		static std::string GenerateButtonId(enum CheckBoxType ButtonType, int ButtonNumber);
 		static std::string GetModel(std::vector<Checkbox>& Choices);
+		static std::shared_ptr<QmlTag> GetLoader(const std::string buttonNum);
+		static std::shared_ptr<QmlTag> GetComponent(const std::shared_ptr<QmlTag> uiCard, const std::string buttonNum);
 
 		template <typename CardElement>
 		static std::shared_ptr<QmlTag> GetNewColumn(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context);
@@ -89,5 +91,6 @@ namespace RendererQml
 		static std::shared_ptr<QmlTag> ListViewTagforTimeInput(std::string& parent_id, std::string& id, std::map < std::string, std::map<std::string, std::string>>& properties);
 
         static const std::string getActionOpenUrlClickFunc(std::shared_ptr<AdaptiveCards::OpenUrlAction> action, std::shared_ptr<AdaptiveRenderContext> context);
+		static const std::string getActionShowCardClickFunc(std::string buttonId);
     };
 }
