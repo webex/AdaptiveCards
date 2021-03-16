@@ -12,39 +12,37 @@
             "type": "ActionSet",
             "actions": [
                 {
-                    "type": "Action.ShowCard",
+                    "type": "Action.OpenUrl",
                     "title": "ShowCard",
-                    "card": {
-                        "type": "AdaptiveCard",
-                        "body": [
-                            {
-                                "type": "TextBlock",
-                                "text": "This is a show card"
-                            }
-                        ]
-                    }
+                    "url": "vhsjdvja"
                 },
                 {
                     "type": "Action.OpenUrl",
-                    "title": "OpenUrl test",
+                    "title": "OpenUrl",
                     "url": "https://adaptivecards.io"
                 },
                 {
                     "type": "Action.OpenUrl",
-                    "title": "OpenUrl Two",
+                    "title": "OpenUrl",
                     "url": "https://adaptivecards.io"
                 },
                 {
                     "type": "Action.OpenUrl",
-                    "title": "OpenUrl Three",
+                    "title": "OpenUrl",
                     "url": "https://adaptivecards.io"
                 },
                 {
                     "type": "Action.OpenUrl",
-                    "title": "OpenUrl Four",
+                    "title": "OpenUrl",
+                    "url": "https://adaptivecards.io"
+                },
+                {
+                    "type": "Action.OpenUrl",
+                    "title": "OpenUrl",
                     "url": "https://adaptivecards.io"
                 }
-            ]
+            ],
+            "horizontalAlignment": "Center"
         },
         {
             "type": "TextBlock",
