@@ -4,14 +4,6 @@ class ACRButton: FlatButton {
     public var backgroundColor: NSColor = .init(red: 0.35216, green: 0.823529412, blue: 1, alpha: 1)
     public var hoverBackgroundColor: NSColor = .linkColor
     public var activeBackgroundColor: NSColor = .gray
-    public var iconImage: String = ""
-    public var iconPos: NSControl.ImagePosition = .imageLeft
-    public var chev: Bool = false {
-        didSet {
-            chevronDraw(par: "arrowdown")
-        }
-    }
-    public var text: NSMutableAttributedString = .init(string: "")
     
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -23,16 +15,16 @@ class ACRButton: FlatButton {
         initialize()
     }
     
-    init(frame: NSRect, chevron: Bool = false, icon: Bool = false, iconName: String = "", iconPosition: NSControl.ImagePosition = .imageLeft) {
+    init(frame: NSRect, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconPosition: NSControl.ImagePosition = .imageLeft) {
         super.init(frame: frame)
         initialize()
-        if chevron {
-            chev = chevron
+        if wantsChevron {
+            showsChevron = wantsChevron
         }
-        if icon {
-            ico = icon
-            iconImage = iconName
-            iconPos = iconPosition
+        if wantsIcon {
+            showsIcon = wantsIcon
+            iconImageName = iconNamed
+            iconPositioned = iconPosition
         }
     }
     
@@ -50,14 +42,16 @@ class ACRButton: FlatButton {
         iconColor = NSColor.white
         activeIconColor = NSColor.white
         momentary = true
-        if ico {
+        showsIcon = true
+        showsChevron = true
+        if showsIcon {
             guard let bundle = Bundle(identifier: "com.test.test.AdaptiveCards"),
-                  let path = bundle.path(forResource: iconImage, ofType: "png") else {
+                  let path = bundle.path(forResource: iconImageName, ofType: "png") else {
                 logError("Image Not Found")
                 return
             }
             image = NSImage(byReferencing: URL(fileURLWithPath: path))
-            imagePosition = iconPos
+            imagePosition = iconPositioned
         }
     }
     

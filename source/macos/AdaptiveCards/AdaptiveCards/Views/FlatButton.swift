@@ -28,9 +28,10 @@ open class FlatButton: NSButton, CALayerDelegate {
     internal var chevronLayer = CAShapeLayer()
     internal var titleLayer = CATextLayer()
     internal var mouseDown = Bool()
-    public var ico: Bool = false
-    internal var c = 1
-    internal var a = 1
+    public var showsIcon: Bool = false
+    internal var chevronSetupFlag: Bool = true
+    public var iconImageName: String = "attachment"
+    public var iconPositioned: NSControl.ImagePosition = .imageLeft
     public var momentary: Bool = true {
         didSet {
             animateColor(state == .on)
@@ -126,9 +127,9 @@ open class FlatButton: NSButton, CALayerDelegate {
             setupImage()
         }
     }
-    open var chevron: Bool = false {
+    open var showsChevron: Bool = false {
         didSet {
-            chevronDraw(par: "arrowdown")
+            drawsChevron("arrowdown")
         }
     }
     override open var isEnabled: Bool {
@@ -177,7 +178,7 @@ open class FlatButton: NSButton, CALayerDelegate {
         layer?.addSublayer(containerLayer)
         setupTitle()
         setupImage()
-        chevronDraw(par: "arrowdown")
+        drawsChevron("arrowdown")
     }
     
     internal func setupTitle() {
@@ -200,71 +201,65 @@ open class FlatButton: NSButton, CALayerDelegate {
         var divisions = 3
         var hSpacing = round(((bounds.width) - (imageRect.width + titleSize.width + chevronRect.width)) / CGFloat(divisions))
         let vSpacing = round(((bounds.height) - (imageRect.height + titleSize.height)) / 3)
-        if iconLayer.frame.width > 0 && chevron && (imagePosition == .imageLeft || imagePosition == .imageRight) {
+        if iconLayer.frame.width > 0 && showsChevron && (imagePosition == .imageLeft || imagePosition == .imageRight) {
             divisions = 4
             hSpacing = round(((bounds.width) - (imageRect.width + titleSize.width + chevronRect.width)) / CGFloat(divisions))
         }
-        length += chevron ? Float(chevronLayer.frame.width) : 0
-        length += ico ? Float(iconLayer.frame.width) : 0
+        length += showsChevron ? Float(chevronLayer.frame.width) : 0
+        length += showsIcon ? Float(iconLayer.frame.width) : 0
         length += Float(titleLayer.frame.width)
         length += Float(hSpacing * CGFloat(divisions))
         layer?.frame = NSRect(x: Int((layer?.frame.origin.x)!), y: Int((layer?.frame.origin.y)!), width: Int(length), height: Int(bounds.height))
         containerLayer.frame = NSRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
         switch imagePosition {
         case .imageAbove:
-            print("image setup above")
             titleRect.origin.y = (vSpacing * 1.75) + imageRect.height
             titleRect.origin.x = hSpacing + round(imageRect.width / 2)
             imageRect.origin.y = vSpacing * 1.75
             imageRect.origin.x = hSpacing + round((titleRect.width - imageRect.width) / 2) + round(imageRect.width / 2) + 5
-            if chevron {
+            if showsChevron {
                 chevronRect.origin.y = round((containerLayer.bounds.height - chevronRect.height) / 2)
                 chevronRect.origin.x = round((hSpacing * 2) + titleSize.width + (imageRect.width / 2))
             }
         case .imageBelow:
-            print("image setup below")
-            print(vSpacing)
             titleRect.origin.y = round(vSpacing * 2.5)
             titleRect.origin.x = hSpacing + round(imageRect.width / 2) + 5
             imageRect.origin.y = round(vSpacing * 2.5) + titleRect.height
             imageRect.origin.x = hSpacing + round((titleRect.width - imageRect.width) / 2) + round(imageRect.width / 2)
-            if chevron {
+            if showsChevron {
                 chevronRect.origin.y = round((containerLayer.bounds.height - chevronRect.height) / 2)
                 chevronRect.origin.x = round((hSpacing * 2) + titleSize.width + (imageRect.width / 2))
             }
         case .imageLeft:
-            print("image setup left")
             titleRect.origin.y = round((containerLayer.bounds.height - titleSize.height) / 2)
             titleRect.origin.x = round((hSpacing * 2) + imageRect.width)
             imageRect.origin.y = round((containerLayer.bounds.height - imageRect.height) / 2)
             imageRect.origin.x = hSpacing
-            if chevron {
+            if showsChevron {
                 chevronRect.origin.y = round((containerLayer.bounds.height - chevronRect.height) / 2)
                 chevronRect.origin.x = round((hSpacing * 3) + titleSize.width + imageRect.width)
-                if c == 1 {
-                    c = 0
+                if chevronSetupFlag {
+                    chevronSetupFlag = false
                     containerLayer.frame.size.width += chevronRect.width
                 }
             }
             
         case .imageRight:
-            print("image setup right")
             titleRect.origin.y = round((containerLayer.bounds.height - titleSize.height) / 2)
             titleRect.origin.x = hSpacing
             imageRect.origin.y = round((containerLayer.bounds.height - imageRect.height) / 2)
             imageRect.origin.x = (hSpacing * 2) + titleRect.width
-            if chevron {
+            if showsChevron {
                 chevronRect.origin.y = round((containerLayer.bounds.height - chevronRect.height) / 2)
                 chevronRect.origin.x = round((hSpacing * 3) + titleSize.width + imageRect.width)
-                if c == 1 {
-                    c = 0
+                if chevronSetupFlag {
+                    chevronSetupFlag = false
                     containerLayer.frame.size.width += chevronRect.width
                 }
             }
             
         default:
-            print("Image setup default")
-            if chevron {
+            if showsChevron {
                 titleRect.origin.y = round((containerLayer.bounds.height - titleSize.height) / 2)
                 titleRect.origin.x = round(hSpacing)
                 chevronRect.origin.y = round((containerLayer.bounds.height - chevronRect.height) / 2)
@@ -284,7 +279,6 @@ open class FlatButton: NSButton, CALayerDelegate {
         guard let image = image else {
             return
         }
-        print("image setup")
         let maskLayer = CALayer()
         image.size.width = (bounds.height / image.size.height) * image.size.width * 0.5
         image.size.height = bounds.height * 0.5
@@ -311,11 +305,10 @@ open class FlatButton: NSButton, CALayerDelegate {
         positionTitleAndImage()
     }
     
-    func chevronDraw(par: String) {
-        if chevron {
-            print("Chevron Setup")
+    func drawsChevron(_ nameOfFile: String) {
+        if showsChevron {
             guard let bundle = Bundle(identifier: "com.test.test.AdaptiveCards"),
-                  let path = bundle.path(forResource: par, ofType: "png") else {
+                  let path = bundle.path(forResource: nameOfFile, ofType: "png") else {
                 logError("image not found")
                 return
             }
@@ -399,10 +392,10 @@ open class FlatButton: NSButton, CALayerDelegate {
             setOn(state == .on ? false : true)
         }
         if state == .on {
-            chevronDraw(par: "arrowup")
+            drawsChevron("arrowup")
         }
         else {
-            chevronDraw(par: "arrowdown")
+            drawsChevron("arrowdown")
         }
     }
     
