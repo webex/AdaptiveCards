@@ -135,7 +135,7 @@ namespace RendererQml
             std::shared_ptr<QmlTag> uiButtonStrip;
             auto actionsConfig = context->GetConfig()->GetActions();
 
-            std::vector<std::pair<std::shared_ptr<QmlTag>,std::string>> showCards;
+            std::vector<std::pair<std::shared_ptr<QmlTag>, std::shared_ptr<QmlTag>>> showCards;
 
             if (actionsConfig.actionsOrientation == AdaptiveCards::ActionsOrientation::Horizontal)
             {
@@ -199,7 +199,7 @@ namespace RendererQml
 						{
 							uiCard->Property("readonly property int margins", "0");
 							uiCard->Property("width", Formatter() << "600 - " << std::to_string(context->GetConfig()->GetSpacing().paddingSpacing*2));
-							showCards.push_back({ uiCard, uiAction->GetId()});
+							showCards.push_back({uiAction, uiCard});
 						}
                     }
 
@@ -219,7 +219,8 @@ namespace RendererQml
             {
 				AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
 				//TODO: Test for multiple showcards
-				auto uiLoader = GetLoader(showCard.second);
+				//change here
+				auto uiLoader = GetLoader(showCard.first);
 				auto uiComponent = GetComponent(showCard.first, showCard.second);
 
 				uiContainer->AddChild(uiLoader);
@@ -231,22 +232,22 @@ namespace RendererQml
         }
     }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetLoader(const std::string buttonId)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetLoader(const std::shared_ptr<QmlTag>& buttonElement)
 	{
 		auto uiLoader = std::make_shared<QmlTag>("Loader");
-		uiLoader->Property("id", Formatter() << buttonId << "_loader");
-		uiLoader->Property("sourceComponent", Formatter() << buttonId << "_component");
+		uiLoader->Property("id", Formatter() << buttonElement->GetId() << "_loader");
+		uiLoader->Property("sourceComponent", Formatter() << buttonElement->GetId() << "_component");
 		uiLoader->Property("visible", "false");
 
 		return uiLoader;
 	}
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::shared_ptr<QmlTag> uiCard, const std::string buttonId)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<QmlTag>& uiCard)
 	{
 		auto uiComponent = std::make_shared<QmlTag>("Component");
-		uiComponent->Property("id", Formatter() << buttonId << "_component");
+		uiComponent->Property("id", Formatter() << buttonElement->GetId() << "_component");
 
-		const std::string layoutId = Formatter() << buttonId << "_component_layout";
+		const std::string layoutId = Formatter() << buttonElement->GetId() << "_component_layout";
 		std::string uiCard_string = uiCard->ToString();
 		std::replace(uiCard_string.begin(), uiCard_string.end(), '"', '\'');
 
@@ -326,6 +327,7 @@ namespace RendererQml
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextInputRender(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		//TODO: Add inline action
+        const std::string origionalElementId = input->GetId();
 
 		std::shared_ptr<QmlTag> uiTextInput;
 		std::shared_ptr<QmlTag> scrollViewTag;
@@ -336,7 +338,7 @@ namespace RendererQml
 		{
 			scrollViewTag = std::make_shared<QmlTag>("ScrollView");
 			scrollViewTag->Property("width", "parent.width");
-			scrollViewTag->Property("height", "50");
+			scrollViewTag->Property("height", "100");
 			scrollViewTag->Property("ScrollBar.vertical.interactive", "true");
 
 			uiTextInput = std::make_shared<QmlTag>("TextArea");
@@ -399,6 +401,8 @@ namespace RendererQml
 			uiTextInput->Property("visible", "false");
 		}
 
+        context->addToInputElementList(origionalElementId, (uiTextInput->GetId() + ".text"));
+
 		if (input->GetIsMultiline())
 		{
 			return scrollViewTag;
@@ -409,6 +413,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::NumberInputRender(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        const std::string origionalElementId = input->GetId();
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 		const auto inputId = input->GetId();
 
@@ -484,6 +489,8 @@ namespace RendererQml
 		}
 
 		uiNumberInput->Property("contentItem", contentItemTag->ToString());
+
+        context->addToInputElementList(origionalElementId, (contentItemTag->GetId() + ".text"));
 
 		return uiNumberInput;
 	}
@@ -571,6 +578,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ToggleInputRender(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        const std::string origionalElementId = input->GetId();
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		const auto valueOn = !input->GetValueOn().empty() ? input->GetValueOn() : "true";
@@ -578,8 +586,8 @@ namespace RendererQml
 		const bool isChecked = input->GetValue().compare(valueOn) == 0 ? true : false;
 
 		//TODO: Add Height
-		return GetCheckBox(RendererQml::Checkbox(input->GetId(),
-			CheckBoxType::Toggle,
+		const auto checkbox = GetCheckBox(RendererQml::Checkbox(input->GetId(),
+            CheckBoxType::Toggle,
 			input->GetTitle(),
 			input->GetValue(),
 			valueOn,
@@ -588,10 +596,13 @@ namespace RendererQml
 			input->GetIsVisible(),
 			isChecked), context);
 
+        context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
+        return checkbox;
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ChoiceSetRender(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        const std::string origionalElementId = input->GetId();
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		int ButtonNumber = 0;
@@ -602,13 +613,13 @@ namespace RendererQml
 		const bool isVisible = input->GetIsVisible();
 		bool isChecked;
 
-		std::vector<std::string> parsedValues;
-		parsedValues = Utils::ParseChoiceSetInputDefaultValues(input->GetValue());
+        std::shared_ptr<QmlTag> uiChoiceSet;
+        const std::vector<std::string> parsedValues = Utils::splitString(input->GetValue(), ',');
 
 		for (const auto& choice : input->GetChoices())
 		{
 			isChecked = (std::find(parsedValues.begin(), parsedValues.end(), choice->GetValue()) != parsedValues.end() && (input->GetIsMultiSelect() || parsedValues.size() == 1)) ? true : false;
-			choices.emplace_back(RendererQml::Checkbox(id + GenerateButtonId(type, ButtonNumber++),
+			choices.emplace_back(RendererQml::Checkbox(GenerateChoiceSetButtonId(id, type, ButtonNumber++),
 				type,
 				choice->GetTitle(),
 				choice->GetValue(),
@@ -624,17 +635,18 @@ namespace RendererQml
 			choices,
 			input->GetPlaceholder());
 
-		if (CheckBoxType::ComboBox == type)
+		if (type == CheckBoxType::ComboBox)
 		{
-			return GetComboBox(choiceSet,context);
+            uiChoiceSet = GetComboBox(choiceSet,context);
+            context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".currentValue"));
 		}
 		else
 		{
-			return GetButtonGroup(choiceSet, context);
+            uiChoiceSet = GetButtonGroup(choiceSet, context);
+            context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
 		}
 
-		std::shared_ptr<QmlTag> uiColumn;
-		return uiColumn;
+		return uiChoiceSet;
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComboBox(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
@@ -682,12 +694,12 @@ namespace RendererQml
 			uiComboBox->Property("currentIndex", "-1");
 			uiComboBox->Property("displayText", "currentIndex === -1 ? '" + choiceset.placeholder + "' : currentText");
 		}
-		else if (choiceset.values.size() ==1)
+		else if (choiceset.values.size() == 1)
 		{
-			std::string target = choiceset.values[0];
+			const std::string target = choiceset.values[0];
 			auto index = std::find_if(choiceset.choices.begin(), choiceset.choices.end(), [target](const Checkbox& options) {
 				return options.value == target;
-				}) - choiceset.choices.begin();
+			}) - choiceset.choices.begin();
 			uiComboBox->Property("currentIndex", std::to_string(index));
 			uiComboBox->Property("displayText", "currentText");
 		}
@@ -749,36 +761,19 @@ namespace RendererQml
 		return model.str();
 	}
 
-	// Default values are specified by a comma separated string
-	std::vector<std::string> Utils::ParseChoiceSetInputDefaultValues(const std::string& value)
-	{
-		std::vector<std::string> parsedValues;
-		std::string element;
-		std::stringstream ss(value);
-		while (std::getline(ss, element, ','))
-		{
-			Utils::Trim(element);		
-			if (!element.empty())
-			{
-				parsedValues.push_back(element);
-			}
-		}
-		return parsedValues;
-	}
-
-	std::string AdaptiveCardQmlRenderer::GenerateButtonId(enum CheckBoxType ButtonType, int  ButtonNumber)
+	std::string AdaptiveCardQmlRenderer::GenerateChoiceSetButtonId(const std::string& parentId, enum CheckBoxType ButtonType, const int& ButtonNumber)
 	{
 		
-		return "_" + std::to_string(ButtonType) + "_" + std::to_string(ButtonNumber);
+		return parentId + "_" + std::to_string(ButtonType) + "_" + std::to_string(ButtonNumber);
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetButtonGroup(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto uiColumn = std::make_shared<QmlTag>("Column");
+        uiColumn->Property("id", choiceset.id);
 	
 		auto uiButtonGroup = std::make_shared<QmlTag>("ButtonGroup");
-	
-		uiButtonGroup->Property("id", choiceset.id);
+		uiButtonGroup->Property("id", choiceset.id + "_btngrp");
 	
 		if (choiceset.isMultiSelect)
 		{
@@ -800,19 +795,46 @@ namespace RendererQml
 		}
 		else
 		{
-			uiInnerColumn->Property("id", choiceset.id + "_radio");
+			uiInnerColumn->Property("id", choiceset.id + "_radio");                        
 		}
-	
-		// render as a series of buttons
-		for (const auto& choice : choiceset.choices)
-		{
-			uiInnerColumn->AddChild(GetCheckBox(choice, context));
-		}
+
+        // render as a series of buttons
+        for (const auto& choice : choiceset.choices)
+        {
+            uiInnerColumn->AddChild(GetCheckBox(choice, context));
+        }
 	
 		uiColumn->AddChild(uiInnerColumn);
+        uiColumn->AddFunctions(getChoiceSetSelectedValuesFunc(uiButtonGroup, choiceset.isMultiSelect));
 		return uiColumn;
 	}
 
+    const std::string AdaptiveCardQmlRenderer::getChoiceSetSelectedValuesFunc(const std::shared_ptr<QmlTag>& btnGroup, const bool isMultiselect)
+    {
+        std::ostringstream function;
+        function << "function getSelectedValues(isMultiselect){\n";
+        function << "var values = \"\";\n";
+        if (isMultiselect)
+        {
+            function << "for (var i = 0; i < " << btnGroup->GetId() << ".buttons.length; ++i) {\n";
+            function << "if(i !== 0 && " << btnGroup->GetId() << ".buttons[i].value !== \"\" && values !== \"\"){\n";
+            function << "values += \",\";\n";
+            function << "}\n";
+            function << "values += " << btnGroup->GetId() << ".buttons[i].value;\n";
+            function << "}\n";
+        }
+        else
+        {
+            function << "for (var i = 0; i < " << btnGroup->GetId() << ".buttons.length; ++i) {\n";
+            function << "if(" << btnGroup->GetId() << ".buttons[i].value !== \"\"){\n";
+            function << "values += " << btnGroup->GetId() << ".buttons[i].value;\n";
+            function << "break;\n";
+            function << "}\n}\n";
+        }
+        function << "return values;\n";
+        function << "}\n";
+        return function.str();
+    }
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCheckBox(Checkbox checkbox, std::shared_ptr<AdaptiveRenderContext> context)
 	{
@@ -827,13 +849,19 @@ namespace RendererQml
 			uiButton = std::make_shared<QmlTag>("CheckBox");
 		}
 
+        uiButton->Property("id", checkbox.id);
+
 		if (checkbox.type == CheckBoxType::Toggle)
 		{
 			uiButton->Property("readonly property string valueOn", "\"" + checkbox.valueOn + "\"");
 			uiButton->Property("readonly property string valueOff", "\"" + checkbox.valueOff + "\"");
+            uiButton->Property("property string value", "checked ? valueOn : valueOff");
 		}
-
-		uiButton->Property("id", checkbox.id);
+        else
+        {
+            uiButton->Property("property string value", Formatter() << "checked ? \"" << checkbox.value << "\" : \"\"");
+        }
+		        
 		uiButton->Property("text", "\"" + checkbox.text + "\"");
 		uiButton->Property("Layout.maximumWidth", "parent.parent.parent.width");
 		uiButton->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default)));
@@ -916,7 +944,7 @@ namespace RendererQml
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
 		//TODO: ids which are qml keywords would result in undefined behaviour
-
+        const std::string origionalElementId = input->GetId();
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
         auto uiDateInput = std::make_shared<QmlTag>("TextField");
@@ -928,12 +956,12 @@ namespace RendererQml
         uiDateInput->Property("font.pixelSize", std::to_string(fontSize));
         uiDateInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-        uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() + "\"" : "\"mm-dd-yyyy\""));
-
         if (!input->GetValue().empty())
         {
             uiDateInput->Property("text", "\"" + Utils::GetDate(input->GetValue(), false) + "\"");
         }
+
+        uiDateInput->Property("property string selectedDate", "\"" + input->GetValue() + "\"");
 
         //TODO: Add stretch property
 
@@ -942,11 +970,7 @@ namespace RendererQml
             uiDateInput->Property("visible", "false");
         }
 
-        uiDateInput->Property("validator", "RegExpValidator { regExp: /^(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])-(\\d{4})$/}");
-
         std::string calendar_box_id = input->GetId() + "_cal_box";
-
-        uiDateInput->Property("onFocusChanged", Formatter() << "{" << "if(focus==true) inputMask=\"00-00-0000;0\";" << "if(activeFocus === false){ z=0; if( " << calendar_box_id << ".visible === true){ " << calendar_box_id << ".visible=false}}} ");
 
         auto glowTag = std::make_shared<QmlTag>("Glow");
         glowTag->Property("samples", "25");
@@ -995,17 +1019,61 @@ namespace RendererQml
         calendarTag->Property("anchors.fill", "parent");
         calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(), true) : "new Date(1900,1,1)");
         calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");
-        calendarTag->Property("onReleased", "{parent.visible=false; " + input->GetId() + ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"MM-dd-yyyy\")}");
 
         auto calendarBoxTag = std::make_shared<QmlTag>("Rectangle");
         calendarBoxTag->Property("id", calendar_box_id);
         calendarBoxTag->Property("visible", "false");
         calendarBoxTag->Property("anchors.left", "parent.left");
         calendarBoxTag->Property("anchors.top", "parent.bottom");
-        calendarBoxTag->Property("width", "275");
-        calendarBoxTag->Property("height", "275");
-        calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
-        uiDateInput->AddChild(calendarBoxTag);
+        calendarBoxTag->Property("width", "300");
+        calendarBoxTag->Property("height", "300");
+        
+		auto EnumDateFormat = Utils::GetSystemDateFormat();
+		auto StringDateFormat = "MM-dd-yyyy";
+		auto inputMask = "00-00-0000;0";
+		auto DateRegex = "/^(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])-(\\d{4})$/";
+
+		switch (EnumDateFormat)
+		{
+			case RendererQml::DateFormat::ddmmyy:
+			{
+				StringDateFormat = "dd-MM-yyyy";
+				DateRegex = "/^(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(\\d{4})$/";
+                uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '00' || getText(3,5) === '00' || getText(6,10) === '0000'){selectedDate = '';}else{selectedDate = getText(6,10) + '-' + getText(3,5) + '-' + getText(0,2);}}");
+				break;
+			}
+			case RendererQml::DateFormat::yymmdd:
+			{
+				StringDateFormat = "yyyy-MM-dd";
+				inputMask = "0000-00-00;0";
+				DateRegex = "/^(\\d{4})-(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])$/";
+                uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(5,7) + '-' + getText(8,10);}}");
+				break;
+			}
+			case RendererQml::DateFormat::yyddmm:
+			{
+				StringDateFormat = "yyyy-dd-MM";
+				inputMask = "0000-00-00;0";
+				DateRegex = "/^(\\d{4})-(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])$/";
+                uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(8,10) + '-' + getText(5,7);}}");
+                break;
+			}
+			//Default case: mm-dd-yyyy
+			default:
+			{
+                uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '00' || getText(3,5) === '00' || getText(6,10) === '0000'){selectedDate = '';}else{selectedDate = getText(6,10) + '-' + getText(0,2) + '-' + getText(3,5);}}");
+				break;
+			}
+		}
+		uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() : "\"Select date") << " in " << Utils::ConvertToLowerIdValue(StringDateFormat) << "\"");
+		uiDateInput->Property("validator", Formatter() << "RegExpValidator { regExp: " << DateRegex << "}");
+		uiDateInput->Property("onFocusChanged", Formatter() << "{" << "if(focus==true) inputMask=\"" << inputMask << "\";" << "if(activeFocus === false){ z=0; if( " << calendar_box_id << ".visible === true){ " << calendar_box_id << ".visible=false}}} ");
+        calendarTag->Property("onReleased", Formatter() << "{parent.visible=false; " << input->GetId() << ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\")," << "\"" << StringDateFormat << "\")}");
+
+		calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
+		uiDateInput->AddChild(calendarBoxTag);
+
+        context->addToInputElementList(origionalElementId, (uiDateInput->GetId() + ".selectedDate"));
 
         return uiDateInput;
     }
@@ -1071,11 +1139,6 @@ namespace RendererQml
 		auto uiRectangle = std::make_shared<QmlTag>("Rectangle");
 		auto uiImage = std::make_shared<QmlTag>("Image");
 
-		std::string file_path = __FILE__;
-		std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-		dir_path.append("\\Images\\Cat.png");
-		std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-
 		if (image->GetId().empty())
 		{
 			image->SetId(Formatter() << "image_auto_" << context->getImageCounter());
@@ -1086,7 +1149,8 @@ namespace RendererQml
         }
 
 		uiImage->Property("id", image->GetId());
-		uiImage->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+		uiImage->Property("readonly property bool isImage", "true");
+		uiImage->Property("source", "\"" + image->GetUrl() + "\"");
 		uiImage->Property("anchors.fill", "parent");
 
 		if (!image->GetIsVisible())
@@ -1232,12 +1296,8 @@ namespace RendererQml
 		{
 			auto url = cardElement->GetBackgroundImage()->GetUrl();
 
-			std::string file_path = __FILE__;
-			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-			dir_path.append("\\Images\\sampleImage.jpg");
-			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-
-			uiContainer->Property("background", "Image { source: \"" + std::string("file:/") + dir_path + "\"}");
+			uiContainer->Property("background", "Image { source: \"" + url + "\" }");
+			uiContainer->Property("readonly property bool hasBackgroundImage", "true");
 		}
 		else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
 		{
@@ -1285,21 +1345,23 @@ namespace RendererQml
   
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TimeInputRender(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		bool is12hour = Utils::isSystemTime12Hour();
+        const std::string origionalElementId = input->GetId();
+		const bool is12hour = Utils::isSystemTime12Hour();
 		
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
-		std::string id = input->GetId();
+		const std::string id = input->GetId();
+        const std::string value = input->GetValue();
 
 		uiTimeInput->Property("id", id);
+        uiTimeInput->Property("property string selectedTime", "\"""\"");
 		uiTimeInput->Property("width", "parent.width");
 		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "\"Select time\"");
         uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 		uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
 
-		std::string value = input->GetValue();
 		if (!input->GetValue().empty() && Utils::isValidTime(value))
 		{
 			std::string defaultTime = value;
@@ -1308,6 +1370,7 @@ namespace RendererQml
 				defaultTime = Utils::defaultTimeto12hour(defaultTime);
 			}
 			uiTimeInput->Property("text", Formatter() << "\"" << defaultTime << "\"");
+            uiTimeInput->Property("property string selectedTime", Formatter() << "\"" << value << "\"");
 		}
 
 		if (!input->GetIsVisible())
@@ -1324,7 +1387,7 @@ namespace RendererQml
 
 		uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus==true) inputMask=\"xx:xx;-\";" << " if(activeFocus==false){ z=0;" << "if(" << timeBox_id << ".visible==true)" << timeBox_id << ".visible=false ;" << "}}");
 
-		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << "}");
+		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << "if(getText(0,2) === '--' || getText(3,5) === '--'){" << id << ".selectedTime ='';} else{" << id << ".selectedTime =" << id << ".text;}}");
 
 		auto glowTag = std::make_shared<QmlTag>("Glow");
 		glowTag->Property("samples", "25");
@@ -1391,7 +1454,7 @@ namespace RendererQml
 			uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01]-|0\\d|1[0-2]):(--|[0-5]-|[0-5]\\d)\\s(--|A-|AM|P-|PM)$/}");
 			uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus==true) inputMask=\"xx:xx >xx;-\";" << " if(activeFocus==false){ z=0;" << "if(" << timeBox_id << ".visible==true)" << timeBox_id << ".visible=false ;" << "}}");
 			uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2))-1;" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));"
-				<< "var tt_index=3;" << "switch(getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}" << listViewtt_id << ".currentIndex=tt_index;" << "}");
+				<< "var tt_index=3;var hh = getText(0,2);" << "switch(getText(6,8)){ case 'PM':tt_index = 1; if(parseInt(getText(0,2))!==12){hh=parseInt(getText(0,2))+12;} break;case 'AM':tt_index = 0; if(parseInt(getText(0,2))===12){hh=parseInt(getText(0,2))-12;} break;}" << listViewtt_id << ".currentIndex=tt_index;" << "if(getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--'){" << id <<".selectedTime ='';} else{" << id <<".selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);}}");
 			mouseAreaTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2))-1;\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n"
 				<< "var tt_index=3;" << "switch(parent.getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}" << listViewtt_id << ".currentIndex=tt_index;" << "}");
 
@@ -1427,11 +1490,13 @@ namespace RendererQml
 		timeBoxTag->AddChild(ListViewMinTag);
 		uiTimeInput->AddChild(timeBoxTag);
 
+        context->addToInputElementList(origionalElementId, (uiTimeInput->GetId() + ".selectedTime"));
+
 		return uiTimeInput;
 
 	}
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ListViewTagforTimeInput(std::string& parent_id, std::string& listView_id, std::map < std::string, std::map<std::string, std::string>>& properties)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ListViewTagforTimeInput(const std::string& parent_id, const std::string& listView_id, std::map<std::string, std::map<std::string, std::string>>& properties)
 	{
 		auto ListViewTag = std::make_shared<QmlTag>("ListView");
 		ListViewTag->Property("id", listView_id);
@@ -1815,6 +1880,8 @@ namespace RendererQml
             //Add button icon
             if (!action->GetIconUrl().empty())
             {
+				buttonElement->Property("readonly property bool hasIconUrl", "true");
+
                 auto contentImage = std::make_shared<QmlTag>("Image");
                 contentImage->Property("id", Formatter() << buttonId << "_img");
                 contentImage->Property("height", Formatter() << fontSize);
@@ -1830,12 +1897,7 @@ namespace RendererQml
                     contentImage->Property("anchors.horizontalCenter", "parent.horizontalCenter");
                 }
 
-                //TODO: Adding dummy image. This should be replaced!
-                std::string file_path = __FILE__;
-                std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-                dir_path.append("\\Images\\Cat.png");
-                std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-                contentImage->Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+                contentImage->Property("source", "\"" + action->GetIconUrl() + "\"");
 
                 contentLayout->AddChild(contentImage);
             }
@@ -1892,7 +1954,7 @@ namespace RendererQml
                 showCardIcon->Property("fillMode", "Image.PreserveAspectFit");
                 showCardIcon->Property("mipmap", "true");
                 showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
-                showCardIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"" );
+                showCardIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
 
                 textLayout->AddChild(showCardIcon);
             }
@@ -1911,7 +1973,7 @@ namespace RendererQml
             }
             else if (action->GetElementTypeString() == "Action.ShowCard")
             {
-				onClickedFunction = getActionShowCardClickFunc(buttonId);
+				onClickedFunction = getActionShowCardClickFunc(buttonElement);
             }
             else if (action->GetElementTypeString() == "Action.ToggleVisibility")
             {
@@ -1919,14 +1981,14 @@ namespace RendererQml
             }
             else if (action->GetElementTypeString() == "Action.Submit")
             {
-
+                onClickedFunction = getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action), context);
             }
             else
             {
                 onClickedFunction = "";
             }
            
-            buttonElement->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "\n}");
+            buttonElement->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}\n");
 
             return buttonElement;
         }
@@ -1934,24 +1996,56 @@ namespace RendererQml
         return nullptr;
     }
 
-    const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(std::shared_ptr<AdaptiveCards::OpenUrlAction> action, std::shared_ptr<AdaptiveRenderContext> context)
+    const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(const std::shared_ptr<AdaptiveCards::OpenUrlAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
     {
         // Sample signal to emit on click
-        //adaptiveCard.buttonClick(var type, var data);
-        //adaptiveCard.buttonClick("Action.OpenUrl", "https://adaptivecards.io");
+        //adaptiveCard.buttonClick(var title, var type, var data);
+        //adaptiveCard.buttonClick("title", "Action.OpenUrl", "https://adaptivecards.io");
         std::ostringstream function;
         function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", \"" << action->GetUrl() << "\");";
 
         return function.str();
     }
 
-	const std::string AdaptiveCardQmlRenderer::getActionShowCardClickFunc(std::string buttonId)
+	const std::string AdaptiveCardQmlRenderer::getActionShowCardClickFunc(const std::shared_ptr<QmlTag>& buttonElement)
 	{
 		std::ostringstream function;
-		function << buttonId << "_loader.visible = !" << buttonId << "_loader.visible";
-		function << "\n" << buttonId << "_dd.source =" <<  buttonId << "_dd.source == "<< "\"" << RendererQml::arrow_up_12 << "\" ?" <<"\"" << RendererQml::arrow_down_12 << "\"" << ":" << "\"" << RendererQml::arrow_up_12 << "\"";
+		function << buttonElement->GetId() << ".showCard = !" << buttonElement->GetId() << ".showCard";
+		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
+		function << "\n" << buttonElement->GetId() << "_dd.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
 
 		return function.str();
 	}
+
+	const std::string AdaptiveCardQmlRenderer::getActionSubmitClickFunc(const std::shared_ptr<AdaptiveCards::SubmitAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
+    {
+        // Sample signal to emit on click
+        //adaptiveCard.buttonClick(var title, var type, var data);
+        //adaptiveCard.buttonClick("title", "Action.Submit", "{"x":13,"firstName":"text1","lastName":"text2"}");
+        std::ostringstream function;
+
+        std::string submitDataJson = action->GetDataJson();
+        submitDataJson = Utils::Trim(submitDataJson);
+
+        function << "var paramJson = {};\n";
+
+        if (!submitDataJson.empty() && submitDataJson != "null")
+        {
+            submitDataJson = Utils::Replace(submitDataJson, "\"", "\\\"");
+            function << "var parmStr = \"" << submitDataJson << "\";\n";
+            function << "paramJson = JSON.parse(parmStr);\n";
+        }
+
+        for(const auto& element : context->getInputElementList())
+        {
+            function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
+        }
+
+        function << "var paramslist = JSON.stringify(paramJson);\n";
+        function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\nconsole.log(paramslist);\n";
+
+        return function.str();
+    }
+
 }
 	

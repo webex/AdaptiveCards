@@ -439,7 +439,7 @@ namespace Samples
 	"body": [
 		{
 		    "type": "TextBlock",
-		    "text": "Date Format: MM/DD/YYYY"
+		    "text": "Sample Card with InputDate"
 		},
 		{
 		    "type": "Input.Date",
@@ -460,7 +460,13 @@ namespace Samples
 		    "min":"1900-01-01",
 		    "max":"2030-01-01"
 		}
-	]
+	],
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "OK"
+        }
+      ]
     })";
 
 	const std::string card_ChoiceSetInput = R"({
@@ -833,7 +839,13 @@ namespace Samples
 		  "max": "17:00",
 		  "value": "25:30"
 		}
-	   ]
+	   ],
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "OK"
+        }
+      ]
 	})";
 
 	const std::string card_ImageSet = R"({
@@ -1514,29 +1526,60 @@ namespace Samples
         ]
     })";
 
-	const std::string card_Action_ShowCard = R"({
-  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-  "type": "AdaptiveCard",
-  "version": "1.0",
-  "body": [
-    {
-      "type": "TextBlock",
-      "text": "This card's action will show another card"
-    }
-  ],
-  "actions": [
-    {
-      "type": "Action.ShowCard",
-      "title": "Action.ShowCard",
-      "card": {
-        "type": "AdaptiveCard",
-        "body": [
-          {
-            "type": "TextBlock",
-            "text": "What do you think?"
+    const std::string card_Action_Submit = R"({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.0",
+      "body": [
+        {
+          "type": "TextBlock",
+          "text": "Present a form and submit it back to the originator"
+        },
+        {
+          "type": "Input.Text",
+          "id": "firstName",
+          "placeholder": "What is your first name?"
+        },
+        {
+          "type": "Input.Text",
+          "id": "lastName",
+          "placeholder": "What is your last name?"
+        }
+      ],
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "Action.Submit",
+          "data": {
+            "x": 13
           }
-        ],
-        "actions": [
+        }
+      ]
+    })";
+
+	const std::string card_Action_ShowCard = R"({
+	  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+	  "type": "AdaptiveCard",
+	  "version": "1.0",
+	  "body": [
+		{
+		  "type": "TextBlock",
+		  "text": "This card's action will show another card"
+		}
+	  ],
+	  "actions": [
+		{
+		  "type": "Action.ShowCard",
+		  "title": "Action.ShowCard",
+		  "card": {
+			"type": "AdaptiveCard",
+			"body": [
+			  {
+				"type": "TextBlock",
+				"text": "What do you think?"
+			  }
+			],
+			"actions": [
             {
                 "type": "Action.OpenUrl",
                 "title": "Action.OpenUrl",
@@ -1562,9 +1605,9 @@ namespace Samples
                 "style": "positive"
             }
         ]
-      }
-    }
-  ]
-})";
+		  }
+		}
+	  ]
+	})";
 }
 

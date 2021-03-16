@@ -23,7 +23,7 @@ namespace RendererQml
 
         std::shared_ptr<AdaptiveCards::HostConfig> GetConfig();
 
-		std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> GetElementRenderers();
+		const std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> GetElementRenderers();
 
         std::string GetRGBColor(const std::string& color, bool isQml = 1);
 
@@ -41,8 +41,11 @@ namespace RendererQml
         void setCardRootId(const std::string& rootId);
         const std::string getCardRootId();
 
-		void setCardRootElement(const std::shared_ptr<QmlTag>);
+		void setCardRootElement(const std::shared_ptr<QmlTag>& rootElement);
 		const std::shared_ptr<QmlTag> getCardRootElement();
+
+		void addToInputElementList(const std::string& elementId, const std::string& value);
+        const std::map<std::string, std::string> getInputElementList();
 
     private:
         std::vector<AdaptiveWarning> m_warnings;
@@ -54,6 +57,7 @@ namespace RendererQml
         std::string m_lang;
         std::string m_CardRootId;
 		std::shared_ptr<QmlTag> m_CardRootElement;
+        std::map<std::string, std::string> m_inputElementList;
         int m_ContainerCounter{ 0 };
         int m_ImageCounter{ 0 };
 		int m_ColumnSetCounter{ 0 };

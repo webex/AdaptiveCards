@@ -122,4 +122,38 @@ class ColorUtils {
             return nil
         }
     }
+    
+    static func hoverColorOnMouseEnter() -> NSColor {
+        if #available(OSX 10.14, *) {
+            return .unemphasizedSelectedTextBackgroundColor
+        } else {
+            return .windowBackgroundColor
+        }
+    }
+    
+    static func hoverColorOnMouseExit() -> NSColor {
+        return .textBackgroundColor
+    }
+}
+
+class TextUtils {
+    static func getMarkdownString(parserResult: ACSMarkdownParserResult) -> NSMutableAttributedString {
+        let content: NSMutableAttributedString
+        if parserResult.isHTML, let htmlData = parserResult.htmlData {
+            do {
+                content = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+                // Delete trailing newline character
+                content.deleteCharacters(in: NSRange(location: content.length - 1, length: 1))
+//                    textView.isSelectable = true
+            } catch {
+                content = NSMutableAttributedString(string: parserResult.parsedString)
+            }
+        } else {
+            content = NSMutableAttributedString(string: parserResult.parsedString)
+            // Delete <p> and </p>
+            content.deleteCharacters(in: NSRange(location: 0, length: 3))
+            content.deleteCharacters(in: NSRange(location: content.length - 4, length: 4))
+        }
+        return content
+    }
 }

@@ -113,7 +113,7 @@ namespace RendererQml
         return m_hostConfig;
     }
 
-	std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> AdaptiveRenderContext::GetElementRenderers()
+	const std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> AdaptiveRenderContext::GetElementRenderers()
 	{
 		return m_elementRenderers;
 	}
@@ -230,7 +230,7 @@ namespace RendererQml
         return m_CardRootId;
     }
 
-	void AdaptiveRenderContext::setCardRootElement(const std::shared_ptr<QmlTag> rootElement)
+	void AdaptiveRenderContext::setCardRootElement(const std::shared_ptr<QmlTag>& rootElement)
 	{
 		m_CardRootElement = rootElement;
 	}
@@ -239,4 +239,15 @@ namespace RendererQml
 	{
 		return m_CardRootElement;
 	}
+
+	void AdaptiveRenderContext::addToInputElementList(const std::string& elementId, const std::string& value)
+    {
+        m_inputElementList[elementId] = value;
+    }
+
+    const std::map<std::string, std::string> AdaptiveRenderContext::getInputElementList()
+    {
+        return m_inputElementList;
+    }
+
 }
