@@ -8,12 +8,12 @@ class ACRActionSetView: NSView {
         return view
     }()
     
-    var frameWidth: CGFloat = 0
-    var totalWidth: CGFloat = 0
-    var actions: [NSView] = []
-    var padding: CGFloat = 0
-    var actionsToRender = 0
-    var maxFrameWidth: CGFloat = 0
+    private var frameWidth: CGFloat = 0
+    private var maxFrameWidth: CGFloat = 0
+    
+    public var totalWidth: CGFloat = 0
+    public var actions: [NSView] = []
+    public var padding: CGFloat = 0
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -25,14 +25,29 @@ class ACRActionSetView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layout() {
+        super.layout()
+        frameWidth = frame.width
+        if orientation == .horizontal, totalWidth > frameWidth, totalWidth > maxFrameWidth, frameWidth != 0 {
+            maxFrameWidth = frameWidth
+            customLayout()
+        }
+    }
+    
     private func setupConstraints() {
         stackview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         stackview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackview.topAnchor.constraint(equalTo: topAnchor).isActive = true
         stackview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
-
-    func customLayout() {
+    
+    private func removeElements() {
+        for view in stackview.arrangedSubviews {
+            view.removeFromSuperview()
+        }
+    }
+    
+    private func customLayout() {
         print("@running custom layout")
         // first empty the stackview and remove all the views
         removeElements()
@@ -71,20 +86,6 @@ class ACRActionSetView: NSView {
         }
     }
     
-    func removeElements() {
-        for view in stackview.arrangedSubviews {
-            view.removeFromSuperview()
-        }
-    }
-    
-    override func layout() {
-        super.layout()
-        frameWidth = frame.width
-        if orientation == .horizontal, totalWidth > frameWidth, totalWidth > maxFrameWidth, frameWidth != 0 {
-            maxFrameWidth = frameWidth
-            customLayout()
-        }
-    }
     var orientation: NSUserInterfaceLayoutOrientation {
         get { stackview.orientation }
         set {

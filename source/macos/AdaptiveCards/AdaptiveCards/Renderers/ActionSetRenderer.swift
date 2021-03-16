@@ -9,10 +9,11 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSActionSet")
             return NSView()
         }
+        
         let actionSetView = ACRActionSetView()
         actionSetView.translatesAutoresizingMaskIntoConstraints = false
-//        actionSetView.distribution = .fillProportionally
         let adaptiveActionHostConfig = hostConfig.getActions()
+        
         if let orientation = adaptiveActionHostConfig?.actionsOrientation, orientation == .horizontal {
             actionSetView.orientation = .horizontal
         } else {
@@ -31,10 +32,12 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
                 }
             }
         }
+        
         var accumulatedWidth = 0, accumulatedHeight = 0, maxWidth = 0, maxHeight = 0
         if actionSet.getActions().isEmpty {
             return actionSetView
         }
+        
         var actionsToRender: Int = 0
         if let maxActionsToRender = adaptiveActionHostConfig?.maxActions, let uMaxActionsToRender = maxActionsToRender as? Int {
             actionsToRender = min(uMaxActionsToRender, actionSet.getActions().count)
@@ -54,6 +57,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
                 actionSetView.actions.append(view)
             }
         }
+        
         var contentWidth = accumulatedWidth
         if let spacing = adaptiveActionHostConfig?.buttonSpacing {
             actionSetView.spacing = CGFloat(truncating: spacing)
@@ -66,8 +70,6 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         actionSetView.totalWidth = CGFloat(contentWidth)
-        actionSetView.actionsToRender = actionsToRender
-        
         return actionSetView
     }
 }
