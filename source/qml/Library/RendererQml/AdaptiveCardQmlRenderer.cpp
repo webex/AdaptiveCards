@@ -967,7 +967,7 @@ namespace RendererQml
         calendarTag->AddImports("import QtQuick.Controls 1.4");
         calendarTag->Property("anchors.fill", "parent");
         calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(), true) : "new Date(1900,1,1)");
-        calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");        
+        calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");
 
         auto calendarBoxTag = std::make_shared<QmlTag>("Rectangle");
         calendarBoxTag->Property("id", calendar_box_id);
@@ -988,6 +988,7 @@ namespace RendererQml
 			{
 				StringDateFormat = "dd-MM-yyyy";
 				DateRegex = "/^(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(\\d{4})$/";
+                uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '00' || getText(3,5) === '00' || getText(6,10) === '0000'){selectedDate = '';}else{selectedDate = getText(6,10) + '-' + getText(3,5) + '-' + getText(0,2);}}");
 				break;
 			}
 			case RendererQml::DateFormat::yymmdd:
@@ -995,6 +996,7 @@ namespace RendererQml
 				StringDateFormat = "yyyy-MM-dd";
 				inputMask = "0000-00-00;0";
 				DateRegex = "/^(\\d{4})-(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])$/";
+                uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(5,7) + '-' + getText(8,10);}}");
 				break;
 			}
 			case RendererQml::DateFormat::yyddmm:
@@ -1002,22 +1004,20 @@ namespace RendererQml
 				StringDateFormat = "yyyy-dd-MM";
 				inputMask = "0000-00-00;0";
 				DateRegex = "/^(\\d{4})-(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])$/";
-				break;
+                uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(8,10) + '-' + getText(5,7);}}");
+                break;
 			}
 			//Default case: mm-dd-yyyy
 			default:
 			{
+                uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '00' || getText(3,5) === '00' || getText(6,10) === '0000'){selectedDate = '';}else{selectedDate = getText(6,10) + '-' + getText(0,2) + '-' + getText(3,5);}}");
 				break;
 			}
 		}
 		uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() : "\"Select date") << " in " << Utils::ConvertToLowerIdValue(StringDateFormat) << "\"");
 		uiDateInput->Property("validator", Formatter() << "RegExpValidator { regExp: " << DateRegex << "}");
 		uiDateInput->Property("onFocusChanged", Formatter() << "{" << "if(focus==true) inputMask=\"" << inputMask << "\";" << "if(activeFocus === false){ z=0; if( " << calendar_box_id << ".visible === true){ " << calendar_box_id << ".visible=false}}} ");
-
-        const auto dateText = input->GetId() + ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"" + StringDateFormat + "\");";
-        //TODO: fix this and move to text field text changed
-        const auto selectedDate = input->GetId() + ".selectedDate=selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"" + StringDateFormat + "\");";
-        calendarTag->Property("onReleased", "{parent.visible=false; " + dateText + selectedDate + "}");
+        calendarTag->Property("onReleased", Formatter() << "{parent.visible=false; " << input->GetId() << ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\")," << "\"" << StringDateFormat << "\")}");
 
 		calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
 		uiDateInput->AddChild(calendarBoxTag);
