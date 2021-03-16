@@ -86,15 +86,11 @@ class ACRDateField: NSView {
     
     override func mouseEntered(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRDateField else { return }
-        if #available(OSX 10.14, *) {
-            contentView.textField.backgroundColor = .unemphasizedSelectedTextBackgroundColor
-        } else {
-            contentView.textField.backgroundColor = .windowBackgroundColor
-        }
+        contentView.textField.backgroundColor = ColorUtils.hoverColorOnMouseEnter()
     }
     override func mouseExited(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRDateField else { return }
-        contentView.textField.backgroundColor = .textBackgroundColor
+        contentView.textField.backgroundColor = ColorUtils.hoverColorOnMouseExit()
     }
     
     // MARK: Actions

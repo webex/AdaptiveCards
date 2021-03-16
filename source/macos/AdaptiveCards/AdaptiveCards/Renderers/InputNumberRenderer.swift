@@ -103,16 +103,12 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     
     override open func mouseEntered(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRNumericTextField else { return }
-        if #available(OSX 10.14, *) {
-            contentView.textField.backgroundColor = .unemphasizedSelectedTextBackgroundColor
-        } else {
-            contentView.textField.backgroundColor = .windowBackgroundColor
-        }
+        contentView.textField.backgroundColor = ColorUtils.hoverColorOnMouseEnter()
     }
     
     override open func mouseExited(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRNumericTextField else { return }
-        contentView.textField.backgroundColor = .textBackgroundColor
+        contentView.textField.backgroundColor = ColorUtils.hoverColorOnMouseExit()
     }
 }
 

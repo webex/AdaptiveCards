@@ -142,15 +142,11 @@ class ACRTextInputView: NSTextField, NSTextFieldDelegate {
     
     override func mouseEntered(with event: NSEvent) {
         guard let textView = event.trackingArea?.owner as? ACRTextInputView else { return }
-        if #available(OSX 10.14, *) {
-            textView.backgroundColor = .unemphasizedSelectedTextBackgroundColor
-        } else {
-            textView.backgroundColor = .windowBackgroundColor
-        }
+        textView.backgroundColor = ColorUtils.hoverColorOnMouseEnter()
     }
     
     override func mouseExited(with event: NSEvent) {
         guard let textView = event.trackingArea?.owner as? ACRTextInputView else { return }
-        textView.backgroundColor = .textBackgroundColor
+        textView.backgroundColor = ColorUtils.hoverColorOnMouseExit()
     }
 }

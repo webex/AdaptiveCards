@@ -77,15 +77,11 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     
     override func mouseEntered(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRMultilineInputTextView else { return }
-        if #available(OSX 10.14, *) {
-            contentView.textView.backgroundColor = .unemphasizedSelectedTextBackgroundColor
-        } else {
-            contentView.textView.backgroundColor = .windowBackgroundColor
-        }
+        contentView.textView.backgroundColor = ColorUtils.hoverColorOnMouseEnter()
     }
     
     override func mouseExited(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRMultilineInputTextView else { return }
-        contentView.textView.backgroundColor = .textBackgroundColor
+        contentView.textView.backgroundColor = ColorUtils.hoverColorOnMouseExit()
     }
 }
