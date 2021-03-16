@@ -198,6 +198,7 @@ const std::string SampleCardModel::getImagePath(const std::string& m_element)
 		dir_path.append("\\Images\\Cat.png");
 	}
 	std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+	dir_path = std::string("file:/") + dir_path;
 
-	return std::string("file:/") + dir_path;
+	return dir_path;
 }
