@@ -114,32 +114,17 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
-			std::string file_path = __FILE__;
-			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-			dir_path.append("\\Images\\sampleImage.jpg");
-			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-
-			genQml.Property("background", "Image { source: \"" + std::string("file:/") + dir_path + "\" }");
+			genQml.Property("background", "Image { source: \"" + getImagePath(genQml.GetElement()) + "\" }");
 		}
 		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
 		{
-			std::string file_path = __FILE__;
-			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-			dir_path.append("\\Images\\Cat.png");
-			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-
-			genQml.Property("source", "\"" + std::string("file:/") + dir_path + "\"");
+			genQml.Property("source", "\"" + getImagePath(genQml.GetElement()) + "\"");
 		}
 		else if (genQml.GetElement() == "Button" && genQml.HasProperty("readonly property bool hasIconUrl"))
 		{
-			std::string file_path = __FILE__;
-			std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-			dir_path.append("\\Images\\Cat.png");
-			std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-
 			std::string str = genQml.GetProperty("contentItem");
 
-			genQml.Property("contentItem", std::regex_replace(str, std::regex("source.*\n"), "source:\"" + std::string("file:/") + dir_path + "\"\n"));
+			genQml.Property("contentItem", std::regex_replace(str, std::regex("source.*\n"), "source:\"" + getImagePath(genQml.GetElement()) + "\"\n"));
 		}
 	});
 
@@ -198,4 +183,21 @@ void SampleCardModel::actionButtonClicked(const QString& title, const QString& t
 
     // Open url in default browser
     ShellExecute(0, 0, toWString(data.toStdString()).c_str(), 0, 0, SW_SHOW);
+}
+
+const std::string SampleCardModel::getImagePath(const std::string& m_element)
+{
+	std::string file_path = __FILE__;
+	std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+	if (m_element == "Frame")
+	{
+		dir_path.append("\\Images\\sampleImage.jpg");
+	}
+	else
+	{
+		dir_path.append("\\Images\\Cat.png");
+	}
+	std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+
+	return std::string("file:/") + dir_path;
 }

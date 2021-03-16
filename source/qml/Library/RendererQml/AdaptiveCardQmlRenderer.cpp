@@ -1031,8 +1031,8 @@ namespace RendererQml
         }
 
 		uiImage->Property("id", image->GetId());
-		uiImage->Property("source", "\"" + image->GetUrl() + "\"");
 		uiImage->Property("readonly property bool isImage", "true");
+		uiImage->Property("source", "\"" + image->GetUrl() + "\"");
 		uiImage->Property("anchors.fill", "parent");
 
 		if (!image->GetIsVisible())

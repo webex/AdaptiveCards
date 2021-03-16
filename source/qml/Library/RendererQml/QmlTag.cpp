@@ -64,10 +64,28 @@ namespace RendererQml
         return std::string();
     }
 
-    void QmlTag::AddChild(const std::shared_ptr<QmlTag>& child)
-    {
-        m_children.emplace_back(child);
-    }
+	const std::string QmlTag::GetElement()
+	{
+		return m_element;
+	}
+
+	const std::string QmlTag::GetProperty(const std::string& name)
+	{
+		auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [name](const auto property) {
+			return property.first == name;
+		});
+
+		if (iterator != m_properties.end())
+		{
+			return iterator->second;
+		}
+		return std::string();
+	}
+
+	const std::vector<std::pair<std::string, std::string>>& QmlTag::GetProperties()
+	{
+		return m_properties;
+	}
 
 	void QmlTag::Transform(Customizer tagCustomization)
 	{
@@ -81,7 +99,7 @@ namespace RendererQml
 		}
 	}
 
-	bool QmlTag::HasProperty(const std::string& name)
+	const bool QmlTag::HasProperty(const std::string& name)
 	{
 		auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [name](const auto property) {
 			return property.first == name;
@@ -93,6 +111,11 @@ namespace RendererQml
 		}
 		return false;
 	}
+
+    void QmlTag::AddChild(const std::shared_ptr<QmlTag>& child)
+    {
+        m_children.emplace_back(child);
+    }
 
     std::string QmlTag::ToString()
     {
@@ -135,29 +158,6 @@ namespace RendererQml
 
         return qmlString.str();
     }
-
-	const std::string QmlTag::GetElement()
-	{
-		return m_element;
-	}
-
-	std::string QmlTag::GetProperty(const std::string& name)
-	{
-		auto iterator = std::find_if(m_properties.begin(), m_properties.end(), [name](const auto property) {
-			return property.first == name;
-		});
-
-		if (iterator != m_properties.end())
-		{
-			return iterator->second;
-		}
-		return std::string();
-	}
-
-	const std::vector<std::pair<std::string, std::string>>& QmlTag::GetProperties()
-	{
-		return  m_properties;
-	}
 
 	const std::vector<std::shared_ptr<QmlTag>>& QmlTag::GetChildren()
 	{
