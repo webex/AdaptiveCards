@@ -52,21 +52,6 @@ class ACRChoiceSetView: NSView {
         newButton.value = value
         return newButton
     }
-    
-//    override open func viewDidMoveToSuperview() {
-//        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
-//        addTrackingArea(trackingArea)
-//    }
-    
-//    override open func mouseEntered(with event: NSEvent) {
-//        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetView else { return }
-//        contentView.previousButton?.backgroundColor = .windowBackgroundColor
-//    }
-
-//    override open func mouseExited(with event: NSEvent) {
-//        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetView else { return }
-//        contentView.previousButton?.backgroundColor = .textBackgroundColor
-//    }
 }
 // MARK: Extension
 extension ACRChoiceSetView: ACRChoiceButtonDelegate {
@@ -78,27 +63,24 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
 // MARK: ACRChoiceSetFieldCompactView
 class ACRChoiceSetCompactView: NSPopUpButton {
     public let type: ACSChoiceSetStyle = .compact
+    private var trackingAreaDefined: Bool = false
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
-        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
-        addTrackingArea(trackingArea)
+        // Could not create in init, had to add tracking area here
+        if !trackingAreaDefined {
+            trackingAreaDefined = true
+            let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+            addTrackingArea(trackingArea)
+        }
     }
     
     override func mouseEntered(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
-        if #available(OSX 10.14, *) {
-            contentView.isHighlighted = true
-        } else {
-            // Fallback on earlier versions
-        }
+        contentView.isHighlighted = true
     }
     override func mouseExited(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
-        if #available(OSX 10.14, *) {
-            contentView.isHighlighted = false
-        } else {
-            // Fallback on earlier versions
-        }
+        contentView.isHighlighted = false
     }
 }

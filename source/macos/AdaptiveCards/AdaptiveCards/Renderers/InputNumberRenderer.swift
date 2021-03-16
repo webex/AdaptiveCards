@@ -36,6 +36,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         setupConstraints()
         setUpControls()
         setUpTheme()
+        setupTrackingArea()
     }
     
     public required init?(coder: NSCoder) {
@@ -94,6 +95,25 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         stepper.layer?.backgroundColor = .clear
         stepper.appearance = NSAppearance(named: .aqua)
     }
+    
+    func setupTrackingArea() {
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
+    }
+    
+    override open func mouseEntered(with event: NSEvent) {
+        guard let contentView = event.trackingArea?.owner as? ACRNumericTextField else { return }
+        if #available(OSX 10.14, *) {
+            contentView.textField.backgroundColor = .unemphasizedSelectedTextBackgroundColor
+        } else {
+            contentView.textField.backgroundColor = .windowBackgroundColor
+        }
+    }
+    
+    override open func mouseExited(with event: NSEvent) {
+        guard let contentView = event.trackingArea?.owner as? ACRNumericTextField else { return }
+        contentView.textField.backgroundColor = .textBackgroundColor
+    }
 }
 
 // MARK: - EXTENSION
@@ -142,27 +162,6 @@ extension ACRNumericTextField {
     
     func stepperShouldWrapValues(_ shouldWrap: Bool) {
         stepper.valueWraps = shouldWrap
-    }
-    
-    override open func viewDidMoveToSuperview() {
-        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
-        addTrackingArea(trackingArea)
-    }
-    
-//    override open func awakeFromNib() {
-//        super.awakeFromNib()
-//        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
-//        addTrackingArea(trackingArea)
-//    }
-    
-    override open func mouseEntered(with event: NSEvent) {
-        guard let contentView = event.trackingArea?.owner as? ACRNumericTextField else { return }
-        contentView.textField.backgroundColor = .windowBackgroundColor
-    }
-    
-    override open func mouseExited(with event: NSEvent) {
-        guard let contentView = event.trackingArea?.owner as? ACRNumericTextField else { return }
-        contentView.textField.backgroundColor = .textBackgroundColor
     }
 }
 
