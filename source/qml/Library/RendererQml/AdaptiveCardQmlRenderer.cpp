@@ -217,6 +217,8 @@ namespace RendererQml
 			
 			for (const auto& showCard : showCards)
             {
+				AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
+				//TODO: Test for multiple showcards
 				auto uiLoader = GetLoader(showCard.second);
 				auto uiComponent = GetComponent(showCard.first, showCard.second);
 
