@@ -285,13 +285,13 @@ namespace RendererQml
 	{
 		//Input format:"yyyy-mm-dd" , Output Format:System date format or "new Date(yyyy,mm,dd)"
 		std::vector<std::string> date_split = Utils::splitString(date, '-');
-		auto year = date_split[0];
-		auto month = date_split[1];
-		auto day = date_split[2];
+		const auto year = date_split[0];
+		const auto month = date_split[1];
+		const auto day = date_split[2];
 
 		if (MiniumDate_MaximumDate == true)
 		{
-			return "new Date(" + date_split[0] + "," + date_split[1] + "," + date_split[2] + ")";
+			return Formatter() << "new Date(" << year << "," << month << "," << day << ")";
 		}
 
 		auto dateFormat = GetSystemDateFormat();
@@ -300,13 +300,10 @@ namespace RendererQml
 		{
 			case RendererQml::DateFormat::ddmmyy:
 				return Formatter() << day << "-" << month << "-" << year;
-
 			case RendererQml::DateFormat::yymmdd:
 				return Formatter() << year << "-" << month << "-" << day;
-
 			case RendererQml::DateFormat::yyddmm:
 				return Formatter() << year << "-" << day << "-" << month;
-
 			default:
 				return Formatter() << month << "-" << day << "-" << year;
 		}
@@ -356,7 +353,7 @@ namespace RendererQml
         return newId;
     }
 
-	std::string Utils::FetchSystemDateTime(std::string& fetchFormat)
+	std::string Utils::FetchSystemDateTime(const std::string& fetchFormat)
 	{
 		char dateTimeBuffer[50];
 		struct tm newtime;
@@ -371,8 +368,8 @@ namespace RendererQml
 	}
 	bool Utils::isSystemTime12Hour()
 	{
-		std::string timeFormat = "%X";
-		std::string timeBuffer = FetchSystemDateTime(timeFormat);
+		const std::string timeFormat = "%X";
+		const std::string timeBuffer = FetchSystemDateTime(timeFormat);
 
 		std::vector<std::string> time_split = Utils::splitString( timeBuffer, ' ');
 
@@ -386,9 +383,10 @@ namespace RendererQml
 
 	RendererQml::DateFormat Utils::GetSystemDateFormat()
 	{
-		std::string SystemDateFormat = "%x";
-		std::string SystemDateBuffer = FetchSystemDateTime(SystemDateFormat);
+		const std::string SystemDateFormat = "%x";
+		const std::string SystemDateBuffer = FetchSystemDateTime(SystemDateFormat);
 
+		//Date separator can vary from system to system
 		char dateSeperator = '-';
 		if (SystemDateBuffer.find('/') != std::string::npos)
 		{
@@ -403,33 +401,30 @@ namespace RendererQml
 			dateSeperator = '.';
 		}
 
-		std::string ddmmyyFormat = Formatter() << "%d" << dateSeperator << "%m" << dateSeperator << "%Y";
+		const std::string ddmmyyFormat = Formatter() << "%d" << dateSeperator << "%m" << dateSeperator << "%Y";
 		std::string ddmmyyBuffer = FetchSystemDateTime(ddmmyyFormat);
 		
-		std::string mmddyyFormat = Formatter() << "%m" << dateSeperator << "%d" << dateSeperator << "%Y";
+		const std::string mmddyyFormat = Formatter() << "%m" << dateSeperator << "%d" << dateSeperator << "%Y";
 		std::string mmddyyBuffer = FetchSystemDateTime(mmddyyFormat);
 
-		std::string yymmddFormat = Formatter() << "%Y" << dateSeperator << "%m" << dateSeperator << "%d";
+		const std::string yymmddFormat = Formatter() << "%Y" << dateSeperator << "%m" << dateSeperator << "%d";
 		std::string yymmddBuffer = FetchSystemDateTime(yymmddFormat);
 
-		std::string yyddmmFormat = Formatter() << "%Y" << dateSeperator << "%d" << dateSeperator << "%m";
+		const std::string yyddmmFormat = Formatter() << "%Y" << dateSeperator << "%d" << dateSeperator << "%m";
 		std::string yyddmmBuffer = FetchSystemDateTime(yyddmmFormat);
 
 		if (SystemDateBuffer.compare(ddmmyyBuffer) == 0)
 		{
 			return RendererQml::DateFormat::ddmmyy;
 		}
-
 		else if (SystemDateBuffer.compare(yymmddBuffer) == 0)
 		{
 			return RendererQml::DateFormat::yymmdd;
 		}
-
 		else if (SystemDateBuffer.compare(yyddmmBuffer) == 0)
 		{
 			return RendererQml::DateFormat::yyddmm;
 		}
-
 		else
 		{
 			return RendererQml::DateFormat::mmddyy;

@@ -961,7 +961,6 @@ namespace RendererQml
 				DateRegex = "/^(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(\\d{4})$/";
 				break;
 			}
-
 			case RendererQml::DateFormat::yymmdd:
 			{
 				StringDateFormat = "yyyy-MM-dd";
@@ -969,7 +968,6 @@ namespace RendererQml
 				DateRegex = "/^(\\d{4})-(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])$/";
 				break;
 			}
-
 			case RendererQml::DateFormat::yyddmm:
 			{
 				StringDateFormat = "yyyy-dd-MM";
@@ -977,7 +975,6 @@ namespace RendererQml
 				DateRegex = "/^(\\d{4})-(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])$/";
 				break;
 			}
-
 			//Default case: mm-dd-yyyy
 			default:
 			{

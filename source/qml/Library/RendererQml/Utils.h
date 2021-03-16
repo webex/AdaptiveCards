@@ -113,7 +113,7 @@ namespace RendererQml
 
     private:
         Utils() {}
-		static std::string FetchSystemDateTime(std::string& fetchFormat);
+		static std::string FetchSystemDateTime(const std::string& fetchFormat);
     };
 
     template<class T, class U>
