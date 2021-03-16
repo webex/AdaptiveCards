@@ -1945,7 +1945,7 @@ namespace RendererQml
         return nullptr;
     }
 
-    const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(std::shared_ptr<AdaptiveCards::OpenUrlAction> action, std::shared_ptr<AdaptiveRenderContext> context)
+    const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(const std::shared_ptr<AdaptiveCards::OpenUrlAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
     {
         // Sample signal to emit on click
         //adaptiveCard.buttonClick(var title, var type, var data);
@@ -1956,7 +1956,7 @@ namespace RendererQml
         return function.str();
     }
 
-    const std::string AdaptiveCardQmlRenderer::getActionSubmitClickFunc(std::shared_ptr<AdaptiveCards::SubmitAction> action, std::shared_ptr<AdaptiveRenderContext> context)
+    const std::string AdaptiveCardQmlRenderer::getActionSubmitClickFunc(const std::shared_ptr<AdaptiveCards::SubmitAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
     {
         // Sample signal to emit on click
         //adaptiveCard.buttonClick(var title, var type, var data);
