@@ -1892,7 +1892,7 @@ namespace RendererQml
                 showCardIcon->Property("fillMode", "Image.PreserveAspectFit");
                 showCardIcon->Property("mipmap", "true");
                 showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
-                showCardIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
+                showCardIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"" );
 
                 textLayout->AddChild(showCardIcon);
             }
@@ -1949,6 +1949,7 @@ namespace RendererQml
 	{
 		std::ostringstream function;
 		function << buttonId << "_loader.visible = !" << buttonId << "_loader.visible";
+		function << "\n" << buttonId << "_dd.source =" <<  buttonId << "_dd.source == "<< "\"" << RendererQml::arrow_up_12 << "\" ?" <<"\"" << RendererQml::arrow_down_12 << "\"" << ":" << "\"" << RendererQml::arrow_up_12 << "\"";
 
 		return function.str();
 	}
