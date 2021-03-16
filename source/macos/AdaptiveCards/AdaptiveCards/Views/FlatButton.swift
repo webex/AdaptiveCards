@@ -216,14 +216,14 @@ open class FlatButton: NSButton, CALayerDelegate {
             titleRect.origin.y = (vSpacing * 1.75) + imageRect.height
             titleRect.origin.x = hSpacing + round(imageRect.width / 2)
             imageRect.origin.y = vSpacing * 1.75
-            imageRect.origin.x = hSpacing + round((titleRect.width - imageRect.width) / 2) + round(imageRect.width / 2) + 5
+            imageRect.origin.x = hSpacing + round((titleRect.width - imageRect.width) / 2) + round(imageRect.width / 2)
             if showsChevron {
                 chevronRect.origin.y = round((containerLayer.bounds.height - chevronRect.height) / 2)
                 chevronRect.origin.x = round((hSpacing * 2) + titleSize.width + (imageRect.width / 2))
             }
         case .imageBelow:
             titleRect.origin.y = round(vSpacing * 2.5)
-            titleRect.origin.x = hSpacing + round(imageRect.width / 2) + 5
+            titleRect.origin.x = hSpacing + round(imageRect.width / 2)
             imageRect.origin.y = round(vSpacing * 2.5) + titleRect.height
             imageRect.origin.x = hSpacing + round((titleRect.width - imageRect.width) / 2) + round(imageRect.width / 2)
             if showsChevron {
