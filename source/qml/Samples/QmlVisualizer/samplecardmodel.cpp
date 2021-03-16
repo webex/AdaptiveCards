@@ -114,17 +114,17 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
-			genQml.Property("background", "Image { source: \"" + getImagePath(genQml.GetElement()) + "\" }");
+			genQml.Property("background", "Image { source: \"" + getImagePath("Frame") + "\" }");
 		}
 		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
 		{
-			genQml.Property("source", "\"" + getImagePath(genQml.GetElement()) + "\"");
+			genQml.Property("source", "\"" + getImagePath("Image") + "\"");
 		}
 		else if (genQml.GetElement() == "Button" && genQml.HasProperty("readonly property bool hasIconUrl"))
 		{
 			std::string str = genQml.GetProperty("contentItem");
 
-			genQml.Property("contentItem", std::regex_replace(str, std::regex("source.*\n"), "source:\"" + getImagePath(genQml.GetElement()) + "\"\n"));
+			genQml.Property("contentItem", std::regex_replace(str, std::regex("source.*\n"), "source:\"" + getImagePath("Button") + "\"\n"));
 		}
 	});
 
