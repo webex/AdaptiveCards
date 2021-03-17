@@ -345,8 +345,6 @@ open class FlatButton: NSButton, CALayerDelegate {
             let chevIcon = NSImage(byReferencing: URL(fileURLWithPath: path))
             let maskLayer = CALayer()
             chevIcon.size = chevronImageSize
-//            chevIcon.size.width = (bounds.height / chevIcon.size.height) * chevIcon.size.width * 0.5
-//            chevIcon.size.height = bounds.height * 0.5
             let chevIconSize = chevIcon.size
             let chevIconRect: NSRect = .init(x: 0, y: 0, width: chevIconSize.width, height: chevIconSize.height)
             let chevRef = chevIcon
