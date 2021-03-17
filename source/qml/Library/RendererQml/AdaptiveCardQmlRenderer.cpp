@@ -364,29 +364,28 @@ namespace RendererQml
             else
             {
                 auto uiContainer = std::make_shared<QmlTag>("Row");
+                uiContainer->Property("id", Formatter() << input->GetId() << "_row");
                 uiContainer->Property("spacing", "5");
                 uiContainer->Property("width", "parent.width");
                 const auto actionsConfig = context->GetConfig()->GetActions();
-                //TODO: Add stretch property
-
-                uiContainer->AddChild(input->GetIsMultiline() ? scrollViewTag : uiTextInput);
+                
                 auto buttonElement = context->Render(input->GetInlineAction());
                 buttonElement->RemoveProperty("background");
                 buttonElement->RemoveProperty("contentItem");
+
+                // Append the icon to the button
+                // NOTE: always using icon size since it's difficult
+                // to match icon's height with text's height
+                auto bgRectangle = std::make_shared<QmlTag>("Rectangle");
+                bgRectangle->Property("id", Formatter() << buttonElement->GetId() << "_bg");
+                bgRectangle->Property("anchors.fill", "parent");
+                bgRectangle->Property("color", Formatter() << buttonElement->GetId() << ".pressed ? '#B4B6B8' : " << buttonElement->GetId() << ".hovered ? '#E6E8E8' : 'white'");
+                buttonElement->Property("background", bgRectangle->ToString());
                 
                 if (!input->GetInlineAction()->GetIconUrl().empty())
                 {
                     buttonElement->Property("height", std::to_string(actionsConfig.iconSize));
                     buttonElement->Property("width", std::to_string(actionsConfig.iconSize));
-
-                    // Append the icon to the button
-                    // NOTE: always using icon size since it's difficult
-                    // to match icon's height with text's height
-                    auto bgRectangle = std::make_shared<QmlTag>("Rectangle");
-                    bgRectangle->Property("id", Formatter() << buttonElement->GetId() << "_bg");
-                    bgRectangle->Property("anchors.fill", "parent");
-                    bgRectangle->Property("color", Formatter() << buttonElement->GetId() << ".pressed ? '#B4B6B8' : " << buttonElement->GetId() << ".hovered ? '#E6E8E8' : 'white'");
-                    buttonElement->Property("background", bgRectangle->ToString());
 
                     auto iconItem = std::make_shared<QmlTag>("Item");
                     iconItem->Property("anchors.fill", "parent");
@@ -396,11 +395,24 @@ namespace RendererQml
                     iconImage->Property("width", std::to_string(actionsConfig.iconSize));
                     iconImage->Property("fillMode", "Image.PreserveAspectFit");
                     iconImage->Property("source", "\"" + input->GetInlineAction()->GetIconUrl() + "\"");
-                    buttonElement->Property("contentItem", iconImage->ToString());                    
+                    iconItem->AddChild(iconImage);
+                    buttonElement->Property("contentItem", iconItem->ToString());
                 }
                 else
                 {
-                    buttonElement->Property("text", input->GetInlineAction()->GetTitle());
+                    buttonElement->Property("text", "\"" + input->GetInlineAction()->GetTitle() + "\"");
+                }
+
+                if (input->GetIsMultiline())
+                {
+                    buttonElement->Property("anchors.bottom", "parent.bottom");
+                    scrollViewTag->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
+                    uiContainer->AddChild(scrollViewTag);
+                }
+                else
+                {
+                    uiTextInput->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
+                    uiContainer->AddChild(uiTextInput);
                 }
                 uiContainer->AddChild(buttonElement);
                 return uiContainer;

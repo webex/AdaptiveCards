@@ -1588,6 +1588,22 @@ namespace Samples
             "title": "Reply",
             "url": "https://adaptivecards.io"
           }
+        },
+        {
+          "type": "TextBlock",
+          "text": "Multiline text input with an inline action"
+        },
+        {
+          "type": "Input.Text",
+          "id": "multilineInputId",
+          "inlineAction": {
+            "type": "Action.Submit",
+            "iconUrl": "https://adaptivecards.io/content/send.png",
+            "title": "Send"
+          },
+          "placeholder": "enter comment",
+          "maxLength": 500,
+          "isMultiline": true
         }
       ]
     })";
