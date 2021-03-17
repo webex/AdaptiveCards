@@ -104,6 +104,8 @@ namespace RendererQml
         AddContainerElements(bodyLayout, card->GetBody(), context);
         AddActions(bodyLayout, card->GetActions(), context);
 
+        //Add onclick event
+        addActionButtonClickFunc(context);
 		return uiCard;
 	}
 
@@ -1964,10 +1966,21 @@ namespace RendererQml
             contentLayout->AddChild(textLayout);
             buttonElement->Property("contentItem", contentItem->ToString());
 
-            //TODO: Add logic for toggle visiblity
+            context->addToActionButtonList(buttonElement, action);
+            return buttonElement;
+        }
 
-            //Add onclick event
-            std::string onClickedFunction;
+        return nullptr;
+    }
+
+    void AdaptiveCardQmlRenderer::addActionButtonClickFunc(const std::shared_ptr<AdaptiveRenderContext>& context)
+    {
+        for (auto& element : context->getActionButtonList())
+        {
+            //TODO: Add logic for toggle visiblity            
+            std::string onClickedFunction;            
+            auto buttonElement = element.first;
+            const auto action = element.second;
 
             if (action->GetElementTypeString() == "Action.OpenUrl")
             {
@@ -1984,18 +1997,15 @@ namespace RendererQml
             else if (action->GetElementTypeString() == "Action.Submit")
             {
                 onClickedFunction = getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action), context);
+
             }
             else
             {
                 onClickedFunction = "";
             }
-           
+
             buttonElement->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}\n");
-
-            return buttonElement;
-        }
-
-        return nullptr;
+        }        
     }
 
     const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(const std::shared_ptr<AdaptiveCards::OpenUrlAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
