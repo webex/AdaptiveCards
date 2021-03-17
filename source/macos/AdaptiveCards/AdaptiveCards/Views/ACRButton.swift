@@ -3,7 +3,7 @@ import AppKit
 class ACRButton: FlatButton {
     public var backgroundColor: NSColor = .init(red: 0.35216, green: 0.823529412, blue: 1, alpha: 1)
     public var hoverBackgroundColor: NSColor = .linkColor
-    public var activeBackgroundColor: NSColor = .gray
+    public var activeBackgroundColor: NSColor = .linkColor
     
     override init(frame: NSRect) {
         super.init(frame: frame)
