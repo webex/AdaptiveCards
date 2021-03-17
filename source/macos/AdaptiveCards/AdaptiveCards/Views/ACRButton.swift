@@ -15,9 +15,8 @@ class ACRButton: FlatButton {
         initialize()
     }
     
-    init(frame: NSRect, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconPosition: NSControl.ImagePosition = .imageLeft) {
+    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconPosition: NSControl.ImagePosition = .imageLeft) {
         super.init(frame: frame)
-        initialize()
         if wantsChevron {
             showsChevron = wantsChevron
         }
@@ -26,6 +25,7 @@ class ACRButton: FlatButton {
             iconImageName = iconNamed
             iconPositioned = iconPosition
         }
+        initialize()
     }
     
     private func initialize() {
@@ -40,7 +40,9 @@ class ACRButton: FlatButton {
         offAnimationDuration = 0.0
         iconColor = NSColor.white
         activeIconColor = NSColor.white
-        momentary = false
+        momentary = !showsChevron
+        iconColor = .white
+        print(showsIcon, iconImageName, iconPositioned)
         if showsIcon {
             guard let bundle = Bundle(identifier: "com.test.test.AdaptiveCards"),
                   let path = bundle.path(forResource: iconImageName, ofType: "png") else {
