@@ -34,7 +34,8 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         var accumulatedWidth: CGFloat = 0, maxWidth: CGFloat = 0
-        if actionSet.getActions().isEmpty {
+        guard !actionSet.getActions().isEmpty else {
+            logInfo("Actions in ActionSet is empty")
             return actionSetView
         }
         
@@ -42,7 +43,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         if let maxActionsToRender = adaptiveActionHostConfig?.maxActions, let uMaxActionsToRender = maxActionsToRender as? Int {
             actionsToRender = min(uMaxActionsToRender, actionSet.getActions().count)
             if actionSet.getActions().count > uMaxActionsToRender {
-                print("WARNING: Some actions were not rendered due to exceeding the maximum number \(uMaxActionsToRender) actions are allowed")
+                logError("WARNING: Some actions were not rendered due to exceeding the maximum number \(uMaxActionsToRender) actions are allowed")
             }
         }
         
