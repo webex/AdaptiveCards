@@ -352,6 +352,61 @@ namespace RendererQml
 
         context->addToInputElementList(origionalElementId, (uiTextInput->GetId() + ".text"));
 
+        // Add inline action mode
+        if (context->GetConfig()->GetSupportsInteractivity() && input->GetInlineAction() != nullptr)
+        {
+            // ShowCard Inline Action Mode is not supported
+            if (input->GetInlineAction()->GetElementType() == AdaptiveCards::ActionType::ShowCard &&
+                context->GetConfig()->GetActions().showCard.actionMode == AdaptiveCards::ActionMode::Inline)
+            {
+                context->AddWarning(AdaptiveWarning(Code::RenderException, "Inline ShowCard not supported for InlineAction"));
+            }
+            else
+            {
+                auto uiContainer = std::make_shared<QmlTag>("Row");
+                uiContainer->Property("spacing", "5");
+                uiContainer->Property("width", "parent.width");
+                const auto actionsConfig = context->GetConfig()->GetActions();
+                //TODO: Add stretch property
+
+                uiContainer->AddChild(input->GetIsMultiline() ? scrollViewTag : uiTextInput);
+                auto buttonElement = context->Render(input->GetInlineAction());
+                buttonElement->RemoveProperty("background");
+                buttonElement->RemoveProperty("contentItem");
+                
+                if (!input->GetInlineAction()->GetIconUrl().empty())
+                {
+                    buttonElement->Property("height", std::to_string(actionsConfig.iconSize));
+                    buttonElement->Property("width", std::to_string(actionsConfig.iconSize));
+
+                    // Append the icon to the button
+                    // NOTE: always using icon size since it's difficult
+                    // to match icon's height with text's height
+                    auto bgRectangle = std::make_shared<QmlTag>("Rectangle");
+                    bgRectangle->Property("id", Formatter() << buttonElement->GetId() << "_bg");
+                    bgRectangle->Property("anchors.fill", "parent");
+                    bgRectangle->Property("color", Formatter() << buttonElement->GetId() << ".pressed ? '#B4B6B8' : " << buttonElement->GetId() << ".hovered ? '#E6E8E8' : 'white'");
+                    buttonElement->Property("background", bgRectangle->ToString());
+
+                    auto iconItem = std::make_shared<QmlTag>("Item");
+                    iconItem->Property("anchors.fill", "parent");
+                    auto iconImage = std::make_shared<QmlTag>("Image");
+                    iconImage->Property("id", Formatter() << buttonElement->GetId() << "_img");
+                    iconImage->Property("height", std::to_string(actionsConfig.iconSize));
+                    iconImage->Property("width", std::to_string(actionsConfig.iconSize));
+                    iconImage->Property("fillMode", "Image.PreserveAspectFit");
+                    iconImage->Property("source", "\"" + input->GetInlineAction()->GetIconUrl() + "\"");
+                    buttonElement->Property("contentItem", iconImage->ToString());                    
+                }
+                else
+                {
+                    buttonElement->Property("text", input->GetInlineAction()->GetTitle());
+                }
+                uiContainer->AddChild(buttonElement);
+                return uiContainer;
+            }
+        }        
+
 		if (input->GetIsMultiline())
 		{
 			return scrollViewTag;
