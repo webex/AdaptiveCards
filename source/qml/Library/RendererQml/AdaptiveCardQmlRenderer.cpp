@@ -1979,7 +1979,7 @@ namespace RendererQml
         {
             //TODO: Add logic for toggle visiblity            
             std::string onClickedFunction;            
-            auto buttonElement = element.first;
+            const auto buttonElement = element.first;
             const auto action = element.second;
 
             if (action->GetElementTypeString() == "Action.OpenUrl")

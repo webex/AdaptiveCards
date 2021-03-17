@@ -235,7 +235,7 @@ namespace RendererQml
         return m_inputElementList;
     }
 
-    void AdaptiveRenderContext::addToActionButtonList(std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::BaseActionElement>& action)
+    void AdaptiveRenderContext::addToActionButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::BaseActionElement>& action)
     {
         m_actionButtonList[buttonElement] = action;
     }
