@@ -33,7 +33,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
             }
         }
         
-        var accumulatedWidth = 0, accumulatedHeight = 0, maxWidth = 0, maxHeight = 0
+        var accumulatedWidth: CGFloat = 0, maxWidth: CGFloat = 0
         if actionSet.getActions().isEmpty {
             return actionSetView
         }
@@ -41,6 +41,9 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         var actionsToRender: Int = 0
         if let maxActionsToRender = adaptiveActionHostConfig?.maxActions, let uMaxActionsToRender = maxActionsToRender as? Int {
             actionsToRender = min(uMaxActionsToRender, actionSet.getActions().count)
+            if actionSet.getActions().count > uMaxActionsToRender {
+                print("WARNING: Some actions were not rendered due to exceeding the maximum number \(uMaxActionsToRender) actions are allowed")
+            }
         }
         
         for index in 0..<actionsToRender {
@@ -53,10 +56,8 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
                 if actionSetView.orientation == .vertical {
                     view.widthAnchor.constraint(equalTo: actionSetView.widthAnchor).isActive = true
                 }
-                accumulatedWidth += Int(view.intrinsicContentSize.width)
-                accumulatedHeight += Int(view.intrinsicContentSize.height)
-                maxWidth = max(maxWidth, Int(view.intrinsicContentSize.width))
-                maxHeight = max(maxHeight, Int(view.intrinsicContentSize.height))
+                accumulatedWidth += view.intrinsicContentSize.width
+                maxWidth = max(maxWidth, view.intrinsicContentSize.width)
                 actionSetView.actions.append(view)
             }
         }
@@ -64,9 +65,9 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         var contentWidth = accumulatedWidth
         if let spacing = adaptiveActionHostConfig?.buttonSpacing {
             actionSetView.spacing = CGFloat(truncating: spacing)
-            actionSetView.padding = CGFloat(truncating: spacing)
+            actionSetView.elementSpacing = CGFloat(truncating: spacing)
             if actionSetView.orientation == .horizontal {
-                contentWidth += Int(truncating: spacing) * (actionsToRender - 1)
+                contentWidth += CGFloat(truncating: spacing) * CGFloat(actionsToRender - 1)
             } else {
                 contentWidth = maxWidth
             }

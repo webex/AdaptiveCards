@@ -13,7 +13,7 @@ class ACRActionSetView: NSView {
     
     public var totalWidth: CGFloat = 0
     public var actions: [NSView] = []
-    public var padding: CGFloat = 0
+    public var elementSpacing: CGFloat = 0
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -62,17 +62,17 @@ class ACRActionSetView: NSView {
         // new child stackview for horizontal orientation
         var curview = NSStackView()
         curview.translatesAutoresizingMaskIntoConstraints = false
-        curview.spacing = padding
+        curview.spacing = elementSpacing
         
-        // adding new child stackview to stackview and the parent stackview will align child stackview vertically
+        // adding new child stackview to parent stackview and the parent stackview will align child stackview vertically
         stackview.addArrangedSubview(curview)
         stackview.orientation = .vertical
         stackview.alignment = .leading
         
+        totalWidth = 0
         for view in actions {
             accumulatedWidth += view.intrinsicContentSize.width
-            accumulatedWidth += padding
-            totalWidth = frameWidth
+            totalWidth = max(totalWidth, accumulatedWidth)
             if accumulatedWidth > frameWidth {
                 let newStackView: NSStackView = {
                     let view = NSStackView()
@@ -81,13 +81,14 @@ class ACRActionSetView: NSView {
                 }()
                 curview = newStackView
                 curview.addArrangedSubview(view)
-                curview.spacing = padding
+                curview.spacing = elementSpacing
                 accumulatedWidth = 0
                 accumulatedWidth += view.intrinsicContentSize.width
-                accumulatedWidth += padding
+                accumulatedWidth += elementSpacing
                 stackview.addArrangedSubview(newStackView)
             } else {
                 curview.addArrangedSubview(view)
+                accumulatedWidth += elementSpacing
             }
         }
     }

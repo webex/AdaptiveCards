@@ -13,8 +13,8 @@
             "actions": [
                 {
                     "type": "Action.OpenUrl",
-                    "title": "ShowCard",
-                    "url": "vhsjdvja"
+                    "title": "OpenUrl",
+                    "url": "https://adaptivecards.io"
                 },
                 {
                     "type": "Action.OpenUrl",
