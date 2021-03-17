@@ -42,7 +42,6 @@ class ACRButton: FlatButton {
         activeIconColor = NSColor.white
         momentary = !showsChevron
         iconColor = .white
-        print(showsIcon, iconImageName, iconPositioned)
         if showsIcon {
             guard let bundle = Bundle(identifier: "com.test.test.AdaptiveCards"),
                   let path = bundle.path(forResource: iconImageName, ofType: "png") else {
