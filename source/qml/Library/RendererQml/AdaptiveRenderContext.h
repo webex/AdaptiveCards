@@ -5,6 +5,8 @@
 #include "AdaptiveWarning.h"
 #include "AdaptiveRenderArgs.h"
 
+#include "SubmitAction.h"
+
 namespace RendererQml
 {
     class AdaptiveRenderContext;
@@ -46,9 +48,12 @@ namespace RendererQml
 
 		void addToInputElementList(const std::string& elementId, const std::string& value);
         const std::map<std::string, std::string> getInputElementList();
-
+     
+     void addToActionButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::BaseActionElement>& action);
+        const std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::BaseActionElement>> getActionButtonList();
+   
 		const int getCardWidth();
-
+        
     private:
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
@@ -60,6 +65,8 @@ namespace RendererQml
         std::string m_CardRootId;
 		std::shared_ptr<QmlTag> m_CardRootElement;
         std::map<std::string, std::string> m_inputElementList;
+        std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::BaseActionElement>> m_actionButtonList;
+
         int m_ContainerCounter{ 0 };
         int m_ImageCounter{ 0 };
 		int m_ColumnSetCounter{ 0 };
