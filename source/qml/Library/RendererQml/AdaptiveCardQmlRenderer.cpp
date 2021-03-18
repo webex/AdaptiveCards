@@ -2054,12 +2054,22 @@ namespace RendererQml
 		auto outerContainer = std::make_shared<QmlTag>("Column");
 		outerContainer->Property("width", "parent.width");
 
+		if (!actionSet->GetIsVisible())
+		{
+			outerContainer->Property("visible", "false");
+		}
+
 		auto actionsConfig = context->GetConfig()->GetActions();
+		const auto oldActionAlignment = context->GetConfig()->GetActions().actionAlignment;
 
 		actionsConfig.actionAlignment = (AdaptiveCards::ActionAlignment) actionSet->GetHorizontalAlignment();
 		context->GetConfig()->SetActions(actionsConfig);
 
 		AddActions(outerContainer, actionSet->GetActions(), context);
+
+		actionsConfig.actionAlignment = oldActionAlignment;
+		context->GetConfig()->SetActions(actionsConfig);
+
 		return outerContainer;
 	}
 }
