@@ -47,6 +47,8 @@ namespace RendererQml
 		void addToInputElementList(const std::string& elementId, const std::string& value);
         const std::map<std::string, std::string> getInputElementList();
 
+		const int getCardWidth();
+
     private:
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;

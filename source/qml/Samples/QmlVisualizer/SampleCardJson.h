@@ -1580,31 +1580,11 @@ namespace Samples
 			  }
 			],
 			"actions": [
-            {
-                "type": "Action.OpenUrl",
-                "title": "Action.OpenUrl",
-                "url": "https://adaptivecards.io"
-            },
-            {
-                "type": "Action.OpenUrl",
-                "title": "Action.OpenUrl.icon",
-                "url": "https://adaptivecards.io",
-                "iconUrl": "https://adaptivecards.io/content/cats/1.png"
-            },
-            {
-                "type": "Action.OpenUrl",
-                "title": "Action.OpenUrl",
-                "url": "https://adaptivecards.io",
-                "style": "destructive"
-            },
-            {
-                "type": "Action.OpenUrl",
-                "title": "Action.OpenUrl.icon",
-                "url": "https://adaptivecards.io",
-                "iconUrl": "https://adaptivecards.io/content/cats/1.png",
-                "style": "positive"
-            }
-        ]
+			  {
+				"type": "Action.Submit",
+				"title": "Neat!"
+			  }
+			]
 		  }
 		}
 	  ]

@@ -80,7 +80,6 @@ namespace RendererQml
 		static std::string GenerateChoiceSetButtonId(const std::string& parentId, enum CheckBoxType ButtonType, const int& ButtonNumber);
         static const std::string getChoiceSetSelectedValuesFunc(const std::shared_ptr<QmlTag>& btnGroup, const bool isMultiselect);
 		static std::string GetModel(std::vector<Checkbox>& Choices);
-		static std::shared_ptr<QmlTag> GetLoader(const std::shared_ptr<QmlTag>& buttonElement);
 		static std::shared_ptr<QmlTag> GetComponent(const std::shared_ptr<QmlTag>& buttonElement,const std::shared_ptr<QmlTag>& uiCard);
 
 		template <typename CardElement>

@@ -230,16 +230,6 @@ namespace RendererQml
         return m_CardRootId;
     }
 
-	void AdaptiveRenderContext::setCardRootElement(const std::shared_ptr<QmlTag>& rootElement)
-	{
-		m_CardRootElement = rootElement;
-	}
-
-	const std::shared_ptr<QmlTag> AdaptiveRenderContext::getCardRootElement()
-	{
-		return m_CardRootElement;
-	}
-
 	void AdaptiveRenderContext::addToInputElementList(const std::string& elementId, const std::string& value)
     {
         m_inputElementList[elementId] = value;
@@ -250,4 +240,18 @@ namespace RendererQml
         return m_inputElementList;
     }
 
+	void AdaptiveRenderContext::setCardRootElement(const std::shared_ptr<QmlTag>& rootElement)
+	{
+		m_CardRootElement = rootElement;
+	}
+
+	const std::shared_ptr<QmlTag> AdaptiveRenderContext::getCardRootElement()
+	{
+		return m_CardRootElement;
+	}
+
+	const int AdaptiveRenderContext::getCardWidth()
+	{
+		return 600;
+	}
 }

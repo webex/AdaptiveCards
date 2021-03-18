@@ -75,7 +75,7 @@ namespace RendererQml
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
         //TODO: Width can be set as config
-        uiCard->Property("width", "600");
+        uiCard->Property("width", std::to_string(context->getCardWidth()));
         uiCard->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
 		auto columnLayout = std::make_shared<QmlTag>("ColumnLayout");
@@ -198,7 +198,7 @@ namespace RendererQml
 						if (uiCard != nullptr)
 						{
 							uiCard->Property("readonly property int margins", "0");
-							uiCard->Property("width", Formatter() << "600 - " << std::to_string(context->GetConfig()->GetSpacing().paddingSpacing*2));
+							uiCard->Property("width", Formatter() << std::to_string(context->getCardWidth()) << " - " << std::to_string(context->GetConfig()->GetSpacing().paddingSpacing*2));
 							showCards.push_back({uiAction, uiCard});
 						}
                     }
@@ -214,33 +214,26 @@ namespace RendererQml
             }
 
 			const auto uiCardRootElement = context->getCardRootElement();
-			
+
+			if (!showCards.empty())
+			{
+				AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
+				auto uiLoader = std::make_shared<QmlTag>("Loader");
+				uiLoader->Property("id", "showcard_loader");
+				uiLoader->Property("sourceComponent", Formatter() << showCards[0].first->GetId() << "_component");
+				uiLoader->Property("visible", "false");
+				uiContainer->AddChild(uiLoader);
+			}
+
 			for (const auto& showCard : showCards)
             {
-				AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
-				//TODO: Test for multiple showcards
-				//change here
-				auto uiLoader = GetLoader(showCard.first);
-				auto uiComponent = GetComponent(showCard.first, showCard.second);
-
-				uiContainer->AddChild(uiLoader);
-				uiCardRootElement->AddChild(uiComponent);
+				uiCardRootElement->AddChild(GetComponent(showCard.first, showCard.second));
             }
 
             // Restore the iconPlacement for the context.
             actionsConfig.iconPlacement = oldConfigIconPlacement;
         }
     }
-
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetLoader(const std::shared_ptr<QmlTag>& buttonElement)
-	{
-		auto uiLoader = std::make_shared<QmlTag>("Loader");
-		uiLoader->Property("id", Formatter() << buttonElement->GetId() << "_loader");
-		uiLoader->Property("sourceComponent", Formatter() << buttonElement->GetId() << "_component");
-		uiLoader->Property("visible", "false");
-
-		return uiLoader;
-	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<QmlTag>& uiCard)
 	{
@@ -249,7 +242,9 @@ namespace RendererQml
 
 		const std::string layoutId = Formatter() << buttonElement->GetId() << "_component_layout";
 		std::string uiCard_string = uiCard->ToString();
-		std::replace(uiCard_string.begin(), uiCard_string.end(), '"', '\'');
+		uiCard_string = Utils::Replace(uiCard_string, "\\", "\\\\");
+		uiCard_string = Utils::Replace(uiCard_string, "\"", "\\\"");
+		//std::string uiCard_string = std::regex_replace(uiCard_string2, std::regex("\""), "\\\"");
 
 		auto uiColumn = std::make_shared<QmlTag>("ColumnLayout");
 		uiColumn->Property("id", layoutId);
@@ -1918,28 +1913,64 @@ namespace RendererQml
             {
                 if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
                 {
-                    bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#196323' : '#1B8728'");
-                    bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#196323' : " << buttonId << ".hovered ? '#1B8728' : 'white'");
-                    contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
+					if (isShowCardButton)
+					{
+						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#196323' : "<< buttonId << ".pressed ? '#196323' : '#1B8728'");
+						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#196323' : " << buttonId << ".pressed ? '#196323' : " << buttonId << ".hovered ? '#1B8728' : 'white'");
+						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
+					}
+					else
+					{
+						bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#196323' : '#1B8728'");
+						bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#196323' : " << buttonId << ".hovered ? '#1B8728' : 'white'");
+						contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
+					}
                 }
                 else if (Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
                 {
-                    bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#A12C23' : '#D93829'");
-                    bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#A12C23' : " << buttonId << ".hovered ? '#D93829' : 'white'");
-                    contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
+					if(isShowCardButton)
+					{
+						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#A12C23' : " << buttonId << ".pressed ? '#A12C23' : '#D93829'");
+						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#A12C23' : " << buttonId << ".pressed ? '#A12C23' : " << buttonId << ".hovered ? '#D93829' : 'white'");
+						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
+					}
+					else
+					{
+						bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#A12C23' : '#D93829'");
+						bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#A12C23' : " << buttonId << ".hovered ? '#D93829' : 'white'");
+						contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
+					}
                 }
                 else
                 {
-                    bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
-                    bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
-                    contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+					if (isShowCardButton)
+					{
+						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
+						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
+						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+					}
+					else
+					{
+						bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
+						bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
+						contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+					}
                 }
             }
             else
             {
-                bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
-                bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
-                contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+				if (isShowCardButton)
+				{
+					bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
+					bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
+					contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+				}
+				else
+				{
+					bgRectangle->Property("border.color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
+					bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
+					contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+				}
             }
 
             textLayout->AddChild(contentText);
@@ -2011,7 +2042,8 @@ namespace RendererQml
 	{
 		std::ostringstream function;
 		function << buttonElement->GetId() << ".showCard = !" << buttonElement->GetId() << ".showCard";
-		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
+		function << "\n" << "if(" << buttonElement->GetId() << ".showCard)" << "\n{\nshowcard_loader.sourceComponent = " << buttonElement->GetId() << "_component\n}";
+		function << "\n" << "showcard_loader.visible = " << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_dd.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
 
 		return function.str();
