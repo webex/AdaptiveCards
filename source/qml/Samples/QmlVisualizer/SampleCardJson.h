@@ -1590,7 +1590,7 @@ namespace Samples
 	  ]
 	})";
 
-    const std::string card_Action_Inline = R"({
+	const std::string card_Action_Inline = R"({
       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
       "type": "AdaptiveCard",
       "version": "1.2",
@@ -1640,6 +1640,5 @@ namespace Samples
         }
       ]
     })";
-
 }
 
