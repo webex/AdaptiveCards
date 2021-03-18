@@ -67,6 +67,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             print("Font family - \(config.getFontFamily() ?? "nil")")
             
             let cardView = AdaptiveCard.render(card: card, with: config, width: 335, actionDelegate: self)
+            // This changes the appearance of the native components depending on the hostConfig
             if darkTheme {
                 if #available(OSX 10.14, *) {
                     cardView.appearance = NSAppearance(named: .darkAqua)
@@ -91,11 +92,8 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         guard selectedItem >= 0 && selectedItem < configs.count else { return config }
         let path = "/hostconfigs/\(configs[selectedItem])"
         let parts = path.components(separatedBy: ".")
-        if path.contains("dark") {
-            darkTheme = true
-        } else {
-            darkTheme = false
-        }
+        // Check for dark theme in hostConfig file path
+        darkTheme = path.contains("dark")
         guard let filepath = Bundle.main.path(forResource: parts[0], ofType: "json") else {
             print("File Not found: \(configs[selectedItem])")
             return config
