@@ -299,13 +299,13 @@ namespace RendererQml
 		switch (dateFormat)
 		{
 			case RendererQml::DateFormat::ddmmyy:
-				return Formatter() << day << "-" << month << "-" << year;
+				return Formatter() << "new Date(" << year << "," << month << "," << day << ")" << ".toLocaleString(Qt.locale(\"en_US\"),\"dd-MMM-yyyy\")";
 			case RendererQml::DateFormat::yymmdd:
-				return Formatter() << year << "-" << month << "-" << day;
+				return Formatter() << "new Date(" << year << "," << month << "," << day << ")" << ".toLocaleString(Qt.locale(\"en_US\"),\"yyyy-MMM-dd\")";
 			case RendererQml::DateFormat::yyddmm:
-				return Formatter() << year << "-" << day << "-" << month;
+				return Formatter() << "new Date(" << year << "," << month << "," << day << ")" << ".toLocaleString(Qt.locale(\"en_US\"),\"yyyy-dd-MMM\")";
 			default:
-				return Formatter() << month << "-" << day << "-" << year;
+				return Formatter() << "new Date(" << year << "," << month << "," << day << ")" << ".toLocaleString(Qt.locale(\"en_US\"),\"MMM-dd-yyyy\")";
 		}
 		
 	}

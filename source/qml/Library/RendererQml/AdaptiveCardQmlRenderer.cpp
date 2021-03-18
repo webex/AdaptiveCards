@@ -962,7 +962,7 @@ namespace RendererQml
 
         if (!input->GetValue().empty())
         {
-            uiDateInput->Property("text", "\"" + Utils::GetDate(input->GetValue(), false) + "\"");
+            uiDateInput->Property("text", Utils::GetDate(input->GetValue(), false) );
         }
 
         uiDateInput->Property("property string selectedDate", "\"" + input->GetValue() + "\"");
@@ -1033,38 +1033,49 @@ namespace RendererQml
         calendarBoxTag->Property("height", "300");
         
 		auto EnumDateFormat = Utils::GetSystemDateFormat();
-		auto StringDateFormat = "MM-dd-yyyy";
-		auto inputMask = "00-00-0000;0";
-		auto DateRegex = "/^(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])-(\\d{4})$/";
+		
+		const auto dateSeparator = "-";
+		const auto day_Regex = "([-0123]-|0\\d|[12]\\d|3[01])";
+		const auto month_Regex = "(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)";
+		const auto year_Regex = "(-{4}|\\d-{3}|\\d{2}-{2}|\\d{3}-|\\d{4})";
+
+		//Default date format: MMM-dd-yyyy
+		std::string DateRegex = Formatter() << "/^" << month_Regex << dateSeparator << day_Regex << dateSeparator << year_Regex << "$/";
+		std::string StringDateFormat = Formatter() << "MMM" << dateSeparator << "dd" << dateSeparator << "yyyy";
+		std::string inputMask = Formatter() << ">x<xx" << dateSeparator << "xx" << dateSeparator << "xxxx;-";
 
 		switch (EnumDateFormat)
 		{
 			case RendererQml::DateFormat::ddmmyy:
 			{
-				StringDateFormat = "dd-MM-yyyy";
-				DateRegex = "/^(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(\\d{4})$/";
-                uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '00' || getText(3,5) === '00' || getText(6,10) === '0000'){selectedDate = '';}else{selectedDate = getText(6,10) + '-' + getText(3,5) + '-' + getText(0,2);}}");
+				StringDateFormat = Formatter() << "dd" << dateSeparator << "MMM" << dateSeparator << "yyyy";
+				DateRegex = Formatter() << "/^" << day_Regex << dateSeparator << month_Regex << dateSeparator << year_Regex << "$/";
+				//TODO: Change Logic to avoid partial date submit
+				uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '--' || getText(3,6) === '---' || getText(7,11) === '----'){selectedDate = '';}else{selectedDate = getText(7,11) + '-' + getText(3,6) + '-' + getText(0,2);}}");
 				break;
 			}
 			case RendererQml::DateFormat::yymmdd:
 			{
-				StringDateFormat = "yyyy-MM-dd";
-				inputMask = "0000-00-00;0";
-				DateRegex = "/^(\\d{4})-(0[0-9]|1[0-2])-(0?[0-9]|[12][0-9]|3[01])$/";
-                uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(5,7) + '-' + getText(8,10);}}");
+				StringDateFormat = Formatter() << "yyyy" << dateSeparator << "MMM" << dateSeparator << "dd";
+				inputMask = Formatter() << "xxxx" << dateSeparator << ">x<xx" << dateSeparator << "xx;-";
+				DateRegex = Formatter() << "/^" << year_Regex << dateSeparator << month_Regex << dateSeparator << day_Regex << "$/";
+				//TODO: Change Logic to avoid partial date submit
+				uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(5,7) + '-' + getText(8,10);}}");
 				break;
 			}
 			case RendererQml::DateFormat::yyddmm:
 			{
-				StringDateFormat = "yyyy-dd-MM";
-				inputMask = "0000-00-00;0";
-				DateRegex = "/^(\\d{4})-(0?[0-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])$/";
-                uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(8,10) + '-' + getText(5,7);}}");
+				StringDateFormat = Formatter() << "yyyy" << dateSeparator << "dd" << dateSeparator << "MMM";
+				inputMask = Formatter() << "xxxx" << dateSeparator << "xx" << dateSeparator << ">x<xx;-";
+				DateRegex = Formatter() << "/^" << year_Regex << dateSeparator << day_Regex << dateSeparator << month_Regex << "$/";
+				//TODO: Change Logic to avoid partial date submit
+				uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(8,10) + '-' + getText(5,7);}}");
                 break;
 			}
 			//Default case: mm-dd-yyyy
 			default:
 			{
+				//TODO: Change Logic to avoid partial date submit
                 uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '00' || getText(3,5) === '00' || getText(6,10) === '0000'){selectedDate = '';}else{selectedDate = getText(6,10) + '-' + getText(0,2) + '-' + getText(3,5);}}");
 				break;
 			}
