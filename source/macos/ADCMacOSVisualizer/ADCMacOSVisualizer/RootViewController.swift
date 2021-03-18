@@ -11,6 +11,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     private var configs: [String] = []
     private var hostConfigString = sampleHostConfig // default config string
     private let webexConfig: String = "webex_light_config.json"
+    private var darkTheme: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,6 +67,14 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             print("Font family - \(config.getFontFamily() ?? "nil")")
             
             let cardView = AdaptiveCard.render(card: card, with: config, width: 335, actionDelegate: self)
+            if darkTheme {
+                if #available(OSX 10.14, *) {
+                    cardView.appearance = NSAppearance(named: .darkAqua)
+                } else {
+                    // Fallback on earlier versions
+                    cardView.appearance = NSAppearance(named: .aqua)
+                }
+            }
             if let renderedView = stackView.arrangedSubviews.first {
                 renderedView.removeFromSuperview()
             }
@@ -82,6 +91,11 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         guard selectedItem >= 0 && selectedItem < configs.count else { return config }
         let path = "/hostconfigs/\(configs[selectedItem])"
         let parts = path.components(separatedBy: ".")
+        if path.contains("dark") {
+            darkTheme = true
+        } else {
+            darkTheme = false
+        }
         guard let filepath = Bundle.main.path(forResource: parts[0], ofType: "json") else {
             print("File Not found: \(configs[selectedItem])")
             return config
