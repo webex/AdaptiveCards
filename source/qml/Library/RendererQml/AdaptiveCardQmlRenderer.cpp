@@ -1008,7 +1008,7 @@ namespace RendererQml
         mouseAreaTag->Property("anchors.right", "parent.right");
         mouseAreaTag->Property("enabled", "true");
 
-        std::string onClicked_value = "{ parent.focus=true; " + calendar_box_id + ".visible=!" + calendar_box_id + ".visible; parent.z=" + calendar_box_id + ".visible?1:0; }";
+        std::string onClicked_value = "{ parent.forceActiveFocus(); " + calendar_box_id + ".visible=!" + calendar_box_id + ".visible; parent.z=" + calendar_box_id + ".visible?1:0; }";
         mouseAreaTag->Property("onClicked", onClicked_value);
 
         uiDateInput->AddChild(mouseAreaTag);
