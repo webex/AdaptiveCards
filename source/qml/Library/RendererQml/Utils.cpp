@@ -281,33 +281,21 @@ namespace RendererQml
 		}
 	}
 
-	std::string Utils::GetDate(std::string date, bool MiniumDate_MaximumDate)
+	std::string Utils::GetDate(const std::string& date, bool MiniumDate_MaximumDate)
 	{
-		//Input format:"yyyy-mm-dd" , Output Format:System date format or "new Date(yyyy,mm,dd)"
+		//Input format:"yyyy-mm-dd" , Output Format: "new Date(yyyy,mm,dd)"
 		std::vector<std::string> date_split = Utils::splitString(date, '-');
 		const auto year = date_split[0];
-		const auto month = date_split[1];
+		auto month = date_split[1];
 		const auto day = date_split[2];
 
+		//To set minimum or maximum date for calendar, month starts from 0 instead 1
 		if (MiniumDate_MaximumDate == true)
 		{
-			return Formatter() << "new Date(" << year << "," << month << "," << day << ")";
+			month = std::to_string(stoi(month) - 1);
 		}
 
-		auto dateFormat = GetSystemDateFormat();
-
-		switch (dateFormat)
-		{
-			case RendererQml::DateFormat::ddmmyy:
-				return Formatter() << "new Date(" << year << "," << month << "," << day << ")" << ".toLocaleString(Qt.locale(\"en_US\"),\"dd-MMM-yyyy\")";
-			case RendererQml::DateFormat::yymmdd:
-				return Formatter() << "new Date(" << year << "," << month << "," << day << ")" << ".toLocaleString(Qt.locale(\"en_US\"),\"yyyy-MMM-dd\")";
-			case RendererQml::DateFormat::yyddmm:
-				return Formatter() << "new Date(" << year << "," << month << "," << day << ")" << ".toLocaleString(Qt.locale(\"en_US\"),\"yyyy-dd-MMM\")";
-			default:
-				return Formatter() << "new Date(" << year << "," << month << "," << day << ")" << ".toLocaleString(Qt.locale(\"en_US\"),\"MMM-dd-yyyy\")";
-		}
-		
+		return Formatter() << "new Date(" << year << "," << month << "," << day << ")";		
 	}
 
 	const bool Utils::isValidTime(const std::string& time)

@@ -960,11 +960,6 @@ namespace RendererQml
         uiDateInput->Property("font.pixelSize", std::to_string(fontSize));
         uiDateInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-        if (!input->GetValue().empty())
-        {
-            uiDateInput->Property("text", Utils::GetDate(input->GetValue(), false) );
-        }
-
         uiDateInput->Property("property string selectedDate", "\"" + input->GetValue() + "\"");
 
         //TODO: Add stretch property
@@ -1021,8 +1016,8 @@ namespace RendererQml
         auto calendarTag = std::make_shared<QmlTag>("Calendar");
         calendarTag->AddImports("import QtQuick.Controls 1.4");
         calendarTag->Property("anchors.fill", "parent");
-        calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(), true) : "new Date(1900,1,1)");
-        calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(), true) : "new Date(2050,1,1)");
+        calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(),true) : "new Date(1900,1,1)");
+        calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(),true) : "new Date(2050,1,1)");
 
         auto calendarBoxTag = std::make_shared<QmlTag>("Rectangle");
         calendarBoxTag->Property("id", calendar_box_id);
@@ -1049,6 +1044,7 @@ namespace RendererQml
 			case RendererQml::DateFormat::ddmmyy:
 			{
 				StringDateFormat = Formatter() << "dd" << dateSeparator << "MMM" << dateSeparator << "yyyy";
+				inputMask = Formatter() << "xx" << dateSeparator << ">x<xx" << dateSeparator << "xxxx;-";
 				DateRegex = Formatter() << "/^" << day_Regex << dateSeparator << month_Regex << dateSeparator << year_Regex << "$/";
 				//TODO: Change Logic to avoid partial date submit
 				uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '--' || getText(3,6) === '---' || getText(7,11) === '----'){selectedDate = '';}else{selectedDate = getText(7,11) + '-' + getText(3,6) + '-' + getText(0,2);}}");
@@ -1080,6 +1076,12 @@ namespace RendererQml
 				break;
 			}
 		}
+
+		if (!input->GetValue().empty())
+		{
+			uiDateInput->Property("text", Formatter() << Utils::GetDate(input->GetValue(),false) << ".toLocaleString(Qt.locale(\"en_US\")," << "\"" << StringDateFormat << "\"" << ")" );
+		}
+
 		uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() : "\"Select date") << " in " << Utils::ConvertToLowerIdValue(StringDateFormat) << "\"");
 		uiDateInput->Property("validator", Formatter() << "RegExpValidator { regExp: " << DateRegex << "}");
 		uiDateInput->Property("onFocusChanged", Formatter() << "{" << "if(focus==true) inputMask=\"" << inputMask << "\";" << "if(activeFocus === false){ z=0; if( " << calendar_box_id << ".visible === true){ " << calendar_box_id << ".visible=false}}} ");
