@@ -24,10 +24,15 @@ class AdaptiveCardRenderer {
             rootView.addArrangedSubview(viewWithInheritedProperties)
         }
         
-        for action in card.getActions() {
-            let renderer = RendererManager.shared.actionRenderer(for: action.getType())
-            let view = renderer.render(action: action, with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [])
+        if !card.getActions().isEmpty {
+            let view = ActionSetRenderer.shared.renderActionButtons(actions: card.getActions(), with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [])
+            let lastView = rootView.arrangedSubviews.last
             rootView.addArrangedSubview(view)
+            // add vertical spacing b/w action button view and last BaseCard Element
+            if let spacing = hostConfig.getActions()?.buttonSpacing, lastView != nil {
+                let verticalSpace = NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: lastView, attribute: .bottom, multiplier: 1, constant: CGFloat(truncating: spacing))
+                NSLayoutConstraint.activate([verticalSpace])
+            }
         }
         
         rootView.appearance = NSAppearance(named: .aqua)
