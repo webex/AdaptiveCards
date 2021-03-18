@@ -16,6 +16,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             return view
         }()
         let textView = ACRTextInputView(frame: .zero)
+        textView.id = inputBlock.getId()
         var attributedInitialValue: NSMutableAttributedString
         
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -40,6 +41,8 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         
         if inputBlock.getIsMultiline() {
             let multilineView = ACRMultilineInputTextView()
+            multilineView.setId(inputBlock.getId())
+            multilineView.setVisibilty(to: inputBlock.getIsVisible())
             if let placeholderString = inputBlock.getPlaceholder() {
                 multilineView.setPlaceholder(placeholder: placeholderString)
             }
@@ -47,6 +50,10 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
                 multilineView.setValue(value: valueString, maximumLen: inputBlock.getMaxLength())
             }
             multilineView.maxLen = inputBlock.getMaxLength() as? Int ?? 0
+            // Add Input Handler
+            if let acrView = rootView as? ACRView {
+            acrView.addInputHandler(multilineView)
+            }
             if renderButton {
                 stackview.addArrangedSubview(multilineView)
                 addInlineButton(parentview: stackview, view: multilineView, element: inputBlock, style: style, with: hostConfig)
@@ -61,6 +68,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             textView.cell?.isScrollable = true
             textView.cell?.truncatesLastVisibleLine = true
             textView.cell?.lineBreakMode = .byTruncatingTail
+            textView.isHidden = !inputBlock.getIsVisible()
         }
         // Create placeholder and initial value string if they exist
         if let placeholderString = inputBlock.getPlaceholder() {
@@ -74,11 +82,19 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             }
             textView.attributedStringValue = attributedInitialValue
         }
+        // Add Input Handler
+        if let acrView = rootView as? ACRView {
+        acrView.addInputHandler(textView)
+        }
         if renderButton {
             stackview.addArrangedSubview(textView)
             addInlineButton(parentview: stackview, view: textView, element: inputBlock, style: style, with: hostConfig)
             return stackview
         }
+//        // Add Input Handler
+//        if let acrView = rootView as? ACRView {
+//        acrView.addInputHandler(textView)
+//        }
         return textView
     }
     private func addInlineButton(parentview: NSStackView, view: NSView, element: ACSTextInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig) {
@@ -112,8 +128,25 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
     }
 }
-class ACRTextInputView: NSTextField, NSTextFieldDelegate {
+class ACRTextInputView: NSTextField, InputHandlingViewProtocol {
+    var value: String {
+        return stringValue
+    }
+    
+    var key: String {
+        guard let id = id else {
+            logError("ID must be set on creation")
+            return ""
+        }
+        return id
+    }
+    
+    var isValid: Bool {
+        return !isHidden && !(superview?.isHidden ?? false)
+    }
+    
     var maxLen: Int = 0
+    var id: String?
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)

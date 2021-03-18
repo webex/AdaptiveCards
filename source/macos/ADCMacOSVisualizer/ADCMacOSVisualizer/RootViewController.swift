@@ -150,4 +150,18 @@ extension RootViewController: AdaptiveCardActionDelegate {
         guard let url = URL(string: urlString) else { return }
         NSWorkspace.shared.open(url)
     }
+    
+    func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses: [String: String], button: NSButton) {
+        let alert = NSAlert()
+        if let jsonData = try? JSONSerialization.data(withJSONObject: didSubmitUserResponses, options: [.prettyPrinted]) {
+            if let jsonString = String(data: jsonData, encoding: .ascii) {
+//                print(jsonString)
+                alert.messageText = "Input values"
+                alert.informativeText = jsonString
+                alert.alertStyle = .informational
+                alert.addButton(withTitle: "Ok")
+                alert.runModal()
+            }
+        }
+    }
 }

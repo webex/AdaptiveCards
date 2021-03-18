@@ -3,6 +3,7 @@ import AppKit
 
 public protocol AdaptiveCardActionDelegate: AnyObject {
     func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, button: NSButton)
+    func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses: [String: String], button: NSButton)
 }
 
 enum HostConfigParseError: Error {

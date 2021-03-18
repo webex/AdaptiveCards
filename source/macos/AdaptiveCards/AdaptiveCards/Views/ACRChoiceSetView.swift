@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 // MARK: ACRChoiceSetView
-class ACRChoiceSetView: NSView {
+class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     private lazy var stackview: NSStackView = {
         let view = NSStackView()
         view.orientation = .vertical
@@ -14,6 +14,7 @@ class ACRChoiceSetView: NSView {
     public var isRadioGroup: Bool = false
     public var previousButton: ACRChoiceButton?
     public var wrap: Bool = false
+    public var idString: String?
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -34,7 +35,7 @@ class ACRChoiceSetView: NSView {
     
     private func handleClickAction(_ clickedButton: ACRChoiceButton) {
         guard isRadioGroup else { return }
-        if previousButton?.value != clickedButton.value {
+        if previousButton?.buttonValue != clickedButton.buttonValue {
             previousButton?.state = .off
             previousButton = clickedButton
         }
@@ -49,8 +50,36 @@ class ACRChoiceSetView: NSView {
         let newButton = ACRChoiceButton()
         newButton.labelAttributedString = attributedString
         newButton.wrap = self.wrap
-        newButton.value = value
+        newButton.buttonValue = value
         return newButton
+    }
+    
+    var value: String {
+        var mystr: [String] = []
+        let arrayViews = stackview.arrangedSubviews
+        for view in arrayViews {
+            if let view = view as? ACRChoiceButton, view.state == .on {
+                mystr.append(view.buttonValue ?? "")
+            }
+        }
+        
+        return mystr.joined(separator: ", ")
+//        if isRadioGroup {
+//            return previousButton?.value ?? ""
+//        }
+//        return ""
+    }
+    
+    var key: String {
+        guard let id = idString else {
+            logError("ID must be set on creation")
+            return ""
+        }
+        return id
+    }
+    
+    var isValid: Bool {
+        return !isHidden && !(superview?.isHidden ?? false)
     }
 }
 // MARK: Extension

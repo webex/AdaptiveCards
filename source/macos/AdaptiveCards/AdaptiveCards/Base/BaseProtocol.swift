@@ -18,4 +18,11 @@ protocol TargetHandler {
 
 protocol TargetHandlerDelegate: AnyObject {
     func handleOpenURLAction(button: NSButton, urlString: String)
+    func handleSubmitAction(button: NSButton)
+}
+
+protocol InputHandlingViewProtocol: NSView {
+    var value: String { get }
+    var key: String { get }
+    var isValid: Bool { get }
 }

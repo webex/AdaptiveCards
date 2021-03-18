@@ -4,10 +4,13 @@ protocol ACRChoiceButtonDelegate: NSObjectProtocol {
     func acrChoiceButtonDidSelect(_ button: ACRChoiceButton)
 }
 
-class ACRChoiceButton: NSView, NSTextFieldDelegate {
+class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     weak var delegate: ACRChoiceButtonDelegate?
-    public var value: String?
+    public var buttonValue: String?
     public var buttonType: NSButton.ButtonType = .switch
+    var idString: String?
+    var valueOn: String?
+    var valueOff: String?
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -86,6 +89,26 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate {
     
     @objc private func handleButtonAction() {
         delegate?.acrChoiceButtonDidSelect(self)
+    }
+    
+    var value: String {
+        if state == .on {
+            return valueOn ?? ""
+        } else {
+            return valueOff ?? ""
+        }
+    }
+    
+    var key: String {
+        guard let id = idString else {
+            logError("ID must be set on creation")
+            return ""
+        }
+        return id
+    }
+    
+    var isValid: Bool {
+        return !isHidden && !(superview?.isHidden ?? false)
     }
 }
 // MARK: EXTENSION
