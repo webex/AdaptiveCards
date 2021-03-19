@@ -241,23 +241,26 @@ namespace RendererQml
         }
     }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<QmlTag>& uiCard)
-	{
-		auto uiComponent = std::make_shared<QmlTag>("Component");
-		uiComponent->Property("id", Formatter() << buttonElement->GetId() << "_component");
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<QmlTag>& uiCard)
+    {
+        auto uiComponent = std::make_shared<QmlTag>("Component");
+        uiComponent->Property("id", Formatter() << buttonElement->GetId() << "_component");
 
-		const std::string layoutId = Formatter() << buttonElement->GetId() << "_component_layout";
-		std::string uiCard_string = uiCard->ToString();
-		uiCard_string = Utils::Replace(uiCard_string, "\\", "\\\\");
-		uiCard_string = Utils::Replace(uiCard_string, "\"", "\\\"");
-		//std::string uiCard_string = std::regex_replace(uiCard_string2, std::regex("\""), "\\\"");
+        const std::string layoutId = Formatter() << buttonElement->GetId() << "_component_layout";
+        std::string uiCard_string = uiCard->ToString();
+        uiCard_string = Utils::Replace(uiCard_string, "\\", "\\\\");
+        uiCard_string = Utils::Replace(uiCard_string, "\"", "\\\"");
+        //std::string uiCard_string = std::regex_replace(uiCard_string2, std::regex("\""), "\\\"");
 
-		auto uiColumn = std::make_shared<QmlTag>("ColumnLayout");
-		uiColumn->Property("id", layoutId);
-		uiColumn->AddFunctions("property var card");
-		uiColumn->Property("property string showCard", "\"" + uiCard_string + "\"");
-		uiColumn->Property("Component.onCompleted", "reload(showCard)");
-		uiColumn->AddFunctions( Formatter() << "function reload(mCard)\n{\nif (card)\n{\ncard.destroy()\n}\ncard = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\ncard.buttonClicked.connect(adaptiveCard.buttonClicked)\n}");
+        auto uiColumn = std::make_shared<QmlTag>("ColumnLayout");
+        uiColumn->Property("id", layoutId);
+        uiColumn->AddFunctions("property var card");
+        uiColumn->Property("property string showCard", "\"" + uiCard_string + "\"");
+        uiColumn->Property("Component.onCompleted", "reload(showCard)");
+        uiColumn->AddFunctions(Formatter() << "function reload(mCard)\n{\n");
+        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.destroy()\n }\n");
+        uiColumn->AddFunctions(Formatter() << "card = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\n");
+        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked)\n }\n}");
 
 		uiComponent->AddChild(uiColumn);
 
