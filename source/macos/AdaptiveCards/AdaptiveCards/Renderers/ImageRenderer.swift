@@ -11,14 +11,10 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             return NSView()
         }
                         
-        guard let root = rootView as? ACRView else {
-            logError("Root is not of type ACRView")
-            return NSView()
-        }
-        
-        guard let url = imageElement.getUrl() else {
-            return NSView()
-        }
+        guard let root = rootView as? ACRView, let url = imageElement.getUrl() else {
+                  logError("Root is not of type ACRView or url is not available")
+                  return NSView()
+              }
         
         let imageView = root.getImageView(for: ResourceKey(url: url, type: ResourceType.image))
         
@@ -89,13 +85,10 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
     }
     
     func configUpdateForImage(image: NSImage?, imageView: NSImageView) {
-        guard let superView = imageView.superview as? ACRContentHoldingView else {
-            return
-        }
-        
-        guard let imageSize = image?.size else {
-            return
-        }
+        guard let superView = imageView.superview as? ACRContentHoldingView, let imageSize = image?.size else {
+                logError("superView or image is nil")
+                return
+            }
         
         let imageProperties = superView.imageProperties
         imageProperties?.updateContentSize(size: imageSize)
