@@ -289,12 +289,9 @@ namespace RendererQml
 		auto month = date_split[1];
 		const auto day = date_split[2];
 
-		//To set minimum or maximum date for calendar, month starts from 0 instead 1
-		if (MiniumDate_MaximumDate == true)
-		{
-			month = std::to_string(stoi(month) - 1);
-		}
-
+		//For Date object, month starts from 0 instead 1
+		month = std::to_string(stoi(month) - 1);
+		
 		return Formatter() << "new Date(" << year << "," << month << "," << day << ")";		
 	}
 
@@ -389,6 +386,7 @@ namespace RendererQml
 			dateSeperator = '.';
 		}
 
+		//Short Format: eg: 19-03-2021
 		const std::string ddmmyyFormat = Formatter() << "%d" << dateSeperator << "%m" << dateSeperator << "%Y";
 		std::string ddmmyyBuffer = FetchSystemDateTime(ddmmyyFormat);
 		
@@ -401,15 +399,28 @@ namespace RendererQml
 		const std::string yyddmmFormat = Formatter() << "%Y" << dateSeperator << "%d" << dateSeperator << "%m";
 		std::string yyddmmBuffer = FetchSystemDateTime(yyddmmFormat);
 
-		if (SystemDateBuffer.compare(ddmmyyBuffer) == 0)
+		//Medium Format eg: 19-Mar-2021
+		const std::string Medium_ddmmyyFormat = Formatter() << "%d" << dateSeperator << "%b" << dateSeperator << "%Y";
+		std::string Medium_ddmmyyBuffer = FetchSystemDateTime(Medium_ddmmyyFormat);
+
+		const std::string Medium_mmddyyFormat = Formatter() << "%b" << dateSeperator << "%d" << dateSeperator << "%Y";
+		std::string Medium_mmddyyBuffer = FetchSystemDateTime(Medium_mmddyyFormat);
+
+		const std::string Medium_yymmddFormat = Formatter() << "%Y" << dateSeperator << "%b" << dateSeperator << "%d";
+		std::string Medium_yymmddBuffer = FetchSystemDateTime(Medium_yymmddFormat);
+
+		const std::string Medium_yyddmmFormat = Formatter() << "%Y" << dateSeperator << "%d" << dateSeperator << "%b";
+		std::string Medium_yyddmmBuffer = FetchSystemDateTime(Medium_yyddmmFormat);
+
+		if (SystemDateBuffer.compare(ddmmyyBuffer) == 0 || SystemDateBuffer.compare(Medium_ddmmyyBuffer) == 0)
 		{
 			return RendererQml::DateFormat::ddmmyy;
 		}
-		else if (SystemDateBuffer.compare(yymmddBuffer) == 0)
+		else if (SystemDateBuffer.compare(yymmddBuffer) == 0 || SystemDateBuffer.compare(Medium_yymmddBuffer) == 0)
 		{
 			return RendererQml::DateFormat::yymmdd;
 		}
-		else if (SystemDateBuffer.compare(yyddmmBuffer) == 0)
+		else if (SystemDateBuffer.compare(yyddmmBuffer) == 0 || SystemDateBuffer.compare(Medium_yyddmmBuffer) == 0)
 		{
 			return RendererQml::DateFormat::yyddmm;
 		}

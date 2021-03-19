@@ -961,8 +961,9 @@ namespace RendererQml
         uiDateInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
         uiDateInput->Property("property string selectedDate", "\"" + input->GetValue() + "\"");
+		uiDateInput->AddFunctions(Formatter() << "signal on_" << uiDateInput->GetId() << "TextChanged(var dateText)");
 
-        //TODO: Add stretch property
+		//TODO: Add stretch property
 
         if (!input->GetIsVisible())
         {
@@ -1015,11 +1016,23 @@ namespace RendererQml
 
         auto calendarTag = std::make_shared<QmlTag>("Calendar");
         calendarTag->AddImports("import QtQuick.Controls 1.4");
+		calendarTag->AddImports("import QtQuick 2.15");
         calendarTag->Property("anchors.fill", "parent");
         calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(),true) : "new Date(1900,1,1)");
         calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(),true) : "new Date(2050,1,1)");
 
-        auto calendarBoxTag = std::make_shared<QmlTag>("Rectangle");
+		calendarTag->AddFunctions(Formatter() << "function setCalendarDate(dateString)" << "{"
+			<< "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};"
+			<< "var y=dateString.match(/\\\\d{4}/);"
+			<< "dateString=dateString.replace(y,\"\");"
+			<< "var m=dateString.match(/[a-zA-Z]{3}/);"
+			<< "var d=dateString.match(/\\\\d{2}/);"
+			<< "if (d!==null && m!==null && y!==null){selectedDate=new Date(y[0],Months[m[0]],d[0]) }"
+			<< "}" );
+
+		calendarTag->Property("Component.onCompleted", Formatter() << "{" << uiDateInput->GetId() << "." << "on_" << uiDateInput->GetId() << "TextChanged.connect(setCalendarDate);" << uiDateInput->GetId() << ".on_" << uiDateInput->GetId() << "TextChanged( "<< uiDateInput->GetId() <<".text)" << "}");
+
+		auto calendarBoxTag = std::make_shared<QmlTag>("Rectangle");
         calendarBoxTag->Property("id", calendar_box_id);
         calendarBoxTag->Property("visible", "false");
         calendarBoxTag->Property("anchors.left", "parent.left");
@@ -1047,7 +1060,7 @@ namespace RendererQml
 				inputMask = Formatter() << "xx" << dateSeparator << ">x<xx" << dateSeparator << "xxxx;-";
 				DateRegex = Formatter() << "/^" << day_Regex << dateSeparator << month_Regex << dateSeparator << year_Regex << "$/";
 				//TODO: Change Logic to avoid partial date submit
-				uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '--' || getText(3,6) === '---' || getText(7,11) === '----'){selectedDate = '';}else{selectedDate = getText(7,11) + '-' + getText(3,6) + '-' + getText(0,2);}}");
+				uiDateInput->Property("onTextChanged", Formatter() << "{" << "on_" << uiDateInput->GetId() << "TextChanged(text);" << "if(getText(0,2) === '--' || getText(3,6) === '---' || getText(7,11) === '----'){selectedDate = '';}else{selectedDate = getText(7,11) + '-' + getText(3,6) + '-' + getText(0,2);}}");
 				break;
 			}
 			case RendererQml::DateFormat::yymmdd:
@@ -1056,7 +1069,7 @@ namespace RendererQml
 				inputMask = Formatter() << "xxxx" << dateSeparator << ">x<xx" << dateSeparator << "xx;-";
 				DateRegex = Formatter() << "/^" << year_Regex << dateSeparator << month_Regex << dateSeparator << day_Regex << "$/";
 				//TODO: Change Logic to avoid partial date submit
-				uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(5,7) + '-' + getText(8,10);}}");
+				uiDateInput->Property("onTextChanged", Formatter() << "{" << "on_" << uiDateInput->GetId() << "TextChanged(text);" << "if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(5,7) + '-' + getText(8,10);}}");
 				break;
 			}
 			case RendererQml::DateFormat::yyddmm:
@@ -1065,14 +1078,14 @@ namespace RendererQml
 				inputMask = Formatter() << "xxxx" << dateSeparator << "xx" << dateSeparator << ">x<xx;-";
 				DateRegex = Formatter() << "/^" << year_Regex << dateSeparator << day_Regex << dateSeparator << month_Regex << "$/";
 				//TODO: Change Logic to avoid partial date submit
-				uiDateInput->Property("onTextChanged", "{if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(8,10) + '-' + getText(5,7);}}");
+				uiDateInput->Property("onTextChanged", Formatter() << "{" << "on_" << uiDateInput->GetId() << "TextChanged(text);" << "if(getText(0,4) === '00' || getText(5,7) === '00' || getText(8,10) === '0000'){selectedDate = '';}else{selectedDate = getText(0,4) + '-' + getText(8,10) + '-' + getText(5,7);}}");
                 break;
 			}
 			//Default case: mm-dd-yyyy
 			default:
 			{
 				//TODO: Change Logic to avoid partial date submit
-                uiDateInput->Property("onTextChanged", "{if(getText(0,2) === '00' || getText(3,5) === '00' || getText(6,10) === '0000'){selectedDate = '';}else{selectedDate = getText(6,10) + '-' + getText(0,2) + '-' + getText(3,5);}}");
+                uiDateInput->Property("onTextChanged", Formatter() << "{" << "on_" << uiDateInput->GetId() << "TextChanged(text);" << "if(getText(0,2) === '00' || getText(3,5) === '00' || getText(6,10) === '0000'){selectedDate = '';}else{selectedDate = getText(6,10) + '-' + getText(0,2) + '-' + getText(3,5);}}");
 				break;
 			}
 		}
