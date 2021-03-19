@@ -22,10 +22,14 @@ public:
     std::vector<std::shared_ptr<BaseActionElement>>& GetActions();
     const std::vector<std::shared_ptr<BaseActionElement>>& GetActions() const;
 
-private:
-    void PopulateKnownPropertiesSet();
-    std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>> m_actions;
-};
+		HorizontalAlignment GetHorizontalAlignment() const;
+        void SetHorizontalAlignment(const HorizontalAlignment& value);
+
+    private:
+        void PopulateKnownPropertiesSet();
+        std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>> m_actions;
+        HorizontalAlignment m_hAlignment;
+    };
 
 class ActionSetParser : public BaseCardElementParser
 {
