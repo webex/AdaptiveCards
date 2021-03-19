@@ -1,21 +1,33 @@
 import AppKit
 
+enum ActionStyle: String {
+    case positive
+    case `default`
+    case destructive
+}
+
 class ACRButton: FlatButton {
     public var backgroundColor: NSColor = .init(red: 0.35216, green: 0.823529412, blue: 1, alpha: 1)
     public var hoverBackgroundColor: NSColor = .linkColor
     public var activeBackgroundColor: NSColor = .linkColor
     
+    private var inActiveTextColor: NSColor = .linkColor
+    private var inActiveborderColor: NSColor = .linkColor
+    private var hoverButtonColor: NSColor = .linkColor
+    
     override init(frame: NSRect) {
         super.init(frame: frame)
         initialize()
+        setupButtonStyle()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         initialize()
+        setupButtonStyle()
     }
     
-    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconPosition: NSControl.ImagePosition = .imageLeft) {
+    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: String = "default") {
         super.init(frame: frame)
         if wantsChevron {
             showsChevron = wantsChevron
@@ -26,16 +38,11 @@ class ACRButton: FlatButton {
             iconPositioned = iconPosition
         }
         initialize()
+        setupButtonStyle(style: style)
     }
     
     private func initialize() {
-        borderWidth = 0
-        borderColor = backgroundColor
-        buttonColor = backgroundColor
-        activeBorderColor = activeBackgroundColor
-        activeButtonColor = activeBackgroundColor
-        textColor = NSColor.white
-        activeTextColor = NSColor.white
+        borderWidth = 1
         onAnimationDuration = 0.0
         offAnimationDuration = 0.0
         iconColor = NSColor.white
@@ -64,8 +71,9 @@ class ACRButton: FlatButton {
     }
 
     override open func mouseEntered(with event: NSEvent) {
-        buttonColor = hoverBackgroundColor
-        borderColor = hoverBackgroundColor
+        buttonColor = hoverButtonColor
+        borderColor = activeBorderColor
+        textColor = activeTextColor
         if mouseDown {
             setOn(state != .on)
         }
@@ -73,10 +81,89 @@ class ACRButton: FlatButton {
     
     override open func mouseExited(with event: NSEvent) {
         buttonColor = backgroundColor
-        borderColor = backgroundColor
+        borderColor = inActiveborderColor
+        textColor = inActiveTextColor
         if mouseDown {
             setOn(state != .on)
             mouseDown = false
+        }
+    }
+    
+    override func mouseDown(with event: NSEvent) {
+        super.mouseDown(with: event)
+        buttonColor = activeButtonColor
+        borderColor = activeBorderColor
+        textColor = activeTextColor
+    }
+    
+    private func setupButtonStyle(style: String = "default") {
+        let buttonStyle = ActionStyle(rawValue: style)
+        switch buttonStyle {
+        case .default:
+            // borderColor
+            borderColor = ColorUtils.color(from: "#007EA8") ?? .clear
+            inActiveborderColor = borderColor
+            activeBorderColor = ColorUtils.color(from: "#0A5E7D") ?? .clear
+            
+            // button color
+            buttonColor = .white
+            activeButtonColor = ColorUtils.color(from: "#0A5E7D") ?? .clear
+            hoverButtonColor = ColorUtils.color(from: "#007EA8") ?? .clear
+            
+            backgroundColor = .white
+            // textColor
+            textColor = ColorUtils.color(from: "#007EA8") ?? .white
+            activeTextColor = .white
+            inActiveTextColor = textColor
+            
+        case .positive:
+            // borderColor
+            borderColor = ColorUtils.color(from: "#1B8728") ?? .clear
+            inActiveborderColor = borderColor
+            activeBorderColor = ColorUtils.color(from: "#196323") ?? .clear
+            
+            // button color
+            buttonColor = .white
+            activeButtonColor = ColorUtils.color(from: "#1B8728") ?? .clear
+            hoverButtonColor = ColorUtils.color(from: "#1B8728") ?? .clear
+            
+            backgroundColor = .white
+            // textColor
+            textColor = ColorUtils.color(from: "#1B8728") ?? .white
+            activeTextColor = .white
+            inActiveTextColor = textColor
+            
+        case .destructive:
+            // borderColor
+            borderColor = ColorUtils.color(from: "#D93829") ?? .clear
+            inActiveborderColor = borderColor
+            activeBorderColor = ColorUtils.color(from: "#A12C23") ?? .clear
+            
+            // button color
+            buttonColor = .white
+            activeButtonColor = ColorUtils.color(from: "#A12C23") ?? .clear
+            hoverButtonColor = ColorUtils.color(from: "#D93829") ?? .clear
+            
+            backgroundColor = .white
+            // textColor
+            textColor = ColorUtils.color(from: "#D93829") ?? .white
+            activeTextColor = .white
+            inActiveTextColor = textColor
+        case .none:
+            // borderColor
+            borderColor = backgroundColor
+            inActiveborderColor = backgroundColor
+            activeBorderColor = activeBackgroundColor
+            
+            // button color
+            buttonColor = backgroundColor
+            activeButtonColor = activeBackgroundColor
+            hoverButtonColor = activeBackgroundColor
+            
+            // textColor
+            textColor = .white
+            activeTextColor = .white
+            inActiveTextColor = textColor
         }
     }
 }
