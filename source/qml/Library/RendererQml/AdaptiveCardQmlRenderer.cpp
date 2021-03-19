@@ -137,8 +137,6 @@ namespace RendererQml
             std::shared_ptr<QmlTag> uiButtonStrip;
             auto actionsConfig = context->GetConfig()->GetActions();
 
-            std::vector<std::pair<std::shared_ptr<QmlTag>, std::shared_ptr<QmlTag>>> showCards;
-
             if (actionsConfig.actionsOrientation == AdaptiveCards::ActionsOrientation::Horizontal)
             {
                 uiButtonStrip = std::make_shared<QmlTag>("Flow");
@@ -185,15 +183,13 @@ namespace RendererQml
 
             for (unsigned int i = 0; i < maxActions; i++)
             {
-                // add actions
+                // add actions buttons
                 auto uiAction = context->Render(actions[i]);
-
                 if (uiAction != nullptr)
                 {
                     if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
                     {
                         const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
-                        
 						auto subContext = std::make_shared<AdaptiveRenderContext>(context->GetConfig(), context->GetElementRenderers());
 						auto uiCard = subContext->Render(showCardAction->GetCard(), &AdaptiveCardRender);
 
@@ -202,8 +198,19 @@ namespace RendererQml
 							//TODO: Remove these hardcoded colors once config settings are finalised
 							uiCard->Property("color", "'#F2F4F6'");
 							uiCard->GetChildren()[0]->GetChildren()[0]->Property("color", "'#F2F4F6'");
-							//NOTE - This colors are just for visual representation
-							showCards.push_back({uiAction, uiCard});
+
+                            // Add show card component to root element
+                            const auto showCardComponent = GetComponent(uiAction, uiCard);
+                            context->getCardRootElement()->AddChild(showCardComponent);
+
+                            //Add show card loader to the parent container
+                            AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
+                            auto uiLoader = std::make_shared<QmlTag>("Loader");
+                            uiLoader->Property("id", uiAction->GetId() + "_loader");
+                            uiLoader->Property("x", "-margins");
+                            uiLoader->Property("sourceComponent", showCardComponent->GetId());
+                            uiLoader->Property("visible", "false");
+                            uiContainer->AddChild(uiLoader);
 						}
                     }
 
@@ -215,24 +222,6 @@ namespace RendererQml
             {
                 AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
                 uiContainer->AddChild(uiButtonStrip);
-            }
-
-			const auto uiCardRootElement = context->getCardRootElement();
-
-			if (!showCards.empty())
-			{
-				AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
-				auto uiLoader = std::make_shared<QmlTag>("Loader");
-				uiLoader->Property("id", "showcard_loader");
-				uiLoader->Property("x", "-margins");
-				uiLoader->Property("sourceComponent", Formatter() << showCards[0].first->GetId() << "_component");
-				uiLoader->Property("visible", "false");
-				uiContainer->AddChild(uiLoader);
-			}
-
-			for (const auto& showCard : showCards)
-            {
-				uiCardRootElement->AddChild(GetComponent(showCard.first, showCard.second));
             }
 
             // Restore the iconPlacement for the context.
@@ -2147,8 +2136,7 @@ namespace RendererQml
 
 
 		function << "\n" << buttonElement->GetId() << ".showCard = !" << buttonElement->GetId() << ".showCard";
-		function << "\n" << "if(" << buttonElement->GetId() << ".showCard)" << "\n{\nshowcard_loader.sourceComponent = " << buttonElement->GetId() << "_component\n}";
-		function << "\n" << "showcard_loader.visible = " << buttonElement->GetId() << ".showCard";
+		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_dd.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
 
 		return function.str();
