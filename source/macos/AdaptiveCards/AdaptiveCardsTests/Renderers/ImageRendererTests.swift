@@ -4,7 +4,7 @@ import XCTest
 
 class ImageRendererTests: XCTestCase {
     private var hostConfig: FakeHostConfig!
-    private var fakeImageView: FakeImageView!
+    private var fakeImageView: FakeImage!
     private var imageRenderer: ImageRenderer!
     private var fakeACRView: ACRView!
     let sampleURL = "https://messagecardplayground.azurewebsites.net/assets/TxP_Flight.png"
