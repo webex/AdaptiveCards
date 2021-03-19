@@ -30,7 +30,7 @@ class AdaptiveCardRenderer {
             rootView.addArrangedSubview(view)
             // getting spacing from hostConfig
             if let verticalSpacing = hostConfig.getActions()?.spacing {
-                let spacing = ActionUtils.getSpacing(verticalSpacing, with: hostConfig)
+                let spacing = HostConfigUtils.getSpacing(verticalSpacing, with: hostConfig)
                 // add vertical spacing b/w action button view and last BaseCard Element
                 if lastView != nil {
                     let verticalSpace = NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: lastView, attribute: .bottom, multiplier: 1, constant: CGFloat(truncating: spacing))

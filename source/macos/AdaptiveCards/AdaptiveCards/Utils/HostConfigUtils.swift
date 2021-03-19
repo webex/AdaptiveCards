@@ -158,7 +158,7 @@ class TextUtils {
     }
 }
 
-class ActionUtils {
+class HostConfigUtils {
     static func getSpacing(_ spacing: ACSSpacing, with hostConfig: ACSHostConfig) -> NSNumber {
         let spacingConfig = hostConfig.getSpacing()
         let spaceAdded: NSNumber
