@@ -27,7 +27,6 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
 
         // Setting up ImageView based on Image Properties
         imageView.wantsLayer = true
-        // imageView.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0, alpha: 1)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer?.masksToBounds = true
         

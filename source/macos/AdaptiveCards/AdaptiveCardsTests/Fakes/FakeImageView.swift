@@ -39,7 +39,7 @@ class FakeImageView: ACSImage {
 }
 
 extension FakeImageView {
-    static func make(url: String? = "", backgroundColor: String? = "#FFFFFF", imageStyle: ACSImageStyle = .default, imageSize: ACSImageSize = .auto, horizontalAlignment: ACSHorizontalAlignment = .left, pixelWidth: NSNumber = 0, pixelHeight: NSNumber = 0) -> FakeImageView {
+    static func make(url: String? = "sampleUrl", backgroundColor: String? = "#FFFFFF", imageStyle: ACSImageStyle = .default, imageSize: ACSImageSize = .auto, horizontalAlignment: ACSHorizontalAlignment = .left, pixelWidth: NSNumber = 0, pixelHeight: NSNumber = 0) -> FakeImageView {
         let fakeImageView = FakeImageView()
         fakeImageView.url = url
         fakeImageView.backgroundColor = backgroundColor
