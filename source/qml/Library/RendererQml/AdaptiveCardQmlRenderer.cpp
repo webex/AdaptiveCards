@@ -227,6 +227,7 @@ namespace RendererQml
                 }
             }
 
+            // add show card click function
             addShowCardButtonClickFunc(context);            
 
             // Restore the iconPlacement for the context.
