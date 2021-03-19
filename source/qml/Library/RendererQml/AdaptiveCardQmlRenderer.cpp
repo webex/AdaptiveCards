@@ -134,6 +134,11 @@ namespace RendererQml
     {
         if (context->GetConfig()->GetSupportsInteractivity())
         {
+            if ((unsigned int)actions.size() == 0)
+            {
+                return;
+            }
+
             std::shared_ptr<QmlTag> uiButtonStrip;
             auto actionsConfig = context->GetConfig()->GetActions();
 
@@ -181,6 +186,10 @@ namespace RendererQml
                 context->GetConfig()->SetActions(actionsConfig);
             }
 
+            // add separator and button set layout
+            AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
+            uiContainer->AddChild(uiButtonStrip);
+
             for (unsigned int i = 0; i < maxActions; i++)
             {
                 // add actions buttons
@@ -216,12 +225,6 @@ namespace RendererQml
 
                     uiButtonStrip->AddChild(uiAction);
                 }
-            }
-
-            if (!uiButtonStrip->GetChildren().empty())
-            {
-                AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
-                uiContainer->AddChild(uiButtonStrip);
             }
 
             addShowCardButtonClickFunc(context);            
