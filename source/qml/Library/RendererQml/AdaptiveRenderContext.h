@@ -6,6 +6,7 @@
 #include "AdaptiveRenderArgs.h"
 
 #include "SubmitAction.h"
+#include "ShowCardAction.h"
 
 namespace RendererQml
 {
@@ -49,8 +50,12 @@ namespace RendererQml
 		void addToInputElementList(const std::string& elementId, const std::string& value);
         const std::map<std::string, std::string> getInputElementList();
 
-		void addToActionButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::BaseActionElement>& action);
-		const std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::BaseActionElement>> getActionButtonList();
+		void addToSubmitActionButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::SubmitAction>& action);
+		const std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> getSubmitActionButtonList();
+
+        void addToShowCardButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::ShowCardAction>& action);
+        const std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::ShowCardAction>> getShowCardButtonList();
+        void clearShowCardButtonList();
 
 		const int getCardWidth();
 
@@ -65,7 +70,8 @@ namespace RendererQml
         std::string m_CardRootId;
 		std::shared_ptr<QmlTag> m_CardRootElement;
         std::map<std::string, std::string> m_inputElementList;
-        std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::BaseActionElement>> m_actionButtonList;
+        std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> m_submitActionButtonList;
+        std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardButtonList;
         int m_ContainerCounter{ 0 };
         int m_ImageCounter{ 0 };
 		int m_ColumnSetCounter{ 0 };
