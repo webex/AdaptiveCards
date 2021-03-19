@@ -1018,9 +1018,17 @@ namespace RendererQml
         calendarTag->AddImports("import QtQuick.Controls 1.4");
 		calendarTag->AddImports("import QtQuick 2.15");
         calendarTag->Property("anchors.fill", "parent");
-        calendarTag->Property("minimumDate", !input->GetMin().empty() ? Utils::GetDate(input->GetMin(),true) : "new Date(1900,1,1)");
-        calendarTag->Property("maximumDate", !input->GetMax().empty() ? Utils::GetDate(input->GetMax(),true) : "new Date(2050,1,1)");
 
+		if (!input->GetMin().empty())
+		{
+			calendarTag->Property("minimumDate", Utils::GetDate(input->GetMin()));
+		}
+
+		if (!input->GetMax().empty())
+		{
+			calendarTag->Property("maximumDate", Utils::GetDate(input->GetMax()));
+		}
+        
 		calendarTag->AddFunctions(Formatter() << "function setCalendarDate(dateString)" << "{"
 			<< "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};"
 			<< "var y=dateString.match(/\\\\d{4}/);"
@@ -1092,7 +1100,7 @@ namespace RendererQml
 
 		if (!input->GetValue().empty())
 		{
-			uiDateInput->Property("text", Formatter() << Utils::GetDate(input->GetValue(),false) << ".toLocaleString(Qt.locale(\"en_US\")," << "\"" << StringDateFormat << "\"" << ")" );
+			uiDateInput->Property("text", Formatter() << Utils::GetDate(input->GetValue()) << ".toLocaleString(Qt.locale(\"en_US\")," << "\"" << StringDateFormat << "\"" << ")" );
 		}
 
 		uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() : "\"Select date") << " in " << Utils::ConvertToLowerIdValue(StringDateFormat) << "\"");

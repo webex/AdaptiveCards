@@ -281,7 +281,7 @@ namespace RendererQml
 		}
 	}
 
-	std::string Utils::GetDate(const std::string& date, bool MiniumDate_MaximumDate)
+	std::string Utils::GetDate(const std::string& date)
 	{
 		//Input format:"yyyy-mm-dd" , Output Format: "new Date(yyyy,mm,dd)"
 		std::vector<std::string> date_split = Utils::splitString(date, '-');
