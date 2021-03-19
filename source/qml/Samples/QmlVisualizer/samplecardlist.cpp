@@ -22,6 +22,7 @@ SampleCardList::SampleCardList(QObject *parent) : QObject(parent)
     mCards.append({ QStringLiteral("Action Open URL"), QString::fromStdString(Samples::card_Action_OpenUrl) });
 	mCards.append({ QStringLiteral("Action Submit 1"), QString::fromStdString(Samples::card_Action_Submit) });
 	mCards.append({ QStringLiteral("Action Show Card"), QString::fromStdString(Samples::card_Action_ShowCard) });
+    mCards.append({ QStringLiteral("Food order"), QString::fromStdString(Samples::card_FoodOrder) });
     
 }
 
