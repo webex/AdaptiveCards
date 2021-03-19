@@ -188,7 +188,9 @@ namespace RendererQml
 
             // add separator and button set layout
             AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
-            uiContainer->AddChild(uiButtonStrip);
+            uiContainer->AddChild(uiButtonStrip);            
+
+            bool addLoaderSeparator = true;
 
             for (unsigned int i = 0; i < maxActions; i++)
             {
@@ -213,7 +215,11 @@ namespace RendererQml
                             context->getCardRootElement()->AddChild(showCardComponent);
 
                             //Add show card loader to the parent container
-                            AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
+                            if (addLoaderSeparator)
+                            {
+                                AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
+                                addLoaderSeparator = false;
+                            }
                             auto uiLoader = std::make_shared<QmlTag>("Loader");
                             uiLoader->Property("id", uiAction->GetId() + "_loader");
                             uiLoader->Property("x", "-margins");
