@@ -97,7 +97,13 @@ class ACRButton: FlatButton {
     }
     
     private func setupButtonStyle(style: String = "default") {
+        // Common styling b/w all Action Style
+        backgroundColor = .white
+        buttonColor = .white
+        activeTextColor = .white
+        
         let buttonStyle = ActionStyle(rawValue: style)
+        
         switch buttonStyle {
         case .default:
             // borderColor
@@ -106,14 +112,11 @@ class ACRButton: FlatButton {
             activeBorderColor = ColorUtils.color(from: "#0A5E7D") ?? .clear
             
             // button color
-            buttonColor = .white
             activeButtonColor = ColorUtils.color(from: "#0A5E7D") ?? .clear
             hoverButtonColor = ColorUtils.color(from: "#007EA8") ?? .clear
             
-            backgroundColor = .white
             // textColor
             textColor = ColorUtils.color(from: "#007EA8") ?? .white
-            activeTextColor = .white
             inActiveTextColor = textColor
             
         case .positive:
@@ -123,14 +126,11 @@ class ACRButton: FlatButton {
             activeBorderColor = ColorUtils.color(from: "#196323") ?? .clear
             
             // button color
-            buttonColor = .white
             activeButtonColor = ColorUtils.color(from: "#1B8728") ?? .clear
             hoverButtonColor = ColorUtils.color(from: "#1B8728") ?? .clear
             
-            backgroundColor = .white
             // textColor
             textColor = ColorUtils.color(from: "#1B8728") ?? .white
-            activeTextColor = .white
             inActiveTextColor = textColor
             
         case .destructive:
@@ -140,16 +140,14 @@ class ACRButton: FlatButton {
             activeBorderColor = ColorUtils.color(from: "#A12C23") ?? .clear
             
             // button color
-            buttonColor = .white
             activeButtonColor = ColorUtils.color(from: "#A12C23") ?? .clear
             hoverButtonColor = ColorUtils.color(from: "#D93829") ?? .clear
             
-            backgroundColor = .white
             // textColor
             textColor = ColorUtils.color(from: "#D93829") ?? .white
-            activeTextColor = .white
             inActiveTextColor = textColor
         case .none:
+            backgroundColor = .init(red: 0.35216, green: 0.823529412, blue: 1, alpha: 1)
             // borderColor
             borderColor = backgroundColor
             inActiveborderColor = backgroundColor
@@ -162,7 +160,6 @@ class ACRButton: FlatButton {
             
             // textColor
             textColor = .white
-            activeTextColor = .white
             inActiveTextColor = textColor
         }
     }
