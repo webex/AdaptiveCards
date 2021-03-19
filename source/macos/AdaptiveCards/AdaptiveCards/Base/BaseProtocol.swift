@@ -20,3 +20,7 @@ protocol TargetHandlerDelegate: AnyObject {
     func handleOpenURLAction(button: NSButton, urlString: String)
     func handleShowCardAction(button: NSButton, showCard: ACSAdaptiveCard)
 }
+
+public protocol ImageHandlerView: NSView {
+    func setImage(_ image: NSImage, for url: String)
+}
