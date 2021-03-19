@@ -10,7 +10,7 @@ class ActionShowCardRenderer: BaseActionElementRendererProtocol {
             return NSView()
         }
         
-        let button = ACRButton()
+        let button = ACRButton(wantsChevron: true)
         button.title = showCardAction.getTitle() ?? ""
 
         let target = ActionShowCardTarget(element: showCardAction.getCard() ?? ACSAdaptiveCard(), delegate: rootView)
