@@ -14,7 +14,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         guard let root = rootView as? ACRView, let url = imageElement.getUrl() else {
                   logError("Root is not of type ACRView or url is not available")
                   return NSView()
-              }
+        }
         
         let imageView = root.getImageView(for: ResourceKey(url: url, type: ResourceType.image))
         
@@ -88,7 +88,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         guard let superView = imageView.superview as? ACRContentHoldingView, let imageSize = image?.size else {
                 logError("superView or image is nil")
                 return
-            }
+        }
         
         let imageProperties = superView.imageProperties
         imageProperties?.updateContentSize(size: imageSize)
