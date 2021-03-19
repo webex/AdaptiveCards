@@ -1077,7 +1077,8 @@ namespace RendererQml
 		{
 			calendarTag->Property("maximumDate", Utils::GetDate(input->GetMax()));
 		}
-        
+
+		//Supporting function to handle the signal of the TextField
 		calendarTag->AddFunctions(Formatter() << "function setCalendarDate(dateString)" << "{"
 			<< "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};"
 			<< "var y=dateString.match(/\\\\d{4}/);"
@@ -1106,8 +1107,8 @@ namespace RendererQml
 
 		//Default date format: MMM-dd-yyyy
 		auto month_Text = "getText(0,3)";
-		auto day_Text = "getText(4-6)";
-		auto year_Text = "getText(7-11)";
+		auto day_Text = "getText(4,6)";
+		auto year_Text = "getText(7,11)";
 		std::string DateRegex = Formatter() << "/^" << month_Regex << dateSeparator << day_Regex << dateSeparator << year_Regex << "$/";
 		std::string StringDateFormat = Formatter() << "MMM" << dateSeparator << "dd" << dateSeparator << "yyyy";
 		std::string inputMask = Formatter() << ">x<xx" << dateSeparator << "xx" << dateSeparator << "xxxx;-";
