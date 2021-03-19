@@ -6,8 +6,8 @@ public protocol AdaptiveCardActionDelegate: AnyObject {
 }
 
 public protocol AdaptiveCardResourceResolver: AnyObject {
-    func adaptiveCard(_ adaptiveCard: ImageHandlerView, dimensionsForImageWith url: String) -> NSSize?
-    func adaptiveCard(_ adaptiveCard: ImageHandlerView, requestImageFor url: String)
+    func adaptiveCard(_ adaptiveCard: ImageResourceHandlerView, dimensionsForImageWith key: ResourceKey) -> NSSize?
+    func adaptiveCard(_ adaptiveCard: ImageResourceHandlerView, requestImageFor key: ResourceKey)
 }
 
 enum HostConfigParseError: Error {

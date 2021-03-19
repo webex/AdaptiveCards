@@ -45,10 +45,10 @@ extension AdaptiveCardRenderer: ACRViewDelegate {
 }
 
 extension AdaptiveCardRenderer: ACRViewResourceResolverDelegate {
-    func resolve(_ adaptiveCard: ImageHandlerView, requestImageFor url: String) {
-        resolverDelegate?.adaptiveCard(adaptiveCard, requestImageFor: url)
+    func resolve(_ adaptiveCard: ImageResourceHandlerView, requestImageFor key: ResourceKey) {
+        resolverDelegate?.adaptiveCard(adaptiveCard, requestImageFor: key)
     }
-    func resolve(_ adaptiveCard: ImageHandlerView, dimensionsForImageWith url: String) -> NSSize? {
-        resolverDelegate?.adaptiveCard(adaptiveCard, dimensionsForImageWith: url)
+    func resolve(_ adaptiveCard: ImageResourceHandlerView, dimensionsForImageWith key: ResourceKey) -> NSSize? {
+        resolverDelegate?.adaptiveCard(adaptiveCard, dimensionsForImageWith: key)
     }
 }

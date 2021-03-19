@@ -20,7 +20,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             return NSView()
         }
         
-        let imageView = root.getImageView(for: url)
+        let imageView = root.getImageView(for: ResourceKey(url: url, type: ResourceType.image))
         
         let imageProperties = ACRImageProperties(element: imageElement, config: hostConfig, image: imageView.image, parentView: parentView)
         let cgsize = imageProperties.contentSize

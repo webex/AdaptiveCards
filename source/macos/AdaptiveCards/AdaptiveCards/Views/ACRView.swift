@@ -6,8 +6,8 @@ protocol ACRViewDelegate: AnyObject {
 }
 
 protocol ACRViewResourceResolverDelegate: AnyObject {
-    func resolve(_ adaptiveCard: ImageHandlerView, dimensionsForImageWith url: String) -> NSSize?
-    func resolve(_ adaptiveCard: ImageHandlerView, requestImageFor url: String)
+    func resolve(_ adaptiveCard: ImageResourceHandlerView, dimensionsForImageWith key: ResourceKey) -> NSSize?
+    func resolve(_ adaptiveCard: ImageResourceHandlerView, requestImageFor key: ResourceKey)
 }
 
 class ACRView: ACRColumnView {
@@ -30,19 +30,19 @@ class ACRView: ACRColumnView {
         targets.append(target)
     }
     
-    func getImageView(for url: String) -> NSImageView {
+    func getImageView(for key: ResourceKey) -> NSImageView {
         let imageView: NSImageView
-        if let dimensions = resolverDelegate?.resolve(self, dimensionsForImageWith: url) {
+        if let dimensions = resolverDelegate?.resolve(self, dimensionsForImageWith: key) {
             let image = NSImage(size: dimensions)
             imageView = NSImageView(image: image)
         } else {
             imageView = NSImageView()
         }
 
-        if imageViewMap[url] == nil { imageViewMap[url] = [] }
-        imageViewMap[url]?.append(imageView)
+        if imageViewMap[key.url] == nil { imageViewMap[key.url] = [] }
+        imageViewMap[key.url]?.append(imageView)
         
-        resolverDelegate?.resolve(self, requestImageFor: url)
+        resolverDelegate?.resolve(self, requestImageFor: key)
         return imageView
     }
 }
@@ -67,17 +67,20 @@ extension ACRView: TargetHandlerDelegate {
     }
 }
 
-extension ACRView: ImageHandlerView {
-    func setImage(_ image: NSImage, for url: String) {
-        guard let imageViews = imageViewMap[url] else {
+extension ACRView: ImageResourceHandlerView {
+    func setImage(_ image: NSImage, for key: ResourceKey) {
+        guard let imageViews = imageViewMap[key.url] else {
             return
         }
-        for imageView in imageViews {
-            if imageView.image == nil {
-                // update constraints only when image view does not contain an image
-                ImageRenderer.shared.configUpdateForImage(image: image, imageView: imageView)
+        // handling image resourve type
+        if key.type == .image {
+            for imageView in imageViews {
+                if imageView.image == nil {
+                    // update constraints only when image view does not contain an image
+                    ImageRenderer.shared.configUpdateForImage(image: image, imageView: imageView)
+                }
+                imageView.image = image
             }
-            imageView.image = image
         }
     }
 }
