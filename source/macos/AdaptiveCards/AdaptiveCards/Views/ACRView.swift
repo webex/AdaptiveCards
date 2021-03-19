@@ -16,9 +16,9 @@ class ACRView: ACRColumnView {
     weak var delegate: ACRViewDelegate?
     weak var resolverDelegate: ACRViewResourceResolverDelegate?
 
-    private var targets: [TargetHandler] = []
-    private var showCardsMap: [NSNumber: NSView] = [:]
-    private var currentShowCardItems: ShowCardItems?
+    private (set) var targets: [TargetHandler] = []
+    private (set) var showCardsMap: [NSNumber: NSView] = [:]
+    private (set) var currentShowCardItems: ShowCardItems?
 	private (set) var imageViewMap: [String: [NSImageView]] = [:]
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
