@@ -1,7 +1,7 @@
 import AdaptiveCards_bridge
 import AppKit
 
-public enum ResourceType: CaseIterable {
+public enum ResourceType {
     case image, backgroundImage, imageSet, iconUrl
 }
 
