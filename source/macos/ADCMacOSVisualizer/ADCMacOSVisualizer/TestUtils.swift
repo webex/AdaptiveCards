@@ -1,10 +1,3 @@
-//
-//  TestUtils.swift
-//  ADCMacOSVisualizer
-//
-//  Created by manujai on 18/03/21.
-//
-
 import Foundation
 
 public class TestUtils {
