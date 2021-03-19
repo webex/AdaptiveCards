@@ -26,17 +26,15 @@ class AdaptiveCardRenderer {
         
         if !card.getActions().isEmpty {
             let view = ActionSetRenderer.shared.renderActionButtons(actions: card.getActions(), with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [])
-            let lastView = rootView.arrangedSubviews.last
-            rootView.addArrangedSubview(view)
             // getting spacing from hostConfig
             if let verticalSpacing = hostConfig.getActions()?.spacing {
                 let spacing = HostConfigUtils.getSpacing(verticalSpacing, with: hostConfig)
                 // add vertical spacing b/w action button view and last BaseCard Element
-                if lastView != nil {
-                    let verticalSpace = NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: lastView, attribute: .bottom, multiplier: 1, constant: CGFloat(truncating: spacing))
-                    NSLayoutConstraint.activate([verticalSpace])
+                if let lastView = rootView.arrangedSubviews.last {
+                    rootView.setCustomSpacing(spacing: CGFloat(truncating: spacing), after: lastView)
                 }
             }
+            rootView.addArrangedSubview(view)
         }
         
         rootView.appearance = NSAppearance(named: .aqua)
