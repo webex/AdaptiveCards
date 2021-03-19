@@ -9,13 +9,11 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSActionSet")
             return NSView()
         }
-        let view = renderView(actions: actionSet.getActions(), with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs)
-        return view
+        return renderView(actions: actionSet.getActions(), with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs)
     }
     
     func renderActionButtons(actions: [ACSBaseActionElement], with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
-        let view = renderView(actions: actions, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs)
-        return view
+        return renderView(actions: actions, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs)
     }
     
     private func renderView(actions: [ACSBaseActionElement], with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
