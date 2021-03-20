@@ -315,7 +315,6 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextInputRender(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		//TODO: Add inline action
         const std::string origionalElementId = input->GetId();
 
 		std::shared_ptr<QmlTag> uiTextInput;
@@ -1887,7 +1886,7 @@ namespace RendererQml
         return std::make_shared<QmlTag>("Rectangle");
     }
   
-  std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ActionSetRender(std::shared_ptr<AdaptiveCards::ActionSet> actionSet, std::shared_ptr<AdaptiveRenderContext> context)
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ActionSetRender(std::shared_ptr<AdaptiveCards::ActionSet> actionSet, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto outerContainer = std::make_shared<QmlTag>("Column");
 		outerContainer->Property("width", "parent.width");
@@ -2144,8 +2143,10 @@ namespace RendererQml
             if (uiCard != nullptr)
             {
                 //TODO: Remove these hardcoded colors once config settings are finalised
-                uiCard->Property("color", "'#F2F4F6'");
-                uiCard->GetChildren()[0]->GetChildren()[0]->Property("color", "'#F2F4F6'");
+                const auto containerColor = context->GetRGBColor(context->GetConfig()->GetBackgroundColor(context->GetConfig()->GetActions().showCard.style));
+                
+                uiCard->Property("color", containerColor);
+                uiCard->GetChildren()[0]->GetChildren()[0]->Property("color", containerColor);
 
                 // Add show card component to root element
                 const auto showCardComponent = GetComponent(componentElement.first, uiCard);
@@ -2173,7 +2174,7 @@ namespace RendererQml
 			const auto button = element.first;
 			const auto action = element.second;
 
-			if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action) && buttonElement->GetId() != button->GetId())
+			if (buttonElement->GetId() != button->GetId())
 			{
 				function << "if(" << button->GetId() << ".showCard)\n{\n";
 				function << button->GetId() << ".clicked()\n}\n";
