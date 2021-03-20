@@ -279,4 +279,14 @@ namespace RendererQml
     {
         m_showCardButtonList.clear();
     }
+
+    void AdaptiveRenderContext::addToShowCardLoaderComponentList(const std::string& componentId, const std::shared_ptr<AdaptiveCards::ShowCardAction>& action)
+    {
+        m_showCardLoaderComponentList[componentId] = action;
+    }
+
+    const std::map<std::string, std::shared_ptr<AdaptiveCards::ShowCardAction>> AdaptiveRenderContext::getShowCardLoaderComponentList()
+    {
+        return m_showCardLoaderComponentList;
+    }
 }
