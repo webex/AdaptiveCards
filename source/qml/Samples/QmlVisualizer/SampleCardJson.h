@@ -2213,6 +2213,11 @@ namespace Samples
             "type": "Container",
             "id": "nameProperties",
             "items": [
+            {
+                "type": "TextBlock",
+                "text": "First Name",
+                "wrap": true
+            },
               {
                 "type": "Input.Text",
                 "label": "First Name",
@@ -2220,11 +2225,21 @@ namespace Samples
                 "isRequired": true,
                 "errorMessage": "First Name is required"
               },
+            {
+                "type": "TextBlock",
+                "text": "Middle Name",
+                "wrap": true
+            },
               {
                 "type": "Input.Text",
                 "label": "Middle Name",
                 "id": "MiddleName"
               },
+            {
+                "type": "TextBlock",
+                "text": "Last Name",
+                "wrap": true
+            },
               {
                 "type": "Input.Text",
                 "label": "Last Name",
@@ -2248,9 +2263,19 @@ namespace Samples
                   "id": "addressProperties",
                   "items": [
                     {
+                        "type": "TextBlock",
+                        "text": "Address line 1",
+                        "wrap": true
+                    },
+                    {
                       "type": "Input.Text",
                       "label": "Address line 1",
                       "id": "AddressLine1"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "Address line 2",
+                        "wrap": true
                     },
                     {
                       "type": "Input.Text",
@@ -2265,6 +2290,11 @@ namespace Samples
                           "width": "stretch",
                           "items": [
                             {
+                                "type": "TextBlock",
+                                "text": "City",
+                                "wrap": true
+                            },
+                            {
                               "type": "Input.Text",
                               "label": "City",
                               "id": "City"
@@ -2276,9 +2306,14 @@ namespace Samples
                           "width": "stretch",
                           "items": [
                             {
+                                "type": "TextBlock",
+                                "text": "State",
+                                "wrap": true
+                            },
+                            {
                               "type": "Input.Text",
                               "label": "State",
-                              "id": "State"
+                              "id": "State1"
                             }
                           ]
                         },
@@ -2286,6 +2321,11 @@ namespace Samples
                           "type": "Column",
                           "width": "stretch",
                           "items": [
+                            {
+                                "type": "TextBlock",
+                                "text": "Zip",
+                                "wrap": true
+                            },
                             {
                               "type": "Input.Text",
                               "label": "Zip Code",
@@ -2306,16 +2346,31 @@ namespace Samples
                     "type": "AdaptiveCard",
                     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                     "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "Cell Number",
+                        "wrap": true
+                    },
                       {
                         "type": "Input.Text",
                         "label": "Cell Number",
                         "id": "CellPhone"
                       },
+                    {
+                        "type": "TextBlock",
+                        "text": "Home Number",
+                        "wrap": true
+                    },
                       {
                         "type": "Input.Text",
                         "label": "Home Number",
                         "id": "HomePhone"
                       },
+                    {
+                        "type": "TextBlock",
+                        "text": "Email Address",
+                        "wrap": true
+                    },
                       {
                         "type": "Input.Text",
                         "label": "Email Address",
