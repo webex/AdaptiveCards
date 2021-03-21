@@ -113,6 +113,11 @@ namespace RendererQml
         return m_hostConfig;
     }
 
+	const std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> AdaptiveRenderContext::GetElementRenderers()
+	{
+		return m_elementRenderers;
+	}
+
     std::string AdaptiveRenderContext::GetRGBColor(const std::string& color, bool isQml)
     {
         if (color.length() > 1 && color[0] == '#')
@@ -225,7 +230,7 @@ namespace RendererQml
         return m_CardRootId;
     }
 
-    void AdaptiveRenderContext::addToInputElementList(const std::string& elementId, const std::string& value)
+	void AdaptiveRenderContext::addToInputElementList(const std::string& elementId, const std::string& value)
     {
         m_inputElementList[elementId] = value;
     }
@@ -233,5 +238,30 @@ namespace RendererQml
     const std::map<std::string, std::string> AdaptiveRenderContext::getInputElementList()
     {
         return m_inputElementList;
+    }
+
+	void AdaptiveRenderContext::setCardRootElement(const std::shared_ptr<QmlTag>& rootElement)
+	{
+		m_CardRootElement = rootElement;
+	}
+
+	const std::shared_ptr<QmlTag> AdaptiveRenderContext::getCardRootElement()
+	{
+		return m_CardRootElement;
+	}
+
+	const int AdaptiveRenderContext::getCardWidth()
+	{
+		return 600;
+	}
+
+	void AdaptiveRenderContext::addToActionButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::BaseActionElement>& action)
+    {
+        m_actionButtonList[buttonElement] = action;
+    }
+
+    const std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::BaseActionElement>> AdaptiveRenderContext::getActionButtonList()
+    {
+        return m_actionButtonList;
     }
 }

@@ -1556,5 +1556,150 @@ namespace Samples
         }
       ]
     })";
+  
+	const std::string card_ActionSet = R"({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.0",
+      "body": [
+        {
+          "type": "TextBlock",
+          "wrap": true,
+          "text": "Cards can have action sets in the middle of their body."
+        },
+        {
+          "type": "ActionSet",
+          "actions": [
+            {
+              "type": "Action.ShowCard",
+              "title": "ShowCard",
+              "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                  {
+                    "type": "TextBlock",
+                    "text": "This is a show card"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Action.OpenUrl",
+              "title": "OpenUrl",
+              "url": "https://adaptivecards.io"
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "wrap": true,
+          "text": "There are also still actions at the bottom of the card"
+        }
+      ],
+      "actions": [
+        {
+          "type": "Action.ShowCard",
+          "title": "ShowCard",
+          "card": {
+            "type": "AdaptiveCard",
+            "body": [
+              {
+                "type": "TextBlock",
+                "text": "This is a show card"
+              }
+            ]
+          }
+        },
+        {
+          "type": "Action.OpenUrl",
+          "title": "OpenUrl",
+          "url": "https://adaptivecards.io"
+		}
+      ]
+    })";
+
+	const std::string card_Action_ShowCard = R"({
+	  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+	  "type": "AdaptiveCard",
+	  "version": "1.0",
+	  "body": [
+		{
+		  "type": "TextBlock",
+		  "text": "This card's action will show another card"
+		}
+	  ],
+	  "actions": [
+		{
+		  "type": "Action.ShowCard",
+		  "title": "Action.ShowCard",
+		  "card": {
+			"type": "AdaptiveCard",
+			"body": [
+			  {
+				"type": "TextBlock",
+				"text": "What do you think?"
+			  }
+			],
+			"actions": [
+			  {
+				"type": "Action.Submit",
+				"title": "Neat!"
+			  }
+			]
+		  }
+		}
+	  ]
+	})";
+
+	const std::string card_Action_Inline = R"({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.2",
+      "body": [
+        {
+          "type": "TextBlock",
+          "text": "Text input with an inline action"
+        },
+        {
+          "type": "Input.Text",
+          "id": "iconInlineActionId",
+          "inlineAction": {
+            "type": "Action.Submit",
+            "iconUrl": "https://adaptivecards.io/content/send.png",
+            "title": "Send"
+          }
+        },
+        {
+          "type": "TextBlock",
+          "text": "Text input with an inline action with no icon",
+          "wrap": true
+        },
+        {
+          "type": "Input.Text",
+          "id": "textInlineActionId",
+          "inlineAction": {
+            "type": "Action.OpenUrl",
+            "title": "Reply",
+            "url": "https://adaptivecards.io"
+          }
+        },
+        {
+          "type": "TextBlock",
+          "text": "Multiline text input with an inline action"
+        },
+        {
+          "type": "Input.Text",
+          "id": "multilineInputId",
+          "inlineAction": {
+            "type": "Action.Submit",
+            "iconUrl": "https://adaptivecards.io/content/send.png",
+            "title": "Send"
+          },
+          "placeholder": "enter comment",
+          "maxLength": 500,
+          "isMultiline": true
+        }
+      ]
+    })";
 }
 

@@ -7,6 +7,7 @@ SampleCardList::SampleCardList(QObject *parent) : QObject(parent)
     mCards.append({ QStringLiteral("TextBlock"), QString::fromStdString(Samples::card_TextBlock) });
     mCards.append({ QStringLiteral("Rich text"), QString::fromStdString(Samples::card_richText) });
     mCards.append({ QStringLiteral("Input text"), QString::fromStdString(Samples::card_InputText) });
+    mCards.append({ QStringLiteral("Action Inline"), QString::fromStdString(Samples::card_Action_Inline) });
     mCards.append({ QStringLiteral("Input number"), QString::fromStdString(Samples::card_InputNumber) });
     mCards.append({ QStringLiteral("Input date"), QString::fromStdString(Samples::card_dateInput) });
     mCards.append({ QStringLiteral("Input Toggle"), QString::fromStdString(Samples::card_CheckboxInput) });
@@ -19,8 +20,9 @@ SampleCardList::SampleCardList(QObject *parent) : QObject(parent)
 	mCards.append({ QStringLiteral("Seperator and Spacing"), QString::fromStdString(Samples::card_Separator) });
 	mCards.append({ QStringLiteral("ColumnSet"), QString::fromStdString(Samples::card_columnSet) });
     mCards.append({ QStringLiteral("Action Open URL"), QString::fromStdString(Samples::card_Action_OpenUrl) });
-    mCards.append({ QStringLiteral("Action Submit 1"), QString::fromStdString(Samples::card_Action_Submit) });
-
+	mCards.append({ QStringLiteral("Action Submit 1"), QString::fromStdString(Samples::card_Action_Submit) });
+	mCards.append({ QStringLiteral("Action Show Card"), QString::fromStdString(Samples::card_Action_ShowCard) });
+    mCards.append({ QStringLiteral("Action Set"), QString::fromStdString(Samples::card_ActionSet) });    
 }
 
 QVector<Card> SampleCardList::cardList() const
