@@ -74,19 +74,14 @@ class ACRButton: FlatButton {
         buttonColor = hoverButtonColor
         borderColor = activeBorderColor
         textColor = activeTextColor
-        if mouseDown {
-            setOn(state != .on)
-        }
+        super.mouseEntered(with: event)
     }
     
     override open func mouseExited(with event: NSEvent) {
+        super.mouseExited(with: event)
         buttonColor = backgroundColor
         borderColor = inActiveborderColor
         textColor = inActiveTextColor
-        if mouseDown {
-            setOn(state != .on)
-            mouseDown = false
-        }
     }
     
     override func mouseDown(with event: NSEvent) {
