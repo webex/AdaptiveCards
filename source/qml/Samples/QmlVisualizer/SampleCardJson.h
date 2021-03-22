@@ -2393,4 +2393,125 @@ namespace Samples
     }
   ]
 })";
+
+    const std::string card_CardSelectAction = R"({
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.2",
+    "selectAction": {
+        "type": "Action.Submit",
+        "title": "Submit action",
+        "data": {
+            "info": "My submit action data"
+        }
+    },
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Publish Adaptive Card schema",
+                    "weight": "Bolder",
+                    "size": "Medium"
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "auto",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
+                                    "size": "Small",
+                                    "style": "Person"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Matt Hidinger",
+                                    "weight": "Bolder",
+                                    "wrap": true
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "spacing": "None",
+                                    "text": "Created {{DATE(2017-02-14T06:08:39Z, SHORT)}}",
+                                    "isSubtle": true,
+                                    "wrap": true
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
+                    "wrap": true
+                },
+                {
+                    "type": "FactSet",
+                    "facts": [
+                        {
+                            "title": "Board:",
+                            "value": "Adaptive Card"
+                        },
+                        {
+                            "title": "List:",
+                            "value": "Backlog"
+                        },
+                        {
+                            "title": "Assigned to:",
+                            "value": "Matt Hidinger"
+                        },
+                        {
+                            "title": "Due date:",
+                            "value": "Not set"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.ShowCard",
+            "title": "Comment",
+            "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                    {
+                        "type": "Input.Text",
+                        "id": "comment",
+                        "isMultiline": true,
+                        "placeholder": "Enter your comment"
+                    }
+                ],
+                "actions": [
+                    {
+                        "type": "Action.Submit",
+                        "title": "OK"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Action.OpenUrl",
+            "title": "View",
+            "url": "https://adaptivecards.io"
+        }
+    ]
+})";
 }
