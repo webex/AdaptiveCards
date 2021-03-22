@@ -27,7 +27,7 @@ class ACRButton: FlatButton {
         setupButtonStyle()
     }
     
-    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: String = "default") {
+    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default) {
         super.init(frame: frame)
         if wantsChevron {
             showsChevron = wantsChevron
@@ -96,13 +96,13 @@ class ACRButton: FlatButton {
         textColor = activeTextColor
     }
     
-    private func setupButtonStyle(style: String = "default") {
+    private func setupButtonStyle(style: ActionStyle = .default) {
         // Common styling b/w all Action Style
         backgroundColor = .white
         buttonColor = .white
         activeTextColor = .white
         
-        let buttonStyle = ActionStyle(rawValue: style)
+        let buttonStyle = style
         
         switch buttonStyle {
         case .default:
@@ -145,21 +145,6 @@ class ACRButton: FlatButton {
             
             // textColor
             textColor = ColorUtils.color(from: "#D93829") ?? .white
-            inActiveTextColor = textColor
-        case .none:
-            backgroundColor = .init(red: 0.35216, green: 0.823529412, blue: 1, alpha: 1)
-            // borderColor
-            borderColor = backgroundColor
-            inActiveborderColor = backgroundColor
-            activeBorderColor = activeBackgroundColor
-            
-            // button color
-            buttonColor = backgroundColor
-            activeButtonColor = activeBackgroundColor
-            hoverButtonColor = activeBackgroundColor
-            
-            // textColor
-            textColor = .white
             inActiveTextColor = textColor
         }
     }
