@@ -326,7 +326,7 @@ namespace RendererQml
 		{
 			scrollViewTag = std::make_shared<QmlTag>("ScrollView");
 			scrollViewTag->Property("width", "parent.width");
-			scrollViewTag->Property("height", "100");
+			scrollViewTag->Property("height", Formatter() << input->GetId() <<".visible ? 100 : 0");
 			scrollViewTag->Property("ScrollBar.vertical.interactive", "true");
 
 			uiTextInput = std::make_shared<QmlTag>("TextArea");
