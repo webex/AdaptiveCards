@@ -4,17 +4,38 @@ import AppKit
 class AdaptiveCardRenderer {
     static let shared = AdaptiveCardRenderer()
     weak var actionDelegate: AdaptiveCardActionDelegate?
+    weak var resolverDelegate: AdaptiveCardResourceResolver?
     
     func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, width: CGFloat) -> NSView {
         var style: ACSContainerStyle = .default
         if let colorConfig = hostConfig.getAdaptiveCard() {
             style = (colorConfig.allowCustomStyle && card.getStyle() != .none) ? card.getStyle() : .default
         }
-        
+        return renderAdaptiveCard(card, with: hostConfig, style: style, width: width)
+    }
+    
+    func renderShowCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, parent: ACRView) -> NSView {
+        var style: ACSContainerStyle = .default
+        if let colorConfig = hostConfig.getAdaptiveCard() {
+            let showCardStyle = hostConfig.getActions()?.showCard.style ?? .default
+            style = colorConfig.allowCustomStyle ? card.getStyle() : showCardStyle
+        }
+        guard let cardView = renderAdaptiveCard(card, with: hostConfig, style: style) as? ACRView else {
+            logError("renderAdaptiveCard should return ACRView")
+            return NSView()
+        }
+        parent.addShowCard(cardView)
+        return cardView
+    }
+    
+    private func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, style: ACSContainerStyle, width: CGFloat? = nil) -> NSView {
         let rootView = ACRView(style: style, hostConfig: hostConfig)
         rootView.translatesAutoresizingMaskIntoConstraints = false
-        rootView.widthAnchor.constraint(equalToConstant: width).isActive = true
+        if let width = width {
+            rootView.widthAnchor.constraint(equalToConstant: width).isActive = true
+        }
         rootView.delegate = self
+        rootView.resolverDelegate = self
            
         for (index, element) in card.getBody().enumerated() {
             let isFirstElement = index == 0
@@ -24,13 +45,19 @@ class AdaptiveCardRenderer {
             rootView.addArrangedSubview(viewWithInheritedProperties)
         }
         
-        for action in card.getActions() {
-            let renderer = RendererManager.shared.actionRenderer(for: action.getType())
-            let view = renderer.render(action: action, with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [])
+        if !card.getActions().isEmpty {
+            let view = ActionSetRenderer.shared.renderActionButtons(actions: card.getActions(), with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [])
+            // getting spacing from hostConfig
+            if let verticalSpacing = hostConfig.getActions()?.spacing {
+                let spacing = HostConfigUtils.getSpacing(verticalSpacing, with: hostConfig)
+                // add vertical spacing b/w action button view and last BaseCard Element
+                if let lastView = rootView.arrangedSubviews.last {
+                    rootView.setCustomSpacing(spacing: CGFloat(truncating: spacing), after: lastView)
+                }
+            }
             rootView.addArrangedSubview(view)
         }
         
-        rootView.appearance = NSAppearance(named: .aqua)
         rootView.layoutSubtreeIfNeeded()
         return rootView
     }
@@ -39,5 +66,14 @@ class AdaptiveCardRenderer {
 extension AdaptiveCardRenderer: ACRViewDelegate {
     func acrView(_ view: ACRView, didSelectOpenURL url: String, button: NSButton) {
         actionDelegate?.adaptiveCard(view, didSelectOpenURL: url, button: button)
+    }
+}
+
+extension AdaptiveCardRenderer: ACRViewResourceResolverDelegate {
+    func resolve(_ adaptiveCard: ImageResourceHandlerView, requestImageFor key: ResourceKey) {
+        resolverDelegate?.adaptiveCard(adaptiveCard, requestImageFor: key)
+    }
+    func resolve(_ adaptiveCard: ImageResourceHandlerView, dimensionsForImageWith key: ResourceKey) -> NSSize? {
+        resolverDelegate?.adaptiveCard(adaptiveCard, dimensionsForImageWith: key)
     }
 }
