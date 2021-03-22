@@ -1691,6 +1691,7 @@
 				28CE1A8125E7557400BFCFD9 /* ACRFactTextField.swift */,
 				A032271A25E9176D00E7172E /* ACRContentHoldingView.swift */,
 				13C41B0C25F25D06008A1F2E /* ACRDateField.swift */,
+				81C0371A26047C1E00B33324 /* ACRBackgroundImage.swift */,
 				2910CF002600A82A000910C8 /* ACRActionSetView.swift */,
 			);
 			path = Views;
