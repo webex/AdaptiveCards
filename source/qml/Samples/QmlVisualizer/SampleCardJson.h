@@ -2514,4 +2514,23 @@ namespace Samples
         }
     ]
 })";
+
+    const std::string card_ImageSelectAction = R"({
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.2",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://adaptivecards.io/content/cats/1.png",
+            "selectAction": {
+                "type": "Action.Submit",
+                "title": "Submit action",
+                "data": {
+                    "info": "My submit action data"
+                }
+            }
+        }
+    ]
+})";
 }

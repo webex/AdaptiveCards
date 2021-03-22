@@ -244,7 +244,7 @@ namespace RendererQml
                 return;
             }
 
-            const auto parentColor = !parent->GetProperty("color").empty() ? parent->GetProperty("color") : "transparent";
+            const auto parentColor = !parent->GetProperty("color").empty() ? parent->GetProperty("color") : "'transparent'";
             const auto hoverColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().emphasisPalette.backgroundColor);
 
             auto mouseArea = std::make_shared<QmlTag>("MouseArea");
@@ -1359,6 +1359,8 @@ namespace RendererQml
 		}
 
 		uiRectangle->AddChild(uiImage);
+
+        AddSelectAction(uiRectangle, image->GetSelectAction(), context);
 
 		return uiRectangle;
 	}
