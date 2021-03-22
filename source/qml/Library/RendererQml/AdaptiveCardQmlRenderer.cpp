@@ -1410,12 +1410,9 @@ namespace RendererQml
 
 		uiContainer->Property("onMinHeightChanged", Formatter() << "{bodyLayout.generateStretchHeight( column_" << id << ".children, minHeight - " << 2 * tempMargin << " )}");
 
-		if (cardElement->GetElementTypeString() == "Column")
-		{
-			uiContainer->Property("property int minWidth", Formatter() << "bodyLayout.getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempMargin);
+		uiContainer->Property("property int minWidth", Formatter() << "bodyLayout.getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempMargin);
 
-			uiContainer->Property("implicitWidth", "minWidth");
-		}
+		uiContainer->Property("implicitWidth", "minWidth");
 
 		return uiContainer;
 	}
@@ -1762,6 +1759,7 @@ namespace RendererQml
 		std::string heightString = "";
 		bool bleedFlag = false;
 		int marginReleased = 2*margin;
+		int tempMargin = 0;
 
 		if (columnSet->GetId().empty())
 		{
@@ -1791,13 +1789,25 @@ namespace RendererQml
 			uiRow->Property("Layout.bottomMargin", std::to_string(margin));
 			uiRow->Property("Layout.leftMargin", std::to_string(margin));
 			uiRow->Property("Layout.rightMargin", std::to_string(margin));
+			tempMargin = margin;
 		}
 		else
 		{
 			marginReleased -= (2 * margin);
 		}
 
-		//TODO: Add Horizontal Alignment
+		switch (columnSet->GetHorizontalAlignment())
+		{
+			case AdaptiveCards::HorizontalAlignment::Right:
+				uiRow->Property("Layout.alignment", "Qt.AlignRight");
+				break;
+			case AdaptiveCards::HorizontalAlignment::Center:
+				uiRow->Property("Layout.alignment", "Qt.AlignHCenter");
+				break;
+			default:
+				uiRow->Property("Layout.alignment", "Qt.AlignLeft");
+				break;
+		}
 
 		uiFrame->Property("property int minHeight", std::to_string(columnSet->GetMinHeight()));
 
@@ -1838,14 +1848,9 @@ namespace RendererQml
 
 				//TODO: Add collection element
 				heightString += ("clayout_" + cardElement->GetId() + ".implicitHeight, " + cardElement->GetId() + ".minHeight, ");
-				if (columnSet->GetPadding())
-				{
-					uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight(" << int(columnSet->GetMinHeight()) << ")");
-				}
-				else
-				{
-					uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight(" << columnSet->GetMinHeight() << ") + " << (2 * margin));
-				}
+
+				uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight(" << cardElement->GetMinHeight() << ")");
+
 				uiRow->AddChild(uiElement);
 
 				const auto width = cardElement->GetWidth();
@@ -1879,9 +1884,9 @@ namespace RendererQml
 			uiFrame->Property("width", "parent.width");
 		}
 
-		uiFrame->AddFunctions(Formatter() << "function getColumnSetHeight(){ var calculatedHeight = getColumnHeight();if(calculatedHeight >= minHeight - " << (2 * margin) << "){return calculatedHeight + " << (2 * margin) << "}else{return minHeight;}}");
+		uiFrame->AddFunctions(Formatter() << "function getColumnSetHeight(){ var calculatedHeight = getColumnHeight();if(calculatedHeight >= minHeight - " << (2 * tempMargin) << "){return calculatedHeight + " << (2 * tempMargin) << "}else{return minHeight;}}");
 
-		uiFrame->AddFunctions(Formatter() << "function getColumnHeight(){var calculatedHeight =  Math.max(" << heightString.substr(0, heightString.size() - 2) << "); if(calculatedHeight <= minHeight - " << (2 * margin) << "){return minHeight - " << (2 * margin) << "}else{return calculatedHeight;}}");
+		uiFrame->AddFunctions(Formatter() << "function getColumnHeight(){var calculatedHeight =  Math.max(" << heightString.substr(0, heightString.size() - 2) << "); if(calculatedHeight <= minHeight - " << (2 * tempMargin) << "){return minHeight - " << (2 * tempMargin) << "}else{return calculatedHeight;}}");
 
 		uiFrame->Property("onWidthChanged", Formatter() << "{bodyLayout.generateStretchWidth( row_" << id << ".children, parent.width - " << marginReleased << ")}");
 
