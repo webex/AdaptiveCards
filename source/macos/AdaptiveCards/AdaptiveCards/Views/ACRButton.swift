@@ -7,12 +7,21 @@ enum ActionStyle: String {
 }
 
 class ACRButton: FlatButton {
+    struct Constants {
+        static let blueColorCode = "#0A5E7D"
+        static let darkBlueColorCode = "#007EA8"
+        
+        static let greenColorCode = "#1B8728"
+        static let darkGreenColorCode = "#196323"
+        
+        static let redColorCode = "#D93829"
+        static let darkRedColorCode = "#A12C23"
+    }
+    
     public var backgroundColor: NSColor = .init(red: 0.35216, green: 0.823529412, blue: 1, alpha: 1)
     public var hoverBackgroundColor: NSColor = .linkColor
     public var activeBackgroundColor: NSColor = .linkColor
     
-    private var inActiveTextColor: NSColor = .linkColor
-    private var inActiveborderColor: NSColor = .linkColor
     private var hoverButtonColor: NSColor = .linkColor
     
     override init(frame: NSRect) {
@@ -72,7 +81,7 @@ class ACRButton: FlatButton {
 
     override open func mouseEntered(with event: NSEvent) {
         buttonColor = hoverButtonColor
-        borderColor = activeBorderColor
+        borderColor = activeButtonColor
         textColor = activeTextColor
         super.mouseEntered(with: event)
     }
@@ -80,14 +89,14 @@ class ACRButton: FlatButton {
     override open func mouseExited(with event: NSEvent) {
         super.mouseExited(with: event)
         buttonColor = backgroundColor
-        borderColor = inActiveborderColor
-        textColor = inActiveTextColor
+        borderColor = hoverButtonColor
+        textColor = activeButtonColor
     }
     
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
         buttonColor = activeButtonColor
-        borderColor = activeBorderColor
+        borderColor = activeButtonColor
         textColor = activeTextColor
     }
     
@@ -97,50 +106,37 @@ class ACRButton: FlatButton {
         buttonColor = .white
         activeTextColor = .white
         
-        let buttonStyle = style
-        
-        switch buttonStyle {
+        switch style {
         case .default:
             // borderColor
-            borderColor = ColorUtils.color(from: "#007EA8") ?? .clear
-            inActiveborderColor = borderColor
-            activeBorderColor = ColorUtils.color(from: "#0A5E7D") ?? .clear
+            borderColor = ColorUtils.color(from: Constants.darkBlueColorCode) ?? .clear
             
             // button color
-            activeButtonColor = ColorUtils.color(from: "#0A5E7D") ?? .clear
-            hoverButtonColor = ColorUtils.color(from: "#007EA8") ?? .clear
+            activeButtonColor = ColorUtils.color(from: Constants.blueColorCode) ?? .clear
+            hoverButtonColor = borderColor
             
             // textColor
-            textColor = ColorUtils.color(from: "#007EA8") ?? .white
-            inActiveTextColor = textColor
-            
+            textColor = hoverButtonColor
         case .positive:
             // borderColor
-            borderColor = ColorUtils.color(from: "#1B8728") ?? .clear
-            inActiveborderColor = borderColor
-            activeBorderColor = ColorUtils.color(from: "#196323") ?? .clear
+            borderColor = ColorUtils.color(from: Constants.greenColorCode) ?? .clear
             
             // button color
-            activeButtonColor = ColorUtils.color(from: "#1B8728") ?? .clear
-            hoverButtonColor = ColorUtils.color(from: "#1B8728") ?? .clear
+            activeButtonColor = ColorUtils.color(from: Constants.darkGreenColorCode) ?? .clear
+            hoverButtonColor = borderColor
             
             // textColor
-            textColor = ColorUtils.color(from: "#1B8728") ?? .white
-            inActiveTextColor = textColor
-            
+            textColor = hoverButtonColor
         case .destructive:
             // borderColor
-            borderColor = ColorUtils.color(from: "#D93829") ?? .clear
-            inActiveborderColor = borderColor
-            activeBorderColor = ColorUtils.color(from: "#A12C23") ?? .clear
+            borderColor = ColorUtils.color(from: Constants.redColorCode) ?? .clear
             
             // button color
-            activeButtonColor = ColorUtils.color(from: "#A12C23") ?? .clear
-            hoverButtonColor = ColorUtils.color(from: "#D93829") ?? .clear
+            activeButtonColor = ColorUtils.color(from: Constants.darkRedColorCode) ?? .clear
+            hoverButtonColor = borderColor
             
             // textColor
-            textColor = ColorUtils.color(from: "#D93829") ?? .white
-            inActiveTextColor = textColor
+            textColor = hoverButtonColor
         }
     }
 }
