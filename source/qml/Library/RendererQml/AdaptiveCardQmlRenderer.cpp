@@ -1202,10 +1202,12 @@ namespace RendererQml
             image->SetId(Utils::ConvertToLowerIdValue(image->GetId()));
         }
 
-		uiImage->Property("id", image->GetId());
+		uiRectangle->Property("id", image->GetId());
+		uiImage->Property("id", Formatter() << image->GetId() << "_img");
 		uiImage->Property("readonly property bool isImage", "true");
 		uiImage->Property("source", "\"" + image->GetUrl() + "\"");
 		uiImage->Property("anchors.fill", "parent");
+		uiImage->Property("visible", "parent.visible");
 
 		if (!image->GetIsVisible())
 		{
@@ -1220,7 +1222,7 @@ namespace RendererQml
 
 				if (image->GetPixelHeight() == 0)
 				{
-					uiRectangle->Property("height", Formatter() << image->GetId() << ".implicitHeight / " << image->GetId() << ".implicitWidth * width");
+					uiRectangle->Property("height", Formatter() << image->GetId() << "_img.implicitHeight / " << image->GetId() << "_img.implicitWidth * width");
 				}
 			}
 			if (image->GetPixelHeight() != 0)
@@ -1229,7 +1231,7 @@ namespace RendererQml
 
 				if (image->GetPixelWidth() == 0)
 				{
-					uiRectangle->Property("width", Formatter() << "Math.min(" << image->GetId() << ".implicitWidth / " << image->GetId() << ".implicitHeight * height, parent.width)");
+					uiRectangle->Property("width", Formatter() << "Math.min(" << image->GetId() << "_img.implicitWidth / " << image->GetId() << "_img.implicitHeight * height, parent.width)");
 				}
 			}
 		}
@@ -1255,7 +1257,7 @@ namespace RendererQml
 				break;
 			}
 
-			uiRectangle->Property("height", Formatter() << image->GetId() << ".implicitHeight / " << image->GetId() << ".implicitWidth * width");
+			uiRectangle->Property("height", Formatter() << image->GetId() << "_img.implicitHeight / " << image->GetId() << "_img.implicitWidth * width");
 		}
 
 		if (!image->GetBackgroundColor().empty())
@@ -1842,6 +1844,7 @@ namespace RendererQml
 		uiFrame->AddFunctions(Formatter() << "function getColumnHeight(){return Math.max(minHeight," << heightString.substr(0, heightString.size() - 2) << ")}");
 
 		uiRow->AddFunctions(Formatter() << "function getColumnWidth(width) { var calculatedWidth =  (parent.width - (" << usedWidth + (2 * margin) << ")) / " << no_of_columns - widthElements << "; if(width === ''){ return calculatedWidth} else { return (" << weigthedWidthCount << " * calculatedWidth * width)/ " << weightedWidth << "}}");
+		uiRow->Property("height", columnSet->GetId() + ".getColumnHeight()");
 
 		if (columnSet->GetBleed() && columnSet->GetCanBleed())
 		{
@@ -2078,7 +2081,7 @@ namespace RendererQml
             }
             else if (action->GetElementTypeString() == "Action.ToggleVisibility")
             {
-
+				onClickedFunction = getActionToggleVisibilityClickFunc(std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action), context);
             }
             else if (action->GetElementTypeString() == "Action.Submit")
             {
@@ -2159,6 +2162,37 @@ namespace RendererQml
 
         return function.str();
     }
+	
+	const std::string AdaptiveCardQmlRenderer::getActionToggleVisibilityClickFunc(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
+	{
+		auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
+		std::ostringstream function;
+
+		for (const auto& targetElement : toggleVisibilityAction->GetTargetElements())
+		{			
+			std::string targetElementId;
+
+			if (targetElement != nullptr)
+			{
+				targetElementId = Utils::ConvertToLowerIdValue(targetElement->GetElementId());
+
+				switch (targetElement->GetIsVisible())
+				{
+				case AdaptiveCards::IsVisible::IsVisibleTrue:
+					function << targetElementId << ".visible = true";
+					break;
+				case AdaptiveCards::IsVisible::IsVisibleFalse:
+					function << targetElementId << ".visible = false";
+					break;
+				default:
+					function << targetElementId << ".visible = !" << targetElementId << ".visible ";
+				}
+			}
+			function << "\n";
+		}
+
+		return function.str();
+	}
 
 }
 	
