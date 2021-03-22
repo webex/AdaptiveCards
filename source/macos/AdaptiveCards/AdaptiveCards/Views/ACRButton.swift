@@ -9,8 +9,8 @@ enum ActionStyle: String {
 
 class ACRButton: FlatButton {
     struct Constants {
-        static let blueColorCode = "#0A5E7D"
-        static let darkBlueColorCode = "#007EA8"
+        static let blueColorCode = "#007EA8"
+        static let darkBlueColorCode = "#0A5E7D"
         
         static let greenColorCode = "#1B8728"
         static let darkGreenColorCode = "#196323"
