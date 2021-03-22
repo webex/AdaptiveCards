@@ -245,12 +245,13 @@ namespace RendererQml
             }
 
             const auto parentColor = !parent->GetProperty("color").empty() ? parent->GetProperty("color") : "transparent";
+            const auto hoverColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().emphasisPalette.backgroundColor);
 
             auto mouseArea = std::make_shared<QmlTag>("MouseArea");
             mouseArea->Property("anchors.fill", "parent");
             mouseArea->Property("acceptedButtons", "Qt.LeftButton");
             mouseArea->Property("hoverEnabled", "true");
-            mouseArea->Property("onEntered", "{parent.color = '#f2f2f2'}");
+            mouseArea->Property("onEntered", Formatter() << "{parent.color = " << hoverColor << "}");
             mouseArea->Property("onExited", Formatter() << "{parent.color = " << parentColor << "}");
             parent->AddChild(mouseArea);
         }
