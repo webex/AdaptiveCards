@@ -106,8 +106,6 @@ namespace RendererQml
         AddContainerElements(bodyLayout, card->GetBody(), context);
         AddActions(bodyLayout, card->GetActions(), context);
 
-        addActionButtonClickFunc(context);
-
 		bodyLayout->Property("onHeightChanged", Formatter() << "{generateStretchHeight(bodyLayout.children," << card->GetMinHeight() << ");}");
 
 		bodyLayout->Property("onWidthChanged", Formatter() << "{generateStretchHeight(bodyLayout.children," << card->GetMinHeight() << ")}");

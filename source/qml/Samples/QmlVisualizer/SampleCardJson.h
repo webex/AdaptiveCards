@@ -2484,9 +2484,8 @@ namespace Samples
   ]
 }
 	)";
-}
 
-    const std::string card_FoodOrder = R"({
+	const std::string card_FoodOrder = R"({
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
   "type": "AdaptiveCard",
   "version": "1.0",
@@ -2657,7 +2656,7 @@ namespace Samples
   ]
 })";
 
-    const std::string card_ShowCardWiz = R"({
+			  const std::string card_ShowCardWiz = R"({
   "type": "AdaptiveCard",
   "version": "1.0",
   "body": [
@@ -2861,3 +2860,5 @@ namespace Samples
   ]
 })";
 }
+
+    
