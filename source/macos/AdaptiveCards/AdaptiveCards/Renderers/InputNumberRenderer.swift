@@ -170,7 +170,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     var value: String {
-        return inputString
+        return String(Int(inputValue))
     }
     
     var key: String {

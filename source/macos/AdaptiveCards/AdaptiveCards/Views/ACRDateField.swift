@@ -99,9 +99,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         guard let selectedDate = selectedDate else {
             return ""
         }
-        
         return dateFormatter.string(from: selectedDate)
-//        return textField.stringValue = dateFormatter.string(from: date) (from: date)
     }
     
     var key: String {

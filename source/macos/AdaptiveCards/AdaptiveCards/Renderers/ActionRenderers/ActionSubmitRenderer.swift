@@ -12,14 +12,10 @@ class ActionSubmitRenderer: BaseActionElementRendererProtocol {
         
         let button = ACRButton()
         button.title = submitAction.getTitle() ?? ""
-        
+        // TODO: Add image and other properties once ACRButton is Fixed
         let target = ActionSubmitTarget(element: submitAction, delegate: rootView)
         target.configureAction(for: button)
         rootView.addTarget(target)
-//        let target = ActionOpenURLTarget(element: openURLAction, delegate: rootView)
-//        target.configureAction(for: button)
-//        rootView.addTarget(target)
-        
         return button
     }
 }

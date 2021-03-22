@@ -155,8 +155,7 @@ extension RootViewController: AdaptiveCardActionDelegate {
         let alert = NSAlert()
         if let jsonData = try? JSONSerialization.data(withJSONObject: didSubmitUserResponses, options: [.prettyPrinted]) {
             if let jsonString = String(data: jsonData, encoding: .ascii) {
-//                print(jsonString)
-                alert.messageText = "Input values"
+                alert.messageText = button.title
                 alert.informativeText = jsonString
                 alert.alertStyle = .informational
                 alert.addButton(withTitle: "Ok")

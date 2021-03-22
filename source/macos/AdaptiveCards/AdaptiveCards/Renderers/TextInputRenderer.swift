@@ -91,10 +91,6 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             addInlineButton(parentview: stackview, view: textView, element: inputBlock, style: style, with: hostConfig)
             return stackview
         }
-//        // Add Input Handler
-//        if let acrView = rootView as? ACRView {
-//        acrView.addInputHandler(textView)
-//        }
         return textView
     }
     private func addInlineButton(parentview: NSStackView, view: NSView, element: ACSTextInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig) {
