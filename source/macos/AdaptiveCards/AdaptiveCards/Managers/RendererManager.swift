@@ -22,6 +22,7 @@ class RendererManager: RendererManagerProtocol {
         case .dateInput: return InputDateRenderer.shared
         case .timeInput: return InputTimeRenderer.shared
         case .imageSet: return ImageSetRenderer.shared
+        case .actionSet: return ActionSetRenderer.shared
         default: return UnknownElementRenderer.shared
         }
     }
@@ -30,6 +31,7 @@ class RendererManager: RendererManagerProtocol {
         switch elementType {
         case .openUrl: return ActionOpenURLRenderer.shared
         case .submit: return ActionSubmitRenderer.shared
+        case .showCard: return ActionShowCardRenderer.shared
         default: return UnknownElementRenderer.shared
         }
     }
@@ -54,7 +56,6 @@ class UnknownElementRenderer: BaseCardElementRendererProtocol, BaseActionElement
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.red.cgColor
         view.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 20).isActive = true
         return view
     }
 }

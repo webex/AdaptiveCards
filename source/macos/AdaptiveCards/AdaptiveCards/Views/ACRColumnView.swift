@@ -45,6 +45,15 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         return view
     }()
     
+    private (set) lazy var showCardStackView: NSStackView = {
+        let view = NSStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.orientation = .vertical
+        view.alignment = .leading
+        view.spacing = 0
+        return view
+    }()
+    
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
         self.hostConfig = hostConfig
         super.init(frame: .zero)
@@ -94,6 +103,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         stackView.addArrangedSubview(subview)
     }
     
+    func addShowCard(_ cardView: ACRView) {
+        showCardStackView.addArrangedSubview(cardView)
+        cardView.widthAnchor.constraint(equalTo: showCardStackView.widthAnchor).isActive = true
+    }
+    
     func applyPadding(_ padding: CGFloat) {
         stackViewLeadingConstraint?.constant = padding
         stackViewTopConstraint?.constant = padding
@@ -110,20 +124,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     }
     
     func addSpacing(_ spacing: ACSSpacing) {
-        let spacingConfig = hostConfig.getSpacing()
-        let spaceAdded: NSNumber
-        switch spacing {
-        case .default: spaceAdded = spacingConfig?.defaultSpacing ?? 0
-        case .none: spaceAdded = 0
-        case .small: spaceAdded = spacingConfig?.smallSpacing ?? 3
-        case .medium: spaceAdded = spacingConfig?.mediumSpacing ?? 20
-        case .large: spaceAdded = spacingConfig?.largeSpacing ?? 30
-        case .extraLarge: spaceAdded = spacingConfig?.extraLargeSpacing ?? 40
-        case .padding: spaceAdded = spacingConfig?.paddingSpacing ?? 20
-        @unknown default:
-            logError("Unknown padding!")
-            spaceAdded = 0
-        }
+        let spaceAdded = HostConfigUtils.getSpacing(spacing, with: hostConfig)
         addSpacing(spacing: CGFloat(truncating: spaceAdded))
     }
     
@@ -152,13 +153,18 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     
     private func setupViews() {
         addSubview(stackView)
+        addSubview(showCardStackView)
     }
     
     private func setupConstraints() {
         stackViewLeadingConstraint = stackView.leadingAnchor.constraint(equalTo: leadingAnchor)
         stackViewTrailingConstraint = stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
         stackViewTopConstraint = stackView.topAnchor.constraint(equalTo: topAnchor)
-        stackViewBottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        stackViewBottomConstraint = stackView.bottomAnchor.constraint(equalTo: showCardStackView.topAnchor)
+
+        showCardStackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        showCardStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        showCardStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
         guard let leading = stackViewLeadingConstraint, let trailing = stackViewTrailingConstraint, let top = stackViewTopConstraint, let bottom = stackViewBottomConstraint else { return }
         NSLayoutConstraint.activate([leading, trailing, top, bottom])

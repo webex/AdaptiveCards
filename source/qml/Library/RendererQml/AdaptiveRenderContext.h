@@ -5,6 +5,9 @@
 #include "AdaptiveWarning.h"
 #include "AdaptiveRenderArgs.h"
 
+#include "SubmitAction.h"
+#include "ShowCardAction.h"
+
 namespace RendererQml
 {
     class AdaptiveRenderContext;
@@ -23,6 +26,8 @@ namespace RendererQml
 
         std::shared_ptr<AdaptiveCards::HostConfig> GetConfig();
 
+		const std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> GetElementRenderers();
+
         std::string GetRGBColor(const std::string& color, bool isQml = 1);
 
 		std::string GetColor(const AdaptiveCards::ForegroundColor color, bool isSubtle, bool isHighlight, bool isQml = 1);
@@ -39,8 +44,23 @@ namespace RendererQml
         void setCardRootId(const std::string& rootId);
         const std::string getCardRootId();
 
-        void addToInputElementList(const std::string& elementId, const std::string& value);
+		void setCardRootElement(const std::shared_ptr<QmlTag>& rootElement);
+		const std::shared_ptr<QmlTag> getCardRootElement();
+
+		void addToInputElementList(const std::string& elementId, const std::string& value);
         const std::map<std::string, std::string> getInputElementList();
+
+		void addToSubmitActionButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::SubmitAction>& action);
+		const std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> getSubmitActionButtonList();
+
+        void addToShowCardButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::ShowCardAction>& action);
+        const std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::ShowCardAction>> getShowCardButtonList();
+        void clearShowCardButtonList();
+
+        void addToShowCardLoaderComponentList(const std::string& componentId, const std::shared_ptr<AdaptiveCards::ShowCardAction>& action);
+        const std::map<std::string, std::shared_ptr<AdaptiveCards::ShowCardAction>> getShowCardLoaderComponentList();
+
+		const int getCardWidth();
 
     private:
         std::vector<AdaptiveWarning> m_warnings;
@@ -48,10 +68,16 @@ namespace RendererQml
         std::shared_ptr<AdaptiveCards::HostConfig> m_hostConfig;
         AdaptiveRenderArgs m_renderArgs;
         AdaptiveCards::FeatureRegistration m_featureRegistration;
-        std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
         std::string m_lang;
+
         std::string m_CardRootId;
+		std::shared_ptr<QmlTag> m_CardRootElement;
+        std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
+
         std::map<std::string, std::string> m_inputElementList;
+        std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> m_submitActionButtonList;
+        std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardButtonList;
+        std::map<std::string, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardLoaderComponentList;
 
         int m_ContainerCounter{ 0 };
         int m_ImageCounter{ 0 };

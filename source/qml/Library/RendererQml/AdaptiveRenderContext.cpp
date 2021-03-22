@@ -113,6 +113,11 @@ namespace RendererQml
         return m_hostConfig;
     }
 
+	const std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> AdaptiveRenderContext::GetElementRenderers()
+	{
+		return m_elementRenderers;
+	}
+
     std::string AdaptiveRenderContext::GetRGBColor(const std::string& color, bool isQml)
     {
         if (color.length() > 1 && color[0] == '#')
@@ -225,7 +230,7 @@ namespace RendererQml
         return m_CardRootId;
     }
 
-    void AdaptiveRenderContext::addToInputElementList(const std::string& elementId, const std::string& value)
+	void AdaptiveRenderContext::addToInputElementList(const std::string& elementId, const std::string& value)
     {
         m_inputElementList[elementId] = value;
     }
@@ -233,5 +238,55 @@ namespace RendererQml
     const std::map<std::string, std::string> AdaptiveRenderContext::getInputElementList()
     {
         return m_inputElementList;
+    }
+
+	void AdaptiveRenderContext::setCardRootElement(const std::shared_ptr<QmlTag>& rootElement)
+	{
+		m_CardRootElement = rootElement;
+	}
+
+	const std::shared_ptr<QmlTag> AdaptiveRenderContext::getCardRootElement()
+	{
+		return m_CardRootElement;
+	}
+
+	const int AdaptiveRenderContext::getCardWidth()
+	{
+		return 600;
+	}
+
+	void AdaptiveRenderContext::addToSubmitActionButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::SubmitAction>& action)
+    {
+        m_submitActionButtonList[buttonElement] = action;
+    }
+
+    const std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> AdaptiveRenderContext::getSubmitActionButtonList()
+    {
+        return m_submitActionButtonList;
+    }
+
+    void AdaptiveRenderContext::addToShowCardButtonList(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveCards::ShowCardAction>& action)
+    {
+        m_showCardButtonList[buttonElement] = action;
+    }
+
+    const std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::ShowCardAction>> AdaptiveRenderContext::getShowCardButtonList()
+    {
+        return m_showCardButtonList;
+    }
+
+    void AdaptiveRenderContext::clearShowCardButtonList()
+    {
+        m_showCardButtonList.clear();
+    }
+
+    void AdaptiveRenderContext::addToShowCardLoaderComponentList(const std::string& componentId, const std::shared_ptr<AdaptiveCards::ShowCardAction>& action)
+    {
+        m_showCardLoaderComponentList[componentId] = action;
+    }
+
+    const std::map<std::string, std::shared_ptr<AdaptiveCards::ShowCardAction>> AdaptiveRenderContext::getShowCardLoaderComponentList()
+    {
+        return m_showCardLoaderComponentList;
     }
 }
