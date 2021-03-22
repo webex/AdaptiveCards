@@ -1179,6 +1179,17 @@ namespace RendererQml
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::FactSetRender(std::shared_ptr<AdaptiveCards::FactSet> factSet, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto uiFactSet = std::make_shared<QmlTag>("GridLayout");
+
+		if (factSet->GetId().empty())
+		{
+			factSet->SetId(Formatter() << "factSet_auto_" << context->getFactSetCounter());
+		}
+		else
+		{
+			factSet->SetId(Utils::ConvertToLowerIdValue(factSet->GetId()));
+		}
+		
+		uiFactSet->Property("id", factSet->GetId());
 		uiFactSet->Property("columns", "2");
 		uiFactSet->Property("rows", std::to_string(factSet->GetFacts().size()));
 		uiFactSet->Property("property int titleWidth", "0");

@@ -220,6 +220,11 @@ namespace RendererQml
         return ++m_ButtonCounter;
     }
 
+	const int AdaptiveRenderContext::getFactSetCounter()
+	{
+		return ++m_FactSetCounter;
+	}
+
     void AdaptiveRenderContext::setCardRootId(const std::string& rootId)
     {
         m_CardRootId = rootId;
