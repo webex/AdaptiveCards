@@ -4,17 +4,38 @@ import AppKit
 class AdaptiveCardRenderer {
     static let shared = AdaptiveCardRenderer()
     weak var actionDelegate: AdaptiveCardActionDelegate?
+    weak var resolverDelegate: AdaptiveCardResourceResolver?
     
     func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, width: CGFloat) -> NSView {
         var style: ACSContainerStyle = .default
         if let colorConfig = hostConfig.getAdaptiveCard() {
             style = (colorConfig.allowCustomStyle && card.getStyle() != .none) ? card.getStyle() : .default
         }
-        
+        return renderAdaptiveCard(card, with: hostConfig, style: style, width: width)
+    }
+    
+    func renderShowCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, parent: ACRView) -> NSView {
+        var style: ACSContainerStyle = .default
+        if let colorConfig = hostConfig.getAdaptiveCard() {
+            let showCardStyle = hostConfig.getActions()?.showCard.style ?? .default
+            style = colorConfig.allowCustomStyle ? card.getStyle() : showCardStyle
+        }
+        guard let cardView = renderAdaptiveCard(card, with: hostConfig, style: style) as? ACRView else {
+            logError("renderAdaptiveCard should return ACRView")
+            return NSView()
+        }
+        parent.addShowCard(cardView)
+        return cardView
+    }
+    
+    private func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, style: ACSContainerStyle, width: CGFloat? = nil) -> NSView {
         let rootView = ACRView(style: style, hostConfig: hostConfig)
         rootView.translatesAutoresizingMaskIntoConstraints = false
-        rootView.widthAnchor.constraint(equalToConstant: width).isActive = true
+        if let width = width {
+            rootView.widthAnchor.constraint(equalToConstant: width).isActive = true
+        }
         rootView.delegate = self
+        rootView.resolverDelegate = self
            
         for (index, element) in card.getBody().enumerated() {
             let isFirstElement = index == 0
@@ -37,7 +58,6 @@ class AdaptiveCardRenderer {
             rootView.addArrangedSubview(view)
         }
         
-        rootView.appearance = NSAppearance(named: .aqua)
         rootView.layoutSubtreeIfNeeded()
         return rootView
     }
@@ -46,5 +66,14 @@ class AdaptiveCardRenderer {
 extension AdaptiveCardRenderer: ACRViewDelegate {
     func acrView(_ view: ACRView, didSelectOpenURL url: String, button: NSButton) {
         actionDelegate?.adaptiveCard(view, didSelectOpenURL: url, button: button)
+    }
+}
+
+extension AdaptiveCardRenderer: ACRViewResourceResolverDelegate {
+    func resolve(_ adaptiveCard: ImageResourceHandlerView, requestImageFor key: ResourceKey) {
+        resolverDelegate?.adaptiveCard(adaptiveCard, requestImageFor: key)
+    }
+    func resolve(_ adaptiveCard: ImageResourceHandlerView, dimensionsForImageWith key: ResourceKey) -> NSSize? {
+        resolverDelegate?.adaptiveCard(adaptiveCard, dimensionsForImageWith: key)
     }
 }
