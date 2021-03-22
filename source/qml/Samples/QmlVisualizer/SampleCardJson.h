@@ -2533,4 +2533,94 @@ namespace Samples
         }
     ]
 })";
+
+    const std::string card_TextRunSelectAction = R"({
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.2",
+  "body": [
+    {
+      "type": "RichTextBlock",
+      "inlines": [
+        "This is the first inline. ",
+        {
+          "type": "TextRun",
+          "text": "We support colors,",
+          "color": "good"
+        },
+        {
+          "type": "TextRun",
+          "text": " We support select action,",
+          "color": "good",
+          "selectAction": {
+                "type": "Action.Submit",
+                "title": "Submit action",
+                "data": {
+                    "info": "My submit action data"
+                }
+            }
+        },
+        {
+          "type": "TextRun",
+          "text": " both regular and subtle. ",
+          "isSubtle": true
+        },
+        {
+          "type": "TextRun",
+          "text": "Text ",
+          "size": "small"
+        },
+        {
+          "type": "TextRun",
+          "text": "of ",
+          "size": "medium"
+        },
+        {
+          "type": "TextRun",
+          "text": "all ",
+          "size": "large"
+        },
+        {
+          "type": "TextRun",
+          "text": "sizes! ",
+          "size": "extraLarge"
+        },
+        {
+          "type": "TextRun",
+          "text": "Light weight text. ",
+          "weight": "lighter"
+        },
+        {
+          "type": "TextRun",
+          "text": "Bold weight text. ",
+          "weight": "bolder"
+        },
+        {
+          "type": "TextRun",
+          "text": "Highlights. ",
+          "highlight": true
+        },
+        {
+          "type": "TextRun",
+          "text": "Italics. ",
+          "italic": true
+        },
+        {
+          "type": "TextRun",
+          "text": "Strikethrough. ",
+          "strikethrough": true
+        },
+        {
+          "type": "TextRun",
+          "text": "Monospace too!",
+          "fontType": "monospace",
+          "selectAction": {
+            "type": "Action.OpenUrl",
+            "url": "https://msn.com"
+          }
+        }
+      ]
+    }
+  ]
+})";
 }

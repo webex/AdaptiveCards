@@ -26,6 +26,7 @@ SampleCardList::SampleCardList(QObject *parent) : QObject(parent)
     mCards.append({ QStringLiteral("Action Set"), QString::fromStdString(Samples::card_ActionSet) });
     mCards.append({ QStringLiteral("Select Action - Card"), QString::fromStdString(Samples::card_CardSelectAction) });
     mCards.append({ QStringLiteral("Select Action - Image"), QString::fromStdString(Samples::card_ImageSelectAction) });
+    mCards.append({ QStringLiteral("Select Action - TextRun"), QString::fromStdString(Samples::card_TextRunSelectAction) });
     mCards.append({ QStringLiteral("Food order"), QString::fromStdString(Samples::card_FoodOrder) });
     mCards.append({ QStringLiteral("Show card wizard"), QString::fromStdString(Samples::card_ShowCardWiz) });
     

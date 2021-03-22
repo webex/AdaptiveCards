@@ -593,22 +593,57 @@ namespace RendererQml
 			uiTextBlock->Property("visible", "false");
 		}
 
+        int selectActionCounter = 0;
+        std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>> selectActionList;
+
 		for (const auto& inlineRun : richTextBlock->GetInlines())
 		{
 			if (Utils::IsInstanceOfSmart<AdaptiveCards::TextRun>(inlineRun))
 			{
+                std::string selectActionId = "";
 				auto textRun = std::dynamic_pointer_cast<AdaptiveCards::TextRun>(inlineRun);
-				textrun_all.append(TextRunRender(textRun, context));
+
+                if (textRun->GetSelectAction() != nullptr)
+                {
+                    selectActionId = "selectaction_" + ++selectActionCounter;
+                    selectActionList[selectActionId] = textRun->GetSelectAction();
+                }
+
+				textrun_all.append(TextRunRender(textRun, context, selectActionId));
 			}
 		}
 		textrun_all = textrun_all.append("\"");
 		uiTextBlock->Property("text", textrun_all);
 
+        if (!selectActionList.empty())
+        {
+            std::ostringstream onLinkActivated;
+            onLinkActivated << "{\n";
+            for (const auto& action : selectActionList)
+            {
+                onLinkActivated << "if(link === '" << action.first << "'){\n";
+
+                if (action.second->GetElementTypeString() == "Action.OpenUrl")
+                {
+                    onLinkActivated << getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action.second), context);
+                }
+                else if (action.second->GetElementTypeString() == "Action.Submit")
+                {
+                    onLinkActivated << getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action.second), context);
+                }
+
+                onLinkActivated << "return;\n}\n";
+            }
+            onLinkActivated << "}\n";
+
+            uiTextBlock->Property("onLinkActivated", onLinkActivated.str());
+        }
+
 		return uiTextBlock;
 
 	}
 
-	std::string AdaptiveCardQmlRenderer::TextRunRender(std::shared_ptr<AdaptiveCards::TextRun> textRun, std::shared_ptr<AdaptiveRenderContext> context)
+	std::string AdaptiveCardQmlRenderer::TextRunRender(const std::shared_ptr<AdaptiveCards::TextRun>& textRun, const std::shared_ptr<AdaptiveRenderContext>& context, const std::string& selectaction)
 	{
 		const std::string fontFamily = context->GetConfig()->GetFontFamily(textRun->GetFontType());
 		const int fontSize = context->GetConfig()->GetFontSize(textRun->GetFontType(), textRun->GetTextSize());
@@ -642,7 +677,17 @@ namespace RendererQml
 		}
 
 		uiTextRun.append("'>");
-		uiTextRun.append(TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang()));
+
+        if (textRun->GetSelectAction() != nullptr)
+        {
+            uiTextRun.append("<a href='" + selectaction + "'>");
+            uiTextRun.append(TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang()));
+            uiTextRun.append("</a>");
+        }
+        else
+        {
+            uiTextRun.append(TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang()));
+        }
 		uiTextRun.append("</span>");
 
 		return uiTextRun;
