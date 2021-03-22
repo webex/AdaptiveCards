@@ -109,6 +109,7 @@ namespace RendererQml
         //Add submit onclick event
         addSubmitActionButtonClickFunc(context);
         addShowCardLoaderComponents(context);
+        AddSelectAction(uiCard, card->GetSelectAction(), context);
 		return uiCard;
 	}
 
@@ -229,6 +230,29 @@ namespace RendererQml
 
             // Restore the iconPlacement for the context.
             actionsConfig.iconPlacement = oldConfigIconPlacement;
+        }
+    }
+
+    void AdaptiveCardQmlRenderer::AddSelectAction(const std::shared_ptr<QmlTag>& parent, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context)
+    {
+        if (context->GetConfig()->GetSupportsInteractivity() && selectAction != nullptr)
+        {
+            // SelectAction doesn't allow showCard actions
+            if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(selectAction))
+            {
+                context->AddWarning(AdaptiveWarning(Code::RenderException, "Inline ShowCard not supported for SelectAction"));
+                return;
+            }
+
+            const auto parentColor = !parent->GetProperty("color").empty() ? parent->GetProperty("color") : "transparent";
+
+            auto mouseArea = std::make_shared<QmlTag>("MouseArea");
+            mouseArea->Property("anchors.fill", "parent");
+            mouseArea->Property("acceptedButtons", "Qt.LeftButton");
+            mouseArea->Property("hoverEnabled", "true");
+            mouseArea->Property("onEntered", "{parent.color = '#f2f2f2'}");
+            mouseArea->Property("onExited", Formatter() << "{parent.color = " << parentColor << "}");
+            parent->AddChild(mouseArea);
         }
     }
 
