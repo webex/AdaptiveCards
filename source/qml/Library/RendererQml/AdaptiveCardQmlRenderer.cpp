@@ -85,7 +85,7 @@ namespace RendererQml
 
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
 		rectangle->Property("id", "adaptiveCardRectangle");
-		rectangle->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+		rectangle->Property("color", "'transparent'");
 		rectangle->Property("Layout.margins", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
 		rectangle->Property("Layout.preferredHeight", "40");
@@ -2220,7 +2220,6 @@ namespace RendererQml
                 const auto containerColor = context->GetRGBColor(context->GetConfig()->GetBackgroundColor(context->GetConfig()->GetActions().showCard.style));
                 
                 uiCard->Property("color", containerColor);
-                uiCard->GetChildren()[0]->GetChildren()[0]->Property("color", containerColor);
 
                 // Add show card component to root element
                 const auto showCardComponent = GetComponent(componentElement.first, uiCard);
