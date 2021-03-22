@@ -64,10 +64,6 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         }
         
         return mystr.joined(separator: ", ")
-//        if isRadioGroup {
-//            return previousButton?.value ?? ""
-//        }
-//        return ""
     }
     
     var key: String {
@@ -90,9 +86,12 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
 }
 
 // MARK: ACRChoiceSetFieldCompactView
-class ACRChoiceSetCompactView: NSPopUpButton {
+class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     public let type: ACSChoiceSetStyle = .compact
     private var trackingAreaDefined: Bool = false
+    public var idString: String?
+    public var valueSelected: String?
+    public var arrayValues: [String]? = []
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
@@ -111,5 +110,22 @@ class ACRChoiceSetCompactView: NSPopUpButton {
     override func mouseExited(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
         contentView.isHighlighted = false
+    }
+    
+    var value: String {
+        return arrayValues?[indexOfSelectedItem] ?? ""
+//        return valueSelected ?? ""
+    }
+    
+    var key: String {
+        guard let id = idString else {
+            logError("ID must be set on creation")
+            return ""
+        }
+        return id
+    }
+    
+    var isValid: Bool {
+        return !isHidden && !(superview?.isHidden ?? false)
     }
 }

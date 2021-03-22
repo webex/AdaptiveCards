@@ -64,20 +64,23 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
             }
             index += 1
         }
+        choiceSetFieldCompactView.idString = choiceSetInput.getId()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
-            choiceSetFieldCompactView.addItem(withTitle: "")
+            choiceSetFieldCompactView.addItem(withTitle: title)
             let item = choiceSetFieldCompactView.item(at: index)
-            item?.title = title
+//            item?.title = title
             // item?.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
+            choiceSetFieldCompactView.arrayValues?.append(choice.getValue() ?? "")
             if choiceSetInput.getValue() == choice.getValue() {
                 choiceSetFieldCompactView.select(item)
+                choiceSetFieldCompactView.valueSelected = choice.getValue()
             }
             index += 1
         }
-//        if let acrView = rootView as? ACRView {
-//            acrView.addInputHandler(choiceSetFieldCompactView)
-//        }
+        if let acrView = rootView as? ACRView {
+            acrView.addInputHandler(choiceSetFieldCompactView)
+        }
         return choiceSetFieldCompactView
     }
     
