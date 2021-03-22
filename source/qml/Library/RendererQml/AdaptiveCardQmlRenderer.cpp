@@ -249,10 +249,23 @@ namespace RendererQml
 
             auto mouseArea = std::make_shared<QmlTag>("MouseArea");
             mouseArea->Property("anchors.fill", "parent");
+            mouseArea->Property("z", "-1");
             mouseArea->Property("acceptedButtons", "Qt.LeftButton");
             mouseArea->Property("hoverEnabled", "true");
             mouseArea->Property("onEntered", Formatter() << "{parent.color = " << hoverColor << "}");
             mouseArea->Property("onExited", Formatter() << "{parent.color = " << parentColor << "}");
+
+            std::string onClickedFunction;
+            if (selectAction->GetElementTypeString() == "Action.OpenUrl")
+            {
+                onClickedFunction = getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(selectAction), context);
+            }
+            else if (selectAction->GetElementTypeString() == "Action.Submit")
+            {
+                onClickedFunction = getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(selectAction), context);
+            }
+            mouseArea->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}");
+
             parent->AddChild(mouseArea);
         }
     }
