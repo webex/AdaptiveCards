@@ -55,15 +55,14 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     var value: String {
-        var mystr: [String] = []
+        var stringOfSelectedValues: [String] = []
         let arrayViews = stackview.arrangedSubviews
         for view in arrayViews {
             if let view = view as? ACRChoiceButton, view.state == .on {
-                mystr.append(view.buttonValue ?? "")
+                stringOfSelectedValues.append(view.buttonValue ?? "")
             }
         }
-        
-        return mystr.joined(separator: ", ")
+        return stringOfSelectedValues.joined(separator: ",")
     }
     
     var key: String {
@@ -114,7 +113,6 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     
     var value: String {
         return arrayValues?[indexOfSelectedItem] ?? ""
-//        return valueSelected ?? ""
     }
     
     var key: String {
