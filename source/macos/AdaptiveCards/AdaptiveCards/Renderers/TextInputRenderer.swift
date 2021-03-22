@@ -16,7 +16,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             return view
         }()
         let textView = ACRTextInputView(frame: .zero)
-        textView.id = inputBlock.getId()
+        textView.idString = inputBlock.getId()
         var attributedInitialValue: NSMutableAttributedString
         
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -130,7 +130,7 @@ class ACRTextInputView: NSTextField, InputHandlingViewProtocol {
     }
     
     var key: String {
-        guard let id = id else {
+        guard let id = idString else {
             logError("ID must be set on creation")
             return ""
         }
@@ -142,7 +142,7 @@ class ACRTextInputView: NSTextField, InputHandlingViewProtocol {
     }
     
     var maxLen: Int = 0
-    var id: String?
+    var idString: String?
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)

@@ -37,6 +37,8 @@ class ACRView: ACRColumnView {
     
     func addInputHandler(_ handler: InputHandlingViewProtocol) {
         inputHandlers.append(handler)
+    }
+    
     func getImageView(for key: ResourceKey) -> NSImageView {
         let imageView: NSImageView
         if let dimensions = resolverDelegate?.resolve(self, dimensionsForImageWith: key) {

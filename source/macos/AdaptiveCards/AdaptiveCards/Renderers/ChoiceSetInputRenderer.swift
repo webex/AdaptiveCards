@@ -62,6 +62,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
             if let menuItem = choiceSetFieldCompactView.item(at: 0) {
                 menuItem.isEnabled = false
             }
+            choiceSetFieldCompactView.arrayValues?.append("")
             index += 1
         }
         choiceSetFieldCompactView.idString = choiceSetInput.getId()
