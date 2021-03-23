@@ -556,6 +556,12 @@ namespace RendererQml
 		std::string textType = richTextBlock->GetElementTypeString();
 		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(richTextBlock->GetHorizontalAlignment());
 
+		if (!richTextBlock->GetId().empty())
+		{
+			richTextBlock->SetId(Utils::ConvertToLowerIdValue(richTextBlock->GetId()));
+			uiTextBlock->Property("id", richTextBlock->GetId());
+		}
+
 		uiTextBlock->Property("textFormat", "Text.RichText");
 		uiTextBlock->Property("wrapMode", "Text.Wrap");
 		uiTextBlock->Property("width", "parent.width");
@@ -1180,16 +1186,12 @@ namespace RendererQml
 	{
 		auto uiFactSet = std::make_shared<QmlTag>("GridLayout");
 
-		if (factSet->GetId().empty())
-		{
-			factSet->SetId(Formatter() << "factSet_auto_" << context->getFactSetCounter());
-		}
-		else
+		if (!factSet->GetId().empty())
 		{
 			factSet->SetId(Utils::ConvertToLowerIdValue(factSet->GetId()));
+			uiFactSet->Property("id", factSet->GetId());	
 		}
 		
-		uiFactSet->Property("id", factSet->GetId());
 		uiFactSet->Property("columns", "2");
 		uiFactSet->Property("rows", std::to_string(factSet->GetFacts().size()));
 		uiFactSet->Property("property int titleWidth", "0");
@@ -1685,6 +1687,12 @@ namespace RendererQml
 
 		uiFlow->Property("width", "parent.width");
 		uiFlow->Property("spacing", "10");
+
+		if (!imageSet->GetId().empty())
+		{
+			imageSet->SetId(Utils::ConvertToLowerIdValue(imageSet->GetId()));
+			uiFlow->Property("id", imageSet->GetId());
+		}
 
 		if (!imageSet->GetIsVisible())
 		{
@@ -2284,10 +2292,9 @@ namespace RendererQml
 	
 	const std::string AdaptiveCardQmlRenderer::getActionToggleVisibilityClickFunc(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
 	{
-		auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
 		std::ostringstream function;
 
-		for (const auto& targetElement : toggleVisibilityAction->GetTargetElements())
+		for (const auto& targetElement : action->GetTargetElements())
 		{			
 			std::string targetElementId;
 
