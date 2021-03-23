@@ -3644,7 +3644,7 @@ namespace Samples
     "version": "1.2",
     "body": [
         {
-            "type": "Container",            
+            "type": "Container",
             "items": [
                 {
                     "type": "TextBlock",
@@ -3659,6 +3659,7 @@ namespace Samples
         {
             "type": "Container",
             "style": "emphasis",
+            "backgroundImage": "https://adaptivecards.io/content/AlkiBeach.jpg",
             "items": [
                 {
                     "type": "TextBlock",
@@ -3672,6 +3673,7 @@ namespace Samples
         },
         {
             "type": "Container",
+            "style": "good",
             "items": [
                 {
                     "type": "TextBlock",
@@ -3685,6 +3687,16 @@ namespace Samples
                     "info": "My submit action data"
                 }
             }
+        },
+        {
+            "type": "TextBlock",
+            "text": "Date Input"
+        },
+        {
+            "type": "Input.Date",
+            "id": "date",
+            "placeholder": "Enter a date",
+            "value": "2017-10-12"
         }
     ]
 })";

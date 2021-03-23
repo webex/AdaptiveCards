@@ -1527,6 +1527,11 @@ namespace RendererQml
             backgroundImg->Property("source", "\"" + url + "\"");
             backgroundRect->AddChild(backgroundImg);
 
+            if (cardElement->GetSelectAction() != nullptr)
+            {
+                AddSelectAction(backgroundRect, cardElement->GetSelectAction(), context);
+            }
+
 			uiContainer->Property("background", backgroundRect->ToString());
 			uiContainer->Property("readonly property bool hasBackgroundImage", "true");
 		}
@@ -1535,13 +1540,24 @@ namespace RendererQml
 			const auto color = context->GetConfig()->GetBackgroundColor(cardElement->GetStyle());
             backgroundRect->Property("border.width", "0");
             backgroundRect->Property("color", "\"" + color + "\"");
+
+            if (cardElement->GetSelectAction() != nullptr)
+            {
+                AddSelectAction(backgroundRect, cardElement->GetSelectAction(), context);
+            }
+
 			uiContainer->Property("background", backgroundRect->ToString());
 		}
 		else
 		{
-            const auto color = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
             backgroundRect->Property("border.width", "0");
-            backgroundRect->Property("color", color);
+            backgroundRect->Property("color", "'transparent'");
+
+            if (cardElement->GetSelectAction() != nullptr)
+            {
+                AddSelectAction(backgroundRect, cardElement->GetSelectAction(), context);
+            }
+
             uiContainer->Property("background", backgroundRect->ToString());
         }
 
