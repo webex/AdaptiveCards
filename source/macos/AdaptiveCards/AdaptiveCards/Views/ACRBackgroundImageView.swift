@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRBackgroundImageView: NSView, CALayerDelegate {
-    public var image: NSImage = .init() {
+    public var image: NSImage? {
         didSet {
             setupBGImage()
         }
@@ -37,6 +37,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
     }
     
     private func setupBGImage() {
+        guard let image = image else { return }
         /* In this block of code, the basic approach used to implement the alignment is that the layer is padded with image on the horizontal or vertical (whichever required) axes with the image pattern. After this is done, based on the requirements, the origin of the layer is offsetted so as to create the desired placement of the image pattern based on the vertical alignment, horizontal alignment, and fill modes. */
 
         switch fillMode {
