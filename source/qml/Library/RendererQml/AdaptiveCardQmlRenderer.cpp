@@ -2309,7 +2309,7 @@ namespace RendererQml
 		function generateStretchHeight(childrens,minHeight)
         {
             var n = childrens.length
-            var implicitHei = 0;
+            var implicitHt = 0;
             var stretchCount = 0;
             var stretchMinHeight = 0;
             for(var i=0;i<childrens.length;i++)
