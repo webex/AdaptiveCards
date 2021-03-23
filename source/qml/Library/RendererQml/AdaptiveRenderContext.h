@@ -40,6 +40,7 @@ namespace RendererQml
 		const int getColumnSetCounter();
 		const int getColumnCounter();
         const int getButtonCounter();
+		const int getSeperatorCounter();
 
         void setCardRootId(const std::string& rootId);
         const std::string getCardRootId();
