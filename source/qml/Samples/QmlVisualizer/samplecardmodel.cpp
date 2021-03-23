@@ -114,7 +114,8 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
-			genQml.Property("background", "Image { source: \"" + getImagePath("Frame") + "\" }");
+            std::string str = genQml.GetProperty("background");
+            genQml.Property("background", std::regex_replace(str, std::regex("source.*\n"), "source:\"" + getImagePath("Frame") + "\"\n"));
 		}
 		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
 		{

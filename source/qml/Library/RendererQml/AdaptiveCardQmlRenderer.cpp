@@ -74,13 +74,8 @@ namespace RendererQml
 		uiCard->Property("readonly property int margins", std::to_string(context->GetConfig()->GetSpacing().paddingSpacing));
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
-        //TODO: Width can be set as config
         uiCard->Property("width", std::to_string(context->getCardWidth()));
-        uiCard->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
-		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchWidth());
-		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
-		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthActionSet());
+        uiCard->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));		
 
 		auto columnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		columnLayout->Property("id", "adaptiveCardLayout");
@@ -119,6 +114,12 @@ namespace RendererQml
         addSubmitActionButtonClickFunc(context);
         addShowCardLoaderComponents(context);
         addTextRunSubmitSelectActionLogic(context);
+
+        // Add height anf widtch calculation function
+        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
+        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchWidth());
+        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
+        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthActionSet());
 		return uiCard;
 	}
 
@@ -1516,22 +1517,32 @@ namespace RendererQml
 
 		uiColumnLayout->AddChild(uiColumn);
 
+        auto backgroundRect = std::make_shared<QmlTag>("Rectangle");
+
 		if (cardElement->GetBackgroundImage())
 		{
 			auto url = cardElement->GetBackgroundImage()->GetUrl();
+            auto backgroundImg = std::make_shared<QmlTag>("Image");
+            backgroundImg->Property("anchors.fill", "parent");
+            backgroundImg->Property("source", "\"" + url + "\"");
+            backgroundRect->AddChild(backgroundImg);
 
-			uiContainer->Property("background", "Image { source: \"" + url + "\" }");
+			uiContainer->Property("background", backgroundRect->ToString());
 			uiContainer->Property("readonly property bool hasBackgroundImage", "true");
 		}
 		else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
 		{
 			const auto color = context->GetConfig()->GetBackgroundColor(cardElement->GetStyle());
-			uiContainer->Property("background", "Rectangle{border.width:0;color:\"" + color + "\";}");
+            backgroundRect->Property("border.width", "0");
+            backgroundRect->Property("color", "\"" + color + "\"");
+			uiContainer->Property("background", backgroundRect->ToString());
 		}
 		else
 		{
             const auto color = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
-            uiContainer->Property("background", "Rectangle{border.width : 0; color: " + color + " }");
+            backgroundRect->Property("border.width", "0");
+            backgroundRect->Property("color", color);
+            uiContainer->Property("background", backgroundRect->ToString());
         }
 
 		int tempMargin = 0;
