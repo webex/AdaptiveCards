@@ -35,6 +35,10 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             imageView.imageScaling = .scaleAxesIndependently
         }
         
+        if cgsize.width > 0 {
+            imageView.widthAnchor.constraint(equalToConstant: cgsize.width).isActive = true
+        }
+        
         guard let parent = rootView as? ACRContentStackView else {
             logError("Parent is not of type ACRContentStackView")
             return NSView()
