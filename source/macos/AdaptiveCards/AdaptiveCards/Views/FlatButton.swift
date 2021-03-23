@@ -365,7 +365,7 @@ open class FlatButton: NSButton, CALayerDelegate {
         chevronLayer.frame = chevIconRect
         maskLayer.frame = chevIconRect
         chevronLayer.mask = maskLayer
-        chevronLayer.backgroundColor = .black
+        chevronLayer.backgroundColor = titleLayer.foregroundColor
         positionTitleAndImage()
     }
 
