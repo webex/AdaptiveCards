@@ -49,7 +49,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             multilineView.maxLen = inputBlock.getMaxLength() as? Int ?? 0
             if renderButton {
                 stackview.addArrangedSubview(multilineView)
-                addInlineButton(parentview: stackview, view: multilineView, element: inputBlock, style: style, with: hostConfig)
+                addInlineButton(parentview: stackview, view: multilineView, element: inputBlock, style: style, with: hostConfig, rootview: rootView)
                 return stackview
             }
             return multilineView
@@ -76,14 +76,17 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         if renderButton {
             stackview.addArrangedSubview(textView)
-            addInlineButton(parentview: stackview, view: textView, element: inputBlock, style: style, with: hostConfig)
+            addInlineButton(parentview: stackview, view: textView, element: inputBlock, style: style, with: hostConfig, rootview: rootView)
             return stackview
         }
         return textView
     }
-    private func addInlineButton(parentview: NSStackView, view: NSView, element: ACSTextInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig) {
+    private func addInlineButton(parentview: NSStackView, view: NSView, element: ACSTextInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig, rootview: NSView) {
         let action = element.getInlineAction()
-        let button = NSButton(title: action?.getTitle() ?? "", target: self, action: Selector(("test")))
+        let button = ACRButton(style: .inline)
+        button.title = action?.getTitle() ?? ""
+        button.cornerRadius = 0
+        
         let attributedString: NSMutableAttributedString
         attributedString = NSMutableAttributedString(string: button.title)
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
@@ -98,17 +101,44 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         button.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5).isActive = true
         button.attributedTitle = attributedString
+        
         // image icon
         if let imageIcon = action?.getIconUrl(), !imageIcon.isEmpty {
             guard let url = URL(string: imageIcon) else { return }
             DispatchQueue.global().async {
                 guard let data = try? Data(contentsOf: url) else { return }
                 DispatchQueue.main.async {
-                    let image = NSImage(data: data)
-                    image?.size = .init(width: button.bounds.width, height: button.bounds.height)
+                    guard let image = NSImage(data: data) else {
+                        return
+                    }
+                    image.size = .init(width: button.bounds.width, height: button.bounds.height)
+                    button.showsIcon = true
+                    button.title = ""
+                    button.iconImageSize = NSSize(width: image.size.width * 0.5, height: image.size.height)
                     button.image = image
+                    button.iconColor = NSColor(patternImage: image)
+                    button.activeIconColor = button.iconColor
                 }
             }
+        }
+        
+        // adding target to the Buttons
+        guard let acrView = rootview as? ACRView else {
+            return
+        }
+        switch action?.getType() {
+        case .openUrl:
+            guard let openURLAction = action as? ACSOpenUrlAction else {
+                logError("Element is not of type ACSOpenUrlAction")
+                return
+            }
+            let target = ActionOpenURLTarget(element: openURLAction, delegate: acrView)
+            target.configureAction(for: button)
+            acrView.addTarget(target)
+        case .submit: break
+        // TODO add target for submit action
+        default:
+            break
         }
     }
 }

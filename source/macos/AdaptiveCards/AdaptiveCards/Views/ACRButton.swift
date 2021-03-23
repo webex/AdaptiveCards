@@ -5,6 +5,7 @@ enum ActionStyle: String {
     case `default`
     case destructive
     case none
+    case inline
 }
 
 class ACRButton: FlatButton {
@@ -17,6 +18,9 @@ class ACRButton: FlatButton {
         
         static let redColorCode = "#D93829"
         static let darkRedColorCode = "#A12C23"
+        
+        static let grayColorCode = "#E6E8E8"
+        static let darkGrayColorCode = "#B4B6B8"
     }
     
     public var backgroundColor: NSColor = .init(red: 0.35216, green: 0.823529412, blue: 1, alpha: 1)
@@ -26,6 +30,7 @@ class ACRButton: FlatButton {
     private var inActiveTextColor: NSColor = .linkColor
     private var inActiveborderColor: NSColor = .linkColor
     private var hoverButtonColor: NSColor = .linkColor
+    private var buttonStyle: ActionStyle = .default
     
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -79,7 +84,9 @@ class ACRButton: FlatButton {
     
     override open func layout() {
         super.layout()
-        cornerRadius = bounds.height / 2
+        if buttonStyle != .inline {
+            cornerRadius = bounds.height / 2
+        }
     }
 
     override open func mouseEntered(with event: NSEvent) {
@@ -108,6 +115,7 @@ class ACRButton: FlatButton {
         backgroundColor = .white
         buttonColor = .white
         activeTextColor = .white
+        buttonStyle = style
         
         switch style {
         case .default:
@@ -151,6 +159,21 @@ class ACRButton: FlatButton {
             // textColor
             textColor = activeBorderColor
             inActiveTextColor = textColor
+            
+        case .inline:
+            borderColor = .clear
+            inActiveborderColor = .clear
+            activeBorderColor = .clear
+            
+            // button color
+            activeButtonColor = ColorUtils.color(from: Constants.darkGrayColorCode) ?? .clear
+            hoverButtonColor = ColorUtils.color(from: Constants.grayColorCode) ?? .clear
+            
+            // textColor
+            textColor = .black
+            activeTextColor = .black
+            inActiveTextColor = textColor
+            
         case .none:
             backgroundColor = .init(red: 0.35216, green: 0.823529412, blue: 1, alpha: 1)
             // borderColor
