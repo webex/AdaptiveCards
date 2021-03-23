@@ -35,7 +35,8 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             imageView.imageScaling = .scaleAxesIndependently
         }
         
-        if cgsize.width > 0 {
+        let size = imageElement.getSize()
+        if (size == .small || size == .medium || size == .large) && cgsize.width > 0 {
             imageView.widthAnchor.constraint(equalToConstant: cgsize.width).isActive = true
         }
         
