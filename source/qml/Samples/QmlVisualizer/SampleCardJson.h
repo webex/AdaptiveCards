@@ -2642,6 +2642,27 @@ namespace Samples
           }
         }
       ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "What time do you want to meet?"
+    },
+    {
+      "type": "Input.Time",
+      "id": "time1",
+      "min": "09:00",
+      "max": "17:00",
+      "value": "15:30"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Date Input"
+    },
+    {
+      "type": "Input.Date",
+      "id": "date",
+      "placeholder": "Enter a date",
+      "value": "2017-10-12"
     }
   ]
 })";
