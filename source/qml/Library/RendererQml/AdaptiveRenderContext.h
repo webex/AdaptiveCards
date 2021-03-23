@@ -64,6 +64,9 @@ namespace RendererQml
         void addToTextRunSubmitSelectActionList(const std::shared_ptr<QmlTag>& textRunElement, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>& actionList);
         const std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> getTextRunSubmitSelectActionList();
 
+        void addToContainersSubmitSelectActionList(const std::shared_ptr<QmlTag>& frame, std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>>& actionList);
+        const std::map<std::shared_ptr<QmlTag>, std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>>> getContainersSubmitSelectActionList();
+
 		const int getCardWidth();
 
     private:
@@ -83,6 +86,7 @@ namespace RendererQml
         std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardButtonList;
         std::map<std::string, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardLoaderComponentList;
         std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> m_textRunSubmitSelectActionList;
+        std::map<std::shared_ptr<QmlTag>, std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>>> m_containersSubmitSelectActionList;
 
         int m_ContainerCounter{ 0 };
         int m_ImageCounter{ 0 };

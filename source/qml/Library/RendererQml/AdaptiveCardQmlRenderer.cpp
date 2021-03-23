@@ -114,6 +114,7 @@ namespace RendererQml
         addSubmitActionButtonClickFunc(context);
         addShowCardLoaderComponents(context);
         addTextRunSubmitSelectActionLogic(context);
+        addContainersSubmitSelectActionLogic(context);
 
         // Add height anf widtch calculation function
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
@@ -1525,14 +1526,7 @@ namespace RendererQml
             auto backgroundImg = std::make_shared<QmlTag>("Image");
             backgroundImg->Property("anchors.fill", "parent");
             backgroundImg->Property("source", "\"" + url + "\"");
-            backgroundRect->AddChild(backgroundImg);
-
-            if (cardElement->GetSelectAction() != nullptr)
-            {
-                AddSelectAction(backgroundRect, cardElement->GetSelectAction(), context);
-            }
-
-			uiContainer->Property("background", backgroundRect->ToString());
+            backgroundRect->AddChild(backgroundImg);			
 			uiContainer->Property("readonly property bool hasBackgroundImage", "true");
 		}
 		else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
@@ -1540,26 +1534,28 @@ namespace RendererQml
 			const auto color = context->GetConfig()->GetBackgroundColor(cardElement->GetStyle());
             backgroundRect->Property("border.width", "0");
             backgroundRect->Property("color", "\"" + color + "\"");
-
-            if (cardElement->GetSelectAction() != nullptr)
-            {
-                AddSelectAction(backgroundRect, cardElement->GetSelectAction(), context);
-            }
-
-			uiContainer->Property("background", backgroundRect->ToString());
 		}
 		else
 		{
             backgroundRect->Property("border.width", "0");
             backgroundRect->Property("color", "'transparent'");
+        }
 
-            if (cardElement->GetSelectAction() != nullptr)
+        if (cardElement->GetSelectAction() != nullptr)
+        {
+            std::ostringstream onClicked;
+            if (cardElement->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
             {
                 AddSelectAction(backgroundRect, cardElement->GetSelectAction(), context);
             }
-
-            uiContainer->Property("background", backgroundRect->ToString());
+            else if (cardElement->GetSelectAction()->GetElementTypeString() == "Action.Submit")
+            {
+                std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> actionlist;
+                actionlist[backgroundRect] = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(cardElement->GetSelectAction());
+                context->addToContainersSubmitSelectActionList(uiContainer, actionlist);
+            }
         }
+        uiContainer->Property("background", backgroundRect->ToString());
 
 		int tempMargin = 0;
 		bool inheritsStyleFromParent = (cardElement->GetStyle() == AdaptiveCards::ContainerStyle::None);
@@ -2380,6 +2376,18 @@ namespace RendererQml
                 }                
             }
             textRunElement.first->Property("onLinkActivated", Formatter() << "{\n" << onLinkActivatedFunc << "}");
+        }
+    }
+
+    void AdaptiveCardQmlRenderer::addContainersSubmitSelectActionLogic(const std::shared_ptr<AdaptiveRenderContext>& context)
+    {
+        for (const auto& frame : context->getContainersSubmitSelectActionList())
+        {
+            for (const auto& rect : frame.second)
+            {
+                AddSelectAction(rect.first, rect.second, context);
+                frame.first->Property("background", rect.first->ToString());
+            }            
         }
     }
 
