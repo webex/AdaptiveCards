@@ -2483,6 +2483,17 @@ namespace Samples
                     ]
                 }
             ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "What time do you want to meet?"
+        },
+        {
+            "type": "Input.Time",
+            "id": "time",
+            "min": "09:00",
+            "max": "17:00",
+            "value": "15:30"
         }
     ],
     "actions": [
@@ -2540,6 +2551,17 @@ namespace Samples
   "version": "1.2",
   "body": [
     {
+      "type": "TextBlock",
+      "text": "What time do you want to meet?"
+    },
+    {
+      "type": "Input.Time",
+      "id": "time",
+      "min": "09:00",
+      "max": "17:00",
+      "value": "15:30"
+    },
+    {        
       "type": "RichTextBlock",
       "inlines": [
         "This is the first inline. ",
@@ -2622,5 +2644,56 @@ namespace Samples
       ]
     }
   ]
+})";
+
+    const std::string card_ContainerSelectAction = R"({
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.2",
+    "body": [
+        {
+            "type": "Container",            
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Cool link"
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            }
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Emphasis link"
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://msn.com"
+            }
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Submit action"
+                }
+            ],
+            "selectAction": {
+                "type": "Action.Submit",
+                "title": "Submit action",
+                "data": {
+                    "info": "My submit action data"
+                }
+            }
+        }
+    ]
 })";
 }
