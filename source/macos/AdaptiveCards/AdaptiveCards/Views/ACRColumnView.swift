@@ -11,7 +11,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     private (set) var stackViewTrailingConstraint: NSLayoutConstraint?
     private (set) var stackViewTopConstraint: NSLayoutConstraint?
     private (set) var stackViewBottomConstraint: NSLayoutConstraint?
-    
+    let view = ACRBackgroundImageView()
     let hostConfig: ACSHostConfig
     
     public var orientation: NSUserInterfaceLayoutOrientation {

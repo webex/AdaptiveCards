@@ -1,10 +1,3 @@
-//
-//  ACRBackgroundImage.swift
-//  AdaptiveCards
-//
-//  Created by snbehar on 19/03/21.
-//
-
 import AdaptiveCards_bridge
 import AppKit
 
@@ -20,6 +13,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
     
     private var bgImageLayer = CALayer()
     private var ratio = CGFloat(1)
+    
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
         initialize()
@@ -30,7 +24,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
         initialize()
     }
     
-    func initialize() {
+    private func initialize() {
         wantsLayer = true
         layer?.delegate = self
         layer?.masksToBounds = true
@@ -42,12 +36,12 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
         setupBGImage()
     }
     
-    func setupBGImage() {
+    private func setupBGImage() {
         /* In this block of code, the basic approach used to implement the alignment is that the layer is padded with image on the horizontal or vertical (whichever required) axes with the image pattern. After this is done, based on the requirements, the origin of the layer is offsetted so as to create the desired placement of the image pattern based on the vertical alignment, horizontal alignment, and fill modes. */
-        
+
         switch fillMode {
         case .cover:
-            ratio = bounds.height / bgimage.size.height > bounds.width / bgimage.size.width ? bounds.height / bgimage.size.height : bounds.width / bgimage.size.width
+            ratio = max(bounds.height / bgimage.size.height, bounds.width / bgimage.size.width)
             bgimage.size = .init(width: bgimage.size.width * ratio, height: bgimage.size.height * ratio)
             bgImageLayer.frame = .init(x: 0, y: 0, width: bgimage.size.width, height: bgimage.size.height)
             
@@ -57,8 +51,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             case .bottom:
                 bgImageLayer.frame.origin.y += (bounds.height - bgimage.size.height)
             default:
-                // Do Nothing Basically
-                ratio = 1
+                break
             }
             
             switch horizontalAlignment {
@@ -67,8 +60,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             case .right:
                 bgImageLayer.frame.origin.x += (bounds.width - bgimage.size.width)
             default:
-                // Do Nothing Basically
-                ratio = 1
+                break
             }
         
         case .repeatHorizontally:
@@ -80,8 +72,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             case .bottom:
                 bgImageLayer.frame.origin.y += (bounds.height - bgimage.size.height)
             default:
-                // Do Nothing Basically
-                ratio = 1
+                break
             }
             
             switch horizontalAlignment {
@@ -92,8 +83,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             case .right:
                 bgImageLayer.frame.origin.x -= (1 - ((bounds.width / bgimage.size.width).truncatingRemainder(dividingBy: 1))) * bgimage.size.width
             default:
-                // Do Nothing Basically
-                ratio = 1
+                break
             }
         
         case .repeatVertically:
@@ -107,8 +97,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             case .bottom:
                 bgImageLayer.frame.origin.y -= (1 - ((bounds.height / bgimage.size.height).truncatingRemainder(dividingBy: 1))) * bgimage.size.height
             default:
-                // Do Nothing Basically
-                ratio = 1
+                break
             }
             
             switch horizontalAlignment {
@@ -117,8 +106,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             case .right:
                 bgImageLayer.frame.origin.x += (bounds.width - bgimage.size.width)
             default:
-                // Do Nothing Basically
-                ratio = 1
+                break
             }
             
         case .repeat:
@@ -132,8 +120,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             case .bottom:
                 bgImageLayer.frame.origin.y -= (1 - ((bounds.height / bgimage.size.height).truncatingRemainder(dividingBy: 1))) * bgimage.size.height
             default:
-                // Do Nothing Basically
-                ratio = 1
+                break
             }
             
             switch horizontalAlignment {
@@ -144,8 +131,7 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             case .right:
                 bgImageLayer.frame.origin.x -= (1 - ((bounds.width / bgimage.size.width).truncatingRemainder(dividingBy: 1))) * bgimage.size.width
             default:
-                // Do Nothing Basically
-                ratio = 1
+                break
             }
         @unknown default:
             fatalError()

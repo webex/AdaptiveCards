@@ -7,10 +7,11 @@ class ViewTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        imageView = ACRBackgroundImageView()
+        imageView = ACRBackgroundImageView(frame: NSRect(x: 0, y: 0, width: 200, height: 600))
     }
     
     // Test Cases are named as testBGImage<fillmode><horizontalAlignment><verticalAlignment>
+    // Test Image dimensions are 100x57, so all calculations are done accordingly
     
     func testBGImageCoverLeftTop() {
         imageView.fillMode = .cover
@@ -18,10 +19,11 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
+        // 1052.63 in the next line is because when the image of height (57) is increased to 600, the proportional new width is 1052.63
+        XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
+        XCTAssertEqual(imageLayer.frame.height,600)
     }
     
     func testBGImageCoverLeftBottom() {
@@ -30,10 +32,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
+        XCTAssertEqual(imageLayer.frame.height, 600)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.maxY, 600)
     }
     
     func testBGImageCoverLeftCenter() {
@@ -42,10 +44,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
+        XCTAssertEqual(imageLayer.frame.height, 600)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.maxY, 600)
     }
     
     func testBGImageCoverRightTop() {
@@ -54,10 +56,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
+        XCTAssertEqual(imageLayer.frame.height, 600)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageCoverRightBottom() {
@@ -66,10 +68,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
+        XCTAssertEqual(imageLayer.frame.height, 600)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.maxY, 600)
     }
     
     func testBGImageCoverRightCenter() {
@@ -78,10 +80,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
+        XCTAssertEqual(imageLayer.frame.height, 600)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.midY, 300)
     }
     
     func testBGImageCoverCenterTop() {
@@ -90,10 +92,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
+        XCTAssertEqual(imageLayer.frame.height, 600)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageCoverCenterBottom() {
@@ -102,10 +104,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
+        XCTAssertEqual(imageLayer.frame.height, 600)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.maxY, 600)
     }
     
     func testBGImageCoverCenterCenter() {
@@ -114,10 +116,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
+        XCTAssertEqual(imageLayer.frame.height, 600)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.midY, 300)
     }
     
     func testBGImageRpthorizontallyLeftTop() {
@@ -126,10 +128,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height, 57)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.maxY, 57)
     }
     
     func testBGImageRpthorizontallyLeftBottom() {
@@ -138,10 +140,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height, 57)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.maxY, 600)
     }
     
     func testBGImageRpthorizontallyLeftCenter() {
@@ -150,10 +152,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height, 57)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.midY, 300)
     }
     
     func testBGImageRpthorizontallyRightTop() {
@@ -162,10 +164,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height, 57)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageRpthorizontallyRightBottom() {
@@ -174,10 +176,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,57)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.maxY, 600)
     }
     
     func testBGImageRpthorizontallyRightCenter() {
@@ -186,10 +188,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,57)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.midY, 300)
     }
     
     func testBGImageRpthorizontallyCenterTop() {
@@ -198,10 +200,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,57)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageRpthorizontallyCenterBottom() {
@@ -210,10 +212,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,57)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.maxY, 600)
     }
     
     func testBGImageRpthorizontallyCenterCenter() {
@@ -222,10 +224,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,57)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.midY, 300)
     }
     
     func testBGImageRptverticallyLeftTop() {
@@ -234,10 +236,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 100)
+        XCTAssertEqual(imageLayer.frame.height, 657)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageRptverticallyLeftBottom() {
@@ -246,10 +248,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 100)
+        XCTAssertEqual(imageLayer.frame.height, 657)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.maxY, 630)
     }
     
     func testBGImageRptverticallyLeftCenter() {
@@ -258,10 +260,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 100)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.midY, 315)
     }
     
     func testBGImageRptverticallyRightTop() {
@@ -270,10 +272,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 100)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageRptverticallyRightBottom() {
@@ -282,10 +284,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 100)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.maxY, 630)
     }
     
     func testBGImageRptverticallyRightCenter() {
@@ -294,10 +296,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 100)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.midY, 315)
     }
     
     func testBGImageRptverticallyCenterTop() {
@@ -306,10 +308,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 100)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageRptverticallyCenterBottom() {
@@ -318,10 +320,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 100)
+        XCTAssertEqual(imageLayer.frame.height, 657)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.maxY, 630)
     }
     
     func testBGImageRptverticallyCenterCenter() {
@@ -330,10 +332,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 100)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.midY, 315)
     }
     
     func testBGImageRepeatLeftTop() {
@@ -342,10 +344,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageRepeatLeftBottom() {
@@ -354,10 +356,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.maxY, 630)
     }
     
     func testBGImageRepeatLeftCenter() {
@@ -366,10 +368,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = CGFloat(0)
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.minX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.minX, 0)
+        XCTAssertEqual(imageLayer.frame.midY, 315)
     }
     
     func testBGImageRepeatRightTop() {
@@ -378,10 +380,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageRepeatRightBottom() {
@@ -390,10 +392,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.maxY, 630)
     }
     
     func testBGImageRepeatRightCenter() {
@@ -402,10 +404,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.bounds.maxX
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.maxX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.maxX, 200)
+        XCTAssertEqual(imageLayer.frame.midY, 315)
     }
     
     func testBGImageRepeatCenterTop() {
@@ -414,10 +416,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .top
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = CGFloat(0)
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.minY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.minY, 0)
     }
     
     func testBGImageRepeatCenterBottom() {
@@ -426,10 +428,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .bottom
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = imageView.layer?.bounds.maxY
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.maxY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.maxY, 630)
     }
     
     func testBGImageRepeatCenterCenter() {
@@ -438,10 +440,10 @@ class ViewTests: XCTestCase {
         imageView.verticalAlignment = .center
         imageView.bgimage = getImageFile()
         let imageLayer = getImageLayer()
-        let xOrigin = imageView.layer?.frame.midX
-        let yOrigin = imageView.layer?.frame.midY
-        XCTAssertEqual(imageLayer.frame.midX, xOrigin)
-        XCTAssertEqual(imageLayer.frame.midY, yOrigin)
+        XCTAssertEqual(imageLayer.frame.width, 300)
+        XCTAssertEqual(imageLayer.frame.height,657)
+        XCTAssertEqual(imageLayer.frame.midX, 100)
+        XCTAssertEqual(imageLayer.frame.midY, 315)
     }
     
     
