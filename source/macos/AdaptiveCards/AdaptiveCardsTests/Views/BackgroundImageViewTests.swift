@@ -17,7 +17,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .cover
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.minX, 0)
         XCTAssertEqual(imageLayer.frame.minY, 0)
@@ -30,7 +30,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .cover
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
         XCTAssertEqual(imageLayer.frame.height, 600)
@@ -42,7 +42,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .cover
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
         XCTAssertEqual(imageLayer.frame.height, 600)
@@ -54,7 +54,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .cover
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
         XCTAssertEqual(imageLayer.frame.height, 600)
@@ -66,7 +66,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .cover
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
         XCTAssertEqual(imageLayer.frame.height, 600)
@@ -78,7 +78,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .cover
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
         XCTAssertEqual(imageLayer.frame.height, 600)
@@ -90,7 +90,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .cover
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
         XCTAssertEqual(imageLayer.frame.height, 600)
@@ -102,7 +102,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .cover
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
         XCTAssertEqual(imageLayer.frame.height, 600)
@@ -114,7 +114,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .cover
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 1052.6315789473686)
         XCTAssertEqual(imageLayer.frame.height, 600)
@@ -126,7 +126,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatHorizontally
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height, 57)
@@ -138,7 +138,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatHorizontally
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height, 57)
@@ -150,7 +150,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatHorizontally
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height, 57)
@@ -162,7 +162,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatHorizontally
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height, 57)
@@ -174,7 +174,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatHorizontally
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,57)
@@ -186,7 +186,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatHorizontally
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,57)
@@ -198,7 +198,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatHorizontally
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,57)
@@ -210,7 +210,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatHorizontally
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,57)
@@ -222,7 +222,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatHorizontally
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,57)
@@ -234,7 +234,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatVertically
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 100)
         XCTAssertEqual(imageLayer.frame.height, 657)
@@ -246,7 +246,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatVertically
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 100)
         XCTAssertEqual(imageLayer.frame.height, 657)
@@ -258,7 +258,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatVertically
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 100)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -270,7 +270,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatVertically
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 100)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -282,7 +282,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatVertically
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 100)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -294,7 +294,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatVertically
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 100)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -306,7 +306,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatVertically
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 100)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -318,7 +318,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatVertically
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 100)
         XCTAssertEqual(imageLayer.frame.height, 657)
@@ -330,7 +330,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeatVertically
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 100)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -342,7 +342,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeat
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -354,7 +354,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeat
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -366,7 +366,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeat
         imageView.horizontalAlignment = .left
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -378,7 +378,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeat
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -390,7 +390,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeat
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -402,7 +402,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeat
         imageView.horizontalAlignment = .right
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -414,7 +414,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeat
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .top
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -426,7 +426,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeat
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .bottom
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,657)
@@ -438,7 +438,7 @@ class ViewTests: XCTestCase {
         imageView.fillMode = .repeat
         imageView.horizontalAlignment = .center
         imageView.verticalAlignment = .center
-        imageView.bgimage = getImageFile()
+        imageView.image = getImageFile()
         let imageLayer = getImageLayer()
         XCTAssertEqual(imageLayer.frame.width, 300)
         XCTAssertEqual(imageLayer.frame.height,657)
