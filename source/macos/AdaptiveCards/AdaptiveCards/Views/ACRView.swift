@@ -95,11 +95,15 @@ extension ACRView: TargetHandlerDelegate {
         delegate?.acrView(self, didSelectOpenURL: urlString, button: button)
     }
     
-    func handleSubmitAction(button: NSButton) {
+    func handleSubmitAction(button: NSButton, dataJson: String) {
         var dict = [String: String]()
         for handler in inputHandlers {
             guard handler.isValid else { continue }
             dict[handler.key] = handler.value
+        }
+        
+        if let data = dataJson.data(using: String.Encoding.utf8), let dataJsonDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
+            dict.merge(dataJsonDict) { current, _ in current }
         }
         delegate?.acrInputViewHandler(self, didSubmitUserResponses: dict, button: button)
     }

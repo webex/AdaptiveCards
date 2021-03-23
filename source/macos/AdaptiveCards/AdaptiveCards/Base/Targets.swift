@@ -22,9 +22,11 @@ class ActionOpenURLTarget: NSObject, TargetHandler {
     
 class ActionSubmitTarget: NSObject, TargetHandler {
     weak var delegate: TargetHandlerDelegate?
+    let dataJson: String
     
     init(element: ACSSubmitAction, delegate: TargetHandlerDelegate) {
         self.delegate = delegate
+        self.dataJson = element.getDataJson() ?? ""
     }
     
     func configureAction(for button: NSButton) {
@@ -33,7 +35,7 @@ class ActionSubmitTarget: NSObject, TargetHandler {
     }
     
     @objc private func handleButtonAction(_ sender: NSButton) {
-        delegate?.handleSubmitAction(button: sender)
+        delegate?.handleSubmitAction(button: sender, dataJson: self.dataJson)
     }
 }
 
