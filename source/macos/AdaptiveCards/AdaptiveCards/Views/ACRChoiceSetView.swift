@@ -90,7 +90,7 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     private var trackingAreaDefined: Bool = false
     public var idString: String?
     public var valueSelected: String?
-    public var arrayValues: [String]? = []
+    public var arrayValues: [String] = []
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
@@ -112,7 +112,7 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     }
     
     var value: String {
-        return arrayValues?[indexOfSelectedItem] ?? ""
+        return arrayValues[indexOfSelectedItem]
     }
     
     var key: String {

@@ -163,15 +163,14 @@ extension RootViewController: AdaptiveCardActionDelegate {
     
     func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses: [String: String], button: NSButton) {
         let alert = NSAlert()
-        if let jsonData = try? JSONSerialization.data(withJSONObject: didSubmitUserResponses, options: [.prettyPrinted]) {
-            if let jsonString = String(data: jsonData, encoding: .ascii) {
-                alert.messageText = button.title
-                alert.informativeText = jsonString
-                alert.alertStyle = .informational
-                alert.addButton(withTitle: "Ok")
-                alert.runModal()
-            }
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: didSubmitUserResponses, options: [.prettyPrinted]), let jsonString = String(data: jsonData, encoding: .ascii) else {
+            return
         }
+        alert.messageText = button.title
+        alert.informativeText = jsonString
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "Ok")
+        alert.runModal()
     }
 }
 
