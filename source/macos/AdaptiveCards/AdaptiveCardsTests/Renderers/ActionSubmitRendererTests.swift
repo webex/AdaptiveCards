@@ -45,7 +45,7 @@ class ActionSubmitRendererTests: XCTestCase {
         testinputHandler.key = "Key"
         testinputHandler.isValid = true
         acrView.addInputHandler(testinputHandler)
-        acrView.handleSubmitAction(button: NSButton())
+        acrView.handleSubmitAction(button: NSButton(), dataJson: nil)
         guard let myDelegate = acrView.delegate as? FakeACRViewDelegate else { fatalError() }
         XCTAssertEqual("Value", myDelegate.dict["Key"])
     }
@@ -57,7 +57,7 @@ class ActionSubmitRendererTests: XCTestCase {
         testinputHandler.key = "Key"
         testinputHandler.isValid = false
         acrView.addInputHandler(testinputHandler)
-        acrView.handleSubmitAction(button: NSButton())
+        acrView.handleSubmitAction(button: NSButton(), dataJson: nil)
         guard let myDelegate = acrView.delegate as? FakeACRViewDelegate else { fatalError() }
         XCTAssertEqual(0, myDelegate.dict.count)
     }
@@ -74,12 +74,27 @@ class ActionSubmitRendererTests: XCTestCase {
         testinputHandler2.key = "Key2"
         testinputHandler2.isValid = true
         acrView.addInputHandler(testinputHandler2)
-        acrView.handleSubmitAction(button: NSButton())
+        acrView.handleSubmitAction(button: NSButton(), dataJson: nil)
         guard let myDelegate = acrView.delegate as? FakeACRViewDelegate else { fatalError() }
         XCTAssertEqual(2, myDelegate.dict.count)
         XCTAssertEqual("Value1", myDelegate.dict["Key1"])
         XCTAssertEqual("Value2", myDelegate.dict["Key2"])
     }
+    
+    func testInputHandlerWithDataJson() {
+        acrView.delegate = delegate
+        let testinputHandler = FakeInputHandlingView()
+        testinputHandler.value = "Value"
+        testinputHandler.key = "Key"
+        testinputHandler.isValid = true
+        acrView.addInputHandler(testinputHandler)
+        acrView.handleSubmitAction(button: NSButton(), dataJson: "{\"id\":\"1234567890\"}\n")
+        guard let myDelegate = acrView.delegate as? FakeACRViewDelegate else { fatalError() }
+        XCTAssertEqual(2, myDelegate.dict.count)
+        XCTAssertEqual("Value", myDelegate.dict["Key"])
+        XCTAssertEqual("1234567890", myDelegate.dict["id"])
+    }
+    
     
     private func renderButton() -> ACRButton {
         let view = actionSubmitRenderer.render(action: actionSubmit, with: hostConfig, style: .default, rootView: acrView, parentView: NSView(), inputs: [])
