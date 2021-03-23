@@ -2307,12 +2307,12 @@ namespace RendererQml
             {
                 if(typeof childrens[i].seperator !== 'undefined')
                 {
-					implicitHei += childrens[i].height;
+					implicitHt += childrens[i].height;
                     stretchMinHeight += childrens[i].height;
                 }
                 else
                 {
-                    implicitHei += childrens[i].implicitHeight;
+                    implicitHt += childrens[i].implicitHeight;
                     if(typeof childrens[i].stretch !== 'undefined')
                     {
                         stretchCount++;
@@ -2334,9 +2334,9 @@ namespace RendererQml
 					}
 				}
             }
-            if(stretchCount > 0 && implicitHei < minHeight)
+            if(stretchCount > 0 && implicitHt < minHeight)
             {
-                var stretctHeight = (minHeight - implicitHei)/stretchCount
+                var stretctHeight = (minHeight - implicitHt)/stretchCount
                 for(i=0;i<childrens.length;i++)
                 {
 					if(typeof childrens[i].seperator === 'undefined')
