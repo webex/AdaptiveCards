@@ -155,7 +155,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
 }
 
 extension RootViewController: AdaptiveCardActionDelegate {
-    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, button: NSButton) {
+    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, actionView: NSView) {
         print("OPEN URL ACTION: \(urlString)")
         guard let url = URL(string: urlString) else { return }
         NSWorkspace.shared.open(url)

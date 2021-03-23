@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 protocol ACRViewDelegate: AnyObject {
-    func acrView(_ view: ACRView, didSelectOpenURL url: String, button: NSButton)
+    func acrView(_ view: ACRView, didSelectOpenURL url: String, actionView: NSView)
     func acrInputViewHandler(_ view: ACRView, didSubmitUserResponses dict: [String: String], button: NSButton )
 }
 
@@ -91,8 +91,8 @@ extension ACRView: TargetHandlerDelegate {
         }
     }
     
-    func handleOpenURLAction(button: NSButton, urlString: String) {
-        delegate?.acrView(self, didSelectOpenURL: urlString, button: button)
+    func handleOpenURLAction(actionView: NSView, urlString: String) {
+        delegate?.acrView(self, didSelectOpenURL: urlString, actionView: actionView)
     }
     
     func handleSubmitAction(button: NSButton, dataJson: String?) {

@@ -14,10 +14,11 @@ protocol BaseActionElementRendererProtocol {
 protocol TargetHandler: NSObject {
     var delegate: TargetHandlerDelegate? { get set }
     func configureAction(for button: NSButton)
+    func configureAction(for actionView: NSView)
 }
 
 protocol TargetHandlerDelegate: AnyObject {
-    func handleOpenURLAction(button: NSButton, urlString: String)
+    func handleOpenURLAction(actionView: NSView, urlString: String)
     func handleSubmitAction(button: NSButton, dataJson: String?)
     func handleShowCardAction(button: NSButton, showCard: ACSAdaptiveCard)
 }

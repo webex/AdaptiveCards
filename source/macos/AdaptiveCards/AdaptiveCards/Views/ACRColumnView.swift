@@ -234,6 +234,7 @@ class ACRColumnView: ACRContentStackView {
     
     private lazy var widthConstraint = widthAnchor.constraint(equalToConstant: Constants.minWidth)
     private (set) var columnWidth: ColumnWidth = .weighted(1)
+    var testTarget: ActionOpenURLTarget?
     
     override init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
         super.init(style: style, parentStyle: parentStyle, hostConfig: hostConfig, superview: superview)
@@ -290,4 +291,14 @@ class ACRColumnView: ACRContentStackView {
             widthConstraint.isActive = false
         }
     }
+    
+    override func mouseDown(with event: NSEvent) {
+        guard let testTarget = testTarget as? ActionOpenURLTarget else { return }
+        testTarget.configureAction(for: stackView)
+    }
+    
+//    override func mouse(_ sender: Any?) {
+//        guard let testTarget = testTarget as? ActionOpenURLTarget else { return }
+//        testTarget.configureAction()
+//    }
 }
