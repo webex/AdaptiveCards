@@ -29,11 +29,15 @@ public:
 
     void GetResourceInformation(std::vector<RemoteResourceInformation>& resourceInfo) override;
 
-private:
-    void PopulateKnownPropertiesSet();
+		HorizontalAlignment GetHorizontalAlignment() const;
+        void SetHorizontalAlignment(const HorizontalAlignment value);
 
-    std::vector<std::shared_ptr<Column>> m_columns;
-};
+    private:
+        void PopulateKnownPropertiesSet();
+
+        std::vector<std::shared_ptr<Column>> m_columns;
+        HorizontalAlignment m_hAlignment;
+    };
 
 class ColumnSetParser : public BaseCardElementParser
 {
