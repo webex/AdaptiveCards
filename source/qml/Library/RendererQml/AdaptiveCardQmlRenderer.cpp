@@ -105,11 +105,12 @@ namespace RendererQml
 
         AddContainerElements(bodyLayout, card->GetBody(), context);
         AddActions(bodyLayout, card->GetActions(), context);
+        AddSelectAction(uiCard, card->GetSelectAction(), context);
 
         //Add submit onclick event
         addSubmitActionButtonClickFunc(context);
         addShowCardLoaderComponents(context);
-        AddSelectAction(uiCard, card->GetSelectAction(), context);
+        addTextRunSubmitSelectActionLogic(context);
 		return uiCard;
 	}
 
@@ -262,7 +263,11 @@ namespace RendererQml
             }
             else if (selectAction->GetElementTypeString() == "Action.Submit")
             {
-                onClickedFunction = getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(selectAction), context);
+                context->addToSubmitActionButtonList(mouseArea, std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(selectAction));
+            }
+            else
+            {
+                onClickedFunction = "";
             }
             mouseArea->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}");
 
@@ -606,7 +611,6 @@ namespace RendererQml
 			uiTextBlock->Property("visible", "false");
 		}
 
-        int selectActionCounter = 0;
         std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>> selectActionList;
 
 		for (const auto& inlineRun : richTextBlock->GetInlines())
@@ -618,7 +622,7 @@ namespace RendererQml
 
                 if (textRun->GetSelectAction() != nullptr)
                 {
-                    selectActionId = "selectaction_" + ++selectActionCounter;
+                    selectActionId = Formatter() << "selectaction_" << context->getSelectActionCounter();
                     selectActionList[selectActionId] = textRun->GetSelectAction();
                 }
 
@@ -631,7 +635,6 @@ namespace RendererQml
         if (!selectActionList.empty())
         {
             std::ostringstream onLinkActivated;
-            onLinkActivated << "{\n";
             for (const auto& action : selectActionList)
             {
                 onLinkActivated << "if(link === '" << action.first << "'){\n";
@@ -642,18 +645,18 @@ namespace RendererQml
                 }
                 else if (action.second->GetElementTypeString() == "Action.Submit")
                 {
-                    onLinkActivated << getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action.second), context);
+                    onLinkActivated << "{" << action.first << "}";
                 }
 
                 onLinkActivated << "return;\n}\n";
             }
-            onLinkActivated << "}\n";
 
-            uiTextBlock->Property("onLinkActivated", onLinkActivated.str());
+            uiTextBlock->Property("onLinkActivated", Formatter() << "{\n" << onLinkActivated.str() << "}");
         }
 
-		return uiTextBlock;
+        context->addToTextRunSubmitSelectActionList(uiTextBlock, selectActionList);
 
+		return uiTextBlock;
 	}
 
 	std::string AdaptiveCardQmlRenderer::TextRunRender(const std::shared_ptr<AdaptiveCards::TextRun>& textRun, const std::shared_ptr<AdaptiveRenderContext>& context, const std::string& selectaction)
@@ -2287,6 +2290,23 @@ namespace RendererQml
                 context->getCardRootElement()->AddChild(showCardComponent);
             }
         }        
+    }
+
+    void AdaptiveCardQmlRenderer::addTextRunSubmitSelectActionLogic(const std::shared_ptr<AdaptiveRenderContext>& context)
+    {
+        for (const auto& textRunElement : context->getTextRunSubmitSelectActionList())
+        {
+            auto onLinkActivatedFunc = textRunElement.first->GetProperty("onLinkActivated");
+            for (const auto& action : textRunElement.second)
+            {
+                if (action.second->GetElementTypeString() == "Action.Submit")
+                {
+                    const auto submitClickFunc = getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action.second), context);
+                    onLinkActivatedFunc = Utils::Replace(onLinkActivatedFunc, "{" + action.first + "}", submitClickFunc);
+                }                
+            }
+            textRunElement.first->Property("onLinkActivated", onLinkActivatedFunc);
+        }
     }
 
     const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(const std::shared_ptr<AdaptiveCards::OpenUrlAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
