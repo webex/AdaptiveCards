@@ -26,7 +26,8 @@ SampleCardList::SampleCardList(QObject *parent) : QObject(parent)
     mCards.append({ QStringLiteral("Action Set"), QString::fromStdString(Samples::card_ActionSet) });    
     mCards.append({ QStringLiteral("Food order"), QString::fromStdString(Samples::card_FoodOrder) });
     mCards.append({ QStringLiteral("Show card wizard"), QString::fromStdString(Samples::card_ShowCardWiz) });
-    
+	mCards.append({ QStringLiteral("Background Image"), QString::fromStdString(Samples::card_BackgroundImage) });
+
 }
 
 QVector<Card> SampleCardList::cardList() const

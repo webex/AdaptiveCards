@@ -81,18 +81,33 @@ namespace RendererQml
 		auto columnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		columnLayout->Property("id", "adaptiveCardLayout");
 		columnLayout->Property("width", "parent.width");
-		uiCard->AddChild(columnLayout);
 
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
 		rectangle->Property("id", "adaptiveCardRectangle");
-		rectangle->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-		rectangle->Property("Layout.margins", "margins");
+		rectangle->Property("color", "'transparent'");
 		rectangle->Property("Layout.fillWidth", "true");
 		rectangle->Property("Layout.preferredHeight", "40");
 
 		if (card->GetMinHeight() > 0)
 		{
 			rectangle->Property("Layout.minimumHeight", std::to_string(card->GetMinHeight()));
+		}
+
+		if (card->GetBackgroundImage() != nullptr)
+		{
+			auto uiFrame = std::make_shared<QmlTag>("Frame");
+			uiFrame->Property("anchors.fill", "parent");
+			uiFrame->Property("readonly property bool hasBackgroundImage", "true");
+			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context)->ToString());
+			uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight + 2 * margins");
+
+			uiCard->AddChild(uiFrame);
+			uiFrame->AddChild(columnLayout);
+		}
+		else
+		{
+			rectangle->Property("Layout.margins", "margins");
+			uiCard->AddChild(columnLayout);
 		}
 		columnLayout->AddChild(rectangle);
 
@@ -1394,7 +1409,7 @@ namespace RendererQml
 		{
 			auto url = cardElement->GetBackgroundImage()->GetUrl();
 
-			uiContainer->Property("background", "Image { source: \"" + url + "\" }");
+			uiContainer->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(cardElement->GetBackgroundImage(), context)->ToString());
 			uiContainer->Property("readonly property bool hasBackgroundImage", "true");
 		}
 		else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
@@ -2267,5 +2282,40 @@ namespace RendererQml
 
         return function.str();
     }
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetBackgroundImage(std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		auto uiImage = std::make_shared<QmlTag>("Image");
+		uiImage->Property("source", "\"" + backgroundImage->GetUrl() + "\"");
+
+		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(backgroundImage->GetHorizontalAlignment());
+		std::string verticalAlignment = AdaptiveCards::EnumHelpers::getVerticalAlignmentEnum().toString(backgroundImage->GetVerticalAlignment());
+
+		switch (backgroundImage->GetFillMode())
+		{
+		case AdaptiveCards::ImageFillMode::Repeat:
+			uiImage->Property("fillMode", "Image.Tile");
+			uiImage->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
+			uiImage->Property("verticalAlignment", Utils::GetVerticalAlignment(verticalAlignment));
+			break;
+		case AdaptiveCards::ImageFillMode::RepeatHorizontally:
+			uiImage->Property("fillMode", "Image.TileHorizontally");
+			uiImage->Property("horizontalAlignment", "Qt.AlignLeft");
+			uiImage->Property("verticalAlignment", Utils::GetVerticalAlignment(verticalAlignment));
+			break;
+		case AdaptiveCards::ImageFillMode::RepeatVertically:
+			uiImage->Property("fillMode", "Image.TileVertically");
+			uiImage->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
+			uiImage->Property("verticalAlignment", "Qt.AlignTop");
+			break;
+		case AdaptiveCards::ImageFillMode::Cover:
+		default:
+			uiImage->Property("fillMode", "Image.PreserveAspectCrop");
+			uiImage->Property("verticalAlignment", Utils::GetVerticalAlignment(verticalAlignment));
+			break;
+		}
+
+		return uiImage;
+	}
 }
 	
