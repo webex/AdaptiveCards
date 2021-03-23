@@ -3,7 +3,7 @@ import AppKit
 
 protocol ACRViewDelegate: AnyObject {
     func acrView(_ view: ACRView, didSelectOpenURL url: String, button: NSButton)
-    func acrInputViewHandler(_ view: ACRView, didSubmitUserResponses: [String: String], button: NSButton )
+    func acrInputViewHandler(_ view: ACRView, didSubmitUserResponses dict: [String: String], button: NSButton )
 }
 
 protocol ACRViewResourceResolverDelegate: AnyObject {
@@ -95,14 +95,14 @@ extension ACRView: TargetHandlerDelegate {
         delegate?.acrView(self, didSelectOpenURL: urlString, button: button)
     }
     
-    func handleSubmitAction(button: NSButton, dataJson: String) {
+    func handleSubmitAction(button: NSButton, dataJson: String?) {
         var dict = [String: String]()
         for handler in inputHandlers {
             guard handler.isValid else { continue }
             dict[handler.key] = handler.value
         }
         
-        if let data = dataJson.data(using: String.Encoding.utf8), let dataJsonDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
+        if let data = dataJson?.data(using: String.Encoding.utf8), let dataJsonDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
             dict.merge(dataJsonDict) { current, _ in current }
         }
         delegate?.acrInputViewHandler(self, didSubmitUserResponses: dict, button: button)

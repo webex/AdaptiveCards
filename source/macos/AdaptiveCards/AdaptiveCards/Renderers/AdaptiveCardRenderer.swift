@@ -64,8 +64,8 @@ class AdaptiveCardRenderer {
 }
 
 extension AdaptiveCardRenderer: ACRViewDelegate {
-    func acrInputViewHandler(_ view: ACRView, didSubmitUserResponses: [String: String], button: NSButton) {
-        actionDelegate?.adaptiveCard(view, didSubmitUserResponses: didSubmitUserResponses, button: button)
+    func acrInputViewHandler(_ view: ACRView, didSubmitUserResponses dict: [String: String], button: NSButton) {
+        actionDelegate?.adaptiveCard(view, didSubmitUserResponses: dict, button: button)
     }
     
     func acrView(_ view: ACRView, didSelectOpenURL url: String, button: NSButton) {

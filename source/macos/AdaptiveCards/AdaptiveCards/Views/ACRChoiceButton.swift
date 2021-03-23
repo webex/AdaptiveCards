@@ -8,9 +8,9 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     weak var delegate: ACRChoiceButtonDelegate?
     public var buttonValue: String?
     public var buttonType: NSButton.ButtonType = .switch
-    var idString: String?
-    var valueOn: String?
-    var valueOff: String?
+    public var idString: String?
+    public var valueOn: String?
+    public var valueOff: String?
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -92,11 +92,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     var value: String {
-        if state == .on {
-            return valueOn ?? ""
-        } else {
-            return valueOff ?? ""
-        }
+        return (state == .on ? valueOn: valueOff) ?? ""
     }
     
     var key: String {
