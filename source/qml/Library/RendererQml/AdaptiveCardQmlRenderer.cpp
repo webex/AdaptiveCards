@@ -2330,7 +2330,7 @@ namespace RendererQml
                     onLinkActivatedFunc = Utils::Replace(onLinkActivatedFunc, "{" + action.first + "}", submitClickFunc);
                 }                
             }
-            textRunElement.first->Property("onLinkActivated", onLinkActivatedFunc);
+            textRunElement.first->Property("onLinkActivated", Formatter() << "{\n" << onLinkActivatedFunc << "}");
         }
     }
 
