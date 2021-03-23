@@ -55,6 +55,7 @@ class ACRButton: FlatButton {
             iconPositioned = iconPosition
         }
         initialize()
+        buttonStyle = style
         setupButtonStyle(style: style)
     }
     
@@ -115,7 +116,6 @@ class ACRButton: FlatButton {
         backgroundColor = .white
         buttonColor = .white
         activeTextColor = .white
-        buttonStyle = style
         
         switch style {
         case .default:
