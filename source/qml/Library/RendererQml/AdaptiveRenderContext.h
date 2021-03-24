@@ -61,8 +61,8 @@ namespace RendererQml
         void addToShowCardLoaderComponentList(const std::string& componentId, const std::shared_ptr<AdaptiveCards::ShowCardAction>& action);
         const std::map<std::string, std::shared_ptr<AdaptiveCards::ShowCardAction>> getShowCardLoaderComponentList();
 
-        void addToTextRunSubmitSelectActionList(const std::shared_ptr<QmlTag>& textRunElement, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>& actionList);
-        const std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> getTextRunSubmitSelectActionList();
+        void addToTextRunSelectActionList(const std::shared_ptr<QmlTag>& textRunElement, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>& actionList);
+        const std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> getTextRunSelectActionList();
 
         void addToContainersSubmitSelectActionList(const std::shared_ptr<QmlTag>& frame, std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>>& actionList);
         const std::map<std::shared_ptr<QmlTag>, std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>>> getContainersSubmitSelectActionList();
@@ -85,7 +85,7 @@ namespace RendererQml
         std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> m_submitActionButtonList;
         std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardButtonList;
         std::map<std::string, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardLoaderComponentList;
-        std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> m_textRunSubmitSelectActionList;
+        std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> m_textRunSelectActionList;
         std::map<std::shared_ptr<QmlTag>, std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>>> m_containersSubmitSelectActionList;
 
         int m_ContainerCounter{ 0 };

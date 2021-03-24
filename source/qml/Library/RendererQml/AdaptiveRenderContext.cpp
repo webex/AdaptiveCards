@@ -295,14 +295,14 @@ namespace RendererQml
         return m_showCardLoaderComponentList;
     }
 
-    void AdaptiveRenderContext::addToTextRunSubmitSelectActionList(const std::shared_ptr<QmlTag>& textRunElement, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>& actionList)
+    void AdaptiveRenderContext::addToTextRunSelectActionList(const std::shared_ptr<QmlTag>& textRunElement, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>& actionList)
     {
-        m_textRunSubmitSelectActionList[textRunElement] = actionList;
+        m_textRunSelectActionList[textRunElement] = actionList;
     }
 
-    const std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> AdaptiveRenderContext::getTextRunSubmitSelectActionList()
+    const std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> AdaptiveRenderContext::getTextRunSelectActionList()
     {
-        return m_textRunSubmitSelectActionList;
+        return m_textRunSelectActionList;
     }
 
     void AdaptiveRenderContext::addToContainersSubmitSelectActionList(const std::shared_ptr<QmlTag>& frame, std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>>& actionList)
