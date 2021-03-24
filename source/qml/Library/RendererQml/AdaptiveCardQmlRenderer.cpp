@@ -104,7 +104,7 @@ namespace RendererQml
 
         AddContainerElements(bodyLayout, card->GetBody(), context);
         AddActions(bodyLayout, card->GetActions(), context);
-        AddSelectAction(uiCard, card->GetSelectAction(), context);
+        AddSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context);
 
 		bodyLayout->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
 
@@ -249,7 +249,7 @@ namespace RendererQml
         }
     }
 
-    void AdaptiveCardQmlRenderer::AddSelectAction(const std::shared_ptr<QmlTag>& parent, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context)
+    void AdaptiveCardQmlRenderer::AddSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context)
     {
         if (context->GetConfig()->GetSupportsInteractivity() && selectAction != nullptr)
         {
@@ -267,8 +267,8 @@ namespace RendererQml
             mouseArea->Property("anchors.fill", "parent");
             mouseArea->Property("acceptedButtons", "Qt.LeftButton");
             mouseArea->Property("hoverEnabled", "true");
-            mouseArea->Property("onEntered", Formatter() << "{parent.color = " << hoverColor << "}");
-            mouseArea->Property("onExited", Formatter() << "{parent.color = " << parentColor << "}");
+            mouseArea->Property("onEntered", Formatter() << "{" << rectId << ".color = " << hoverColor << "}");
+            mouseArea->Property("onExited", Formatter() << "{" << rectId << ".color = " << parentColor << "}");
 
             std::string onClickedFunction;
             if (selectAction->GetElementTypeString() == "Action.OpenUrl")
@@ -1467,7 +1467,7 @@ namespace RendererQml
 
 		uiRectangle->AddChild(uiImage);
 
-        AddSelectAction(uiRectangle, image->GetSelectAction(), context);
+        AddSelectAction(uiRectangle, uiRectangle->GetId(), image->GetSelectAction(), context);
 
 		return uiRectangle;
 	}
@@ -1549,7 +1549,7 @@ namespace RendererQml
             std::ostringstream onClicked;
             if (cardElement->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
             {
-                AddSelectAction(backgroundRect, cardElement->GetSelectAction(), context);
+                AddSelectAction(backgroundRect, backgroundRect->GetId(), cardElement->GetSelectAction(), context);
             }
             else if (cardElement->GetSelectAction()->GetElementTypeString() == "Action.Submit")
             {
@@ -2011,7 +2011,7 @@ namespace RendererQml
             std::ostringstream onClicked;
             if (columnSet->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
             {
-                AddSelectAction(backgroundRect, columnSet->GetSelectAction(), context);
+                AddSelectAction(backgroundRect, backgroundRect->GetId(), columnSet->GetSelectAction(), context);
             }
             else if (columnSet->GetSelectAction()->GetElementTypeString() == "Action.Submit")
             {
@@ -2407,7 +2407,7 @@ namespace RendererQml
         {
             for (const auto& rect : frame.second)
             {
-                AddSelectAction(rect.first, rect.second, context);
+                AddSelectAction(rect.first, rect.first->GetId(), rect.second, context);
                 frame.first->Property("background", rect.first->ToString());
             }            
         }
