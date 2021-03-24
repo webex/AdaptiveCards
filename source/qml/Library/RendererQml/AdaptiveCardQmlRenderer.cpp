@@ -2162,6 +2162,12 @@ namespace RendererQml
                 showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
                 showCardIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
 
+				auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
+				ColorOverlayTag->Property("anchors.fill", "parent");
+				ColorOverlayTag->Property("source", "parent");
+				ColorOverlayTag->Property("color", Formatter() << buttonId << ".hovered ? 'white' : 'black'");
+
+				showCardIcon->AddChild(ColorOverlayTag);
                 textLayout->AddChild(showCardIcon);
             }
 
