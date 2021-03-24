@@ -116,14 +116,12 @@ namespace RendererQml
         addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context);
 
 		bodyLayout->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
-
 		bodyLayout->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
 
         //Add submit onclick event
         addSubmitActionButtonClickFunc(context);
         addShowCardLoaderComponents(context);
         addTextRunSelectActions(context);
-        addContainersSubmitSelectActionLogic(context);
 
         // Add height anf widtch calculation function
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
@@ -2379,18 +2377,6 @@ namespace RendererQml
             }
         }        
     }    
-
-    void AdaptiveCardQmlRenderer::addContainersSubmitSelectActionLogic(const std::shared_ptr<AdaptiveRenderContext>& context)
-    {
-        for (const auto& frame : context->getContainersSubmitSelectActionList())
-        {
-            for (const auto& rect : frame.second)
-            {
-                addSelectAction(rect.first, rect.first->GetId(), rect.second, context);
-                frame.first->Property("background", rect.first->ToString());
-            }            
-        }
-    }
 
     const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(const std::shared_ptr<AdaptiveCards::OpenUrlAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
     {
