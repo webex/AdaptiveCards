@@ -3700,6 +3700,145 @@ namespace Samples
         }
     ]
 })";
+
+    const std::string card_ColumnSetSelectAction = R"({
+    "type": "AdaptiveCard",
+    "version": "1.2",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Pick up where you left off?",
+            "weight": "Bolder"
+        },
+        {
+            "type": "ColumnSet",
+            "spacing": "Medium",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://unsplash.it/80?image=1083",
+                            "size": "Medium"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": 4,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Silver Star Mountain"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Maps",
+                            "isSubtle": true,
+                            "spacing": "None"
+                        }
+                    ]
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://www.msn.com"
+            }
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://unsplash.it/80?image=1082",
+                            "size": "Medium"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": 4,
+                    "style": "emphasis",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Kitchen Remodel"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "With EMPHASIS",
+                            "isSubtle": true,
+                            "spacing": "None"
+                        }
+                    ]
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://www.AdaptiveCards.io"
+            }
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://unsplash.it/80?image=1080",
+                            "size": "Medium"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": 4,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "The Witcher"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Netflix",
+                            "isSubtle": true,
+                            "spacing": "None"
+                        }
+                    ],
+                    "selectAction": {
+                        "type": "Action.OpenUrl",
+                        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    }
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://www.outlook.com"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Resume all",
+            "url": "ms-cortana:resume-all"
+        },
+        {
+            "type": "Action.OpenUrl",
+            "title": "More activities",
+            "url": "ms-cortana:more-activities"
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+})";
 }
 
     

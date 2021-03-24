@@ -265,7 +265,6 @@ namespace RendererQml
 
             auto mouseArea = std::make_shared<QmlTag>("MouseArea");
             mouseArea->Property("anchors.fill", "parent");
-            mouseArea->Property("z", "-1");
             mouseArea->Property("acceptedButtons", "Qt.LeftButton");
             mouseArea->Property("hoverEnabled", "true");
             mouseArea->Property("onEntered", Formatter() << "{parent.color = " << hoverColor << "}");
@@ -1994,15 +1993,34 @@ namespace RendererQml
 
 		uiFrame->Property("padding", "0");
 
+        auto backgroundRect = std::make_shared<QmlTag>("Rectangle");
 		if (columnSet->GetStyle() != AdaptiveCards::ContainerStyle::None)
 		{
 			const auto color = context->GetConfig()->GetBackgroundColor(columnSet->GetStyle());
-			uiFrame->Property("background", "Rectangle{border.width:0; color : \"" + color + "\";}");
+            backgroundRect->Property("border.width", "0");
+            backgroundRect->Property("color", "\"" + color + "\"");
 		}
 		else
 		{
-			uiFrame->Property("background", "Rectangle{border.width : 0; color : \"transparent\"}");
+            backgroundRect->Property("border.width", "0");
+            backgroundRect->Property("color", "'transparent'");
 		}
+
+        if (columnSet->GetSelectAction() != nullptr)
+        {
+            std::ostringstream onClicked;
+            if (columnSet->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
+            {
+                AddSelectAction(backgroundRect, columnSet->GetSelectAction(), context);
+            }
+            else if (columnSet->GetSelectAction()->GetElementTypeString() == "Action.Submit")
+            {
+                std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> actionlist;
+                actionlist[backgroundRect] = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(columnSet->GetSelectAction());
+                context->addToContainersSubmitSelectActionList(uiFrame, actionlist);
+            }
+        }
+        uiFrame->Property("background", backgroundRect->ToString());
 
 		for (int i = 0; i < no_of_columns; i++)
 		{
