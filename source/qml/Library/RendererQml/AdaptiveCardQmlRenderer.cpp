@@ -82,36 +82,31 @@ namespace RendererQml
 		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
 		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthActionSet());
 
+		if (card->GetBackgroundImage() != nullptr)
+		{
+			auto uiFrame = std::make_shared<QmlTag>("Frame");
+			uiFrame->Property("readonly property bool hasBackgroundImage", "true");
+			uiFrame->Property("anchors.fill", "parent");
+			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context)->ToString());
+
+			uiCard->AddChild(uiFrame);
+		}
+
 		auto columnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		columnLayout->Property("id", "adaptiveCardLayout");
 		columnLayout->Property("width", "parent.width");
+		uiCard->AddChild(columnLayout);
 
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
 		rectangle->Property("id", "adaptiveCardRectangle");
 		rectangle->Property("color", "'transparent'");
+		rectangle->Property("Layout.margins", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
 		rectangle->Property("Layout.preferredHeight", "40");
 
 		if (card->GetMinHeight() > 0)
 		{
 			rectangle->Property("Layout.minimumHeight", std::to_string(card->GetMinHeight()));
-		}
-
-		if (card->GetBackgroundImage() != nullptr)
-		{
-			auto uiFrame = std::make_shared<QmlTag>("Frame");
-			uiFrame->Property("anchors.fill", "parent");
-			uiFrame->Property("readonly property bool hasBackgroundImage", "true");
-			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context)->ToString());
-			uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight + 2 * margins");
-
-			uiCard->AddChild(uiFrame);
-			uiFrame->AddChild(columnLayout);
-		}
-		else
-		{
-			rectangle->Property("Layout.margins", "margins");
-			uiCard->AddChild(columnLayout);
 		}
 		columnLayout->AddChild(rectangle);
 
