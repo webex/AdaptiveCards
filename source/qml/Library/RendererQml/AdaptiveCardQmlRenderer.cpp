@@ -104,7 +104,7 @@ namespace RendererQml
 
         AddContainerElements(bodyLayout, card->GetBody(), context);
         AddActions(bodyLayout, card->GetActions(), context);
-        AddSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context);
+        addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context);
 
 		bodyLayout->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
 
@@ -113,7 +113,7 @@ namespace RendererQml
         //Add submit onclick event
         addSubmitActionButtonClickFunc(context);
         addShowCardLoaderComponents(context);
-        addTextRunSelectActionLogic(context);
+        addTextRunSelectActions(context);
         addContainersSubmitSelectActionLogic(context);
 
         // Add height anf widtch calculation function
@@ -249,7 +249,7 @@ namespace RendererQml
         }
     }
 
-    void AdaptiveCardQmlRenderer::AddSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context)
+    void AdaptiveCardQmlRenderer::addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context)
     {
         if (context->GetConfig()->GetSupportsInteractivity() && selectAction != nullptr)
         {
@@ -286,6 +286,32 @@ namespace RendererQml
             mouseArea->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}");
 
             parent->AddChild(mouseArea);
+        }
+    }
+
+    void AdaptiveCardQmlRenderer::addTextRunSelectActions(const std::shared_ptr<AdaptiveRenderContext>& context)
+    {
+        if (context->GetConfig()->GetSupportsInteractivity())
+        {
+            for (const auto& textRunElement : context->getTextRunSelectActionList())
+            {
+                std::ostringstream onLinkActivated;
+                for (const auto& action : textRunElement.second)
+                {
+                    onLinkActivated << "if(link === '" << action.first << "'){\n";
+
+                    if (action.second->GetElementTypeString() == "Action.OpenUrl")
+                    {
+                        onLinkActivated << getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action.second), context);
+                    }
+                    else if (action.second->GetElementTypeString() == "Action.Submit")
+                    {
+                        onLinkActivated << getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action.second), context);
+                    }
+                    onLinkActivated << "return;\n}\n";
+                }
+                textRunElement.first->Property("onLinkActivated", Formatter() << "{\n" << onLinkActivated.str() << "}");
+            }
         }
     }
 
@@ -1445,7 +1471,7 @@ namespace RendererQml
 
 		uiRectangle->AddChild(uiImage);
 
-        AddSelectAction(uiRectangle, uiRectangle->GetId(), image->GetSelectAction(), context);
+        addSelectAction(uiRectangle, uiRectangle->GetId(), image->GetSelectAction(), context);
 
 		return uiRectangle;
 	}
@@ -1989,7 +2015,7 @@ namespace RendererQml
             std::ostringstream onClicked;
             if (columnSet->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
             {
-                AddSelectAction(backgroundRect, backgroundRect->GetId(), columnSet->GetSelectAction(), context);
+                addSelectAction(backgroundRect, backgroundRect->GetId(), columnSet->GetSelectAction(), context);
             }
             else if (columnSet->GetSelectAction()->GetElementTypeString() == "Action.Submit")
             {
@@ -2360,33 +2386,7 @@ namespace RendererQml
                 context->getCardRootElement()->AddChild(showCardComponent);
             }
         }        
-    }
-
-    void AdaptiveCardQmlRenderer::addTextRunSelectActionLogic(const std::shared_ptr<AdaptiveRenderContext>& context)
-    {
-        if (context->GetConfig()->GetSupportsInteractivity())
-        {
-            for (const auto& textRunElement : context->getTextRunSelectActionList())
-            {
-                std::ostringstream onLinkActivated;
-                for (const auto& action : textRunElement.second)
-                {
-                    onLinkActivated << "if(link === '" << action.first << "'){\n";
-
-                    if (action.second->GetElementTypeString() == "Action.OpenUrl")
-                    {
-                        onLinkActivated << getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action.second), context);
-                    }
-                    else if (action.second->GetElementTypeString() == "Action.Submit")
-                    {
-                        onLinkActivated << getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action.second), context);
-                    }
-                    onLinkActivated << "return;\n}\n";
-                }
-                textRunElement.first->Property("onLinkActivated", Formatter() << "{\n" << onLinkActivated.str() << "}");
-            }
-        }        
-    }
+    }    
 
     void AdaptiveCardQmlRenderer::addContainersSubmitSelectActionLogic(const std::shared_ptr<AdaptiveRenderContext>& context)
     {
@@ -2394,7 +2394,7 @@ namespace RendererQml
         {
             for (const auto& rect : frame.second)
             {
-                AddSelectAction(rect.first, rect.first->GetId(), rect.second, context);
+                addSelectAction(rect.first, rect.first->GetId(), rect.second, context);
                 frame.first->Property("background", rect.first->ToString());
             }            
         }
