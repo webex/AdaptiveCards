@@ -173,6 +173,8 @@ class ACRButton: FlatButton {
             textColor = .black
             activeTextColor = .black
             inActiveTextColor = textColor
+            contentInsets.left = 5
+            contentInsets.right = 5
             
         case .none:
             backgroundColor = .init(red: 0.35216, green: 0.823529412, blue: 1, alpha: 1)

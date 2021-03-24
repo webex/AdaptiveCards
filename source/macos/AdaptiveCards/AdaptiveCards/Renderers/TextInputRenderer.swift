@@ -118,6 +118,8 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
                     button.image = image
                     button.iconColor = NSColor(patternImage: image)
                     button.activeIconColor = button.iconColor
+                    button.contentInsets.left = 10
+                    button.contentInsets.right = 10
                 }
             }
         }
