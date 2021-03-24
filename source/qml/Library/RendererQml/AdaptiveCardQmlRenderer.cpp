@@ -82,6 +82,15 @@ namespace RendererQml
 		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
 		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthActionSet());
 
+		if (card->GetBackgroundImage() != nullptr)
+		{
+			auto uiFrame = std::make_shared<QmlTag>("Frame");
+			uiFrame->Property("readonly property bool hasBackgroundImage", "true");
+			uiFrame->Property("anchors.fill", "parent");
+			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context)->ToString());
+			uiCard->AddChild(uiFrame);
+		}
+
 		auto columnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		columnLayout->Property("id", "adaptiveCardLayout");
 		columnLayout->Property("width", "parent.width");
@@ -89,7 +98,7 @@ namespace RendererQml
 
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
 		rectangle->Property("id", "adaptiveCardRectangle");
-		rectangle->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+		rectangle->Property("color", "'transparent'");
 		rectangle->Property("Layout.margins", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
 		rectangle->Property("Layout.preferredHeight", "40");
@@ -274,7 +283,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextBlockRender(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		//TODO:Parse markdown in the text
+		//LIMITATION: Elide and maximumLineCount property do not work for textFormat:Text.MarkdownText
 
 		std::string fontFamily = context->GetConfig()->GetFontFamily(textBlock->GetFontType());
 		int fontSize = context->GetConfig()->GetFontSize(textBlock->GetFontType(), textBlock->GetTextSize());
@@ -284,7 +293,12 @@ namespace RendererQml
 		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(textBlock->GetHorizontalAlignment());
 
 		uiTextBlock->Property("width", "parent.width");
+
+		//Does not work for Markdown text
 		uiTextBlock->Property("elide", "Text.ElideRight");
+
+		uiTextBlock->Property("clip", "true");
+		uiTextBlock->Property("textFormat", "Text.MarkdownText");
 		uiTextBlock->Property("text", "\"" + textBlock->GetText() + "\"");
 
 		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
@@ -308,6 +322,7 @@ namespace RendererQml
 			uiTextBlock->Property("visible", "false");
 		}
 
+		//Does not work for Markdown text
 		if (textBlock->GetMaxLines() > 0)
 		{
 			uiTextBlock->Property("maximumLineCount", std::to_string(textBlock->GetMaxLines()));
@@ -1436,7 +1451,7 @@ namespace RendererQml
 		{
 			auto url = cardElement->GetBackgroundImage()->GetUrl();
 
-			uiContainer->Property("background", "Image { source: \"" + url + "\" }");
+			uiContainer->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(cardElement->GetBackgroundImage(), context)->ToString());
 			uiContainer->Property("readonly property bool hasBackgroundImage", "true");
 		}
 		else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
@@ -2348,6 +2363,41 @@ namespace RendererQml
 
 		return function.str();
   }
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetBackgroundImage(std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		auto uiImage = std::make_shared<QmlTag>("Image");
+		uiImage->Property("source", "\"" + backgroundImage->GetUrl() + "\"");
+
+		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(backgroundImage->GetHorizontalAlignment());
+		std::string verticalAlignment = AdaptiveCards::EnumHelpers::getVerticalAlignmentEnum().toString(backgroundImage->GetVerticalAlignment());
+
+		switch (backgroundImage->GetFillMode())
+		{
+		case AdaptiveCards::ImageFillMode::Repeat:
+			uiImage->Property("fillMode", "Image.Tile");
+			uiImage->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
+			uiImage->Property("verticalAlignment", Utils::GetVerticalAlignment(verticalAlignment));
+			break;
+		case AdaptiveCards::ImageFillMode::RepeatHorizontally:
+			uiImage->Property("fillMode", "Image.TileHorizontally");
+			uiImage->Property("horizontalAlignment", "Qt.AlignLeft");
+			uiImage->Property("verticalAlignment", Utils::GetVerticalAlignment(verticalAlignment));
+			break;
+		case AdaptiveCards::ImageFillMode::RepeatVertically:
+			uiImage->Property("fillMode", "Image.TileVertically");
+			uiImage->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
+			uiImage->Property("verticalAlignment", "Qt.AlignTop");
+			break;
+		case AdaptiveCards::ImageFillMode::Cover:
+		default:
+			uiImage->Property("fillMode", "Image.PreserveAspectCrop");
+			uiImage->Property("verticalAlignment", Utils::GetVerticalAlignment(verticalAlignment));
+			break;
+		}
+
+		return uiImage;
+	}
 
 	const std::string RendererQml::AdaptiveCardQmlRenderer::getStretchHeight()
 	{
