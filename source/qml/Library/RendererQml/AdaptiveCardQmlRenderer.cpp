@@ -2389,6 +2389,7 @@ namespace RendererQml
         //adaptiveCard.buttonClick("title", "Action.OpenUrl", "https://adaptivecards.io");
         std::ostringstream function;
         function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", \"" << action->GetUrl() << "\");";
+        function << "\nconsole.log(\"" << action->GetUrl() << "\");\n";
 
         return function.str();
     }
