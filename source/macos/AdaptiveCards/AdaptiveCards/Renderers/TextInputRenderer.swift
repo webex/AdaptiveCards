@@ -127,7 +127,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
                     image.size = .init(width: button.bounds.width, height: button.bounds.height)
                     button.showsIcon = true
                     button.title = ""
-                    button.iconImageSize = NSSize(width: image.size.width * 0.5, height: image.size.height)
+                    button.iconImageSize = NSSize(width: 25, height: 25)
                     button.image = image
                     // added this to maintain the color of the image
                     button.iconColor = NSColor(patternImage: image)
@@ -141,6 +141,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         
         // adding target to the Buttons
         guard let acrView = rootview as? ACRView else {
+            logError("rootView should be ACRView")
             return
         }
         switch action?.getType() {
