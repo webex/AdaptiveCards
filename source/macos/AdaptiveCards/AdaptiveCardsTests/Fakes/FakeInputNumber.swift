@@ -50,6 +50,10 @@ class FakeInputNumber: ACSNumberInput {
     override func getType() -> ACSCardElementType {
         return .numberInput
     }
+    
+    override func getId() -> String? {
+        return "inputNumber"
+    }
 }
 
 extension FakeInputNumber {

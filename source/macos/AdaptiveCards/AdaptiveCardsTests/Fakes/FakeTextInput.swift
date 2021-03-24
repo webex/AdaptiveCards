@@ -64,6 +64,14 @@ class FakeInputText: ACSTextInput {
     override func setRegex(_ value: String) {
         regexString = value
     }
+    
+    override func getId() -> String? {
+        return "input-text"
+    }
+    
+    override func getIsVisible() -> Bool {
+        return true
+    }
 }
 
 extension FakeInputText {

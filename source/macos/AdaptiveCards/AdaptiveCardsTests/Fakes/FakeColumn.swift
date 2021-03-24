@@ -78,6 +78,10 @@ class FakeColumn: ACSColumn {
     override func setSeparator(_ value: Bool) {
         separator = value
     }
+    
+    override func getId() -> String? {
+        return "column"
+    }
 }
 
 extension FakeColumn {

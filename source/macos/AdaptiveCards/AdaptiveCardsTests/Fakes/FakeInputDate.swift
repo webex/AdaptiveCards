@@ -37,6 +37,14 @@ class FakeInputDate: ACSDateInput {
     override func setMin(_ value: String?) {
         min = value
     }
+    
+    override func getId() -> String? {
+        return "inputdate"
+    }
+    
+    override func getIsVisible() -> Bool {
+        return true
+    }
 }
 
 extension FakeInputDate {

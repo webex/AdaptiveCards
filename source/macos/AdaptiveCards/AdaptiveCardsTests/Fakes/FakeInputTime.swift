@@ -37,6 +37,14 @@ class FakeInputTime: ACSTimeInput {
     override func setMin(_ value: String?) {
         min = value
     }
+    
+    override func getId() -> String? {
+        return "input-time"
+    }
+    
+    override func getIsVisible() -> Bool {
+        return true
+    }
 }
 
 extension FakeInputTime {

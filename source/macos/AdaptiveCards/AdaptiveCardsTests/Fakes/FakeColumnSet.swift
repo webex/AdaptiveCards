@@ -15,6 +15,10 @@ class FakeColumnSet: ACSColumnSet {
     override func setStyle(_ value: ACSContainerStyle) {
         style = value
     }
+    
+    override func getId() -> String? {
+        return "columnSet"
+    }
 }
 
 extension FakeColumnSet {

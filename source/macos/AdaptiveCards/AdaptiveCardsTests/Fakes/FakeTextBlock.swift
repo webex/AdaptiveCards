@@ -100,6 +100,10 @@ class FakeTextBlock: ACSTextBlock {
     open override func getType() -> ACSCardElementType {
         return .textBlock
     }
+    
+    override func getId() -> String? {
+        return "textBlock"
+    }
 }
 
 extension FakeTextBlock {
