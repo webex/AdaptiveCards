@@ -24,13 +24,12 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
         initialize()
     }
     
-    var cacheFrame: NSRect?
+    private var cacheFrame: NSRect?
     override func layout() {
-        if cacheFrame != frame {
-            super.layout()
-            setupBGImage()
-            cacheFrame = frame
-        }
+        super.layout()
+        guard cacheFrame != frame else { return }
+        setupBGImage()
+        cacheFrame = frame
     }
     
     override var isFlipped: Bool {

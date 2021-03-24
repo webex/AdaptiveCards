@@ -54,14 +54,14 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     }()
     
     private (set) lazy var backgroundImageView: ACRBackgroundImageView = {
-            let view = ACRBackgroundImageView()
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.fillMode = .cover
-            view.horizontalAlignment = .left
-            view.verticalAlignment = .top
-            // image to be initialized here for the background image from a url
-            return view
-        }()
+        let view = ACRBackgroundImageView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.fillMode = .cover
+        view.horizontalAlignment = .left
+        view.verticalAlignment = .top
+        // image to be initialized here for the background image from a url
+        return view
+    }()
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
         self.hostConfig = hostConfig
