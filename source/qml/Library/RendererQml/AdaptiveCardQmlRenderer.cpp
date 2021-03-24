@@ -1861,6 +1861,8 @@ namespace RendererQml
 		uiFrame->Property("padding", "0");
 
         auto backgroundRect = std::make_shared<QmlTag>("Rectangle");
+        backgroundRect->Property("id", Formatter() << id << "_bgRect");
+
 		if (columnSet->GetStyle() != AdaptiveCards::ContainerStyle::None)
 		{
 			const auto color = context->GetConfig()->GetBackgroundColor(columnSet->GetStyle());
@@ -1873,20 +1875,7 @@ namespace RendererQml
             backgroundRect->Property("color", "'transparent'");
 		}
 
-        if (columnSet->GetSelectAction() != nullptr)
-        {
-            std::ostringstream onClicked;
-            if (columnSet->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
-            {
-                addSelectAction(backgroundRect, backgroundRect->GetId(), columnSet->GetSelectAction(), context);
-            }
-            else if (columnSet->GetSelectAction()->GetElementTypeString() == "Action.Submit")
-            {
-                std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> actionlist;
-                actionlist[backgroundRect] = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(columnSet->GetSelectAction());
-                context->addToContainersSubmitSelectActionList(uiFrame, actionlist);
-            }
-        }
+        addSelectAction(uiFrame, backgroundRect->GetId(), columnSet->GetSelectAction(), context);
         uiFrame->Property("background", backgroundRect->ToString());
 
 		for (int i = 0; i < no_of_columns; i++)
