@@ -125,7 +125,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 		{
 			std::string str = genQml.GetProperty("contentItem");
 
-			genQml.Property("contentItem", std::regex_replace(str, std::regex("source.*\n"), "source:\"" + getImagePath("Button") + "\"\n"));
+			genQml.Property("contentItem", std::regex_replace(str, std::regex("source:.*\n"), "source:\"" + getImagePath("Button") + "\"\n"));
 		}
 	});
 
