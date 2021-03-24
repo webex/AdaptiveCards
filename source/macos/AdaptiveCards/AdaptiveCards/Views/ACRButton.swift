@@ -164,8 +164,9 @@ class ACRButton: FlatButton {
             borderColor = .clear
             inActiveborderColor = .clear
             activeBorderColor = .clear
-            
+            backgroundColor = .clear
             // button color
+            buttonColor = backgroundColor
             activeButtonColor = ColorUtils.color(from: Constants.darkGrayColorCode) ?? .clear
             hoverButtonColor = ColorUtils.color(from: Constants.grayColorCode) ?? .clear
             

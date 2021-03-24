@@ -52,7 +52,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             multilineView.maxLen = inputBlock.getMaxLength() as? Int ?? 0
             // Add Input Handler
             if let acrView = rootView as? ACRView {
-            acrView.addInputHandler(multilineView)
+                acrView.addInputHandler(multilineView)
             }
             if renderButton {
                 stackview.addArrangedSubview(multilineView)
@@ -84,7 +84,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         // Add Input Handler
         if let acrView = rootView as? ACRView {
-        acrView.addInputHandler(textView)
+            acrView.addInputHandler(textView)
         }
         if renderButton {
             stackview.addArrangedSubview(textView)
@@ -98,6 +98,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         let button = ACRButton(style: .inline)
         button.title = action?.getTitle() ?? ""
         button.cornerRadius = 0
+        button.isBordered = false
         
         let attributedString: NSMutableAttributedString
         attributedString = NSMutableAttributedString(string: button.title)
@@ -106,7 +107,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         parentview.addArrangedSubview(button)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.isBordered = false
+        
         if view is ACRMultilineInputTextView {
             button.setContentHuggingPriority(.required, for: .vertical)
             button.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
@@ -149,8 +150,14 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             let target = ActionOpenURLTarget(element: openURLAction, delegate: acrView)
             target.configureAction(for: button)
             acrView.addTarget(target)
-        case .submit: break
-        // TODO add target for submit action
+        case .submit:
+            guard let submitAction = action as? ACSSubmitAction else {
+                logError("Element is not of type ACSSubmitAction")
+                return
+            }
+            let target = ActionSubmitTarget(element: submitAction, delegate: acrView)
+            target.configureAction(for: button)
+            acrView.addTarget(target)
         default:
             break
         }
