@@ -129,8 +129,10 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
                     button.title = ""
                     button.iconImageSize = NSSize(width: image.size.width * 0.5, height: image.size.height)
                     button.image = image
+                    // added this to maintain the color of the image
                     button.iconColor = NSColor(patternImage: image)
                     button.activeIconColor = button.iconColor
+                    // for icon added left and right contentInsets
                     button.contentInsets.left = 10
                     button.contentInsets.right = 10
                 }
