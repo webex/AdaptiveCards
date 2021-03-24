@@ -23,7 +23,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
                 containerView.testTarget = ActionOpenURLTarget(element: selectAction, delegate: rootView)
                 guard let testTarget = containerView.testTarget else { return NSView() }
                 rootView.addTarget(testTarget)
-                
+//                containerView.acceptsFirstMouse(for: )
                 print(selectAction)
             }
         }

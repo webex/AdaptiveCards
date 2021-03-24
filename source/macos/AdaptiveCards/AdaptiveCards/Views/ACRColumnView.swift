@@ -293,8 +293,17 @@ class ACRColumnView: ACRContentStackView {
     }
     
     override func mouseDown(with event: NSEvent) {
-        guard let testTarget = testTarget as? ActionOpenURLTarget else { return }
+        guard let testTarget = testTarget else { return }
+//        superview?.acceptsFirstMouse(for: event)
         testTarget.configureAction(for: stackView)
+    }
+    
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        return true
+    }
+    
+    override var acceptsFirstResponder: Bool {
+        return true
     }
     
 //    override func mouse(_ sender: Any?) {
