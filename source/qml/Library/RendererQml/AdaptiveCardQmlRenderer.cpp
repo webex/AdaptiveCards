@@ -88,7 +88,6 @@ namespace RendererQml
 			uiFrame->Property("readonly property bool hasBackgroundImage", "true");
 			uiFrame->Property("anchors.fill", "parent");
 			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context)->ToString());
-
 			uiCard->AddChild(uiFrame);
 		}
 
