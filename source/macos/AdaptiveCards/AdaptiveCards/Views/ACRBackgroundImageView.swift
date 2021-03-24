@@ -24,6 +24,19 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
         initialize()
     }
     
+    var cacheFrame: NSRect?
+    override func layout() {
+        if cacheFrame != frame {
+            super.layout()
+            setupBGImage()
+            cacheFrame = frame
+        }
+    }
+    
+    override var isFlipped: Bool {
+        return true
+    }
+    
     private func initialize() {
         wantsLayer = true
         layer?.delegate = self
@@ -92,11 +105,10 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             
             switch verticalAlignment {
             case .center:
-                var offset = (0.5 - ((bounds.height / (2 * image.size.height)).truncatingRemainder(dividingBy: 1.0)))
-                offset = offset > 0 ? offset : (1 + offset)
-                bgImageLayer.frame.origin.y -= offset * image.size.height
+                bgImageLayer.frame.origin.y -= image.size.height / 2
             case .bottom:
-                bgImageLayer.frame.origin.y -= (1 - ((bounds.height / image.size.height).truncatingRemainder(dividingBy: 1))) * image.size.height
+                layer?.isGeometryFlipped = true
+                bgImageLayer.isGeometryFlipped = true
             default:
                 break
             }
@@ -115,11 +127,10 @@ class ACRBackgroundImageView: NSView, CALayerDelegate {
             
             switch verticalAlignment {
             case .center:
-                var offset = (0.5 - ((bounds.height / (2 * image.size.height)).truncatingRemainder(dividingBy: 1.0)))
-                offset = offset > 0 ? offset : (1 + offset)
-                bgImageLayer.frame.origin.y -= offset * image.size.height
+                bgImageLayer.frame.origin.y -= image.size.height / 2
             case .bottom:
-                bgImageLayer.frame.origin.y -= (1 - ((bounds.height / image.size.height).truncatingRemainder(dividingBy: 1))) * image.size.height
+                layer?.isGeometryFlipped = true
+                bgImageLayer.isGeometryFlipped = true
             default:
                 break
             }
