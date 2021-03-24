@@ -93,7 +93,7 @@ namespace RendererQml
 
         static void addSubmitActionButtonClickFunc(const std::shared_ptr<AdaptiveRenderContext>& context);
         static void addShowCardButtonClickFunc(const std::shared_ptr<AdaptiveRenderContext>& context);
-        static void addShowCardLoaderComponents(const std::shared_ptr<AdaptiveRenderContext>& context);        
+        static void addShowCardLoaderComponents(const std::shared_ptr<AdaptiveRenderContext>& context);     
 
         static const std::string getActionOpenUrlClickFunc(const std::shared_ptr<AdaptiveCards::OpenUrlAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
         static const std::string getActionSubmitClickFunc(const std::shared_ptr<AdaptiveCards::SubmitAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);

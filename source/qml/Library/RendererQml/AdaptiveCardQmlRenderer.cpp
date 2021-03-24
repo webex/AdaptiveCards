@@ -2379,8 +2379,8 @@ namespace RendererQml
                 const auto showCardComponent = GetComponent(componentElement.first, uiCard);
                 context->getCardRootElement()->AddChild(showCardComponent);
             }
-        }        
-    }    
+        }
+    }
 
     const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(const std::shared_ptr<AdaptiveCards::OpenUrlAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
     {
