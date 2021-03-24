@@ -1455,6 +1455,10 @@ namespace RendererQml
 		{
 			uiRectangle->Property("color", context->GetRGBColor(image->GetBackgroundColor()));
 		}
+        else
+        {
+            uiRectangle->Property("color", "'transparent'");
+        }
 
 		switch (image->GetHorizontalAlignment())
 		{
