@@ -1474,144 +1474,7 @@ namespace RendererQml
         addSelectAction(uiRectangle, uiRectangle->GetId(), image->GetSelectAction(), context);
 
 		return uiRectangle;
-	}
-
-	template<typename CardElement>
-	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetNewColumn(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-		const auto spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), cardElement->GetSpacing());
-
-		std::shared_ptr<QmlTag> uiColumn = std::make_shared<QmlTag>("Column");
-
-		uiColumn->Property("Layout.fillWidth", "true");
-
-		if (cardElement->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Top)
-		{
-			uiColumn->Property("Layout.alignment", "Qt.AlignTop");
-		}
-		else if (cardElement->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Bottom)
-		{
-			uiColumn->Property("Layout.alignment", "Qt.AlignBottom");
-		}
-
-		return uiColumn;
-	}
-
-	template<typename CardElement>
-	inline std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetNewContainer(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-		const auto id = cardElement->GetId();
-		const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
-
-		std::shared_ptr<QmlTag> uiContainer;
-		std::shared_ptr<QmlTag> uiColumnLayout;
-		std::shared_ptr<QmlTag> uiColumn = GetNewColumn(cardElement, context);
-
-		uiContainer = std::make_shared<QmlTag>("Frame");
-		uiColumnLayout = std::make_shared<QmlTag>("ColumnLayout");
-		uiContainer->AddChild(uiColumnLayout);
-
-		uiContainer->Property("id", id);
-		uiColumnLayout->Property("id", "clayout_" + id);
-		uiColumn->Property("id", "column_" + id);
-
-		uiColumnLayout->Property("anchors.fill", "parent");
-
-		uiContainer->Property("padding", "0");
-		uiContainer->Property("property int minHeight", Formatter() << cardElement->GetMinHeight());
-		uiContainer->Property("implicitHeight", Formatter() << "Math.max(" << cardElement->GetMinHeight() << ", clayout_" << cardElement->GetId() << ".implicitHeight)");
-
-		AddContainerElements(uiColumn, cardElement->GetItems(), context);
-
-		uiColumnLayout->AddChild(uiColumn);
-
-        auto backgroundRect = std::make_shared<QmlTag>("Rectangle");
-
-		if (cardElement->GetBackgroundImage())
-		{
-			auto url = cardElement->GetBackgroundImage()->GetUrl();
-            auto backgroundImg = std::make_shared<QmlTag>("Image");
-            backgroundImg->Property("anchors.fill", "parent");
-            backgroundImg->Property("source", "\"" + url + "\"");
-            backgroundRect->AddChild(backgroundImg);			
-			uiContainer->Property("readonly property bool hasBackgroundImage", "true");
-		}
-		else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
-		{
-			const auto color = context->GetConfig()->GetBackgroundColor(cardElement->GetStyle());
-            backgroundRect->Property("border.width", "0");
-            backgroundRect->Property("color", "\"" + color + "\"");
-		}
-		else
-		{
-            backgroundRect->Property("border.width", "0");
-            backgroundRect->Property("color", "'transparent'");
-        }
-
-        if (cardElement->GetSelectAction() != nullptr)
-        {
-            std::ostringstream onClicked;
-            if (cardElement->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
-            {
-                AddSelectAction(backgroundRect, backgroundRect->GetId(), cardElement->GetSelectAction(), context);
-            }
-            else if (cardElement->GetSelectAction()->GetElementTypeString() == "Action.Submit")
-            {
-                std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::SubmitAction>> actionlist;
-                actionlist[backgroundRect] = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(cardElement->GetSelectAction());
-                context->addToContainersSubmitSelectActionList(uiContainer, actionlist);
-            }
-        }
-        uiContainer->Property("background", backgroundRect->ToString());
-
-		int tempMargin = 0;
-		bool inheritsStyleFromParent = (cardElement->GetStyle() == AdaptiveCards::ContainerStyle::None);
-		if (cardElement->GetPadding() && !inheritsStyleFromParent)
-		{
-			uiColumn->Property("Layout.margins", std::to_string(margin));
-			tempMargin = margin;
-		}
-
-		uiColumn->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
-
-		uiColumn->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
-
-		uiContainer->Property("onMinHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight( column_" << id << ".children, minHeight - " << 2 * tempMargin << " )}");
-
-		uiContainer->Property("property int minWidth", Formatter() << "{" << context->getCardRootId() << ".getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempMargin << "}");
-
-		uiContainer->Property("implicitWidth", "minWidth");
-
-		return uiContainer;
-	}
-
-	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::ContainerRender(std::shared_ptr<AdaptiveCards::Container> container, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-		const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
-
-		if (container->GetId().empty())
-		{
-			container->SetId(Formatter() << "container_auto_" << context->getContainerCounter());
-		}
-		else
-		{
-			container->SetId(Utils::ConvertToLowerIdValue(container->GetId()));
-		}
-
-		std::shared_ptr<QmlTag> uiContainer = GetNewContainer(container, context);
-
-		if (container->GetBleed() && container->GetCanBleed())
-		{
-			uiContainer->Property("x", Formatter() << "-" << std::to_string(margin));
-			uiContainer->Property("width", "parent.width + " + std::to_string(2 * margin));
-		}
-		else
-		{
-			uiContainer->Property("width", "parent.width");
-		}
-
-		return uiContainer;
-	}
+	}	
   
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TimeInputRender(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
@@ -2112,6 +1975,131 @@ namespace RendererQml
 
 		return uiContainer;
 	}
+
+    std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::ContainerRender(std::shared_ptr<AdaptiveCards::Container> container, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
+
+        if (container->GetId().empty())
+        {
+            container->SetId(Formatter() << "container_auto_" << context->getContainerCounter());
+        }
+        else
+        {
+            container->SetId(Utils::ConvertToLowerIdValue(container->GetId()));
+        }
+
+        std::shared_ptr<QmlTag> uiContainer = GetNewContainer(container, context);
+
+        if (container->GetBleed() && container->GetCanBleed())
+        {
+            uiContainer->Property("x", Formatter() << "-" << std::to_string(margin));
+            uiContainer->Property("width", "parent.width + " + std::to_string(2 * margin));
+        }
+        else
+        {
+            uiContainer->Property("width", "parent.width");
+        }
+
+        return uiContainer;
+    }
+
+    template<typename CardElement>
+    std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetNewColumn(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        const auto spacing = Utils::GetSpacing(context->GetConfig()->GetSpacing(), cardElement->GetSpacing());
+
+        std::shared_ptr<QmlTag> uiColumn = std::make_shared<QmlTag>("Column");
+
+        uiColumn->Property("Layout.fillWidth", "true");
+
+        if (cardElement->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Top)
+        {
+            uiColumn->Property("Layout.alignment", "Qt.AlignTop");
+        }
+        else if (cardElement->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Bottom)
+        {
+            uiColumn->Property("Layout.alignment", "Qt.AlignBottom");
+        }
+
+        return uiColumn;
+    }
+
+    template<typename CardElement>
+    inline std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetNewContainer(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        const auto id = cardElement->GetId();
+        const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
+
+        std::shared_ptr<QmlTag> uiContainer;
+        std::shared_ptr<QmlTag> uiColumnLayout;
+        std::shared_ptr<QmlTag> uiColumn = GetNewColumn(cardElement, context);
+
+        uiContainer = std::make_shared<QmlTag>("Frame");
+        uiColumnLayout = std::make_shared<QmlTag>("ColumnLayout");
+        uiContainer->AddChild(uiColumnLayout);
+
+        uiContainer->Property("id", id);
+        uiColumnLayout->Property("id", "clayout_" + id);
+        uiColumn->Property("id", "column_" + id);
+
+        uiColumnLayout->Property("anchors.fill", "parent");
+
+        uiContainer->Property("padding", "0");
+        uiContainer->Property("property int minHeight", Formatter() << cardElement->GetMinHeight());
+        uiContainer->Property("implicitHeight", Formatter() << "Math.max(" << cardElement->GetMinHeight() << ", clayout_" << cardElement->GetId() << ".implicitHeight)");
+
+        AddContainerElements(uiColumn, cardElement->GetItems(), context);
+
+        uiColumnLayout->AddChild(uiColumn);
+
+        auto backgroundRect = std::make_shared<QmlTag>("Rectangle");
+        backgroundRect->Property("id", Formatter() << id << "_bgRect");
+
+        if (cardElement->GetBackgroundImage())
+        {
+            auto url = cardElement->GetBackgroundImage()->GetUrl();
+            auto backgroundImg = std::make_shared<QmlTag>("Image");
+            backgroundImg->Property("anchors.fill", "parent");
+            backgroundImg->Property("source", "\"" + url + "\"");
+            backgroundRect->AddChild(backgroundImg);
+            uiContainer->Property("readonly property bool hasBackgroundImage", "true");
+        }
+        else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
+        {
+            const auto color = context->GetConfig()->GetBackgroundColor(cardElement->GetStyle());
+            backgroundRect->Property("border.width", "0");
+            backgroundRect->Property("color", "\"" + color + "\"");
+        }
+        else
+        {
+            backgroundRect->Property("border.width", "0");
+            backgroundRect->Property("color", "'transparent'");
+        }
+
+        addSelectAction(uiContainer, backgroundRect->GetId(), cardElement->GetSelectAction(), context);
+        uiContainer->Property("background", backgroundRect->ToString());
+
+        int tempMargin = 0;
+        bool inheritsStyleFromParent = (cardElement->GetStyle() == AdaptiveCards::ContainerStyle::None);
+        if (cardElement->GetPadding() && !inheritsStyleFromParent)
+        {
+            uiColumn->Property("Layout.margins", std::to_string(margin));
+            tempMargin = margin;
+        }
+
+        uiColumn->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
+
+        uiColumn->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
+
+        uiContainer->Property("onMinHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight( column_" << id << ".children, minHeight - " << 2 * tempMargin << " )}");
+
+        uiContainer->Property("property int minWidth", Formatter() << "{" << context->getCardRootId() << ".getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempMargin << "}");
+
+        uiContainer->Property("implicitWidth", "minWidth");
+
+        return uiContainer;
+    }
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::MediaRender(std::shared_ptr<AdaptiveCards::Media> media, std::shared_ptr<AdaptiveRenderContext> context)
     {
