@@ -1229,7 +1229,7 @@ namespace RendererQml
         
 		auto EnumDateFormat = Utils::GetSystemDateFormat();
 		
-		const auto dateSeparator = "/";
+		const auto dateSeparator = "\\/";
 		const auto day_Regex = "([-0123]-|0\\d|[12]\\d|3[01])";
 		const auto month_Regex = "(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)";
 		const auto year_Regex = "(-{4}|\\d-{3}|\\d{2}-{2}|\\d{3}-|\\d{4})";
@@ -1238,7 +1238,7 @@ namespace RendererQml
 		auto month_Text = "getText(0,3)";
 		auto day_Text = "getText(4,6)";
 		auto year_Text = "getText(7,11)";
-		std::string DateRegex = Formatter() << "/^" << month_Regex << "\\" << dateSeparator << day_Regex << "\\" << dateSeparator << year_Regex << "$/";
+		std::string DateRegex = Formatter() << "/^" << month_Regex << dateSeparator << day_Regex  << dateSeparator << year_Regex << "$/";
 		std::string StringDateFormat = Formatter() << "MMM" << dateSeparator << "dd" << dateSeparator << "yyyy";
 		std::string inputMask = Formatter() << ">x<xx" << dateSeparator << "xx" << dateSeparator << "xxxx;-";
 
@@ -1248,7 +1248,7 @@ namespace RendererQml
 			{
 				StringDateFormat = Formatter() << "dd" << dateSeparator << "MMM" << dateSeparator << "yyyy";
 				inputMask = Formatter() << "xx" << dateSeparator << ">x<xx" << dateSeparator << "xxxx;-";
-				DateRegex = Formatter() << "/^" << day_Regex << "\\" << dateSeparator << month_Regex << "\\" << dateSeparator << year_Regex << "$/";
+				DateRegex = Formatter() << "/^" << day_Regex  << dateSeparator << month_Regex  << dateSeparator << year_Regex << "$/";
 
 				day_Text = "getText(0,2)";
 				month_Text = "getText(3,6)";
@@ -1259,7 +1259,7 @@ namespace RendererQml
 			{
 				StringDateFormat = Formatter() << "yyyy" << dateSeparator << "MMM" << dateSeparator << "dd";
 				inputMask = Formatter() << "xxxx" << dateSeparator << ">x<xx" << dateSeparator << "xx;-";
-				DateRegex = Formatter() << "/^" << year_Regex << "\\" << dateSeparator << month_Regex << "\\" << dateSeparator << day_Regex << "$/";
+				DateRegex = Formatter() << "/^" << year_Regex  << dateSeparator << month_Regex  << dateSeparator << day_Regex << "$/";
 
 				day_Text = "getText(9,11)";
 				month_Text = "getText(5,8)";
@@ -1270,7 +1270,7 @@ namespace RendererQml
 			{
 				StringDateFormat = Formatter() << "yyyy" << dateSeparator << "dd" << dateSeparator << "MMM";
 				inputMask = Formatter() << "xxxx" << dateSeparator << "xx" << dateSeparator << ">x<xx;-";
-				DateRegex = Formatter() << "/^" << year_Regex << "\\" << dateSeparator << day_Regex << "\\" << dateSeparator << month_Regex << "$/";
+				DateRegex = Formatter() << "/^" << year_Regex  << dateSeparator << day_Regex  << dateSeparator << month_Regex << "$/";
 
 				day_Text = "getText(5,7)";
 				month_Text = "getText(8,11)";
