@@ -63,6 +63,9 @@ namespace RendererQml
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
     {
+		const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
+		const auto bodySize = card->GetBody().size();
+
         auto uiCard = std::make_shared<QmlTag>("Rectangle");
         uiCard->AddImports("import QtQuick 2.15");
         uiCard->AddImports("import QtQuick.Layouts 1.3");
@@ -94,7 +97,10 @@ namespace RendererQml
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
 		rectangle->Property("id", "adaptiveCardRectangle");
 		rectangle->Property("color", "'transparent'");
-		rectangle->Property("Layout.margins", "margins");
+		rectangle->Property("Layout.topMargin", std::to_string(margin));
+		rectangle->Property("Layout.bottomMargin", std::to_string(margin));
+		rectangle->Property("Layout.leftMargin", std::to_string(margin));
+		rectangle->Property("Layout.rightMargin", std::to_string(margin));
 		rectangle->Property("Layout.fillWidth", "true");
 		rectangle->Property("Layout.preferredHeight", "40");
 
@@ -117,6 +123,26 @@ namespace RendererQml
 
 		bodyLayout->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
 		bodyLayout->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
+
+		//Remove Top and Bottom Paddin if bleed for first and last element is true
+		if (bodySize > 0)
+		{
+			if (card->GetBody()[0]->GetElementTypeString() == "Container" || card->GetBody()[0]->GetElementTypeString() == "ColumnSet")
+			{
+				if (bodyLayout->GetChildren()[0]->HasProperty("readonly property bool bleed"))
+				{
+					rectangle->RemoveProperty("Layout.topMargin");
+				}
+			}
+
+			if (card->GetBody()[bodySize - 1]->GetElementTypeString() == "Container" || card->GetBody()[bodySize - 1]->GetElementTypeString() == "ColumnSet")
+			{
+				if (bodyLayout->GetChildren()[bodyLayout->GetChildren().size() - 1]->HasProperty("readonly property bool bleed"))
+				{
+					rectangle->RemoveProperty("Layout.bottomMargin");
+				}
+			}
+		}
 
         //Add submit onclick event
         addSubmitActionButtonClickFunc(context);
@@ -1391,6 +1417,7 @@ namespace RendererQml
         }
 
 		uiRectangle->Property("id", image->GetId());
+		uiRectangle->Property("implicitHeight", "height");
 		uiImage->Property("id", Formatter() << image->GetId() << "_img");
 		uiImage->Property("readonly property bool isImage", "true");
 		uiImage->Property("source", "\"" + image->GetUrl() + "\"");
@@ -1828,6 +1855,7 @@ namespace RendererQml
 		bool bleedFlag = false;
 		int marginReleased = 2*margin;
 		int tempMargin = 0;
+		int bleedCount = 0;
 
 		if (columnSet->GetId().empty())
 		{
@@ -1851,8 +1879,7 @@ namespace RendererQml
 		uiFrame->AddChild(uiRowLayout);
 		uiRowLayout->AddChild(uiRow);
 
-		const bool inheritsStyleFromParent = columnSet->GetStyle() == AdaptiveCards::ContainerStyle::None;
-		if (columnSet->GetPadding() && !inheritsStyleFromParent)
+		if (columnSet->GetPadding())
 		{
 			uiRow->Property("Layout.topMargin", std::to_string(margin));
 			uiRow->Property("Layout.bottomMargin", std::to_string(margin));
@@ -1911,6 +1938,22 @@ namespace RendererQml
 		for (int i = 0; i < no_of_columns; i++)
 		{
 			auto cardElement = columns[i];
+			if (cardElement->GetBleed() && cardElement->GetCanBleed())
+			{
+				bleedCount++;
+			}
+		}
+
+		if (bleedCount == no_of_columns)
+		{
+			uiRow->RemoveProperty("Layout.topMargin");
+			uiRow->RemoveProperty("Layout.bottomMargin");
+			tempMargin = 0;
+		}
+
+		for (int i = 0; i < no_of_columns; i++)
+		{
+			auto cardElement = columns[i];
 
 			auto uiElement = context->Render(cardElement);
 
@@ -1921,35 +1964,45 @@ namespace RendererQml
 					AddSeparator(uiRow, cardElement, context);
 				}
 
-				//TODO: Add collection element
 				heightString += ("clayout_" + cardElement->GetId() + ".implicitHeight, " + cardElement->GetId() + ".minHeight, ");
 
 				uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight(" << cardElement->GetMinHeight() << ")");
 
 				uiRow->AddChild(uiElement);
 
-				const auto width = cardElement->GetWidth();
+				const auto bleedLeft = AdaptiveCards::ContainerBleedDirection::BleedLeft;
+				const auto bleedRight = AdaptiveCards::ContainerBleedDirection::BleedRight;
 
-				if (i == 0 && cardElement->GetBleed() && cardElement->GetCanBleed())
+				if (cardElement->GetBleed() && cardElement->GetCanBleed())
 				{
-					uiRow->RemoveProperty("Layout.leftMargin");
-					marginReleased -= margin;
-					if (!columnSet->GetPadding())
+					if ((cardElement->GetBleedDirection() & bleedLeft) == bleedLeft)
 					{
-						uiRowLayout->Property("x", Formatter() << "-" << margin);
+						uiRow->RemoveProperty("Layout.leftMargin");
+						marginReleased -= margin;
+						if (!columnSet->GetPadding())
+						{
+							uiRowLayout->Property("x", Formatter() << "-" << margin);
+						}
 					}
-				}
 
-				if (i == no_of_columns - 1 && cardElement->GetBleed() && cardElement->GetCanBleed())
-				{
-					uiRow->RemoveProperty("Layout.rightMargin");
-					marginReleased -= margin;
+					if ((cardElement->GetBleedDirection() & bleedRight) == bleedRight)
+					{
+						uiRow->RemoveProperty("Layout.rightMargin");
+						marginReleased -= margin;
+					}
+
+					if (bleedCount != no_of_columns)
+					{
+						uiElement->Property("y", Formatter() << "-" << margin);
+						uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight(" << cardElement->GetMinHeight() << ") + " << 2 * margin);
+					}
 				}
 			}
 		}
 
 		if (columnSet->GetBleed() && columnSet->GetCanBleed())
 		{
+			uiFrame->Property("readonly property bool bleed", "true");
 			uiFrame->Property("x", Formatter() << "-" << std::to_string(margin));
 			marginReleased -= (2 * margin);
 			uiFrame->Property("width", "parent.width + " + std::to_string(2 * margin));
@@ -2012,8 +2065,28 @@ namespace RendererQml
 
         if (container->GetBleed() && container->GetCanBleed())
         {
-            uiContainer->Property("x", Formatter() << "-" << std::to_string(margin));
-            uiContainer->Property("width", "parent.width + " + std::to_string(2 * margin));
+			uiContainer->Property("readonly property bool bleed", "true");
+			const auto bleedLeftRight = AdaptiveCards::ContainerBleedDirection::BleedLeftRight;
+			const auto bleedLeft = AdaptiveCards::ContainerBleedDirection::BleedLeft;
+			const auto bleedRight = AdaptiveCards::ContainerBleedDirection::BleedRight;
+
+			if ((container->GetBleedDirection() & bleedLeftRight) == bleedLeftRight)
+			{
+				uiContainer->Property("x", Formatter() << "-" << std::to_string(margin));
+				uiContainer->Property("width", "parent.width + " + std::to_string(2 * margin));
+			}
+			else
+			{
+				if ((container->GetBleedDirection() & bleedLeft) == bleedLeft)
+				{
+					uiContainer->Property("x", Formatter() << "-" << std::to_string(margin));
+					uiContainer->Property("width", "parent.width + " + std::to_string(margin));
+				}
+				else if ((container->GetBleedDirection() & bleedRight) == bleedRight)
+				{
+					uiContainer->Property("width", "parent.width + " + std::to_string(margin));
+				}
+			}
         }
         else
         {
@@ -2049,6 +2122,7 @@ namespace RendererQml
     {
         const auto id = cardElement->GetId();
         const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
+		const auto bodySize = cardElement->GetItems().size();
 
         std::shared_ptr<QmlTag> uiContainer;
         std::shared_ptr<QmlTag> uiColumnLayout;
@@ -2103,9 +2177,31 @@ namespace RendererQml
         bool inheritsStyleFromParent = (cardElement->GetStyle() == AdaptiveCards::ContainerStyle::None);
         if (cardElement->GetPadding() && !inheritsStyleFromParent)
         {
-            uiColumn->Property("Layout.margins", std::to_string(margin));
+			uiColumn->Property("Layout.topMargin", std::to_string(margin));
+			uiColumn->Property("Layout.bottomMargin", std::to_string(margin));
+			uiColumn->Property("Layout.leftMargin", std::to_string(margin));
+			uiColumn->Property("Layout.rightMargin", std::to_string(margin));
             tempMargin = margin;
         }
+
+		if (bodySize > 0)
+		{
+			if (cardElement->GetItems()[0]->GetElementTypeString() == "Container" || cardElement->GetItems()[0]->GetElementTypeString() == "ColumnSet")
+			{
+				if (uiColumn->GetChildren()[0]->HasProperty("readonly property bool bleed"))
+				{
+					uiColumn->RemoveProperty("Layout.topMargin");
+				}
+			}
+
+			if (cardElement->GetItems()[bodySize - 1]->GetElementTypeString() == "Container" || cardElement->GetItems()[bodySize - 1]->GetElementTypeString() == "ColumnSet")
+			{
+				if (uiColumn->GetChildren()[uiColumn->GetChildren().size() - 1]->HasProperty("readonly property bool bleed"))
+				{
+					uiColumn->RemoveProperty("Layout.bottomMargin");
+				}
+			}
+		}
 
         uiColumn->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
 
@@ -2114,6 +2210,15 @@ namespace RendererQml
         uiContainer->Property("onMinHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight( column_" << id << ".children, minHeight - " << 2 * tempMargin << " )}");
 
         uiContainer->Property("property int minWidth", Formatter() << "{" << context->getCardRootId() << ".getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempMargin << "}");
+
+		if (cardElement->GetElementTypeString() == "Column")
+		{
+			uiContainer->Property("implicitWidth", "minWidth");
+		}
+		else if (cardElement->GetElementTypeString() == "Container")
+		{
+			uiContainer->Property("implicitWidth", "parent.width");
+		}
 
         uiContainer->Property("implicitWidth", "minWidth");
 
