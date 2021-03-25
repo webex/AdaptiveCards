@@ -42,7 +42,7 @@ class ACRContentHoldingView: NSView {
             subview.layer?.masksToBounds = true
         }
         
-        if !isVisible {
+        if !isVisible && isImageSet {
             // setting the width constant to zero to maintain the remaining wrapping constraints
             // visibility should be GONE instead of HIDDEN in case of images
             widthAnchor.constraint(equalToConstant: CGFloat.zero).isActive = true

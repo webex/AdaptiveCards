@@ -86,6 +86,22 @@ class ImageRendererTests: XCTestCase {
         XCTAssertEqual(contentView.imageProperties?.hasExplicitDimensions, true)
     }
 
+    // content size should be zero
+    func testRendererSetsVisibilityFalse() {
+        fakeImageView = .make(isVisible: false)
+        
+        let contentView = renderImageView()
+        XCTAssertEqual(contentView.fittingSize.width, CGFloat.zero)
+    }
+    
+    // content size should not be zero
+    func testRendererSetsVisibilityTrue() {
+        fakeImageView = .make(imageSize: .large, isVisible: true)
+        
+        let contentView = renderImageView()
+        XCTAssert(contentView.fittingSize.width != CGFloat.zero)
+    }
+    
     private func renderImageView() -> ACRContentHoldingView {
         let view = imageRenderer.render(element: fakeImageView, with: hostConfig, style: .default, rootView: fakeACRView, parentView: fakeACRView, inputs: [])
         
