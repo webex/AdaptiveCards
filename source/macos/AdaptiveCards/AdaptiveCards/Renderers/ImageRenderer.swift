@@ -10,10 +10,15 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSImage")
             return NSView()
         }
-                        
+        
         guard let root = rootView as? ACRView, let url = imageElement.getUrl() else {
                   logError("Root is not of type ACRView or url is not available")
                   return NSView()
+        }
+        
+        guard let parent = parentView as? ACRContentStackView else {
+            logError("Parent is not of type ACRContentStackView")
+            return NSView()
         }
         
         let imageView = root.getImageView(for: ResourceKey(url: url, type: ResourceType.image))
@@ -40,9 +45,8 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             imageView.widthAnchor.constraint(equalToConstant: cgsize.width).isActive = true
         }
         
-        guard let parent = rootView as? ACRContentStackView else {
-            logError("Parent is not of type ACRContentStackView")
-            return NSView()
+        if cgsize.height > 0 {
+            imageView.heightAnchor.constraint(equalToConstant: cgsize.height).isActive = true
         }
     
         // Setting up content holder view
@@ -64,10 +68,11 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         wrappingView.heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
+
         if imageProperties.acsImageSize == ACSImageSize.stretch {
-            wrappingView.widthAnchor.constraint(greaterThanOrEqualTo: imageView.widthAnchor).isActive = true
-        } else {
             wrappingView.widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        } else {
+            wrappingView.widthAnchor.constraint(greaterThanOrEqualTo: imageView.widthAnchor).isActive = true
         }
         
         let imagePriority = getImageViewLayoutPriority(wrappingView)
@@ -86,6 +91,8 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             wrappingView.isPersonStyle = true
         }
         
+        wrappingView.isVisible = imageElement.getIsVisible()
+        
         return wrappingView
     }
     
@@ -98,6 +105,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         let imageProperties = superView.imageProperties
         imageProperties?.updateContentSize(size: imageSize)
         let cgSize = imageProperties?.contentSize ?? CGSize.zero
+        superView.isImageSet = true
         
         let priority = getImageViewLayoutPriority(superView)
         

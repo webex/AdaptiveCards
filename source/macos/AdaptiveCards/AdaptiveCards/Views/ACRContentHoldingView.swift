@@ -7,6 +7,7 @@ class ACRContentHoldingView: NSView {
     private weak var _heightConstraint: NSLayoutConstraint?
     weak var imageView: NSImageView?
     var imageProperties: ACRImageProperties?
+    var isVisible: Bool = true
     
     var isImageSet: Bool = true
     var isPersonStyle: Bool = false
@@ -40,6 +41,29 @@ class ACRContentHoldingView: NSView {
             subview.layer?.cornerRadius = radius
             subview.layer?.masksToBounds = true
         }
+        
+        if !isVisible {
+            // setting the width constant to zero to maintain the remaining wrapping constraints
+            // visibility should be GONE instead of HIDDEN in case of images
+            widthAnchor.constraint(equalToConstant: CGFloat.zero).isActive = true
+        }
+    }
+    
+    override var intrinsicContentSize: NSSize {
+        guard let size = imageProperties?.contentSize else {
+            return super.intrinsicContentSize
+        }
+        if size.width != CGFloat.zero {
+            return size
+        } else {
+            return super.intrinsicContentSize
+        }
+    }
+    
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        guard let superView = self.superview else { return }
+        widthAnchor.constraint(equalTo: superView.widthAnchor).isActive = true
     }
     
     func configureHeight() {
