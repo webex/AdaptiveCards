@@ -5,6 +5,8 @@ class FakeInputDate: ACSDateInput {
     public var placeholder: String?
     public var max: String?
     public var min: String?
+    public var id: String? = ""
+    public var visibility: Bool = true
 
     open override func getValue() -> String? {
         return value
@@ -39,11 +41,11 @@ class FakeInputDate: ACSDateInput {
     }
     
     override func getId() -> String? {
-        return "inputdate"
+        return id
     }
     
     override func getIsVisible() -> Bool {
-        return true
+        return visibility
     }
 }
 

@@ -3,6 +3,7 @@ import AdaptiveCards_bridge
 class FakeColumnSet: ACSColumnSet {
     var columns: [ACSColumn] = []
     var style: ACSContainerStyle = .default
+    var id: String? = ""
     
     override func getColumns() -> [ACSColumn] {
         return columns
@@ -17,7 +18,7 @@ class FakeColumnSet: ACSColumnSet {
     }
     
     override func getId() -> String? {
-        return "columnSet"
+        return id
     }
 }
 
