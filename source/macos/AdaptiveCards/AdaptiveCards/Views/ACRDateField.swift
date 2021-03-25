@@ -41,11 +41,11 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
        return view
     }()
        
-    private let datepickercalendar = NSDatePicker()
-    private let datepickertextfield = NSDatePicker()
+    private let datePickerCalendar = NSDatePicker()
+    private let datePickerTextfield = NSDatePicker()
 
     var isTimeMode: Bool = false
-    var selectedDate: Date?
+    var selectedDate: Date? = Date()
     var minDateValue: String?
     var maxDateValue: String?
     var idString: String?
@@ -66,7 +66,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     var value: String {
-        guard let selectedDate = selectedDate else {
+        guard !textField.stringValue.isEmpty, let selectedDate = selectedDate else {
             return ""
         }
         return dateFormatterOut.string(from: selectedDate)
@@ -128,31 +128,28 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     @objc private func handleButtonAction() {
         let frame = isTimeMode ? NSRect(x: 0, y: 0, width: 122, height: 122) : NSRect(x: 0, y: 0, width: 138, height: 147)
         if let dateValue = selectedDate {
-            datepickercalendar.dateValue = dateValue
-            datepickertextfield.dateValue = dateValue
-        } else {
-            datepickercalendar.dateValue = Date()
-            datepickertextfield.dateValue = Date()
+            datePickerCalendar.dateValue = dateValue
+            datePickerTextfield.dateValue = dateValue
         }
         if let minDate = minDateValue, let date = dateFormatter.date(from: minDate) {
-            datepickercalendar.minDate = date
-            datepickertextfield.minDate = date
+            datePickerCalendar.minDate = date
+            datePickerTextfield.minDate = date
         }
         if let maxDate = maxDateValue, let date = dateFormatter.date(from: maxDate) {
-            datepickercalendar.maxDate = date
-            datepickertextfield.maxDate = date
+            datePickerCalendar.maxDate = date
+            datePickerTextfield.maxDate = date
         }
-        datepickercalendar.datePickerStyle = .clockAndCalendar
-        datepickercalendar.datePickerElements = isTimeMode ? .hourMinuteSecond : .yearMonthDay
-        datepickercalendar.target = self
-        datepickercalendar.action = #selector(handleDateAction(_:))
+        datePickerCalendar.datePickerStyle = .clockAndCalendar
+        datePickerCalendar.datePickerElements = isTimeMode ? .hourMinuteSecond : .yearMonthDay
+        datePickerCalendar.target = self
+        datePickerCalendar.action = #selector(handleDateAction(_:))
 
-        datepickertextfield.datePickerElements = .yearMonthDay
-        datepickertextfield.datePickerStyle = .textFieldAndStepper
-        datepickertextfield.target = self
-        datepickertextfield.action = #selector(handleDateAction(_:))
-        if !isTimeMode { stackview.addArrangedSubview(datepickertextfield) }
-        stackview.addArrangedSubview(datepickercalendar)
+        datePickerTextfield.datePickerElements = .yearMonthDay
+        datePickerTextfield.datePickerStyle = .textFieldAndStepper
+        datePickerTextfield.target = self
+        datePickerTextfield.action = #selector(handleDateAction(_:))
+        if !isTimeMode { stackview.addArrangedSubview(datePickerTextfield) }
+        stackview.addArrangedSubview(datePickerCalendar)
         let popover = NSViewController()
         popover.view = stackview
         popover.view.frame = frame
@@ -162,8 +159,8 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     @objc private func handleDateAction(_ datePicker: NSDatePicker) {
         textField.stringValue = dateFormatterOut.string(from: datePicker.dateValue)
         selectedDate = datePicker.dateValue
-        datepickercalendar.dateValue = datePicker.dateValue
-        datepickertextfield.dateValue = datePicker.dateValue
+        datePickerCalendar.dateValue = datePicker.dateValue
+        datePickerTextfield.dateValue = datePicker.dateValue
     }
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
