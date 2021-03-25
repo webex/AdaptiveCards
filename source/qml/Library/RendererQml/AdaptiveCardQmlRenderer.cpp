@@ -347,7 +347,6 @@ namespace RendererQml
 			uiTextInput->Property("id", input->GetId());
 			uiTextInput->Property("wrapMode", "Text.Wrap");
 			uiTextInput->Property("selectByMouse", "true");
-			uiTextInput->Property("selectionColor", "'deepskyblue'");
 			uiTextInput->Property("selectedTextColor", "'white'");
 			uiTextInput->Property("padding", "10");
             uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
@@ -365,7 +364,6 @@ namespace RendererQml
 			uiTextInput->Property("id", input->GetId());
 			uiTextInput->Property("width", "parent.width");
 			uiTextInput->Property("selectByMouse", "true");
-			uiTextInput->Property("selectionColor", "'deep sky blue'");
 			uiTextInput->Property("selectedTextColor", "'white'");
             uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
@@ -510,7 +508,6 @@ namespace RendererQml
 		contentItemTag->Property("padding", "10");
 		contentItemTag->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
 		contentItemTag->Property("selectByMouse", "true");
-		contentItemTag->Property("selectionColor", "'deepskyblue'");
 		contentItemTag->Property("selectedTextColor", "'white'");
 		contentItemTag->Property("readOnly", Formatter() << "!" << inputId << ".editable");
 		contentItemTag->Property("validator", Formatter() << inputId << ".validator");
@@ -1032,7 +1029,6 @@ namespace RendererQml
         uiDateInput->Property("font.family", "\"" + context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default) + "\"");
         uiDateInput->Property("font.pixelSize", std::to_string(fontSize));
 		uiDateInput->Property("selectByMouse", "true");
-		uiDateInput->Property("selectionColor", "'deepskyblue'");
 		uiDateInput->Property("selectedTextColor", "'white'");
         uiDateInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
@@ -1521,7 +1517,6 @@ namespace RendererQml
 
 		uiTimeInput->Property("id", id);
 		uiTimeInput->Property("selectByMouse", "true");
-		uiTimeInput->Property("selectionColor", "'deepskyblue'");
 		uiTimeInput->Property("selectedTextColor", "'white'");
         uiTimeInput->Property("property string selectedTime", "\"""\"");
 		uiTimeInput->Property("width", "parent.width");
@@ -2098,6 +2093,8 @@ namespace RendererQml
             }
             contentText->Property("font.pixelSize", Formatter() << fontSize);
 
+			auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
+			
             //TODO: Add border color and style: default/positive/destructive
             if (!Utils::IsNullOrWhitespace(action->GetStyle()) && !Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
             {
@@ -2108,6 +2105,7 @@ namespace RendererQml
 						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#196323' : "<< buttonId << ".pressed ? '#196323' : '#1B8728'");
 						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#196323' : " << buttonId << ".pressed ? '#196323' : " << buttonId << ".hovered ? '#1B8728' : 'white'");
 						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
+						ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
 					}
 					else
 					{
@@ -2123,6 +2121,7 @@ namespace RendererQml
 						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#A12C23' : " << buttonId << ".pressed ? '#A12C23' : '#D93829'");
 						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#A12C23' : " << buttonId << ".pressed ? '#A12C23' : " << buttonId << ".hovered ? '#D93829' : 'white'");
 						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
+						ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
 					}
 					else
 					{
@@ -2138,6 +2137,7 @@ namespace RendererQml
 						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
 						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
 						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+						ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
 					}
 					else
 					{
@@ -2154,6 +2154,7 @@ namespace RendererQml
 					bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
 					bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
 					contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+					ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
 				}
 				else
 				{
@@ -2177,10 +2178,8 @@ namespace RendererQml
                 showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
                 showCardIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
 
-				auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
 				ColorOverlayTag->Property("anchors.fill", "parent");
 				ColorOverlayTag->Property("source", "parent");
-				ColorOverlayTag->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#000000'");
 
 				showCardIcon->AddChild(ColorOverlayTag);
                 textLayout->AddChild(showCardIcon);
