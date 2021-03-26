@@ -12,7 +12,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     
     init() {
         super.init(frame: .zero)
-        BundleUtils.loadNib("ACRMultilineInputTextView", self)
+        BundleUtils.loadNibNamed("ACRMultilineInputTextView", self)
         textView.allowsUndo = true
         setupViews()
         setupConstaints()

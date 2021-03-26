@@ -448,7 +448,7 @@ class ViewTests: XCTestCase {
     
     
     private func getImageFile() -> NSImage? {
-        return BundleUtils.getImage("cisco.jpg")
+        return BundleUtils.getImage("cisco", "jpg")
     }
     
     private func getImageLayer() -> CALayer {

@@ -7,7 +7,7 @@ class ACRFactTextField: NSView {
     
     init() {
         super.init(frame: .zero)
-        BundleUtils.loadNib("ACRFactTextField", self)
+        BundleUtils.loadNibNamed("ACRFactTextField", self)
         setupViews()
         setupConstraints()
     }

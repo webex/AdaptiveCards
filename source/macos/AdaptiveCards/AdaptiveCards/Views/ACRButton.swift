@@ -44,7 +44,7 @@ class ACRButton: FlatButton {
         setupButtonStyle()
     }
     
-    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default) {
+    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconImageFileType: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default) {
         super.init(frame: frame)
         if wantsChevron {
             showsChevron = wantsChevron
@@ -52,6 +52,7 @@ class ACRButton: FlatButton {
         if wantsIcon {
             showsIcon = wantsIcon
             iconImageName = iconNamed
+            iconFileType = iconImageFileType
             iconPositioned = iconPosition
         }
         initialize()
@@ -68,7 +69,7 @@ class ACRButton: FlatButton {
         momentary = !showsChevron
         iconColor = .white
         if showsIcon {
-            image = BundleUtils.getImage(iconImageName)
+            image = BundleUtils.getImage(iconImageName, iconFileType)
             imagePosition = iconPositioned
         }
     }
