@@ -277,14 +277,14 @@ namespace RendererQml
             mouseArea->Property("acceptedButtons", "Qt.LeftButton");
             mouseArea->Property("hoverEnabled", "true");
 
-            std::ostringstream OnEntered;
-            OnEntered << "{" << rectId << ".color = " << hoverColor << ";";
+            std::ostringstream onEntered;
+            onEntered << "{" << rectId << ".color = " << hoverColor << ";";
             if (hasBackgroundImage)
             {
-                OnEntered << rectId << ".opacity = 0.5;";
+                onEntered << rectId << ".opacity = 0.5;";
             }            
-            OnEntered << "}";
-            mouseArea->Property("onEntered", OnEntered.str());
+            onEntered << "}";
+            mouseArea->Property("onEntered", onEntered.str());
 
             std::ostringstream onExited;
             onExited << "{" << rectId << ".color = " << parentColor << ";";
@@ -1481,7 +1481,7 @@ namespace RendererQml
 			}
 
 		}
-        
+
 		if (!image->GetBackgroundColor().empty())
 		{
             uiRectangle->Property("readonly property string bgColor", context->GetRGBColor(image->GetBackgroundColor()));
