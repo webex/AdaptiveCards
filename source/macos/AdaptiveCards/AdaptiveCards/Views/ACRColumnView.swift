@@ -235,8 +235,8 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     }
     
     override func mouseExited(with event: NSEvent) {
-//        guard let columnView = event.trackingArea?.owner as? ACRColumnView, target != nil else { return }
-//        columnView.layer?.backgroundColor = previousBackgroundColor ?? .clear
+        guard let columnView = event.trackingArea?.owner as? ACRColumnView, target != nil else { return }
+        columnView.layer?.backgroundColor = previousBackgroundColor ?? .clear
     }
 }
 

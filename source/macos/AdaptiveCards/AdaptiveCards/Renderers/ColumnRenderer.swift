@@ -41,28 +41,6 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
             columnView.heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
         }
         
-//        if let selectAction = column.getSelectAction(), let rootView = rootView as? ACRView {
-//            var target: TargetHandler?
-//            switch selectAction.getType() {
-//            case .openUrl:
-//                guard let openURLAction = selectAction as? ACSOpenUrlAction else { break }
-//                target = ActionOpenURLTarget(element: openURLAction, delegate: rootView)
-//
-//            case .submit:
-//                guard let submitAction = selectAction as? ACSSubmitAction else { break }
-//                target = ActionSubmitTarget(element: submitAction, delegate: rootView)
-//
-//            default:
-//                break
-//            }
-//
-//            if let actionTarget = target {
-//                columnView.target = actionTarget
-//                rootView.addTarget(actionTarget)
-//                print("CV: ", columnView.hash, "CV Name:", columnView.className, "TARGET: ", actionTarget.hash)
-//            }
-//        }
-        
         columnView.setupSelectAction(selectAction: column.getSelectAction(), rootView: rootView)
         
         return columnView

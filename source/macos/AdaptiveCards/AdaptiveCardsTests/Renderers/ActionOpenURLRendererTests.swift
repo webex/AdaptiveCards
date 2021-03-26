@@ -53,12 +53,11 @@ class ActionOpenURLRendererTests: XCTestCase {
 }
 
 private class FakeACRViewOpenURLDelegate: ACRViewDelegate {
-    func acrInputViewHandler(_ view: ACRView, didSubmitUserResponses dict: [String : String], button: NSButton) { }
     var calledURL: String?
     func acrView(_ view: ACRView, didSelectOpenURL url: String, actionView: NSView) {
         calledURL = url
     }
     
-    func acrView(_ view: ACRView, didSubmitUserResponses dict: [String : String], actionView: NSView) { }
+    func acrView(_ view: ACRView, didSubmitUserResponses dict: [String : Any], actionView: NSView) { }
     
 }
