@@ -15,21 +15,11 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         
         // add bleed
         
-        // add selectAction
-//        print(container.getSelectAction()?.getType())
-        if let selectAction = container.getSelectAction() {
-            if selectAction.getType() == .openUrl {
-                guard let selectAction = selectAction as? ACSOpenUrlAction, let rootView = rootView as? ACRView else { return NSView() }
-                containerView.testTarget = ActionOpenURLTarget(element: selectAction, delegate: rootView)
-                guard let testTarget = containerView.testTarget else { return NSView() }
-                rootView.addTarget(testTarget)
-//                containerView.acceptsFirstMouse(for: )
-                print(selectAction)
-            }
-        }
-        
         // add background Image
         renderBackgroundImage(backgroundImage: container.getBackgroundImage(), view: containerView, rootview: rootView)
+        
+        // add selectAction
+        containerView.setupSelectAction(selectAction: container.getSelectAction(), rootView: rootView)
         
         var leadingBlankSpace: NSView?
         if container.getVerticalContentAlignment() == .center || container.getVerticalContentAlignment() == .bottom {

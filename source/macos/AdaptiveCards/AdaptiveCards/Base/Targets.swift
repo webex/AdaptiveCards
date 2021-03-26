@@ -38,8 +38,12 @@ class ActionSubmitTarget: NSObject, TargetHandler {
         button.action = #selector(handleButtonAction(_:))
     }
     
+    func configureAction(for actionView: NSView) {
+        delegate?.handleSubmitAction(actionView: actionView, dataJson: self.dataJson)
+    }
+    
     @objc private func handleButtonAction(_ sender: NSButton) {
-        delegate?.handleSubmitAction(button: sender, dataJson: self.dataJson)
+        delegate?.handleSubmitAction(actionView: sender, dataJson: self.dataJson)
     }
 }
 

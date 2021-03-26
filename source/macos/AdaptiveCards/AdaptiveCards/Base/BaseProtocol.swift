@@ -19,7 +19,7 @@ protocol TargetHandler: NSObject {
 
 protocol TargetHandlerDelegate: AnyObject {
     func handleOpenURLAction(actionView: NSView, urlString: String)
-    func handleSubmitAction(button: NSButton, dataJson: String?)
+    func handleSubmitAction(actionView: NSView, dataJson: String?)
     func handleShowCardAction(button: NSButton, showCard: ACSAdaptiveCard)
 }
 

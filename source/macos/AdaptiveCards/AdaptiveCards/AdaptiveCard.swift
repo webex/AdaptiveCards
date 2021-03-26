@@ -3,7 +3,7 @@ import AppKit
 
 public protocol AdaptiveCardActionDelegate: AnyObject {
     func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, actionView: NSView)
-    func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses dict: [String: String], button: NSButton)
+    func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses dict: [String: Any], actionView: NSView)
 }
 
 public protocol AdaptiveCardResourceResolver: AnyObject {
