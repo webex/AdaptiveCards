@@ -269,7 +269,7 @@ namespace RendererQml
                 return;
             }
 
-            const auto parentColor = parent->GetProperty("readonly property string bgColor");
+            const auto parentColor = !parent->GetProperty("readonly property string bgColor").empty() ? parent->GetProperty("readonly property string bgColor") : "'transparent'";
             const auto hoverColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().emphasisPalette.backgroundColor);
 
             auto mouseArea = std::make_shared<QmlTag>("MouseArea");
