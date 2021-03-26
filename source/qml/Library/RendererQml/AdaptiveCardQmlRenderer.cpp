@@ -366,7 +366,10 @@ namespace RendererQml
 
 		uiTextBlock->Property("clip", "true");
 		uiTextBlock->Property("textFormat", "Text.MarkdownText");
-		uiTextBlock->Property("text", "\"" + textBlock->GetText() + "\"");
+
+		std::string text = TextUtils::ApplyTextFunctions(textBlock->GetText(), context->GetLang());
+		text = Utils::Replace(text, "\"", "\\\"");
+		uiTextBlock->Property("text", Formatter() << "\"" << text << "\"");
 
 		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
 
@@ -428,6 +431,8 @@ namespace RendererQml
 			uiTextInput = std::make_shared<QmlTag>("TextArea");
 			uiTextInput->Property("id", input->GetId());
 			uiTextInput->Property("wrapMode", "Text.Wrap");
+			uiTextInput->Property("selectByMouse", "true");
+			uiTextInput->Property("selectedTextColor", "'white'");
 			uiTextInput->Property("padding", "10");
             uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
@@ -443,6 +448,8 @@ namespace RendererQml
 			uiTextInput = std::make_shared<QmlTag>("TextField");
 			uiTextInput->Property("id", input->GetId());
 			uiTextInput->Property("width", "parent.width");
+			uiTextInput->Property("selectByMouse", "true");
+			uiTextInput->Property("selectedTextColor", "'white'");
             uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 			if (input->GetMaxLength() > 0)
@@ -585,6 +592,8 @@ namespace RendererQml
 		contentItemTag->Property("id", inputId + "_contentItem");
 		contentItemTag->Property("padding", "10");
 		contentItemTag->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
+		contentItemTag->Property("selectByMouse", "true");
+		contentItemTag->Property("selectedTextColor", "'white'");
 		contentItemTag->Property("readOnly", Formatter() << "!" << inputId << ".editable");
 		contentItemTag->Property("validator", Formatter() << inputId << ".validator");
 		contentItemTag->Property("inputMethodHints", "Qt.ImhFormattedNumbersOnly");
@@ -1129,6 +1138,8 @@ namespace RendererQml
 
         uiDateInput->Property("font.family", "\"" + context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default) + "\"");
         uiDateInput->Property("font.pixelSize", std::to_string(fontSize));
+		uiDateInput->Property("selectByMouse", "true");
+		uiDateInput->Property("selectedTextColor", "'white'");
         uiDateInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
         uiDateInput->Property("property string selectedDate", "\"" + input->GetValue() + "\"");
@@ -1221,7 +1232,7 @@ namespace RendererQml
         
 		auto EnumDateFormat = Utils::GetSystemDateFormat();
 		
-		const auto dateSeparator = "-";
+		const auto dateSeparator = "\\/";
 		const auto day_Regex = "([-0123]-|0\\d|[12]\\d|3[01])";
 		const auto month_Regex = "(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)";
 		const auto year_Regex = "(-{4}|\\d-{3}|\\d{2}-{2}|\\d{3}-|\\d{4})";
@@ -1292,7 +1303,8 @@ namespace RendererQml
 
 		uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? "\"" + input->GetPlaceholder() : "\"Select date") << " in " << Utils::ConvertToLowerIdValue(StringDateFormat) << "\"");
 		uiDateInput->Property("validator", Formatter() << "RegExpValidator { regExp: " << DateRegex << "}");
-		uiDateInput->Property("onFocusChanged", Formatter() << "{" << "if(focus==true) inputMask=\"" << inputMask << "\";" << "if(activeFocus === false){ z=0; if( " << calendar_box_id << ".visible === true){ " << calendar_box_id << ".visible=false}}} ");
+		uiDateInput->Property("onFocusChanged", Formatter() << "{" << "if(focus===true) inputMask=\"" << inputMask << "\";" <<
+			"if(focus === false){ z=0;" << "if(text === \""<< std::string(dateSeparator) + std::string(dateSeparator) << "\"){ inputMask = \"\" ; } " <<"if( " << calendar_box_id << ".visible === true){ " << calendar_box_id << ".visible=false}}} ");
         calendarTag->Property("onReleased", Formatter() << "{parent.visible=false; " << input->GetId() << ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\")," << "\"" << StringDateFormat << "\")}");
 
 		calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
@@ -1505,6 +1517,8 @@ namespace RendererQml
         const std::string value = input->GetValue();
 
 		uiTimeInput->Property("id", id);
+		uiTimeInput->Property("selectByMouse", "true");
+		uiTimeInput->Property("selectedTextColor", "'white'");
         uiTimeInput->Property("property string selectedTime", "\"""\"");
 		uiTimeInput->Property("width", "parent.width");
 		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "\"Select time\"");
@@ -1535,7 +1549,8 @@ namespace RendererQml
 		std::string listViewtt_id = id + "_tt";
 		std::string timeBox_id = id + "_timeBox";
 
-		uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus==true) inputMask=\"xx:xx;-\";" << " if(activeFocus==false){ z=0;" << "if(" << timeBox_id << ".visible==true)" << timeBox_id << ".visible=false ;" << "}}");
+		uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus===true) inputMask=\"xx:xx;-\";"
+			<< " if(focus===false){ z=0;" << "if(text===\":\") { inputMask=\"\" }" << "if(" << timeBox_id << ".visible===true)" << timeBox_id << ".visible=false ;" << "}}");
 
 		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << "if(getText(0,2) === '--' || getText(3,5) === '--'){" << id << ".selectedTime ='';} else{" << id << ".selectedTime =" << id << ".text;}}");
 
@@ -1602,7 +1617,8 @@ namespace RendererQml
 		{
 			timeBoxTag->Property("width", "155");
 			uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01]-|0\\d|1[0-2]):(--|[0-5]-|[0-5]\\d)\\s(--|A-|AM|P-|PM)$/}");
-			uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus==true) inputMask=\"xx:xx >xx;-\";" << " if(activeFocus==false){ z=0;" << "if(" << timeBox_id << ".visible==true)" << timeBox_id << ".visible=false ;" << "}}");
+			uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus===true) inputMask=\"xx:xx >xx;-\";" <<
+				" if(focus===false){ z=0;" << "if(text===\": \" ) { inputMask=\"\" }" << "if(" << timeBox_id << ".visible===true)" << timeBox_id << ".visible=false ;" << "}}");
 			uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2))-1;" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));"
 				<< "var tt_index=3;var hh = getText(0,2);" << "switch(getText(6,8)){ case 'PM':tt_index = 1; if(parseInt(getText(0,2))!==12){hh=parseInt(getText(0,2))+12;} break;case 'AM':tt_index = 0; if(parseInt(getText(0,2))===12){hh=parseInt(getText(0,2))-12;} break;}" << listViewtt_id << ".currentIndex=tt_index;" << "if(getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--'){" << id <<".selectedTime ='';} else{" << id <<".selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);}}");
 			mouseAreaTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2))-1;\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n"
@@ -2213,6 +2229,8 @@ namespace RendererQml
             }
             contentText->Property("font.pixelSize", Formatter() << fontSize);
 
+			auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
+			
             //TODO: Add border color and style: default/positive/destructive
             if (!Utils::IsNullOrWhitespace(action->GetStyle()) && !Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
             {
@@ -2223,6 +2241,7 @@ namespace RendererQml
 						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#196323' : "<< buttonId << ".pressed ? '#196323' : '#1B8728'");
 						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#196323' : " << buttonId << ".pressed ? '#196323' : " << buttonId << ".hovered ? '#1B8728' : 'white'");
 						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
+						ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
 					}
 					else
 					{
@@ -2238,6 +2257,7 @@ namespace RendererQml
 						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#A12C23' : " << buttonId << ".pressed ? '#A12C23' : '#D93829'");
 						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#A12C23' : " << buttonId << ".pressed ? '#A12C23' : " << buttonId << ".hovered ? '#D93829' : 'white'");
 						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
+						ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
 					}
 					else
 					{
@@ -2253,6 +2273,7 @@ namespace RendererQml
 						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
 						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
 						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+						ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
 					}
 					else
 					{
@@ -2269,6 +2290,7 @@ namespace RendererQml
 					bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
 					bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
 					contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+					ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
 				}
 				else
 				{
@@ -2292,6 +2314,10 @@ namespace RendererQml
                 showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
                 showCardIcon->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
 
+				ColorOverlayTag->Property("anchors.fill", "parent");
+				ColorOverlayTag->Property("source", "parent");
+
+				showCardIcon->AddChild(ColorOverlayTag);
                 textLayout->AddChild(showCardIcon);
             }
 

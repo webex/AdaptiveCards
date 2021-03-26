@@ -41,7 +41,7 @@ class AdaptiveCardRenderer {
             let isFirstElement = index == 0
             let renderer = RendererManager.shared.renderer(for: element.getType())
             let view = renderer.render(element: element, with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [])
-            let viewWithInheritedProperties = BaseCardElementRenderer().updateView(view: view, element: element, style: style, hostConfig: hostConfig, isfirstElement: isFirstElement)
+            let viewWithInheritedProperties = BaseCardElementRenderer.shared.updateView(view: view, element: element, style: style, hostConfig: hostConfig, isfirstElement: isFirstElement)
             rootView.addArrangedSubview(viewWithInheritedProperties)
             BleedConfiguration.configBleed(container: view, rootView: rootView, with: hostConfig, element: element, isFirstElement: isFirstElement)
         }
@@ -59,18 +59,21 @@ class AdaptiveCardRenderer {
             rootView.addArrangedSubview(view)
         }
         
+        // add selectAction
+        rootView.setupSelectAction(selectAction: card.getSelectAction(), rootView: rootView)
+        
         rootView.layoutSubtreeIfNeeded()
         return rootView
     }
 }
 
 extension AdaptiveCardRenderer: ACRViewDelegate {
-    func acrInputViewHandler(_ view: ACRView, didSubmitUserResponses dict: [String: String], button: NSButton) {
-        actionDelegate?.adaptiveCard(view, didSubmitUserResponses: dict, button: button)
+    func acrView(_ view: ACRView, didSelectOpenURL url: String, actionView: NSView) {
+        actionDelegate?.adaptiveCard(view, didSelectOpenURL: url, actionView: actionView)
     }
     
-    func acrView(_ view: ACRView, didSelectOpenURL url: String, button: NSButton) {
-        actionDelegate?.adaptiveCard(view, didSelectOpenURL: url, button: button)
+    func acrView(_ view: ACRView, didSubmitUserResponses dict: [String: Any], actionView: NSView) {
+        actionDelegate?.adaptiveCard(view, didSubmitUserResponses: dict, actionView: actionView)
     }
 }
 

@@ -21,10 +21,12 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
             topSpacingView = view
         }
         
-        for item in column.getItems() {
+        for (index, item) in column.getItems().enumerated() {
             let renderer = RendererManager.shared.renderer(for: item.getType())
             let view = renderer.render(element: item, with: hostConfig, style: style, rootView: rootView, parentView: columnView, inputs: [])
-            columnView.addArrangedSubview(view)
+            columnView.configureColumnProperties(for: view)
+            let viewWithInheritedProperties = BaseCardElementRenderer.shared.updateView(view: view, element: item, style: style, hostConfig: hostConfig, isfirstElement: index == 0)
+            columnView.addArrangedSubview(viewWithInheritedProperties)
         }
         
         if column.getVerticalContentAlignment() == .center, let topView = topSpacingView {
@@ -38,6 +40,8 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
         if let height = column.getMinHeight(), let heightPt = CGFloat(exactly: height), heightPt > 0 {
             columnView.heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
         }
+        
+        columnView.setupSelectAction(selectAction: column.getSelectAction(), rootView: rootView)
         
         return columnView
     }
