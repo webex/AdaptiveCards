@@ -63,7 +63,6 @@ namespace RendererQml
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
     {
-		const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
 		const auto bodySize = card->GetBody().size();
 
         auto uiCard = std::make_shared<QmlTag>("Rectangle");
@@ -97,10 +96,10 @@ namespace RendererQml
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
 		rectangle->Property("id", "adaptiveCardRectangle");
 		rectangle->Property("color", "'transparent'");
-		rectangle->Property("Layout.topMargin", std::to_string(margin));
-		rectangle->Property("Layout.bottomMargin", std::to_string(margin));
-		rectangle->Property("Layout.leftMargin", std::to_string(margin));
-		rectangle->Property("Layout.rightMargin", std::to_string(margin));
+		rectangle->Property("Layout.topMargin", "margins");
+		rectangle->Property("Layout.bottomMargin", "margins");
+		rectangle->Property("Layout.leftMargin", "margins");
+		rectangle->Property("Layout.rightMargin", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
 		rectangle->Property("Layout.preferredHeight", "40");
 
