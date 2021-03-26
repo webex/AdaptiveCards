@@ -12,11 +12,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     
     init() {
         super.init(frame: .zero)
-        guard let bundle = Bundle(identifier: "com.test.test.AdaptiveCards") else {
-            logError("Bundle is nil")
-            return
-        }
-        bundle.loadNibNamed("ACRMultilineInputTextView", owner: self, topLevelObjects: nil)
+        BundleUtils.loadNib("ACRMultilineInputTextView", self)
         textView.allowsUndo = true
         setupViews()
         setupConstaints()
