@@ -4,10 +4,6 @@ import AppKit
 struct ACRBleedDirection: OptionSet {
     let rawValue: UInt
     
-    init(rawValue: UInt) {
-        self.rawValue = rawValue
-    }
-    
     static let ACRBleedRestricted = ACRBleedDirection(rawValue: 0 << 0)
     static let ACRBleedToLeadingEdge = ACRBleedDirection(rawValue: 1 << 0)
     static let ACRBleedToTrailingEdge = ACRBleedDirection(rawValue: 1 << 1)
@@ -17,8 +13,10 @@ struct ACRBleedDirection: OptionSet {
 }
 
 class BleedConfiguration {
-    static func bleedRequired(container: NSView, rootView: ACRView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, parentView: NSView?) {
-        // do something
+    static func configBleed(container: NSView, rootView: ACRView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, isFirstElement: Bool) {
+        if !(element is ACSCollectionTypeElement) {
+            return
+        }
         guard let collection = element as? ACSCollectionTypeElement else {
             logError("Element is not ACSCollectionTypeElement")
             return
@@ -26,18 +24,15 @@ class BleedConfiguration {
         if !collection.getBleed() {
             return
         }
-        // check current collection type element has padding, if so added to the padding map
         // bleed specification requires the object that's asked to be bled to have padding
         if collection.getPadding() {
             let adaptiveBleedDirection = collection.getBleedDirection()
             let direction = ACRBleedDirection(rawValue: adaptiveBleedDirection.rawValue)
             
             // 1. create a background view (bv).
-            // 2. bv is added to bleed target view (tv), which is also a parent view.
-            // bv is then pinned to the tv according to the bleed direction
-            // bv gets current container view's (cv) container style
-            // and cv's container style is reset to transparent, such that
-            // bv's container style will be diplayed.
+            // 2. Now, add bv to the rootView
+            // bv is then pinned to the rootView to the bleed direction
+            // bv gets current collection view's (cv) container style
             // container view's stack view (csv) holds content views, and bv dislpays
             // container style we transpose them, and get the final result
             
@@ -54,7 +49,7 @@ class BleedConfiguration {
             let trailing = ((direction.rawValue & ACRBleedDirection.ACRBleedToTrailingEdge.rawValue) != 0)
             let bottom = ((direction.rawValue & ACRBleedDirection.ACRBleedToBottomEdge.rawValue) != 0)
             
-            if rootView.stackView.arrangedSubviews.count == 1, top {
+            if isFirstElement, top {
                 backgroundView.topAnchor.constraint(equalTo: rootView.topAnchor).isActive = true
             } else {
                 backgroundView.topAnchor.constraint(equalTo: container.topAnchor).isActive = true
