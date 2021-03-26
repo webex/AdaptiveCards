@@ -72,7 +72,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         if style != .none, let bgColor = hostConfig.getBackgroundColor(for: style) {
             layer?.backgroundColor = bgColor.cgColor
         }
-        setupTrackingArea()
     }
     
     init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
@@ -97,7 +96,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
                 applyPadding(padding)
             }
         }
-        setupTrackingArea()
     }
     
     required init?(coder: NSCoder) {
@@ -109,6 +107,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     private func initialize() {
         setupViews()
         setupConstraints()
+        setupTrackingArea()
     }
     
     func addArrangedSubview(_ subview: NSView) {
@@ -189,32 +188,31 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     }
     
     func setupSelectAction(selectAction: ACSBaseActionElement?, rootView: NSView) {
-        if let selectAction = selectAction, let rootView = rootView as? ACRView {
-            var target: TargetHandler?
-            switch selectAction.getType() {
-            case .openUrl:
-                guard let openURLAction = selectAction as? ACSOpenUrlAction else { break }
-                target = ActionOpenURLTarget(element: openURLAction, delegate: rootView)
-                
-            case .submit:
-                guard let submitAction = selectAction as? ACSSubmitAction else { break }
-                target = ActionSubmitTarget(element: submitAction, delegate: rootView)
-                
-            default:
-                break
-            }
+        guard let selectAction = selectAction, let rootView = rootView as? ACRView else { return }
+        var target: TargetHandler?
+        switch selectAction.getType() {
+        case .openUrl:
+            guard let openURLAction = selectAction as? ACSOpenUrlAction else { break }
+            target = ActionOpenURLTarget(element: openURLAction, delegate: rootView)
             
-            if let actionTarget = target {
-                self.target = actionTarget
-                rootView.addTarget(actionTarget)
-            }
+        case .submit:
+            guard let submitAction = selectAction as? ACSSubmitAction else { break }
+            target = ActionSubmitTarget(element: submitAction, delegate: rootView)
+            
+        default:
+            break
+        }
+        
+        if let actionTarget = target {
+            self.target = actionTarget
+            rootView.addTarget(actionTarget)
         }
     }
     
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
         guard let target = target else { return }
-        target.configureAction(for: self)
+        target.handleSelectionAction(for: self)
     }
     
     override func hitTest(_ point: NSPoint) -> NSView? {

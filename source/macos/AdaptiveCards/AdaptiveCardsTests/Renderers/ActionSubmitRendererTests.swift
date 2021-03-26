@@ -30,7 +30,6 @@ class ActionSubmitRendererTests: XCTestCase {
     }
     
     func testSetsTargets() {
-//        actionSubmit = .make()
         actionSubmit = .make(inputText: FakeInputText.make())
         let button = renderButton()
         guard let target = acrView.targets.first as? ActionSubmitTarget else { return XCTFail() }

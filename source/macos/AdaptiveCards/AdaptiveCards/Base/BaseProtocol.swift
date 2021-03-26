@@ -14,7 +14,7 @@ protocol BaseActionElementRendererProtocol {
 protocol TargetHandler: NSObject {
     var delegate: TargetHandlerDelegate? { get set }
     func configureAction(for button: NSButton)
-    func configureAction(for actionView: NSView)
+    func handleSelectionAction(for actionView: NSView)
 }
 
 protocol TargetHandlerDelegate: AnyObject {
