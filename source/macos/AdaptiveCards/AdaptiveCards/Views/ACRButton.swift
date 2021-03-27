@@ -69,7 +69,7 @@ class ACRButton: FlatButton {
         momentary = !showsChevron
         iconColor = .white
         if showsIcon {
-            image = BundleUtils.getImage(iconImageName, iconFileType)
+            image = BundleUtils.getImage(iconImageName, ofType: iconFileType)
             imagePosition = iconPositioned
         }
     }
