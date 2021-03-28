@@ -5,6 +5,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
     static let shared = ContainerRenderer()
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
+        let isFirstElement = true
         guard let container = element as? ACSContainer else {
             logError("Element is not of type ACSContainer")
             return NSView()
@@ -12,9 +13,19 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         
         let containerView = ACRColumnView(style: container.getStyle(), parentStyle: style, hostConfig: hostConfig, superview: rootView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
+        print(container.getStyle().rawValue, "stylee")
+        containerView.style = container.getStyle()
         
+        if let rootview = parentView as? ACRColumnView {
+            let viewWithInheritedProperties = BaseCardElementRenderer.shared.updateView(view: containerView, element: element, style: style, hostConfig: hostConfig, isfirstElement: isFirstElement)
+            rootview.addArrangedSubview(viewWithInheritedProperties)
+        }
         // add bleed
-        
+        if container.getBleed() {
+            if let rootview = parentView as? ACRColumnView {
+                BleedConfiguration.configBleed(container: containerView, rootView: rootview, with: hostConfig, element: element, isFirstElement: isFirstElement, superview: rootView)
+            }
+        }
         // add background Image
         renderBackgroundImage(backgroundImage: container.getBackgroundImage(), view: containerView, rootview: rootView)
         
@@ -32,6 +43,9 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             let isFirstElement = index == 0
             let renderer = RendererManager.shared.renderer(for: item.getType())
             let view = renderer.render(element: item, with: hostConfig, style: container.getStyle(), rootView: rootView, parentView: containerView, inputs: [])
+            if item is ACSContainer {
+                continue
+            }
             let viewWithInheritedProperties = BaseCardElementRenderer().updateView(view: view, element: item, style: container.getStyle(), hostConfig: hostConfig, isfirstElement: isFirstElement)
             containerView.addArrangedSubview(viewWithInheritedProperties)
         }

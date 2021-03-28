@@ -14,6 +14,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     let hostConfig: ACSHostConfig
     public var backgroundView: NSView?
     var target: TargetHandler?
+    var style: ACSContainerStyle?
     
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
