@@ -13,7 +13,7 @@ struct ACRBleedDirection: OptionSet {
 }
 
 class BleedConfiguration {
-    static func configBleed(container: NSView, rootView: ACRView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, isFirstElement: Bool) {
+    static func configBleed(container: NSView, rootView: ACRColumnView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, isFirstElement: Bool) {
         if !(element is ACSCollectionTypeElement) {
             return
         }
@@ -39,7 +39,9 @@ class BleedConfiguration {
             let backgroundView = NSView()
             backgroundView.translatesAutoresizingMaskIntoConstraints = false
             rootView.backgroundView = backgroundView
-            
+            if let containerView = container as? ACRColumnView {
+                containerView.backgroundView = backgroundView
+            }
             rootView.addSubview(backgroundView, positioned: .above, relativeTo: rootView.backgroundImageView)
             backgroundView.wantsLayer = true
             backgroundView.layer?.backgroundColor = container.layer?.backgroundColor
@@ -56,12 +58,15 @@ class BleedConfiguration {
             }
             if leading {
                 backgroundView.leadingAnchor.constraint(equalTo: rootView.leadingAnchor).isActive = true
+            } else {
+                backgroundView.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
             }
             if trailing {
                 backgroundView.trailingAnchor.constraint(equalTo: rootView.trailingAnchor).isActive = true
+            } else {
+                backgroundView.leadingAnchor.constraint(equalTo: container.trailingAnchor).isActive = true
             }
-            
-            if (direction.rawValue & ACRBleedDirection.ACRBleedToBottomEdge.rawValue) != 0, bottom {
+            if bottom {
                 backgroundView.bottomAnchor.constraint(equalTo: rootView.bottomAnchor).isActive = true
             } else {
                 backgroundView.bottomAnchor.constraint(equalTo: container.bottomAnchor).isActive = true
