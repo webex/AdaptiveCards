@@ -13,7 +13,6 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         
         let containerView = ACRColumnView(style: container.getStyle(), parentStyle: style, hostConfig: hostConfig, superview: rootView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        print(container.getStyle().rawValue, "stylee")
         containerView.style = container.getStyle()
         
         if let rootview = parentView as? ACRColumnView {
