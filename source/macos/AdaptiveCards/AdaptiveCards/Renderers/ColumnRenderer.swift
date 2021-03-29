@@ -41,6 +41,11 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
             columnView.heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
         }
         
+        if let backgroundImage = column.getBackgroundImage(), let url = backgroundImage.getUrl() {
+            columnView.setupBackgroundImageProperties(backgroundImage)
+            rootView.registerImageHandlingView(columnView.backgroundImageView, for: url)
+        }
+        
         columnView.setupSelectAction(column.getSelectAction(), rootView: rootView)
      
         return columnView
