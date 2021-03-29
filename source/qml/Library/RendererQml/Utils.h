@@ -110,6 +110,7 @@ namespace RendererQml
 		static RendererQml::DateFormat GetSystemDateFormat();
 
 		static std::vector<std::string> splitString(const std::string& string, char delimiter);
+		static void HandleEscapeSequences(std::string& text, bool isTextBlock);
 
     private:
         Utils() {}

@@ -452,4 +452,14 @@ namespace RendererQml
 		return splitElements;
 	}
 
+	void Utils::HandleEscapeSequences(std::string& text, bool isTextBlock)
+	{
+		if (isTextBlock == true)
+		{
+			Replace(text, "\n", "\\\\\n");
+			Replace(text, "\r", "\\\\\r");
+			Replace(text, "\"", "\\\"");
+
+		}
+	}
 }
