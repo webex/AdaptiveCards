@@ -2007,13 +2007,6 @@ namespace RendererQml
 
         std::shared_ptr<QmlTag> uiContainer = GetNewContainer(container, context);
 
-		uiContainer->Property("id", container->GetId());
-
-		if (!container->GetIsVisible())
-		{
-			uiContainer->Property("visible", "false");
-		}
-
         if (container->GetBleed() && container->GetCanBleed())
         {
             uiContainer->Property("x", Formatter() << "-" << std::to_string(margin));
