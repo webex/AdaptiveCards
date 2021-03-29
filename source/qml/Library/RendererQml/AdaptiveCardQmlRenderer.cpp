@@ -77,9 +77,11 @@ namespace RendererQml
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
         uiCard->Property("width", std::to_string(context->getCardWidth()));
-        uiCard->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));		
+        uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+        uiCard->Property("color", "bgColor");		
 
-		if (card->GetBackgroundImage() != nullptr)
+        const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
+		if (hasBackgroundImage)
 		{
 			auto uiFrame = std::make_shared<QmlTag>("Frame");
 			uiFrame->Property("readonly property bool hasBackgroundImage", "true");
@@ -118,7 +120,7 @@ namespace RendererQml
 
         AddContainerElements(bodyLayout, card->GetBody(), context);
         AddActions(bodyLayout, card->GetActions(), context);
-        addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context);
+        addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context, hasBackgroundImage);
 
 		bodyLayout->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
 		bodyLayout->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
@@ -281,7 +283,7 @@ namespace RendererQml
         }
     }
 
-    void AdaptiveCardQmlRenderer::addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context)
+    void AdaptiveCardQmlRenderer::addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context, const bool hasBackgroundImage)
     {
         if (context->GetConfig()->GetSupportsInteractivity() && selectAction != nullptr)
         {
@@ -292,15 +294,31 @@ namespace RendererQml
                 return;
             }
 
-            const auto parentColor = !parent->GetProperty("color").empty() ? parent->GetProperty("color") : "'transparent'";
+            const auto parentColor = !parent->GetProperty("readonly property string bgColor").empty() ? parent->GetProperty("readonly property string bgColor") : "'transparent'";
             const auto hoverColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().emphasisPalette.backgroundColor);
 
             auto mouseArea = std::make_shared<QmlTag>("MouseArea");
             mouseArea->Property("anchors.fill", "parent");
             mouseArea->Property("acceptedButtons", "Qt.LeftButton");
             mouseArea->Property("hoverEnabled", "true");
-            mouseArea->Property("onEntered", Formatter() << "{" << rectId << ".color = " << hoverColor << "}");
-            mouseArea->Property("onExited", Formatter() << "{" << rectId << ".color = " << parentColor << "}");
+
+            std::ostringstream onEntered;
+            onEntered << "{" << rectId << ".color = " << hoverColor << ";";
+            if (hasBackgroundImage)
+            {
+                onEntered << rectId << ".opacity = 0.5;";
+            }            
+            onEntered << "}";
+            mouseArea->Property("onEntered", onEntered.str());
+
+            std::ostringstream onExited;
+            onExited << "{" << rectId << ".color = " << parentColor << ";";
+            if (hasBackgroundImage)
+            {
+                onExited << rectId << ".opacity = 1;";
+            }            
+            onExited << "}";
+            mouseArea->Property("onExited", onExited.str());
 
             std::string onClickedFunction;
             if (selectAction->GetElementTypeString() == "Action.OpenUrl")
@@ -391,7 +409,10 @@ namespace RendererQml
 
 		uiTextBlock->Property("clip", "true");
 		uiTextBlock->Property("textFormat", "Text.MarkdownText");
-		uiTextBlock->Property("text", "\"" + textBlock->GetText() + "\"");
+
+		std::string text = TextUtils::ApplyTextFunctions(textBlock->GetText(), context->GetLang());
+		text = Utils::Replace(text, "\"", "\\\"");
+		uiTextBlock->Property("text", Formatter() << "\"" << text << "\"");
 
 		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
 
@@ -1417,6 +1438,7 @@ namespace RendererQml
 
 		uiRectangle->Property("id", image->GetId());
 		uiRectangle->Property("implicitHeight", "height");
+        uiRectangle->Property("readonly property string bgColor", "'transparent'");
 		uiImage->Property("id", Formatter() << image->GetId() << "_img");
 		uiImage->Property("readonly property bool isImage", "true");
 		uiImage->Property("source", "\"" + image->GetUrl() + "\"");
@@ -1488,12 +1510,9 @@ namespace RendererQml
 
 		if (!image->GetBackgroundColor().empty())
 		{
-			uiRectangle->Property("color", context->GetRGBColor(image->GetBackgroundColor()));
+            uiRectangle->Property("readonly property string bgColor", context->GetRGBColor(image->GetBackgroundColor()));
 		}
-        else
-        {
-            uiRectangle->Property("color", "'transparent'");
-        }
+        uiRectangle->Property("color", "bgColor");
 
 		switch (image->GetHorizontalAlignment())
 		{
@@ -1905,6 +1924,7 @@ namespace RendererQml
 		}
 
 		uiFrame->Property("property int minHeight", std::to_string(columnSet->GetMinHeight()));
+        uiFrame->Property("readonly property string bgColor", "'transparent'");
 
 		uiFrame->Property("id", id);
 		uiRowLayout->Property("id", "rlayout_" + id);
@@ -1922,14 +1942,14 @@ namespace RendererQml
 		if (columnSet->GetStyle() != AdaptiveCards::ContainerStyle::None)
 		{
 			const auto color = context->GetConfig()->GetBackgroundColor(columnSet->GetStyle());
+            uiFrame->Property("readonly property string bgColor", "\"" + color + "\"");
             backgroundRect->Property("border.width", "0");
-            backgroundRect->Property("color", "\"" + color + "\"");
 		}
 		else
 		{
             backgroundRect->Property("border.width", "0");
-            backgroundRect->Property("color", "'transparent'");
 		}
+        backgroundRect->Property("color", "parent.bgColor");
 
         addSelectAction(uiFrame, backgroundRect->GetId(), columnSet->GetSelectAction(), context);
         uiFrame->Property("background", backgroundRect->ToString());
@@ -2140,6 +2160,7 @@ namespace RendererQml
         uiContainer->Property("padding", "0");
         uiContainer->Property("property int minHeight", Formatter() << cardElement->GetMinHeight());
         uiContainer->Property("implicitHeight", Formatter() << "Math.max(" << cardElement->GetMinHeight() << ", clayout_" << cardElement->GetId() << ".implicitHeight)");
+        uiContainer->Property("readonly property string bgColor", "'transparent'");
 
         AddContainerElements(uiColumn, cardElement->GetItems(), context);
 
@@ -2148,7 +2169,8 @@ namespace RendererQml
         auto backgroundRect = std::make_shared<QmlTag>("Rectangle");
         backgroundRect->Property("id", Formatter() << id << "_bgRect");
 
-        if (cardElement->GetBackgroundImage())
+        const auto hasBackgroundImage = cardElement->GetBackgroundImage() != nullptr;
+        if (hasBackgroundImage)
         {
             auto url = cardElement->GetBackgroundImage()->GetUrl();
             auto backgroundImg = std::make_shared<QmlTag>("Image");
@@ -2160,16 +2182,16 @@ namespace RendererQml
         else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
         {
             const auto color = context->GetConfig()->GetBackgroundColor(cardElement->GetStyle());
+            uiContainer->Property("readonly property string bgColor", "\"" + color + "\"");
             backgroundRect->Property("border.width", "0");
-            backgroundRect->Property("color", "\"" + color + "\"");
         }
         else
         {
             backgroundRect->Property("border.width", "0");
-            backgroundRect->Property("color", "'transparent'");
         }
+        backgroundRect->Property("color", "parent.bgColor");
 
-        addSelectAction(uiContainer, backgroundRect->GetId(), cardElement->GetSelectAction(), context);
+        addSelectAction(uiContainer, backgroundRect->GetId(), cardElement->GetSelectAction(), context, hasBackgroundImage);
         uiContainer->Property("background", backgroundRect->ToString());
 
         int tempMargin = 0;
