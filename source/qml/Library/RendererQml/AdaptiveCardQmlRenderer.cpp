@@ -671,9 +671,25 @@ namespace RendererQml
 		uiNumberInput->Property("validator", doubleValidatorTag->ToString());
 		uiNumberInput->Property("valueFromText", "function(text, locale) {\nreturn Number(text)\n}");
 
+		if (input->GetValue() != std::nullopt)
+		{
+			uiNumberInput->Property("readonly property bool hasDefaultValue", "true");
+			uiNumberInput->Property("readonly property int defaultValue", std::to_string(input->GetValue().value()));
+		}
+		else if(input->GetMin() == std::nullopt)
+		{
+			input->SetValue(0);
+			uiNumberInput->Property("readonly property bool hasDefaultValue", "true");
+			uiNumberInput->Property("readonly property int defaultValue", std::to_string(0));
+		}
+		else
+		{
+			uiNumberInput->Property("readonly property bool hasDefaultValue", "false");
+		}
+
 		if (input->GetMin() == std::nullopt)
 		{
-			input->SetMin(0);
+			input->SetMin(INT_MIN);
 		}
 		if (input->GetMax() == std::nullopt)
 		{
@@ -682,27 +698,18 @@ namespace RendererQml
 
 		if ((input->GetMin() == input->GetMax() && input->GetMin() == 0) || input->GetMin() > input->GetMax())
 		{
-			input->SetMin(0);
+			input->SetMin(INT_MIN);
 			input->SetMax(INT_MAX);
-		}
-		if (input->GetValue() == std::nullopt)
-		{
-			uiNumberInput->Property("property bool hasDefaultValue", "false");
-		}
-		else
-		{
-			uiNumberInput->Property("property bool hasDefaultValue", "true");
-			uiNumberInput->Property("property int defaultValue", std::to_string(input->GetValue().value()));
 		}
 		if (input->GetValue() < input->GetMin())
 		{
 			input->SetValue(input->GetMin());
-			uiNumberInput->Property("property int defaultValue", std::to_string(input->GetMin().value()));
+			uiNumberInput->Property("readonly property int defaultValue", std::to_string(input->GetMin().value()));
 		}
 		if (input->GetValue() > input->GetMax())
 		{
 			input->SetValue(input->GetMax());
-			uiNumberInput->Property("property int defaultValue", std::to_string(input->GetMax().value()));
+			uiNumberInput->Property("readonly property int defaultValue", std::to_string(input->GetMax().value()));
 		}
 
 		uiNumberInput->Property("from", std::to_string(input->GetMin().value()));
