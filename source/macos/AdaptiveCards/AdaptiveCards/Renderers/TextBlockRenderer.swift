@@ -49,7 +49,6 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
 
 class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     var placeholderAttrString: NSAttributedString?
-    var target: TargetHandler?
     
     override var intrinsicContentSize: NSSize {
         guard let layoutManager = layoutManager, let textContainer = textContainer else {
