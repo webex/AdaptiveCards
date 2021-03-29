@@ -616,7 +616,7 @@ namespace RendererQml
 		contentItemTag->Property("readOnly", Formatter() << "!" << inputId << ".editable");
 		contentItemTag->Property("validator", Formatter() << inputId << ".validator");
 		contentItemTag->Property("inputMethodHints", "Qt.ImhFormattedNumbersOnly");
-		contentItemTag->Property("text", Formatter() << inputId << ".textFromValue(" << inputId << ".value, " << inputId << ".locale)");
+		contentItemTag->Property("text", Formatter() << inputId << ".value");
 		if (!input->GetPlaceholder().empty())
 		{
 			contentItemTag->Property("placeholderText", "\"" + input->GetPlaceholder() + "\"");
@@ -625,7 +625,7 @@ namespace RendererQml
 		auto textBackgroundTag = std::make_shared<QmlTag>("Rectangle");
 		textBackgroundTag->Property("color", "'transparent'");
 		contentItemTag->Property("background", textBackgroundTag->ToString());
-		contentItemTag->Property("onEditingFinished", Formatter() << "{ if(Number(text) < " << inputId << ".from || Number(text) > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
+		contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
         contentItemTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 		auto colorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
@@ -669,6 +669,7 @@ namespace RendererQml
 		uiNumberInput->Property("stepSize", "1");
 		uiNumberInput->Property("editable", "true");
 		uiNumberInput->Property("validator", doubleValidatorTag->ToString());
+		uiNumberInput->Property("valueFromText", "function(text, locale) {\nreturn Number(text)\n}");
 
 		if (input->GetMin() == std::nullopt)
 		{
