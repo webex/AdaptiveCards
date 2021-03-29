@@ -40,15 +40,6 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             imageView.imageScaling = .scaleAxesIndependently
         }
         
-        let size = imageElement.getSize()
-        if (size == .small || size == .medium || size == .large) && cgsize.width > 0 {
-            imageView.widthAnchor.constraint(equalToConstant: cgsize.width).isActive = true
-        }
-        
-        if cgsize.height > 0 {
-            imageView.heightAnchor.constraint(equalToConstant: cgsize.height).isActive = true
-        }
-    
         // Setting up content holder view
         let wrappingView = ACRContentHoldingView(imageProperties: imageProperties, imageView: imageView, viewgroup: parent)
         wrappingView.translatesAutoresizingMaskIntoConstraints = false
@@ -69,16 +60,22 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         
         wrappingView.heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
 
-        if imageProperties.acsImageSize == ACSImageSize.stretch {
-            wrappingView.widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        if !imageProperties.hasExplicitDimensions {
+            if imageProperties.acsImageSize == ACSImageSize.stretch {
+                wrappingView.widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+            } else {
+                wrappingView.widthAnchor.constraint(greaterThanOrEqualTo: imageView.widthAnchor).isActive = true
+            }
         } else {
-            wrappingView.widthAnchor.constraint(greaterThanOrEqualTo: imageView.widthAnchor).isActive = true
+            if cgsize.width > 0 {
+                wrappingView.widthAnchor.constraint(greaterThanOrEqualTo: imageView.widthAnchor).isActive = true
+            }
         }
-        
-        let imagePriority = getImageViewLayoutPriority(wrappingView)
+    
+        let imagePriority = NSLayoutConstraint.Priority.defaultHigh // TODO: Possible need to revisit this
         if imageProperties.acsImageSize != ACSImageSize.stretch {
             imageView.setContentHuggingPriority(imagePriority, for: .horizontal)
-            imageView.setContentHuggingPriority(NSLayoutConstraint.Priority.defaultHigh, for: .vertical)
+            imageView.setContentHuggingPriority(.defaultHigh, for: .vertical)
             imageView.setContentCompressionResistancePriority(imagePriority, for: .horizontal)
             imageView.setContentCompressionResistancePriority(imagePriority, for: .vertical)
         }
@@ -107,7 +104,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         let cgSize = imageProperties?.contentSize ?? CGSize.zero
         superView.isImageSet = true
         
-        let priority = getImageViewLayoutPriority(superView)
+        let priority = NSLayoutConstraint.Priority.defaultHigh // TODO Need to revisit this for a more generalised logic
         
         var constraints: [NSLayoutConstraint] = []
         

@@ -9,7 +9,7 @@ class ACRContentHoldingView: NSView {
     var imageProperties: ACRImageProperties?
     var isVisible: Bool = true
     
-    var isImageSet: Bool = true
+    var isImageSet: Bool = false
     var isPersonStyle: Bool = false
     var hidePlayicon: Bool = false
     var isMediaType: Bool = false
@@ -41,12 +41,6 @@ class ACRContentHoldingView: NSView {
             subview.layer?.cornerRadius = radius
             subview.layer?.masksToBounds = true
         }
-        
-        if !isVisible && isImageSet {
-            // setting the width constant to zero to maintain the remaining wrapping constraints
-            // visibility should be GONE instead of HIDDEN in case of images
-            widthAnchor.constraint(equalToConstant: CGFloat.zero).isActive = true
-        }
     }
     
     override var intrinsicContentSize: NSSize {
@@ -63,7 +57,13 @@ class ACRContentHoldingView: NSView {
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
         guard let superView = self.superview else { return }
-        widthAnchor.constraint(equalTo: superView.widthAnchor).isActive = true
+        if !isImageSet {
+            if imageProperties?.acsImageSize != .stretch {
+                widthAnchor.constraint(greaterThanOrEqualTo: superView.widthAnchor).isActive = true
+            } else {
+                widthAnchor.constraint(equalTo: superView.widthAnchor).isActive = true
+            }
+        }
     }
     
     func configureHeight() {
