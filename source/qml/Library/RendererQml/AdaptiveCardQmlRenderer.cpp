@@ -63,8 +63,6 @@ namespace RendererQml
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
     {
-		const auto bodySize = card->GetBody().size();
-
         auto uiCard = std::make_shared<QmlTag>("Rectangle");
         uiCard->AddImports("import QtQuick 2.15");
         uiCard->AddImports("import QtQuick.Layouts 1.3");
@@ -126,24 +124,7 @@ namespace RendererQml
 		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
 
 		//Remove Top and Bottom Paddin if bleed for first and last element is true
-		if (bodySize > 0)
-		{
-			if (card->GetBody()[0]->GetElementTypeString() == "Container" || card->GetBody()[0]->GetElementTypeString() == "ColumnSet")
-			{
-				if (bodyLayout->GetChildren()[0]->HasProperty("readonly property bool bleed"))
-				{
-					rectangle->RemoveProperty("Layout.topMargin");
-				}
-			}
-
-			if (card->GetBody()[bodySize - 1]->GetElementTypeString() == "Container" || card->GetBody()[bodySize - 1]->GetElementTypeString() == "ColumnSet")
-			{
-				if (bodyLayout->GetChildren()[bodyLayout->GetChildren().size() - 1]->HasProperty("readonly property bool bleed"))
-				{
-					rectangle->RemoveProperty("Layout.bottomMargin");
-				}
-			}
-		}
+		rectangle = applyVerticalPadding(bodyLayout, rectangle);
 
         //Add submit onclick event
         addSubmitActionButtonClickFunc(context);
@@ -2036,7 +2017,6 @@ namespace RendererQml
 
 		if (columnSet->GetBleed() && columnSet->GetCanBleed())
 		{
-			uiFrame->Property("readonly property bool bleed", "true");
 			uiFrame = applyHorizontalBleed(columnSet, uiFrame, context);
 
 			const auto bleedLeftRight = AdaptiveCards::ContainerBleedDirection::BleedLeftRight;
@@ -2117,7 +2097,6 @@ namespace RendererQml
 
         if (container->GetBleed() && container->GetCanBleed())
         {
-			uiContainer->Property("readonly property bool bleed", "true");
 			uiContainer = applyHorizontalBleed(container, uiContainer,context);
         }
         else
@@ -2218,24 +2197,7 @@ namespace RendererQml
             tempMargin = margin;
         }
 
-		if (bodySize > 0)
-		{
-			if (cardElement->GetItems()[0]->GetElementTypeString() == "Container" || cardElement->GetItems()[0]->GetElementTypeString() == "ColumnSet")
-			{
-				if (uiColumn->GetChildren()[0]->HasProperty("readonly property bool bleed"))
-				{
-					uiColumn->RemoveProperty("Layout.topMargin");
-				}
-			}
-
-			if (cardElement->GetItems()[bodySize - 1]->GetElementTypeString() == "Container" || cardElement->GetItems()[bodySize - 1]->GetElementTypeString() == "ColumnSet")
-			{
-				if (uiColumn->GetChildren()[uiColumn->GetChildren().size() - 1]->HasProperty("readonly property bool bleed"))
-				{
-					uiColumn->RemoveProperty("Layout.bottomMargin");
-				}
-			}
-		}
+		uiColumn = applyVerticalPadding(uiColumn, uiColumn);
 
         uiColumn->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
 
@@ -2253,8 +2215,6 @@ namespace RendererQml
 		{
 			uiContainer->Property("implicitWidth", "parent.width");
 		}
-
-        uiContainer->Property("implicitWidth", "minWidth");
 
         return uiContainer;
     }
@@ -2680,6 +2640,25 @@ namespace RendererQml
 		const auto bleedLeftRight = AdaptiveCards::ContainerBleedDirection::BleedLeftRight;
 		const auto bleedLeft = AdaptiveCards::ContainerBleedDirection::BleedLeft;
 		const auto bleedRight = AdaptiveCards::ContainerBleedDirection::BleedRight;
+		const auto bleedUpDown = AdaptiveCards::ContainerBleedDirection::BleedUpDown;
+		const auto bleedUp = AdaptiveCards::ContainerBleedDirection::BleedUp;
+		const auto bleedDown = AdaptiveCards::ContainerBleedDirection::BleedDown;
+
+		if ((cardElement->GetBleedDirection() & bleedUpDown) == bleedUpDown)
+		{
+			uiContainer->Property("readonly property string bleed", "UpDown");
+		}
+		else
+		{
+			if ((cardElement->GetBleedDirection() & bleedUp) == bleedUp)
+			{
+				uiContainer->Property("readonly property string bleed", "Up");
+			}
+			else if ((cardElement->GetBleedDirection() & bleedDown) == bleedDown)
+			{
+				uiContainer->Property("readonly property string bleed", "Down");
+			}
+		}
 
 		if ((cardElement->GetBleedDirection() & bleedLeftRight) == bleedLeftRight)
 		{
@@ -2699,6 +2678,33 @@ namespace RendererQml
 			}
 		}
 		return uiContainer;
+	}
+
+	const std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::applyVerticalPadding(std::shared_ptr<QmlTag> elementsParent, std::shared_ptr<QmlTag> source)
+	{
+		const auto bodySize = elementsParent->GetChildren().size();
+
+		if (bodySize > 0)
+		{
+			for (int i = 0; i < bodySize; i++)
+			{
+				if (elementsParent->GetChildren()[i]->HasProperty("readonly property string bleed"))
+				{
+					const auto bleedDirection = elementsParent->GetChildren()[i]->GetProperty("readonly property string bleed");
+
+					if (bleedDirection.find("Up") == 0)
+					{
+						source->RemoveProperty("Layout.topMargin");
+					}
+
+					if (Utils::EndsWith(bleedDirection, "Down"))
+					{
+						source->RemoveProperty("Layout.bottomMargin");
+					}
+				}
+			}
+		}
+		return source;
 	}
 
 	const std::string RendererQml::AdaptiveCardQmlRenderer::getStretchHeight()
