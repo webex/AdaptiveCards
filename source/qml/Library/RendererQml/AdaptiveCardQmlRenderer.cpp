@@ -823,8 +823,8 @@ namespace RendererQml
             uiTextRun.append("<a href='" + selectaction + "'>");
             std::string text = TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang());
             text = Utils::HandleEscapeSequences(text);
-			uiTextRun.append(text);
-			uiTextRun.append("</a>");
+            uiTextRun.append(text);
+            uiTextRun.append("</a>");
         }
         else
         {
