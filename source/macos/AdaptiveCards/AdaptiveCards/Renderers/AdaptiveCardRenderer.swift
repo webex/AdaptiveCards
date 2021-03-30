@@ -41,12 +41,9 @@ class AdaptiveCardRenderer {
             let isFirstElement = index == 0
             let renderer = RendererManager.shared.renderer(for: element.getType())
             let view = renderer.render(element: element, with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [])
-            if element is ACSContainer {
-                continue
-            }
             let viewWithInheritedProperties = BaseCardElementRenderer.shared.updateView(view: view, element: element, rootView: rootView, style: style, hostConfig: hostConfig, isfirstElement: isFirstElement)
             rootView.addArrangedSubview(viewWithInheritedProperties)
-//            BleedConfiguration.configBleed(container: view, rootView: rootView, with: hostConfig, element: element, isFirstElement: isFirstElement)
+            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: rootView, with: hostConfig, element: element)
         }
         
         if !card.getActions().isEmpty {

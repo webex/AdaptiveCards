@@ -72,7 +72,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         self.hostConfig = hostConfig
         super.init(frame: .zero)
         initialize()
-        if style != .none {
+        if style != .none && style != parentStyle {
             if let bgColor = hostConfig.getBackgroundColor(for: style) {
                 layer?.backgroundColor = bgColor.cgColor
             }
@@ -113,6 +113,21 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         stackViewTopConstraint?.constant = padding
         stackViewTrailingConstraint?.constant = -padding
         stackViewBottomConstraint?.constant = -padding
+    }
+    
+    func setBleedProp(top: Bool, bottom: Bool, trailing: Bool, leading: Bool) {
+        if top {
+            stackViewTopConstraint?.constant = 0
+        }
+        if bottom {
+            stackViewBottomConstraint?.constant = 0
+        }
+        if leading {
+            stackViewLeadingConstraint?.constant = 0
+        }
+        if trailing {
+            stackViewTrailingConstraint?.constant = 0
+        }
     }
     
     func addSeperator(_ separator: Bool) {

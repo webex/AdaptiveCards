@@ -53,4 +53,77 @@ class BaseCardElementRenderer {
         }
         return updatedView
     }
+    
+    func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement) {
+        if !(element is ACSCollectionTypeElement) {
+            return
+        }
+        guard let collection = element as? ACSCollectionTypeElement else {
+            logError("Element is not ACSCollectionTypeElement")
+            return
+        }
+        if !collection.getBleed() {
+            return
+        }
+        guard let containerView = collectionView as? ACRContentStackView else {
+            logError("Container is not type of ACRContentStackView")
+            return
+        }
+        // bleed specification requires the object that's asked to be bled to have padding
+        if collection.getPadding() {
+            let adaptiveBleedDirection = collection.getBleedDirection()
+            let direction = ACRBleedDirection(rawValue: adaptiveBleedDirection.rawValue)
+            
+            // 1. create a background view (bv).
+            // 2. Now, add bv to the parentView
+            // bv is then pinned to the parentView to the bleed direction
+            // bv gets current collection view's (cv) container style
+            // container view's stack view (csv) holds content views, and bv dislpays
+            // container style we transpose them, and get the final result
+            
+            let backgroundView = NSView()
+            backgroundView.translatesAutoresizingMaskIntoConstraints = false
+            
+            containerView.backgroundView = backgroundView
+            
+            parentView.addSubview(backgroundView, positioned: .above, relativeTo: parentView.backgroundImageView)
+            backgroundView.wantsLayer = true
+            backgroundView.layer?.backgroundColor = collectionView.layer?.backgroundColor
+            // adding this above parentView backgroundImage view to overcome that color thing
+            let top = ((direction.rawValue & ACRBleedDirection.ACRBleedToTopEdge.rawValue) != 0)
+            let leading = ((direction.rawValue & ACRBleedDirection.ACRBleedToLeadingEdge.rawValue) != 0)
+            let trailing = ((direction.rawValue & ACRBleedDirection.ACRBleedToTrailingEdge.rawValue) != 0)
+            let bottom = ((direction.rawValue & ACRBleedDirection.ACRBleedToBottomEdge.rawValue) != 0)
+            containerView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
+            
+            if top {
+                backgroundView.topAnchor.constraint(equalTo: parentView.topAnchor).isActive = true
+            } else {
+                backgroundView.topAnchor.constraint(equalTo: collectionView.topAnchor).isActive = true
+            }
+            if leading {
+                backgroundView.leadingAnchor.constraint(equalTo: parentView.leadingAnchor).isActive = true
+            } else {
+                backgroundView.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor).isActive = true
+            }
+            if trailing {
+                backgroundView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor).isActive = true
+            } else {
+                backgroundView.trailingAnchor.constraint(equalTo: collectionView.trailingAnchor).isActive = true
+            }
+            if bottom {
+                backgroundView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor).isActive = true
+            } else {
+                backgroundView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor).isActive = true
+            }
+            
+            if let borderWidth = collectionView.layer?.borderWidth {
+                backgroundView.layer?.borderWidth = borderWidth
+            }
+            
+            if let borderColor = collectionView.layer?.borderColor {
+                backgroundView.layer?.borderColor = borderColor
+            }
+        }
+    }
 }

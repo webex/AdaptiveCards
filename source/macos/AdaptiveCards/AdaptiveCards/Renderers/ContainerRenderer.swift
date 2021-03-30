@@ -5,7 +5,6 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
     static let shared = ContainerRenderer()
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
-        let isFirstElement: Bool = false
         guard let container = element as? ACSContainer else {
             logError("Element is not of type ACSContainer")
             return NSView()
@@ -14,19 +13,6 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         let containerView = ACRColumnView(style: container.getStyle(), parentStyle: style, hostConfig: hostConfig, superview: rootView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.style = container.getStyle()
-        
-        if let rootview = parentView as? ACRColumnView {
-            let viewWithInheritedProperties = BaseCardElementRenderer.shared.updateView(view: containerView, element: element, rootView: rootView, style: style, hostConfig: hostConfig, isfirstElement: isFirstElement)
-            rootview.addArrangedSubview(viewWithInheritedProperties)
-        }
-        // add bleed
-        if container.getBleed() {
-            if let rootview = parentView as? ACRColumnView {
-                BleedConfiguration.configBleed(container: containerView, rootView: rootview, with: hostConfig, element: element, isFirstElement: isFirstElement, superview: rootView)
-            }
-        }
-        // add background Image
-        renderBackgroundImage(backgroundImage: container.getBackgroundImage(), view: containerView, rootview: rootView)
         
         // add selectAction
         containerView.setupSelectAction(selectAction: container.getSelectAction(), rootView: rootView)
@@ -44,6 +30,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             let view = renderer.render(element: item, with: hostConfig, style: container.getStyle(), rootView: rootView, parentView: containerView, inputs: [])
             let viewWithInheritedProperties = BaseCardElementRenderer().updateView(view: view, element: item, rootView: rootView, style: container.getStyle(), hostConfig: hostConfig, isfirstElement: isFirstElement)
             containerView.addArrangedSubview(viewWithInheritedProperties)
+            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: containerView, with: hostConfig, element: item)
         }
         
         let verticalAlignment = container.getVerticalContentAlignment()
@@ -61,11 +48,5 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
         }
         return containerView
-    }
-    private func renderBackgroundImage(backgroundImage: ACSBackgroundImage?, view: NSView, rootview: NSView) {
-        // add image
-        if backgroundImage == nil, let url = backgroundImage?.getUrl(), url.isEmpty {
-            return
-        }
     }
 }
