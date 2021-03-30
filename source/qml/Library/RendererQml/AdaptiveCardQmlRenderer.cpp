@@ -669,7 +669,7 @@ namespace RendererQml
 		uiNumberInput->Property("stepSize", "1");
 		uiNumberInput->Property("editable", "true");
 		uiNumberInput->Property("validator", doubleValidatorTag->ToString());
-		uiNumberInput->Property("valueFromText", "function(text, locale) {\nreturn Number(text)\n}");
+		uiNumberInput->Property("valueFromText", "function(text, locale){\nreturn Number(text)\n}");
 
 		if (input->GetValue() != std::nullopt)
 		{
