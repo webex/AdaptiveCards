@@ -2069,6 +2069,7 @@ namespace RendererQml
 		}
 
 		std::shared_ptr<QmlTag> uiContainer = GetNewContainer(column, context);
+
 		if (!column->GetWidth().empty())
 		{
 			uiContainer->Property("property string widthProperty", Formatter() << "'" << column->GetWidth() << "'");
@@ -2076,6 +2077,11 @@ namespace RendererQml
 		else
 		{
 			uiContainer->Property("property string widthProperty", "'auto'");
+		}
+
+		if (!column->GetIsVisible())
+		{
+			uiContainer->Property("visible", "false");
 		}
 
 		return uiContainer;
