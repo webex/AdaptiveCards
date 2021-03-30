@@ -452,14 +452,13 @@ namespace RendererQml
 		return splitElements;
 	}
 
-	void Utils::HandleEscapeSequences(std::string& text, bool isTextBlock)
+	void Utils::HandleEscapeSequences(std::string& text)
 	{
-		if (isTextBlock == true)
-		{
-			Replace(text, "\n", "\\\\\n");
-			Replace(text, "\r", "\\\\\r");
-			Replace(text, "\"", "\\\"");
-
-		}
+		text = Replace(text, "\n", "<br />");
+		text = Replace(text, "\r", "<br />");
+		//Handles tab space in RichText, works for MarkdownText as well
+		text = Replace(text, "\t", "<span style='white-space:pre'>\t</span>");
+		text = Replace(text, "\"", "&quot;");
+		text = Replace(text, "\\", "&#92;");
 	}
 }
