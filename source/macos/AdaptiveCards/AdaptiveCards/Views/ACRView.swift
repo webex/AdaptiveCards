@@ -32,12 +32,6 @@ class ACRView: ACRColumnView {
         super.init(coder: coder)
     }
     
-    func addShowCard(_ cardView: ACRView, parentView: ACRView) {
-        cardView.parent = parentView
-        showCardStackView.addArrangedSubview(cardView)
-        cardView.widthAnchor.constraint(equalTo: showCardStackView.widthAnchor).isActive = true
-    }
-    
     func addTarget(_ target: TargetHandler) {
         targets.append(target)
     }
@@ -47,6 +41,7 @@ class ACRView: ACRColumnView {
     }
     
     func addShowCard(_ cardView: ACRView) {
+        cardView.parent = self
         showCardStackView.addArrangedSubview(cardView)
         cardView.widthAnchor.constraint(equalTo: showCardStackView.widthAnchor).isActive = true
     }

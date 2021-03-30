@@ -24,7 +24,7 @@ class AdaptiveCardRenderer {
             logError("renderAdaptiveCard should return ACRView")
             return NSView()
         }
-        parent.addShowCard(cardView, parentView: parent)
+        parent.addShowCard(cardView)
         return cardView
     }
     
