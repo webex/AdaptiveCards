@@ -452,7 +452,7 @@ namespace RendererQml
 		return splitElements;
 	}
 
-	void Utils::HandleEscapeSequences(std::string& text)
+	std::string Utils::HandleEscapeSequences(std::string& text)
 	{
 		text = Replace(text, "\n", "<br />");
 		text = Replace(text, "\r", "<br />");
@@ -460,5 +460,6 @@ namespace RendererQml
 		text = Replace(text, "\t", "<span style='white-space:pre'>\t</span>");
 		text = Replace(text, "\"", "&quot;");
 		text = Replace(text, "\\", "&#92;");
+		return text;
 	}
 }
