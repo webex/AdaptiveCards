@@ -47,11 +47,7 @@ class ACRContentHoldingView: NSView {
         guard let size = imageProperties?.contentSize else {
             return super.intrinsicContentSize
         }
-        if size.width != CGFloat.zero {
-            return size
-        } else {
-            return super.intrinsicContentSize
-        }
+        return size.width > 0 ? size : super.intrinsicContentSize
     }
     
     override func viewDidMoveToSuperview() {
