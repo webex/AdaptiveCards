@@ -120,8 +120,8 @@ namespace RendererQml
         AddActions(bodyLayout, card->GetActions(), context);
         addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context);
 
-		bodyLayout->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
-		bodyLayout->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
+		bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
+		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
 
 		//Remove Top and Bottom Paddin if bleed for first and last element is true
 		if (bodySize > 0)
@@ -1963,10 +1963,6 @@ namespace RendererQml
 					AddSeparator(uiRow, cardElement, context);
 				}
 
-				heightString += ("clayout_" + cardElement->GetId() + ".implicitHeight, " + cardElement->GetId() + ".minHeight, ");
-
-				uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight(" << cardElement->GetMinHeight() << ")");
-
 				uiRow->AddChild(uiElement);
 
 				const auto bleedLeft = AdaptiveCards::ContainerBleedDirection::BleedLeft;
@@ -1993,8 +1989,19 @@ namespace RendererQml
 					if (bleedCount != no_of_columns)
 					{
 						uiElement->Property("y", Formatter() << "-" << margin);
-						uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight(" << cardElement->GetMinHeight() << ") + " << 2 * margin);
+						uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight() + " << 2*margin);
+						heightString += ("clayout_" + cardElement->GetId() + ".implicitHeight - " + std::to_string(2*margin) + ","  + cardElement->GetId() + ".minHeight, ");
 					}
+					else
+					{
+						uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight()");
+						heightString += ("clayout_" + cardElement->GetId() + ".implicitHeight," + cardElement->GetId() + ".minHeight, ");
+					}
+				}
+				else
+				{
+					uiElement->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight()");
+					heightString += ("clayout_" + cardElement->GetId() + ".implicitHeight," + cardElement->GetId() + ".minHeight, ");
 				}
 			}
 		}
@@ -2015,7 +2022,7 @@ namespace RendererQml
 
 		uiFrame->AddFunctions(Formatter() << "function getColumnHeight(){var calculatedHeight =  Math.max(" << heightString.substr(0, heightString.size() - 2) << "); if(calculatedHeight <= minHeight - " << (2 * tempMargin) << "){return minHeight - " << (2 * tempMargin) << "}else{return calculatedHeight;}}");
 
-		uiFrame->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchWidth( row_" << id << ".children, parent.width - " << marginReleased << ")}");
+		uiFrame->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchWidth( row_" << id << ".children, parent.width - (" << marginReleased << "))}");
 
 		return uiFrame;
 	}
@@ -2202,9 +2209,9 @@ namespace RendererQml
 			}
 		}
 
-        uiColumn->Property("onHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
+        uiColumn->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
 
-        uiColumn->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
+        uiColumn->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
 
         uiContainer->Property("onMinHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight( column_" << id << ".children, minHeight - " << 2 * tempMargin << " )}");
 
