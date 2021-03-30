@@ -1878,6 +1878,12 @@ namespace RendererQml
 		uiFrame->Property("property int minHeight", std::to_string(columnSet->GetMinHeight()));
 
 		uiFrame->Property("id", id);
+
+		if (!columnSet->GetIsVisible())
+		{
+			uiFrame->Property("visible", "false");
+		}
+
 		uiRowLayout->Property("id", "rlayout_" + id);
 		uiRow->Property("id", "row_" + id);
 
