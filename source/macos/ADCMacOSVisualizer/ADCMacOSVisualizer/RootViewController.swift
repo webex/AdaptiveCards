@@ -6,7 +6,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     @IBOutlet var stackView: NSStackView!
     @IBOutlet var textView: NSTextView!
     @IBOutlet var comboBox: NSComboBox!
-    
+    @IBOutlet var cardScrollView: NSView!
     private var items: [String] = []
     private var configs: [String] = []
     private var hostConfigString = sampleHostConfig // default config string
@@ -47,6 +47,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticTextReplacementEnabled = false
         textView.smartInsertDeleteEnabled = false
+        cardScrollView.translatesAutoresizingMaskIntoConstraints = true
     }
     
     // MARK: Private Methods
@@ -179,20 +180,18 @@ extension RootViewController: AdaptiveCardActionDelegate {
 }
 
 extension RootViewController: AdaptiveCardResourceResolver {
-    func adaptiveCard(_ card: ImageResourceHandlerView, dimensionsForImageWith key: ResourceKey) -> NSSize? {
+    func adaptiveCard(_ card: ImageResourceHandlerView, dimensionsForImageWith url: String) -> NSSize? {
         return nil
     }
     
-    func adaptiveCard(_ card: ImageResourceHandlerView, requestImageFor key: ResourceKey) {
-        guard let imageURL = URL(string: key.url) else {
+    func adaptiveCard(_ card: ImageResourceHandlerView, requestImageFor url: String) {
+        guard let imageURL = URL(string: url) else {
             return
         }
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: imageURL) {
-                if let image = NSImage(data: data) {
-                    DispatchQueue.main.async {
-                        card.setImage(image, for: key)
-                    }
+        DispatchQueue.global().async {
+            if let data = try? Data(contentsOf: imageURL), let image = NSImage(data: data) {
+                DispatchQueue.main.async {
+                    card.setImage(image, for: url)
                 }
             }
         }
