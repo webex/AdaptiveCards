@@ -2,13 +2,13 @@ import AdaptiveCards_bridge
 import AppKit
 
 public protocol AdaptiveCardActionDelegate: AnyObject {
-    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, button: NSButton)
-    func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses dict: [String: String], button: NSButton)
+    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, actionView: NSView)
+    func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses dict: [String: Any], actionView: NSView)
 }
 
 public protocol AdaptiveCardResourceResolver: AnyObject {
-    func adaptiveCard(_ adaptiveCard: ImageResourceHandlerView, dimensionsForImageWith key: ResourceKey) -> NSSize?
-    func adaptiveCard(_ adaptiveCard: ImageResourceHandlerView, requestImageFor key: ResourceKey)
+    func adaptiveCard(_ adaptiveCard: ImageResourceHandlerView, dimensionsForImageWith url: String) -> NSSize?
+    func adaptiveCard(_ adaptiveCard: ImageResourceHandlerView, requestImageFor url: String)
 }
 
 enum HostConfigParseError: Error {

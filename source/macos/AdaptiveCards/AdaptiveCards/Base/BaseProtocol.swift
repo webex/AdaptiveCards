@@ -4,7 +4,7 @@ import AppKit
 protocol BaseInputHandler { }
 
 protocol BaseCardElementRendererProtocol {
-    func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView
+    func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView
 }
 
 protocol BaseActionElementRendererProtocol {
@@ -14,11 +14,12 @@ protocol BaseActionElementRendererProtocol {
 protocol TargetHandler: NSObject {
     var delegate: TargetHandlerDelegate? { get set }
     func configureAction(for button: NSButton)
+    func handleSelectionAction(for actionView: NSView)
 }
 
 protocol TargetHandlerDelegate: AnyObject {
-    func handleOpenURLAction(button: NSButton, urlString: String)
-    func handleSubmitAction(button: NSButton, dataJson: String?)
+    func handleOpenURLAction(actionView: NSView, urlString: String)
+    func handleSubmitAction(actionView: NSView, dataJson: String?)
     func handleShowCardAction(button: NSButton, showCard: ACSAdaptiveCard)
 }
 
