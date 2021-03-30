@@ -124,7 +124,7 @@ namespace RendererQml
 		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << card->GetMinHeight() << ")}");
 
 		//Remove Top and Bottom Paddin if bleed for first and last element is true
-		rectangle = applyVerticalPadding(bodyLayout, rectangle);
+		rectangle = applyVerticalBleed(bodyLayout, rectangle);
 
         //Add submit onclick event
         addSubmitActionButtonClickFunc(context);
@@ -2197,7 +2197,7 @@ namespace RendererQml
             tempMargin = margin;
         }
 
-		uiColumn = applyVerticalPadding(uiColumn, uiColumn);
+		uiColumn = applyVerticalBleed(uiColumn, uiColumn);
 
         uiColumn->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << ".minHeight - " << 2 * tempMargin << " )}");
 
@@ -2680,7 +2680,7 @@ namespace RendererQml
 		return uiContainer;
 	}
 
-	const std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::applyVerticalPadding(std::shared_ptr<QmlTag> elementsParent, std::shared_ptr<QmlTag> source)
+	const std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::applyVerticalBleed(std::shared_ptr<QmlTag> elementsParent, std::shared_ptr<QmlTag> source)
 	{
 		const auto bodySize = elementsParent->GetChildren().size();
 

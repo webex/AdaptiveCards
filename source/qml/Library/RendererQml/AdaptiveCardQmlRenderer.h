@@ -107,6 +107,6 @@ namespace RendererQml
 
 		template <typename CardElement>
 		static const std::shared_ptr<QmlTag> applyHorizontalBleed(CardElement cardElement, std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveRenderContext> context);
-		static const std::shared_ptr<QmlTag> applyVerticalPadding(std::shared_ptr<QmlTag> elementsParent, std::shared_ptr<QmlTag> source);
+		static const std::shared_ptr<QmlTag> applyVerticalBleed(std::shared_ptr<QmlTag> elementsParent, std::shared_ptr<QmlTag> source);
     };
 }
