@@ -65,7 +65,7 @@ class BaseCardElementRenderer {
         if !collection.getBleed() {
             return
         }
-        guard let containerView = collectionView as? ACRContentStackView else {
+        guard let collectionView = collectionView as? ACRContentStackView else {
             logError("Container is not type of ACRContentStackView")
             return
         }
@@ -84,7 +84,7 @@ class BaseCardElementRenderer {
             let backgroundView = NSView()
             backgroundView.translatesAutoresizingMaskIntoConstraints = false
             
-            containerView.backgroundView = backgroundView
+            collectionView.backgroundView = backgroundView
             // adding this above parentView backgroundImage view
             parentView.addSubview(backgroundView, positioned: .above, relativeTo: parentView.backgroundImageView)
             backgroundView.wantsLayer = true
@@ -98,7 +98,7 @@ class BaseCardElementRenderer {
             // In columnSetView, we have wrapping view, that wraps column view,
             // now here we set bleed property of both wrapping view
             // and column view
-            containerView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
+            collectionView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
             if let columnView = columnView as? ACRColumnView {
                 columnView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
             }
