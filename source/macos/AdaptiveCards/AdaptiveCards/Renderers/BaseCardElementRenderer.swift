@@ -85,15 +85,19 @@ class BaseCardElementRenderer {
             backgroundView.translatesAutoresizingMaskIntoConstraints = false
             
             containerView.backgroundView = backgroundView
-            
+            // adding this above parentView backgroundImage view
             parentView.addSubview(backgroundView, positioned: .above, relativeTo: parentView.backgroundImageView)
             backgroundView.wantsLayer = true
             backgroundView.layer?.backgroundColor = collectionView.layer?.backgroundColor
-            // adding this above parentView backgroundImage view to overcome that color thing
+            
             let top = ((direction.rawValue & ACRBleedDirection.ACRBleedToTopEdge.rawValue) != 0)
             let leading = ((direction.rawValue & ACRBleedDirection.ACRBleedToLeadingEdge.rawValue) != 0)
             let trailing = ((direction.rawValue & ACRBleedDirection.ACRBleedToTrailingEdge.rawValue) != 0)
             let bottom = ((direction.rawValue & ACRBleedDirection.ACRBleedToBottomEdge.rawValue) != 0)
+            
+            // In columnSetView, we have wrapping view, that wraps column view,
+            // now here we set bleed property of both wrapping view
+            // and column view
             containerView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
             if let columnView = columnView as? ACRColumnView {
                 columnView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
