@@ -68,9 +68,9 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         // Spacing between title and value in the horizontal Stack
         titleStack.trailingAnchor.constraint(equalTo: valueStack.leadingAnchor, constant: -10).isActive = true
         // Getting Max width from Host config if it exists
-        let maxAllowedWidth = factsetConfig?.title.maxWidth ?? 150
-        if requiredWidth > CGFloat(truncating: maxAllowedWidth) {
-            titleStack.widthAnchor.constraint(equalToConstant: CGFloat(truncating: maxAllowedWidth)).isActive = true
+        let maxAllowedWidth = CGFloat(truncating: factsetConfig?.title.maxWidth ?? 150)
+        if requiredWidth > maxAllowedWidth {
+            titleStack.widthAnchor.constraint(equalToConstant: CGFloat(maxAllowedWidth)).isActive = true
         } else {
             titleStack.widthAnchor.constraint(equalToConstant: CGFloat(requiredWidth + 2)).isActive = true
         }
