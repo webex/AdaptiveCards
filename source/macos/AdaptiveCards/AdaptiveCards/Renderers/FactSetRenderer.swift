@@ -70,9 +70,9 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         // Getting Max width from Host config if it exists
         let maxAllowedWidth = CGFloat(truncating: factsetConfig?.title.maxWidth ?? 150)
         if requiredWidth > maxAllowedWidth {
-            titleStack.widthAnchor.constraint(equalToConstant: CGFloat(maxAllowedWidth)).isActive = true
+            titleStack.widthAnchor.constraint(equalToConstant: maxAllowedWidth).isActive = true
         } else {
-            titleStack.widthAnchor.constraint(equalToConstant: CGFloat(requiredWidth + 2)).isActive = true
+            titleStack.widthAnchor.constraint(equalToConstant: (requiredWidth + 1)).isActive = true
         }
 
         valueStack.trailingAnchor.constraint(equalTo: mainFactView.trailingAnchor).isActive = true
