@@ -54,7 +54,7 @@ class BaseCardElementRenderer {
         return updatedView
     }
     
-    func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement) {
+    func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, columnView: NSView?) {
         if !(element is ACSCollectionTypeElement) {
             return
         }
@@ -95,6 +95,9 @@ class BaseCardElementRenderer {
             let trailing = ((direction.rawValue & ACRBleedDirection.ACRBleedToTrailingEdge.rawValue) != 0)
             let bottom = ((direction.rawValue & ACRBleedDirection.ACRBleedToBottomEdge.rawValue) != 0)
             containerView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
+            if let columnView = columnView as? ACRColumnView {
+                columnView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
+            }
             
             if top {
                 backgroundView.topAnchor.constraint(equalTo: parentView.topAnchor).isActive = true

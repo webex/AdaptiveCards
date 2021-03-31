@@ -30,7 +30,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             // Check if has extra properties else add column view
             guard index > 0, column.getSpacing() != .none, !column.getSeparator() else {
                 columnSetView.addArrangedSubview(columnView)
-                BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column)
+                BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column, columnView: nil)
                 continue
             }
             let wrappingView = ACRContentStackView(style: column.getStyle(), hostConfig: hostConfig)
@@ -44,7 +44,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             wrappingView.addArrangedSubview(columnView)
             columnView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
             columnSetView.addArrangedSubview(wrappingView)
-            BaseCardElementRenderer.shared.configBleed(collectionView: wrappingView, parentView: columnSetView, with: hostConfig, element: column)
+            BaseCardElementRenderer.shared.configBleed(collectionView: wrappingView, parentView: columnSetView, with: hostConfig, element: column, columnView: columnView)
         }
         
         // Only one is weighted and others are stretch
