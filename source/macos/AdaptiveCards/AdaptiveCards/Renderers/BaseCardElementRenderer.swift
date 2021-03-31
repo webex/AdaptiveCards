@@ -102,27 +102,10 @@ class BaseCardElementRenderer {
             if let columnView = columnView as? ACRColumnView {
                 columnView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
             }
-            
-            if top {
-                backgroundView.topAnchor.constraint(equalTo: parentView.topAnchor).isActive = true
-            } else {
-                backgroundView.topAnchor.constraint(equalTo: collectionView.topAnchor).isActive = true
-            }
-            if leading {
-                backgroundView.leadingAnchor.constraint(equalTo: parentView.leadingAnchor).isActive = true
-            } else {
-                backgroundView.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor).isActive = true
-            }
-            if trailing {
-                backgroundView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor).isActive = true
-            } else {
-                backgroundView.trailingAnchor.constraint(equalTo: collectionView.trailingAnchor).isActive = true
-            }
-            if bottom {
-                backgroundView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor).isActive = true
-            } else {
-                backgroundView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor).isActive = true
-            }
+            backgroundView.topAnchor.constraint(equalTo: top ? parentView.topAnchor : collectionView.topAnchor).isActive = true
+            backgroundView.leadingAnchor.constraint(equalTo: leading ? parentView.leadingAnchor : collectionView.leadingAnchor).isActive = true
+            backgroundView.trailingAnchor.constraint(equalTo: trailing ? parentView.trailingAnchor : collectionView.trailingAnchor).isActive = true
+            backgroundView.bottomAnchor.constraint(equalTo: bottom ? parentView.bottomAnchor : collectionView.bottomAnchor).isActive = true
             
             if let borderWidth = collectionView.layer?.borderWidth {
                 backgroundView.layer?.borderWidth = borderWidth
