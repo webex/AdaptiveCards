@@ -55,14 +55,7 @@ class BaseCardElementRenderer {
     }
     
     func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, columnView: NSView?) {
-        if !(element is ACSCollectionTypeElement) {
-            return
-        }
-        guard let collection = element as? ACSCollectionTypeElement else {
-            logError("Element is not ACSCollectionTypeElement")
-            return
-        }
-        if !collection.getBleed() {
+        guard let collection = element as? ACSCollectionTypeElement, collection.getBleed() else {
             return
         }
         guard let collectionView = collectionView as? ACRContentStackView else {
@@ -84,7 +77,6 @@ class BaseCardElementRenderer {
             let backgroundView = NSView()
             backgroundView.translatesAutoresizingMaskIntoConstraints = false
             
-            collectionView.backgroundView = backgroundView
             // adding this above parentView backgroundImage view
             parentView.addSubview(backgroundView, positioned: .above, relativeTo: parentView.backgroundImageView)
             backgroundView.wantsLayer = true

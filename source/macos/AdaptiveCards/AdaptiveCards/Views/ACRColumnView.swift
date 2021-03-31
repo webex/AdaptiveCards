@@ -11,10 +11,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private (set) var stackViewTrailingConstraint: NSLayoutConstraint?
     private (set) var stackViewTopConstraint: NSLayoutConstraint?
     private (set) var stackViewBottomConstraint: NSLayoutConstraint?
+    private (set) var style: ACSContainerStyle?
     let hostConfig: ACSHostConfig
-    public var backgroundView: NSView?
     var target: TargetHandler?
-    var style: ACSContainerStyle?
     
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
@@ -64,12 +63,14 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
         self.hostConfig = hostConfig
+        self.style = style
         super.init(frame: .zero)
         initialize()
     }
     
     init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
         self.hostConfig = hostConfig
+        self.style = style
         super.init(frame: .zero)
         initialize()
         if style != .none && style != parentStyle {
