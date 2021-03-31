@@ -47,6 +47,9 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             BaseCardElementRenderer.shared.configBleed(collectionView: wrappingView, parentView: columnSetView, with: hostConfig, element: column, columnView: columnView)
         }
         
+        // Add SelectAction
+        columnSetView.setupSelectAction(columnSet.getSelectAction(), rootView: rootView)
+        
         // Only one is weighted and others are stretch
         let isSpecialAllStretch = numberOfWeightedItems == 1 && numberOfStretchItems == totalColumns - 1
         
@@ -95,8 +98,6 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                 }
             }
         }
-        
-        columnSetView.setupSelectAction(selectAction: columnSet.getSelectAction(), rootView: rootView)
         
         return columnSetView
     }
