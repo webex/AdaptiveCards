@@ -223,8 +223,6 @@ namespace RendererQml
             AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
             uiContainer->AddChild(uiButtonStrip);            
 
-            bool addLoaderSeparator = true;
-
             for (unsigned int i = 0; i < maxActions; i++)
             {
                 // add actions buttons
@@ -239,12 +237,9 @@ namespace RendererQml
                         context->addToShowCardLoaderComponentList(componentId, showCardAction);
 
                         //Add show card loader to the parent container
-                        if (addLoaderSeparator)
-                        {
-                            AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
-                            addLoaderSeparator = false;
-                        }
-                        auto uiLoader = std::make_shared<QmlTag>("Loader");
+                        AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, true, uiAction->GetId() + "_loader");
+
+						auto uiLoader = std::make_shared<QmlTag>("Loader");
                         uiLoader->Property("id", uiAction->GetId() + "_loader");
                         uiLoader->Property("x", "-margins");
                         uiLoader->Property("sourceComponent", componentId);
@@ -1853,7 +1848,7 @@ namespace RendererQml
 		return uiFlow;
 	}
 
-	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context)
+	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context, bool isShowCard, std::string loaderId)
 	{
 		//Returns only when seperator=false and spacing=none
 		if (!adaptiveElement->GetSeparator() && adaptiveElement->GetSpacing() == AdaptiveCards::Spacing::None)
@@ -1880,6 +1875,11 @@ namespace RendererQml
 		
 		uiSep->Property("color", "\"transparent\"");
 		uiSep->Property("visible", adaptiveElement->GetIsVisible() ? "true" : "false");
+
+		if (isShowCard)
+		{
+			uiSep->Property("visible", Formatter() << loaderId << ".visible" );
+		}
 
 		if (adaptiveElement->GetSeparator() && adaptiveElement->GetIsVisible())
 		{
