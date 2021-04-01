@@ -100,6 +100,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     private func initialize() {
         wantsLayer = true
+        layer = NoClippingLayer()
         setupViews()
         setupConstraints()
         setupTrackingArea()
@@ -331,5 +332,13 @@ class ACRColumnView: ACRContentStackView {
         case .weighted:
             widthConstraint.isActive = false
         }
+    }
+}
+
+class NoClippingLayer: CALayer {
+    override var masksToBounds: Bool {
+        // swiftlint:disable unused_setter_value
+        get { return false }
+        set { }
     }
 }

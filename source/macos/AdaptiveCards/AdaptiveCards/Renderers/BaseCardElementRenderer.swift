@@ -74,6 +74,10 @@ class BaseCardElementRenderer {
             // container view's stack view (csv) holds content views, and bv dislpays
             // container style we transpose them, and get the final result
             
+            if !collection.getCanBleed() {
+                return
+            }
+            
             let backgroundView = NSView()
             backgroundView.translatesAutoresizingMaskIntoConstraints = false
             
@@ -87,12 +91,21 @@ class BaseCardElementRenderer {
             let trailing = ((direction.rawValue & ACRBleedDirection.ACRBleedToTrailingEdge.rawValue) != 0)
             let bottom = ((direction.rawValue & ACRBleedDirection.ACRBleedToBottomEdge.rawValue) != 0)
             
+            var padding: CGFloat = 0
+            if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing {
+                padding = CGFloat(truncating: paddingSpace)
+            }
             collectionView.setBleedProp(top: top, bottom: bottom, trailing: trailing, leading: leading)
-
-            backgroundView.topAnchor.constraint(equalTo: top ? parentView.topAnchor : collectionView.topAnchor).isActive = true
-            backgroundView.leadingAnchor.constraint(equalTo: leading ? parentView.leadingAnchor : collectionView.leadingAnchor).isActive = true
-            backgroundView.trailingAnchor.constraint(equalTo: trailing ? parentView.trailingAnchor : collectionView.trailingAnchor).isActive = true
-            backgroundView.bottomAnchor.constraint(equalTo: bottom ? parentView.bottomAnchor : collectionView.bottomAnchor).isActive = true
+            
+            backgroundView.topAnchor.constraint(equalTo: collectionView.topAnchor, constant: top ? -padding : 0).isActive = true
+            backgroundView.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor, constant: leading ? -padding : 0).isActive = true
+            backgroundView.trailingAnchor.constraint(equalTo: collectionView.trailingAnchor, constant: trailing ?  padding : 0).isActive = true
+            if bottom {
+                let paddingBottom = parentView.style == ACSContainerStyle.none || parentView.style == .default ? padding : 0
+                backgroundView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor, constant: paddingBottom).isActive = true
+            } else {
+                backgroundView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor).isActive = true
+            }
             
             if let borderWidth = collectionView.layer?.borderWidth {
                 backgroundView.layer?.borderWidth = borderWidth
