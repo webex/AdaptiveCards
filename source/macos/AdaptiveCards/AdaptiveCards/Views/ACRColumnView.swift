@@ -6,12 +6,14 @@ protocol ACRContentHoldingViewProtocol {
     func applyPadding(_ padding: CGFloat)
 }
 
-class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
+class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHandlingProtocol {
     private (set) var stackViewLeadingConstraint: NSLayoutConstraint?
     private (set) var stackViewTrailingConstraint: NSLayoutConstraint?
     private (set) var stackViewTopConstraint: NSLayoutConstraint?
     private (set) var stackViewBottomConstraint: NSLayoutConstraint?
+    private (set) var style: ACSContainerStyle?
     let hostConfig: ACSHostConfig
+    var target: TargetHandler?
     
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
@@ -56,29 +58,22 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     private (set) lazy var backgroundImageView: ACRBackgroundImageView = {
         let view = ACRBackgroundImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.fillMode = .cover
-        view.horizontalAlignment = .left
-        view.verticalAlignment = .top
-        // image to be initialized here for the background image from a url
         return view
     }()
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
         self.hostConfig = hostConfig
+        self.style = style
         super.init(frame: .zero)
         initialize()
-        wantsLayer = true
-        if style != .none, let bgColor = hostConfig.getBackgroundColor(for: style) {
-            layer?.backgroundColor = bgColor.cgColor
-        }
     }
     
     init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
         self.hostConfig = hostConfig
+        self.style = style
         super.init(frame: .zero)
         initialize()
-        wantsLayer = true
-        if style != .none {
+        if style != .none && style != parentStyle {
             if let bgColor = hostConfig.getBackgroundColor(for: style) {
                 layer?.backgroundColor = bgColor.cgColor
             }
@@ -104,17 +99,14 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     }
     
     private func initialize() {
+        wantsLayer = true
         setupViews()
         setupConstraints()
+        setupTrackingArea()
     }
     
     func addArrangedSubview(_ subview: NSView) {
         stackView.addArrangedSubview(subview)
-    }
-    
-    func addShowCard(_ cardView: ACRView) {
-        showCardStackView.addArrangedSubview(cardView)
-        cardView.widthAnchor.constraint(equalTo: showCardStackView.widthAnchor).isActive = true
     }
     
     func applyPadding(_ padding: CGFloat) {
@@ -122,6 +114,21 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         stackViewTopConstraint?.constant = padding
         stackViewTrailingConstraint?.constant = -padding
         stackViewBottomConstraint?.constant = -padding
+    }
+    
+    func setBleedProp(top: Bool, bottom: Bool, trailing: Bool, leading: Bool) {
+        if top {
+            stackViewTopConstraint?.constant = 0
+        }
+        if bottom {
+            stackViewBottomConstraint?.constant = 0
+        }
+        if leading {
+            stackViewLeadingConstraint?.constant = 0
+        }
+        if trailing {
+            stackViewTrailingConstraint?.constant = 0
+        }
     }
     
     func addSeperator(_ separator: Bool) {
@@ -139,6 +146,13 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
     
     func setCustomSpacing(spacing: CGFloat, after view: NSView) {
         stackView.setCustomSpacing(spacing, after: view)
+    }
+    
+    func setupBackgroundImageProperties(_ properties: ACSBackgroundImage) {
+        backgroundImageView.fillMode = properties.getFillMode()
+        backgroundImageView.horizontalAlignment = properties.getHorizontalAlignment()
+        backgroundImageView.verticalAlignment = properties.getVerticalAlignment()
+        heightAnchor.constraint(greaterThanOrEqualToConstant: 30).isActive = true
     }
     
     private func addSeperator(thickness: NSNumber, color: String) {
@@ -183,6 +197,34 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol {
         
         guard let leading = stackViewLeadingConstraint, let trailing = stackViewTrailingConstraint, let top = stackViewTopConstraint, let bottom = stackViewBottomConstraint else { return }
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
+    }
+    
+    override func mouseDown(with event: NSEvent) {
+        super.mouseDown(with: event)
+        guard let target = target else { return }
+        target.handleSelectionAction(for: self)
+    }
+    
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        guard target != nil, frame.contains(point) else { return super.hitTest(point) }
+        return self
+    }
+    
+    private func setupTrackingArea() {
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
+    }
+    
+    private var previousBackgroundColor: CGColor?
+    override func mouseEntered(with event: NSEvent) {
+        guard let columnView = event.trackingArea?.owner as? ACRColumnView, target != nil else { return }
+        previousBackgroundColor = columnView.layer?.backgroundColor
+        columnView.layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        guard let columnView = event.trackingArea?.owner as? ACRColumnView, target != nil else { return }
+        columnView.layer?.backgroundColor = previousBackgroundColor ?? .clear
     }
 }
 

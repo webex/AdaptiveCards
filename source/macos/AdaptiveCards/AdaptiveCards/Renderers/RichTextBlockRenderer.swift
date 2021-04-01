@@ -4,7 +4,7 @@ import AppKit
 class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
     static let shared = RichTextBlockRenderer()
     
-    func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
+    func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
         guard let richTextBlock = element as? ACSRichTextBlock else {
             logError("Element is not of type ACSRichTextBlock")
             return NSView()
@@ -50,6 +50,18 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
                     if let highlightColor = ColorUtils.color(from: colorHex) {
                         textRunContent.addAttributes([.backgroundColor: highlightColor], range: NSRange(location: 0, length: textRunContent.length))
                     }
+                }
+            }
+            
+            // Add SelectAction to textRun
+            if textRun.getSelectAction() != nil {
+                let target = textView.getTargetHandler(for: textRun.getSelectAction(), rootView: rootView)
+                if let actionTarget = target {
+                    textRunContent.addAttributes([.submitAction: actionTarget], range: NSRange(location: 0, length: textRunContent.length))
+                    textRunContent.addAttributes([.foregroundColor: NSColor.linkColor], range: NSRange(location: 0, length: textRunContent.length))
+                    textRunContent.addAttributes([.underlineStyle: 1], range: NSRange(location: 0, length: textRunContent.length))
+                    // Rootview add target
+                    rootView.addTarget(actionTarget)
                 }
             }
                                 

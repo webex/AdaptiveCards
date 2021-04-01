@@ -4,7 +4,7 @@ import AppKit
 class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
     static let shared = FactSetRenderer()
     
-    func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
+    func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
         guard let factSet = element as? ACSFactSet else {
             logError("Element is not of type ACSFactSet")
             return NSView()
@@ -26,6 +26,7 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         valueStack.orientation = .vertical
         valueStack.alignment = .leading
         
+        var requiredWidth: CGFloat = 0
         // Main loop to iterate over Array of facts
         for fact in factArray {
             let markdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig)
@@ -52,6 +53,7 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
             
             if !(titleView.isEmpty) || !(valueView.isEmpty) {
                 titleStack.addArrangedSubview(titleView)
+                requiredWidth = max(titleView.attributedTextValue?.size().width ?? 0, requiredWidth)
                 valueStack.addArrangedSubview(valueView)
             }
         }
@@ -65,8 +67,16 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         titleStack.bottomAnchor.constraint(equalTo: mainFactView.bottomAnchor).isActive = true
         // Spacing between title and value in the horizontal Stack
         titleStack.trailingAnchor.constraint(equalTo: valueStack.leadingAnchor, constant: -10).isActive = true
-        // Getting Max width from Host config if it exists
-        titleStack.widthAnchor.constraint(lessThanOrEqualToConstant: CGFloat(truncating: factsetConfig?.title.maxWidth ?? 150)).isActive = true
+        
+        let constraint = titleStack.widthAnchor.constraint(lessThanOrEqualTo: mainFactView.widthAnchor, multiplier: 0.45)
+        constraint.priority = .defaultHigh
+        constraint.isActive = true
+
+        if let maxWidth = factsetConfig?.title.maxWidth, let maxAllowedWidth = CGFloat(exactly: maxWidth), requiredWidth > maxAllowedWidth {
+            titleStack.widthAnchor.constraint(lessThanOrEqualToConstant: maxAllowedWidth).isActive = true
+        } else {
+            titleStack.widthAnchor.constraint(lessThanOrEqualToConstant: requiredWidth + 2).isActive = true
+        }
 
         valueStack.trailingAnchor.constraint(equalTo: mainFactView.trailingAnchor).isActive = true
         valueStack.topAnchor.constraint(equalTo: mainFactView.topAnchor).isActive = true

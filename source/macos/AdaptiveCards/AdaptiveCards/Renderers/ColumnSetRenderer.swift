@@ -4,12 +4,12 @@ import AppKit
 class ColumnSetRenderer: BaseCardElementRendererProtocol {
     static let shared = ColumnSetRenderer()
     
-    func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: NSView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
+    func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
         guard let columnSet = element as? ACSColumnSet else {
             logError("Element is not of type ACSColumnSet")
             return NSView()
         }
-        let columnSetView = ACRContentStackView(style: columnSet.getStyle(), hostConfig: hostConfig)
+        let columnSetView = ACRContentStackView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, superview: parentView)
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
         columnSetView.orientation = .horizontal
         columnSetView.distribution = .fillEqually
@@ -30,6 +30,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             // Check if has extra properties else add column view
             guard index > 0, column.getSpacing() != .none, !column.getSeparator() else {
                 columnSetView.addArrangedSubview(columnView)
+                BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column)
                 continue
             }
             let wrappingView = ACRContentStackView(style: column.getStyle(), hostConfig: hostConfig)
@@ -41,7 +42,11 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             wrappingView.addArrangedSubview(columnView)
             columnView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
             columnSetView.addArrangedSubview(wrappingView)
+            BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column)
         }
+        
+        // Add SelectAction
+        columnSetView.setupSelectAction(columnSet.getSelectAction(), rootView: rootView)
         
         // Only one is weighted and others are stretch
         let isSpecialAllStretch = numberOfWeightedItems == 1 && numberOfStretchItems == totalColumns - 1
