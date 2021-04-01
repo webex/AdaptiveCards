@@ -13,7 +13,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
         columnSetView.orientation = .horizontal
         columnSetView.distribution = .fillEqually
-        
+        columnSetView.bleed = columnSet.getBleed()
         var numberOfAutoItems = 0
         var numberOfStretchItems = 0
         var numberOfWeightedItems = 0

@@ -13,6 +13,8 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         let containerView = ACRColumnView(style: container.getStyle(), parentStyle: style, hostConfig: hostConfig, superview: rootView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
         
+        containerView.bleed = container.getBleed()
+        
         // add selectAction
         containerView.setupSelectAction(container.getSelectAction(), rootView: rootView)
         

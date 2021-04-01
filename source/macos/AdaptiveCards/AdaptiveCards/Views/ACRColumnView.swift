@@ -14,7 +14,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private (set) var style: ACSContainerStyle?
     let hostConfig: ACSHostConfig
     var target: TargetHandler?
-    
+    public var bleed: Bool = false
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
         set {

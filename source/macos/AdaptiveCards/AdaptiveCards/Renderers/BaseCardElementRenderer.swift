@@ -101,7 +101,7 @@ class BaseCardElementRenderer {
             backgroundView.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor, constant: leading ? -padding : 0).isActive = true
             backgroundView.trailingAnchor.constraint(equalTo: collectionView.trailingAnchor, constant: trailing ?  padding : 0).isActive = true
             if bottom {
-                let paddingBottom = parentView.style == ACSContainerStyle.none || parentView.style == .default ? padding : 0
+                let paddingBottom = parentView.style == ACSContainerStyle.none || parentView.bleed ? padding : 0
                 backgroundView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor, constant: paddingBottom).isActive = true
             } else {
                 backgroundView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor).isActive = true
