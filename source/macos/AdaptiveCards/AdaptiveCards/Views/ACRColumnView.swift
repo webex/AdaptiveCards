@@ -140,28 +140,3 @@ class ACRColumnView: ACRContentStackView {
         }
     }
 }
-
-extension ACSContainerStyle {
-    var description: String {
-        switch self {
-        case .accent: return "accent"
-        case .none: return "none"
-        case .default: return "default"
-        case .emphasis: return "emphasis"
-        case .good: return "good"
-        case .attention: return "attention"
-        case .warning: return "warning"
-        @unknown default: return "unknown"
-        }
-    }
-    
-//    func equals(_ style: ACSContainerStyle?) -> Bool {
-//        guard let style = style else {
-//            return false
-//        }
-//        switch (self, style) {
-//        case (.none, .default), (.default, .none): return true
-//        default: return style == self
-//        }
-//    }
-}
