@@ -22,8 +22,7 @@ char* ImageDownloader::Convert(const std::string& s) //Convert url from std::str
 
 bool ImageDownloader::download_jpeg(char* url)
 {
-	//TODO: Change hardcoded path
-	FILE* fp = fopen("C:\\dev\\desktopAdaptiveCards\\source\\qml\\Samples\\QmlVisualizer\\Images\\out.jpg", "wb");
+	FILE* fp = fopen(Convert(SOLUTION_DIR + std::string("\\Samples\\QmlVisualizer\\Images\\out.jpg")), "wb");
 	if (!fp)
 	{
 		printf("!!! Failed to create file on the disk\n");
