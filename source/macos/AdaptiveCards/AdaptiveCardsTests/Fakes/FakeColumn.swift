@@ -82,6 +82,14 @@ class FakeColumn: ACSColumn {
         separator = value
     }
     
+    override func getBackgroundImage() -> ACSBackgroundImage? {
+        return backgroundImage
+    }
+    
+    override func getSelectAction() -> ACSBaseActionElement? {
+        return selectAction
+    }
+    
     override func getId() -> String? {
         return id
     }
