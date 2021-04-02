@@ -20,9 +20,9 @@ char* ImageDownloader::Convert(const std::string& s) //Convert url from std::str
 	return pc;
 }
 
-bool ImageDownloader::download_jpeg(char* url)
-{
-	FILE* fp = fopen(Convert(SOLUTION_DIR + std::string("\\Samples\\QmlVisualizer\\Images\\out.jpg")), "wb");
+bool ImageDownloader::download_jpeg(const std::string& imgName, char* url)
+{    
+	FILE* fp = fopen(Convert(SolutionDir + imageFolder + imgName), "wb");
 	if (!fp)
 	{
 		printf("!!! Failed to create file on the disk\n");
@@ -55,4 +55,12 @@ bool ImageDownloader::download_jpeg(char* url)
 	fclose(fp);
 
 	return true;
+}
+
+void ImageDownloader::clearImageFolder()
+{
+    const auto dir_path = SolutionDir + imageFolder;
+    for (auto& path : fs::directory_iterator(dir_path)) {
+        fs::remove_all(path);
+    }
 }
