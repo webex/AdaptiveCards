@@ -303,6 +303,9 @@ twp.json
 # Android
 **/.cxx/*
 
+# Image folder
+source/qml/Samples/QmlVisualizer/Images
+
 ### CMake ###
 CMakeLists.txt.user
 CMakeCache.txt
