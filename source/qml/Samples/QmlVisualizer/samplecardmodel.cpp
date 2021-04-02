@@ -114,8 +114,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
-            std::string str = genQml.GetProperty("background");
-            genQml.Property("background", std::regex_replace(str, std::regex("source:.*\n"), "source:\"" + getImagePath("Frame") + "\"\n"));
+            genQml.Property("property var imgSource", "\"" + getImagePath("Frame") + "\"");
 		}
 		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
 		{
@@ -123,8 +122,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 		}
 		else if (genQml.GetElement() == "Button" && genQml.HasProperty("readonly property bool hasIconUrl"))
 		{
-			std::string str = genQml.GetProperty("contentItem");
-			genQml.Property("contentItem", std::regex_replace(str, std::regex("source:.*\n"), "source:\"" + getImagePath("Button") + "\"\n"));
+            genQml.Property("property var imgSource", "\"" + getImagePath("Button") + "\"");
 		}
 	});
 	//Test code to download image using curl
