@@ -3,9 +3,10 @@
 
 #include <AdaptiveCardQmlRenderer.h>
 #include <RenderedQmlAdaptiveCard.h>
+#include <ImageDownloader.h>
+#include <Utils.h>
 
 #include <QAbstractListModel>
-#include <ImageDownloader.h>
 
 using namespace RendererQml;
 

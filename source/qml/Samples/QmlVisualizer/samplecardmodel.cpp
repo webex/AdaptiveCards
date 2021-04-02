@@ -105,33 +105,41 @@ std::shared_ptr<AdaptiveCards::HostConfig> SampleCardModel::getHostConfig()
 
 QString SampleCardModel::generateQml(const QString& cardQml)
 {
-    std::shared_ptr<AdaptiveCards::ParseResult> mainCard = AdaptiveCards::AdaptiveCard::DeserializeFromString(cardQml.toStdString(), "2.0");
+    std::map<std::string, std::string> urls;
+    std::shared_ptr<int> imgCounter{ 0 };
 
+    std::shared_ptr<AdaptiveCards::ParseResult> mainCard = AdaptiveCards::AdaptiveCard::DeserializeFromString(cardQml.toStdString(), "2.0");
     std::shared_ptr<RenderedQmlAdaptiveCard> result = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard());
     const auto generatedQml = result->GetResult();
 
-	generatedQml->Transform([](QmlTag& genQml)
+	generatedQml->Transform([&urls](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
+            auto url = genQml.GetProperty("property var imgSource");
+            urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
             genQml.Property("property var imgSource", "\"" + getImagePath("Frame") + "\"");
 		}
 		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
 		{
+            auto url = genQml.GetProperty("source");
+            urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
 			genQml.Property("source", "\"" + getImagePath("Image") + "\"");
 		}
 		else if (genQml.GetElement() == "Button" && genQml.HasProperty("readonly property bool hasIconUrl"))
 		{
+            auto url = genQml.GetProperty("property var imgSource");
+            urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
             genQml.Property("property var imgSource", "\"" + getImagePath("Button") + "\"");
 		}
 	});
-	//Test code to download image using curl
-	std::string urlString = "https://adaptivecards.io/content/airplane.png";
-	char* url = ImageDownloader::Convert(urlString);
-	if (!ImageDownloader::download_jpeg(url))
-	{
-		printf("!! Failed to download file!");
-	}
+	////Test code to download image using curl
+	//std::string urlString = "https://adaptivecards.io/content/airplane.png";
+	//char* url = ImageDownloader::Convert(urlString);
+	//if (!ImageDownloader::download_jpeg(url))
+	//{
+	//	printf("!! Failed to download file!");
+	//}
 
     const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
