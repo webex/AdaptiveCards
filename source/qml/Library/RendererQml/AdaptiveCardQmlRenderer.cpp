@@ -562,6 +562,7 @@ namespace RendererQml
                     iconImage->Property("height", std::to_string(actionsConfig.iconSize));
                     iconImage->Property("width", std::to_string(actionsConfig.iconSize));
                     iconImage->Property("fillMode", "Image.PreserveAspectFit");
+                    iconImage->Property("cache", "false");
                     iconImage->Property("source", "\"" + input->GetInlineAction()->GetIconUrl() + "\"");
                     iconItem->AddChild(iconImage);
                     buttonElement->Property("contentItem", iconItem->ToString());
@@ -1484,6 +1485,7 @@ namespace RendererQml
         uiRectangle->Property("readonly property string bgColor", "'transparent'");
 		uiImage->Property("id", Formatter() << image->GetId() << "_img");
 		uiImage->Property("readonly property bool isImage", "true");
+        uiImage->Property("cache", "false");
 		uiImage->Property("source", "\"" + image->GetUrl() + "\"");
 		uiImage->Property("anchors.fill", "parent");
 		uiImage->Property("visible", "parent.visible");
@@ -2249,6 +2251,7 @@ namespace RendererQml
             uiContainer->Property("readonly property bool hasBackgroundImage", "true");
             uiContainer->Property("property var imgSource", "\"" + cardElement->GetBackgroundImage()->GetUrl() + "\"");
             auto backgroundImg = std::make_shared<QmlTag>("Image");
+            backgroundImg->Property("cache", "false");
             backgroundImg->Property("anchors.fill", "parent");
             backgroundImg->Property("source", Formatter() << id << ".imgSource");
             backgroundRect->AddChild(backgroundImg);            
@@ -2379,6 +2382,7 @@ namespace RendererQml
 
                 auto contentImage = std::make_shared<QmlTag>("Image");
                 contentImage->Property("id", Formatter() << buttonId << "_img");
+                contentImage->Property("cache", "false");
                 contentImage->Property("height", Formatter() << fontSize);
                 contentImage->Property("width", Formatter() << fontSize);
                 contentImage->Property("fillMode", "Image.PreserveAspectFit");
@@ -2684,6 +2688,7 @@ namespace RendererQml
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetBackgroundImage(std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage, std::shared_ptr<AdaptiveRenderContext> context, const std::string& imgSource)
 	{
 		auto uiImage = std::make_shared<QmlTag>("Image");
+        uiImage->Property("cache", "false");
 		uiImage->Property("source", imgSource);
 
 		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(backgroundImage->GetHorizontalAlignment());
