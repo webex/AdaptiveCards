@@ -82,6 +82,7 @@ namespace RendererQml
 		if (hasBackgroundImage)
 		{
 			auto uiFrame = std::make_shared<QmlTag>("Frame");
+            uiFrame->Property("id", Formatter() << uiCard->GetId() << "_frame");
 			uiFrame->Property("readonly property bool hasBackgroundImage", "true");
             uiFrame->Property("property var imgSource", "\"" + card->GetBackgroundImage()->GetUrl() + "\"");
 			uiFrame->Property("anchors.fill", "parent");

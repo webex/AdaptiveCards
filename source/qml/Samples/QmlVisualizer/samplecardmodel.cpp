@@ -112,29 +112,71 @@ QString SampleCardModel::generateQml(const QString& cardQml)
     std::shared_ptr<RenderedQmlAdaptiveCard> result = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard());
     const auto generatedQml = result->GetResult();
 
+    //Temp
+    ImageDownloader::clearImageFolder();
+
 	generatedQml->Transform([&urls](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
             auto url = genQml.GetProperty("property var imgSource");
             urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
-            genQml.Property("property var imgSource", "\"" + getImagePath("Frame") + "\"");
+
+            //Temp
+            char* imgUrl = ImageDownloader::Convert(url);
+            const std::string imageName = genQml.GetId() + ".jpg";
+
+            if (ImageDownloader::download_jpeg(imageName, imgUrl))
+            {
+                genQml.Property("property var imgSource", "\"" + getImagePath(imageName) + "\"");
+            }
+            else
+            {
+                printf("!! Failed to download file!");
+            }
+            //Temp            
 		}
 		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
 		{
             auto url = genQml.GetProperty("source");
             urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
-			genQml.Property("source", "\"" + getImagePath("Image") + "\"");
+
+            //Temp
+            char* imgUrl = ImageDownloader::Convert(url);
+            const std::string imageName = genQml.GetId() + ".jpg";
+
+            if (ImageDownloader::download_jpeg(imageName, imgUrl))
+            {
+                genQml.Property("source", "\"" + getImagePath(imageName) + "\"");
+            }
+            else
+            {
+                printf("!! Failed to download file!");
+            }
+            //Temp 
 		}
 		else if (genQml.GetElement() == "Button" && genQml.HasProperty("readonly property bool hasIconUrl"))
 		{
             auto url = genQml.GetProperty("property var imgSource");
             urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
-            genQml.Property("property var imgSource", "\"" + getImagePath("Button") + "\"");
+
+            //Temp
+            char* imgUrl = ImageDownloader::Convert(url);
+            const std::string imageName = genQml.GetId() + ".jpg";
+
+            if (ImageDownloader::download_jpeg(imageName, imgUrl))
+            {
+                genQml.Property("property var imgSource", "\"" + getImagePath(imageName) + "\"");
+            }
+            else
+            {
+                printf("!! Failed to download file!");
+            }
+            //Temp 
 		}
 	});
 
-    rehostImage(urls);
+    //rehostImage(urls);
     const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
 }
@@ -148,9 +190,9 @@ void SampleCardModel::rehostImage(const std::map<std::string, std::string>& urls
         char* imgUrl = ImageDownloader::Convert(url.second);
         const std::string imageName = url.first + ".jpg";
 
-        if (!ImageDownloader::download_jpeg(imageName, imgUrl))
+        if(!ImageDownloader::download_jpeg(imageName, imgUrl))
         {
-    	    printf("!! Failed to download file!");
+            printf("!! Failed to download file!");
         }
     }
 }
@@ -221,22 +263,11 @@ void SampleCardModel::actionSubmitButtonClicked(const QString& title, const QStr
     emit sendCardResponseToQml(output);
 }
 
-const std::string SampleCardModel::getImagePath(const std::string& m_element)
+const std::string SampleCardModel::getImagePath(const std::string& imageName)
 {
 	std::string file_path = __FILE__;
 	std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-	if (m_element == "Frame")
-	{
-		dir_path.append("\\Images\\sampleImage.jpg");
-	}
-    else if (m_element == "Button")
-    {
-        dir_path.append("\\Images\\buttonicon.png");
-    }
-	else
-	{
-		dir_path.append("\\Images\\Cat.png");
-	}
+    dir_path.append("\\Images\\" + imageName);
 	std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
 	dir_path = std::string("file:/") + dir_path;
 
