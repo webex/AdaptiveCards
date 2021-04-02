@@ -54,7 +54,7 @@ class BaseCardElementRenderer {
         return updatedView
     }
     
-    func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement) {
+    func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, parentElement: ACSBaseCardElement) {
         guard let collection = element as? ACSCollectionTypeElement, collection.getBleed() else {
             return
         }
@@ -81,8 +81,8 @@ class BaseCardElementRenderer {
             let backgroundView = NSView()
             backgroundView.translatesAutoresizingMaskIntoConstraints = false
             
-            // adding this above parentView backgroundImage view
-            parentView.addSubview(backgroundView, positioned: .above, relativeTo: parentView.backgroundImageView)
+            // adding this above collectionView backgroundImage view
+            collectionView.addSubview(backgroundView, positioned: .above, relativeTo: collectionView.backgroundImageView)
             backgroundView.wantsLayer = true
             backgroundView.layer?.backgroundColor = collectionView.layer?.backgroundColor
             
@@ -101,7 +101,16 @@ class BaseCardElementRenderer {
             backgroundView.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor, constant: leading ? -padding : 0).isActive = true
             backgroundView.trailingAnchor.constraint(equalTo: collectionView.trailingAnchor, constant: trailing ?  padding : 0).isActive = true
             if bottom {
-                let paddingBottom = parentView.style == ACSContainerStyle.none || parentView.bleed ? padding : 0
+                // case 1: when parent style == none,
+                // case 2: when parent is bleeding but, bottom bleed direction false
+                // case 3: when parent bleeds till end and has bottom bleed direction true
+                var parentBottomBleedDirection = false
+                if parentElement != element, let parent = parentElement as? ACSCollectionTypeElement {
+                    let directionParent = parent.getBleedDirection()
+                    parentBottomBleedDirection = (directionParent.rawValue & ACRBleedDirection.ACRBleedToBottomEdge.rawValue) != 0
+                }
+                let paddingBottom = parentView.style == ACSContainerStyle.none || (parentView.bleed && parentBottomBleedDirection
+                ) ? padding : 0
                 backgroundView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor, constant: paddingBottom).isActive = true
             } else {
                 backgroundView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor).isActive = true
