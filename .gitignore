@@ -319,3 +319,5 @@ _deps
 ### CMake Patch ###
 # External projects
 *-prefix/
+# Image folder
+source/qml/Samples/QmlVisualizer/Images
