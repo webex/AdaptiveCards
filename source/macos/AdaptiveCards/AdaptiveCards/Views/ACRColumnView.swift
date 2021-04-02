@@ -73,7 +73,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.style = style
         super.init(frame: .zero)
         initialize()
-        if style != .none && style != parentStyle {
+        if (parentStyle == nil) || (!style.equals(ACSContainerStyle.none) && !style.equals(parentStyle)) {
             if let bgColor = hostConfig.getBackgroundColor(for: style) {
                 layer?.backgroundColor = bgColor.cgColor
             }
@@ -107,6 +107,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func addArrangedSubview(_ subview: NSView) {
         stackView.addArrangedSubview(subview)
+    }
+    
+    func addView(_ view: NSView, in gravity: NSStackView.Gravity) {
+        stackView.addView(view, in: gravity)
     }
     
     func applyPadding(_ padding: CGFloat) {
@@ -217,13 +221,13 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     private var previousBackgroundColor: CGColor?
     override func mouseEntered(with event: NSEvent) {
-        guard let columnView = event.trackingArea?.owner as? ACRColumnView, target != nil else { return }
+        guard let columnView = event.trackingArea?.owner as? ACRContentStackView, target != nil else { return }
         previousBackgroundColor = columnView.layer?.backgroundColor
         columnView.layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
     }
     
     override func mouseExited(with event: NSEvent) {
-        guard let columnView = event.trackingArea?.owner as? ACRColumnView, target != nil else { return }
+        guard let columnView = event.trackingArea?.owner as? ACRContentStackView, target != nil else { return }
         columnView.layer?.backgroundColor = previousBackgroundColor ?? .clear
     }
 }
@@ -330,6 +334,31 @@ class ACRColumnView: ACRContentStackView {
             
         case .weighted:
             widthConstraint.isActive = false
+        }
+    }
+}
+
+extension ACSContainerStyle {
+    var description: String {
+        switch self {
+        case .accent: return "accent"
+        case .none: return "none"
+        case .default: return "default"
+        case .emphasis: return "emphasis"
+        case .good: return "good"
+        case .attention: return "attention"
+        case .warning: return "warning"
+        @unknown default: return "unknown"
+        }
+    }
+    
+    func equals(_ style: ACSContainerStyle?) -> Bool {
+        guard let style = style else {
+            return false
+        }
+        switch (self, style) {
+        case (.none, .default), (.default, .none): return true
+        default: return style == self
         }
     }
 }
