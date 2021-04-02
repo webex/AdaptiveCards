@@ -563,7 +563,7 @@ namespace RendererQml
                     iconImage->Property("width", std::to_string(actionsConfig.iconSize));
                     iconImage->Property("fillMode", "Image.PreserveAspectFit");
                     iconImage->Property("cache", "false");
-                    iconImage->Property("source", "\"" + input->GetInlineAction()->GetIconUrl() + "\"");
+                    iconImage->Property("source", Formatter() << buttonElement->GetId() + ".imgSource");
                     iconItem->AddChild(iconImage);
                     buttonElement->Property("contentItem", iconItem->ToString());
                 }
