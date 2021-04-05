@@ -13,6 +13,10 @@ class ActionOpenURLRenderer: BaseActionElementRendererProtocol {
         let button = ACRButton()
         button.title = openURLAction.getTitle() ?? ""
         
+        if let iconUrl = openURLAction.getIconUrl() {
+            rootView.registerImageHandlingView(button, for: iconUrl)
+        }
+        
         let target = ActionOpenURLTarget(element: openURLAction, delegate: rootView)
         target.configureAction(for: button)
         rootView.addTarget(target)

@@ -18,6 +18,10 @@ class ActionShowCardRenderer: BaseActionElementRendererProtocol {
             return button
         }
         
+        if let iconUrl = showCardAction.getIconUrl() {
+            rootView.registerImageHandlingView(button, for: iconUrl)
+        }
+        
         let target = ActionShowCardTarget(element: showCard, delegate: rootView)
         target.configureAction(for: button)
         rootView.addTarget(target)

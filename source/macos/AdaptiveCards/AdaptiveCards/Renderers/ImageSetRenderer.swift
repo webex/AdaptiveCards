@@ -12,6 +12,12 @@ class ImageSetRenderer: NSObject, BaseCardElementRendererProtocol {
             return NSView()
         }
         
+        var imageSize: ACSImageSize = imageSet.getImageSize()
+        if imageSize == .auto || imageSize == .stretch || imageSize == .none {
+            imageSize = .medium
+        }
+        collectionViewDataSource.registerImageViews(acsImages: imageSet.getImages(), rootView: rootView, size: imageSize)
+        
         let colView = ACRCollectionView(frame: .zero, imageSet: imageSet, hostConfig: hostConfig)
         colView.translatesAutoresizingMaskIntoConstraints = false
         colView.dataSource = collectionViewDataSource

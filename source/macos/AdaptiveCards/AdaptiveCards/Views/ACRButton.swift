@@ -8,7 +8,7 @@ enum ActionStyle: String {
     case inline
 }
 
-class ACRButton: FlatButton {
+class ACRButton: FlatButton, ImageHoldingView {
     struct Constants {
         static let blueColorCode = "#007EA8"
         static let darkBlueColorCode = "#0A5E7D"
@@ -44,7 +44,7 @@ class ACRButton: FlatButton {
         setupButtonStyle()
     }
     
-    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconImageFileType: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default) {
+    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = true, iconNamed: String = "", iconImageFileType: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default) {
         super.init(frame: frame)
         if wantsChevron {
             showsChevron = wantsChevron
@@ -84,6 +84,10 @@ class ACRButton: FlatButton {
         if buttonStyle != .inline {
             cornerRadius = bounds.height / 2
         }
+    }
+    
+    func setImage(_ image: NSImage) {
+        self.image = image
     }
 
     override open func mouseEntered(with event: NSEvent) {

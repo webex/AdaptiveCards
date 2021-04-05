@@ -3,7 +3,7 @@ import AppKit
 
 class ACRCollectionView: NSCollectionView {
     var imageSet: ACSImageSet?
-    var imageSize: ACSImageSize?
+    var imageSize: ACSImageSize = .medium
     var hostConfig: ACSHostConfig?
     
     required init?(coder: NSCoder) {
@@ -69,20 +69,42 @@ class ACRCollectionView: NSCollectionView {
 
 // MARK: DataSource for CollectionView
 class ACRCollectionViewDatasource: NSObject, NSCollectionViewDataSource {
+    var imageViews: [ImageSetImageView] = []
+    var images: [ACSImage] = []
+    var imageSize: ACSImageSize = .medium
+    
+    func registerImageViews(acsImages: [ACSImage], rootView: ACRView, size: ACSImageSize) {
+        self.images = acsImages
+        self.imageSize = size
+        for image in images {
+            let imageView = ImageSetImageView()
+            guard let url = image.getUrl() else { continue }
+            rootView.registerImageHandlingView(imageView, for: url)
+            imageViews.append(imageView)
+        }
+    }
+    
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        guard let collectionView = collectionView as? ACRCollectionView, let hostConfig = collectionView.hostConfig, let item = collectionView.makeItem(withIdentifier: ACRCollectionViewItem.identifier, for: indexPath) as? ACRCollectionViewItem else { return NSCollectionViewItem() }
-        guard let imageSet = collectionView.imageSet, let urlString = imageSet.getImages()[indexPath.item].getUrl() else { return item }
-        item.setupItem(with: urlString, hostConfig: hostConfig, imageSize: collectionView.imageSize ?? .medium)
+        guard let collectionView = collectionView as? ACRCollectionView,
+              let hostConfig = collectionView.hostConfig,
+              let item = collectionView.makeItem(withIdentifier: ACRCollectionViewItem.identifier, for: indexPath) as? ACRCollectionViewItem else { return NSCollectionViewItem() }
+        
+        item.setupBounds(with: imageViews[indexPath.item], and: imageSize, hostConfig: hostConfig)
         return item
     }
     
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let collectionView = collectionView as? ACRCollectionView, let newImageSet = collectionView.imageSet else { return 0 }
-        return newImageSet.getImages().count
+        return images.count
     }
     
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
         return 1
+    }
+}
+
+class ImageSetImageView: NSImageView, ImageHoldingView {
+    func setImage(_ image: NSImage) {
+        self.image = image
     }
 }
 
