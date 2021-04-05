@@ -54,7 +54,7 @@ class BaseCardElementRenderer {
         return updatedView
     }
     
-    func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, parentElement: ACSBaseCardElement) {
+    func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, parentElement: ACSBaseCardElement?) {
         guard let collection = element as? ACSCollectionTypeElement, collection.getBleed() else {
             return
         }
@@ -105,7 +105,7 @@ class BaseCardElementRenderer {
                 // case 2: when parent is bleeding but, bottom bleed direction false
                 // case 3: when parent bleeds till end and has bottom bleed direction true
                 var parentBottomBleedDirection = false
-                if parentElement != element, let parent = parentElement as? ACSCollectionTypeElement {
+                if let parent = parentElement as? ACSCollectionTypeElement {
                     let directionParent = parent.getBleedDirection()
                     parentBottomBleedDirection = (directionParent.rawValue & ACRBleedDirection.ACRBleedToBottomEdge.rawValue) != 0
                 }
