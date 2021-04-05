@@ -1,7 +1,6 @@
 #include "AdaptiveCardQmlRenderer.h"
 #include "ImageDataURI.h"
 #include "pch.h"
-#include <windows.h>
 
 namespace RendererQml
 {
