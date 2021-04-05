@@ -50,14 +50,12 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         // Add SelectAction
         columnSetView.setupSelectAction(columnSet.getSelectAction(), rootView: rootView)
         
-        // Only one is weighted and others are stretch
-//        let isSpecialAllStretch = numberOfWeightedItems == 1 && numberOfStretchItems == totalColumns - 1
-        
         if numberOfStretchItems == totalColumns && !columnViews.isEmpty {
             let firstColumn = columnViews[0]
             for index in (1..<columnViews.count) {
                 columnViews[index].widthAnchor.constraint(equalTo: firstColumn.widthAnchor).isActive = true
             }
+            columnSetView.distribution = .fill
         } else if numberOfAutoItems == totalColumns {
             columnSetView.distribution = .gravityAreas
         } else if numberOfStretchItems == 0 && numberOfWeightedItems == 0 {
