@@ -9,9 +9,7 @@ class ACRCollectionViewItem: NSCollectionViewItem {
     }
     
     private let itemView: NSView = {
-        let view = NSView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+        return NSView()
     }()
     
     func setupBounds(with imageView: ImageSetImageView) {
