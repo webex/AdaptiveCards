@@ -93,14 +93,6 @@ class FakeColumn: ACSColumn {
     override func getId() -> String? {
         return id
     }
-    
-    override func getBackgroundImage() -> ACSBackgroundImage? {
-        return backgroundImage
-    }
-    
-    override func getSelectAction() -> ACSBaseActionElement? {
-        return selectAction
-    }
 }
 
 extension FakeColumn {
