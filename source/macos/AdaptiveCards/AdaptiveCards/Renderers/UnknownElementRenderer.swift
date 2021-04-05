@@ -7,7 +7,10 @@ class UnknownElementRenderer: BaseCardElementRendererProtocol, BaseActionElement
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler]) -> NSView {
         switch  element.getFallbackType() {
         case .content:
-            guard let fallbackElement = element.getFallbackContent() as? ACSBaseCardElement else { return NSView() }
+            guard let fallbackElement = element.getFallbackContent() as? ACSBaseCardElement else {
+                logError("Fallback Content is not of type ACSBaseCardElement")
+                return NSView()
+            }
             return RendererManager.shared.renderer(for: fallbackElement.getType()).render(element: fallbackElement, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs)
         case .none, .drop:
             return NSView()
