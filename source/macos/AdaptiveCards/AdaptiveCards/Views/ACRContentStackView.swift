@@ -143,7 +143,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         anchor.constraint(equalToConstant: CGFloat(truncating: thickness)).isActive = true
         seperatorView.layer?.backgroundColor = ColorUtils.color(from: color)?.cgColor ?? .black
         stackView.addArrangedSubview(seperatorView)
-        stackView.setCustomSpacing(3, after: seperatorView)
+        stackView.setCustomSpacing(5, after: seperatorView)
     }
     
     private func addSpacing(spacing: CGFloat) {

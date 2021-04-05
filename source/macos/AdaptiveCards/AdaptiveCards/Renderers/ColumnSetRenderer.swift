@@ -30,7 +30,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             
             // Check if has extra properties else add column view
             columnViews.append(columnView)
-            guard index > 0, column.getSpacing() != .none, !column.getSeparator() else {
+            guard index > 0, (column.getSpacing() != .none || column.getSeparator()) else {
                 columnSetView.addView(columnView, in: gravityArea)
                 BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column)
                 continue
@@ -51,9 +51,9 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         columnSetView.setupSelectAction(columnSet.getSelectAction(), rootView: rootView)
         
         // Only one is weighted and others are stretch
-        let isSpecialAllStretch = numberOfWeightedItems == 1 && numberOfStretchItems == totalColumns - 1
+//        let isSpecialAllStretch = numberOfWeightedItems == 1 && numberOfStretchItems == totalColumns - 1
         
-        if (numberOfStretchItems == totalColumns || isSpecialAllStretch) && !columnViews.isEmpty {
+        if numberOfStretchItems == totalColumns && !columnViews.isEmpty {
             let firstColumn = columnViews[0]
             for index in (1..<columnViews.count) {
                 columnViews[index].widthAnchor.constraint(equalTo: firstColumn.widthAnchor).isActive = true
