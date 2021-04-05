@@ -231,15 +231,16 @@ namespace RendererQml
                     if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
                     {
                         // Add to loader source component list
+						const std::string loaderId = uiAction->GetId() + "_loader";
                         const std::string componentId = uiAction->GetId() + "_component";
                         const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
                         context->addToShowCardLoaderComponentList(componentId, showCardAction);
 
                         //Add show card loader to the parent container
-                        AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, true, uiAction->GetId() + "_loader");
+                        AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, true, loaderId);
 
 						auto uiLoader = std::make_shared<QmlTag>("Loader");
-                        uiLoader->Property("id", uiAction->GetId() + "_loader");
+                        uiLoader->Property("id", loaderId);
                         uiLoader->Property("x", "-margins");
                         uiLoader->Property("sourceComponent", componentId);
                         uiLoader->Property("visible", "false");
