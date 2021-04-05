@@ -5,12 +5,8 @@ class ACRCollectionViewItem: NSCollectionViewItem {
     static let identifier = NSUserInterfaceItemIdentifier(rawValue: "ImageSetItem")
     
     override func loadView() {
-        view = itemView
+        view = NSView()
     }
-    
-    private let itemView: NSView = {
-        return NSView()
-    }()
     
     func setupBounds(with imageView: ImageSetImageView) {
         imageView.removeFromSuperview()
