@@ -3,6 +3,8 @@
 
 #include <AdaptiveCardQmlRenderer.h>
 #include <RenderedQmlAdaptiveCard.h>
+#include <ImageDownloader.h>
+#include <Utils.h>
 
 #include <QAbstractListModel>
 
@@ -50,8 +52,9 @@ private:
     static std::wstring toWString(const std::string& input);
     void actionOpenUrlButtonClicked(const QString& title, const QString& type, const QString& data);
     void actionSubmitButtonClicked(const QString& title, const QString& type, const QString& data);
+    void rehostImage(const std::map<std::string, std::string>& urls);
 
-	static const std::string getImagePath(const std::string& m_element);
+	static const std::string getImagePath(const std::string& imageName);
 };
 
 #endif // SAMPLECARDMODEL_H

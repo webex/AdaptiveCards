@@ -1,6 +1,5 @@
 #include "Utils.h"
 #include <time.h>
-#include <windows.h>
 
 namespace RendererQml
 {
@@ -353,8 +352,12 @@ namespace RendererQml
 		struct tm newtime;
 		time_t now = time(0);
 
+#ifdef _WIN32
 		localtime_s(&newtime, &now);
-
+#else
+		localtime_r(&now, &newtime);
+#endif
+		
 		setlocale(LC_ALL, "");
 
 		strftime(dateTimeBuffer, 50, fetchFormat.c_str(), &newtime);

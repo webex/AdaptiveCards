@@ -1,7 +1,6 @@
 #include "AdaptiveCardQmlRenderer.h"
 #include "ImageDataURI.h"
 #include "pch.h"
-#include <windows.h>
 
 namespace RendererQml
 {
@@ -82,9 +81,11 @@ namespace RendererQml
 		if (hasBackgroundImage)
 		{
 			auto uiFrame = std::make_shared<QmlTag>("Frame");
+            uiFrame->Property("id", Formatter() << uiCard->GetId() << "_frame");
 			uiFrame->Property("readonly property bool hasBackgroundImage", "true");
+            uiFrame->Property("property var imgSource", "\"" + card->GetBackgroundImage()->GetUrl() + "\"");
 			uiFrame->Property("anchors.fill", "parent");
-			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context)->ToString());
+			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context, "parent.imgSource")->ToString());
 			uiCard->AddChild(uiFrame);
 		}
 
@@ -223,8 +224,6 @@ namespace RendererQml
             AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
             uiContainer->AddChild(uiButtonStrip);            
 
-            bool addLoaderSeparator = true;
-
             for (unsigned int i = 0; i < maxActions; i++)
             {
                 // add actions buttons
@@ -234,18 +233,16 @@ namespace RendererQml
                     if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
                     {
                         // Add to loader source component list
+						const std::string loaderId = uiAction->GetId() + "_loader";
                         const std::string componentId = uiAction->GetId() + "_component";
                         const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
                         context->addToShowCardLoaderComponentList(componentId, showCardAction);
 
                         //Add show card loader to the parent container
-                        if (addLoaderSeparator)
-                        {
-                            AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
-                            addLoaderSeparator = false;
-                        }
-                        auto uiLoader = std::make_shared<QmlTag>("Loader");
-                        uiLoader->Property("id", uiAction->GetId() + "_loader");
+                        AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, true, loaderId);
+
+						auto uiLoader = std::make_shared<QmlTag>("Loader");
+                        uiLoader->Property("id", loaderId);
                         uiLoader->Property("x", "-margins");
                         uiLoader->Property("sourceComponent", componentId);
                         uiLoader->Property("visible", "false");
@@ -560,7 +557,8 @@ namespace RendererQml
                     iconImage->Property("height", std::to_string(actionsConfig.iconSize));
                     iconImage->Property("width", std::to_string(actionsConfig.iconSize));
                     iconImage->Property("fillMode", "Image.PreserveAspectFit");
-                    iconImage->Property("source", "\"" + input->GetInlineAction()->GetIconUrl() + "\"");
+                    iconImage->Property("cache", "false");
+                    iconImage->Property("source", Formatter() << buttonElement->GetId() + ".imgSource");
                     iconItem->AddChild(iconImage);
                     buttonElement->Property("contentItem", iconItem->ToString());
                 }
@@ -1482,6 +1480,7 @@ namespace RendererQml
         uiRectangle->Property("readonly property string bgColor", "'transparent'");
 		uiImage->Property("id", Formatter() << image->GetId() << "_img");
 		uiImage->Property("readonly property bool isImage", "true");
+        uiImage->Property("cache", "false");
 		uiImage->Property("source", "\"" + image->GetUrl() + "\"");
 		uiImage->Property("anchors.fill", "parent");
 		uiImage->Property("visible", "parent.visible");
@@ -1853,7 +1852,7 @@ namespace RendererQml
 		return uiFlow;
 	}
 
-	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context)
+	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context, const bool isShowCard, const std::string loaderId)
 	{
 		//Returns only when seperator=false and spacing=none
 		if (!adaptiveElement->GetSeparator() && adaptiveElement->GetSpacing() == AdaptiveCards::Spacing::None)
@@ -1880,6 +1879,11 @@ namespace RendererQml
 		
 		uiSep->Property("color", "\"transparent\"");
 		uiSep->Property("visible", adaptiveElement->GetIsVisible() ? "true" : "false");
+
+		if (isShowCard)
+		{
+			uiSep->Property("visible", Formatter() << loaderId << ".visible" );
+		}
 
 		if (adaptiveElement->GetSeparator() && adaptiveElement->GetIsVisible())
 		{
@@ -2244,12 +2248,13 @@ namespace RendererQml
         const auto hasBackgroundImage = cardElement->GetBackgroundImage() != nullptr;
         if (hasBackgroundImage)
         {
-            auto url = cardElement->GetBackgroundImage()->GetUrl();
-            auto backgroundImg = std::make_shared<QmlTag>("Image");
-            backgroundImg->Property("anchors.fill", "parent");
-            backgroundImg->Property("source", "\"" + url + "\"");
-            backgroundRect->AddChild(backgroundImg);
             uiContainer->Property("readonly property bool hasBackgroundImage", "true");
+            uiContainer->Property("property var imgSource", "\"" + cardElement->GetBackgroundImage()->GetUrl() + "\"");
+            auto backgroundImg = std::make_shared<QmlTag>("Image");
+            backgroundImg->Property("cache", "false");
+            backgroundImg->Property("anchors.fill", "parent");
+            backgroundImg->Property("source", Formatter() << id << ".imgSource");
+            backgroundRect->AddChild(backgroundImg);            
         }
         else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
         {
@@ -2373,9 +2378,11 @@ namespace RendererQml
             if (!action->GetIconUrl().empty())
             {
 				buttonElement->Property("readonly property bool hasIconUrl", "true");
+                buttonElement->Property("property var imgSource", "\"" + action->GetIconUrl() + "\"");
 
                 auto contentImage = std::make_shared<QmlTag>("Image");
                 contentImage->Property("id", Formatter() << buttonId << "_img");
+                contentImage->Property("cache", "false");
                 contentImage->Property("height", Formatter() << fontSize);
                 contentImage->Property("width", Formatter() << fontSize);
                 contentImage->Property("fillMode", "Image.PreserveAspectFit");
@@ -2389,7 +2396,7 @@ namespace RendererQml
                     contentImage->Property("anchors.horizontalCenter", "parent.horizontalCenter");
                 }
 
-                contentImage->Property("source", "\"" + action->GetIconUrl() + "\"");
+                contentImage->Property("source", Formatter() << buttonId << ".imgSource");
 
                 contentLayout->AddChild(contentImage);
             }
@@ -2678,10 +2685,11 @@ namespace RendererQml
 		return function.str();
   }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetBackgroundImage(std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage, std::shared_ptr<AdaptiveRenderContext> context)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetBackgroundImage(std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage, std::shared_ptr<AdaptiveRenderContext> context, const std::string& imgSource)
 	{
 		auto uiImage = std::make_shared<QmlTag>("Image");
-		uiImage->Property("source", "\"" + backgroundImage->GetUrl() + "\"");
+        uiImage->Property("cache", "false");
+		uiImage->Property("source", imgSource);
 
 		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(backgroundImage->GetHorizontalAlignment());
 		std::string verticalAlignment = AdaptiveCards::EnumHelpers::getVerticalAlignmentEnum().toString(backgroundImage->GetVerticalAlignment());
