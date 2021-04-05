@@ -2250,10 +2250,8 @@ namespace RendererQml
         {
             uiContainer->Property("readonly property bool hasBackgroundImage", "true");
             uiContainer->Property("property var imgSource", "\"" + cardElement->GetBackgroundImage()->GetUrl() + "\"");
-            auto backgroundImg = std::make_shared<QmlTag>("Image");
-            backgroundImg->Property("cache", "false");
+			auto backgroundImg = AdaptiveCardQmlRenderer::GetBackgroundImage(cardElement->GetBackgroundImage(), context, id + ".imgSource");
             backgroundImg->Property("anchors.fill", "parent");
-            backgroundImg->Property("source", Formatter() << id << ".imgSource");
             backgroundRect->AddChild(backgroundImg);            
         }
         else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
