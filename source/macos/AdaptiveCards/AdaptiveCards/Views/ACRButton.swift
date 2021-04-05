@@ -44,7 +44,7 @@ class ACRButton: FlatButton, ImageHoldingView {
         setupButtonStyle()
     }
     
-    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = true, iconNamed: String = "", iconImageFileType: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default) {
+    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconImageFileType: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default) {
         super.init(frame: frame)
         if wantsChevron {
             showsChevron = wantsChevron
@@ -64,10 +64,7 @@ class ACRButton: FlatButton, ImageHoldingView {
         borderWidth = 1
         onAnimationDuration = 0.0
         offAnimationDuration = 0.0
-        iconColor = NSColor.white
-        activeIconColor = NSColor.white
         momentary = !showsChevron
-        iconColor = .white
         if showsIcon {
             image = BundleUtils.getImage(iconImageName, ofType: iconFileType)
             imagePosition = iconPositioned
@@ -87,7 +84,10 @@ class ACRButton: FlatButton, ImageHoldingView {
     }
     
     func setImage(_ image: NSImage) {
+        iconColor = NSColor(patternImage: image)
+        activeIconColor = iconColor
         self.image = image
+        mouseExited(with: NSEvent()) // this is to force trigger the event for image updation
     }
 
     override open func mouseEntered(with event: NSEvent) {

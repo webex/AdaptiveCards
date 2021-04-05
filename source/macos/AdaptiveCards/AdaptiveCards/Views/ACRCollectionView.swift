@@ -27,7 +27,7 @@ class ACRCollectionView: NSCollectionView {
         // TODO: Change minimumLineSpacing to 0 after adding images
         layout.minimumLineSpacing = spacing
         layout.minimumInteritemSpacing = spacing
-        layout.itemSize = ImageUtils.getImageSizeAsCGSize(imageSize: self.imageSize ?? .medium, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
+        layout.itemSize = ImageUtils.getImageSizeAsCGSize(imageSize: self.imageSize, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
         collectionViewLayout = layout
         
         self.backgroundColors = [.clear]
@@ -69,19 +69,23 @@ class ACRCollectionView: NSCollectionView {
 
 // MARK: DataSource for CollectionView
 class ACRCollectionViewDatasource: NSObject, NSCollectionViewDataSource {
-    var imageViews: [ImageSetImageView] = []
-    var images: [ACSImage] = []
-    var imageSize: ACSImageSize = .medium
+    let imageViews: [ImageSetImageView]
+    let images: [ACSImage]
+    let hostConfig: ACSHostConfig
     
-    func registerImageViews(acsImages: [ACSImage], rootView: ACRView, size: ACSImageSize) {
+    init(acsImages: [ACSImage], rootView: ACRView, size: ACSImageSize, hostConfig: ACSHostConfig) {
         self.images = acsImages
-        self.imageSize = size
+        self.hostConfig = hostConfig
+        var imageViews: [ImageSetImageView] = []
         for image in images {
             let imageView = ImageSetImageView()
-            guard let url = image.getUrl() else { continue }
+            imageView.hostConfig = hostConfig
+            imageView.imageSize = size
+            let url = image.getUrl() ?? ""
             rootView.registerImageHandlingView(imageView, for: url)
             imageViews.append(imageView)
         }
+        self.imageViews = imageViews
     }
     
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
@@ -89,7 +93,7 @@ class ACRCollectionViewDatasource: NSObject, NSCollectionViewDataSource {
               let hostConfig = collectionView.hostConfig,
               let item = collectionView.makeItem(withIdentifier: ACRCollectionViewItem.identifier, for: indexPath) as? ACRCollectionViewItem else { return NSCollectionViewItem() }
         
-        item.setupBounds(with: imageViews[indexPath.item], and: imageSize, hostConfig: hostConfig)
+        item.setupBounds(with: imageViews[indexPath.item])
         return item
     }
     
@@ -103,7 +107,21 @@ class ACRCollectionViewDatasource: NSObject, NSCollectionViewDataSource {
 }
 
 class ImageSetImageView: NSImageView, ImageHoldingView {
+    var imageSize: ACSImageSize = .medium
+    var hostConfig: ACSHostConfig?
+    
     func setImage(_ image: NSImage) {
+        guard let config = hostConfig else {
+            self.image = image
+            return
+        }
+        
+        let imageRatio = ImageUtils.getAspectRatio(from: image.size)
+        var maxImageSize = ImageUtils.getImageSizeAsCGSize(imageSize: imageSize, width: 0, height: 0, with: config, explicitDimensions: false)
+        if imageRatio.height < 1 {
+            maxImageSize.height *= imageRatio.height
+        }
+        image.size = maxImageSize
         self.image = image
     }
 }

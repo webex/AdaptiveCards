@@ -10,16 +10,18 @@ class ActionShowCardRenderer: BaseActionElementRendererProtocol {
             return NSView()
         }
         
-        let button = ACRButton(wantsChevron: true)
+        let button: ACRButton
+        if let iconUrl = showCardAction.getIconUrl(), !iconUrl.isEmpty {
+            button = ACRButton(wantsChevron: true, wantsIcon: true)
+            rootView.registerImageHandlingView(button, for: iconUrl)
+        } else {
+            button = ACRButton(wantsChevron: true, wantsIcon: false)
+        }
         button.title = showCardAction.getTitle() ?? ""
 
         guard let showCard = showCardAction.getCard() else {
             logError("ShowCard object is nil")
             return button
-        }
-        
-        if let iconUrl = showCardAction.getIconUrl() {
-            rootView.registerImageHandlingView(button, for: iconUrl)
         }
         
         let target = ActionShowCardTarget(element: showCard, delegate: rootView)
