@@ -20,6 +20,53 @@ char* ImageDownloader::Convert(const std::string& s) //Convert url from std::str
 	return pc;
 }
 
+timeval ImageDownloader::get_timeout(CURLM* multi_handle)
+{
+	long curl_timeo = -1;
+	/* set a suitable timeout to play around with */
+	struct timeval timeout;
+	timeout.tv_sec = 1;
+	timeout.tv_usec = 0;
+
+	curl_multi_timeout(multi_handle, &curl_timeo);
+	if (curl_timeo >= 0) {
+		timeout.tv_sec = curl_timeo / 1000;
+		if (timeout.tv_sec > 1)
+			timeout.tv_sec = 1;
+		else
+			timeout.tv_usec = (curl_timeo % 1000) * 1000;
+	}
+	return timeout;
+}
+
+int ImageDownloader::wait_if_needed(CURLM* multi_handle, timeval& timeout)
+{
+	fd_set fdread;
+	fd_set fdwrite;
+	fd_set fdexcep;
+	FD_ZERO(&fdread);
+	FD_ZERO(&fdwrite);
+	FD_ZERO(&fdexcep);
+	int maxfd = -1;
+	/* get file descriptors from the transfers */
+	auto mc = curl_multi_fdset(multi_handle, &fdread, &fdwrite, &fdexcep, &maxfd);
+
+	if (mc != CURLM_OK)
+	{
+		std::cerr << "curl_multi_fdset() failed, code " << mc << "." << std::endl;
+	}
+	/* On success the value of maxfd is guaranteed to be >= -1. We call
+		   sleep for 100ms, which is the minimum suggested value in the
+		   curl_multi_fdset() doc. */
+	if (maxfd == -1)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+
+	int rc = maxfd != -1 ? select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout) : 0;
+	return rc;
+} 
+
 bool ImageDownloader::download_jpeg(const std::string& imgName, char* url)
 {
     const std::string imgSource = SolutionDir + imageFolder + imgName;
@@ -44,50 +91,17 @@ bool ImageDownloader::download_jpeg(const std::string& imgName, char* url)
 
 	curl_multi_perform(multi_handle, &still_running);
 
-	while (still_running) {
-		CURLMcode mc; /* curl_multi_wait() return code */
-		int numfds;
-		int repeats = 0;
-
-		/* wait for activity, timeout or "nothing" */
-		mc = curl_multi_wait(multi_handle, NULL, 0, 1000, &numfds);
-
-		if (mc != CURLM_OK) {
-			fprintf(stderr, "curl_multi_wait() failed, code %d.\n", mc);
-			break;
-		}
-
-		/* 'numfds' being zero means either a timeout or no file descriptors to
-		   wait for. Try timeout on first occurrence, then assume no file
-		   descriptors and no file descriptors to wait for means wait for 100
-		   milliseconds. */
-
-		if (!numfds) {
-			repeats++; /* count number of repeated zero numfds */
-			if (repeats > 1) {
-				Sleep(100); /* sleep 100 milliseconds */
-			}
-		}
-		else
-			repeats = 0;
-
-		curl_multi_perform(multi_handle, &still_running);
-	}
-	/*
-	CURLcode rc = curl_easy_perform(curlCtx);
-	if (rc)
+	while (still_running)
 	{
-		printf("!!! Failed to download: %s\n", url);
-        return false;
+		struct timeval timeout = get_timeout(multi_handle);
+		auto rc = wait_if_needed(multi_handle, timeout);
+		if (rc >= 0)
+		{
+			/* timeout or readable/writable sockets */
+			curl_multi_perform(multi_handle, &still_running);
+		} 
 	}
-
-	long res_code = 0;
-	curl_easy_getinfo(curlCtx, CURLINFO_RESPONSE_CODE, &res_code);
-	if (!((res_code == 200 || res_code == 201) && rc != CURLE_ABORTED_BY_CALLBACK))
-	{
-		printf("!!! Response code: %d\n", res_code);
-        return false;
-	}*/
+	
 	curl_multi_cleanup(multi_handle);
 
 	curl_easy_cleanup(curlCtx);
