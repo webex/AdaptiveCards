@@ -11,7 +11,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     private var configs: [String] = []
     private var hostConfigString = sampleHostConfig // default config string
     private let webexConfig: String = "webex_light_config.json"
-    private var darkTheme: Bool = false
+    private var darkTheme = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,15 +58,9 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             print("RENDER FAILED")
             return
         }
-        print("ELEMENTS:")
-        card.getBody().forEach { print($0.getTypeString() ?? "nil") }
-        card.getBody().forEach { print(type(of: $0)) }
 
         switch AdaptiveCard.parseHostConfig(from: hostConfigString) {
         case .success(let config):
-            print("PARSED HOSTCONFIG")
-            print("Font family - \(config.getFontFamily() ?? "nil")")
-            
             let cardView = AdaptiveCard.render(card: card, with: config, width: 335, actionDelegate: self, resourceResolver: self)
             // This changes the appearance of the native components depending on the hostConfig
             if #available(OSX 10.14, *) {
