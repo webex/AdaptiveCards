@@ -24,7 +24,9 @@ class ImageDownloader
 	public:
 		static char* Convert(const std::string& s);
 		static bool download_jpeg(const std::string& imgName, char* url);
-        static void clearImageFolder();
+		static bool download_multiple_jpeg(const std::string& imgName, char* url);
+
+		static void clearImageFolder();
 	private:
 		static size_t callbackfunction(void* ptr, size_t size, size_t nmemb, void* userdata);
 		static timeval get_timeout(CURLM* multi_handle);
