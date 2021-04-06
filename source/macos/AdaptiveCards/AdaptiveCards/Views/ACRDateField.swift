@@ -28,7 +28,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }()
 
     private lazy var iconButton: NSButtonWithImageSpacing = {
-        let view = NSButtonWithImageSpacing(image: NSImage(named: "NSTouchBarHistoryTemplate") ?? NSImage(), target: self, action: #selector(mouseDown(with:)))
+        let view = NSButtonWithImageSpacing(image: (isTimeMode ? NSImage(named: "NSTouchBarHistoryTemplate") : BundleUtils.getImage("calendar-month-light", ofType: "png")) ?? NSImage(), target: self, action: #selector(mouseDown(with:)))
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.clear.cgColor
@@ -47,7 +47,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     private let datePickerCalendar = NSDatePicker()
     private let datePickerTextfield = NSDatePicker()
     private var popover = NSPopover()
-    var isTimeMode = false
+    let isTimeMode: Bool
     var selectedDate: Date? = Date()
     var minDateValue: String?
     var maxDateValue: String?
@@ -87,14 +87,15 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         return !isHidden && !(superview?.isHidden ?? false)
     }
     
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
+    init(isTimeMode: Bool) {
+        self.isTimeMode = isTimeMode
+        super.init(frame: .zero)
         setupViews()
         setupConstraints()
         setupTrackingArea()
     }
     
-    public required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
