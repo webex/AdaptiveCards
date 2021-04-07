@@ -4,14 +4,10 @@ import AppKit
 class ACRDateField: NSView, InputHandlingViewProtocol {
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = isTimeMode ? "HH:mm:ss" : "yyyy-MM-dd"
-        return formatter
-    }()
-    private lazy var dateFormatterSubmit: DateFormatter = {
-        let formatter = DateFormatter()
         formatter.dateFormat = isTimeMode ? "HH:mm" : "yyyy-MM-dd"
         return formatter
     }()
+    
     private lazy var dateFormatterOut: DateFormatter = {
         let formatter = DateFormatter()
         if isTimeMode {
@@ -76,7 +72,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         guard !textField.stringValue.isEmpty, let selectedDate = selectedDate else {
             return ""
         }
-        return dateFormatterSubmit.string(from: selectedDate)
+        return dateFormatter.string(from: selectedDate)
     }
     
     var key: String {
