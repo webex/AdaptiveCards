@@ -1618,12 +1618,18 @@ namespace RendererQml
 		if (!input->GetValue().empty() && Utils::isValidTime(value))
 		{
 			std::string defaultTime = value;
+            std::string defaultSelectedTime = value;
 			if (is12hour == true)
 			{
 				defaultTime = Utils::defaultTimeto12hour(defaultTime);
+                defaultSelectedTime = Utils::defaultTimeto24hour(defaultSelectedTime);
 			}
+            else
+            {
+                defaultTime = defaultSelectedTime = Utils::defaultTimeto24hour(defaultTime);
+            }
 			uiTimeInput->Property("text", Formatter() << "\"" << defaultTime << "\"");
-            uiTimeInput->Property("property string selectedTime", Formatter() << "\"" << value << "\"");
+            uiTimeInput->Property("property string selectedTime", Formatter() << "\"" << defaultSelectedTime << "\"");
 		}
 
 		if (!input->GetIsVisible())
