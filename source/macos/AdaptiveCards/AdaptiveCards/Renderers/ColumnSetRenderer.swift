@@ -20,7 +20,6 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         let totalColumns = columnSet.getColumns().count
         var columnViews: [NSView] = []
         for (index, column) in columnSet.getColumns().enumerated() {
-//            if column.getItems().isEmpty {
             let width = ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth())
             
             if width.isWeighted { numberOfWeightedItems += 1 }
