@@ -86,6 +86,7 @@ namespace RendererQml
             uiFrame->Property("property var imgSource", "\"" + card->GetBackgroundImage()->GetUrl() + "\"");
 			uiFrame->Property("anchors.fill", "parent");
 			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context, "parent.imgSource")->ToString());
+			uiCard->Property("clip", "true");
 			uiCard->AddChild(uiFrame);
 		}
 
@@ -1463,6 +1464,7 @@ namespace RendererQml
 		//TODO: Height(Stretch/Automatic)
 
 		std::shared_ptr<QmlTag> maskTag;
+		std::shared_ptr<QmlTag> maskSourceTag;
 		auto uiRectangle = std::make_shared<QmlTag>("Rectangle");
 		auto uiImage = std::make_shared<QmlTag>("Image");
 
@@ -1574,7 +1576,11 @@ namespace RendererQml
 			break;
 		case AdaptiveCards::ImageStyle::Person:
 			maskTag = std::make_shared<QmlTag>("OpacityMask");
-			maskTag->Property("maskSource", "parent");
+			maskSourceTag = std::make_shared<QmlTag>("Rectangle");
+			maskSourceTag->Property("width", image->GetId() + ".width");
+			maskSourceTag->Property("height", image->GetId() + ".height");
+			maskSourceTag->Property("radius", image->GetId() + ".radius");
+			maskTag->Property("maskSource", maskSourceTag->ToString());
 			uiImage->Property("layer.enabled", "true");
 			uiImage->Property("layer.effect", maskTag->ToString());
 			uiRectangle->Property("radius", "width/2");
@@ -2244,16 +2250,14 @@ namespace RendererQml
 
         auto backgroundRect = std::make_shared<QmlTag>("Rectangle");
         backgroundRect->Property("id", Formatter() << id << "_bgRect");
+		backgroundRect->Property("clip", "true");
 
         const auto hasBackgroundImage = cardElement->GetBackgroundImage() != nullptr;
         if (hasBackgroundImage)
         {
             uiContainer->Property("readonly property bool hasBackgroundImage", "true");
             uiContainer->Property("property var imgSource", "\"" + cardElement->GetBackgroundImage()->GetUrl() + "\"");
-            auto backgroundImg = std::make_shared<QmlTag>("Image");
-            backgroundImg->Property("cache", "false");
-            backgroundImg->Property("anchors.fill", "parent");
-            backgroundImg->Property("source", Formatter() << id << ".imgSource");
+			auto backgroundImg = AdaptiveCardQmlRenderer::GetBackgroundImage(cardElement->GetBackgroundImage(), context, id + ".imgSource");
             backgroundRect->AddChild(backgroundImg);            
         }
         else if (cardElement->GetStyle() != AdaptiveCards::ContainerStyle::None)
@@ -2700,21 +2704,27 @@ namespace RendererQml
 			uiImage->Property("fillMode", "Image.Tile");
 			uiImage->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
 			uiImage->Property("verticalAlignment", Utils::GetVerticalAlignment(verticalAlignment));
+			uiImage->Property("anchors.fill", "parent");
 			break;
 		case AdaptiveCards::ImageFillMode::RepeatHorizontally:
+			uiImage->Property("width", "parent.width");
+			uiImage->Property("height", "implicitHeight");
 			uiImage->Property("fillMode", "Image.TileHorizontally");
 			uiImage->Property("horizontalAlignment", "Qt.AlignLeft");
-			uiImage->Property("verticalAlignment", Utils::GetVerticalAlignment(verticalAlignment));
+			uiImage->Property("anchors." + Utils::GetVerticalAnchors(verticalAlignment), "parent." + Utils::GetVerticalAnchors(verticalAlignment));
 			break;
 		case AdaptiveCards::ImageFillMode::RepeatVertically:
+			uiImage->Property("width", "implicitWidth");
+			uiImage->Property("height", "parent.height");
 			uiImage->Property("fillMode", "Image.TileVertically");
-			uiImage->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
+			uiImage->Property("anchors." + Utils::GetHorizontalAnchors(horizontalAlignment), "parent." + Utils::GetHorizontalAnchors(horizontalAlignment));
 			uiImage->Property("verticalAlignment", "Qt.AlignTop");
 			break;
 		case AdaptiveCards::ImageFillMode::Cover:
 		default:
 			uiImage->Property("fillMode", "Image.PreserveAspectCrop");
 			uiImage->Property("verticalAlignment", Utils::GetVerticalAlignment(verticalAlignment));
+			uiImage->Property("anchors.fill", "parent");
 			break;
 		}
 
