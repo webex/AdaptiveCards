@@ -24,22 +24,9 @@
         {
             "type": "Input.Time",
             "id": "time4",
-            "min": "09:00:32",
-            "max": "17:00:43",
-            "value": "15:30"
-        },
-        {
-            "type": "Input.Time",
-            "id": "time5",
             "min": "09:00",
             "max": "17:00",
-            "value": "15:30:43"
-        },
-        {
-            "type": "Input.Time",
-            "id": "time6",
-            "min": "09:00:32",
-            "max": "08:00:43"
+            "value": "15:30"
         }
     ],
     "actions": [
