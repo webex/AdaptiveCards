@@ -4,10 +4,14 @@ import AppKit
 class ACRDateField: NSView, InputHandlingViewProtocol {
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
+        formatter.dateFormat = isTimeMode ? "HH:mm:ss" : "yyyy-MM-dd"
+        return formatter
+    }()
+    private lazy var dateFormatterSubmit: DateFormatter = {
+        let formatter = DateFormatter()
         formatter.dateFormat = isTimeMode ? "HH:mm" : "yyyy-MM-dd"
         return formatter
     }()
-    
     private lazy var dateFormatterOut: DateFormatter = {
         let formatter = DateFormatter()
         if isTimeMode {
@@ -72,7 +76,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         guard !textField.stringValue.isEmpty, let selectedDate = selectedDate else {
             return ""
         }
-        return dateFormatter.string(from: selectedDate)
+        return dateFormatterSubmit.string(from: selectedDate)
     }
     
     var key: String {
@@ -152,6 +156,10 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         datePickerTextfield.action = #selector(handleDateAction(_:))
         stackview.addArrangedSubview(datePickerTextfield)
         stackview.addArrangedSubview(datePickerCalendar)
+        if isTimeMode {
+            stackview.spacing = 3
+            stackview.edgeInsets.bottom = 3
+        }
         let popoverView = NSViewController()
         popoverView.view = stackview
         popoverView.view.frame = frame

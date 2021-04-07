@@ -15,7 +15,7 @@ class InputTimeRendererTest: XCTestCase {
     }
     
     func testRendererSetsValue() {
-        let val: String = "15:30"
+        let val: String = "15:30:32"
         inputTime = .make(value: val)
 
         let inputTimeField = renderTimeInput()
@@ -31,7 +31,7 @@ class InputTimeRendererTest: XCTestCase {
     }
     
     func testRendererForMinValue() {
-        let minVal: String = "09:30"
+        let minVal: String = "09:30:23"
         inputTime = .make(min: minVal)
 
         let inputTimeField = renderTimeInput()
@@ -39,7 +39,7 @@ class InputTimeRendererTest: XCTestCase {
     }
 
     func testRendererForMaxValue() {
-        let maxValue: String = "16:00"
+        let maxValue: String = "16:00:23"
         inputTime = .make(max: maxValue)
 
         let inputTimeField = renderTimeInput()
