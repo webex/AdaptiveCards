@@ -16,8 +16,8 @@ public class TestUtils {
         "https://messagecardplayground.azurewebsites.net/assets/CircleBlue_flight.png": NSSize(width: 25.0, height: 25.0),
         "https://messagecardplayground.azurewebsites.net/assets/SeaTacMap.png": NSSize(width: 649.0, height: 253.0),
         "https://adaptivecards.io/content/pending.png": NSSize(width: 168, height: 50),
-        "https://adaptivecards.io/content/up.png ": NSSize(width: 40, height: 40),
-        "https://adaptivecards.io/content/down.png ": NSSize(width: 40, height: 40),
+        "https://adaptivecards.io/content/up.png": NSSize(width: 40, height: 40),
+        "https://adaptivecards.io/content/down.png": NSSize(width: 40, height: 40),
         "https://messagecardplayground.azurewebsites.net/assets/TxP_Flight.png": NSSize(width: 375, height: 132),
         "https://messagecardplayground.azurewebsites.net/assets/smallairplane.png": NSSize(width: 24, height: 24),
         "https://messagecardplayground.azurewebsites.net/assets/graydot2x2.png": NSSize(width: 2.0, height: 2.0),
@@ -42,6 +42,10 @@ public class TestUtils {
         "https://adaptivecards.io/content/AlkiBeach.jpg": NSSize(width: 500.0, height: 500.0),
         "https://adaptivecards.io/content/uparrow.png": NSSize(width: 20.0, height: 11.0),
         "https://messagecardplayground.azurewebsites.net/assets/TxP_Background.png": NSSize(width: 375.0, height: 132.0),
-        "https://messagecardplayground.azurewebsites.net/assets/Mostly%20Cloudy-Background.jpg": NSSize(width: 400.0, height: 400.0)
+        "https://messagecardplayground.azurewebsites.net/assets/Mostly%20Cloudy-Background.jpg": NSSize(width: 400.0, height: 400.0),
+        "https://adaptivecards.io/content/send.png": NSSize(width: 69, height: 70),
+        "https://unsplash.it/80?image=1082": NSSize(width: 80, height: 80),
+        "https://unsplash.it/80?image=1083": NSSize(width: 80, height: 80),
+        "https://unsplash.it/80?image=1080": NSSize(width: 80, height: 80)
     ]
 }
