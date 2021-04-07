@@ -1,5 +1,7 @@
 #include "ImageDownloader.h"
 
+using namespace RendererQml;
+
 size_t ImageDownloader::callbackfunction(void* ptr, size_t size, size_t nmemb, void* userdata)
 {
 	FILE* stream = (FILE*)userdata;
@@ -106,27 +108,39 @@ int ImageDownloader::wait_if_needed(CURLM* multi_handle, timeval& timeout)
 	return NumAvailableSockets;
 }
 
-bool ImageDownloader::download_multiple_jpeg(const std::string& imgName, char* url)
+bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::string> &urls)
 {
-    const std::string imgSource = SolutionDir + imageFolder + imgName;
-	FILE* fp = fopen(Convert(imgSource), "wb");
-	if (!fp)
-	{
-		printf("!!! Failed to create file on the disk\n");
-        return false;
-	}
-
 	CURLM* multi_handle;
 	int still_running = 0;
 	multi_handle = curl_multi_init();
 
-	CURL* curlCtx = curl_easy_init();
-	curl_easy_setopt(curlCtx, CURLOPT_URL, url);
-	curl_easy_setopt(curlCtx, CURLOPT_WRITEDATA, fp);
-	curl_easy_setopt(curlCtx, CURLOPT_WRITEFUNCTION, callbackfunction);
-	curl_easy_setopt(curlCtx, CURLOPT_FOLLOWLOCATION, 1);
+	std::map<FILE*, CURL*> easy_handles;
+	FILE* fp;
+	CURL* easy_handle;
+	std::string imgSource;
+	std::string imageFormat;
 
-	curl_multi_add_handle(multi_handle, curlCtx);
+	for (auto& url : urls)
+	{
+		imageFormat = Utils::splitString(url.second, '.').back();
+		imgSource = SolutionDir + imageFolder + url.first + "." + imageFormat;
+		fp = fopen(Convert(imgSource), "wb");
+		if (!fp)
+		{
+			printf("!!! Failed to create file on the disk\n");
+			return false;
+		}
+
+		easy_handle = curl_easy_init();
+		//Note:The url passed should be of type char*
+		curl_easy_setopt(easy_handle, CURLOPT_URL, url.second.c_str());
+		curl_easy_setopt(easy_handle, CURLOPT_WRITEDATA, fp);
+		curl_easy_setopt(easy_handle, CURLOPT_WRITEFUNCTION, callbackfunction);
+		curl_easy_setopt(easy_handle, CURLOPT_FOLLOWLOCATION, 1);
+
+		easy_handles.insert(std::pair<FILE*, CURL*>(fp, easy_handle));
+		curl_multi_add_handle(multi_handle, easy_handle);
+	}
 
 	curl_multi_perform(multi_handle, &still_running);
 
@@ -143,9 +157,11 @@ bool ImageDownloader::download_multiple_jpeg(const std::string& imgName, char* u
 	
 	curl_multi_cleanup(multi_handle);
 
-	curl_easy_cleanup(curlCtx);
-
-	fclose(fp);
+	for (auto& handle : easy_handles)
+	{
+		curl_easy_cleanup(handle.second);
+		fclose(handle.first);
+	}
 
     return true;
 }

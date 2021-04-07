@@ -112,9 +112,9 @@ QString SampleCardModel::generateQml(const QString& cardQml)
     std::shared_ptr<RenderedQmlAdaptiveCard> result = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard());
     const auto generatedQml = result->GetResult();
 
-    //Temp
-    ImageDownloader::clearImageFolder();
-
+    //SYNCHRONOUS
+    /*ImageDownloader::clearImageFolder();
+	
 	generatedQml->Transform([&urls](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
@@ -174,9 +174,28 @@ QString SampleCardModel::generateQml(const QString& cardQml)
             }
             //Temp 
 		}
-	});
+	});*/
 
-    //rehostImage(urls);
+	//ASYNCHRONOUS
+	generatedQml->Transform([&urls](QmlTag& genQml)
+	{
+		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
+		{
+			auto url = genQml.GetProperty("property var imgSource");
+			urls[genQml.GetId()] = Utils::Replace(url, "\"", "");      
+		}
+		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
+		{
+			auto url = genQml.GetProperty("source");
+			urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
+		}
+		else if (genQml.GetElement() == "Button" && genQml.HasProperty("readonly property bool hasIconUrl"))
+		{
+			auto url = genQml.GetProperty("property var imgSource");
+			urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
+		}
+	});
+    rehostImage(urls);
     const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
 }
@@ -185,16 +204,10 @@ void SampleCardModel::rehostImage(const std::map<std::string, std::string>& urls
 {
     ImageDownloader::clearImageFolder();
 
-    for (auto& url : urls)
-    {
-        char* imgUrl = ImageDownloader::Convert(url.second);
-        const std::string imageName = url.first + ".jpg";
-
-        if(!ImageDownloader::download_jpeg(imageName, imgUrl))
-        {
-            printf("!! Failed to download file!");
-        }
-    }
+	if (!ImageDownloader::download_multiple_jpeg(urls))
+	{
+		printf("!! Failed to download file!");
+	}
 }
 
 void SampleCardModel::setTheme(const QString& theme)
