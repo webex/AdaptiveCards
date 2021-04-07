@@ -446,6 +446,8 @@
 		08FFAC322608DBCA00296D62 /* FakeOpenURLAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FFAC312608DBCA00296D62 /* FakeOpenURLAction.swift */; };
 		13B13E4C25E750CB005D9380 /* FakeInputDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B13E4B25E750CB005D9380 /* FakeInputDate.swift */; };
 		13B13E4E25E75239005D9380 /* InputDateRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B13E4D25E75239005D9380 /* InputDateRendererTests.swift */; };
+		13BE7603261C5F4600FC9636 /* calendar-month-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 13BE7602261C5F4600FC9636 /* calendar-month-light.png */; };
+		13BE7607261C7EDA00FC9636 /* calendar-month-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 13BE7606261C7EDA00FC9636 /* calendar-month-dark.png */; };
 		13C1F7EE25FF0DFF00B59001 /* ActionShowCardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C1F7ED25FF0DFF00B59001 /* ActionShowCardRenderer.swift */; };
 		13C41B0725F226C9008A1F2E /* InputTimeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C41B0625F226C9008A1F2E /* InputTimeRenderer.swift */; };
 		13C41B0925F257C3008A1F2E /* FakeInputTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C41B0825F257C2008A1F2E /* FakeInputTime.swift */; };
@@ -455,6 +457,7 @@
 		2806E8EC26010C3800CF7A40 /* ActionSubmitRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E8EB26010C3800CF7A40 /* ActionSubmitRenderer.swift */; };
 		2806E8F62608886F00CF7A40 /* ActionSubmitRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E8F52608886F00CF7A40 /* ActionSubmitRendererTests.swift */; };
 		2806E94826122F0D00CF7A40 /* SelectActionHandlingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E94726122F0D00CF7A40 /* SelectActionHandlingProtocol.swift */; };
+		2806E986261AEE4A00CF7A40 /* UnknownElementRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */; };
 		2871B11825DD20A30040AB27 /* FakeTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B11725DD20A30040AB27 /* FakeTextInput.swift */; };
 		2871B11D25DD225C0040AB27 /* ACRMultilineInputTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2871B11C25DD225C0040AB27 /* ACRMultilineInputTextView.xib */; };
 		2871B12A25DD27F10040AB27 /* ACRMultilineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */; };
@@ -991,6 +994,8 @@
 		08FFAC312608DBCA00296D62 /* FakeOpenURLAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeOpenURLAction.swift; sourceTree = "<group>"; };
 		13B13E4B25E750CB005D9380 /* FakeInputDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeInputDate.swift; sourceTree = "<group>"; };
 		13B13E4D25E75239005D9380 /* InputDateRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputDateRendererTests.swift; sourceTree = "<group>"; };
+		13BE7602261C5F4600FC9636 /* calendar-month-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "calendar-month-light.png"; sourceTree = "<group>"; };
+		13BE7606261C7EDA00FC9636 /* calendar-month-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "calendar-month-dark.png"; sourceTree = "<group>"; };
 		13C1F7ED25FF0DFF00B59001 /* ActionShowCardRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionShowCardRenderer.swift; sourceTree = "<group>"; };
 		13C41B0625F226C9008A1F2E /* InputTimeRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTimeRenderer.swift; sourceTree = "<group>"; };
 		13C41B0825F257C2008A1F2E /* FakeInputTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeInputTime.swift; sourceTree = "<group>"; };
@@ -1000,6 +1005,7 @@
 		2806E8EB26010C3800CF7A40 /* ActionSubmitRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSubmitRenderer.swift; sourceTree = "<group>"; };
 		2806E8F52608886F00CF7A40 /* ActionSubmitRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSubmitRendererTests.swift; sourceTree = "<group>"; };
 		2806E94726122F0D00CF7A40 /* SelectActionHandlingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectActionHandlingProtocol.swift; sourceTree = "<group>"; };
+		2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownElementRenderer.swift; sourceTree = "<group>"; };
 		2871B11725DD20A30040AB27 /* FakeTextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeTextInput.swift; sourceTree = "<group>"; };
 		2871B11C25DD225C0040AB27 /* ACRMultilineInputTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ACRMultilineInputTextView.xib; sourceTree = "<group>"; };
 		2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACRMultilineInputTextView.swift; sourceTree = "<group>"; };
@@ -1682,6 +1688,7 @@
 				29050BFD25D59A3F00AF3CA9 /* InputToggleRenderer.swift */,
 				29BA82D625E265F4000B7578 /* ChoiceSetInputRenderer.swift */,
 				A01CA38525DFE3E400A07E21 /* RichTextBlockRenderer.swift */,
+				2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */,
 				0872608F25E6AF530036061C /* ColumnSetRenderer.swift */,
 				0872609425E6AF5F0036061C /* ColumnRenderer.swift */,
 				A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */,
@@ -1783,6 +1790,8 @@
 		81A94A6E25FF80D60018213A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				13BE7602261C5F4600FC9636 /* calendar-month-light.png */,
+				13BE7606261C7EDA00FC9636 /* calendar-month-dark.png */,
 				81C037282604B1F700B33324 /* cisco.jpg */,
 				81A94A7825FF86E70018213A /* arrowup.png */,
 				81A94A7725FF86E70018213A /* attachment.png */,
@@ -2173,6 +2182,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13BE7603261C5F4600FC9636 /* calendar-month-light.png in Resources */,
+				13BE7607261C7EDA00FC9636 /* calendar-month-dark.png in Resources */,
 				81A94A7025FF80D60018213A /* arrowdown.png in Resources */,
 				81C037292604B1F700B33324 /* cisco.jpg in Resources */,
 				08299F9E25AF279E00799C66 /* AdaptiveCards.xcconfig in Resources */,
@@ -2250,6 +2261,7 @@
 				088C673C2615C2B00070186C /* ACRContentStackView.swift in Sources */,
 				28D7A57725F1E7E800AEA09C /* ACRCollectionViewItem.swift in Sources */,
 				28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */,
+				2806E986261AEE4A00CF7A40 /* UnknownElementRenderer.swift in Sources */,
 				28CE1A8225E7557400BFCFD9 /* ACRFactTextField.swift in Sources */,
 				13C41B0725F226C9008A1F2E /* InputTimeRenderer.swift in Sources */,
 				28CE1A4425DFD64B00BFCFD9 /* FactSetRenderer.swift in Sources */,
