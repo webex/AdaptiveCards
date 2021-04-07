@@ -362,7 +362,7 @@ namespace RendererQml
         {
             time_split[0] = std::to_string(stoi(time_split[0]) - 12);
         }
-        else if (stoi(time_split[0]) > 12 == 0)
+        else if (stoi(time_split[0]) == 0)
         {
             time_split[0] = std::to_string(12);
         }
