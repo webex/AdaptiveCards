@@ -60,8 +60,8 @@ class ACRColumnView: ACRContentStackView {
         return view
     }()
     
-    override init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?, paddingCollection: Bool) {
-        super.init(style: style, parentStyle: parentStyle, hostConfig: hostConfig, superview: superview, paddingCollection: paddingCollection)
+    override init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?, needsPadding: Bool) {
+        super.init(style: style, parentStyle: parentStyle, hostConfig: hostConfig, superview: superview, needsPadding: needsPadding)
         initialize()
     }
     
