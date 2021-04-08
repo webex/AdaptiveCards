@@ -120,7 +120,6 @@ bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::st
 	std::string imgSource;
 	std::string imageFormat;
 
-	//for (auto& url : urls)
 	std::for_each(urls.begin(), urls.end(), [&](auto& url) 
 	{
 		imageFormat = Utils::splitString(url.second, '.').back();
