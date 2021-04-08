@@ -120,7 +120,8 @@ bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::st
 	std::string imgSource;
 	std::string imageFormat;
 
-	for (auto& url : urls)
+	//for (auto& url : urls)
+	std::for_each(urls.begin(), urls.end(), [&](auto& url) 
 	{
 		imageFormat = Utils::splitString(url.second, '.').back();
 		imgSource = SolutionDir + imageFolder + url.first + "." + imageFormat;
@@ -137,11 +138,10 @@ bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::st
 		curl_easy_setopt(easy_handle, CURLOPT_WRITEDATA, fp);
 		curl_easy_setopt(easy_handle, CURLOPT_WRITEFUNCTION, callbackfunction);
 		curl_easy_setopt(easy_handle, CURLOPT_FOLLOWLOCATION, 1);
-		//curl_easy_setopt(easy_handle, CURLOPT_NOSIGNAL, 1);
 
 		easy_handles.insert(std::pair<FILE*, CURL*>(fp, easy_handle));
 		curl_multi_add_handle(multi_handle, easy_handle);
-	}
+	});
 
 	curl_multi_perform(multi_handle, &still_running);
 	
