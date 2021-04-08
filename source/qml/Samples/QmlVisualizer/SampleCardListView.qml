@@ -81,7 +81,7 @@ Frame{
                         cardListView.currentIndex = index;
                         listItemClicked(index, model.CardJson);
                         reloadCard(_aModel.generateQml(model.CardJson));
-						_aModel.rehostImage();
+						//_aModel.rehostImage();
                     }
                 }
             }
