@@ -10,7 +10,7 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
             return NSView()
         }
         
-        let columnView = ACRColumnView(style: column.getStyle(), parentStyle: style, hostConfig: hostConfig, superview: parentView)
+        let columnView = ACRColumnView(style: column.getStyle(), parentStyle: style, hostConfig: hostConfig, superview: parentView, paddingCollection: column.getPadding())
         columnView.translatesAutoresizingMaskIntoConstraints = false
         columnView.setWidth(ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth()))
         columnView.bleed = column.getBleed()

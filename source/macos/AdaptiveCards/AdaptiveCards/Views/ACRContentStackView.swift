@@ -11,6 +11,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var stackViewTrailingConstraint: NSLayoutConstraint?
     private var stackViewTopConstraint: NSLayoutConstraint?
     private var stackViewBottomConstraint: NSLayoutConstraint?
+    private var paddingCollection = true
     
     let style: ACSContainerStyle
     let hostConfig: ACSHostConfig
@@ -55,12 +56,13 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         initialize()
     }
     
-    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?) {
+    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?, paddingCollection: Bool) {
         self.hostConfig = hostConfig
         self.style = style
+        self.paddingCollection = paddingCollection
         super.init(frame: .zero)
         initialize()
-        if style != .none && style != parentStyle {
+        if self.paddingCollection {
             if let bgColor = hostConfig.getBackgroundColor(for: style) {
                 layer?.backgroundColor = bgColor.cgColor
             }
