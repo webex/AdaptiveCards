@@ -98,14 +98,17 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
     }
     
     func configUpdateForImage(image: NSImage?, imageView: NSImageView) {
-        guard let superView = imageView.superview as? ACRContentHoldingView, let imageSize = image?.size else {
+        guard let superView = imageView.superview as? ACRContentHoldingView, let imageSize = image?.absoluteSize else {
                 logError("superView or image is nil")
                 return
         }
         
-        let imageProperties = superView.imageProperties
-        imageProperties?.updateContentSize(size: imageSize)
-        let cgSize = imageProperties?.contentSize ?? CGSize.zero
+        guard let imageProperties = superView.imageProperties else {
+            logError("imageProperties is null")
+            return
+        }
+        imageProperties.updateContentSize(size: imageSize)
+        let cgSize = imageProperties.contentSize ?? CGSize.zero
         superView.isImageSet = true
         
         let priority = NSLayoutConstraint.Priority.defaultHigh // TODO Need to revisit this for a more generalised logic
@@ -119,10 +122,12 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         
         guard cgSize.width > 0, cgSize.height > 0 else { return }
         
-        constraints.append(imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: cgSize.width / cgSize.height, constant: 0))
-        constraints.append(imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: cgSize.height / cgSize.width, constant: 0))
-        constraints[2].priority = priority + 2
-        constraints[3].priority = priority + 2
+        if !imageProperties.hasExplicitDimensions {
+            constraints.append(imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: cgSize.width / cgSize.height, constant: 0))
+            constraints.append(imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: cgSize.height / cgSize.width, constant: 0))
+            constraints[2].priority = priority + 2
+            constraints[3].priority = priority + 2
+        }
         
         NSLayoutConstraint.activate(constraints)
                     
@@ -137,6 +142,12 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
 }
 
 class ImageView: NSImageView, ImageHoldingView {
+    override var intrinsicContentSize: NSSize {
+        guard let image = image else {
+            return .zero
+        }
+        return image.absoluteSize
+    }
     func setImage(_ image: NSImage) {
         if self.image == nil {
             // update constraints only when image view does not contain an image

@@ -30,12 +30,11 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
         }
         
-        textView.textContainer?.lineBreakMode = .byWordWrapping
+        textView.textContainer?.lineBreakMode = .byTruncatingTail
         let resolvedMaxLines = textBlock.getMaxLines()?.intValue ?? 0
         textView.textContainer?.maximumNumberOfLines = textBlock.getWrap() ? resolvedMaxLines : 1
     
         textView.textStorage?.setAttributedString(attributedString)
-        textView.font = FontUtils.getFont(for: hostConfig, with: BridgeTextUtils.convertTextBlock(toRichTextElementProperties: textBlock))
         textView.textContainer?.widthTracksTextView = true
         textView.backgroundColor = .clear
         

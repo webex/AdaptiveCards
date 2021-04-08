@@ -32,14 +32,13 @@ class ACRImageProperties: NSObject {
             acsImageSize = ACSImageSize.auto
         }
   
+        // update the content size based on image sizes and pixel dimensions
         contentSize = ImageUtils.getImageSizeAsCGSize(imageSize: acsImageSize,
                                                       width: pixelWidth,
                                                       height: pixelHeight,
                                                       with: config,
                                                       explicitDimensions: hasExplicitDimensions)
-        if image != nil {
-            updateContentSize(size: contentSize)
-        }
+        
         acsHorizontalAlignment = imageElement.getHorizontalAlignment()
     }
     
@@ -74,5 +73,14 @@ class ACRImageProperties: NSObject {
             newSize.height = contentSize.width * heightToWidthRatio
             contentSize = newSize
         }
+    }
+}
+extension NSImage {
+    var absoluteSize: NSSize {
+        guard !representations.isEmpty else {
+            return size
+        }
+        let info = representations[0]
+        return NSSize(width: info.pixelsWide, height: info.pixelsHigh)
     }
 }
