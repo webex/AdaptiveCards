@@ -2768,6 +2768,7 @@ namespace RendererQml
 		int bleedDownCount = 0;
 		int bleedMargin = 0;
 		int tempMargin = 0;
+		int maxBleedMargin = 0;
 
 		const auto bleedLeft = int(AdaptiveCards::ContainerBleedDirection::BleedLeft);
 		const auto bleedRight = int(AdaptiveCards::ContainerBleedDirection::BleedRight);
@@ -2882,36 +2883,21 @@ namespace RendererQml
 				if (uiElements[i]->HasProperty("readonly property int bleed"))
 				{
 					int bleedDirection = std::stoi(uiElements[i]->GetProperty("readonly property int bleed"));
-					//int canBleed = std::stoi(uiElements[i]->GetProperty("readonly property int canBleed"));
-
-					int heightAdded = 0;
 
 					if ((bleedDirection & bleedUp) == bleedUp && bleedUpCount != no_of_columns)
 					{
-						if (columnSet->GetPadding())
-						{
-							uiElements[i]->Property("y", Formatter() << "-" << margin);
-							bleedMargin += margin;
-						}
-						else
-						{
-
-						}
+						uiElements[i]->Property("y", Formatter() << "-" << margin);
+						bleedMargin += margin;
+						
 					}
 
 					if ((bleedDirection & bleedDown) == bleedDown && bleedDownCount != no_of_columns)
 					{
-						if (columnSet->GetPadding())
-						{
-							bleedMargin += margin;
-						}
-						else
-						{
-
-						}
+						bleedMargin += margin;
 					}
 				}
-				uiElements[i]->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight() + " << bleedMargin);
+				maxBleedMargin = std::max(bleedMargin, maxBleedMargin);
+				uiElements[i]->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight( " << uiElements[i]->HasProperty("readonly property int bleed") << " ) + " << bleedMargin);
 				heightString += ("clayout_" + uiElements[i]->GetProperty("id") + ".implicitHeight - " + std::to_string(bleedMargin) + "," + uiElements[i]->GetProperty("id") + ".minHeight, ");
 			}
 		}
@@ -2921,9 +2907,9 @@ namespace RendererQml
 			uiFrame->Property("readonly property int bleed", std::to_string(parentBleedDirection));
 		}
 
-		uiFrame->AddFunctions(Formatter() << "function getColumnSetHeight(){ var calculatedHeight = getColumnHeight();if(calculatedHeight >= minHeight - " << (tempMargin) << "){return calculatedHeight + " << (tempMargin) << "}else{return minHeight;}}");
+		uiFrame->AddFunctions(Formatter() << "function getColumnSetHeight(){ var calculatedHeight = getColumnHeight(true);if(calculatedHeight >= minHeight - (" << (tempMargin) << ")){return calculatedHeight + (" << (tempMargin) << ")}else{return minHeight;}}");
 
-		uiFrame->AddFunctions(Formatter() << "function getColumnHeight(){var calculatedHeight =  Math.max(" << heightString.substr(0, heightString.size() - 2) << "); if(calculatedHeight <= minHeight - " << (tempMargin) << "){return minHeight - " << (tempMargin) << "}else{return calculatedHeight;}}");
+		uiFrame->AddFunctions(Formatter() << "function getColumnHeight(bleed){var calculatedHeight =  Math.max(" << heightString.substr(0, heightString.size() - 2) << "); if(calculatedHeight < minHeight - (" << (tempMargin) << ")){return minHeight - (" << (tempMargin) << ")}else{if(calculatedHeight === 0 && !bleed){return calculatedHeight + " << maxBleedMargin << " }else{return calculatedHeight}}}");
 
 		return uiFrame;
 	}
