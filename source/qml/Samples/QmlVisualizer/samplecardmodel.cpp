@@ -117,7 +117,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
     //SYNCHRONOUS
     /*ImageDownloader::clearImageFolder();
 	
-	generatedQml->Transform([&](QmlTag& genQml)
+	generatedQml->Transform([this](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
@@ -179,7 +179,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 	});*/
 
 	//ASYNCHRONOUS
-	generatedQml->Transform([&](QmlTag& genQml)
+	generatedQml->Transform([this](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
