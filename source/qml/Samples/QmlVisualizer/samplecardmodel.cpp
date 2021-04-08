@@ -105,7 +105,9 @@ std::shared_ptr<AdaptiveCards::HostConfig> SampleCardModel::getHostConfig()
 
 QString SampleCardModel::generateQml(const QString& cardQml)
 {
-    std::map<std::string, std::string> urls;
+    //Clearing the urls map to remove the image urls of the previously rendered card images
+	urls.clear();
+
     std::shared_ptr<int> imgCounter{ 0 };
 
     std::shared_ptr<AdaptiveCards::ParseResult> mainCard = AdaptiveCards::AdaptiveCard::DeserializeFromString(cardQml.toStdString(), "2.0");
@@ -115,7 +117,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
     //SYNCHRONOUS
     /*ImageDownloader::clearImageFolder();
 	
-	generatedQml->Transform([&urls](QmlTag& genQml)
+	generatedQml->Transform([&](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
@@ -177,12 +179,12 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 	});*/
 
 	//ASYNCHRONOUS
-	generatedQml->Transform([&urls](QmlTag& genQml)
+	generatedQml->Transform([&](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
 			auto url = genQml.GetProperty("property var imgSource");
-			urls[genQml.GetId()] = Utils::Replace(url, "\"", "");      
+			urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
 		}
 		else if (genQml.GetElement() == "Image" && genQml.HasProperty("readonly property bool isImage"))
 		{
@@ -195,12 +197,12 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 			urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
 		}
 	});
-    rehostImage(urls);
+	
     const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
 }
 
-void SampleCardModel::rehostImage(const std::map<std::string, std::string>& urls)
+void SampleCardModel::rehostImage()
 {
     ImageDownloader::clearImageFolder();
 
