@@ -5,8 +5,11 @@
 
 #include <windows.h>
 #include <shellapi.h>
+#include <mutex>
 
 using namespace RendererQml;
+
+std::mutex images_mutex;
 
 SampleCardModel::SampleCardModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -105,8 +108,7 @@ std::shared_ptr<AdaptiveCards::HostConfig> SampleCardModel::getHostConfig()
 
 QString SampleCardModel::generateQml(const QString& cardQml)
 {
-    //Clearing the urls map to remove the image urls of the previously rendered card images
-	std::map<std::string, std::string> urls;
+    std::map<std::string, std::string> urls;
 
     std::shared_ptr<int> imgCounter{ 0 };
 
@@ -197,25 +199,26 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 			urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
 		}
 	});
-	std::thread thread_object([&urls]() {
-		rehostImage(urls);
-		printf("Download done");
+
+	std::thread thread_object([urls]() {
+		images_mutex.lock();
+		const std::map<std::string, std::string> paths = rehostImage(urls);
+		printf("Number of Images downloaded: %d\n", paths.size());
+		images_mutex.unlock();
 		});
 
+	//Detaching the thread to make it asynchronous
 	thread_object.detach();
-    const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
+
+	const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
 }
 
-//TODO: Pass by reference for urls is resulting in a runtime exception 
-void SampleCardModel::rehostImage(const std::map<std::string, std::string> urls)
+const std::map<std::string, std::string> SampleCardModel::rehostImage(const std::map<std::string, std::string>& urls)
 {
-    ImageDownloader::clearImageFolder();
-
-	if (!ImageDownloader::download_multiple_jpeg(urls))
-	{
-		printf("!! Failed to download file!");
-	}
+	ImageDownloader::clearImageFolder();
+	const std::map<std::string, std::string> file_paths = ImageDownloader::download_multiple_jpeg(urls);
+	return file_paths;
 }
 
 void SampleCardModel::setTheme(const QString& theme)

@@ -27,7 +27,7 @@ class ImageDownloader
 	public:
 		static char* Convert(const std::string& s);
 		static bool download_jpeg(const std::string& imgName, char* url);
-		static bool download_multiple_jpeg(const std::map<std::string,std::string> &urls);
+		static const std::map<std::string, std::string> download_multiple_jpeg(const std::map<std::string,std::string> &urls);
 
 		static void clearImageFolder();
 	private:

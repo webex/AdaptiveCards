@@ -1,10 +1,10 @@
 #ifndef SAMPLECARDMODEL_H
 #define SAMPLECARDMODEL_H
 
-#include <AdaptiveCardQmlRenderer.h>
-#include <RenderedQmlAdaptiveCard.h>
-#include <ImageDownloader.h>
-#include <Utils.h>
+#include "AdaptiveCardQmlRenderer.h"
+#include "RenderedQmlAdaptiveCard.h"
+#include "ImageDownloader.h"
+#include "Utils.h"
 
 #include <QAbstractListModel>
 
@@ -52,9 +52,10 @@ private:
     static std::wstring toWString(const std::string& input);
     void actionOpenUrlButtonClicked(const QString& title, const QString& type, const QString& data);
     void actionSubmitButtonClicked(const QString& title, const QString& type, const QString& data);
-	static void rehostImage(const std::map<std::string, std::string> urls);
+	static const std::map<std::string, std::string> rehostImage(const std::map<std::string, std::string>& urls);
 
 	static const std::string getImagePath(const std::string& imageName);
+
 };
 
 #endif // SAMPLECARDMODEL_H

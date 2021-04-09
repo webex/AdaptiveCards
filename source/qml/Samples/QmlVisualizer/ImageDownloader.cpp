@@ -108,8 +108,9 @@ int ImageDownloader::wait_if_needed(CURLM* multi_handle, timeval& timeout)
 	return NumAvailableSockets;
 }
 
-bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::string> &urls)
+const std::map<std::string, std::string> ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::string> &urls)
 {
+	std::map<std::string, std::string> file_paths;
 	CURLM* multi_handle;
 	int still_running = 0;
 	multi_handle = curl_multi_init();
@@ -120,7 +121,7 @@ bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::st
 	std::string imgSource;
 	std::string imageFormat;
 
-	std::for_each(urls.begin(), urls.end(), [&](auto& url) 
+	for(auto &url:urls)
 	{
 		imageFormat = Utils::splitString(url.second, '.').back();
 		imgSource = SolutionDir + imageFolder + url.first + "." + imageFormat;
@@ -128,8 +129,10 @@ bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::st
 		if (!fp)
 		{
 			printf("!!! Failed to create file on the disk\n");
-			return false;
+			continue;
 		}
+
+		file_paths.insert(std::pair<std::string, std::string>(url.first, imgSource));
 
 		easy_handle = curl_easy_init();
 		//Note:The url passed should be of type char*
@@ -140,7 +143,7 @@ bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::st
 
 		easy_handles.insert(std::pair<FILE*, CURL*>(fp, easy_handle));
 		curl_multi_add_handle(multi_handle, easy_handle);
-	});
+	}
 
 	curl_multi_perform(multi_handle, &still_running);
 	
@@ -154,7 +157,7 @@ bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::st
 			curl_multi_perform(multi_handle, &still_running);
 		} 
 	}
-	
+
 	curl_multi_cleanup(multi_handle);
 
 	for (auto& handle : easy_handles)
@@ -163,7 +166,7 @@ bool ImageDownloader::download_multiple_jpeg(const std::map<std::string, std::st
 		fclose(handle.first);
 	}
 
-    return true;
+    return file_paths;
 }
 
 void ImageDownloader::clearImageFolder()
