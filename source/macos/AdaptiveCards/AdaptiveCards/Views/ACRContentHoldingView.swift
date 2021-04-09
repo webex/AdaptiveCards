@@ -7,7 +7,6 @@ class ACRContentHoldingView: NSView, SelectActionHandlingProtocol {
     private weak var _heightConstraint: NSLayoutConstraint?
     weak var imageView: NSImageView?
     var imageProperties: ACRImageProperties?
-    var isVisible = true
     var target: TargetHandler?
     
     var isImageSet = false
@@ -52,74 +51,27 @@ class ACRContentHoldingView: NSView, SelectActionHandlingProtocol {
     
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
+        guard let hasExpilicitDimension = imageProperties?.hasExplicitDimensions else {
+            // assuming no explicit pixel height and width is provided when imageProperties not set
+            setWidthConstraintWithSuperView()
+            return
+        }
+        
+        if !hasExpilicitDimension {
+            setWidthConstraintWithSuperView()
+        }
+    }
+
+    private func setWidthConstraintWithSuperView() {
         guard let superView = self.superview else { return }
-        if !isImageSet {
+        if isImageSet {
+            // when actual image or its dimensions are available
             if imageProperties?.acsImageSize != .stretch {
                 widthAnchor.constraint(greaterThanOrEqualTo: superView.widthAnchor).isActive = true
             } else {
                 widthAnchor.constraint(equalTo: superView.widthAnchor).isActive = true
             }
         }
-    }
-    
-    func configureHeight() {
-        var shouldUpdate = false
-        if !(imageProperties?.hasExplicitDimensions ?? false) && _heightConstraint == nil {
-            setHeightConstraint()
-            shouldUpdate = true
-        }
-
-        if imageProperties?.acsImageSize == ACSImageSize.stretch {
-            if _heightConstraint != nil && _imageViewHeightConstraint != nil {
-                shouldUpdate = false
-            }
-
-            if _heightConstraint == nil {
-                setHeightConstraint()
-            }
-
-            if _imageViewHeightConstraint == nil {
-                setImageViewHeightConstraint()
-            }
-        }
-
-        if shouldUpdate {
-            _viewgroup?.invalidateIntrinsicContentSize()
-        }
-    }
-
-    // update the intrinsic content size when the width become available
-    private func updateIntrinsicContentSizeOfSelfAndViewGroup() {
-        var width = imageProperties?.contentSize.width ?? 0
-        if width > 0 {
-            if imageProperties?.acsImageSize == ACSImageSize.stretch || (width > self.frame.size.width) {
-                width = self.frame.size.width
-            }
-        }
-
-        var height: CGFloat = 1
-
-        let ratios = ImageUtils.getAspectRatio(from: imageProperties?.contentSize ?? CGSize.zero)
-        height = width * ratios.height
-        // update it to the new value
-        imageProperties?.contentSize = CGSize(width: width, height: height)
-    }
-
-    private func setHeightConstraint() {
-        updateIntrinsicContentSizeOfSelfAndViewGroup()
-        _heightConstraint = setHeightConstraintUtil(heightAnchor: heightAnchor )
-    }
-
-    private func setImageViewHeightConstraint() {
-        // set new height anchor to the height of new intrinsic contentsize
-        _imageViewHeightConstraint = setHeightConstraintUtil(heightAnchor: self.imageView?.heightAnchor ?? NSLayoutDimension())
-    }
-
-    private func setHeightConstraintUtil(heightAnchor: NSLayoutDimension) -> NSLayoutConstraint {
-        let constraint = heightAnchor.constraint(equalToConstant: imageProperties?.contentSize.height ?? 0)
-        constraint.priority = NSLayoutConstraint.Priority(rawValue: 999)
-        constraint.isActive = true
-        return constraint
     }
     
     override func mouseDown(with event: NSEvent) {

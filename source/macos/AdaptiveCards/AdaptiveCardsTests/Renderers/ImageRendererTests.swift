@@ -78,6 +78,23 @@ class ImageRendererTests: XCTestCase {
         XCTAssertEqual(contentView.imageProperties?.contentSize.width, CGFloat(truncating: width))
     }
     
+    func testRendererSetsPixelHeight() {
+        let height : NSNumber = 50
+        fakeImageView = .make(pixelHeight: height)
+        
+        let contentView = renderImageView()
+        XCTAssertEqual(contentView.imageProperties?.contentSize.height, CGFloat(truncating: height))
+    }
+    
+    func testRendererSetsExplicitDimensionsWhenImageSizeIsAlsoGiven() {
+        let width : NSNumber = 50
+        fakeImageView = .make(imageSize: .large, pixelWidth: width)
+        
+        let contentView = renderImageView()
+        XCTAssertEqual(contentView.imageProperties?.contentSize.width, CGFloat(truncating: width))
+    }
+    
+    
     func testRendererSetsExplicitDimensions() {
         let height : NSNumber = 100
         fakeImageView = .make(pixelHeight: height)

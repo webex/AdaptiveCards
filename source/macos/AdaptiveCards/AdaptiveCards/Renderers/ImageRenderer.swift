@@ -25,7 +25,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         
         rootView.registerImageHandlingView(imageView, for: url)
       
-        let imageProperties = ACRImageProperties(element: imageElement, config: hostConfig, image: imageView.image, parentView: parentView)
+        let imageProperties = ACRImageProperties(element: imageElement, config: hostConfig, parentView: parentView)
         let cgsize = imageProperties.contentSize
 
         // Setting up ImageView based on Image Properties
@@ -90,7 +90,6 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             wrappingView.isPersonStyle = true
         }
         
-        wrappingView.isVisible = imageElement.getIsVisible()
         wrappingView.setupSelectAction(imageElement.getSelectAction(), rootView: rootView)
         
         return wrappingView
