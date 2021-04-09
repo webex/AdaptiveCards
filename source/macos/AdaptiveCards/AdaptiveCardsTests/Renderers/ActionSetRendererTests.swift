@@ -66,7 +66,7 @@ class ActionSetRendererTests: XCTestCase {
     }
     
     private func renderActionSetView() -> ACRActionSetView {
-        let view = actionSetRenderer.render(element: actionSet, with: hostConfig, style: .default, rootView: ACRView(style: .default, hostConfig: hostConfig), parentView: NSView(), inputs: [])
+        let view = actionSetRenderer.render(element: actionSet, with: hostConfig, style: .default, rootView: ACRView(style: .default, hostConfig: hostConfig), parentView: NSView(), inputs: [], config: config)
         
         XCTAssertTrue(view is ACRActionSetView)
         guard let actionSetView = view as? ACRActionSetView else { fatalError() }

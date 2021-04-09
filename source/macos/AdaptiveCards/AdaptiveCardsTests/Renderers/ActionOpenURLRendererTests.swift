@@ -44,7 +44,7 @@ class ActionOpenURLRendererTests: XCTestCase {
     }
     
     private func renderButton() -> ACRButton {
-        let view = actionOpenURLRenderer.render(action: actionOpenURL, with: hostConfig, style: .default, rootView: acrView, parentView: NSView(), inputs: [])
+        let view = actionOpenURLRenderer.render(action: actionOpenURL, with: hostConfig, style: .default, rootView: acrView, parentView: NSView(), inputs: [], config: config)
         
         XCTAssertTrue(view is ACRButton)
         guard let button = view as? ACRButton else { fatalError() }

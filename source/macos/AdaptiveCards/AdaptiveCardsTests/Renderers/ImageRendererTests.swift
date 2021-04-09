@@ -87,7 +87,7 @@ class ImageRendererTests: XCTestCase {
     }
     
     private func renderImageView() -> ACRContentHoldingView {
-        let view = imageRenderer.render(element: fakeImageView, with: hostConfig, style: .default, rootView: fakeACRView, parentView: fakeACRView, inputs: [])
+        let view = imageRenderer.render(element: fakeImageView, with: hostConfig, style: .default, rootView: fakeACRView, parentView: fakeACRView, inputs: [], config: config)
         
         XCTAssertTrue(view is ACRContentHoldingView)
         guard let contentView = view as? ACRContentHoldingView else { fatalError() }

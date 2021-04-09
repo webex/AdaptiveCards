@@ -96,7 +96,7 @@ class ActionSubmitRendererTests: XCTestCase {
     
     
     private func renderButton() -> ACRButton {
-        let view = actionSubmitRenderer.render(action: actionSubmit, with: hostConfig, style: .default, rootView: acrView, parentView: NSView(), inputs: [])
+        let view = actionSubmitRenderer.render(action: actionSubmit, with: hostConfig, style: .default, rootView: acrView, parentView: NSView(), inputs: [], config: config)
         
         XCTAssertTrue(view is ACRButton)
         guard let button = view as? ACRButton else { fatalError() }
