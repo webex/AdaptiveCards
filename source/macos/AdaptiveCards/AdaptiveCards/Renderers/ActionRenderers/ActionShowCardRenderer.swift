@@ -13,10 +13,10 @@ class ActionShowCardRenderer: BaseActionElementRendererProtocol {
         let button: ACRButton
         let buttonStyle = ActionStyle(rawValue: showCardAction.getStyle() ?? "") ?? .default
         if let iconUrl = showCardAction.getIconUrl(), !iconUrl.isEmpty {
-            button = ACRButton(wantsChevron: true, wantsIcon: true, style: buttonStyle)
+            button = ACRButton(wantsChevron: true, wantsIcon: true, style: buttonStyle, config: config)
             rootView.registerImageHandlingView(button, for: iconUrl)
         } else {
-            button = ACRButton(wantsChevron: true, wantsIcon: false, style: buttonStyle)
+            button = ACRButton(wantsChevron: true, wantsIcon: false, style: buttonStyle, config: config)
         }
         button.title = showCardAction.getTitle() ?? ""
 

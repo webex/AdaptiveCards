@@ -38,11 +38,60 @@ open class AdaptiveCard {
 }
 
 public struct RenderConfig {
-    public static let `default` = RenderConfig(isDarkMode: false)
-    
+    public static let `default` = RenderConfig(isDarkMode: false, buttonConfig: .default)
     let isDarkMode: Bool
+    let buttonConfig: ButtonConfig
     
-    public init(isDarkMode: Bool) {
+    public init(isDarkMode: Bool, buttonConfig: ButtonConfig) {
         self.isDarkMode = isDarkMode
+        self.buttonConfig = buttonConfig
+    }
+}
+
+public struct ButtonColorConfig {
+    public static let `default` = ButtonColorConfig()
+    // backgroundColor
+    let backgroundColor: NSColor
+    
+    // buttonColor
+    let buttonColor: NSColor
+    let activeButtonColor: NSColor
+    let hoverButtonColor: NSColor
+    
+    // textColor
+    let textColor: NSColor
+    let activeTextColor: NSColor
+    
+    // borderColor
+    let borderColor: NSColor
+    let activeBorderColor: NSColor
+        
+    public init(backgroundColor: NSColor = .clear, buttonColor: NSColor = .clear, activeButtonColor: NSColor = .clear, hoverButtonColor: NSColor = .clear, textColor: NSColor = .clear, activeTextColor: NSColor = .clear, borderColor: NSColor = .clear, activeBorderColor: NSColor = .clear) {
+        self.backgroundColor = backgroundColor
+        self.buttonColor = buttonColor
+        self.activeButtonColor = activeButtonColor
+        self.hoverButtonColor = hoverButtonColor
+        self.textColor = textColor
+        self.activeTextColor = activeTextColor
+        self.borderColor = borderColor
+        self.activeBorderColor = activeBorderColor
+    }
+}
+
+public struct ButtonConfig {
+    public static let `default` = ButtonConfig()
+    
+    let positiveButtonConfig: ButtonColorConfig
+    let destructiveButtonConfig: ButtonColorConfig
+    let defaultButtonConfig: ButtonColorConfig
+    let darkThemeButtonConfig: ButtonColorConfig
+    let inlineButtonConfig: ButtonColorConfig
+    
+    public init(positiveButtonConfig: ButtonColorConfig = .default, destructiveButtonConfig: ButtonColorConfig = .default, defaultButtonConfig: ButtonColorConfig = .default, darkThemeButtonConfig: ButtonColorConfig = .default, inlineButtonConfig: ButtonColorConfig = .default) {
+        self.positiveButtonConfig = positiveButtonConfig
+        self.destructiveButtonConfig = destructiveButtonConfig
+        self.defaultButtonConfig = defaultButtonConfig
+        self.darkThemeButtonConfig = darkThemeButtonConfig
+        self.inlineButtonConfig = inlineButtonConfig
     }
 }

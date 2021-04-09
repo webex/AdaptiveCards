@@ -12,6 +12,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     private var hostConfigString = sampleHostConfig // default config string
     private let webexConfig: String = "webex_light_config.json"
     private var darkTheme = false
+    private var buttonConfig: ButtonConfig = .default
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,10 +59,10 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             print("RENDER FAILED")
             return
         }
-
+        setupButtonConfig()
         switch AdaptiveCard.parseHostConfig(from: hostConfigString) {
         case .success(let config):
-            let cardView = AdaptiveCard.render(card: card, with: config, width: 335, actionDelegate: self, resourceResolver: self, config: RenderConfig(isDarkMode: darkTheme))
+            let cardView = AdaptiveCard.render(card: card, with: config, width: 335, actionDelegate: self, resourceResolver: self, config: RenderConfig(isDarkMode: darkTheme, buttonConfig: buttonConfig))
             // This changes the appearance of the native components depending on the hostConfig
             if #available(OSX 10.14, *) {
                 cardView.appearance = NSAppearance(named: darkTheme ? .darkAqua : .aqua)
@@ -101,6 +102,28 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
 
     @IBAction private func handleRenderAction(_ sender: Any) {
         renderCard(with: textView.string)
+    }
+    
+    private func setupButtonConfig() {
+        let greenColor = NSColor.color(from: Constants.greenColorCode) ?? .clear
+        let darkGreenColor = NSColor.color(from: Constants.darkGreenColorCode) ?? .clear
+        let redColor = NSColor.color(from: Constants.redColorCode) ?? .clear
+        let darkRedColor = NSColor.color(from: Constants.darkRedColorCode) ?? .clear
+        let blueColor = NSColor.color(from: Constants.blueColorCode) ?? .clear
+        let darkBlueColor = NSColor.color(from: Constants.darkBlueColorCode) ?? .clear
+        let grayColor = NSColor.color(from: Constants.grayColorCode) ?? .clear
+        let darkGrayColor = NSColor.color(from: Constants.darkGrayColorCode) ?? .clear
+        let darkThemePrimaryColor = NSColor.color(from: Constants.darkThemePrimary) ?? .clear
+        let darkThemePressedColor = NSColor.color(from: Constants.darkThemePressed) ?? .clear
+        
+        let positiveButtonConfig = ButtonColorConfig(backgroundColor: .white, buttonColor: .white, activeButtonColor: darkGreenColor, hoverButtonColor: greenColor, textColor: greenColor, activeTextColor: .white, borderColor: greenColor, activeBorderColor: darkGreenColor)
+        let destructiveButtonConfig = ButtonColorConfig(backgroundColor: .white, buttonColor: .white, activeButtonColor: darkRedColor, hoverButtonColor: redColor, textColor: redColor, activeTextColor: .white, borderColor: redColor, activeBorderColor: darkRedColor)
+        let defaultButtonConfig = ButtonColorConfig(backgroundColor: .white, buttonColor: .white, activeButtonColor: darkBlueColor, hoverButtonColor: blueColor, textColor: blueColor, activeTextColor: .white, borderColor: blueColor, activeBorderColor: darkBlueColor)
+        let inlineButtonConfig = ButtonColorConfig(backgroundColor: .clear, buttonColor: .clear, activeButtonColor: darkGrayColor, hoverButtonColor: grayColor, textColor: .black, activeTextColor: .black, borderColor: .clear, activeBorderColor: .clear)
+        let darkButtonConfig = ButtonColorConfig(backgroundColor: darkThemePrimaryColor, buttonColor: darkThemePrimaryColor, activeButtonColor: darkThemePressedColor, hoverButtonColor: darkThemePressedColor, textColor: .white, activeTextColor: .white, borderColor: darkThemePrimaryColor, activeBorderColor: darkThemePressedColor)
+       
+        let buttonConfig = ButtonConfig(positiveButtonConfig: positiveButtonConfig, destructiveButtonConfig: destructiveButtonConfig, defaultButtonConfig: defaultButtonConfig, darkThemeButtonConfig: darkButtonConfig, inlineButtonConfig: inlineButtonConfig)
+        self.buttonConfig = buttonConfig
     }
     
     // MARK: TableView Datasource

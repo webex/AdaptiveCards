@@ -13,10 +13,10 @@ class ActionSubmitRenderer: BaseActionElementRendererProtocol {
         let button: ACRButton
         let buttonStyle = ActionStyle(rawValue: submitAction.getStyle() ?? "") ?? .default
         if let iconUrl = submitAction.getIconUrl(), !iconUrl.isEmpty {
-            button = ACRButton(wantsIcon: true, style: buttonStyle)
+            button = ACRButton(wantsIcon: true, style: buttonStyle, config: config)
             rootView.registerImageHandlingView(button, for: iconUrl)
         } else {
-            button = ACRButton(wantsIcon: false, style: buttonStyle)
+            button = ACRButton(wantsIcon: false, style: buttonStyle, config: config)
         }
         button.title = submitAction.getTitle() ?? ""
         
