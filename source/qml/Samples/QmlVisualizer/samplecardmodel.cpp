@@ -117,9 +117,9 @@ QString SampleCardModel::generateQml(const QString& cardQml)
     const auto generatedQml = result->GetResult();
 
     //SYNCHRONOUS
-    /*ImageDownloader::clearImageFolder();
+    ImageDownloader::clearImageFolder();
 	
-	generatedQml->Transform([this](QmlTag& genQml)
+	generatedQml->Transform([&urls](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
@@ -178,10 +178,10 @@ QString SampleCardModel::generateQml(const QString& cardQml)
             }
             //Temp 
 		}
-	});*/
+	});
 
 	//ASYNCHRONOUS
-	generatedQml->Transform([&urls](QmlTag& genQml)
+	/*generatedQml->Transform([&urls](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
@@ -208,7 +208,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 		});
 
 	//Detaching the thread to make it asynchronous
-	thread_object.detach();
+	thread_object.detach();*/
 
 	const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
