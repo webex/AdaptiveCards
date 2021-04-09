@@ -50,8 +50,6 @@ public struct RenderConfig {
 
 public struct ButtonColorConfig {
     public static let `default` = ButtonColorConfig()
-    // backgroundColor
-    let backgroundColor: NSColor
     
     // buttonColor
     let buttonColor: NSColor
@@ -66,8 +64,7 @@ public struct ButtonColorConfig {
     let borderColor: NSColor
     let activeBorderColor: NSColor
         
-    public init(backgroundColor: NSColor = .clear, buttonColor: NSColor = .clear, activeButtonColor: NSColor = .clear, hoverButtonColor: NSColor = .clear, textColor: NSColor = .clear, activeTextColor: NSColor = .clear, borderColor: NSColor = .clear, activeBorderColor: NSColor = .clear) {
-        self.backgroundColor = backgroundColor
+    public init(buttonColor: NSColor = .blue, activeButtonColor: NSColor = .systemBlue, hoverButtonColor: NSColor = .systemBlue, textColor: NSColor = .black, activeTextColor: NSColor = .black, borderColor: NSColor = .blue, activeBorderColor: NSColor = .systemBlue) {
         self.buttonColor = buttonColor
         self.activeButtonColor = activeButtonColor
         self.hoverButtonColor = hoverButtonColor
@@ -81,17 +78,15 @@ public struct ButtonColorConfig {
 public struct ButtonConfig {
     public static let `default` = ButtonConfig()
     
-    let positiveButtonConfig: ButtonColorConfig
-    let destructiveButtonConfig: ButtonColorConfig
-    let defaultButtonConfig: ButtonColorConfig
-    let darkThemeButtonConfig: ButtonColorConfig
-    let inlineButtonConfig: ButtonColorConfig
+    let positive: ButtonColorConfig
+    let destructive: ButtonColorConfig
+    let `default`: ButtonColorConfig
+    let inline: ButtonColorConfig
     
-    public init(positiveButtonConfig: ButtonColorConfig = .default, destructiveButtonConfig: ButtonColorConfig = .default, defaultButtonConfig: ButtonColorConfig = .default, darkThemeButtonConfig: ButtonColorConfig = .default, inlineButtonConfig: ButtonColorConfig = .default) {
-        self.positiveButtonConfig = positiveButtonConfig
-        self.destructiveButtonConfig = destructiveButtonConfig
-        self.defaultButtonConfig = defaultButtonConfig
-        self.darkThemeButtonConfig = darkThemeButtonConfig
-        self.inlineButtonConfig = inlineButtonConfig
+    public init(positive: ButtonColorConfig = .default, destructive: ButtonColorConfig = .default, default: ButtonColorConfig = .default, inline: ButtonColorConfig = .default) {
+        self.positive = positive
+        self.destructive = destructive
+        self.default = `default`
+        self.inline = inline
     }
 }

@@ -4,7 +4,6 @@ enum ActionStyle: String {
     case positive
     case `default`
     case destructive
-    case darkMode
     case inline
 }
 
@@ -16,17 +15,17 @@ class ACRButton: FlatButton, ImageHoldingView {
     private var hoverButtonColor: NSColor = .linkColor
     private var buttonActionStyle: ActionStyle = .default
     private var buttonConfig: ButtonConfig = .default
-    
+        
     override init(frame: NSRect) {
         super.init(frame: frame)
         initialize()
-        setupButtonStyle()
+        setupButtonStyle(style: .default, buttonConfig: .default)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         initialize()
-        setupButtonStyle()
+        setupButtonStyle(style: .default, buttonConfig: .default)
     }
     
     init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconImageFileType: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default, config: RenderConfig = .default) {
@@ -42,11 +41,7 @@ class ACRButton: FlatButton, ImageHoldingView {
         }
         initialize()
         buttonActionStyle = style
-        if config.isDarkMode {
-            buttonActionStyle = .darkMode
-        }
-        buttonConfig = config.buttonConfig
-        setupButtonStyle()
+        setupButtonStyle(style: style, buttonConfig: config.buttonConfig)
     }
     
     private func initialize() {
@@ -100,106 +95,87 @@ class ACRButton: FlatButton, ImageHoldingView {
         textColor = activeTextColor
     }
     
-    private func setupButtonStyle() {
+    private func setupButtonStyle(style: ActionStyle, buttonConfig: ButtonConfig) {
         // Common styling b/w all Action Style
         switch buttonActionStyle {
         case .default:
             // backgroundColor
-            backgroundColor = buttonConfig.defaultButtonConfig.backgroundColor
+            backgroundColor = buttonConfig.default.buttonColor
             
             // borderColor
-            borderColor = buttonConfig.defaultButtonConfig.borderColor
+            borderColor = buttonConfig.default.borderColor
             inActiveborderColor = borderColor
-            activeBorderColor = buttonConfig.defaultButtonConfig.activeBorderColor
+            activeBorderColor = buttonConfig.default.activeBorderColor
             
             // button color
-            buttonColor = buttonConfig.defaultButtonConfig.buttonColor
-            activeButtonColor = buttonConfig.defaultButtonConfig.activeButtonColor
-            hoverButtonColor = buttonConfig.defaultButtonConfig.hoverButtonColor
+            buttonColor = buttonConfig.default.buttonColor
+            activeButtonColor = buttonConfig.default.activeButtonColor
+            hoverButtonColor = buttonConfig.default.hoverButtonColor
             
             // textColor
-            textColor = buttonConfig.defaultButtonConfig.textColor
+            textColor = buttonConfig.default.textColor
             inActiveTextColor = textColor
-            activeTextColor = buttonConfig.defaultButtonConfig.activeTextColor
+            activeTextColor = buttonConfig.default.activeTextColor
             
         case .positive:
             // backgroundColor
-            backgroundColor = buttonConfig.positiveButtonConfig.backgroundColor
+            backgroundColor = buttonConfig.positive.buttonColor
             
             // borderColor
-            borderColor = buttonConfig.positiveButtonConfig.borderColor
+            borderColor = buttonConfig.positive.borderColor
             inActiveborderColor = borderColor
-            activeBorderColor = buttonConfig.positiveButtonConfig.activeBorderColor
+            activeBorderColor = buttonConfig.positive.activeBorderColor
             
             // button color
-            buttonColor = buttonConfig.positiveButtonConfig.buttonColor
-            activeButtonColor = buttonConfig.positiveButtonConfig.activeButtonColor
-            hoverButtonColor = buttonConfig.positiveButtonConfig.hoverButtonColor
+            buttonColor = buttonConfig.positive.buttonColor
+            activeButtonColor = buttonConfig.positive.activeButtonColor
+            hoverButtonColor = buttonConfig.positive.hoverButtonColor
             
             // textColor
-            textColor = buttonConfig.positiveButtonConfig.textColor
+            textColor = buttonConfig.positive.textColor
             inActiveTextColor = textColor
-            activeTextColor = buttonConfig.positiveButtonConfig.activeTextColor
+            activeTextColor = buttonConfig.positive.activeTextColor
             
         case .destructive:
             // backgroundColor
-            backgroundColor = buttonConfig.destructiveButtonConfig.backgroundColor
+            backgroundColor = buttonConfig.destructive.buttonColor
             
             // borderColor
-            borderColor = buttonConfig.destructiveButtonConfig.borderColor
+            borderColor = buttonConfig.destructive.borderColor
             inActiveborderColor = borderColor
-            activeBorderColor = buttonConfig.destructiveButtonConfig.activeBorderColor
+            activeBorderColor = buttonConfig.destructive.activeBorderColor
             
             // button color
-            buttonColor = buttonConfig.destructiveButtonConfig.buttonColor
-            activeButtonColor = buttonConfig.destructiveButtonConfig.activeButtonColor
-            hoverButtonColor = buttonConfig.destructiveButtonConfig.hoverButtonColor
+            buttonColor = buttonConfig.destructive.buttonColor
+            activeButtonColor = buttonConfig.destructive.activeButtonColor
+            hoverButtonColor = buttonConfig.destructive.hoverButtonColor
             
             // textColor
-            textColor = buttonConfig.destructiveButtonConfig.textColor
+            textColor = buttonConfig.destructive.textColor
             inActiveTextColor = textColor
-            activeTextColor = buttonConfig.destructiveButtonConfig.activeTextColor
+            activeTextColor = buttonConfig.destructive.activeTextColor
             
         case .inline:
             // backgroundColor
-            backgroundColor = buttonConfig.inlineButtonConfig.backgroundColor
+            backgroundColor = buttonConfig.inline.buttonColor
             
             // borderColor
-            borderColor = buttonConfig.inlineButtonConfig.borderColor
+            borderColor = buttonConfig.inline.borderColor
             inActiveborderColor = borderColor
-            activeBorderColor = buttonConfig.inlineButtonConfig.activeBorderColor
+            activeBorderColor = buttonConfig.inline.activeBorderColor
             
             // button color
-            buttonColor = buttonConfig.inlineButtonConfig.buttonColor
-            activeButtonColor = buttonConfig.inlineButtonConfig.activeButtonColor
-            hoverButtonColor = buttonConfig.inlineButtonConfig.hoverButtonColor
+            buttonColor = buttonConfig.inline.buttonColor
+            activeButtonColor = buttonConfig.inline.activeButtonColor
+            hoverButtonColor = buttonConfig.inline.hoverButtonColor
             
             // textColor
-            textColor = buttonConfig.inlineButtonConfig.textColor
+            textColor = buttonConfig.inline.textColor
             inActiveTextColor = textColor
-            activeTextColor = buttonConfig.inlineButtonConfig.activeTextColor
+            activeTextColor = buttonConfig.inline.activeTextColor
             
             contentInsets.left = 5
             contentInsets.right = 5
-            
-        case .darkMode:
-            // backgroundColor
-            backgroundColor = buttonConfig.darkThemeButtonConfig.backgroundColor
-            
-            // borderColor
-            borderColor = buttonConfig.darkThemeButtonConfig.borderColor
-            inActiveborderColor = borderColor
-            activeBorderColor = buttonConfig.darkThemeButtonConfig.activeBorderColor
-            
-            // button color
-            buttonColor = buttonConfig.darkThemeButtonConfig.buttonColor
-            activeButtonColor = buttonConfig.darkThemeButtonConfig.activeButtonColor
-            hoverButtonColor = buttonConfig.darkThemeButtonConfig.hoverButtonColor
-            
-            // textColor
-            textColor = buttonConfig.darkThemeButtonConfig.textColor
-            inActiveTextColor = textColor
-            activeTextColor = buttonConfig.darkThemeButtonConfig.activeTextColor
         }
     }
 }
