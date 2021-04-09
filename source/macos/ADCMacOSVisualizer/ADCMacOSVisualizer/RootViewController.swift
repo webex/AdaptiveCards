@@ -116,13 +116,13 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         let darkThemePrimaryColor = NSColor.color(from: Constants.darkThemePrimary) ?? .clear
         let darkThemePressedColor = NSColor.color(from: Constants.darkThemePressed) ?? .clear
         
-        let positive = ButtonColorConfig(buttonColor: .white, activeButtonColor: darkGreenColor, hoverButtonColor: greenColor, textColor: greenColor, activeTextColor: .white, borderColor: greenColor, activeBorderColor: darkGreenColor)
-        let destructive = ButtonColorConfig(buttonColor: .white, activeButtonColor: darkRedColor, hoverButtonColor: redColor, textColor: redColor, activeTextColor: .white, borderColor: redColor, activeBorderColor: darkRedColor)
-        var `default` = ButtonColorConfig(buttonColor: .white, activeButtonColor: darkBlueColor, hoverButtonColor: blueColor, textColor: blueColor, activeTextColor: .white, borderColor: blueColor, activeBorderColor: darkBlueColor)
+        let positive = ButtonColorConfig(buttonColor: .white, selectedButtonColor: darkGreenColor, hoverButtonColor: greenColor, textColor: greenColor, selectedTextColor: .white, borderColor: greenColor, selectedBorderColor: darkGreenColor)
+        let destructive = ButtonColorConfig(buttonColor: .white, selectedButtonColor: darkRedColor, hoverButtonColor: redColor, textColor: redColor, selectedTextColor: .white, borderColor: redColor, selectedBorderColor: darkRedColor)
+        var `default` = ButtonColorConfig(buttonColor: .white, selectedButtonColor: darkBlueColor, hoverButtonColor: blueColor, textColor: blueColor, selectedTextColor: .white, borderColor: blueColor, selectedBorderColor: darkBlueColor)
         if self.darkTheme == true {
-            `default` = ButtonColorConfig(buttonColor: darkThemePrimaryColor, activeButtonColor: darkThemePressedColor, hoverButtonColor: darkThemePressedColor, textColor: .white, activeTextColor: .white, borderColor: darkThemePrimaryColor, activeBorderColor: darkThemePressedColor)
+            `default` = ButtonColorConfig(buttonColor: darkThemePrimaryColor, selectedButtonColor: darkThemePressedColor, hoverButtonColor: darkThemePressedColor, textColor: .white, selectedTextColor: .white, borderColor: darkThemePrimaryColor, selectedBorderColor: darkThemePressedColor)
         }
-        let inline = ButtonColorConfig(buttonColor: .clear, activeButtonColor: darkGrayColor, hoverButtonColor: grayColor, textColor: .black, activeTextColor: .black, borderColor: .clear, activeBorderColor: .clear)
+        let inline = ButtonColorConfig(buttonColor: .clear, selectedButtonColor: darkGrayColor, hoverButtonColor: grayColor, textColor: .black, selectedTextColor: .black, borderColor: .clear, selectedBorderColor: .clear)
        
         let buttonConfig = ButtonConfig(positive: positive, destructive: destructive, default: `default`, inline: inline)
         self.buttonConfig = buttonConfig

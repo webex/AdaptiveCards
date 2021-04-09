@@ -49,41 +49,39 @@ public struct RenderConfig {
 }
 
 public struct ButtonColorConfig {
-    public static let `default` = ButtonColorConfig()
-    
     // buttonColor
     let buttonColor: NSColor
-    let activeButtonColor: NSColor
+    let selectedButtonColor: NSColor
     let hoverButtonColor: NSColor
     
     // textColor
     let textColor: NSColor
-    let activeTextColor: NSColor
+    let selectedTextColor: NSColor
     
     // borderColor
     let borderColor: NSColor
-    let activeBorderColor: NSColor
+    let selectedBorderColor: NSColor
         
-    public init(buttonColor: NSColor = .blue, activeButtonColor: NSColor = .systemBlue, hoverButtonColor: NSColor = .systemBlue, textColor: NSColor = .black, activeTextColor: NSColor = .black, borderColor: NSColor = .blue, activeBorderColor: NSColor = .systemBlue) {
+    public init(buttonColor: NSColor, selectedButtonColor: NSColor, hoverButtonColor: NSColor, textColor: NSColor, selectedTextColor: NSColor, borderColor: NSColor, selectedBorderColor: NSColor) {
         self.buttonColor = buttonColor
-        self.activeButtonColor = activeButtonColor
+        self.selectedButtonColor = selectedButtonColor
         self.hoverButtonColor = hoverButtonColor
         self.textColor = textColor
-        self.activeTextColor = activeTextColor
+        self.selectedTextColor = selectedTextColor
         self.borderColor = borderColor
-        self.activeBorderColor = activeBorderColor
+        self.selectedBorderColor = selectedBorderColor
     }
 }
 
 public struct ButtonConfig {
-    public static let `default` = ButtonConfig()
+    public static let `default` = ButtonConfig(positive: .init(buttonColor: .green, selectedButtonColor: .systemGreen, hoverButtonColor: .systemGreen, textColor: .white, selectedTextColor: .white, borderColor: .green, selectedBorderColor: .systemGreen), destructive: .init(buttonColor: .systemRed, selectedButtonColor: .red, hoverButtonColor: .red, textColor: .white, selectedTextColor: .white, borderColor: .systemRed, selectedBorderColor: .red), default: .init(buttonColor: .systemBlue, selectedButtonColor: .blue, hoverButtonColor: .blue, textColor: .white, selectedTextColor: .white, borderColor: .systemBlue, selectedBorderColor: .blue), inline: .init(buttonColor: .clear, selectedButtonColor: .gray, hoverButtonColor: .darkGray, textColor: .black, selectedTextColor: .black, borderColor: .clear, selectedBorderColor: .clear))
     
     let positive: ButtonColorConfig
     let destructive: ButtonColorConfig
     let `default`: ButtonColorConfig
     let inline: ButtonColorConfig
     
-    public init(positive: ButtonColorConfig = .default, destructive: ButtonColorConfig = .default, default: ButtonColorConfig = .default, inline: ButtonColorConfig = .default) {
+    public init(positive: ButtonColorConfig, destructive: ButtonColorConfig, default: ButtonColorConfig, inline: ButtonColorConfig) {
         self.positive = positive
         self.destructive = destructive
         self.default = `default`

@@ -10,8 +10,8 @@ enum ActionStyle: String {
 class ACRButton: FlatButton, ImageHoldingView {
     public var backgroundColor: NSColor = .clear
     
-    private var inActiveTextColor: NSColor = .linkColor
-    private var inActiveborderColor: NSColor = .linkColor
+    private var disabledTextColor: NSColor = .linkColor
+    private var disabledBorderColor: NSColor = .linkColor
     private var hoverButtonColor: NSColor = .linkColor
     private var buttonActionStyle: ActionStyle = .default
     private var buttonConfig: ButtonConfig = .default
@@ -69,113 +69,59 @@ class ACRButton: FlatButton, ImageHoldingView {
     
     func setImage(_ image: NSImage) {
         iconColor = NSColor(patternImage: image)
-        activeIconColor = iconColor
+        selectedIconColor = iconColor
         self.image = image
         mouseExited(with: NSEvent()) // this is to force trigger the event for image updation
     }
 
     override open func mouseEntered(with event: NSEvent) {
         buttonColor = hoverButtonColor
-        borderColor = activeBorderColor
-        textColor = activeTextColor
+        borderColor = selectedBorderColor
+        textColor = selectedTextColor
         super.mouseEntered(with: event)
     }
     
     override open func mouseExited(with event: NSEvent) {
         super.mouseExited(with: event)
         buttonColor = backgroundColor
-        borderColor = inActiveborderColor
-        textColor = inActiveTextColor
+        borderColor = disabledBorderColor
+        textColor = disabledTextColor
     }
     
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
-        buttonColor = activeButtonColor
-        borderColor = activeBorderColor
-        textColor = activeTextColor
+        buttonColor = selectedButtonColor
+        borderColor = selectedBorderColor
+        textColor = selectedTextColor
     }
     
     private func setupButtonStyle(style: ActionStyle, buttonConfig: ButtonConfig) {
         // Common styling b/w all Action Style
+        let colorConfig: ButtonColorConfig
         switch buttonActionStyle {
         case .default:
-            // backgroundColor
-            backgroundColor = buttonConfig.default.buttonColor
-            
-            // borderColor
-            borderColor = buttonConfig.default.borderColor
-            inActiveborderColor = borderColor
-            activeBorderColor = buttonConfig.default.activeBorderColor
-            
-            // button color
-            buttonColor = buttonConfig.default.buttonColor
-            activeButtonColor = buttonConfig.default.activeButtonColor
-            hoverButtonColor = buttonConfig.default.hoverButtonColor
-            
-            // textColor
-            textColor = buttonConfig.default.textColor
-            inActiveTextColor = textColor
-            activeTextColor = buttonConfig.default.activeTextColor
-            
+            colorConfig = buttonConfig.default
         case .positive:
-            // backgroundColor
-            backgroundColor = buttonConfig.positive.buttonColor
-            
-            // borderColor
-            borderColor = buttonConfig.positive.borderColor
-            inActiveborderColor = borderColor
-            activeBorderColor = buttonConfig.positive.activeBorderColor
-            
-            // button color
-            buttonColor = buttonConfig.positive.buttonColor
-            activeButtonColor = buttonConfig.positive.activeButtonColor
-            hoverButtonColor = buttonConfig.positive.hoverButtonColor
-            
-            // textColor
-            textColor = buttonConfig.positive.textColor
-            inActiveTextColor = textColor
-            activeTextColor = buttonConfig.positive.activeTextColor
-            
+            colorConfig = buttonConfig.positive
         case .destructive:
-            // backgroundColor
-            backgroundColor = buttonConfig.destructive.buttonColor
-            
-            // borderColor
-            borderColor = buttonConfig.destructive.borderColor
-            inActiveborderColor = borderColor
-            activeBorderColor = buttonConfig.destructive.activeBorderColor
-            
-            // button color
-            buttonColor = buttonConfig.destructive.buttonColor
-            activeButtonColor = buttonConfig.destructive.activeButtonColor
-            hoverButtonColor = buttonConfig.destructive.hoverButtonColor
-            
-            // textColor
-            textColor = buttonConfig.destructive.textColor
-            inActiveTextColor = textColor
-            activeTextColor = buttonConfig.destructive.activeTextColor
-            
+            colorConfig = buttonConfig.destructive
         case .inline:
-            // backgroundColor
-            backgroundColor = buttonConfig.inline.buttonColor
-            
-            // borderColor
-            borderColor = buttonConfig.inline.borderColor
-            inActiveborderColor = borderColor
-            activeBorderColor = buttonConfig.inline.activeBorderColor
-            
-            // button color
-            buttonColor = buttonConfig.inline.buttonColor
-            activeButtonColor = buttonConfig.inline.activeButtonColor
-            hoverButtonColor = buttonConfig.inline.hoverButtonColor
-            
-            // textColor
-            textColor = buttonConfig.inline.textColor
-            inActiveTextColor = textColor
-            activeTextColor = buttonConfig.inline.activeTextColor
-            
+            colorConfig = buttonConfig.inline
             contentInsets.left = 5
             contentInsets.right = 5
         }
+        
+        backgroundColor = colorConfig.buttonColor
+        borderColor = colorConfig.borderColor
+        selectedBorderColor = colorConfig.selectedBorderColor
+        disabledBorderColor = borderColor
+        
+        buttonColor = colorConfig.buttonColor
+        hoverButtonColor = colorConfig.hoverButtonColor
+        selectedButtonColor = colorConfig.selectedButtonColor
+        
+        textColor = colorConfig.textColor
+        selectedTextColor = colorConfig.selectedTextColor
+        disabledTextColor = textColor
     }
 }
