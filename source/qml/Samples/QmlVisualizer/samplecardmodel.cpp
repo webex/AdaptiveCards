@@ -106,7 +106,7 @@ std::shared_ptr<AdaptiveCards::HostConfig> SampleCardModel::getHostConfig()
 QString SampleCardModel::generateQml(const QString& cardQml)
 {
     //Clearing the urls map to remove the image urls of the previously rendered card images
-	urls.clear();
+	std::map<std::string, std::string> urls;
 
     std::shared_ptr<int> imgCounter{ 0 };
 
@@ -115,7 +115,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
     const auto generatedQml = result->GetResult();
 
     //SYNCHRONOUS
-    ImageDownloader::clearImageFolder();
+    /*ImageDownloader::clearImageFolder();
 	
 	generatedQml->Transform([this](QmlTag& genQml)
 	{
@@ -176,10 +176,10 @@ QString SampleCardModel::generateQml(const QString& cardQml)
             }
             //Temp 
 		}
-	});
+	});*/
 
 	//ASYNCHRONOUS
-	/*generatedQml->Transform([this](QmlTag& genQml)
+	generatedQml->Transform([&urls](QmlTag& genQml)
 	{
 		if (genQml.GetElement() == "Frame" && genQml.HasProperty("readonly property bool hasBackgroundImage"))
 		{
@@ -196,13 +196,19 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 			auto url = genQml.GetProperty("property var imgSource");
 			urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
 		}
-	});*/
-	
+	});
+	std::thread thread_object([&urls]() {
+		rehostImage(urls);
+		printf("Download done");
+		});
+
+	thread_object.detach();
     const QString generatedQmlString = QString::fromStdString(generatedQml->ToString());
     return generatedQmlString;
 }
 
-void SampleCardModel::rehostImage()
+//TODO: Pass by reference for urls is resulting in a runtime exception 
+void SampleCardModel::rehostImage(const std::map<std::string, std::string> urls)
 {
     ImageDownloader::clearImageFolder();
 
