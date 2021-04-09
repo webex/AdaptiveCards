@@ -36,7 +36,7 @@ class ACRView: ACRColumnView {
         return view
     }()
     
-    override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
+    init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
 		self.renderConfig = renderConfig
         super.init(style: style, parentStyle: nil, hostConfig: hostConfig, superview: nil, needsPadding: true)
     }
