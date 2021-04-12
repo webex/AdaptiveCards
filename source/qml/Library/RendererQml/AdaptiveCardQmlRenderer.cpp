@@ -391,7 +391,7 @@ namespace RendererQml
 
 		std::string text = TextUtils::ApplyTextFunctions(textBlock->GetText(), context->GetLang());
 		text = Utils::HandleEscapeSequences(text);
-		uiTextBlock->Property("text", Formatter() << "\"" << text << "\"");
+		uiTextBlock->Property("text", Formatter() << text, true);
 
 		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
 
@@ -427,7 +427,7 @@ namespace RendererQml
 
 		if (!fontFamily.empty())
 		{
-            uiTextBlock->Property("font.family", Formatter() << "\"" << fontFamily << "\"");
+            uiTextBlock->Property("font.family", Formatter() << fontFamily, true);
         }
 
 		return uiTextBlock;
@@ -499,12 +499,12 @@ namespace RendererQml
 
 		if (!input->GetValue().empty())
 		{
-			uiTextInput->Property("text", "\"" + input->GetValue() + "\"");
+			uiTextInput->Property("text", input->GetValue(), true);
 		}
 
 		if (!input->GetPlaceholder().empty())
 		{
-			uiTextInput->Property("placeholderText", "\"" + input->GetPlaceholder() + "\"");
+			uiTextInput->Property("placeholderText", input->GetPlaceholder(), true);
 		}
 
 		//TODO: Add stretch property
@@ -565,7 +565,7 @@ namespace RendererQml
                 }
                 else
                 {
-                    buttonElement->Property("text", "\"" + input->GetInlineAction()->GetTitle() + "\"");
+                    buttonElement->Property("text", input->GetInlineAction()->GetTitle(), true);
                 }
 
                 if (input->GetIsMultiline())
@@ -624,7 +624,7 @@ namespace RendererQml
 		contentItemTag->Property("text", Formatter() << inputId << ".value");
 		if (!input->GetPlaceholder().empty())
 		{
-			contentItemTag->Property("placeholderText", "\"" + input->GetPlaceholder() + "\"");
+			contentItemTag->Property("placeholderText", input->GetPlaceholder(), true);
 		}
 
 		auto textBackgroundTag = std::make_shared<QmlTag>("Rectangle");
@@ -646,7 +646,7 @@ namespace RendererQml
 		upIndicatorTag->Property("color", inputId + ".up.pressed ? '#08000000' : 'transparent'");
 
 		auto upIndicatorImage = std::make_shared<QmlTag>("Image");
-		upIndicatorImage->Property("source", Formatter() << "\"" << RendererQml::arrow_up_12 << "\"");
+		upIndicatorImage->Property("source", Formatter() << RendererQml::arrow_up_12, true);
 		upIndicatorImage->Property("anchors.centerIn", "parent");
 		upIndicatorImage->AddChild(colorOverlayTag);
 		upIndicatorTag->AddChild(upIndicatorImage);
@@ -660,7 +660,7 @@ namespace RendererQml
 		downIndicatorTag->Property("color", inputId + ".down.pressed ? '#08000000' : 'transparent'");
 
 		auto downIndicatorImage = std::make_shared<QmlTag>("Image");
-		downIndicatorImage->Property("source", Formatter() << "\"" << RendererQml::arrow_down_12 << "\"");
+		downIndicatorImage->Property("source", Formatter() << RendererQml::arrow_down_12, true);
 		downIndicatorImage->Property("anchors.centerIn", "parent");
 		downIndicatorImage->AddChild(colorOverlayTag);
 		downIndicatorTag->AddChild(downIndicatorImage);
@@ -755,7 +755,7 @@ namespace RendererQml
 		uiTextBlock->Property("width", "parent.width");
 
 		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
-		std::string textrun_all = "\"";
+		std::string textrun_all = "";
 
 		if (!richTextBlock->GetIsVisible())
 		{
@@ -780,8 +780,8 @@ namespace RendererQml
 				textrun_all.append(TextRunRender(textRun, context, selectActionId));
 			}
 		}
-		textrun_all = textrun_all.append("\"");
-		uiTextBlock->Property("text", textrun_all);
+		//textrun_all = textrun_all.append("\"");
+		uiTextBlock->Property("text", textrun_all, true);
 
         context->addToTextRunSelectActionList(uiTextBlock, selectActionList);
 
