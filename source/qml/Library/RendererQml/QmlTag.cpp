@@ -21,12 +21,11 @@ namespace RendererQml
             return property.first == name;
         });
 
-		auto escapedValue = value;
-
-		if (isString)
-		{
-			escapedValue = "\"" + value + "\"";
-		}
+        auto escapedValue = value;
+        if (isString)
+        {
+            escapedValue = "\"" + value + "\"";
+        }
 
         if (iterator != m_properties.end())
         {
