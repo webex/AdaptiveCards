@@ -33,9 +33,6 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             guard index > 0, (column.getSpacing() != .none || column.getSeparator()), !column.getItems().isEmpty else {
                 columnSetView.addView(columnView, in: gravityArea)
                 BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column, parentElement: columnSet)
-                let heightConstraint = columnView.heightAnchor.constraint(equalTo: columnSetView.heightAnchor)
-                heightConstraint.priority = .defaultLow
-                heightConstraint.isActive = true
                 continue
             }
             let wrappingView = ACRContentStackView(style: column.getStyle(), hostConfig: hostConfig)

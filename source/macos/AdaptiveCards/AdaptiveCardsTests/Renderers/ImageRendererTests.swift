@@ -86,7 +86,7 @@ class ImageRendererTests: XCTestCase {
         XCTAssertEqual(contentView.imageProperties?.contentSize.height, CGFloat(truncating: height))
     }
     
-    func testRendererSetsExplicitDimensionsWhenImageSizeIsAlsoGiven() {
+    func testRendererSetsExplicitWidthWhenImageSizeIsAlsoGiven() {
         let width : NSNumber = 50
         fakeImageView = .make(imageSize: .large, pixelWidth: width)
         
@@ -94,6 +94,23 @@ class ImageRendererTests: XCTestCase {
         XCTAssertEqual(contentView.imageProperties?.contentSize.width, CGFloat(truncating: width))
     }
     
+    func testRendererSetsExplicitHeightWhenImageSizeIsAlsoGiven() {
+        let height : NSNumber = 50
+        fakeImageView = .make(imageSize: .large, pixelHeight: height)
+        
+        let contentView = renderImageView()
+        XCTAssertEqual(contentView.imageProperties?.contentSize.height, CGFloat(truncating: height))
+    }
+    
+    func testRendererSetsExplicitDimensionWhenImageSizeIsAlsoGiven() {
+        let width : NSNumber = 50
+        let height : NSNumber = 50
+        fakeImageView = .make(imageSize: .large, pixelWidth: width, pixelHeight: height)
+        
+        let contentView = renderImageView()
+        XCTAssertEqual(contentView.imageProperties?.contentSize.width, CGFloat(truncating: width))
+        XCTAssertEqual(contentView.imageProperties?.contentSize.height, CGFloat(truncating: height))
+    }
     
     func testRendererSetsExplicitDimensions() {
         let height : NSNumber = 100
@@ -103,11 +120,11 @@ class ImageRendererTests: XCTestCase {
         XCTAssertEqual(contentView.imageProperties?.hasExplicitDimensions, true)
     }
     
-    private func renderImageView() -> ACRContentHoldingView {
+    private func renderImageView() -> ACRImageWrappingView {
         let view = imageRenderer.render(element: fakeImageView, with: hostConfig, style: .default, rootView: fakeACRView, parentView: fakeACRView, inputs: [], config: .default)
         
-        XCTAssertTrue(view is ACRContentHoldingView)
-        guard let contentView = view as? ACRContentHoldingView else { fatalError() }
+        XCTAssertTrue(view is ACRImageWrappingView)
+        guard let contentView = view as? ACRImageWrappingView else { fatalError() }
         return contentView
     }
 }
