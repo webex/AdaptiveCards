@@ -13,10 +13,10 @@ class ActionOpenURLRenderer: BaseActionElementRendererProtocol {
         let button: ACRButton
         let buttonStyle = ActionStyle(rawValue: openURLAction.getStyle() ?? "") ?? .default
         if let iconUrl = openURLAction.getIconUrl(), !iconUrl.isEmpty {
-            button = ACRButton(wantsIcon: true, style: buttonStyle, config: config)
+            button = ACRButton(wantsIcon: true, style: buttonStyle, buttonConfig: config.buttonConfig)
             rootView.registerImageHandlingView(button, for: iconUrl)
         } else {
-            button = ACRButton(wantsIcon: false, style: buttonStyle, config: config)
+            button = ACRButton(wantsIcon: false, style: buttonStyle, buttonConfig: config.buttonConfig)
         }
         button.title = openURLAction.getTitle() ?? ""
         

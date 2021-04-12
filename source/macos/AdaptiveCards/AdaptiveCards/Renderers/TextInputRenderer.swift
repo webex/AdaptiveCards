@@ -95,11 +95,11 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         let action = element.getInlineAction()
         let button: ACRButton
         if let iconUrl = action?.getIconUrl(), !iconUrl.isEmpty {
-            button = ACRButton(wantsIcon: true, style: .inline, config: config)
+            button = ACRButton(wantsIcon: true, style: .inline, buttonConfig: config.buttonConfig)
             button.title = "" // no button title when iconUrl available
             rootview.registerImageHandlingView(button, for: iconUrl)
         } else {
-            button = ACRButton(wantsIcon: false, style: .inline, config: config)
+            button = ACRButton(wantsIcon: false, style: .inline, buttonConfig: config.buttonConfig)
             button.title = action?.getTitle() ?? ""
         }
         

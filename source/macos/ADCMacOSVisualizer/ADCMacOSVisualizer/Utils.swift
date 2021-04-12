@@ -37,18 +37,23 @@ extension NSColor {
 }
 
 struct Constants {
-    static let blueColorCode = "#007EA8"
-    static let darkBlueColorCode = "#0A5E7D"
+    static let lightThemeDefault = "#007EA8"
+    static let lightThemeDefaultPressed = "#0A5E7D"
     
-    static let greenColorCode = "#1B8728"
-    static let darkGreenColorCode = "#196323"
+    static let lightThemePositive = "#1B8728"
+    static let lightThemePositivePressed = "#196323"
     
-    static let redColorCode = "#D93829"
-    static let darkRedColorCode = "#A12C23"
+    static let lightThemeDestructive = "#D93829"
+    static let lightThemeDestructivePressed = "#A12C23"
     
-    static let grayColorCode = "#E6E8E8"
-    static let darkGrayColorCode = "#B4B6B8"
+    static let lightThemeInline = "#E6E8E8"
+    static let lightThemeInlinePressed = "#B4B6B8"
     
     static let darkThemePrimary = "#07C1F5"
     static let darkThemePressed = "#0A5E7D"
+    
+    static let darkThemePositive = "#00CF64"
+    static let darkThemeDestructive = "#D4371C"
+    static let darkThemeDestructiveHover = "#A12512"
+    static let darkThemeDestructivePressed = "#6E1D13"
 }

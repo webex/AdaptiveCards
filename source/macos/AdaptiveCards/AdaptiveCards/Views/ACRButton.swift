@@ -14,7 +14,6 @@ class ACRButton: FlatButton, ImageHoldingView {
     private var disabledBorderColor: NSColor = .linkColor
     private var hoverButtonColor: NSColor = .linkColor
     private var buttonActionStyle: ActionStyle = .default
-    private var buttonConfig: ButtonConfig = .default
         
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -28,7 +27,7 @@ class ACRButton: FlatButton, ImageHoldingView {
         setupButtonStyle(style: .default, buttonConfig: .default)
     }
     
-    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconImageFileType: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default, config: RenderConfig = .default) {
+    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconImageFileType: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default, buttonConfig: ButtonConfig = .default) {
         super.init(frame: frame)
         if wantsChevron {
             showsChevron = wantsChevron
@@ -41,7 +40,7 @@ class ACRButton: FlatButton, ImageHoldingView {
         }
         initialize()
         buttonActionStyle = style
-        setupButtonStyle(style: style, buttonConfig: config.buttonConfig)
+        setupButtonStyle(style: style, buttonConfig: buttonConfig)
     }
     
     private func initialize() {
