@@ -33,6 +33,7 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
 // MARK: - ACRNumericTextField Class
 open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     var id: String?
+    var previousValue = ""
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setupViews()
@@ -67,7 +68,12 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     public func controlTextDidChange(_ obj: Notification) {
         guard let textView = obj.object as? NSTextField else { return }
         // updating the stepper value when text field value change
-        stepper.doubleValue = Double(textView.stringValue) ?? stepper.doubleValue
+        stepper.doubleValue = Double(textView.accessibilityValue() ?? "") ?? stepper.doubleValue
+        guard let stringValue = textView.accessibilityValue() else { return }
+        if !(stringValue.isEmpty || Int(stringValue) != nil) {
+            textView.stringValue = previousValue
+        }
+        previousValue = textView.accessibilityValue() ?? ""
     }
     
     func setupViews() {
@@ -129,6 +135,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
         set {
             if !newValue.isEmpty, let doubleVal = Double(newValue) {
                 inputValue = doubleVal
+                previousValue = inputString
             }
         }
     }
@@ -188,6 +195,9 @@ open class InputNumberFormatter: NumberFormatter {
         super.init()
         hasThousandSeparators = false
         numberStyle = Style.decimal
+        generatesDecimalNumbers = true
+        localizesFormat = true
+        maximumFractionDigits = 5
     }
     
     public required init?(coder: NSCoder) {
