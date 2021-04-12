@@ -74,7 +74,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             }
         }
     
-        let imagePriority = NSLayoutConstraint.Priority.defaultHigh // TODO: Possible need to revisit this
+        let imagePriority = NSLayoutConstraint.Priority.defaultHigh
         if imageProperties.acsImageSize != ACSImageSize.stretch {
             imageView.setContentHuggingPriority(imagePriority, for: .horizontal)
             imageView.setContentHuggingPriority(.defaultHigh, for: .vertical)
@@ -109,7 +109,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         let cgSize = imageProperties.contentSize
         superView.isImageSet = true
         
-        let priority = NSLayoutConstraint.Priority.defaultHigh // TODO Need to revisit this for a more generalised logic
+        let priority = NSLayoutConstraint.Priority.defaultHigh
         
         var constraints: [NSLayoutConstraint] = []
         
@@ -123,19 +123,11 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         if !imageProperties.hasExplicitDimensions {
             constraints.append(imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: cgSize.width / cgSize.height, constant: 0))
             constraints.append(imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: cgSize.height / cgSize.width, constant: 0))
-            constraints[2].priority = priority + 2
-            constraints[3].priority = priority + 2
         }
         
         NSLayoutConstraint.activate(constraints)
                     
         superView.invalidateIntrinsicContentSize()
-    }
-    
-    func getImageViewLayoutPriority(_ wrappingView: NSView) -> NSLayoutConstraint.Priority {
-        let ACRColumnWidthPriorityStretch = 249
-        let priority = wrappingView.contentHuggingPriority(for: .horizontal)
-        return (Int(priority.rawValue) > ACRColumnWidthPriorityStretch) ? NSLayoutConstraint.Priority.defaultHigh : priority
     }
 }
 

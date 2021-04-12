@@ -71,6 +71,8 @@ class ACRContentHoldingView: NSView, SelectActionHandlingProtocol {
             } else {
                 widthAnchor.constraint(equalTo: superView.widthAnchor).isActive = true
             }
+        } else {
+            widthAnchor.constraint(equalTo: superView.widthAnchor).isActive = true
         }
     }
     
