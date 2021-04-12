@@ -195,9 +195,6 @@ open class InputNumberFormatter: NumberFormatter {
         super.init()
         hasThousandSeparators = false
         numberStyle = Style.decimal
-        generatesDecimalNumbers = true
-        localizesFormat = true
-        maximumFractionDigits = 5
     }
     
     public required init?(coder: NSCoder) {
