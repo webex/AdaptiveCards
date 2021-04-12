@@ -1,7 +1,7 @@
 import AdaptiveCards_bridge
 import AppKit
 
-class ACRContentHoldingView: NSView, SelectActionHandlingProtocol {
+class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
     private weak var _viewgroup: ACRContentStackView?
     private weak var _imageViewHeightConstraint: NSLayoutConstraint?
     private weak var _heightConstraint: NSLayoutConstraint?
@@ -94,13 +94,13 @@ class ACRContentHoldingView: NSView, SelectActionHandlingProtocol {
     
     private var previousBackgroundColor: CGColor?
     override func mouseEntered(with event: NSEvent) {
-        guard let columnView = event.trackingArea?.owner as? ACRContentHoldingView, target != nil else { return }
+        guard let columnView = event.trackingArea?.owner as? ACRImageWrappingView, target != nil else { return }
         previousBackgroundColor = columnView.layer?.backgroundColor
         columnView.layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
     }
     
     override func mouseExited(with event: NSEvent) {
-        guard let columnView = event.trackingArea?.owner as? ACRContentHoldingView, target != nil else { return }
+        guard let columnView = event.trackingArea?.owner as? ACRImageWrappingView, target != nil else { return }
         columnView.layer?.backgroundColor = previousBackgroundColor ?? .clear
     }
  }
