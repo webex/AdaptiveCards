@@ -43,7 +43,7 @@ public struct RenderConfig {
     let buttonConfig: ButtonConfig
 	let supportsSchemaVersion1Dot3: Bool
     
-    public init(isDarkMode: Bool, buttonConfig: ButtonConfig) {
+    public init(isDarkMode: Bool, buttonConfig: ButtonConfig, supportsSchemaVersion1Dot3: Bool) {
         self.isDarkMode = isDarkMode
         self.buttonConfig = buttonConfig
 		self.supportsSchemaVersion1Dot3 = supportsSchemaVersion1Dot3
