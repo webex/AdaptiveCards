@@ -47,6 +47,7 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
         }
         
         columnView.setupSelectAction(column.getSelectAction(), rootView: rootView)
+        columnView.setHuggingPriority(1)
      
         return columnView
     }
