@@ -30,10 +30,10 @@ open class AdaptiveCard {
         return .success(hostConfig)
     }
     
-    public static func render(card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, width: CGFloat, actionDelegate: AdaptiveCardActionDelegate?, resourceResolver: AdaptiveCardResourceResolver?, config: RenderConfig = .default) -> NSView {
+    public static func render(card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, actionDelegate: AdaptiveCardActionDelegate?, resourceResolver: AdaptiveCardResourceResolver?, config: RenderConfig = .default) -> NSView {
         AdaptiveCardRenderer.shared.actionDelegate = actionDelegate
         AdaptiveCardRenderer.shared.resolverDelegate = resourceResolver
-        return AdaptiveCardRenderer.shared.renderAdaptiveCard(card, with: hostConfig, width: width, config: config)
+        return AdaptiveCardRenderer.shared.renderAdaptiveCard(card, with: hostConfig, config: config)
     }
 }
 

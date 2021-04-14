@@ -158,7 +158,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         stackview.addArrangedSubview(datePickerCalendar)
         if isTimeMode {
             stackview.spacing = 3
-            stackview.edgeInsets.bottom = 3
+            stackview.edgeInsets.bottom = 4
         }
         let popoverView = NSViewController()
         popoverView.view = stackview

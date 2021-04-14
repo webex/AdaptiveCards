@@ -159,19 +159,23 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wOe-bU-DLU">
-                                        <rect key="frame" x="20" y="504" width="350" height="0.0"/>
+                                        <rect key="frame" x="5" y="504" width="379" height="0.0"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="350" id="kJn-4U-cPM"/>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="kJn-4U-cPM"/>
                                         </constraints>
                                     </stackView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="wOe-bU-DLU" firstAttribute="centerX" secondItem="MdU-rn-yDx" secondAttribute="centerX" id="9dn-NB-2Jt"/>
+                                    <constraint firstItem="wOe-bU-DLU" firstAttribute="centerX" secondItem="MdU-rn-yDx" secondAttribute="centerX" id="0YD-Tk-Rov"/>
                                     <constraint firstItem="wOe-bU-DLU" firstAttribute="centerY" secondItem="MdU-rn-yDx" secondAttribute="centerY" id="H2h-LI-FL3"/>
+                                    <constraint firstItem="wOe-bU-DLU" firstAttribute="leading" secondItem="MdU-rn-yDx" secondAttribute="leading" constant="5" id="zGA-dc-cFk"/>
                                 </constraints>
                             </view>
                         </subviews>
                     </clipView>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="2A2-tg-9Rr"/>
+                    </constraints>
                     <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="pL3-LP-bvj">
                         <rect key="frame" x="1" y="395" width="389" height="16"/>
                         <autoresizingMask key="autoresizingMask"/>

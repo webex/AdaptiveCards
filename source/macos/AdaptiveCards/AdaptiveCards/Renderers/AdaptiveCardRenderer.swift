@@ -6,12 +6,12 @@ class AdaptiveCardRenderer {
     weak var actionDelegate: AdaptiveCardActionDelegate?
     weak var resolverDelegate: AdaptiveCardResourceResolver?
     
-    func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, width: CGFloat, config: RenderConfig) -> NSView {
+    func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, config: RenderConfig) -> NSView {
         var style: ACSContainerStyle = .default
         if let colorConfig = hostConfig.getAdaptiveCard() {
             style = (colorConfig.allowCustomStyle && card.getStyle() != .none) ? card.getStyle() : .default
         }
-        return renderAdaptiveCard(card, with: hostConfig, style: style, width: width, config: config)
+        return renderAdaptiveCard(card, with: hostConfig, style: style, config: config)
     }
     
     func renderShowCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, parent: ACRView, config: RenderConfig) -> NSView {
@@ -28,12 +28,12 @@ class AdaptiveCardRenderer {
         return cardView
     }
     
-    private func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, style: ACSContainerStyle, width: CGFloat? = nil, config: RenderConfig) -> NSView {
+    private func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, style: ACSContainerStyle, config: RenderConfig) -> NSView {
         let rootView = ACRView(style: style, hostConfig: hostConfig, renderConfig: config)
         rootView.translatesAutoresizingMaskIntoConstraints = false
-        if let width = width {
-            rootView.widthAnchor.constraint(equalToConstant: width).isActive = true
-        }
+        let width: CGFloat = 400
+        rootView.widthAnchor.constraint(lessThanOrEqualToConstant: width).isActive = true
+        
         rootView.delegate = self
         rootView.resolverDelegate = self
            
