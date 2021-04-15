@@ -211,7 +211,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         columnView.layer?.backgroundColor = previousBackgroundColor ?? .clear
     }
     
-    func setHuggingHorizontalPriority(_ rawValue: Float) {
+    func setHuggingVerticalPriority(_ rawValue: Float) {
         stackView.setHuggingPriority(NSLayoutConstraint.Priority(rawValue), for: .vertical)
     }
 }
