@@ -48,7 +48,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         if let minHeight = container.getMinHeight(), let heightPt = CGFloat(exactly: minHeight), heightPt > 0 {
             containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
         }
-        containerView.setHuggingVerticalPriority(1000)
+        containerView.setVerticalHuggingPriority(1000)
         return containerView
     }
 }
