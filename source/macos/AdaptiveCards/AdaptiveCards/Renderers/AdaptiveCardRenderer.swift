@@ -36,7 +36,7 @@ class AdaptiveCardRenderer {
         }
         rootView.delegate = self
         rootView.resolverDelegate = self
-        if card.getVersion() == "1.3", !config.supportsSchemaVersion1Dot3 {
+        if card.getVersion() == "1.3", !config.supportsSchemeV1_3 {
             logError("CardVersion 1.3 not supported, Card properties of this version and above won't be rendered")
         }
            

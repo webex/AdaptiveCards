@@ -59,7 +59,7 @@ class RichTextBlockRendererTests: XCTestCase {
         richTextBlock = .make(textRun: textRun)
         let textView = renderTextView()
         
-        if renderConfig.supportsSchemaVersion1Dot3 {
+        if renderConfig.supportsSchemeV1_3 {
             XCTAssert(isStringAttributePresent(attrString: textView.attributedString(), attr: .underlineStyle))
         }
     }

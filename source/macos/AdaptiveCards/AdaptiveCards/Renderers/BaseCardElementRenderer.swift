@@ -36,7 +36,7 @@ class BaseCardElementRenderer {
         updatedView.isHidden = !element.getIsVisible()
         
         // Input label handling
-        if config.supportsSchemaVersion1Dot3, let inputElement = element as? ACSBaseInputElement, let label = inputElement.getLabel(), !label.isEmpty {
+        if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let label = inputElement.getLabel(), !label.isEmpty {
             let attributedString = NSMutableAttributedString(string: label)
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
                 attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))

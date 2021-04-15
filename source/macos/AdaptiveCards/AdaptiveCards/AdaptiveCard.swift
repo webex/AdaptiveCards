@@ -38,15 +38,16 @@ open class AdaptiveCard {
 }
 
 public struct RenderConfig {
-    public static let `default` = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemaVersion1Dot3: false)
+    public static let `default` = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false)
     let isDarkMode: Bool
     let buttonConfig: ButtonConfig
-	let supportsSchemaVersion1Dot3: Bool
+    // swiftlint:disable identifier_name
+    let supportsSchemeV1_3: Bool
     
-    public init(isDarkMode: Bool, buttonConfig: ButtonConfig, supportsSchemaVersion1Dot3: Bool) {
+    public init(isDarkMode: Bool, buttonConfig: ButtonConfig, supportsSchemeV1_3: Bool) {
         self.isDarkMode = isDarkMode
         self.buttonConfig = buttonConfig
-		self.supportsSchemaVersion1Dot3 = supportsSchemaVersion1Dot3
+		self.supportsSchemeV1_3 = supportsSchemeV1_3
     }
 }
 
