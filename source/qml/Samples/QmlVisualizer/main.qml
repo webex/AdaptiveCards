@@ -6,32 +6,36 @@ import QtQuick.Controls 2.15
 
 Row{
     id: root
+	width : 1330
+	height : 800
     padding: 10
     spacing: 5
 
     Loader{
         id: cardListViewLoader
         source: "SampleCardListView.qml"
+		height : parent.height - 20
     }
 
     Loader{
         id: cardEditorLoader
         source: "CardEditor.qml"
+		height : parent.height - 20
     }
 
     Rectangle{
         id: cardRoot
 
-        height: 800
-        width: 650
+        height : parent.height - 20
+        width: parent.width - 680
         color: 'lightblue'
         radius: 8
         border.width: 2
         border.color: 'black'
 
         Rectangle{
-            height: 780
-            width: 630
+            height : parent.height - 20
+            width: parent.width - 20
             radius: 8
             x: 10;y: 10
             color: "transparent"
