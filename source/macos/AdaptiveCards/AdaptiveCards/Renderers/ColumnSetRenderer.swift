@@ -45,9 +45,6 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             columnView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
             columnSetView.addView(wrappingView, in: gravityArea)
             BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column, parentElement: columnSet)
-            let heightConstraint = columnView.heightAnchor.constraint(equalTo: columnSetView.heightAnchor)
-            heightConstraint.priority = .defaultLow
-            heightConstraint.isActive = true
         }
         
         // Add SelectAction

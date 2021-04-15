@@ -51,15 +51,8 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
     
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
-        guard let hasExpilicitDimension = imageProperties?.hasExplicitDimensions else {
-            // assuming no explicit pixel height and width is provided when imageProperties not set
-            setWidthConstraintWithSuperView()
-            return
-        }
-        
-        if !hasExpilicitDimension {
-            setWidthConstraintWithSuperView()
-        }
+        guard let hasExpilicitDimension = imageProperties?.hasExplicitDimensions, !hasExpilicitDimension else { return }
+        setWidthConstraintWithSuperView()
     }
 
     private func setWidthConstraintWithSuperView() {
