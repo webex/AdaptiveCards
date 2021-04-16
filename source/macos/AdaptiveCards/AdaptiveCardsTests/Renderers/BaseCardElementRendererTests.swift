@@ -46,7 +46,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertTrue(view is ACRColumnView)
         
         let viewWithInheritedProperties = baseCardRenderer.updateView(view: view, element: container, rootView: FakeRootView(), style: .default, hostConfig: hostConfig, config: .default, isfirstElement: true)
-        XCTAssertTrue(view is ACRContentStackView)
+        XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
         
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         return updatedView
