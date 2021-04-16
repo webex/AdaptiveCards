@@ -33,7 +33,7 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
 // MARK: - ACRNumericTextField Class
 open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     var id: String?
-    var previousValue = ""
+    private var previousValue = ""
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setupViews()
