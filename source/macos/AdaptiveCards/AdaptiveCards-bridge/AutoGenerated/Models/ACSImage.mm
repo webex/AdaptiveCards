@@ -12,7 +12,7 @@
 
 //cpp includes
 #import "../../../../../shared/cpp/ObjectModel/BaseActionElement.h"
-#import "../../../../../shared/cpp/ObjectModel/Enums.h"
+#import "Enums.h"
 #import "../../../../../shared/cpp/ObjectModel/RemoteResourceInformation.h"
 
 

@@ -18,7 +18,7 @@
 #import "../../../../../shared/cpp/ObjectModel/BackgroundImage.h"
 #import "../../../../../shared/cpp/ObjectModel/BaseActionElement.h"
 #import "../../../../../shared/cpp/ObjectModel/BaseElement.h"
-#import "../../../../../shared/cpp/ObjectModel/Enums.h"
+#import "Enums.h"
 #import "../../../../../shared/cpp/ObjectModel/HostConfig.h"
 #import "../../../../../shared/cpp/ObjectModel/RemoteResourceInformation.h"
 

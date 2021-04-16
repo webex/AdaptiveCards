@@ -9,7 +9,7 @@
 
 //cpp includes
 #import "../../../../../shared/cpp/ObjectModel/ChoiceInput.h"
-#import "../../../../../shared/cpp/ObjectModel/Enums.h"
+#import "Enums.h"
 
 
 #import "ACSChoiceSetInput.h"

@@ -3,7 +3,7 @@
 
 //cpp includes 
 #import "../../../../../shared/cpp/ObjectModel/HostConfig.h"
-#import "../../../../../shared/cpp/ObjectModel/Enums.h"
+#import "Enums.h"
 
 #import "ACSShowCardActionConfigConvertor.h"
 #import "ACSActionModeConvertor.h"

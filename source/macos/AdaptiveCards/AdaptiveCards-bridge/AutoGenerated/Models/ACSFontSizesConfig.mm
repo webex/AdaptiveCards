@@ -7,7 +7,7 @@
 #import "ACSTextSizeConvertor.h"
 
 //cpp includes
-#import "../../../../../shared/cpp/ObjectModel/Enums.h"
+#import "Enums.h"
 
 
 #import "ACSFontSizesConfig.h"

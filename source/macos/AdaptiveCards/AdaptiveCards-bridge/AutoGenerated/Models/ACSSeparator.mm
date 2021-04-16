@@ -8,7 +8,7 @@
 #import "ACSSeparatorThicknessConvertor.h"
 
 //cpp includes
-#import "../../../../../shared/cpp/ObjectModel/Enums.h"
+#import "Enums.h"
 
 
 #import "ACSSeparator.h"

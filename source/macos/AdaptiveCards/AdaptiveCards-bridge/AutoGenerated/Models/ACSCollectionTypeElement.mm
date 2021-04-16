@@ -17,7 +17,7 @@
 #import "../../../../../shared/cpp/ObjectModel/BackgroundImage.h"
 #import "../../../../../shared/cpp/ObjectModel/BaseActionElement.h"
 #import "../../../../../shared/cpp/ObjectModel/BaseElement.h"
-#import "../../../../../shared/cpp/ObjectModel/Enums.h"
+#import "Enums.h"
 #import "../../../../../shared/cpp/ObjectModel/json/json.h"
 #import "../../../../../shared/cpp/ObjectModel/ParseContext.h"
 
