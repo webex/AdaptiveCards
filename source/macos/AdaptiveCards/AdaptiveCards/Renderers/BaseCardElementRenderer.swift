@@ -20,14 +20,12 @@ class BaseCardElementRenderer {
             }
         }
         
-        if let collectionElement = element as? ACSCollectionTypeElement {
+        if let collectionElement = element as? ACSCollectionTypeElement, let contentStackView = view as? ACRContentStackView {
             if let columnView = view as? ACRColumnView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
                 columnView.setupBackgroundImageProperties(backgroundImage)
                 rootView.registerImageHandlingView(columnView.backgroundImageView, for: url)
             }
-            if let minHeight = collectionElement.getMinHeight(), let heightPt = CGFloat(exactly: minHeight), heightPt > 0 {
-                view.heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
-            }
+            contentStackView.setMinimumHeight(collectionElement.getMinHeight())
         }
         
         // For seperator
