@@ -47,7 +47,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private lazy var textField: NSTextField = {
+    private (set) lazy var textField: NSTextField = {
         let view = NSTextField()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.delegate = self
@@ -70,8 +70,12 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         // updating the stepper value when text field value change
         stepper.doubleValue = Double(textView.accessibilityValue() ?? "") ?? stepper.doubleValue
         guard let stringValue = textView.accessibilityValue() else { return }
-        if !(stringValue.isEmpty || Int(stringValue) != nil) {
+        if Double(stringValue) != nil {
+            textView.stringValue = stringValue
+        } else if Int(stringValue) == nil && !stringValue.isEmpty {
             textView.stringValue = previousValue
+        } else if stringValue.isEmpty {
+            textView.stringValue = ""
         }
         previousValue = textView.accessibilityValue() ?? ""
     }
