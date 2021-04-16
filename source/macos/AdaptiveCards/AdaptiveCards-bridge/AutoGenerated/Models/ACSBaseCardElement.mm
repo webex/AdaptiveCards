@@ -13,7 +13,7 @@
 
 
 #import "ACSBaseCardElement.h"
-#import "../../../../../shared/cpp/ObjectModel/BaseCardElement.h"
+#import "BaseCardElement.h"
 
 
 @implementation  ACSBaseCardElement {

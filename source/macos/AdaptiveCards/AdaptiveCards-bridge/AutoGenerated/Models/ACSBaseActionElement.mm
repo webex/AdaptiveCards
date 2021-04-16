@@ -9,11 +9,11 @@
 
 //cpp includes
 #import "Enums.h"
-#import "../../../../../shared/cpp/ObjectModel/RemoteResourceInformation.h"
+#import "RemoteResourceInformation.h"
 
 
 #import "ACSBaseActionElement.h"
-#import "../../../../../shared/cpp/ObjectModel/BaseActionElement.h"
+#import "BaseActionElement.h"
 
 
 @implementation  ACSBaseActionElement {

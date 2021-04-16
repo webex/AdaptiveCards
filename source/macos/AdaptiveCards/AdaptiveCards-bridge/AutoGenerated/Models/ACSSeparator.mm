@@ -12,7 +12,7 @@
 
 
 #import "ACSSeparator.h"
-#import "../../../../../shared/cpp/ObjectModel/Separator.h"
+#import "Separator.h"
 
 
 @implementation  ACSSeparator {

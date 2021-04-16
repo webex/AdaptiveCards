@@ -13,7 +13,7 @@
 
 
 #import "ACSBackgroundImage.h"
-#import "../../../../../shared/cpp/ObjectModel/BackgroundImage.h"
+#import "BackgroundImage.h"
 
 
 @implementation  ACSBackgroundImage {

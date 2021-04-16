@@ -11,7 +11,7 @@
 
 
 #import "ACSFontWeightsConfig.h"
-#import "../../../../../shared/cpp/ObjectModel/HostConfig.h"
+#import "HostConfig.h"
 
 
 @implementation  ACSFontWeightsConfig {

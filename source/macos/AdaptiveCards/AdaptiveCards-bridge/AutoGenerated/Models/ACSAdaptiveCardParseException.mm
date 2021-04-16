@@ -11,7 +11,7 @@
 
 
 #import "ACSAdaptiveCardParseException.h"
-#import "../../../../../shared/cpp/ObjectModel/AdaptiveCardParseException.h"
+#import "AdaptiveCardParseException.h"
 
 
 @implementation  ACSAdaptiveCardParseException {

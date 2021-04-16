@@ -15,16 +15,16 @@
 #import "ACSVerticalContentAlignmentConvertor.h"
 
 //cpp includes
-#import "../../../../../shared/cpp/ObjectModel/BackgroundImage.h"
-#import "../../../../../shared/cpp/ObjectModel/BaseActionElement.h"
-#import "../../../../../shared/cpp/ObjectModel/BaseElement.h"
+#import "BackgroundImage.h"
+#import "BaseActionElement.h"
+#import "BaseElement.h"
 #import "Enums.h"
-#import "../../../../../shared/cpp/ObjectModel/HostConfig.h"
-#import "../../../../../shared/cpp/ObjectModel/RemoteResourceInformation.h"
+#import "HostConfig.h"
+#import "RemoteResourceInformation.h"
 
 
 #import "ACSAdaptiveCard.h"
-#import "../../../../../shared/cpp/ObjectModel/SharedAdaptiveCard.h"
+#import "SharedAdaptiveCard.h"
 
 
 @implementation  ACSAdaptiveCard {

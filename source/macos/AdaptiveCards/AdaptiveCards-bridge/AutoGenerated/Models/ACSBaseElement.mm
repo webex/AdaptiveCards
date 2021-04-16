@@ -14,14 +14,14 @@
 
 //cpp includes
 #import "Enums.h"
-#import "../../../../../shared/cpp/ObjectModel/FeatureRegistration.h"
-#import "../../../../../shared/cpp/ObjectModel/json/json.h"
-#import "../../../../../shared/cpp/ObjectModel/ParseContext.h"
-#import "../../../../../shared/cpp/ObjectModel/RemoteResourceInformation.h"
+#import "FeatureRegistration.h"
+#import "json.h"
+#import "ParseContext.h"
+#import "RemoteResourceInformation.h"
 
 
 #import "ACSBaseElement.h"
-#import "../../../../../shared/cpp/ObjectModel/BaseElement.h"
+#import "BaseElement.h"
 
 
 @implementation  ACSBaseElement {

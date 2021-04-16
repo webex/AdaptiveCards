@@ -11,7 +11,7 @@
 
 
 #import "ACSAdaptiveCardParseWarning.h"
-#import "../../../../../shared/cpp/ObjectModel/AdaptiveCardParseWarning.h"
+#import "AdaptiveCardParseWarning.h"
 
 
 @implementation  ACSAdaptiveCardParseWarning {

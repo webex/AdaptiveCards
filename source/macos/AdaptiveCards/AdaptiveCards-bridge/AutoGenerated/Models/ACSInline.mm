@@ -9,11 +9,11 @@
 
 //cpp includes
 #import "Enums.h"
-#import "../../../../../shared/cpp/ObjectModel/json/json.h"
+#import "json.h"
 
 
 #import "ACSInline.h"
-#import "../../../../../shared/cpp/ObjectModel/Inline.h"
+#import "Inline.h"
 
 
 @implementation  ACSInline {

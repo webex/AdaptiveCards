@@ -9,11 +9,11 @@
 
 //cpp includes
 #import "Enums.h"
-#import "../../../../../shared/cpp/ObjectModel/json/json.h"
+#import "json.h"
 
 
 #import "ACSSubmitAction.h"
-#import "../../../../../shared/cpp/ObjectModel/SubmitAction.h"
+#import "SubmitAction.h"
 
 
 @implementation  ACSSubmitAction {

@@ -10,12 +10,12 @@
 
 //cpp includes
 #import "Enums.h"
-#import "../../../../../shared/cpp/ObjectModel/Image.h"
-#import "../../../../../shared/cpp/ObjectModel/RemoteResourceInformation.h"
+#import "Image.h"
+#import "RemoteResourceInformation.h"
 
 
 #import "ACSImageSet.h"
-#import "../../../../../shared/cpp/ObjectModel/ImageSet.h"
+#import "ImageSet.h"
 
 
 @implementation  ACSImageSet {
