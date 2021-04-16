@@ -26,8 +26,12 @@ class BaseCardElementRendererrTests: XCTestCase {
     
     func testRendererSetsVisible() {
         container = .make(visible: true)
-        let viewWithInheritedProperties = renderBaseCardElementView()
+        var viewWithInheritedProperties = renderBaseCardElementView()
         XCTAssertEqual(viewWithInheritedProperties.isHidden, false)
+        
+        container = .make(visible: false)
+        viewWithInheritedProperties = renderBaseCardElementView()
+        XCTAssertEqual(viewWithInheritedProperties.isHidden, true)
     }
     
     func testRendererSetsBackgroundImage() {
