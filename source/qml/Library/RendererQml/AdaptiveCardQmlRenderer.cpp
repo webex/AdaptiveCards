@@ -71,7 +71,7 @@ namespace RendererQml
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);
-		uiCard->Property("readonly property int margins", "0");
+		uiCard->Property("readonly property int margins", std::to_string(margin));
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
         uiCard->Property("Layout.fillWidth","true");
@@ -137,7 +137,12 @@ namespace RendererQml
 
 		if (card->GetMinHeight() >= 0)
 		{
-			rectangle->Property("Layout.minimumHeight", std::to_string(card->GetMinHeight()));
+			int minHeight = card->GetMinHeight();
+			if (minHeight == 0)
+			{
+				minHeight++;
+			}
+			rectangle->Property("Layout.minimumHeight", std::to_string(minHeight - tempMargin));
 		}
 
         //Add submit onclick event
@@ -2188,6 +2193,8 @@ namespace RendererQml
         std::shared_ptr<QmlTag> uiColumn = GetNewColumn(cardElement, context);
 
 		int minHeight = cardElement->GetMinHeight();
+		if (minHeight == 0)
+			minHeight++;
 
         uiContainer = std::make_shared<QmlTag>("Frame");
         uiColumnLayout = std::make_shared<QmlTag>("ColumnLayout");
@@ -2951,7 +2958,7 @@ namespace RendererQml
 				}
 				
 				minHeight = std::max(minHeight, std::stoi(uiElements[i]->GetProperty("property int minHeight")) + bleedMargin);
-				uiElements[i]->Property("property int stretchMinHeight", Formatter() << uiFrame->GetId() << ".stretchMinHeight");
+				uiElements[i]->Property("property int stretchMinHeight", Formatter() << "Math.max(" << uiFrame->GetId() << ".stretchMinHeight, implicitHeight - 1)");
 
 				maxBleedMargin = std::max(bleedMargin, maxBleedMargin);
 				uiElements[i]->Property("implicitHeight", Formatter() << columnSet->GetId() << ".getColumnHeight( " << uiElements[i]->HasProperty("readonly property int bleed") << " ) + " << bleedMargin);
@@ -2970,7 +2977,6 @@ namespace RendererQml
 
 		uiFrame->Property("property int stretchMinHeight", std::to_string(minHeight));
 		uiFrame->Property("onMinHeightChanged", Formatter() << "{ stretchMinHeight = Math.max(minHeight - " << tempMargin << ", stretchMinHeight)}");
-		//uiFrame->Property("onImplicitHeightChanged", Formatter() << "{ stretchMinHeight = Math.max(implicitHeight - " << (2 * margin - tempMargin) << ", stretchMinHeight)}");
 
 		uiFrame->AddFunctions(Formatter() << "function getColumnSetHeight(){ var calculatedHeight = getColumnHeight(true);if(calculatedHeight >= minHeight - (" << (tempMargin) << ")){return calculatedHeight + (" << (tempMargin) << ")}else{return minHeight;}}");
 
