@@ -133,7 +133,7 @@ namespace RendererQml
         addShowCardLoaderComponents(context);
         addTextRunSelectActions(context);
 
-        // Add height and widtch calculation function
+        // Add height and width calculation function
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchWidth());
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
