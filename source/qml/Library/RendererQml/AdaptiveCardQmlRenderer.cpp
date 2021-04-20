@@ -1428,7 +1428,7 @@ namespace RendererQml
 		uiFactSet->Property("columns", "2");
 		uiFactSet->Property("rows", std::to_string(factSet->GetFacts().size()));
 		uiFactSet->Property("property int titleWidth", "0");
-		uiFactSet->Property("property int minWidth", Formatter() << context->getCardRootId() << ".getMinWidthFactSet(children)");
+		uiFactSet->Property("property int minWidth", Formatter() << context->getCardRootId() << ".getMinWidthFactSet(children, columnSpacing)");
 		uiFactSet->AddFunctions("function setTitleWidth(item){	if (item.width > titleWidth){ titleWidth = item.width }}");
 
 		if (!factSet->GetIsVisible())
@@ -3193,12 +3193,12 @@ namespace RendererQml
 	const std::string RendererQml::AdaptiveCardQmlRenderer::getMinWidthFactSet()
 	{
 		return R"(		
-		function getMinWidthFactSet(childrens)		
+		function getMinWidthFactSet(childrens, spacing)		
 		{		
 			var min = 0		
 			for(var j=0;j<childrens.length;j+=2)		
 			{		
-				min = Math.max(min,childrens[j].implicitWidth + childrens[j+1].implicitWidth)		
+				min = Math.max(min,childrens[j].implicitWidth + childrens[j+1].implicitWidth + spacing)		
 			}		
 			return min;		
 		}		
