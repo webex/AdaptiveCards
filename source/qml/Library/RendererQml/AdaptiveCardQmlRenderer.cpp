@@ -149,7 +149,7 @@ namespace RendererQml
         addShowCardLoaderComponents(context);
         addTextRunSelectActions(context);
 
-        // Add height anf widtch calculation function
+        // Add height and width calculation function
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchWidth());
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
@@ -171,7 +171,6 @@ namespace RendererQml
 					AddSeparator(uiContainer, cardElement, context);
 				}
 
-				//TODO: Add collection element
 				if (cardElement->GetHeight() == AdaptiveCards::HeightType::Stretch && cardElement->GetElementTypeString() != "Image")
 				{
 					uiElement->Property("readonly property bool stretch", "true");
@@ -371,7 +370,6 @@ namespace RendererQml
         std::string uiCard_string = uiCard->ToString();
         uiCard_string = Utils::Replace(uiCard_string, "\\", "\\\\");
         uiCard_string = Utils::Replace(uiCard_string, "\"", "\\\"");
-        //std::string uiCard_string = std::regex_replace(uiCard_string2, std::regex("\""), "\\\"");
 
         auto uiColumn = std::make_shared<QmlTag>("ColumnLayout");
         uiColumn->Property("id", layoutId);
@@ -1598,7 +1596,6 @@ namespace RendererQml
 			break;
 		}
 
-		//TODO:calculation to get oval object
 		switch (image->GetImageStyle())
 		{
 		case AdaptiveCards::ImageStyle::Default:
@@ -1666,7 +1663,7 @@ namespace RendererQml
 			uiTimeInput->Property("visibile", "false");
 		}
 
-		//TODO: Height Property, Spacing Property
+		//TODO: Height Property
 		// Time Format: hh:mm tt -> 03:30 AM or hh:mm -> 15:30 
 		std::string listViewHours_id = id + "_hours";
 		std::string listViewMin_id = id + "_min";
