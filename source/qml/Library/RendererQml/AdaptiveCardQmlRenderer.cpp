@@ -75,8 +75,8 @@ namespace RendererQml
 		uiCard->Property("readonly property int margins", std::to_string(margin));
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
-        uiCard->Property("width", std::to_string(context->getCardWidth()));
-        uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+		uiCard->Property("Layout.fillWidth", "true");
+		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         uiCard->Property("color", "bgColor");		
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
@@ -106,6 +106,7 @@ namespace RendererQml
 		rectangle->Property("Layout.rightMargin", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
 		rectangle->Property("Layout.preferredHeight", "40");
+		rectangle->Property("Layout.minimumHeight", "1");
 
 		columnLayout->AddChild(rectangle);
 
@@ -2164,6 +2165,7 @@ namespace RendererQml
         std::shared_ptr<QmlTag> uiColumn = std::make_shared<QmlTag>("Column");
 
         uiColumn->Property("Layout.fillWidth", "true");
+		uiColumn->Property("Layout.minimumHeight", "1");
 
         if (cardElement->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Top)
         {
