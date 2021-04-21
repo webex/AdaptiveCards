@@ -2,6 +2,11 @@
 #include "ImageDataURI.h"
 #include "pch.h"
 
+#include <QtGui/QGuiApplication>
+#include <QtQml/QQmlApplicationEngine>
+#include <QtQuick/QQuickItem>
+#include <QtQuick/QQuickWindow>
+
 namespace RendererQml
 {
 	AdaptiveCardQmlRenderer::AdaptiveCardQmlRenderer()
@@ -428,6 +433,19 @@ namespace RendererQml
             uiTextBlock->Property("font.family", fontFamily, true);
         }
 
+		//Try Reading a qml file
+		//QQmlApplicationEngine engine;
+		//QQmlComponent component(&engine, "file:/C:/dev/desktopAdaptiveCards/source/qml/Samples/QmlVisualizer/CardEditor.qml");
+		//QObject* object = component.create();
+
+		//QVariant v;
+		//v.setValue(401);
+		//object->setProperty("width", v);
+		//auto root_element_width = object->property("width");
+
+		//QQuickItem* item = qobject_cast<QQuickItem*>(object);
+		//auto width_from_QquickItem = item->width();
+		
 		return uiTextBlock;
 
 	}
