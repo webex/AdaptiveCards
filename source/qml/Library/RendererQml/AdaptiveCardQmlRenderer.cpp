@@ -72,6 +72,8 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick.Layouts 1.3");
         uiCard->AddImports("import QtQuick.Controls 2.15");
         uiCard->AddImports("import QtGraphicalEffects 1.15");
+		//TODO: Change hardcoded import
+		uiCard->AddImports(Formatter() << "import " << "\"" << "file:///C:/dev/desktopAdaptiveCards/source/qml/Library/RendererQml/QmlFiles" << "\"");
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);
@@ -380,17 +382,17 @@ namespace RendererQml
 		std::string fontFamily = context->GetConfig()->GetFontFamily(textBlock->GetFontType());
 		int fontSize = context->GetConfig()->GetFontSize(textBlock->GetFontType(), textBlock->GetTextSize());
 
-		auto uiTextBlock = std::make_shared<QmlTag>("Text");
+		auto uiTextBlock = std::make_shared<QmlTag>("TextBlock");
 		std::string textType = textBlock->GetElementTypeString();
 		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(textBlock->GetHorizontalAlignment());
 
 		uiTextBlock->Property("width", "parent.width");
 
 		//Does not work for Markdown text
-		uiTextBlock->Property("elide", "Text.ElideRight");
+		//uiTextBlock->Property("elide", "Text.ElideRight");
 
-		uiTextBlock->Property("clip", "true");
-		uiTextBlock->Property("textFormat", "Text.MarkdownText");
+		//uiTextBlock->Property("clip", "true");
+		//uiTextBlock->Property("textFormat", "Text.MarkdownText");
 
 		std::string text = TextUtils::ApplyTextFunctions(textBlock->GetText(), context->GetLang());
 		text = Utils::HandleEscapeSequences(text);
