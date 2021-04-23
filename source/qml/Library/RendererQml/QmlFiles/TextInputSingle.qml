@@ -5,21 +5,21 @@ import QtGraphicalEffects 1.15
 TextField{
 	property string bgrcolor
 
-    id:textfieldID
-    width:100
-	selectByMouse:true
-    selectedTextColor:'white'
-    background:Rectangle
+    id: textfieldID
+    width: 100
+	selectByMouse: true
+    selectedTextColor: 'white'
+    background: Rectangle
     {
-        radius:5
+        radius: 5
         color: textfieldID.bgrcolor
         border.color: textfieldID.activeFocus? 'black' : 'grey'
-        border.width:1
+        border.width: 1
         layer.enabled: textfieldID.activeFocus ? true : false
-        layer.effect:Glow
+        layer.effect: Glow
         {
-            samples:25
-            color:'skyblue'
+            samples: 25
+            color: 'skyblue'
         }
     }
 }

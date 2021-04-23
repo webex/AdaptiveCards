@@ -8,31 +8,30 @@ ScrollView{
 	property alias text: textAreaID.text
 	property alias placeholderText: textAreaID.placeholderText
 	property alias color: textAreaID.color
-	property alias length: textAreaID.length
-	//Gaining access to function TextArea's remove() method
-	property var remove: textAreaID.remove
+	property int maxLength
 	
-	id:scrollViewID
-    width:100
-	height:textAreaID.visible ? 100 : 0
-    ScrollBar.vertical.interactive:true
+	id: scrollViewID
+    width: 100
+	height: textAreaID.visible ? 100 : 0
+    ScrollBar.vertical.interactive: true
     TextArea{
-        id:textAreaID
-        wrapMode:Text.Wrap
-        selectByMouse:true
-        selectedTextColor:'white'
-        padding:10
-        font.pixelSize:scrollViewID.multifont.pixelSize
-		background:Rectangle{
+        id: textAreaID
+        wrapMode: Text.Wrap
+        selectByMouse: true
+        selectedTextColor: 'white'
+        padding: 10
+        font.pixelSize: scrollViewID.multifont.pixelSize
+		onTextChanged: remove(scrollViewID.maxLength,length)
+		background: Rectangle{
 			id: backgroundRectangle
-            radius:5
+            radius: 5
             color: scrollViewID.bgrcolor
-			border.color:textAreaID.activeFocus? 'black' : 'grey'
-            border.width:1
-            layer.enabled:textAreaID.activeFocus ? true : false
-            layer.effect:Glow{
-                samples:25
-                color:'skyblue'
+			border.color: textAreaID.activeFocus? 'black' : 'grey'
+            border.width: 1
+            layer.enabled: textAreaID.activeFocus ? true : false
+            layer.effect: Glow{
+                samples: 25
+                color: 'skyblue'
             }
         }
     }

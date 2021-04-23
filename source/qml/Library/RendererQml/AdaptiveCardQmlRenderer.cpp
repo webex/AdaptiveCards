@@ -468,7 +468,7 @@ namespace RendererQml
 			
 			if (input->GetMaxLength() > 0)
 			{
-				uiTextInput->Property("onTextChanged", Formatter() << "remove(" << input->GetMaxLength() << ", length)");
+				uiTextInput->Property("maxLength", std::to_string(input->GetMaxLength()));
 			}
 		}
 		else
