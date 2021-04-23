@@ -103,5 +103,11 @@
     <None Include="QmlFiles\TextBlock.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="QmlFiles\TextInputMulti.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="QmlFiles\TextInputSingle.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

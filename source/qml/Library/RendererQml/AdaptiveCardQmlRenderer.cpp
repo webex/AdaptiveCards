@@ -457,40 +457,23 @@ namespace RendererQml
         const std::string origionalElementId = input->GetId();
 
 		std::shared_ptr<QmlTag> uiTextInput;
-		std::shared_ptr<QmlTag> scrollViewTag;
 
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
 		if (input->GetIsMultiline())
 		{
-			scrollViewTag = std::make_shared<QmlTag>("ScrollView");
-			scrollViewTag->Property("width", "parent.width");
-			scrollViewTag->Property("height", Formatter() << input->GetId() <<".visible ? 100 : 0");
-			scrollViewTag->Property("ScrollBar.vertical.interactive", "true");
-
-			uiTextInput = std::make_shared<QmlTag>("TextArea");
-			uiTextInput->Property("id", input->GetId());
-			uiTextInput->Property("wrapMode", "Text.Wrap");
-			uiTextInput->Property("selectByMouse", "true");
-			uiTextInput->Property("selectedTextColor", "'white'");
-			uiTextInput->Property("padding", "10");
-            uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-
+			uiTextInput = std::make_shared<QmlTag>("TextInputMulti");
+			uiTextInput->Property("height", Formatter() << input->GetId() << ".visible ? 100 : 0");
+			uiTextInput->Property("multifont.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
+			
 			if (input->GetMaxLength() > 0)
 			{
 				uiTextInput->Property("onTextChanged", Formatter() << "remove(" << input->GetMaxLength() << ", length)");
 			}
-
-			scrollViewTag->AddChild(uiTextInput);
 		}
 		else
 		{
-			uiTextInput = std::make_shared<QmlTag>("TextField");
-			uiTextInput->Property("id", input->GetId());
-			uiTextInput->Property("width", "parent.width");
-			uiTextInput->Property("selectByMouse", "true");
-			uiTextInput->Property("selectedTextColor", "'white'");
-            uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+			uiTextInput = std::make_shared<QmlTag>("TextInputSingle");
 
 			if (input->GetMaxLength() > 0)
 			{
@@ -498,22 +481,11 @@ namespace RendererQml
 			}
 		}
 
+		uiTextInput->Property("id", input->GetId());
+		uiTextInput->Property("width", "parent.width");
 		uiTextInput->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
-
-		auto glowTag = std::make_shared<QmlTag>("Glow");
-		glowTag->Property("samples", "25");
-		glowTag->Property("color", "'skyblue'");
-
-		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-		backgroundTag->Property("radius", "5");
-		//TODO: These color styling should come from css
-        //TODO: Add hover effect
-        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
-		backgroundTag->Property("border.width", "1");
-		backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
-		backgroundTag->Property("layer.effect", glowTag->ToString());
-		uiTextInput->Property("background", backgroundTag->ToString());
+		uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+		uiTextInput->Property("bgrcolor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
 		if (!input->GetValue().empty())
 		{
@@ -532,7 +504,7 @@ namespace RendererQml
 			uiTextInput->Property("visible", "false");
 		}
 
-        context->addToInputElementList(origionalElementId, (uiTextInput->GetId() + ".text"));
+		context->addToInputElementList(origionalElementId, (uiTextInput->GetId() + ".text"));
 
         // Add inline action mode
         if (context->GetConfig()->GetSupportsInteractivity() && input->GetInlineAction() != nullptr)
@@ -589,8 +561,10 @@ namespace RendererQml
                 if (input->GetIsMultiline())
                 {
                     buttonElement->Property("anchors.bottom", "parent.bottom");
-                    scrollViewTag->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
-                    uiContainer->AddChild(scrollViewTag);
+                    /*scrollViewTag->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
+                    uiContainer->AddChild(scrollViewTag);*/
+					uiTextInput->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
+					uiContainer->AddChild(uiTextInput);
                 }
                 else
                 {
@@ -601,11 +575,6 @@ namespace RendererQml
                 return uiContainer;
             }
         }        
-
-		if (input->GetIsMultiline())
-		{
-			return scrollViewTag;
-		}
 
 		return uiTextInput;
 	}
