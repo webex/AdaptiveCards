@@ -388,12 +388,6 @@ namespace RendererQml
 
 		uiTextBlock->Property("width", "parent.width");
 
-		//Does not work for Markdown text
-		//uiTextBlock->Property("elide", "Text.ElideRight");
-
-		//uiTextBlock->Property("clip", "true");
-		//uiTextBlock->Property("textFormat", "Text.MarkdownText");
-
 		std::string text = TextUtils::ApplyTextFunctions(textBlock->GetText(), context->GetLang());
 		text = Utils::HandleEscapeSequences(text);
 		uiTextBlock->Property("text", text, true);
@@ -434,20 +428,7 @@ namespace RendererQml
 		{
             uiTextBlock->Property("font.family", fontFamily, true);
         }
-
-		//Try Reading a qml file
-		//QQmlApplicationEngine engine;
-		//QQmlComponent component(&engine, "file:/C:/dev/desktopAdaptiveCards/source/qml/Samples/QmlVisualizer/CardEditor.qml");
-		//QObject* object = component.create();
-
-		//QVariant v;
-		//v.setValue(401);
-		//object->setProperty("width", v);
-		//auto root_element_width = object->property("width");
-
-		//QQuickItem* item = qobject_cast<QQuickItem*>(object);
-		//auto width_from_QquickItem = item->width();
-		
+	
 		return uiTextBlock;
 
 	}
