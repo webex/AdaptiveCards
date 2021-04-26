@@ -635,7 +635,6 @@ namespace RendererQml
 		{
 			input->SetValue(input->GetMax());
 			uiNumberInput->Property("defaultValue", Formatter() << input->GetMax());
-
 		}
 
 		uiNumberInput->Property("from", Formatter() << input->GetMin());
@@ -767,7 +766,7 @@ namespace RendererQml
 		const bool isChecked = input->GetValue().compare(valueOn) == 0 ? true : false;
 
 		//TODO: Add Height
-		const auto checkbox = GetCheckBox(RendererQml::Checkbox(input->GetId(),
+		/*const auto checkbox = GetCheckBox(RendererQml::Checkbox(input->GetId(),
             CheckBoxType::Toggle,
 			input->GetTitle(),
 			input->GetValue(),
@@ -775,10 +774,30 @@ namespace RendererQml
 			valueOff,
 			input->GetWrap(),
 			input->GetIsVisible(),
-			isChecked), context);
+			isChecked), context);*/
 
-        context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
-        return checkbox;
+		auto uiToggleInput = std::make_shared<QmlTag>("ToggleInput");
+		uiToggleInput->Property("id", input->GetId());
+		uiToggleInput->Property("width", "parent.width");
+		uiToggleInput->Property("text", input->GetTitle(), true);
+		uiToggleInput->Property("valueOn", valueOn, true);
+		uiToggleInput->Property("valueOff", valueOff, true);
+		uiToggleInput->Property("checked", isChecked ? "true" : "false");
+		
+		if (input->GetWrap())
+		{
+			uiToggleInput->Property("wrapMode", "Text.Wrap");
+		}
+
+		if (!input->GetIsVisible())
+		{
+			uiToggleInput->Property("visible", "false");
+		}
+
+        //context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
+        //return checkbox;
+		context->addToInputElementList(origionalElementId, (uiToggleInput->GetId() + ".value"));
+		return uiToggleInput;
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ChoiceSetRender(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<AdaptiveRenderContext> context)

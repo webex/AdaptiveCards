@@ -112,5 +112,8 @@
     <None Include="QmlFiles\NumberInput.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="QmlFiles\ToggleInput.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

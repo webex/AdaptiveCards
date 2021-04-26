@@ -206,6 +206,7 @@
     <None Include="QmlFiles\TextBlock.qml" />
     <None Include="QmlFiles\TextInputMulti.qml" />
     <None Include="QmlFiles\TextInputSingle.qml" />
+    <None Include="QmlFiles\ToggleInput.qml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
