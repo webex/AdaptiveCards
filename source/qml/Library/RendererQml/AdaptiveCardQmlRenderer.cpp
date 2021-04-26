@@ -585,98 +585,31 @@ namespace RendererQml
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 		const auto inputId = input->GetId();
 
-		auto glowTag = std::make_shared<QmlTag>("Glow");
-		glowTag->Property("samples", "25");
-		glowTag->Property("color", "'skyblue'");
+		auto uiNumberInput = std::make_shared<QmlTag>("NumberInput");
+		uiNumberInput->Property("id", inputId);
+		uiNumberInput->Property("bgrcolor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+		uiNumberInput->Property("textfont.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
+		uiNumberInput->Property("textcolor", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-		backgroundTag->Property("radius", "5");
-		//TODO: These color styling should come from css
-        //TODO: Add hover effect
-        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-
-		backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : 'grey'");
-		backgroundTag->Property("layer.enabled", Formatter() << inputId + "_contentItem" << ".activeFocus ? true : false");
-		backgroundTag->Property("layer.effect", glowTag->ToString());
-
-		auto contentItemTag = std::make_shared<QmlTag>("TextField");
-		contentItemTag->Property("id", inputId + "_contentItem");
-		contentItemTag->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
-		contentItemTag->Property("anchors.left", "parent.left");
-		contentItemTag->Property("selectByMouse", "true");
-		contentItemTag->Property("selectedTextColor", "'white'");
-		contentItemTag->Property("readOnly", Formatter() << "!" << inputId << ".editable");
-		contentItemTag->Property("validator", Formatter() << inputId << ".validator");
-		contentItemTag->Property("inputMethodHints", "Qt.ImhFormattedNumbersOnly");
-		contentItemTag->Property("text", Formatter() << inputId << ".value");
 		if (!input->GetPlaceholder().empty())
 		{
-			contentItemTag->Property("placeholderText", input->GetPlaceholder(), true);
+			uiNumberInput->Property("placeholderText", input->GetPlaceholder(), true);
 		}
-
-		auto textBackgroundTag = std::make_shared<QmlTag>("Rectangle");
-		textBackgroundTag->Property("color", "'transparent'");
-		contentItemTag->Property("background", textBackgroundTag->ToString());
-		contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
-        contentItemTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-
-		auto colorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
-		colorOverlayTag->Property("anchors.fill", "parent");
-		colorOverlayTag->Property("source", "parent");
-		colorOverlayTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-
-		auto upIndicatorTag = std::make_shared<QmlTag>("Rectangle");
-		upIndicatorTag->Property("width", "20");
-		upIndicatorTag->Property("height", "parent.height/2");
-		upIndicatorTag->Property("x", inputId + ".mirrored ? 0 : parent.width - width");
-		upIndicatorTag->Property("radius", "5");
-		upIndicatorTag->Property("color", inputId + ".up.pressed ? '#08000000' : 'transparent'");
-
-		auto upIndicatorImage = std::make_shared<QmlTag>("Image");
-		upIndicatorImage->Property("source", RendererQml::arrow_up_12, true);
-		upIndicatorImage->Property("anchors.centerIn", "parent");
-		upIndicatorImage->AddChild(colorOverlayTag);
-		upIndicatorTag->AddChild(upIndicatorImage);
-
-		auto downIndicatorTag = std::make_shared<QmlTag>("Rectangle");
-		downIndicatorTag->Property("width", "20");
-		downIndicatorTag->Property("height", "parent.height/2");
-		downIndicatorTag->Property("x", inputId + ".mirrored ? 0 : parent.width - width");
-		downIndicatorTag->Property("y", "parent.height/2");
-		downIndicatorTag->Property("radius", "5");
-		downIndicatorTag->Property("color", inputId + ".down.pressed ? '#08000000' : 'transparent'");
-
-		auto downIndicatorImage = std::make_shared<QmlTag>("Image");
-		downIndicatorImage->Property("source", RendererQml::arrow_down_12, true);
-		downIndicatorImage->Property("anchors.centerIn", "parent");
-		downIndicatorImage->AddChild(colorOverlayTag);
-		downIndicatorTag->AddChild(downIndicatorImage);
-
-		auto doubleValidatorTag = std::make_shared<QmlTag>("DoubleValidator");
-
-		auto uiNumberInput = std::make_shared<QmlTag>("SpinBox");
-		uiNumberInput->Property("id", input->GetId());
-		uiNumberInput->Property("width", "parent.width");
-		uiNumberInput->Property("padding", "0");
-		uiNumberInput->Property("stepSize", "1");
-		uiNumberInput->Property("editable", "true");
-		uiNumberInput->Property("validator", doubleValidatorTag->ToString());
-		uiNumberInput->Property("valueFromText", "function(text, locale){\nreturn Number(text)\n}");
-
+		
 		if (input->GetValue() != std::nullopt)
 		{
-			uiNumberInput->Property("readonly property bool hasDefaultValue", "true");
-			uiNumberInput->Property("readonly property int defaultValue", Formatter() << input->GetValue());
+			uiNumberInput->Property("hasDefaultValue", "true");
+			uiNumberInput->Property("defaultValue", Formatter() << input->GetValue());
 		}
 		else if(input->GetMin() == std::nullopt)
 		{
 			input->SetValue(0);
-			uiNumberInput->Property("readonly property bool hasDefaultValue", "true");
-			uiNumberInput->Property("readonly property int defaultValue", std::to_string(0));
+			uiNumberInput->Property("hasDefaultValue", "true");
+			uiNumberInput->Property("defaultValue", std::to_string(0));
 		}
 		else
 		{
-			uiNumberInput->Property("readonly property bool hasDefaultValue", "false");
+			uiNumberInput->Property("hasDefaultValue", "false");
 		}
 
 		if (input->GetMin() == std::nullopt)
@@ -696,12 +629,13 @@ namespace RendererQml
 		if (input->GetValue() < input->GetMin())
 		{
 			input->SetValue(input->GetMin());
-			uiNumberInput->Property("readonly property int defaultValue", Formatter() << input->GetMin());
+			uiNumberInput->Property("defaultValue", Formatter() << input->GetMin());
 		}
 		if (input->GetValue() > input->GetMax())
 		{
 			input->SetValue(input->GetMax());
-			uiNumberInput->Property("readonly property int defaultValue", Formatter() << input->GetMax());
+			uiNumberInput->Property("defaultValue", Formatter() << input->GetMax());
+
 		}
 
 		uiNumberInput->Property("from", Formatter() << input->GetMin());
@@ -714,12 +648,7 @@ namespace RendererQml
 		{
 			uiNumberInput->Property("visible", "false");
 		}
-
-		uiNumberInput->Property("contentItem", contentItemTag->ToString());
-		uiNumberInput->Property("background", backgroundTag->ToString());
-		uiNumberInput->Property("up.indicator", upIndicatorTag->ToString());
-		uiNumberInput->Property("down.indicator", downIndicatorTag->ToString());
-
+		
         context->addToInputElementList(origionalElementId, (inputId + ".value"));
 
 		return uiNumberInput;

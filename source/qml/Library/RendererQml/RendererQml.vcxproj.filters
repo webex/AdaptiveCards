@@ -109,5 +109,8 @@
     <None Include="QmlFiles\TextInputSingle.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="QmlFiles\NumberInput.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
