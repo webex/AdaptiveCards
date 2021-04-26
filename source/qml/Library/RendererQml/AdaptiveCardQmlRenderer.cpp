@@ -766,16 +766,7 @@ namespace RendererQml
 		const bool isChecked = input->GetValue().compare(valueOn) == 0 ? true : false;
 
 		//TODO: Add Height
-		/*const auto checkbox = GetCheckBox(RendererQml::Checkbox(input->GetId(),
-            CheckBoxType::Toggle,
-			input->GetTitle(),
-			input->GetValue(),
-			valueOn,
-			valueOff,
-			input->GetWrap(),
-			input->GetIsVisible(),
-			isChecked), context);*/
-
+		
 		auto uiToggleInput = std::make_shared<QmlTag>("ToggleInput");
 		uiToggleInput->Property("id", input->GetId());
 		uiToggleInput->Property("width", "parent.width");
@@ -794,9 +785,7 @@ namespace RendererQml
 			uiToggleInput->Property("visible", "false");
 		}
 
-        //context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
-        //return checkbox;
-		context->addToInputElementList(origionalElementId, (uiToggleInput->GetId() + ".value"));
+        context->addToInputElementList(origionalElementId, (uiToggleInput->GetId() + ".value"));
 		return uiToggleInput;
 	}
 
