@@ -767,7 +767,7 @@ namespace RendererQml
 
 		//TODO: Add Height
 		
-		auto uiToggleInput = std::make_shared<QmlTag>("ToggleInput");
+		auto uiToggleInput = std::make_shared<QmlTag>("ButtonCheckBox");
 		uiToggleInput->Property("id", input->GetId());
 		uiToggleInput->Property("width", "parent.width");
 		uiToggleInput->Property("text", input->GetTitle(), true);
@@ -1027,7 +1027,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCheckBox(Checkbox checkbox, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		std::shared_ptr<QmlTag> uiButton;
+		/*std::shared_ptr<QmlTag> uiButton;
 
 		if (checkbox.type == CheckBoxType::RadioButton)
 		{
@@ -1127,8 +1127,80 @@ namespace RendererQml
 		}
 	
 		uiButton->Property("contentItem", uiText->ToString());
-	
-		return uiButton;
+		*/
+
+		std::shared_ptr<RendererQml::QmlTag> uiElement;
+		//ButtonRadio Element
+		if (checkbox.type == CheckBoxType::RadioButton)
+		{
+			uiElement = std::make_shared<QmlTag>("ButtonRadio");
+			uiElement->Property("value", Formatter() << "checked ? \"" << checkbox.value << "\" : \"\"");
+			uiElement->Property("Layout.maximumWidth", "parent.parent.parent.width");
+		}
+		//ButtonCheckBox Element
+		else
+		{
+			uiElement = std::make_shared<QmlTag>("ButtonCheckBox");
+			if (checkbox.type == CheckBoxType::Toggle)
+			{
+				uiElement->Property("valueOn", checkbox.valueOn, true);
+				uiElement->Property("valueOff", checkbox.valueOff, true);
+				uiElement->Property("value", "checked ? valueOn : valueOff");
+				uiElement->Property("width", "parent.width");
+			}
+			else
+			{
+				uiElement->Property("value", Formatter() << "checked ? \"" << checkbox.value << "\" : \"\"");
+				uiElement->Property("Layout.maximumWidth", "parent.parent.parent.width");
+			}
+
+			/*uiElement->Property("text", checkbox.text, true);
+			uiElement->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default)));
+
+			if (!checkbox.isVisible)
+			{
+				uiElement->Property("visible", "false");
+			}
+
+			if (checkbox.isChecked)
+			{
+				uiElement->Property("checked", "true");
+			}
+
+			uiElement->Property("textcolor", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+
+			if (checkbox.isWrap)
+			{
+				uiElement->Property("wrapMode", "Text.Wrap");
+			}
+			else
+			{
+				uiElement->Property("elide", "Text.ElideRight");
+			}
+			return uiElement;*/
+		}
+
+		uiElement->Property("id", checkbox.id);
+		uiElement->Property("text", checkbox.text, true);
+		uiElement->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default)));
+
+		if (!checkbox.isVisible)
+		{
+			uiElement->Property("visible", "false");
+		}
+
+		if (checkbox.isChecked)
+		{
+			uiElement->Property("checked", "true");
+		}
+
+		uiElement->Property("textcolor", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+
+		if (checkbox.isWrap)
+		{
+			uiElement->Property("wrapMode", "Text.Wrap");
+		}
+		return uiElement;
 	}
     
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)

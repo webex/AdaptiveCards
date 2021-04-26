@@ -202,11 +202,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="QmlFiles\ButtonRadio.qml" />
     <None Include="QmlFiles\NumberInput.qml" />
     <None Include="QmlFiles\TextBlock.qml" />
     <None Include="QmlFiles\TextInputMulti.qml" />
     <None Include="QmlFiles\TextInputSingle.qml" />
-    <None Include="QmlFiles\ToggleInput.qml" />
+    <None Include="QmlFiles\ButtonCheckBox.qml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

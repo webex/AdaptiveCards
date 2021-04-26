@@ -112,7 +112,10 @@
     <None Include="QmlFiles\NumberInput.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\ToggleInput.qml">
+    <None Include="QmlFiles\ButtonRadio.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="QmlFiles\ButtonCheckBox.qml">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
