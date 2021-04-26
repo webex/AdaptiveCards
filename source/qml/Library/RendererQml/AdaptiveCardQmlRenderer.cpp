@@ -1027,108 +1027,6 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCheckBox(Checkbox checkbox, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		/*std::shared_ptr<QmlTag> uiButton;
-
-		if (checkbox.type == CheckBoxType::RadioButton)
-		{
-			uiButton = std::make_shared<QmlTag>("RadioButton");
-		}
-		else
-		{
-			uiButton = std::make_shared<QmlTag>("CheckBox");
-		}
-
-        uiButton->Property("id", checkbox.id);
-
-		if (checkbox.type == CheckBoxType::Toggle)
-		{
-			uiButton->Property("readonly property string valueOn", checkbox.valueOn, true);
-			uiButton->Property("readonly property string valueOff", checkbox.valueOff, true);
-            uiButton->Property("property string value", "checked ? valueOn : valueOff");
-			uiButton->Property("width", "parent.width");
-		}
-        else
-        {
-            uiButton->Property("property string value", Formatter() << "checked ? \"" << checkbox.value << "\" : \"\"");
-			uiButton->Property("Layout.maximumWidth", "parent.parent.parent.width");
-        }
-		        
-		uiButton->Property("text", checkbox.text, true);
-		uiButton->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default)));
-
-		if (!checkbox.isVisible)
-		{
-			uiButton->Property("visible", "false");
-		}
-		
-		if (checkbox.isChecked)
-		{
-			uiButton->Property("checked", "true");
-		}
-	
-		auto uiOuterRectangle = std::make_shared<QmlTag>("Rectangle");
-		uiOuterRectangle->Property("width", "parent.font.pixelSize");
-		uiOuterRectangle->Property("height", "parent.font.pixelSize");
-		uiOuterRectangle->Property("y", "parent.topPadding + (parent.availableHeight - height) / 2");
-		if (checkbox.type == CheckBoxType::RadioButton)
-		{
-			uiOuterRectangle->Property("radius", "height/2"); 
-		}
-		else
-		{
-			uiOuterRectangle->Property("radius", "3");
-		}
-		uiOuterRectangle->Property("border.color", checkbox.id + ".checked ? '#0075FF' : '767676'");
-		uiOuterRectangle->Property("color", checkbox.id + ".checked ? '#0075FF' : '#ffffff'");
-
-		std::shared_ptr<QmlTag> uiInnerSegment;
-
-		if (checkbox.type == CheckBoxType::RadioButton)
-		{
-			uiInnerSegment = std::make_shared<QmlTag>("Rectangle");
-			uiInnerSegment->Property("width", "parent.width/2");
-			uiInnerSegment->Property("height", "parent.height/2");
-			uiInnerSegment->Property("x", "width/2");
-			uiInnerSegment->Property("y", "height/2");
-			uiInnerSegment->Property("radius", "height/2");
-			uiInnerSegment->Property("color", checkbox.id + ".checked ? '#ffffff' : 'defaultPalette.backgroundColor'");
-			uiInnerSegment->Property("visible", checkbox.id + ".checked");
-		}
-		else
-		{
-			uiInnerSegment = std::make_shared<QmlTag>("Image");
-			uiInnerSegment->Property("anchors.centerIn", "parent");
-			uiInnerSegment->Property("width", "parent.width - 3");
-			uiInnerSegment->Property("height", "parent.height - 3");
-			uiInnerSegment->Property("visible", checkbox.id + ".checked");
-
-			uiInnerSegment->Property("source", RendererQml::check_icon_12, true);
-		}
-			
-		uiOuterRectangle->AddChild(uiInnerSegment);
-	
-		uiButton->Property("indicator", uiOuterRectangle->ToString());
-	
-		auto uiText = std::make_shared<QmlTag>("Text");
-		uiText->Property("text", "parent.text");
-		uiText->Property("font", "parent.font");
-		uiText->Property("horizontalAlignment", "Text.AlignLeft");
-		uiText->Property("verticalAlignment", "Text.AlignVCenter");
-		uiText->Property("leftPadding", "parent.indicator.width + parent.spacing");
-        uiText->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-	
-		if (checkbox.isWrap)
-		{
-			uiText->Property("wrapMode", "Text.Wrap");
-		}
-		else
-		{
-			uiText->Property("elide", "Text.ElideRight");
-		}
-	
-		uiButton->Property("contentItem", uiText->ToString());
-		*/
-
 		std::shared_ptr<RendererQml::QmlTag> uiElement;
 		//ButtonRadio Element
 		if (checkbox.type == CheckBoxType::RadioButton)
@@ -1153,31 +1051,6 @@ namespace RendererQml
 				uiElement->Property("value", Formatter() << "checked ? \"" << checkbox.value << "\" : \"\"");
 				uiElement->Property("Layout.maximumWidth", "parent.parent.parent.width");
 			}
-
-			/*uiElement->Property("text", checkbox.text, true);
-			uiElement->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default)));
-
-			if (!checkbox.isVisible)
-			{
-				uiElement->Property("visible", "false");
-			}
-
-			if (checkbox.isChecked)
-			{
-				uiElement->Property("checked", "true");
-			}
-
-			uiElement->Property("textcolor", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-
-			if (checkbox.isWrap)
-			{
-				uiElement->Property("wrapMode", "Text.Wrap");
-			}
-			else
-			{
-				uiElement->Property("elide", "Text.ElideRight");
-			}
-			return uiElement;*/
 		}
 
 		uiElement->Property("id", checkbox.id);
@@ -1200,6 +1073,7 @@ namespace RendererQml
 		{
 			uiElement->Property("wrapMode", "Text.Wrap");
 		}
+
 		return uiElement;
 	}
     
