@@ -840,7 +840,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComboBox(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		auto uiComboBox = std::make_shared<QmlTag>("ComboBox");
+		/*auto uiComboBox = std::make_shared<QmlTag>("ComboBox");
 		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
 		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
 
@@ -935,7 +935,32 @@ namespace RendererQml
 
 		uiComboBox->Property("contentItem", uiContentItem_Text->ToString());
 				
-		return uiComboBox;
+		return uiComboBox;*/
+		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
+		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
+
+		auto uiDropDown = std::make_shared<QmlTag>("DropDownMenu");
+		uiDropDown->Property("id", choiceset.id);
+		uiDropDown->Property("width", "parent.width");
+		uiDropDown->Property("textcolor", textColor);
+		uiDropDown->Property("model", GetModel(choiceset.choices));
+		uiDropDown->Property("bgrcolor", backgroundColor);
+
+		if (!choiceset.placeholder.empty())
+		{
+			uiDropDown->Property("currentIndex", "-1");
+			uiDropDown->Property("displayText", "currentIndex === -1 ? '" + choiceset.placeholder + "' : currentText");
+		}
+		else if (choiceset.values.size() == 1)
+		{
+			const std::string target = choiceset.values[0];
+			auto index = std::find_if(choiceset.choices.begin(), choiceset.choices.end(), [target](const Checkbox& options) {
+				return options.value == target;
+			}) - choiceset.choices.begin();
+			uiDropDown->Property("currentIndex", std::to_string(index));
+			uiDropDown->Property("displayText", "currentText");
+		}
+		return uiDropDown;
 	}
 
 	std::string AdaptiveCardQmlRenderer::GetModel(std::vector<Checkbox>& Choices)

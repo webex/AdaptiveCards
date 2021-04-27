@@ -118,5 +118,8 @@
     <None Include="QmlFiles\ButtonCheckBox.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="QmlFiles\DropDownMenu.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
