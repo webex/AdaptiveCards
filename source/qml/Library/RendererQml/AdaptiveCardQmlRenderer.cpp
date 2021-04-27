@@ -657,15 +657,16 @@ namespace RendererQml
 		upIndicatorTag->Property("radius", "5");
 		upIndicatorTag->Property("color", inputId + ".up.pressed ? '#08000000' : 'transparent'");
 
-        const std::string upIndicatorImageId = input->GetId() + "_upicon";
-		auto upIndicatorImage = std::make_shared<QmlTag>("Image");
-        upIndicatorImage->Property("id", upIndicatorImageId);
-		upIndicatorImage->Property("source", RendererQml::arrow_up_12, true);
-		upIndicatorImage->Property("anchors.centerIn", "parent");
+		auto upIndicatorImage = std::make_shared<QmlTag>("Text");
+        upIndicatorImage->Property("text", "<div>&#708;</div>", true);
+		upIndicatorImage->Property("textFormat", "Text.RichText");
+		upIndicatorImage->Property("font.pixelSize", Formatter() << inputId << ".font.pixelSize");
+        upIndicatorImage->Property("anchors.fill", "parent");
+        upIndicatorImage->Property("fontSizeMode", "Text.Fit");
+        upIndicatorImage->Property("horizontalAlignment", "Text.AlignHCenter");
+        upIndicatorImage->Property("verticalAlignment", "Text.AlignVCenter");
+        upIndicatorImage->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 		upIndicatorTag->AddChild(upIndicatorImage);
-
-        auto upColorOverlayTag = GetColorOverlay(upIndicatorImageId, context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-        upIndicatorTag->AddChild(upColorOverlayTag);
 
 		auto downIndicatorTag = std::make_shared<QmlTag>("Rectangle");
 		downIndicatorTag->Property("width", "20");
@@ -675,20 +676,21 @@ namespace RendererQml
 		downIndicatorTag->Property("radius", "5");
 		downIndicatorTag->Property("color", inputId + ".down.pressed ? '#08000000' : 'transparent'");
 
-        const std::string downIndicatorImageId = input->GetId() + "_downicon";
-		auto downIndicatorImage = std::make_shared<QmlTag>("Image");
-        downIndicatorImage->Property("id", downIndicatorImageId);
-		downIndicatorImage->Property("source", RendererQml::arrow_down_12, true);
-		downIndicatorImage->Property("anchors.centerIn", "parent");
-		downIndicatorTag->AddChild(downIndicatorImage);
-
-        auto downColorOverlayTag = GetColorOverlay(downIndicatorImageId, context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-        downIndicatorTag->AddChild(downColorOverlayTag);
+        auto downIndicatorImage = std::make_shared<QmlTag>("Text");
+        downIndicatorImage->Property("text", "<div>&#709;</div>", true);
+        downIndicatorImage->Property("textFormat", "Text.RichText");
+        downIndicatorImage->Property("font.pixelSize", Formatter() << inputId << ".font.pixelSize");
+        downIndicatorImage->Property("anchors.fill", "parent");
+        downIndicatorImage->Property("fontSizeMode", "Text.Fit");
+        downIndicatorImage->Property("horizontalAlignment", "Text.AlignHCenter");
+        downIndicatorImage->Property("verticalAlignment", "Text.AlignVCenter");
+        downIndicatorImage->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        downIndicatorTag->AddChild(downIndicatorImage);
 
 		auto doubleValidatorTag = std::make_shared<QmlTag>("DoubleValidator");
 
 		auto uiNumberInput = std::make_shared<QmlTag>("SpinBox");
-		uiNumberInput->Property("id", input->GetId());
+		uiNumberInput->Property("id", inputId);
 		uiNumberInput->Property("width", "parent.width");
 		uiNumberInput->Property("padding", "0");
 		uiNumberInput->Property("stepSize", "1");
