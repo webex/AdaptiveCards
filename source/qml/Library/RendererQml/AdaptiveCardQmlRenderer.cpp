@@ -1688,29 +1688,25 @@ namespace RendererQml
 		backgroundTag->Property("layer.effect", glowTag->ToString());
 		uiTimeInput->Property("background", backgroundTag->ToString());
 
+        const std::string iconId = id + "_icon";
 		auto imageTag = std::make_shared<QmlTag>("Image");
+        imageTag->Property("id", iconId);
 		imageTag->Property("anchors.fill", "parent");
 		imageTag->Property("anchors.margins", "5");
 		imageTag->Property("fillMode", "Image.PreserveAspectFit");
 		imageTag->Property("mipmap", "true");
         imageTag->Property("source", RendererQml::clock_icon_30, true);
 
-		auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
-		ColorOverlayTag->Property("anchors.fill", "parent");
-		ColorOverlayTag->Property("source", "parent");
-		ColorOverlayTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-
-		imageTag->AddChild(ColorOverlayTag);
-
 		auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
-
 		mouseAreaTag->AddChild(imageTag);
 		mouseAreaTag->Property("height", "parent.height");
 		mouseAreaTag->Property("width", "height");
 		mouseAreaTag->Property("anchors.right", "parent.right");
 		mouseAreaTag->Property("enabled", "true");
-
 		mouseAreaTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n" << "}");
+
+        auto ColorOverlayTag = GetColorOverlay(iconId, context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        mouseAreaTag->AddChild(ColorOverlayTag);
 
 		uiTimeInput->AddChild(mouseAreaTag);
 
