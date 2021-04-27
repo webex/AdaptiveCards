@@ -2328,7 +2328,6 @@ namespace RendererQml
             const auto fontSize = config->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default);
             const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
             const bool isIconLeftOfTitle = actionsConfig.iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle;
-            std::shared_ptr<QmlTag> showCardIcon;
 
             auto buttonElement = std::make_shared<QmlTag>("Button");
             buttonElement->Property("id", buttonId);
@@ -2395,9 +2394,8 @@ namespace RendererQml
             }
             contentText->Property("font.pixelSize", Formatter() << fontSize);
 
-			auto ColorOverlayTag = std::make_shared<QmlTag>("ColorOverlay");
-
             //TODO: Add border color and style: default/positive/destructive
+            std::string overlayTagColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
             if (!Utils::IsNullOrWhitespace(action->GetStyle()) && !Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
             {
                 if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
@@ -2407,7 +2405,7 @@ namespace RendererQml
 						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#196323' : "<< buttonId << ".pressed ? '#196323' : '#1B8728'");
 						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#196323' : " << buttonId << ".pressed ? '#196323' : " << buttonId << ".hovered ? '#1B8728' : 'white'");
 						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
-						ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'");
+                        overlayTagColor = Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#1B8728'";
 					}
 					else
 					{
@@ -2423,7 +2421,7 @@ namespace RendererQml
 						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#A12C23' : " << buttonId << ".pressed ? '#A12C23' : '#D93829'");
 						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#A12C23' : " << buttonId << ".pressed ? '#A12C23' : " << buttonId << ".hovered ? '#D93829' : 'white'");
 						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
-						ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#D93829'");
+                        overlayTagColor = Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#D93829'";
 					}
 					else
 					{
@@ -2439,7 +2437,7 @@ namespace RendererQml
 						bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
 						bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
 						contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
-						ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+                        overlayTagColor = Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'";
 					}
 					else
 					{
@@ -2456,7 +2454,7 @@ namespace RendererQml
 					bgRectangle->Property("border.color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : '#007EA8'");
 					bgRectangle->Property("color", Formatter() << buttonId << ".showCard ? '#0A5E7D' : " << buttonId << ".pressed ? '#0A5E7D' : " << buttonId << ".hovered ? '#007EA8' : 'white'");
 					contentText->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
-					ColorOverlayTag->Property("color", Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
+                    overlayTagColor = Formatter() << buttonId << ".showCard ? '#FFFFFF' : " << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'";
 				}
 				else
 				{
@@ -2471,20 +2469,23 @@ namespace RendererQml
 
             if (isShowCardButton)
             {
-                showCardIcon = std::make_shared<QmlTag>("Image");
-                showCardIcon->Property("id", Formatter() << buttonId << "_dd");
-                showCardIcon->Property("height", Formatter() << fontSize);
-                showCardIcon->Property("width", Formatter() << fontSize);
+                auto showCardIconItem = std::make_shared<QmlTag>("Item");
+                showCardIconItem->Property("height", Formatter() << fontSize);
+                showCardIconItem->Property("width", Formatter() << fontSize);
+
+                const std::string iconId = buttonId + "_icon";
+                auto showCardIcon = std::make_shared<QmlTag>("Image");
+                showCardIcon->Property("id", iconId);
+                showCardIcon->Property("anchors.fill", "parent");
                 showCardIcon->Property("fillMode", "Image.PreserveAspectFit");
                 showCardIcon->Property("mipmap", "true");
                 showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
                 showCardIcon->Property("source", RendererQml::arrow_down_12, true);
+                showCardIconItem->AddChild(showCardIcon);
 
-				ColorOverlayTag->Property("anchors.fill", "parent");
-				ColorOverlayTag->Property("source", "parent");
-
-				showCardIcon->AddChild(ColorOverlayTag);
-                textLayout->AddChild(showCardIcon);
+                auto ColorOverlayTag = GetColorOverlay(iconId, overlayTagColor);
+                showCardIconItem->AddChild(ColorOverlayTag);
+                textLayout->AddChild(showCardIconItem);
             }
 
             contentLayout->AddChild(textLayout);
@@ -2603,7 +2604,7 @@ namespace RendererQml
 
 		function << "\n" << buttonElement->GetId() << ".showCard = !" << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
-		function << "\n" << buttonElement->GetId() << "_dd.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
+		function << "\n" << buttonElement->GetId() << "_icon.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
 
 		return function.str();
 	}
