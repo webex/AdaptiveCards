@@ -1661,7 +1661,7 @@ namespace RendererQml
 
 		if (!input->GetIsVisible())
 		{
-			uiTimeInput->Property("visibile", "false");
+			uiTimeInput->Property("visible", "false");
 		}
 
 		//TODO: Height Property
@@ -2983,36 +2983,34 @@ namespace RendererQml
 
 	const std::string RendererQml::AdaptiveCardQmlRenderer::getStretchHeight()
 	{
-		return R"(
-		function generateStretchHeight(childrens,minHeight)
-        {
-            var n = childrens.length
-            var implicitHt = 0;
-            var stretchCount = 0;
-            var stretchMinHeight = 0;
-            for(var i=0;i<childrens.length;i++)
-            {
-                if(typeof childrens[i].seperator !== 'undefined')
-                {
+		std::string stretchHeightFunction =  R"(function generateStretchHeight(childrens,minHeight){
+			var n = childrens.length
+			var implicitHt = 0;
+			var stretchCount = 0;
+			var stretchMinHeight = 0;
+			for(var i=0;i<childrens.length;i++)
+			{
+				if(typeof childrens[i].seperator !== 'undefined')
+				{
 					implicitHt += childrens[i].height;
-                    stretchMinHeight += childrens[i].height;
-                }
-                else
-                {
-                    implicitHt += childrens[i].implicitHeight;
-                    if(typeof childrens[i].stretch !== 'undefined')
-                    {
-                        stretchCount++;
-                    }
+					stretchMinHeight += childrens[i].height;
+				}
+				else
+				{
+					implicitHt += childrens[i].implicitHeight;
+					if(typeof childrens[i].stretch !== 'undefined')
+					{
+						stretchCount++;
+					}
 					else
 					{
 						stretchMinHeight += childrens[i].implicitHeight;
 					}
-                }
-            }
-            stretchMinHeight = (minHeight - stretchMinHeight)/stretchCount
-            for(i=0;(i<childrens.length);i++)
-            {
+				}
+			}
+			stretchMinHeight = (minHeight - stretchMinHeight)/stretchCount
+			for(i=0;(i<childrens.length);i++)
+			{
 				if(typeof childrens[i].seperator === 'undefined')
 				{
 					if(typeof childrens[i].stretch !== 'undefined' && typeof childrens[i].minHeight !== 'undefined')
@@ -3020,12 +3018,12 @@ namespace RendererQml
 						childrens[i].minHeight = Math.max(childrens[i].minHeight,stretchMinHeight)
 					}
 				}
-            }
-            if(stretchCount > 0 && implicitHt < minHeight)
-            {
-                var stretctHeight = (minHeight - implicitHt)/stretchCount
-                for(i=0;i<childrens.length;i++)
-                {
+			}
+			if(stretchCount > 0 && implicitHt < minHeight)
+			{
+				var stretctHeight = (minHeight - implicitHt)/stretchCount
+				for(i=0;i<childrens.length;i++)
+				{
 					if(typeof childrens[i].seperator === 'undefined')
 					{
 						if(typeof childrens[i].stretch !== 'undefined')
@@ -3033,12 +3031,12 @@ namespace RendererQml
 							childrens[i].height = childrens[i].implicitHeight + stretctHeight
 						}
 					}
-                }
-            }
-            else
-            {
-                for(i=0;i<childrens.length;i++)
-                {
+				}
+			}
+			else
+			{
+				for(i=0;i<childrens.length;i++)
+				{
 					if(typeof childrens[i].seperator === 'undefined')
 					{
 						if(typeof childrens[i].stretch !== 'undefined')
@@ -3046,25 +3044,26 @@ namespace RendererQml
 							childrens[i].height = childrens[i].implicitHeight
 						}
 					}
-                }
-            }
-        }
-		)";
+				}
+			}
+		})";
+
+		stretchHeightFunction.erase(std::remove(stretchHeightFunction.begin(), stretchHeightFunction.end(), '\t'), stretchHeightFunction.end());
+
+		return stretchHeightFunction;
 	}
 
 	const std::string RendererQml::AdaptiveCardQmlRenderer::getStretchWidth()
 	{
-		return R"(
-		function generateStretchWidth(childrens,width)
-        {
-            var implicitWid = 0
-            var autoWid = 0
-            var autoCount = 0
-            var weightSum = 0
-            var stretchCount = 0
-            var weightPresent = 0
-            for(var i=0;i<childrens.length;i++)
-            {
+		std::string stretchWidthFunction =  R"(function generateStretchWidth(childrens,width){
+			var implicitWid = 0
+			var autoWid = 0
+			var autoCount = 0
+			var weightSum = 0
+			var stretchCount = 0
+			var weightPresent = 0
+			for(var i=0;i<childrens.length;i++)
+			{
 				if(typeof childrens[i].seperator !== 'undefined')
 				{
 					implicitWid += childrens[i].width
@@ -3093,12 +3092,12 @@ namespace RendererQml
 							weightSum += parseInt(childrens[i].widthProperty)
 						}
 					}
-				}  
-            }
-            autoWid = (width - implicitWid)/(weightPresent + autoCount)
-            var flags = new Array(childrens.length).fill(0)
-            for(i=0;i<childrens.length;i++)
-            {
+				}
+			}
+			autoWid = (width - implicitWid)/(weightPresent + autoCount)
+			var flags = new Array(childrens.length).fill(0)
+			for(i=0;i<childrens.length;i++)
+			{
 				if(typeof childrens[i].seperator === 'undefined')
 				{
 					if(childrens[i].widthProperty === "auto")
@@ -3113,9 +3112,9 @@ namespace RendererQml
 						}
 					}
 				}
-            }
-            for(i=0;i<childrens.length;i++)
-            {
+			}
+			for(i=0;i<childrens.length;i++)
+			{
 				if(typeof childrens[i].seperator === 'undefined')
 				{
 					if(childrens[i].widthProperty === "auto")
@@ -3135,10 +3134,10 @@ namespace RendererQml
 						}
 					}
 				}
-            }
-            var stretchWidth = (width - implicitWid)/stretchCount
-            for(i=0;i<childrens.length;i++)
-            {
+			}
+			var stretchWidth = (width - implicitWid)/stretchCount
+			for(i=0;i<childrens.length;i++)
+			{
 				if(typeof childrens[i].seperator === 'undefined')
 				{
 					if(childrens[i].widthProperty === 'stretch')
@@ -3146,19 +3145,20 @@ namespace RendererQml
 						childrens[i].width = 50+stretchWidth
 					}
 				}
-            }
-        }
-		)";
+			}
+		})";
+
+		stretchWidthFunction.erase(std::remove(stretchWidthFunction.begin(), stretchWidthFunction.end(), '\t'), stretchWidthFunction.end());
+
+		return stretchWidthFunction;
 	}
 
 	const std::string RendererQml::AdaptiveCardQmlRenderer::getMinWidth()
 	{
-		return R"(
-		function getMinWidth(childrens)
-        {
-            var min = 0
-            for(var j =0;j<childrens.length;j++)
-            {
+		std::string minWidthFunction =  R"(function getMinWidth(childrens){
+			var min = 0
+			for(var j =0;j<childrens.length;j++)
+			{
 				if(typeof childrens[j].minWidth === 'undefined')
 				{
 					min = Math.max(min,Math.ceil(childrens[j].implicitWidth))
@@ -3167,41 +3167,46 @@ namespace RendererQml
 				{
 					min = Math.max(min,Math.ceil(childrens[j].minWidth))
 				}
-            }
-            return min
-        }
-		)";
+			}
+			return min
+		})";
+
+		minWidthFunction.erase(std::remove(minWidthFunction.begin(), minWidthFunction.end(), '\t'), minWidthFunction.end());
+
+		return minWidthFunction;
 	}
 
 	const std::string RendererQml::AdaptiveCardQmlRenderer::getMinWidthActionSet()
 	{
-		return R"(
-		function getMinWidthActionSet(childrens,spacing)
-        {
-            var min = 0
-            for(var j =0;j<childrens.length;j++)
-            {
-                min += Math.ceil(childrens[j].implicitWidth)
-            }
-            min += ((childrens.length - 1)*spacing)
-            return min
-        }
-		)";
+		std::string minWidthActionSet =  R"(function getMinWidthActionSet(childrens,spacing){
+			var min = 0
+			for(var j =0;j<childrens.length;j++)
+			{
+				min += Math.ceil(childrens[j].implicitWidth)
+			}
+			min += ((childrens.length - 1)*spacing)
+			return min
+		})";
+
+		minWidthActionSet.erase(std::remove(minWidthActionSet.begin(), minWidthActionSet.end(), '\t'), minWidthActionSet.end());
+
+		return minWidthActionSet;
 	}
 
 	const std::string RendererQml::AdaptiveCardQmlRenderer::getMinWidthFactSet()
 	{
-		return R"(		
-		function getMinWidthFactSet(childrens, spacing)		
-		{		
+		std::string minWidthFactSet =  R"(function getMinWidthFactSet(childrens, spacing){		
 			var min = 0		
 			for(var j=0;j<childrens.length;j+=2)		
 			{		
 				min = Math.max(min,childrens[j].implicitWidth + childrens[j+1].implicitWidth + spacing)		
 			}		
 			return min;		
-		}		
-		)";
+		})";
+
+		minWidthFactSet.erase(std::remove(minWidthFactSet.begin(), minWidthFactSet.end(), '\t'), minWidthFactSet.end());
+
+		return minWidthFactSet;
 	}
 }
 	
