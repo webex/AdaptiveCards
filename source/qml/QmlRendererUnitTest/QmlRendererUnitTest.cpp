@@ -41,10 +41,6 @@ namespace CppUnitTestFramework
 
 	static std::string GenerateQml(std::string cardQml)
 	{
-		std::map<std::string, std::string> urls;
-
-		std::shared_ptr<int> imgCounter{ 0 };
-
 		std::shared_ptr<AdaptiveCards::ParseResult> mainCard = AdaptiveCards::AdaptiveCard::DeserializeFromString(cardQml, "2.0");
 		std::shared_ptr<AdaptiveCardQmlRenderer> renderer_ptr;
 		std::shared_ptr<AdaptiveSharedNamespace::HostConfig> hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(LightConfig::lightConfig));
@@ -52,9 +48,7 @@ namespace CppUnitTestFramework
 		renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig));
 		std::shared_ptr<RenderedQmlAdaptiveCard> result = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard());
 		const auto generatedQml = result->GetResult();
-
-		const auto QmlStr =  generatedQml->ToString();
-		return QmlStr;
+		return generatedQml->ToString();
 	}
 
 	TEST_CLASS(QmlRendererUnitTest)
