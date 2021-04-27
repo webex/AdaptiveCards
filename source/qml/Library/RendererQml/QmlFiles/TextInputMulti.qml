@@ -3,11 +3,12 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 ScrollView{
-    property string bgrcolor
-	property font multifont
+    property alias bgrcolor: backgroundRectangle.color
+	property alias multifont: textAreaID.font
 	property alias text: textAreaID.text
 	property alias placeholderText: textAreaID.placeholderText
 	property alias color: textAreaID.color
+	//Custom Property required to obtain the max lenght set by user
 	property int maxLength
 	
 	id: scrollViewID
@@ -20,12 +21,12 @@ ScrollView{
         selectByMouse: true
         selectedTextColor: 'white'
         padding: 10
-        font.pixelSize: scrollViewID.multifont.pixelSize
+        font.pixelSize: 14
 		onTextChanged: remove(scrollViewID.maxLength,length)
 		background: Rectangle{
 			id: backgroundRectangle
             radius: 5
-            color: scrollViewID.bgrcolor
+            color: '#FFFFFF'
 			border.color: textAreaID.activeFocus? 'black' : 'grey'
             border.width: 1
             layer.enabled: textAreaID.activeFocus ? true : false

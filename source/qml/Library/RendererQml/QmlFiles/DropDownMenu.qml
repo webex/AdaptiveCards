@@ -33,7 +33,6 @@ ComboBox{
         border.width:1
     }
 
-    currentIndex:1
     displayText:currentText
     delegate:ItemDelegate{
         width:parent.width
@@ -51,7 +50,6 @@ ComboBox{
             color:mycolor.textcolor
             elide:Text.ElideRight
         }
-
     }
 
     contentItem:Text{
@@ -63,5 +61,4 @@ ComboBox{
         elide:Text.ElideRight
         color:'#171B1F'
     }
-
 }

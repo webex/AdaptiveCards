@@ -39,5 +39,4 @@ RadioButton{
         color:'#171B1F'
         elide:Text.ElideRight
     }
-
 }

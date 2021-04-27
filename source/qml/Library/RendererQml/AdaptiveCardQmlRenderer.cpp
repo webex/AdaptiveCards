@@ -2,11 +2,6 @@
 #include "ImageDataURI.h"
 #include "pch.h"
 
-#include <QtGui/QGuiApplication>
-#include <QtQml/QQmlApplicationEngine>
-#include <QtQuick/QQuickItem>
-#include <QtQuick/QQuickWindow>
-
 namespace RendererQml
 {
 	AdaptiveCardQmlRenderer::AdaptiveCardQmlRenderer()
@@ -74,8 +69,10 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick.Layouts 1.3");
         uiCard->AddImports("import QtQuick.Controls 2.15");
         uiCard->AddImports("import QtGraphicalEffects 1.15");
-		//TODO: Change hardcoded import
-		uiCard->AddImports(Formatter() << "import " << "\"" << "file:///C:/dev/desktopAdaptiveCards/source/qml/Library/RendererQml/QmlFiles" << "\"");
+        //TODO: Change hardcoded import
+		std::string SolutionDir = SOLUTION_DIR;
+		SolutionDir = Utils::Replace(SolutionDir,"\\","/");
+        uiCard->AddImports(Formatter() << "import " << "\"" << "file:///" << SolutionDir << "Library/RendererQml/QmlFiles" << "\"");
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);

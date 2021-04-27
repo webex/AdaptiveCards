@@ -35,12 +35,14 @@ SpinBox{
         validator:number.validator
         inputMethodHints:Qt.ImhFormattedNumbersOnly
         text:number.value
-        placeholderText:"Enter a number"
+        placeholderText:""
         background:Rectangle{
             color:'transparent'
         }
 
-        onEditingFinished:{ if(text < number.from || text > number.to){
+        onEditingFinished:{ 
+			if(text < number.from || text > number.to)
+			{
                 remove(0,length)
                 if(number.hasDefaultValue)
                     insert(0, number.defaultValue)
@@ -54,7 +56,7 @@ SpinBox{
     background:Rectangle{
         id:backgroundRectangle
         radius:5
-        //color: number.bgrcolor
+        color: '#FFFFFF'
         border.color:number_contentItem.activeFocus? 'black' : 'grey'
         layer.enabled:number_contentItem.activeFocus ? true : false
         layer.effect:Glow{
