@@ -584,6 +584,7 @@ namespace RendererQml
 
 		auto uiNumberInput = std::make_shared<QmlTag>("NumberInput");
 		uiNumberInput->Property("id", inputId);
+		uiNumberInput->Property("width", "parent.width");
 		uiNumberInput->Property("bgrcolor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 		uiNumberInput->Property("textfont.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
 		uiNumberInput->Property("textcolor", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
@@ -950,6 +951,7 @@ namespace RendererQml
 		{
 			uiElement = std::make_shared<QmlTag>("ButtonRadio");
 			uiElement->Property("value", Formatter() << "checked ? \"" << checkbox.value << "\" : \"\"");
+			//Takes the width of the column having all the elements
 			uiElement->Property("Layout.maximumWidth", "parent.parent.parent.width");
 		}
 		//ButtonCheckBox Element
@@ -1303,6 +1305,7 @@ namespace RendererQml
 		uiTimeInput->Property("id", id);
 		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select time", true);
         uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+		uiTimeInput->Property("width", "parent.width");
 
 		uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
 

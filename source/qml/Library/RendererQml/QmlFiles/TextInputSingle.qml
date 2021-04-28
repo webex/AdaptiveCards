@@ -13,7 +13,7 @@ TextField{
     {
 		id: backgroundRectangle
         radius: 5
-        color: '#171B1F' 
+        color: '#FFFFFF' 
         border.color: textfieldID.activeFocus? 'black' : 'grey'
         border.width: 1
         layer.enabled: textfieldID.activeFocus ? true : false

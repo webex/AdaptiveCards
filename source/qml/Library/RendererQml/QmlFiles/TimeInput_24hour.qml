@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
@@ -9,8 +8,7 @@ TextField{
     selectedTextColor:'white'
     property string selectedTime
     property alias bgrcolor: backgroundRectangle.color
-    width:parent.width
-    placeholderText:"Select time"
+    placeholderText:""
     color:'#171B1F'
     validator:RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}
     text:""

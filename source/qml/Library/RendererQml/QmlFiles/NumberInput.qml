@@ -11,7 +11,6 @@ SpinBox{
     property int defaultValue
 
     id:number
-    width:parent.width
     padding:0
     stepSize:1
     editable:true
@@ -22,9 +21,6 @@ SpinBox{
         return Number(text)
     }
 
-    from:1
-    to:10
-    value:3
     contentItem:TextField{
         id:number_contentItem
         font.pixelSize:14

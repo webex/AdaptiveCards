@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
@@ -9,12 +8,28 @@ TextField{
     selectedTextColor:'white'
     property string selectedTime
     property alias bgrcolor: backgroundRectangle.color
-    width:parent.width
     placeholderText:""
     color:'#171B1F'
     validator:RegExpValidator { regExp: /^(--|[01]-|0\d|1[0-2]):(--|[0-5]-|[0-5]\d)\s(--|A-|AM|P-|PM)$/}
     text:""
-    onFocusChanged:{ if (focus===true) inputMask="xx:xx >xx;-"; if(focus===false){ z=0;if(text===": " ) { inputMask="" }if(time1_timeBox.visible===true)time1_timeBox.visible=false ;}}
+    onFocusChanged:{ 
+		if (focus===true) 
+		{
+			inputMask="xx:xx >xx;-"; 
+		}
+		if(focus===false)
+		{
+			z=0;
+			if(text===": " ) 
+			{ 
+				inputMask="" 
+			}
+			if(time1_timeBox.visible===true)
+			{
+				time1_timeBox.visible=false
+			}
+		}
+	}
     onTextChanged:{time1_hours.currentIndex=parseInt(getText(0,2))-1;time1_min.currentIndex=parseInt(getText(3,5));var tt_index=3;var hh = getText(0,2);switch(getText(6,8)){ case 'PM':tt_index = 1; if(parseInt(getText(0,2))!==12){hh=parseInt(getText(0,2))+12;} break;case 'AM':tt_index = 0; if(parseInt(getText(0,2))===12){hh=parseInt(getText(0,2))-12;} break;}time1_tt.currentIndex=tt_index;if(getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--'){time1.selectedTime ='';} else{time1.selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);}}
     background:Rectangle{
         id: backgroundRectangle
@@ -31,6 +46,7 @@ TextField{
     }
 
     MouseArea{
+		clip:true
         height:parent.height
         width:height
         anchors.right:parent.right
@@ -42,6 +58,7 @@ TextField{
             time1_min.currentIndex=parseInt(parent.getText(3,5));
             var tt_index=3;switch(parent.getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}time1_tt.currentIndex=tt_index;}
         Image{
+			clip:true
             anchors.fill:parent
             anchors.margins:5
             fillMode:Image.PreserveAspectFit
@@ -78,7 +95,10 @@ TextField{
             boundsBehavior:Flickable.StopAtBounds
             clip:true
             anchors.right:parent.right
-            model:ListModel{ListElement { name: "AM"} ListElement { name: "PM"}}
+            model:ListModel{
+				ListElement { name: "AM"} 
+				ListElement { name: "PM"}
+			}
             delegate:Rectangle{
                 width:45
                 height:45

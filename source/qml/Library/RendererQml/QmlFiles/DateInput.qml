@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
@@ -17,16 +16,17 @@ TextField{
                                     "ddmmyy":/^([-0123]-|0\d|[12]\d|3[01])\/(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)\/(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})$/,
                                     "yymmdd":/^(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})\/(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)\/([-0123]-|0\d|[12]\d|3[01])$/,
                                     "yyddmm":/^(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})\/([-0123]-|0\d|[12]\d|3[01])\/(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)$/,
-                                    "mmddyy":/^(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)\/([-0123]-|0\d|[12]\d|3[01])\/(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})$/}
+                                    "mmddyy":/^(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)\/([-0123]-|0\d|[12]\d|3[01])\/(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})$/
+									}
     readonly property variant maskFormat:{
-                        "ddmmyy":"xx\/>x<xx\/xxxx;-",
-                        "yymmdd":"xxxx\/>x<xx\/xx;-",
-                        "yyddmm":"xxxx\/xx\/>x<xx;-",
-                        "mmddyy":">x<xx\/xx\/xxxx;-"
-                        }
+									"ddmmyy":"xx\/>x<xx\/xxxx;-",
+									"yymmdd":"xxxx\/>x<xx\/xx;-",
+									"yyddmm":"xxxx\/xx\/>x<xx;-",
+									"mmddyy":">x<xx\/xx\/xxxx;-"
+									}
 	property date defaultDate
-    property date minDate
-    property date maxDate
+    property date minDate: new Date(1900,0,1)
+    property date maxDate: new Date(2050,0,1)
     property string selectedDate:""
     property string dateFormat:"mmddyy"
     property alias bgrcolor: bgrRectangle.color
@@ -99,7 +99,8 @@ TextField{
     }
     MouseArea{
         height:parent.height
-        width:height
+		//Hardocded width to avoid stretching in case height of TextBlock is stretched 
+        width:30
         anchors.right:parent.right
         enabled:true
         onClicked:{ parent.forceActiveFocus(); textFieldID_cal_box.visible=!textFieldID_cal_box.visible; parent.z=textFieldID_cal_box.visible?1:0; }

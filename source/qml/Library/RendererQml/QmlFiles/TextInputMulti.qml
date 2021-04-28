@@ -9,7 +9,8 @@ ScrollView{
 	property alias placeholderText: textAreaID.placeholderText
 	property alias color: textAreaID.color
 	//Custom Property required to obtain the max length set by user
-	property int maxLength
+	//QML max int limit based on documentation
+	property int maxLength:2000000000
 	
 	id: scrollViewID
     width: 100
