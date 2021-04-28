@@ -1009,19 +1009,20 @@ namespace RendererQml
         const std::string origionalElementId = input->GetId();
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
-        auto uiDateInput = std::make_shared<QmlTag>("TextField");
+        auto uiDateInput = std::make_shared<QmlTag>("DateInput");
         uiDateInput->Property("id", input->GetId());
         uiDateInput->Property("width", "parent.width");
         const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
 
         uiDateInput->Property("font.family", context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
         uiDateInput->Property("font.pixelSize", std::to_string(fontSize));
-		uiDateInput->Property("selectByMouse", "true");
-		uiDateInput->Property("selectedTextColor", "'white'");
+		//uiDateInput->Property("selectByMouse", "true");
+		//uiDateInput->Property("selectedTextColor", "'white'");
         uiDateInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-        uiDateInput->Property("property string selectedDate", input->GetValue(), true);
-		uiDateInput->AddFunctions(Formatter() << "signal " << uiDateInput->GetId() << "TextChanged(var dateText)");
+        //uiDateInput->Property("property string selectedDate", input->GetValue(), true);
+		uiDateInput->Property("selectedDate", input->GetValue(), true);
+		//uiDateInput->AddFunctions(Formatter() << "signal " << uiDateInput->GetId() << "TextChanged(var dateText)");
 
 		//TODO: Add stretch property
 
@@ -1030,7 +1031,8 @@ namespace RendererQml
             uiDateInput->Property("visible", "false");
         }
 
-        std::string calendar_box_id = input->GetId() + "_cal_box";
+		uiDateInput->Property("bgrcolor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+        /*std::string calendar_box_id = input->GetId() + "_cal_box";
 
         auto glowTag = std::make_shared<QmlTag>("Glow");
         glowTag->Property("samples", "25");
@@ -1186,8 +1188,21 @@ namespace RendererQml
         calendarTag->Property("onReleased", Formatter() << "{parent.visible=false; " << input->GetId() << ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\")," << "\"" << StringDateFormat << "\")}");
 
 		calendarBoxTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "'," + calendar_box_id + ",'calendar')}");
-		uiDateInput->AddChild(calendarBoxTag);
+		uiDateInput->AddChild(calendarBoxTag);*/
+		if (!input->GetMin().empty())
+		{
+			uiDateInput->Property("minDate", Utils::GetDate(input->GetMin()));
+		}
 
+		if (!input->GetMax().empty())
+		{
+			uiDateInput->Property("maxDate", Utils::GetDate(input->GetMax()));
+		}
+
+		if (!input->GetValue().empty())
+		{
+			uiDateInput->Property("defaultDate", Utils::GetDate(input->GetValue()));
+		}
         context->addToInputElementList(origionalElementId, (uiDateInput->GetId() + ".selectedDate"));
 
         return uiDateInput;
