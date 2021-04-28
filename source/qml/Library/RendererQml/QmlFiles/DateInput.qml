@@ -18,7 +18,13 @@ TextField{
                                     "yymmdd":/^(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})\/(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)\/([-0123]-|0\d|[12]\d|3[01])$/,
                                     "yyddmm":/^(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})\/([-0123]-|0\d|[12]\d|3[01])\/(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)$/,
                                     "mmddyy":/^(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)\/([-0123]-|0\d|[12]\d|3[01])\/(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})$/}
-    property date defaultDate
+    readonly property variant maskFormat:{
+                        "ddmmyy":"xx\/>x<xx\/xxxx;-",
+                        "yymmdd":"xxxx\/>x<xx\/xx;-",
+                        "yyddmm":"xxxx\/xx\/>x<xx;-",
+                        "mmddyy":">x<xx\/xx\/xxxx;-"
+                        }
+	property date defaultDate
     property date minDate
     property date maxDate
     property string selectedDate:""
@@ -37,20 +43,11 @@ TextField{
         }
     }
     onTextChanged:{sample2TextChanged(text);setValidDate(text);}
-    placeholderText:"Enter a date in yyyy\/mmm\/dd"
-    //validator:RegExpValidator { regExp: }
-    //validator:RegExpValidator { regExp: /^(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})\/(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)\/([-0123]-|0\d|[12]\d|3[01])$/}
+    placeholderText:""
     validator: RegExpValidator{regExp: regex[dateFormat]}
     onFocusChanged:{
-        var maskFormat = {
-                        "ddmmyy":"xx\/>x<xx\/xxxx;-",
-                        "yymmdd":"xxxx\/>x<xx\/xx;-",
-                        "yyddmm":"xxxx\/xx\/>x<xx;-",
-                        "mmddyy":">x<xx\/xx\/xxxx;-"
-                        }
         if(focus===true){
-            inputMask=maskFormat[sample2.dateFormat];
-            //inputMask="xxxx\/>x<xx\/xx;-";
+            inputMask=sample2.maskFormat[sample2.dateFormat];
         }
         if(focus === false)
         {
@@ -147,7 +144,8 @@ function setCalendarDate(dateString){
     var m=dateString.match(/[a-zA-Z]{3}/);
     var d=dateString.match(/\\d{2}/);
     if (d!==null && m!==null && y!==null)
-    {selectedDate=new Date(y[0],Months[m[0]],d[0]) }}
+    {selectedDate=new Date(y[0],Months[m[0]],d[0]) }
+	}
 }',sample2_cal_box,'calendar')}
     }
 }
