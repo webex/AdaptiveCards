@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 ComboBox{
-    id:mycolor
+    id:comboBox_id
     property alias textcolor: contentItem_text.color
     property alias bgrcolor: bgrRectangle.color
 
@@ -20,7 +20,7 @@ ComboBox{
         ColorOverlay{
             anchors.fill:parent
             source:parent
-            color: mycolor.textcolor
+            color: comboBox_id.textcolor
         }
     }
 
@@ -37,7 +37,7 @@ ComboBox{
     delegate:ItemDelegate{
         width:parent.width
         background:Rectangle{
-            color:mycolor.bgrcolor
+            color:comboBox_id.bgrcolor
             border.color:'grey'
             border.width:1
         }
@@ -47,7 +47,7 @@ ComboBox{
             text:modelData.text
             font:parent.font
             verticalAlignment:Text.AlignVCenter
-            color:mycolor.textcolor
+            color:comboBox_id.textcolor
             elide:Text.ElideRight
         }
     }

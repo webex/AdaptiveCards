@@ -88,7 +88,6 @@ namespace RendererQml
 		template <typename CardElement>
 		static std::shared_ptr<QmlTag> GetNewContainer(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context);
 
-		static std::shared_ptr<QmlTag> ListViewTagforTimeInput(const std::string& parent_id, const std::string& id, std::map < std::string, std::map<std::string, std::string>>& properties);
 		static std::shared_ptr<QmlTag> GetBackgroundImage(std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage, std::shared_ptr<AdaptiveRenderContext> context, const std::string& imgSource);
 
         static void addSubmitActionButtonClickFunc(const std::shared_ptr<AdaptiveRenderContext>& context);

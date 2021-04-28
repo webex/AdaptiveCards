@@ -2,13 +2,14 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 CheckBox{
-    id:acceptterms
-	property alias textcolor: text_contentItem.color
+    property alias textcolor: text_contentItem.color
 	property alias wrapMode: text_contentItem.wrapMode
     property string valueOn:"true"
     property string valueOff:"false"
     property string value:checked ? valueOn : valueOff
-    width:100
+    
+	id:acceptterms
+	width:100
     text:""
     font.pixelSize:14
     indicator:Rectangle{

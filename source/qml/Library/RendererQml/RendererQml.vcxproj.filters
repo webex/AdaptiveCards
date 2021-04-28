@@ -127,5 +127,8 @@
     <None Include="QmlFiles\TimeInput_24hour.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="QmlFiles\TimeInput_12hour.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

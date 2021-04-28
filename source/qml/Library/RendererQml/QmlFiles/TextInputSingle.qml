@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 TextField{
-	property alias bgrcolor: bgrRectangle.color
+	property alias bgrcolor: backgroundRectangle.color
 
     id: textfieldID
     width: 100
@@ -11,7 +11,7 @@ TextField{
     selectedTextColor: 'white'
     background: Rectangle
     {
-		id: bgrRectangle
+		id: backgroundRectangle
         radius: 5
         color: '#171B1F' 
         border.color: textfieldID.activeFocus? 'black' : 'grey'

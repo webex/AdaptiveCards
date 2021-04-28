@@ -4,7 +4,7 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 TextField{
-    id:sample2
+    id:textFieldID
     width:200
     font.family:"Segoe UI"
     font.pixelSize:14
@@ -34,30 +34,30 @@ TextField{
         id:bgrRectangle
         radius:5
         color:'#FFFFFF'
-        border.color:sample2.activeFocus? 'black' : 'grey'
+        border.color:textFieldID.activeFocus? 'black' : 'grey'
         border.width:1
-        layer.enabled:sample2.activeFocus ? true : false
+        layer.enabled:textFieldID.activeFocus ? true : false
         layer.effect:Glow{
             samples:25
             color:'skyblue'
         }
     }
-    onTextChanged:{sample2TextChanged(text);setValidDate(text);}
+    onTextChanged:{textFieldTextChanged(text);setValidDate(text);}
     placeholderText:""
     validator: RegExpValidator{regExp: regex[dateFormat]}
     onFocusChanged:{
         if(focus===true){
-            inputMask=sample2.maskFormat[sample2.dateFormat];
+            inputMask=textFieldID.maskFormat[textFieldID.dateFormat];
         }
         if(focus === false)
         {
             z=0;
             if(text === "\/\/"){ inputMask = "" ; }
-            if( sample2_cal_box.visible === true)
-            { sample2_cal_box.visible=false}
+            if( textFieldID_cal_box.visible === true)
+            { textFieldID_cal_box.visible=false}
         }
     }
-    signal sample2TextChanged(var dateText)
+    signal textFieldTextChanged(var dateText)
     //Function to set appropriate date to be recevied by an action
     function setValidDate(dateString){
         var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};
@@ -84,9 +84,9 @@ TextField{
                                             }
                                     }
         //Extract the year, month and day based on date format from TextField
-        var year_text = getText(day_month_year_positions[sample2.dateFormat]["year"]["start"],day_month_year_positions[sample2.dateFormat]["year"]["end"])
-        var month_text = Months[getText(day_month_year_positions[sample2.dateFormat]["month"]["start"],day_month_year_positions[sample2.dateFormat]["month"]["end"])]
-        var day_text = getText(day_month_year_positions[sample2.dateFormat]["day"]["start"],day_month_year_positions[sample2.dateFormat]["day"]["end"])
+        var year_text = getText(day_month_year_positions[textFieldID.dateFormat]["year"]["start"],day_month_year_positions[textFieldID.dateFormat]["year"]["end"])
+        var month_text = Months[getText(day_month_year_positions[textFieldID.dateFormat]["month"]["start"],day_month_year_positions[textFieldID.dateFormat]["month"]["end"])]
+        var day_text = getText(day_month_year_positions[textFieldID.dateFormat]["day"]["start"],day_month_year_positions[textFieldID.dateFormat]["day"]["end"])
         var dateObject=new Date(year_text, month_text,day_text);
         //Check if the date inputted is a valid date
         if( dateObject.getFullYear() === parseInt(year_text) && dateObject.getMonth()===month_text && dateObject.getDate()===parseInt(day_text))
@@ -102,7 +102,7 @@ TextField{
         width:height
         anchors.right:parent.right
         enabled:true
-        onClicked:{ parent.forceActiveFocus(); sample2_cal_box.visible=!sample2_cal_box.visible; parent.z=sample2_cal_box.visible?1:0; }
+        onClicked:{ parent.forceActiveFocus(); textFieldID_cal_box.visible=!textFieldID_cal_box.visible; parent.z=textFieldID_cal_box.visible?1:0; }
         Image{
             anchors.fill:parent
             anchors.margins:5
@@ -112,12 +112,12 @@ TextField{
             ColorOverlay{
                 anchors.fill:parent
                 source:parent
-                color:sample2.color
+                color:textFieldID.color
             }
         }
     }
     Rectangle{
-        id:sample2_cal_box
+        id:textFieldID_cal_box
         visible:false
         anchors.left:parent.left
         anchors.top:parent.bottom
@@ -128,14 +128,14 @@ TextField{
 import QtQuick 2.15
 Calendar{
 anchors.fill:parent
-minimumDate:sample2.minDate
-maximumDate:sample2.maxDate
+minimumDate:textFieldID.minDate
+maximumDate:textFieldID.maxDate
 Component.onCompleted:{
-    sample2.sample2TextChanged.connect(setCalendarDate);
-    sample2.sample2TextChanged( sample2.text)}
+    textFieldID.textFieldTextChanged.connect(setCalendarDate);
+    textFieldID.textFieldTextChanged( textFieldID.text)}
 onReleased:{
     parent.visible=false;
-    sample2.text=selectedDate.toLocaleString(Qt.locale("en_US"),sample2.outputDateFormats[sample2.dateFormat])
+    textFieldID.text=selectedDate.toLocaleString(Qt.locale("en_US"),textFieldID.outputDateFormats[textFieldID.dateFormat])
 }
 function setCalendarDate(dateString){
     var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};
@@ -146,6 +146,6 @@ function setCalendarDate(dateString){
     if (d!==null && m!==null && y!==null)
     {selectedDate=new Date(y[0],Months[m[0]],d[0]) }
 	}
-}',sample2_cal_box,'calendar')}
+}',textFieldID_cal_box,'calendar')}
     }
 }

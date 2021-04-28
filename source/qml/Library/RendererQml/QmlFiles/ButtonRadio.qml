@@ -2,13 +2,12 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 RadioButton{
-    id:radio_id
     property alias textcolor: contentItem_text.color
     property alias wrapMode: contentItem_text.wrapMode
 	property alias elide: contentItem_text.elide
     property string value
 
-    text:""
+    id:radio_id
     font.pixelSize:14
 
     indicator:Rectangle{

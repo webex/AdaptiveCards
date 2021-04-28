@@ -8,7 +8,7 @@ ScrollView{
 	property alias text: textAreaID.text
 	property alias placeholderText: textAreaID.placeholderText
 	property alias color: textAreaID.color
-	//Custom Property required to obtain the max lenght set by user
+	//Custom Property required to obtain the max length set by user
 	property int maxLength
 	
 	id: scrollViewID
