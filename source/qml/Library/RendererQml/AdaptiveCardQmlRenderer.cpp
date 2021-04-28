@@ -1297,15 +1297,21 @@ namespace RendererQml
 		
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 
-		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
+		//std::shared_ptr<RendererQml::QmlTag> uiTimeInput = std::make_shared<QmlTag>("TextField");
+		std::shared_ptr<RendererQml::QmlTag> uiTimeInput;
+		if (!is12hour)
+		{
+			uiTimeInput = std::make_shared<QmlTag>("TimeInput_24hour");
+		}
+
 		const std::string id = input->GetId();
         const std::string value = input->GetValue();
 
 		uiTimeInput->Property("id", id);
-		uiTimeInput->Property("selectByMouse", "true");
+		/*uiTimeInput->Property("selectByMouse", "true");
 		uiTimeInput->Property("selectedTextColor", "'white'");
         uiTimeInput->Property("property string selectedTime", "", true);
-		uiTimeInput->Property("width", "parent.width");
+		uiTimeInput->Property("width", "parent.width");*/
 		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select time", true);
         uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
@@ -1325,7 +1331,8 @@ namespace RendererQml
                 defaultTime = defaultSelectedTime = Utils::defaultTimeto24hour(defaultTime);
             }
 			uiTimeInput->Property("text", defaultTime, true);
-            uiTimeInput->Property("property string selectedTime", defaultSelectedTime, true);
+            //uiTimeInput->Property("property string selectedTime", defaultSelectedTime, true);
+			uiTimeInput->Property("selectedTime", defaultSelectedTime, true);
 		}
 
 		if (!input->GetIsVisible())
@@ -1333,6 +1340,8 @@ namespace RendererQml
 			uiTimeInput->Property("visibile", "false");
 		}
 
+		uiTimeInput->Property("bgrcolor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+		/*
 		//TODO: Height Property
 		// Time Format: hh:mm tt -> 03:30 AM or hh:mm -> 15:30 
 		std::string listViewHours_id = id + "_hours";
@@ -1445,7 +1454,7 @@ namespace RendererQml
 
 		timeBoxTag->AddChild(ListViewHoursTag);
 		timeBoxTag->AddChild(ListViewMinTag);
-		uiTimeInput->AddChild(timeBoxTag);
+		uiTimeInput->AddChild(timeBoxTag);*/
 
         context->addToInputElementList(origionalElementId, (uiTimeInput->GetId() + ".selectedTime"));
 
