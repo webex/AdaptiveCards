@@ -1,13 +1,27 @@
+/*
+Example Usage
+
+TimeInput_24hour{
+	id:time2
+	placeholderText:"Select time"
+	color:'#171B1F'
+	width:200
+	text:"15:30"           //Must always set this property in hh:mm format
+    selectedTime:"15:30"   //Must always set this property in hh:mm format
+	bgrcolor:'#FFFFFF'
+}
+*/
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 TextField{
-    id:time1
-    selectByMouse:true
-    selectedTextColor:'white'
     property string selectedTime
     property alias bgrcolor: backgroundRectangle.color
+	
+	id:time1
+    selectByMouse:true
+    selectedTextColor:'white'
     placeholderText:""
     color:'#171B1F'
     validator:RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}
@@ -56,7 +70,8 @@ TextField{
 
     MouseArea{
         height:parent.height
-        width:height
+		//Hardocded width to avoid stretching in case height of TextBlock is stretched
+        width:30
         anchors.right:parent.right
         enabled:true
         onClicked:{time1.forceActiveFocus();

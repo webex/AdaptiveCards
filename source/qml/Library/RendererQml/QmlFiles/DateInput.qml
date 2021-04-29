@@ -1,17 +1,23 @@
+/*
+Example Usage
+
+DateInput{
+	id:sampleUsage_id
+	dateFormat:"ddmmyy"  //Allowed Values:"ddmmyy","yymmdd","yyddmm","mmddyy"
+	minDate: new Date(1900,0,1)
+	maxDate: new Date(2040,0,1)
+	defaultDate: new Date(2021,3,29)
+	bgrcolor:'white'
+	width:200
+	//NOTE: Avoid setting the text property, defaultDate can be used to set default value
+}
+*/
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 TextField{
-    id:textFieldID
-    width:200
-    font.family:"Segoe UI"
-    font.pixelSize:14
-    selectByMouse:true
-    selectedTextColor:'white'
-    color:'#171B1F'
-    text: defaultDate.toLocaleString(Qt.locale("en_US"),outputDateFormats[dateFormat])
-    readonly property variant outputDateFormats: {"ddmmyy":"dd\/MMM\/yyyy","yymmdd":"yyyy\/MMM\/dd","yyddmm":"yyyy\/dd\/MMM","mmddyy":"MMM\/dd\/yyyy"}
+	readonly property variant outputDateFormats: {"ddmmyy":"dd\/MMM\/yyyy","yymmdd":"yyyy\/MMM\/dd","yyddmm":"yyyy\/dd\/MMM","mmddyy":"MMM\/dd\/yyyy"}
     readonly property variant regex: {
                                     "ddmmyy":/^([-0123]-|0\d|[12]\d|3[01])\/(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)\/(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})$/,
                                     "yymmdd":/^(-{4}|\d-{3}|\d{2}-{2}|\d{3}-|\d{4})\/(---|[JFMASOND]--|Ja-|Jan|Fe-|Feb|Ma-|Mar|Ap-|Apr|May|Ju--|Jun|Jul|Au-|Aug|Se-|Sep|Oc-|Oct|No-|Nov|De-|Dec)\/([-0123]-|0\d|[12]\d|3[01])$/,
@@ -30,6 +36,18 @@ TextField{
     property string selectedDate:""
     property string dateFormat:"mmddyy"
     property alias bgrcolor: bgrRectangle.color
+
+    id:textFieldID
+    width:200
+    font.family:"Segoe UI"
+    font.pixelSize:14
+    selectByMouse:true
+    selectedTextColor:'white'
+    color:'#171B1F'
+
+	//Avoid setting text property while using the element
+    text: defaultDate.toLocaleString(Qt.locale("en_US"),outputDateFormats[dateFormat])
+    
     background:Rectangle{
         id:bgrRectangle
         radius:5

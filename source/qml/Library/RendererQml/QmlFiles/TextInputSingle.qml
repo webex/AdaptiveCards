@@ -1,3 +1,16 @@
+/*
+Example Usage
+
+TextInputSingle{
+	maximumLength:500
+	id:defaultinputid
+	width:200
+	font.pixelSize:14
+	color:'#171B1F'
+	bgrcolor:'#FFFFFF'
+	placeholderText:"enter comment"
+}
+*/
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15

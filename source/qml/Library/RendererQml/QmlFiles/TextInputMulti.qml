@@ -1,3 +1,17 @@
+/*
+Example Usage
+
+TextInputMulti{
+	id:multilineinputid
+	height:multilineinputid.visible ? 100 : 0
+	multifont.pixelSize:14
+	maxLength:50
+	font.pixelSize:14
+	color:'#171B1F'
+	bgrcolor:'#FFFFFF'
+	placeholderText:"enter comment"
+}
+*/
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
@@ -9,7 +23,7 @@ ScrollView{
 	property alias placeholderText: textAreaID.placeholderText
 	property alias color: textAreaID.color
 	//Custom Property required to obtain the max length set by user
-	//QML max int limit based on documentation
+	//QML int limit based on documentation
 	property int maxLength:2000000000
 	
 	id: scrollViewID

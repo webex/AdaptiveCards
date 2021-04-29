@@ -1307,8 +1307,6 @@ namespace RendererQml
         uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 		uiTimeInput->Property("width", "parent.width");
 
-		uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
-
 		if (!input->GetValue().empty() && Utils::isValidTime(value))
 		{
 			std::string defaultTime = value;

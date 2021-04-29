@@ -1,12 +1,29 @@
+/*
+Example Usage:
+
+DropDownMenu{
+	id:mycolor
+	width:200
+	textcolor:'#171B1F'
+	//model refers to the model of the ComboBox 
+	model:[{ value: '1', text: 'Red'},
+		{ value: '2', text: 'Green'},
+		{ value: '3', text: 'Blue'},
+	]
+	bgrcolor:'#FFFFFF'
+	currentIndex:1
+	displayText:currentText
+}
+*/
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 ComboBox{
-    id:comboBox_id
     property alias textcolor: contentItem_text.color
     property alias bgrcolor: bgrRectangle.color
 
+	id:comboBox_id
     textRole:'text'
     valueRole:'value'
     width:100

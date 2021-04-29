@@ -1,3 +1,14 @@
+/*
+Example Usage
+
+ButtonRadio{
+	value:checked ? "1" : ""
+	id:sample_id
+	text:"Blue"
+	font.pixelSize:14
+	textcolor:'#171B1F'
+}
+*/
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 

@@ -1,3 +1,20 @@
+/*
+Example Usage
+
+NumberInput{
+	id:number
+	width:200
+	bgrcolor:'#FFFFFF'
+	textfont.pixelSize:14
+	textcolor:'#171B1F'
+	placeholderText:"Enter a number"
+	hasDefaultValue:true
+	defaultValue:3
+	from:1
+	to:10
+	value:3
+}
+*/
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15

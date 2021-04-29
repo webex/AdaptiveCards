@@ -1,12 +1,40 @@
+/*
+Example Usage
+
+In Input.ChoiceSet:
+ButtonCheckBox{
+	value:checked ? "1" : ""
+	id:sample1_id
+	text:"Red"
+	font.pixelSize:14
+	checked:true
+	textcolor:'#171B1F'
+}
+
+In Input.Toggle:
+ButtonCheckBox{
+    valueOn:"true"
+    valueOff:"false"
+    value:checked ? valueOn : valueOff
+    id:sample2_id
+    text:"I accept the terms and agreements"
+    font.pixelSize:14
+    checked:true
+    textcolor:'#171B1F'
+}
+*/
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 CheckBox{
     property alias textcolor: text_contentItem.color
 	property alias wrapMode: text_contentItem.wrapMode
+	property string value:checked ? valueOn : valueOff
+
+	//Cannot be set as read only as Input Toggle can change these properties
     property string valueOn:"true"
     property string valueOff:"false"
-    property string value:checked ? valueOn : valueOff
+    
     
 	id:acceptterms
 	width:100

@@ -1,13 +1,27 @@
+/*
+Example Usage
+
+TimeInput_12hour{
+	id:time2
+	placeholderText:"Select time"
+	color:'#171B1F'
+	width:200
+	text:"03:30 PM"      //Must always set this property in hh:mm tt format
+    selectedTime:"15:30" //Must always set this property in hh:mm format
+	bgrcolor:'#FFFFFF'
+}
+*/
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 TextField{
+	property string selectedTime
+    property alias bgrcolor: backgroundRectangle.color
+
     id:time1
     selectByMouse:true
     selectedTextColor:'white'
-    property string selectedTime
-    property alias bgrcolor: backgroundRectangle.color
     placeholderText:""
     color:'#171B1F'
     validator:RegExpValidator { regExp: /^(--|[01]-|0\d|1[0-2]):(--|[0-5]-|[0-5]\d)\s(--|A-|AM|P-|PM)$/}
@@ -30,7 +44,37 @@ TextField{
 			}
 		}
 	}
-    onTextChanged:{time1_hours.currentIndex=parseInt(getText(0,2))-1;time1_min.currentIndex=parseInt(getText(3,5));var tt_index=3;var hh = getText(0,2);switch(getText(6,8)){ case 'PM':tt_index = 1; if(parseInt(getText(0,2))!==12){hh=parseInt(getText(0,2))+12;} break;case 'AM':tt_index = 0; if(parseInt(getText(0,2))===12){hh=parseInt(getText(0,2))-12;} break;}time1_tt.currentIndex=tt_index;if(getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--'){time1.selectedTime ='';} else{time1.selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);}}
+    onTextChanged:{
+		time1_hours.currentIndex=parseInt(getText(0,2))-1;time1_min.currentIndex=parseInt(getText(3,5));
+		var tt_index=3;
+		var hh = getText(0,2);
+		switch(getText(6,8))
+		{ 
+			case 'PM':
+				tt_index = 1; 
+				if(parseInt(getText(0,2))!==12)
+				{
+					hh=parseInt(getText(0,2))+12;
+				} 
+				break;
+			case 'AM':
+				tt_index = 0; 
+				if(parseInt(getText(0,2))===12)
+				{
+					hh=parseInt(getText(0,2))-12;
+				} 
+				break;
+		}
+		time1_tt.currentIndex=tt_index;
+		if(getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--')
+		{
+			time1.selectedTime ='';
+		} 
+		else
+		{
+			time1.selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);
+		}
+	}
     background:Rectangle{
         id: backgroundRectangle
         radius:5
@@ -48,7 +92,8 @@ TextField{
     MouseArea{
 		clip:true
         height:parent.height
-        width:height
+		//Hardocded width to avoid stretching in case height of TextBlock is stretched
+        width:30
         anchors.right:parent.right
         enabled:true
         onClicked:{time1.forceActiveFocus();
