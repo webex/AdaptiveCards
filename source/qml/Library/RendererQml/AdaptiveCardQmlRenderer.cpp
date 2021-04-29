@@ -72,8 +72,13 @@ namespace RendererQml
         //TODO: Change hardcoded import
 		std::string SolutionDir = SOLUTION_DIR;
 		SolutionDir = Utils::Replace(SolutionDir,"\\","/");
-        uiCard->AddImports(Formatter() << "import " << "\"" << "file:///" << SolutionDir << "Library/RendererQml/QmlFiles" << "\"");
-        uiCard->Property("id", "adaptiveCard");
+		std::string QmlFolderpath = Formatter() << "file:///" << SolutionDir << "Library/RendererQml/QmlFiles";
+        uiCard->AddImports(Formatter() << "import " << "\"" << QmlFolderpath << "\"");
+		auto javaScriptQualifier = "HeightWidthFunctions";
+		context->setJavaScriptQualifier(javaScriptQualifier);
+		uiCard->AddImports(Formatter() << "import \""<< QmlFolderpath <<"/HeightWidthFunctions.js\" as " << context->getJavaScriptQualifier());
+
+		uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);
 		uiCard->Property("readonly property int margins", std::to_string(margin));
@@ -140,9 +145,9 @@ namespace RendererQml
 			tempMargin += margin;
 		}
 
-		bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
+		bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getJavaScriptQualifier() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
 
-		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
+		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getJavaScriptQualifier() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
 
 		if (card->GetMinHeight() > 0)
 		{
@@ -155,11 +160,11 @@ namespace RendererQml
         addTextRunSelectActions(context);
 
         // Add height and width calculation function
-        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
+        /*uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchWidth());
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthActionSet());
-		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthFactSet());
+		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthFactSet());*/
 		return uiCard;
 	}
 
@@ -1090,7 +1095,7 @@ namespace RendererQml
 		uiFactSet->Property("columns", "2");
 		uiFactSet->Property("rows", std::to_string(factSet->GetFacts().size()));
 		uiFactSet->Property("property int titleWidth", "0");
-		uiFactSet->Property("property int minWidth", Formatter() << context->getCardRootId() << ".getMinWidthFactSet(children, columnSpacing)");
+		uiFactSet->Property("property int minWidth", Formatter() << context->getJavaScriptQualifier() << ".getMinWidthFactSet(children, columnSpacing)");
 		uiFactSet->AddFunctions("function setTitleWidth(item){	if (item.width > titleWidth){ titleWidth = item.width }}");
 
 		if (!factSet->GetIsVisible())
@@ -1566,7 +1571,7 @@ namespace RendererQml
 			uiFrame->Property("width", "parent.width");
 		}
 
-		uiFrame->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchWidth( row_" << id << ".children, parent.width - (" << marginReleased << "))}");
+		uiFrame->Property("onWidthChanged", Formatter() << "{" << context->getJavaScriptQualifier() << ".generateStretchWidth( row_" << id << ".children, parent.width - (" << marginReleased << "))}");
 
 		return uiFrame;
 	}
@@ -1753,19 +1758,19 @@ namespace RendererQml
 		if (cardElement->GetElementTypeString() == "Container")
 		{
 			stretchHeight = Formatter() << "minHeight - " << tempMargin;
-			uiContainer->Property("onMinHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight( column_" << id << ".children," << stretchHeight << " )}");
+			uiContainer->Property("onMinHeightChanged", Formatter() << "{" << context->getJavaScriptQualifier() << ".generateStretchHeight( column_" << id << ".children," << stretchHeight << " )}");
 		}
 		else if (cardElement->GetElementTypeString() == "Column")
 		{
 			stretchHeight = Formatter() << "stretchMinHeight - " << tempMargin;
-			uiContainer->Property("onStretchMinHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight( column_" << id << ".children," << stretchHeight << " )}");
+			uiContainer->Property("onStretchMinHeightChanged", Formatter() << "{" << context->getJavaScriptQualifier() << ".generateStretchHeight( column_" << id << ".children," << stretchHeight << " )}");
 		}
 
-		uiColumn->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << "." << stretchHeight << " )}");
+		uiColumn->Property("onImplicitHeightChanged", Formatter() << "{" << context->getJavaScriptQualifier() << ".generateStretchHeight(children, " << id << "." << stretchHeight << " )}");
 
-		uiColumn->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << "." << stretchHeight << " )}");
+		uiColumn->Property("onImplicitWidthChanged", Formatter() << "{" << context->getJavaScriptQualifier() << ".generateStretchHeight(children, " << id << "." << stretchHeight << " )}");
 
-		uiContainer->Property("property int minWidth", Formatter() << "{" << context->getCardRootId() << ".getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempWidth << "}");
+		uiContainer->Property("property int minWidth", Formatter() << "{" << context->getJavaScriptQualifier() << ".getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempWidth << "}");
 
 		if (cardElement->GetElementTypeString() == "Column")
 		{
@@ -1790,7 +1795,7 @@ namespace RendererQml
 			outerContainer->Property("visible", "false");
 		}
 
-		outerContainer->Property("property int minWidth", Formatter() << "{" << context->getCardRootId() << ".getMinWidthActionSet( children[1].children," << context->GetConfig()->GetActions().buttonSpacing << ")}");
+		outerContainer->Property("property int minWidth", Formatter() << "{" << context->getJavaScriptQualifier() << ".getMinWidthActionSet( children[1].children," << context->GetConfig()->GetActions().buttonSpacing << ")}");
 
 		auto actionsConfig = context->GetConfig()->GetActions();
 		const auto oldActionAlignment = context->GetConfig()->GetActions().actionAlignment;

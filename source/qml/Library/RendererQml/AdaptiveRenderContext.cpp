@@ -304,4 +304,14 @@ namespace RendererQml
     {
         return m_textRunSelectActionList;
     }
+
+	void AdaptiveRenderContext::setJavaScriptQualifier(const std::string& JavaScriptQualifier)
+	{
+		m_JavaScriptQualifier = JavaScriptQualifier;
+	}
+
+	const std::string AdaptiveRenderContext::getJavaScriptQualifier()
+	{
+		return m_JavaScriptQualifier;
+	}
 }

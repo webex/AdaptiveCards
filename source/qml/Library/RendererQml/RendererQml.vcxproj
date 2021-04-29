@@ -205,6 +205,7 @@
     <None Include="QmlFiles\ButtonRadio.qml" />
     <None Include="QmlFiles\DateInput.qml" />
     <None Include="QmlFiles\DropDownMenu.qml" />
+    <None Include="QmlFiles\HeightWidthFunctions.js" />
     <None Include="QmlFiles\NumberInput.qml" />
     <None Include="QmlFiles\TextBlock.qml" />
     <None Include="QmlFiles\TextInputMulti.qml" />

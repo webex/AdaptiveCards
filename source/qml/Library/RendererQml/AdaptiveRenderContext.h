@@ -66,6 +66,9 @@ namespace RendererQml
 
 		const int getCardWidth();
 
+		void setJavaScriptQualifier(const std::string& JavaScriptQualifier);
+		const std::string getJavaScriptQualifier();
+
     private:
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
@@ -75,6 +78,7 @@ namespace RendererQml
         std::string m_lang;
 
         std::string m_CardRootId;
+		std::string m_JavaScriptQualifier;
 		std::shared_ptr<QmlTag> m_CardRootElement;
         std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
 
