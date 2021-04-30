@@ -1029,20 +1029,17 @@ namespace RendererQml
 
 		uiDateInput->Property("bgrcolor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
-		//TODO: Handle case when inputted date is not in yyyy-mm-dd
-		if (!input->GetMin().empty())
+		if (!input->GetMin().empty() && Utils::isValidDate(input->GetMin()))
 		{
 			uiDateInput->Property("minDate", Utils::GetDate(input->GetMin()));
 		}
 
-		//TODO: Handle case when inputted date is not in yyyy-mm-dd
-		if (!input->GetMax().empty())
+		if (!input->GetMax().empty() && Utils::isValidDate(input->GetMax()))
 		{
 			uiDateInput->Property("maxDate", Utils::GetDate(input->GetMax()));
 		}
 
-		//TODO: Handle case when inputted date is not in yyyy-mm-dd
-		if (!input->GetValue().empty())
+		if (!input->GetValue().empty() && Utils::isValidDate(input->GetValue()))
 		{
 			uiDateInput->Property("defaultDate", Utils::GetDate(input->GetValue()));
 		}
