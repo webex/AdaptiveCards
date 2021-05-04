@@ -159,12 +159,6 @@ namespace RendererQml
         addShowCardLoaderComponents(context);
         addTextRunSelectActions(context);
 
-        // Add height and width calculation function
-        /*uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
-        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchWidth());
-        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
-        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthActionSet());
-		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthFactSet());*/
 		return uiCard;
 	}
 
@@ -563,9 +557,7 @@ namespace RendererQml
                 if (input->GetIsMultiline())
                 {
                     buttonElement->Property("anchors.bottom", "parent.bottom");
-                    /*scrollViewTag->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
-                    uiContainer->AddChild(scrollViewTag);*/
-					uiTextInput->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
+                    uiTextInput->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
 					uiContainer->AddChild(uiTextInput);
                 }
                 else
