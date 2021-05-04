@@ -70,7 +70,7 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick.Controls 2.15");
         uiCard->AddImports("import QtGraphicalEffects 1.15");
         //TODO: Change hardcoded import
-		std::string SolutionDir = SOLUTION_DIR;
+        std::string SolutionDir = SOLUTION_DIR;
 		SolutionDir = Utils::Replace(SolutionDir,"\\","/");
 		std::string QmlFolderpath = Formatter() << "file:///" << SolutionDir << "Library/RendererQml/QmlFiles";
         uiCard->AddImports(Formatter() << "import " << "\"" << QmlFolderpath << "\"");
