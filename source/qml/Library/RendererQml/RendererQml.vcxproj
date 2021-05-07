@@ -202,6 +202,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="QmlFiles\ActionButtonColumn.qml" />
+    <None Include="QmlFiles\ActionButtonRow.qml" />
     <None Include="QmlFiles\ButtonRadio.qml" />
     <None Include="QmlFiles\DateInput.qml" />
     <None Include="QmlFiles\DropDownMenu.qml" />

@@ -159,9 +159,9 @@ QString SampleCardModel::generateQml(const QString& cardQml)
             }
             //Temp 
 		}
-		else if (genQml.GetElement() == "Button" && genQml.HasProperty("readonly property bool hasIconUrl"))
+		else if (genQml.GetElement() == "ActionButtonRow" && genQml.HasProperty("hasIconUrl"))
 		{
-            auto url = genQml.GetProperty("property var imgSource");
+            auto url = genQml.GetProperty("imgSource");
             urls[genQml.GetId()] = Utils::Replace(url, "\"", "");
 
             //Temp
@@ -170,7 +170,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 
             if (ImageDownloader::download_jpeg(imageName, imgUrl))
             {
-                genQml.Property("property var imgSource", "\"" + getImagePath(imageName) + "\"");
+                genQml.Property("imgSource", "\"" + getImagePath(imageName) + "\"");
             }
             else
             {

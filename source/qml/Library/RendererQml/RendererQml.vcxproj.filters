@@ -133,5 +133,11 @@
     <None Include="QmlFiles\HeightWidthFunctions.js">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="QmlFiles\ActionButtonColumn.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="QmlFiles\ActionButtonRow.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
