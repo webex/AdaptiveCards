@@ -159,7 +159,7 @@ QString SampleCardModel::generateQml(const QString& cardQml)
             }
             //Temp 
 		}
-		else if (genQml.GetElement() == "ActionButtonRow" && genQml.HasProperty("hasIconUrl"))
+		else if ( (genQml.GetElement() == "ActionButtonRow" || genQml.GetElement() == "ActionButtonColumn") && genQml.HasProperty("hasIconUrl"))
 		{
             auto url = genQml.GetProperty("imgSource");
             urls[genQml.GetId()] = Utils::Replace(url, "\"", "");

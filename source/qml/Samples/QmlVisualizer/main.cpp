@@ -20,6 +20,8 @@ int main(int argc, char* argv[])
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
 
+    view.engine()->addImportPath("C:/dev/desktopAdaptiveCards/source/qml/Library/RendererQml/");
+
     SampleCardList cardList;
     SampleCardModel model;
     model.setList(&cardList);

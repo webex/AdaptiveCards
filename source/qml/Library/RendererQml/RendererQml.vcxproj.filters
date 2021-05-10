@@ -139,5 +139,8 @@
     <None Include="QmlFiles\ActionButtonRow.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="QmlFiles\qmldir">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

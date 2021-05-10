@@ -209,6 +209,7 @@
     <None Include="QmlFiles\DropDownMenu.qml" />
     <None Include="QmlFiles\HeightWidthFunctions.js" />
     <None Include="QmlFiles\NumberInput.qml" />
+    <None Include="QmlFiles\qmldir" />
     <None Include="QmlFiles\TextBlock.qml" />
     <None Include="QmlFiles\TextInputMulti.qml" />
     <None Include="QmlFiles\TextInputSingle.qml" />
