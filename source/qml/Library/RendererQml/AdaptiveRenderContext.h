@@ -42,6 +42,10 @@ namespace RendererQml
         const int getButtonCounter();
         const int getSelectActionCounter();
 
+        const int getDefaultIdCounter();
+        void setDefaultIdName(const std::string& defaultId);
+        const std::string getDefaultIdName();
+
         void setCardRootId(const std::string& rootId);
         const std::string getCardRootId();
 
@@ -69,6 +73,9 @@ namespace RendererQml
 		void setJavaScriptQualifier(const std::string& JavaScriptQualifier);
 		const std::string getJavaScriptQualifier();
 
+        void AddToJsonQmlIdList(const std::string& JsonId, const std::string& QmlId);
+        const std::string GetQmlId(const std::string& jsonId);
+
     private:
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
@@ -79,6 +86,7 @@ namespace RendererQml
 
         std::string m_CardRootId;
 		std::string m_JavaScriptQualifier;
+        std::string m_defaultId;
 		std::shared_ptr<QmlTag> m_CardRootElement;
         std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
 
@@ -87,6 +95,7 @@ namespace RendererQml
         std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardButtonList;
         std::map<std::string, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardLoaderComponentList;
         std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> m_textRunSelectActionList;
+        std::map<std::string, std::string> m_JsonQmlIdList;
 
         int m_ContainerCounter{ 0 };
         int m_ImageCounter{ 0 };
@@ -94,5 +103,6 @@ namespace RendererQml
 		int m_ColumnCounter{ 0 };
         int m_ButtonCounter{ 0 };
         int m_SelectActionCounter{ 0 };
+        int m_DefaultIdCounter{ 0 };
     };
 }

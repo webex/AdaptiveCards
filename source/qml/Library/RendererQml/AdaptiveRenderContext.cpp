@@ -225,6 +225,11 @@ namespace RendererQml
         return ++m_SelectActionCounter;
     }
 
+    const int AdaptiveRenderContext::getDefaultIdCounter()
+    {
+        return ++m_DefaultIdCounter;
+    }
+
     void AdaptiveRenderContext::setCardRootId(const std::string& rootId)
     {
         m_CardRootId = rootId;
@@ -314,4 +319,33 @@ namespace RendererQml
 	{
 		return m_JavaScriptQualifier;
 	}
+
+    void AdaptiveRenderContext::setDefaultIdName(const std::string& defaultId)
+    {
+        m_defaultId = defaultId;
+    }
+
+    const std::string AdaptiveRenderContext::getDefaultIdName()
+    {
+        return m_defaultId;
+    }
+
+    void AdaptiveRenderContext::AddToJsonQmlIdList(const std::string& JsonId, const std::string& QmlId)
+    {
+        m_JsonQmlIdList.insert({JsonId, QmlId});
+    }
+
+    const std::string AdaptiveRenderContext::GetQmlId(const std::string& jsonId)
+    {
+        //Goes to catch when json id does not exist in the list
+        try
+        {
+            return m_JsonQmlIdList.at(jsonId);
+        }
+        catch (...)
+        {
+            return "";
+        }
+        
+    }
 }

@@ -116,6 +116,9 @@ namespace RendererQml
 		static std::string HandleEscapeSequences(std::string& text);
 
 		static const bool isValidDate(const std::string& date);
+        static const std::string ConvertToValidID(const std::string& id);
+        static bool hasNonAlphaNumeric(const std::string& id);
+
 
     private:
         Utils() {}

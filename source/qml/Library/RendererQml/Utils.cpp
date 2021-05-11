@@ -391,6 +391,7 @@ namespace RendererQml
         std::string newId = value;
 
         transform(newId.begin(), newId.end(), newId.begin(), ::tolower);
+        newId = ConvertToValidID(newId);
         return newId;
     }
 
@@ -570,4 +571,25 @@ namespace RendererQml
 			return false;
 		}
 	}
+
+    const std::string Utils::ConvertToValidID(const std::string& id)
+    {
+        //TODO: Handle non alpha numeric characters
+
+        //Add underscore to take care of starting character
+        return Formatter() << "_" << id;
+    }
+
+    bool Utils::hasNonAlphaNumeric(const std::string& id)
+    {
+        //check if non alpha numeric character other than underscore exists
+        for (auto& character : id)
+        {
+            if (!std::isalnum(character) && character != '_')
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

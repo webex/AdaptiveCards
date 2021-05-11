@@ -62,6 +62,7 @@ namespace RendererQml
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
     {
+        context->setDefaultIdName("defaultId");
         int margin = context->GetConfig()->GetSpacing().paddingSpacing;
 
         auto uiCard = std::make_shared<QmlTag>("Rectangle");
@@ -417,8 +418,18 @@ namespace RendererQml
 
         if (!textBlock->GetId().empty())
         {
-            textBlock->SetId(Utils::ConvertToLowerIdValue(textBlock->GetId()));
+            std::string origionalElementId = textBlock->GetId();
+            std::string qml_id = Utils::ConvertToLowerIdValue(origionalElementId);
+            if (Utils::hasNonAlphaNumeric(qml_id))
+            {
+                textBlock->SetId(Formatter() << context->getDefaultIdName() << "_" <<std::to_string(context->getDefaultIdCounter()));
+            }
+            else
+            {
+                textBlock->SetId(Utils::ConvertToLowerIdValue(textBlock->GetId()));
+            }
             uiTextBlock->Property("id", textBlock->GetId());
+            context->AddToJsonQmlIdList(origionalElementId, textBlock->GetId());
         }
 
         if (!textBlock->GetIsVisible())
@@ -452,7 +463,16 @@ namespace RendererQml
 
         std::shared_ptr<QmlTag> uiTextInput;
 
-        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+        std::string qml_id = Utils::ConvertToLowerIdValue(input->GetId());
+        if (Utils::hasNonAlphaNumeric(qml_id))
+        {
+            input->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+        }
+        else
+        {
+            input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+        }
+        context->AddToJsonQmlIdList(origionalElementId, input->GetId());
 
         if (input->GetIsMultiline())
         {
@@ -574,7 +594,17 @@ namespace RendererQml
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::NumberInputRender(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
         const std::string origionalElementId = input->GetId();
-        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+
+        std::string qml_id = Utils::ConvertToLowerIdValue(input->GetId());
+        if (Utils::hasNonAlphaNumeric(qml_id))
+        {
+            input->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+        }
+        else
+        {
+            input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+        }
+        context->AddToJsonQmlIdList(origionalElementId, input->GetId());
         const auto inputId = input->GetId();
 
         auto uiNumberInput = std::make_shared<QmlTag>("NumberInput");
@@ -654,8 +684,18 @@ namespace RendererQml
 
         if (!richTextBlock->GetId().empty())
         {
-            richTextBlock->SetId(Utils::ConvertToLowerIdValue(richTextBlock->GetId()));
+            std::string origionalElementId = richTextBlock->GetId();
+            std::string qml_id = Utils::ConvertToLowerIdValue(origionalElementId);
+            if (Utils::hasNonAlphaNumeric(qml_id))
+            {
+                richTextBlock->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+            }
+            else
+            {
+                richTextBlock->SetId(Utils::ConvertToLowerIdValue(richTextBlock->GetId()));
+            }
             uiTextBlock->Property("id", richTextBlock->GetId());
+            context->AddToJsonQmlIdList(origionalElementId, richTextBlock->GetId());
         }
 
         uiTextBlock->Property("textFormat", "Text.RichText");
@@ -752,7 +792,17 @@ namespace RendererQml
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ToggleInputRender(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
         const std::string origionalElementId = input->GetId();
-        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+
+        std::string qml_id = Utils::ConvertToLowerIdValue(origionalElementId);
+        if (Utils::hasNonAlphaNumeric(qml_id))
+        {
+            input->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+        }
+        else
+        {
+            input->SetId(Utils::ConvertToLowerIdValue(origionalElementId));
+        }
+        context->AddToJsonQmlIdList(origionalElementId, input->GetId());
 
         const auto valueOn = !input->GetValueOn().empty() ? input->GetValueOn() : "true";
         const auto valueOff = !input->GetValueOff().empty() ? input->GetValueOff() : "false";
@@ -776,7 +826,17 @@ namespace RendererQml
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ChoiceSetRender(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
         const std::string origionalElementId = input->GetId();
-        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+
+        std::string qml_id = Utils::ConvertToLowerIdValue(input->GetId());
+        if (Utils::hasNonAlphaNumeric(qml_id))
+        {
+            input->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+        }
+        else
+        {
+            input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+        }
+        context->AddToJsonQmlIdList(origionalElementId, input->GetId());
 
         int ButtonNumber = 0;
         RendererQml::Checkboxes choices;
@@ -996,7 +1056,16 @@ namespace RendererQml
     {
         //TODO: ids which are qml keywords would result in undefined behaviour
         const std::string origionalElementId = input->GetId();
-        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+        std::string qml_id = Utils::ConvertToLowerIdValue(input->GetId());
+        if (Utils::hasNonAlphaNumeric(qml_id))
+        {
+            input->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+        }
+        else
+        {
+            input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+        }
+        context->AddToJsonQmlIdList(origionalElementId, input->GetId());
 
         auto uiDateInput = std::make_shared<QmlTag>("DateInput");
         uiDateInput->Property("id", input->GetId());
@@ -1075,8 +1144,19 @@ namespace RendererQml
 
         if (!factSet->GetId().empty())
         {
+            std::string origionalElementId = factSet->GetId();
+            std::string qml_id = Utils::ConvertToLowerIdValue(origionalElementId);
+            if (Utils::hasNonAlphaNumeric(qml_id))
+            {
+                factSet->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+            }
+            else
+            {
+                factSet->SetId(Utils::ConvertToLowerIdValue(factSet->GetId()));
+            }
             factSet->SetId(Utils::ConvertToLowerIdValue(factSet->GetId()));
             uiFactSet->Property("id", factSet->GetId());
+            context->AddToJsonQmlIdList(origionalElementId, factSet->GetId());
         }
 
         uiFactSet->Property("columns", "2");
@@ -1145,7 +1225,17 @@ namespace RendererQml
         }
         else
         {
-            image->SetId(Utils::ConvertToLowerIdValue(image->GetId()));
+            std::string origionalElementId = image->GetId();
+            std::string qml_id = Utils::ConvertToLowerIdValue(origionalElementId);
+            if (Utils::hasNonAlphaNumeric(qml_id))
+            {
+                image->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+            }
+            else
+            {
+                image->SetId(Utils::ConvertToLowerIdValue(image->GetId()));
+            }
+            context->AddToJsonQmlIdList(origionalElementId, image->GetId());
         }
 
         uiRectangle->Property("id", image->GetId());
@@ -1281,7 +1371,16 @@ namespace RendererQml
         const std::string origionalElementId = input->GetId();
         const bool is12hour = Utils::isSystemTime12Hour();
 
-        input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+        std::string qml_id = Utils::ConvertToLowerIdValue(input->GetId());
+        if (Utils::hasNonAlphaNumeric(qml_id))
+        {
+            input->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+        }
+        else
+        {
+            input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
+        }
+        context->AddToJsonQmlIdList(origionalElementId, input->GetId());
 
         std::shared_ptr<RendererQml::QmlTag> uiTimeInput;
         if (is12hour)
@@ -1338,8 +1437,18 @@ namespace RendererQml
 
         if (!imageSet->GetId().empty())
         {
-            imageSet->SetId(Utils::ConvertToLowerIdValue(imageSet->GetId()));
+            std::string origionalElementId = imageSet->GetId();
+            std::string qml_id = Utils::ConvertToLowerIdValue(origionalElementId);
+            if (Utils::hasNonAlphaNumeric(qml_id))
+            {
+                imageSet->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+            }
+            else
+            {
+                imageSet->SetId(Utils::ConvertToLowerIdValue(imageSet->GetId()));
+            }
             uiFlow->Property("id", imageSet->GetId());
+            context->AddToJsonQmlIdList(origionalElementId, imageSet->GetId());
         }
 
         if (!imageSet->GetIsVisible())
@@ -1437,7 +1546,17 @@ namespace RendererQml
         }
         else
         {
-            columnSet->SetId(Utils::ConvertToLowerIdValue(columnSet->GetId()));
+            std::string origionalElementId = columnSet->GetId();
+            std::string qml_id = Utils::ConvertToLowerIdValue(origionalElementId);
+            if (Utils::hasNonAlphaNumeric(qml_id))
+            {
+                columnSet->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+            }
+            else
+            {
+                columnSet->SetId(Utils::ConvertToLowerIdValue(columnSet->GetId()));
+            }
+            context->AddToJsonQmlIdList(origionalElementId, columnSet->GetId());
         }
 
         const auto id = columnSet->GetId();
@@ -1574,7 +1693,17 @@ namespace RendererQml
         }
         else
         {
-            column->SetId(Utils::ConvertToLowerIdValue(column->GetId()));
+            std::string origionalElementId = column->GetId();
+            std::string qml_id = Utils::ConvertToLowerIdValue(origionalElementId);
+            if (Utils::hasNonAlphaNumeric(qml_id))
+            {
+                column->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+            }
+            else
+            {
+                column->SetId(Utils::ConvertToLowerIdValue(column->GetId()));
+            }
+            context->AddToJsonQmlIdList(origionalElementId, column->GetId());
         }
 
         std::shared_ptr<QmlTag> uiContainer = GetNewContainer(column, context);
@@ -1606,7 +1735,18 @@ namespace RendererQml
         }
         else
         {
+            std::string origionalElementId = container->GetId();
+            std::string qml_id = Utils::ConvertToLowerIdValue(origionalElementId);
+            if (Utils::hasNonAlphaNumeric(qml_id))
+            {
+                container->SetId(Formatter() << context->getDefaultIdName() << "_" << std::to_string(context->getDefaultIdCounter()));
+            }
+            else
+            {
+                container->SetId(Utils::ConvertToLowerIdValue(container->GetId()));
+            }
             container->SetId(Utils::ConvertToLowerIdValue(container->GetId()));
+            context->AddToJsonQmlIdList(origionalElementId, container->GetId());
         }
 
         std::shared_ptr<QmlTag> uiContainer = GetNewContainer(container, context);
@@ -2055,7 +2195,8 @@ namespace RendererQml
 
             if (targetElement != nullptr)
             {
-                targetElementId = Utils::ConvertToLowerIdValue(targetElement->GetElementId());
+                targetElementId = context->GetQmlId(targetElement->GetElementId());
+                //targetElementId = Utils::ConvertToLowerIdValue(targetElement->GetElementId());
 
                 switch (targetElement->GetIsVisible())
                 {
