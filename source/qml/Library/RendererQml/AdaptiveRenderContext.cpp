@@ -337,11 +337,11 @@ namespace RendererQml
 
     const std::string AdaptiveRenderContext::GetQmlId(const std::string& jsonId)
     {
-        //Goes to catch when json id does not exist in the list
         try
         {
             return m_JsonQmlIdList.at(jsonId);
         }
+        //std::out_of_range exception
         catch (...)
         {
             return "";

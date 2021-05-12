@@ -2196,8 +2196,7 @@ namespace RendererQml
             if (targetElement != nullptr)
             {
                 targetElementId = context->GetQmlId(targetElement->GetElementId());
-                //targetElementId = Utils::ConvertToLowerIdValue(targetElement->GetElementId());
-
+                
                 switch (targetElement->GetIsVisible())
                 {
                 case AdaptiveCards::IsVisible::IsVisibleTrue:
