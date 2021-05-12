@@ -894,6 +894,11 @@ namespace RendererQml
         uiDropDown->Property("model", GetModel(choiceset.choices));
         uiDropDown->Property("bgrcolor", backgroundColor);
 
+        const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
+
+        uiDropDown->Property("font.family", context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
+        uiDropDown->Property("font.pixelSize", std::to_string(fontSize));
+
         if (!choiceset.placeholder.empty())
         {
             uiDropDown->Property("currentIndex", "-1");
@@ -906,7 +911,7 @@ namespace RendererQml
                 return options.value == target;
             }) - choiceset.choices.begin();
             uiDropDown->Property("currentIndex", std::to_string(index));
-            uiDropDown->Property("displayText", "currentText");
+            //uiDropDown->Property("displayText", "currentText");
         }
 
         return uiDropDown;
@@ -1398,6 +1403,11 @@ namespace RendererQml
         uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select time", true);
         uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
         uiTimeInput->Property("width", "parent.width");
+
+        const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
+
+        uiTimeInput->Property("font.family", context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
+        uiTimeInput->Property("font.pixelSize", std::to_string(fontSize));
 
         if (!input->GetValue().empty() && Utils::isValidTime(value))
         {

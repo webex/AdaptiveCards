@@ -142,5 +142,8 @@
     <None Include="QmlFiles\qmldir">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="QmlFiles\QmlHelperFunctions.js">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

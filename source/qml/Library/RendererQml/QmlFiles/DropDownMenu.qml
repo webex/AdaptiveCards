@@ -62,7 +62,7 @@ ComboBox{
         contentItem: Text{
             id: delegateItem_text
             text: modelData.text
-            font: parent.font
+            font: comboBox_id.font
             verticalAlignment: Text.AlignVCenter
             color: comboBox_id.textcolor
             elide: Text.ElideRight
