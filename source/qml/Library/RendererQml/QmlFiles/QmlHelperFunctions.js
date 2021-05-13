@@ -1,7 +1,27 @@
 //Functions used by the QML Elements (not exposed through the module)
 
 //Helper Function for DateInput
-function setValidDate(dateString)
+function DateInput_onFocusChanged()
+{
+    if (focus === true)
+	{
+        inputMask = textFieldID.maskFormat[textFieldID.dateFormat];
+    }
+    else
+    {
+        z=0;
+        if (text === "\/\/")
+		{
+			inputMask = "" ; 
+		}
+        if (textFieldID_cal_box.visible === true)
+        { 
+			textFieldID_cal_box.visible = false
+		}
+    }
+}
+
+function DateInput_setValidDate(dateString)
 {
     var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};
     var day_month_year_positions = {
@@ -45,4 +65,121 @@ function setValidDate(dateString)
 	{
         selectedDate = ''
     }
+}
+
+function TimeInput_24hour_onFocusChanged()
+{
+	if (focus === true)
+    {
+		inputMask = "xx:xx;-";
+	}
+    else
+    {
+        z = 0;
+        if (text === ":")
+        {
+            inputMask = ""
+        }
+        if (time_ID_timeBox.visible === true)
+        {
+            time_ID_timeBox.visible=false
+        }
+    }
+}
+
+function TimeInput_24hour_onTextChanged()
+{
+	time_ID_hours.currentIndex = parseInt(getText(0,2))
+    time_ID_min.currentIndex = parseInt(getText(3,5))
+    if(getText(0,2) === '--' || getText(3,5) === '--')
+    {
+        time_ID.selectedTime = '';
+    }
+    else
+    {
+        time_ID.selectedTime = time_ID.text
+    }
+}
+
+function TimeInput_24hour_onClicked()
+{
+	time_ID.forceActiveFocus();
+	time_ID_timeBox.visible = !time_ID_timeBox.visible;
+	parent.z = time_ID_timeBox.visible?1:0;
+	time_ID_hours.currentIndex = parseInt(parent.getText(0,2));
+	time_ID_min.currentIndex = parseInt(parent.getText(3,5));
+}
+
+function TimeInput_12hour_onFocusChanged()
+{
+	if (focus === true) 
+	{
+		inputMask = "xx:xx >xx;-"; 
+	}
+	else
+	{
+		z=0;
+		if (text === ": " ) 
+		{ 
+			inputMask = "" 
+		}
+		if (time_ID_timeBox.visible === true)
+		{
+			time_ID_timeBox.visible = false
+		}
+	}
+}
+
+function TimeInput_12hour_onTextChanged()
+{
+	time_ID_hours.currentIndex = parseInt(getText(0,2))-1;
+	time_ID_min.currentIndex = parseInt(getText(3,5));
+	var tt_index = 3;
+	var hh = getText(0,2);
+	switch (getText(6,8))
+	{ 
+		case 'PM':
+			tt_index = 1; 
+			if (parseInt(getText(0,2)) !== 12)
+			{
+				hh = parseInt(getText(0,2)) + 12;
+			} 
+			break;
+		case 'AM':
+			tt_index = 0; 
+			if (parseInt(getText(0,2)) === 12)
+			{
+				hh = parseInt(getText(0,2))-12;
+			} 
+			break;
+	}
+	time_ID_tt.currentIndex = tt_index;
+	if (getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--')
+	{
+		time_ID.selectedTime = '';
+	} 
+	else
+	{
+		time_ID.selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);
+	}
+}
+
+function TimeInput_12hour_onClicked()
+{
+	time_ID.forceActiveFocus();
+	time_ID_timeBox.visible = !time_ID_timeBox.visible;
+	parent.z = time_ID_timeBox.visible?1:0;
+	time_ID_hours.currentIndex = parseInt(parent.getText(0,2))-1;
+	time_ID_min.currentIndex = parseInt(parent.getText(3,5));
+	var tt_index = 3;
+	switch (parent.getText(6,8))
+	{ 
+		case 'PM':
+			tt_index = 1; 
+			break;
+		case 'AM':
+			tt_index = 0; 
+			break;
+	}
+	time_ID_tt.currentIndex = tt_index;
 }

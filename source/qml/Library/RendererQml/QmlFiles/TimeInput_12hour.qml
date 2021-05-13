@@ -14,6 +14,7 @@ TimeInput_12hour{
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
+import "QmlHelperFunctions.js" as QmlHelperFunctions
 
 TextField{
 	id: time_ID
@@ -28,54 +29,10 @@ TextField{
     validator: RegExpValidator { regExp: /^(--|[01]-|0\d|1[0-2]):(--|[0-5]-|[0-5]\d)\s(--|A-|AM|P-|PM)$/}
     text: ""
     onFocusChanged: { 
-		if (focus === true) 
-		{
-			inputMask = "xx:xx >xx;-"; 
-		}
-		else
-		{
-			z=0;
-			if (text === ": " ) 
-			{ 
-				inputMask = "" 
-			}
-			if (time_ID_timeBox.visible === true)
-			{
-				time_ID_timeBox.visible = false
-			}
-		}
+		QmlHelperFunctions.TimeInput_12hour_onFocusChanged()
 	}
     onTextChanged: {
-		time_ID_hours.currentIndex = parseInt(getText(0,2))-1;
-		time_ID_min.currentIndex = parseInt(getText(3,5));
-		var tt_index = 3;
-		var hh = getText(0,2);
-		switch (getText(6,8))
-		{ 
-			case 'PM':
-				tt_index = 1; 
-				if (parseInt(getText(0,2)) !== 12)
-				{
-					hh = parseInt(getText(0,2)) + 12;
-				} 
-				break;
-			case 'AM':
-				tt_index = 0; 
-				if (parseInt(getText(0,2)) === 12)
-				{
-					hh = parseInt(getText(0,2))-12;
-				} 
-				break;
-		}
-		time_ID_tt.currentIndex = tt_index;
-		if (getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--')
-		{
-			time_ID.selectedTime = '';
-		} 
-		else
-		{
-			time_ID.selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);
-		}
+		QmlHelperFunctions.TimeInput_12hour_onTextChanged()
 	}
     background: Rectangle{
         id: backgroundRectangle
@@ -99,22 +56,7 @@ TextField{
         anchors.right: parent.right
         enabled: true
         onClicked: {
-			time_ID.forceActiveFocus();
-            time_ID_timeBox.visible = !time_ID_timeBox.visible;
-            parent.z = time_ID_timeBox.visible?1:0;
-            time_ID_hours.currentIndex = parseInt(parent.getText(0,2))-1;
-            time_ID_min.currentIndex = parseInt(parent.getText(3,5));
-            var tt_index = 3;
-			switch (parent.getText(6,8))
-			{ 
-				case 'PM':
-					tt_index = 1; 
-					break;
-				case 'AM':
-					tt_index = 0; 
-					break;
-			}
-			time_ID_tt.currentIndex = tt_index;
+			QmlHelperFunctions.TimeInput_12hour_onClicked()
 		}
         
 		Image{

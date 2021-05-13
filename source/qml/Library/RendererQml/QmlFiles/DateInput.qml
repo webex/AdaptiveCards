@@ -70,28 +70,12 @@ TextField{
     }
     onTextChanged: {
 		textFieldTextChanged(text);
-		//Function exists in QmlHelperFunctions.js
-		QmlHelperFunctions.setValidDate(text);
+		QmlHelperFunctions.DateInput_setValidDate(text);
 	}
     placeholderText: ""
     validator: RegExpValidator{ regExp: regex[dateFormat]}
     onFocusChanged: {
-        if (focus === true)
-		{
-            inputMask = textFieldID.maskFormat[textFieldID.dateFormat];
-        }
-        else
-        {
-            z=0;
-            if (text === "\/\/")
-			{
-				inputMask = "" ; 
-			}
-            if (textFieldID_cal_box.visible === true)
-            { 
-				textFieldID_cal_box.visible = false
-			}
-        }
+		QmlHelperFunctions.DateInput_onFocusChanged()
     }
     signal textFieldTextChanged(var dateText)
     

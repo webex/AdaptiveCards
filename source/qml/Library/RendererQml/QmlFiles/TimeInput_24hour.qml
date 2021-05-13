@@ -14,6 +14,7 @@ TimeInput_24hour{
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
+import "QmlHelperFunctions.js" as QmlHelperFunctions
 
 TextField{
     id: time_ID
@@ -28,34 +29,10 @@ TextField{
     validator: RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}
     text: ""
     onFocusChanged:{
-        if (focus === true)
-        {
-			inputMask = "xx:xx;-";
-		}
-        else
-        {
-            z = 0;
-            if (text === ":")
-            {
-                inputMask = ""
-            }
-            if (time_ID_timeBox.visible === true)
-            {
-                time_ID_timeBox.visible=false
-            }
-        }
+		QmlHelperFunctions.TimeInput_24hour_onFocusChanged()
     }
     onTextChanged: {
-        time_ID_hours.currentIndex = parseInt(getText(0,2))
-        time_ID_min.currentIndex = parseInt(getText(3,5))
-        if(getText(0,2) === '--' || getText(3,5) === '--')
-        {
-            time_ID.selectedTime = '';
-        }
-        else
-        {
-            time_ID.selectedTime = time_ID.text
-        }
+        QmlHelperFunctions.TimeInput_24hour_onTextChanged()
     }
     background: Rectangle{
         id: backgroundRectangle
@@ -69,7 +46,6 @@ TextField{
             samples: 25
             color: 'skyblue'
         }
-
     }
 
     MouseArea{
@@ -79,11 +55,7 @@ TextField{
         anchors.right: parent.right
         enabled: true
         onClicked: {
-			time_ID.forceActiveFocus();
-            time_ID_timeBox.visible = !time_ID_timeBox.visible;
-            parent.z = time_ID_timeBox.visible?1:0;
-            time_ID_hours.currentIndex = parseInt(parent.getText(0,2));
-            time_ID_min.currentIndex = parseInt(parent.getText(3,5));
+			QmlHelperFunctions.TimeInput_24hour_onClicked()
         }
         
 		Image{
