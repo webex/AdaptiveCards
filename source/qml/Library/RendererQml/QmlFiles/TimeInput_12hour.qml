@@ -16,10 +16,11 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 TextField{
+	id: time_ID
+    
 	property string selectedTime
     property alias bgrcolor: backgroundRectangle.color
 
-    id: time1
     selectByMouse: true
     selectedTextColor: 'white'
     placeholderText: ""
@@ -31,22 +32,22 @@ TextField{
 		{
 			inputMask = "xx:xx >xx;-"; 
 		}
-		if (focus === false)
+		else
 		{
 			z=0;
 			if (text === ": " ) 
 			{ 
 				inputMask = "" 
 			}
-			if (time1_timeBox.visible === true)
+			if (time_ID_timeBox.visible === true)
 			{
-				time1_timeBox.visible = false
+				time_ID_timeBox.visible = false
 			}
 		}
 	}
     onTextChanged: {
-		time1_hours.currentIndex = parseInt(getText(0,2))-1;
-		time1_min.currentIndex = parseInt(getText(3,5));
+		time_ID_hours.currentIndex = parseInt(getText(0,2))-1;
+		time_ID_min.currentIndex = parseInt(getText(3,5));
 		var tt_index = 3;
 		var hh = getText(0,2);
 		switch (getText(6,8))
@@ -66,28 +67,28 @@ TextField{
 				} 
 				break;
 		}
-		time1_tt.currentIndex = tt_index;
+		time_ID_tt.currentIndex = tt_index;
 		if (getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--')
 		{
-			time1.selectedTime = '';
+			time_ID.selectedTime = '';
 		} 
 		else
 		{
-			time1.selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);
+			time_ID.selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);
 		}
 	}
     background: Rectangle{
         id: backgroundRectangle
-        radius: 5
+        
+		radius: 5
         color: '#FFFFFF'
-        border.color: time1.activeFocus? 'black' : 'grey'
+        border.color: time_ID.activeFocus? 'black' : 'grey'
         border.width: 1
-        layer.enabled: time1.activeFocus ? true : false
+        layer.enabled: time_ID.activeFocus ? true : false
         layer.effect: Glow{
             samples: 25
             color: 'skyblue'
         }
-
     }
 
     MouseArea{
@@ -98,11 +99,11 @@ TextField{
         anchors.right: parent.right
         enabled: true
         onClicked: {
-			time1.forceActiveFocus();
-            time1_timeBox.visible = !time1_timeBox.visible;
-            parent.z = time1_timeBox.visible?1:0;
-            time1_hours.currentIndex = parseInt(parent.getText(0,2))-1;
-            time1_min.currentIndex = parseInt(parent.getText(3,5));
+			time_ID.forceActiveFocus();
+            time_ID_timeBox.visible = !time_ID_timeBox.visible;
+            parent.z = time_ID_timeBox.visible?1:0;
+            time_ID_hours.currentIndex = parseInt(parent.getText(0,2))-1;
+            time_ID_min.currentIndex = parseInt(parent.getText(3,5));
             var tt_index = 3;
 			switch (parent.getText(6,8))
 			{ 
@@ -113,25 +114,29 @@ TextField{
 					tt_index = 0; 
 					break;
 			}
-			time1_tt.currentIndex = tt_index;
+			time_ID_tt.currentIndex = tt_index;
 		}
-        Image{
+        
+		Image{
 			clip: true
             anchors.fill: parent
             anchors.margins: 5
             fillMode: Image.PreserveAspectFit
             mipmap: true
             source: "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgd2lkdGg9IjMwcHgiIGhlaWdodD0iMzBweCIgdmlld0JveD0iMCAwIDMwIDMwIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPg0KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggNjAuMSAoODgxMzMpIC0gaHR0cHM6Ly9za2V0Y2guY29tIC0tPg0KICAgIDx0aXRsZT5waG9uZS9yZWNlbnRzLXByZXNlbmNlLXN0cm9rZV8zMDwvdGl0bGU+DQogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+DQogICAgPGcgaWQ9InBob25lL3JlY2VudHMtcHJlc2VuY2Utc3Ryb2tlXzMwIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4NCiAgICAgICAgPHBhdGggZD0iTTE1LjAwMDIsMC4wMDAxIEM2LjcyNzkxNTI1LDAuMDAwMSAwLjAwMDIsNi43Mjc4MTUyNSAwLjAwMDIsMTUuMDAwMSBDMC4wMDAyLDIzLjI3MjM4NDcgNi43Mjc5MTUyNSwzMC4wMDAxIDE1LjAwMDIsMzAuMDAwMSBDMjMuMjcyNDg0NywzMC4wMDAxIDMwLjAwMDIsMjMuMjcyMzg0NyAzMC4wMDAyLDE1LjAwMDEgQzMwLjAwMDIsNi43Mjc4MTUyNSAyMy4yNzI0ODQ3LDAuMDAwMSAxNS4wMDAyLDAuMDAwMSBaIE0xNS4wMDAyLDEuMDAwMSBDMjIuNzIwMiwxLjAwMDEgMjkuMDAwMiw3LjI4MDEgMjkuMDAwMiwxNS4wMDAxIEMyOS4wMDAyLDIyLjcyMDEgMjIuNzIwMiwyOS4wMDAxIDE1LjAwMDIsMjkuMDAwMSBDNy4yODAyLDI5LjAwMDEgMS4wMDAyLDIyLjcyMDEgMS4wMDAyLDE1LjAwMDEgQzEuMDAwMiw3LjI4MDEgNy4yODAyLDEuMDAwMSAxNS4wMDAyLDEuMDAwMSBaIE0xOS4zMjQyLDIwLjkxMjEgQzE5LjIyNjIsMjEuMDEwMSAxOS4wOTgyLDIxLjA1ODEgMTguOTcwMiwyMS4wNTgxIEMxOC44NDMyLDIxLjA1ODEgMTguNzE1MiwyMS4wMTAxIDE4LjYxNzIsMjAuOTEyMSBMMTQuODc5MiwxNy4xNzQxIEMxNC42MzgyLDE2LjkzMzEgMTQuNTAwMiwxNi42MDAxIDE0LjUwMDIsMTYuMjYwMSBMMTQuNTAwMiw3Ljg1MzEgQzE0LjUwMDIsNy41NzYxIDE0LjcyMzIsNy4zNTMxIDE1LjAwMDIsNy4zNTMxIEMxNS4yNzYyLDcuMzUzMSAxNS41MDAyLDcuNTc2MSAxNS41MDAyLDcuODUzMSBMMTUuNTAwMiwxNi4yNjAxIEMxNS41MDAyLDE2LjMzNzEgMTUuNTMxMiwxNi40MTIxIDE1LjU4NjIsMTYuNDY3MSBMMTkuMzI0MiwyMC4yMDUxIEMxOS41MTkyLDIwLjQwMDEgMTkuNTE5MiwyMC43MTcxIDE5LjMyNDIsMjAuOTEyMSIgaWQ9ImZpbGwiIGZpbGw9IiMxNzFCMUYiPjwvcGF0aD4NCiAgICA8L2c+DQo8L3N2Zz4="
-            ColorOverlay{
+            
+			ColorOverlay{
                 anchors.fill: parent
                 source: parent
-                color: time1.color
+                color: time_ID.color
             }
         }
     }
-    Rectangle{
-        id: time1_timeBox
-        anchors.topMargin: 1
+    
+	Rectangle{
+        id: time_ID_timeBox
+        
+		anchors.topMargin: 1
         anchors.left: parent.left
         anchors.top: parent.bottom
         width: 155
@@ -144,8 +149,9 @@ TextField{
         }
 
         ListView{
-            id: time1_tt
-            width: 45
+            id: time_ID_tt
+            
+			width: 45
             height: parent.height-10
             anchors.margins: 5
             anchors.top: parent.top
@@ -157,30 +163,35 @@ TextField{
 				ListElement { name: "AM"} 
 				ListElement { name: "PM"}
 			}
-            delegate: Rectangle{
+            
+			delegate: Rectangle{
                 width: 45
                 height: 45
-                color: time1_tt.currentIndex==index ? "blue" : time1_ttmouseArea.containsMouse?"lightblue":"white"
-                MouseArea{
-                    id: time1_ttmouseArea
-                    anchors.fill: parent
+                color: time_ID_tt.currentIndex==index ? "blue" : time_ID_ttmouseArea.containsMouse?"lightblue":"white"
+                
+				MouseArea{
+                    id: time_ID_ttmouseArea
+                    
+					anchors.fill: parent
                     enabled: true
                     hoverEnabled: true
-                    onClicked: {time1_tt.currentIndex=index;time1.insert(6,model.name);}
+                    onClicked: {time_ID_tt.currentIndex=index;time_ID.insert(6,model.name);}
                 }
                 Text{
                     text: model.name
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    color: time1_tt.currentIndex==index ? "white" : "black"
+                    color: time_ID_tt.currentIndex==index ? "white" : "black"
                 }
             }
 
         }
+
         ListView{
-            id: time1_hours
-            width: 45
+            id: time_ID_hours
+            
+			width: 45
             height: parent.height-10
             anchors.margins: 5
             anchors.top: parent.top
@@ -192,60 +203,67 @@ TextField{
             delegate: Rectangle{
                 width: 45
                 height: 45
-                color: time1_hours.currentIndex==index ? "blue" : time1_hoursmouseArea.containsMouse?"lightblue":"white"
-                MouseArea{
-                    id: time1_hoursmouseArea
-                    anchors.fill: parent
+                color: time_ID_hours.currentIndex==index ? "blue" : time_ID_hoursmouseArea.containsMouse?"lightblue":"white"
+                
+				MouseArea{
+                    id: time_ID_hoursmouseArea
+                    
+					anchors.fill: parent
                     enabled: true
                     hoverEnabled: true
                     onClicked:{
-						time1_hours.currentIndex = index;
-						var x = String(index+1).padStart(2, '0');
-						time1.insert(0,x);
+						time_ID_hours.currentIndex = index;
+						var hourString = String(index+1).padStart(2, '0');
+						time_ID.insert(0,hourString);
 					}
                 }
-                Text{
+                
+				Text{
                     text: String(index+1).padStart(2, '0')
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    color: time1_hours.currentIndex == index ? "white" : "black"
+                    color: time_ID_hours.currentIndex == index ? "white" : "black"
                 }
             }
 
         }
-        ListView{
-            id: time1_min
-            width: 45
+        
+		ListView{
+            id: time_ID_min
+            
+			width: 45
             height: parent.height-10
             anchors.margins: 5
             anchors.top: parent.top
             flickableDirection: Flickable.VerticalFlick
             boundsBehavior: Flickable.StopAtBounds
             clip: true
-            anchors.left: time1_hours.right
+            anchors.left: time_ID_hours.right
             model: 60
             delegate: Rectangle{
                 width: 45
                 height: 45
-                color: time1_min.currentIndex == index ? "blue" : time1_minmouseArea.containsMouse? "lightblue" : "white"
+                color: time_ID_min.currentIndex == index ? "blue" : time_ID_minmouseArea.containsMouse? "lightblue" : "white"
                 MouseArea{
-                    id: time1_minmouseArea
-                    anchors.fill: parent
+                    id: time_ID_minmouseArea
+                    
+					anchors.fill: parent
                     enabled: true
                     hoverEnabled: true
                     onClicked:{
-						time1_min.currentIndex = index;
-						var x = String(index).padStart(2, '0');
-						time1.insert(2,x);
+						time_ID_min.currentIndex = index;
+						var minuteString = String(index).padStart(2, '0');
+						time_ID.insert(2,minuteString);
 					}
                 }
-                Text{
+                
+				Text{
                     text: String(index).padStart(2, '0')
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    color: time1_min.currentIndex == index ? "white" : "black"
+                    color: time_ID_min.currentIndex == index ? "white" : "black"
                 }
             }
 

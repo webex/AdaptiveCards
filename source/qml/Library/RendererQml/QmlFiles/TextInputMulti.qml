@@ -17,8 +17,10 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 ScrollView{
+	id: scrollViewID
+
     property alias bgrcolor: backgroundRectangle.color
-	property alias multifont: textAreaID.font
+	property alias textfont: textAreaID.font
 	property alias text: textAreaID.text
 	property alias placeholderText: textAreaID.placeholderText
 	property alias color: textAreaID.color
@@ -26,26 +28,33 @@ ScrollView{
 	//QML int limit based on documentation
 	property int maxLength: 2000000000
 	
-	id: scrollViewID
-    width: 100
+	width: 100
 	height: textAreaID.visible ? 100 : 0
     ScrollBar.vertical.interactive: true
-    TextArea{
+    
+	TextArea{
         id: textAreaID
-        wrapMode: Text.Wrap
+        
+		wrapMode: Text.Wrap
         selectByMouse: true
         selectedTextColor: 'white'
         padding: 10
         font.pixelSize: 14
-		onTextChanged: remove(scrollViewID.maxLength,length)
+		
+		onTextChanged: {
+			remove(scrollViewID.maxLength,length)
+		}
+		
 		background: Rectangle{
 			id: backgroundRectangle
-            radius: 5
+            
+			radius: 5
             color: '#FFFFFF'
 			border.color: textAreaID.activeFocus? 'black' : 'grey'
             border.width: 1
             layer.enabled: textAreaID.activeFocus ? true : false
-            layer.effect: Glow{
+            
+			layer.effect: Glow{
                 samples: 25
                 color: 'skyblue'
             }

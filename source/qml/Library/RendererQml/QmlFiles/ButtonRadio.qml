@@ -13,12 +13,13 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 RadioButton{
-    property alias textcolor: contentItem_text.color
+    id: radio_id
+    
+	property alias textcolor: contentItem_text.color
     property alias wrapMode: contentItem_text.wrapMode
 	property alias elide: contentItem_text.elide
     property string value
 
-    id: radio_id
     font.pixelSize: 14
 
     indicator: Rectangle{
@@ -28,7 +29,8 @@ RadioButton{
         radius: height/2
         border.color: radio_id.checked ? '#0075FF' : '767676'
         color: radio_id.checked ? '#0075FF' : '#ffffff'
-        Rectangle{
+        
+		Rectangle{
             width: parent.width/2
             height: parent.height/2
             x: width/2
@@ -41,7 +43,8 @@ RadioButton{
 
     contentItem:Text{
         id: contentItem_text
-        text: parent.text
+        
+		text: parent.text
         font: parent.font
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter

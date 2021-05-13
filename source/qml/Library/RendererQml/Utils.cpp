@@ -582,6 +582,7 @@ namespace RendererQml
 
     bool Utils::hasNonAlphaNumeric(const std::string& id)
     {
+        //QML does not allow special characters except underscore
         //check if non alpha numeric character other than underscore exists
         for (auto& character : id)
         {

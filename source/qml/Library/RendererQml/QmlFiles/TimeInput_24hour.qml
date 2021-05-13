@@ -16,11 +16,12 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 TextField{
-    property string selectedTime
+    id: time_ID
+    
+	property string selectedTime
     property alias bgrcolor: backgroundRectangle.color
 	
-	id: time1
-    selectByMouse: true
+	selectByMouse: true
     selectedTextColor: 'white'
     placeholderText: ""
     color: '#171B1F'
@@ -28,39 +29,42 @@ TextField{
     text: ""
     onFocusChanged:{
         if (focus === true)
-            inputMask = "xx:xx;-";
-        if (focus === false)
+        {
+			inputMask = "xx:xx;-";
+		}
+        else
         {
             z = 0;
             if (text === ":")
             {
                 inputMask = ""
             }
-            if (time1_timeBox.visible === true)
+            if (time_ID_timeBox.visible === true)
             {
-                time1_timeBox.visible=false
+                time_ID_timeBox.visible=false
             }
         }
     }
     onTextChanged: {
-        time1_hours.currentIndex = parseInt(getText(0,2))
-        time1_min.currentIndex = parseInt(getText(3,5))
+        time_ID_hours.currentIndex = parseInt(getText(0,2))
+        time_ID_min.currentIndex = parseInt(getText(3,5))
         if(getText(0,2) === '--' || getText(3,5) === '--')
         {
-            time1.selectedTime = '';
+            time_ID.selectedTime = '';
         }
         else
         {
-            time1.selectedTime = time1.text
+            time_ID.selectedTime = time_ID.text
         }
     }
     background: Rectangle{
         id: backgroundRectangle
-        radius: 5
+        
+		radius: 5
         color: '#FFFFFF'
-        border.color: time1.activeFocus? 'black' : 'grey'
+        border.color: time_ID.activeFocus? 'black' : 'grey'
         border.width: 1
-        layer.enabled: time1.activeFocus ? true : false
+        layer.enabled: time_ID.activeFocus ? true : false
         layer.effect: Glow{
             samples: 25
             color: 'skyblue'
@@ -75,13 +79,14 @@ TextField{
         anchors.right: parent.right
         enabled: true
         onClicked: {
-			time1.forceActiveFocus();
-            time1_timeBox.visible = !time1_timeBox.visible;
-            parent.z = time1_timeBox.visible?1:0;
-            time1_hours.currentIndex = parseInt(parent.getText(0,2));
-            time1_min.currentIndex = parseInt(parent.getText(3,5));
+			time_ID.forceActiveFocus();
+            time_ID_timeBox.visible = !time_ID_timeBox.visible;
+            parent.z = time_ID_timeBox.visible?1:0;
+            time_ID_hours.currentIndex = parseInt(parent.getText(0,2));
+            time_ID_min.currentIndex = parseInt(parent.getText(3,5));
         }
-        Image{
+        
+		Image{
             anchors.fill: parent
             anchors.margins: 5
             fillMode: Image.PreserveAspectFit
@@ -90,13 +95,15 @@ TextField{
             ColorOverlay{
                 anchors.fill: parent
                 source: parent
-                color: time1.color
+                color: time_ID.color
             }
         }
     }
-    Rectangle{
-        id: time1_timeBox
-        anchors.topMargin: 1
+    
+	Rectangle{
+        id: time_ID_timeBox
+        
+		anchors.topMargin: 1
         anchors.left: parent.left
         anchors.top: parent.bottom
         width: 105
@@ -109,8 +116,9 @@ TextField{
         }
 
         ListView{
-            id: time1_hours
-            width: 45
+            id: time_ID_hours
+            
+			width: 45
             height: parent.height-10
             anchors.margins: 5
             anchors.top: parent.top
@@ -122,52 +130,59 @@ TextField{
             delegate: Rectangle{
                 width: 45
                 height: 45
-                color: time1_hours.currentIndex == index ? "blue" : time1_hoursmouseArea.containsMouse? "lightblue" : "white"
-                MouseArea{
-                    id: time1_hoursmouseArea
-                    anchors.fill: parent
+                color: time_ID_hours.currentIndex == index ? "blue" : time_ID_hoursmouseArea.containsMouse? "lightblue" : "white"
+                
+				MouseArea{
+                    id: time_ID_hoursmouseArea
+                    
+					anchors.fill: parent
                     enabled: true
                     hoverEnabled: true
                     onClicked: {
-						time1_hours.currentIndex = index;
+						time_ID_hours.currentIndex = index;
 						var x = String(index).padStart(2, '0') ;
-						time1.insert(0,x);
+						time_ID.insert(0,x);
 					}
                 }
-                Text{
+                
+				Text{
                     text: String(index).padStart(2, '0')
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    color: time1_hours.currentIndex == index ? "white" : "black"
+                    color: time_ID_hours.currentIndex == index ? "white" : "black"
                 }
             }
 
         }
-        ListView{
-            id: time1_min
-            width: 45
+        
+		ListView{
+            id: time_ID_min
+            
+			width: 45
             height: parent.height-10
             anchors.margins: 5
             anchors.top: parent.top
             flickableDirection: Flickable.VerticalFlick
             boundsBehavior: Flickable.StopAtBounds
             clip: true
-            anchors.left: time1_hours.right
+            anchors.left: time_ID_hours.right
             model: 60
             delegate: Rectangle{
                 width: 45
                 height: 45
-                color: time1_min.currentIndex == index ? "blue" : time1_minmouseArea.containsMouse? "lightblue" : "white"
-                MouseArea{
-                    id: time1_minmouseArea
-                    anchors.fill: parent
+                color: time_ID_min.currentIndex == index ? "blue" : time_ID_minmouseArea.containsMouse? "lightblue" : "white"
+                
+				MouseArea{
+                    id: time_ID_minmouseArea
+                    
+					anchors.fill: parent
                     enabled: true
                     hoverEnabled: true
                     onClicked:{
-						time1_min.currentIndex = index;
+						time_ID_min.currentIndex = index;
 						var x = String(index).padStart(2, '0');
-						time1.insert(2,x);
+						time_ID.insert(2,x);
 					}
                 }
                 Text{
@@ -175,10 +190,9 @@ TextField{
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    color: time1_min.currentIndex == index ? "white" : "black"
+                    color: time_ID_min.currentIndex == index ? "white" : "black"
                 }
             }
-
         }
     }
 }

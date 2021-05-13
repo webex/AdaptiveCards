@@ -1,3 +1,5 @@
+//Functions used by the QML Elements (not exposed through the module)
+
 //Helper Function for DateInput
 function setValidDate(dateString)
 {
@@ -39,7 +41,8 @@ function setValidDate(dateString)
     {
         selectedDate = dateObject.toLocaleString(Qt.locale("en_US"),"yyyy-MM-dd");
     }
-    else{
+    else
+	{
         selectedDate = ''
     }
 }

@@ -27,7 +27,9 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 CheckBox{
-    property alias textcolor: text_contentItem.color
+    id: checkbox_ID
+
+	property alias textcolor: text_contentItem.color
 	property alias wrapMode: text_contentItem.wrapMode
 	property string value: checked ? valueOn : valueOff
 
@@ -35,19 +37,19 @@ CheckBox{
     property string valueOn: "true"
     property string valueOff: "false"
     
-    
-	id: checkbox_ID
 	width: 100
     text: ""
     font.pixelSize: 14
-    indicator: Rectangle{
+    
+	indicator: Rectangle{
         width: parent.font.pixelSize
         height: parent.font.pixelSize
         y: parent.topPadding + (parent.availableHeight - height) / 2
         radius: 3
         border.color: checkbox_ID.checked ? '#0075FF' : '767676'
         color: checkbox_ID.checked ? '#0075FF' : '#ffffff'
-        Image{
+        
+		Image{
             anchors.centerIn: parent
             width: parent.width - 3
             height: parent.height - 3
@@ -58,7 +60,8 @@ CheckBox{
 
     contentItem: Text{
 		id: text_contentItem
-        text: parent.text
+        
+		text: parent.text
         font: parent.font
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
