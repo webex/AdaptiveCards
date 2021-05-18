@@ -97,49 +97,49 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="QmlFiles\TextBlock.qml">
+    <None Include="CardQmlElements\ActionButtonColumn.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\TextInputMulti.qml">
+    <None Include="CardQmlElements\ActionButtonRow.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\TextInputSingle.qml">
+    <None Include="CardQmlElements\ButtonCheckBox.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\NumberInput.qml">
+    <None Include="CardQmlElements\ButtonRadio.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\ButtonRadio.qml">
+    <None Include="CardQmlElements\DateInput.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\ButtonCheckBox.qml">
+    <None Include="CardQmlElements\DropDownMenu.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\DropDownMenu.qml">
+    <None Include="CardQmlElements\HeightWidthFunctions.js">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\DateInput.qml">
+    <None Include="CardQmlElements\NumberInput.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\TimeInput_24hour.qml">
+    <None Include="CardQmlElements\qmldir">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\TimeInput_12hour.qml">
+    <None Include="CardQmlElements\QmlHelperFunctions.js">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\HeightWidthFunctions.js">
+    <None Include="CardQmlElements\TextBlock.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\ActionButtonColumn.qml">
+    <None Include="CardQmlElements\TextInputMulti.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\ActionButtonRow.qml">
+    <None Include="CardQmlElements\TextInputSingle.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\qmldir">
+    <None Include="CardQmlElements\TimeInput_12hour.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="QmlFiles\QmlHelperFunctions.js">
+    <None Include="CardQmlElements\TimeInput_24hour.qml">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
