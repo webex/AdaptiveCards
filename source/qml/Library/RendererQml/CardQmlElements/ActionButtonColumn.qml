@@ -2,16 +2,16 @@
 Example Usage:
 
 ActionButtonColumn{
-	id:button_auto_1
-	text:"Action.OpenUrl"
-	textfont.pixelSize:14
-	bgrborder.color:button_auto_1.pressed ? '#0A5E7D' : '#007EA8'
-	bgrcolor:button_auto_1.pressed ? '#0A5E7D' : button_auto_1.hovered ? '#007EA8' : 'white'
-	textcolor:button_auto_1.hovered ? '#FFFFFF' : '#007EA8'
-	onClicked:{
-		adaptiveCard.buttonClicked("Action.OpenUrl", "Action.OpenUrl", "https://adaptivecards.io");
-		console.log("https://adaptivecards.io");
-	}
+    id:button_auto_1
+    text:"Action.OpenUrl"
+    textfont.pixelSize:14
+    bgrborder.color:button_auto_1.pressed ? '#0A5E7D' : '#007EA8'
+    bgrcolor:button_auto_1.pressed ? '#0A5E7D' : button_auto_1.hovered ? '#007EA8' : 'white'
+    textcolor:button_auto_1.hovered ? '#FFFFFF' : '#007EA8'
+    onClicked:{
+        adaptiveCard.buttonClicked("Action.OpenUrl", "Action.OpenUrl", "https://adaptivecards.io");
+        console.log("https://adaptivecards.io");
+    }
 }
 */
 import QtQuick 2.15
@@ -37,7 +37,7 @@ Button{
 
     id: button_id
     
-	background:Rectangle{
+    background:Rectangle{
         id: button_id_bg
         anchors.fill: parent
         radius: button_id.height / 2
@@ -52,13 +52,13 @@ Button{
         implicitHeight: column_id.implicitHeight
         implicitWidth: column_id.implicitWidth
         
-		Column{
-			id: column_id
+        Column{
+            id: column_id
             spacing: 5
             leftPadding: 5
             rightPadding: 5
             
-			Image{
+            Image{
                 id: button_auto_4_img
                 cache: false
                 visible: button_id.hasIconUrl
@@ -71,19 +71,19 @@ Button{
             Row{
                 spacing: 5
                 
-				Text{
+                Text{
                     id: text_id
                     text: button_id.text
                     font: button_id.textfont
                     color: button_id.hovered ? '#FFFFFF' : '#007EA8'
                 }
                 
-				Item{
+                Item{
                     height: button_id.textfont.pixelSize
                     width: button_id.textfont.pixelSize
                     visible: button_id.isShowCard
                     
-					Image{
+                    Image{
                         id: button_auto_1_icon
                         anchors.fill: parent
                         cache: false

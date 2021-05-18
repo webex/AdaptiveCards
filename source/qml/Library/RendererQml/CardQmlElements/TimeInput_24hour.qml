@@ -5,13 +5,13 @@ Name- recents-presence-stroke, Color-Black, Size-30
 Example Usage
 
 TimeInput_24hour{
-	id:time2
-	placeholderText:"Select time"
-	color:'#171B1F'
-	width:200
-	text:"15:30"           //Must always set this property in hh:mm format
+    id:time2
+    placeholderText:"Select time"
+    color:'#171B1F'
+    width:200
+    text:"15:30"           //Must always set this property in hh:mm format
     selectedTime:"15:30"   //Must always set this property in hh:mm format
-	bgrcolor:'#FFFFFF'
+    bgrcolor:'#FFFFFF'
 }
 */
 import QtQuick 2.15
@@ -22,17 +22,17 @@ import "QmlHelperFunctions.js" as QmlHelperFunctions
 TextField{
     id: time_ID
     
-	property string selectedTime
+    property string selectedTime
     property alias bgrcolor: backgroundRectangle.color
-	
-	selectByMouse: true
+    
+    selectByMouse: true
     selectedTextColor: 'white'
     placeholderText: ""
     color: '#171B1F'
     validator: RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}
     text: ""
     onFocusChanged:{
-		QmlHelperFunctions.TimeInput_24hour_onFocusChanged()
+        QmlHelperFunctions.TimeInput_24hour_onFocusChanged()
     }
     onTextChanged: {
         QmlHelperFunctions.TimeInput_24hour_onTextChanged()
@@ -40,7 +40,7 @@ TextField{
     background: Rectangle{
         id: backgroundRectangle
         
-		radius: 5
+        radius: 5
         color: '#FFFFFF'
         border.color: time_ID.activeFocus? 'black' : 'grey'
         border.width: 1
@@ -53,15 +53,15 @@ TextField{
 
     MouseArea{
         height: parent.height
-		//Hardocded width to avoid stretching in case height of TextBlock is stretched
+        //Hardocded width to avoid stretching in case height of TextBlock is stretched
         width: 30
         anchors.right: parent.right
         enabled: true
         onClicked: {
-			QmlHelperFunctions.TimeInput_24hour_onClicked()
+            QmlHelperFunctions.TimeInput_24hour_onClicked()
         }
         
-		Image{
+        Image{
             anchors.fill: parent
             anchors.margins: 5
             fillMode: Image.PreserveAspectFit
@@ -75,10 +75,10 @@ TextField{
         }
     }
     
-	Rectangle{
+    Rectangle{
         id: time_ID_timeBox
         
-		anchors.topMargin: 1
+        anchors.topMargin: 1
         anchors.left: parent.left
         anchors.top: parent.bottom
         width: 105
@@ -93,7 +93,7 @@ TextField{
         ListView{
             id: time_ID_hours
             
-			width: 45
+            width: 45
             height: parent.height-10
             anchors.margins: 5
             anchors.top: parent.top
@@ -107,20 +107,20 @@ TextField{
                 height: 45
                 color: time_ID_hours.currentIndex == index ? "blue" : time_ID_hoursmouseArea.containsMouse? "lightblue" : "white"
                 
-				MouseArea{
+                MouseArea{
                     id: time_ID_hoursmouseArea
                     
-					anchors.fill: parent
+                    anchors.fill: parent
                     enabled: true
                     hoverEnabled: true
                     onClicked: {
-						time_ID_hours.currentIndex = index;
-						var x = String(index).padStart(2, '0') ;
-						time_ID.insert(0,x);
-					}
+                        time_ID_hours.currentIndex = index;
+                        var x = String(index).padStart(2, '0') ;
+                        time_ID.insert(0,x);
+                    }
                 }
                 
-				Text{
+                Text{
                     text: String(index).padStart(2, '0')
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
@@ -131,10 +131,10 @@ TextField{
 
         }
         
-		ListView{
+        ListView{
             id: time_ID_min
             
-			width: 45
+            width: 45
             height: parent.height-10
             anchors.margins: 5
             anchors.top: parent.top
@@ -148,17 +148,17 @@ TextField{
                 height: 45
                 color: time_ID_min.currentIndex == index ? "blue" : time_ID_minmouseArea.containsMouse? "lightblue" : "white"
                 
-				MouseArea{
+                MouseArea{
                     id: time_ID_minmouseArea
                     
-					anchors.fill: parent
+                    anchors.fill: parent
                     enabled: true
                     hoverEnabled: true
                     onClicked:{
-						time_ID_min.currentIndex = index;
-						var x = String(index).padStart(2, '0');
-						time_ID.insert(2,x);
-					}
+                        time_ID_min.currentIndex = index;
+                        var x = String(index).padStart(2, '0');
+                        time_ID.insert(2,x);
+                    }
                 }
                 Text{
                     text: String(index).padStart(2, '0')

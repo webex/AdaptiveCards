@@ -1,4 +1,4 @@
-module QmlFiles
+module CardQmlElements
 ActionButtonRow 1.0 ActionButtonRow.qml
 ActionButtonColumn 1.0 ActionButtonColumn.qml
 ButtonCheckBox 1.0 ButtonCheckBox.qml

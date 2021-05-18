@@ -2,16 +2,16 @@
 Example Usage:
 
 ActionButtonRow{
-	id:button_auto_1
-	text:"Action.OpenUrl"
-	textfont.pixelSize:14
-	bgrborder.color:button_auto_1.pressed ? '#0A5E7D' : '#007EA8'
-	bgrcolor:button_auto_1.pressed ? '#0A5E7D' : button_auto_1.hovered ? '#007EA8' : 'white'
-	textcolor:button_auto_1.hovered ? '#FFFFFF' : '#007EA8'
-	onClicked:{
-		adaptiveCard.buttonClicked("Action.OpenUrl", "Action.OpenUrl", "https://adaptivecards.io");
-		console.log("https://adaptivecards.io");
-	}
+    id:button_auto_1
+    text:"Action.OpenUrl"
+    textfont.pixelSize:14
+    bgrborder.color:button_auto_1.pressed ? '#0A5E7D' : '#007EA8'
+    bgrcolor:button_auto_1.pressed ? '#0A5E7D' : button_auto_1.hovered ? '#007EA8' : 'white'
+    textcolor:button_auto_1.hovered ? '#FFFFFF' : '#007EA8'
+    onClicked:{
+        adaptiveCard.buttonClicked("Action.OpenUrl", "Action.OpenUrl", "https://adaptivecards.io");
+        console.log("https://adaptivecards.io");
+    }
 }
 */
 import QtQuick 2.15

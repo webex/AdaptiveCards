@@ -71,7 +71,7 @@ namespace RendererQml
         uiCard->AddImports("import QtGraphicalEffects 1.15");
 
         //Custom QMl Module
-        uiCard->AddImports("import QmlFiles 1.0" );
+        uiCard->AddImports("import CardQmlElements 1.0" );
         //Refers to the javascript file added to the qmldir
         auto javaScriptQualifier = "HeightWidthFunctions";
         context->setJavaScriptQualifier(javaScriptQualifier);
