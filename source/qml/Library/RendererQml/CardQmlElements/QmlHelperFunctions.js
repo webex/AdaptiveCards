@@ -104,9 +104,9 @@ function TimeInput_24hour_onClicked()
 {
     time_ID.forceActiveFocus();
     time_ID_timeBox.visible = !time_ID_timeBox.visible;
-    parent.z = time_ID_timeBox.visible?1:0;
-    time_ID_hours.currentIndex = parseInt(parent.getText(0,2));
-    time_ID_min.currentIndex = parseInt(parent.getText(3,5));
+    time_ID.z = time_ID_timeBox.visible?1:0;
+    time_ID_hours.currentIndex = parseInt(time_ID.getText(0,2));
+    time_ID_min.currentIndex = parseInt(time_ID.getText(3,5));
 }
 
 function TimeInput_12hour_onFocusChanged()
@@ -167,11 +167,11 @@ function TimeInput_12hour_onClicked()
 {
     time_ID.forceActiveFocus();
     time_ID_timeBox.visible = !time_ID_timeBox.visible;
-    parent.z = time_ID_timeBox.visible?1:0;
-    time_ID_hours.currentIndex = parseInt(parent.getText(0,2))-1;
-    time_ID_min.currentIndex = parseInt(parent.getText(3,5));
+    time_ID.z = time_ID_timeBox.visible?1:0;
+    time_ID_hours.currentIndex = parseInt(time_ID.getText(0,2))-1;
+    time_ID_min.currentIndex = parseInt(time_ID.getText(3,5));
     var tt_index = 3;
-    switch (parent.getText(6,8))
+    switch (time_ID.getText(6,8))
     { 
         case 'PM':
             tt_index = 1; 

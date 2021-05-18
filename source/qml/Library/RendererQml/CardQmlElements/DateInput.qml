@@ -96,17 +96,19 @@ TextField{
         }
 
         Image{
+            id: date_icon
+
             anchors.fill: parent
             anchors.margins: 5
             fillMode: Image.PreserveAspectFit
             mipmap: true
             source: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+bWVldGluZ3MvY2FsZW5kYXItZW1wdHlfMzI8L3RpdGxlPjxwYXRoIGQ9Ik0zMCAyM2wwIDEgMCA0LjAwOEMzMCAyOS4xMDUgMjkuMTAzIDMwIDI4IDMwTDQgMzBjLTEuMTA1IDAtMi0uODkzLTItMS45OTJMMiAyNGwwLTFMMiA2Ljk5MkMyIDUuODk1IDIuODk3IDUgNCA1bDI0IDBjMS4xMDUgMCAyIC44OTMgMiAxLjk5MkwzMCAyM3pNMjggNGwtNSAwIDAtMi41MDVjMC0uMjc5LS4yMjQtLjQ5NS0uNS0uNDk1LS4yNjggMC0uNS4yMjItLjUuNDk1TDIyIDQgMTAgNGwwLTIuNTA1QzEwIDEuMjE2IDkuNzc2IDEgOS41IDFjLS4yNjggMC0uNS4yMjItLjUuNDk1TDkgNCA0IDRDMi4zNDcgNCAxIDUuMzQgMSA2Ljk5MmwwIDIxLjAxNkMxIDI5LjY2MSAyLjM0MyAzMSA0IDMxbDI0IDBjMS42NTMgMCAzLTEuMzQgMy0yLjk5MmwwLTIxLjAxNkMzMSA1LjMzOSAyOS42NTcgNCAyOCA0eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+"
-            
-            ColorOverlay{
-                anchors.fill: parent
-                source: parent
-                color: textFieldID.color
-            }
+        }
+
+		ColorOverlay{
+            anchors.fill: date_icon
+            source: date_icon
+            color: textFieldID.color
         }
     }
 
