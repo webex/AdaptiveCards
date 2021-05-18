@@ -187,7 +187,6 @@
     <ClInclude Include="AdaptiveRenderContext.h" />
     <ClInclude Include="AdaptiveWarning.h" />
     <ClInclude Include="Formatter.h" />
-    <ClInclude Include="ImageDataURI.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QmlTag.h" />
     <ClInclude Include="RenderedQmlAdaptiveCardBase.h" />

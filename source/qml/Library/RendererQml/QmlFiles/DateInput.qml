@@ -1,4 +1,7 @@
 /*
+Momentum Icon Used: 
+Name- calendar-empty, Color-Black, Size-32
+
 Example Usage
 
 DateInput{

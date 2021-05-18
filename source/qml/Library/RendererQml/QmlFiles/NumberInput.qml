@@ -1,4 +1,8 @@
 /*
+Momentum Icon Used: 
+Name- arrow-up, Color-Black, Size-12
+Name- arrow-down, Color-Black, Size-12
+
 Example Usage
 
 NumberInput{

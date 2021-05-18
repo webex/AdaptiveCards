@@ -1,5 +1,4 @@
 #include "AdaptiveCardQmlRenderer.h"
-#include "ImageDataURI.h"
 #include "pch.h"
 
 namespace RendererQml
@@ -2497,15 +2496,6 @@ namespace RendererQml
         uiFrame->AddFunctions(Formatter() << "function getColumnHeight(bleed){var calculatedHeight =  Math.max(" << heightString.substr(0, heightString.size() - 2) << "); if(calculatedHeight < minHeight - (" << (tempMargin) << ")){return minHeight - (" << (tempMargin) << ")}else{if(calculatedHeight === 0 && !bleed){return calculatedHeight + " << maxBleedMargin << " }else{return calculatedHeight}}}");
 
         return uiFrame;
-    }
-
-    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetColorOverlay(const std::string& parent, const std::string& color)
-    {
-        auto colorOverlay = std::make_shared<QmlTag>("ColorOverlay");
-        colorOverlay->Property("anchors.fill", parent);
-        colorOverlay->Property("source", parent);
-        colorOverlay->Property("color", color);
-        return colorOverlay;
     }
 }
 
