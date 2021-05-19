@@ -85,9 +85,9 @@ Row{
     Connections {
         target: _aModel
 
-        onSendCardResponseToQml: {
-            cardOutputLoader.item.output = output
-        }
+        function onSendCardResponseToQml(output){
+		    cardOutputLoader.item.output = output
+		}
     }
 
     function onAdaptiveCardButtonClicked(title, type, data){

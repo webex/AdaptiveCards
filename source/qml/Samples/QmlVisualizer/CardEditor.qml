@@ -53,7 +53,6 @@ Rectangle{
             
             onClicked: {
                 reloadCard(_aModel.generateQml(multilineInputId.text))
-				//_aModel.rehostImage();
             }
         }
     }
@@ -65,9 +64,8 @@ Rectangle{
     Connections {
         target: _aModel
         
-        onReloadCardOnThemeChange: {
-            reloadCard(_aModel.generateQml(multilineInputId.text));
-			//_aModel.rehostImage();
-        }
+        function onReloadCardOnThemeChange(){
+		    reloadCard(_aModel.generateQml(multilineInputId.text));
+		}
     }
 }
