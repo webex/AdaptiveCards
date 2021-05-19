@@ -531,6 +531,8 @@ namespace RendererQml
                 const auto actionsConfig = context->GetConfig()->GetActions();
 
                 auto buttonElement = context->Render(input->GetInlineAction());
+                //TODO: Remove Hardcoded color
+                buttonElement->Property("textcolor", "black", true);
                 buttonElement->RemoveProperty("background");
                 buttonElement->RemoveProperty("contentItem");
 
@@ -1087,33 +1089,38 @@ namespace RendererQml
 
         auto EnumDateFormat = Utils::GetSystemDateFormat();
         std::string StringDateFormat;
+        std::string PlaceHolderTextFormat;
         switch (EnumDateFormat)
         {
             case RendererQml::DateFormat::ddmmyy:
             {
                 StringDateFormat = "ddmmyy";
+                PlaceHolderTextFormat = "dd/mmm/yyyy";
                 break;
             }
             case RendererQml::DateFormat::yymmdd:
             {
                 StringDateFormat = "yymmdd";
+                PlaceHolderTextFormat = "yyyy/mmm/dd";
                 break;
             }
             case RendererQml::DateFormat::yyddmm:
             {
                 StringDateFormat = "yyddmm";
+                PlaceHolderTextFormat = "yyyy/dd/mmm";
                 break;
             }
-            //default case: mm-dd-yyyy
+            //default case: mmm/dd/yyyy
             default:
             {
                 StringDateFormat = "mmddyy";
+                PlaceHolderTextFormat = "mmm/dd/yyyy";
                 break;
             }
         }
 
         uiDateInput->Property("dateFormat", StringDateFormat, true);
-        uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select date") << " in " << StringDateFormat, true);
+        uiDateInput->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select date") << " in " << PlaceHolderTextFormat, true);
 
         context->addToInputElementList(origionalElementId, (uiDateInput->GetId() + ".selectedDate"));
 
