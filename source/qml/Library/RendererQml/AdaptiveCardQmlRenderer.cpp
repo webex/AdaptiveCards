@@ -499,10 +499,6 @@ namespace RendererQml
 
 		uiTextInput->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
 
-		auto glowTag = std::make_shared<QmlTag>("Glow");
-		glowTag->Property("samples", "25");
-		glowTag->Property("color", "'skyblue'");
-
 		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
 		backgroundTag->Property("radius", "5");
 		//TODO: These color styling should come from css
@@ -510,8 +506,6 @@ namespace RendererQml
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
 		backgroundTag->Property("border.width", "1");
-		backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
-		backgroundTag->Property("layer.effect", glowTag->ToString());
 		uiTextInput->Property("background", backgroundTag->ToString());
 
 		if (!input->GetValue().empty())
@@ -615,10 +609,6 @@ namespace RendererQml
         input->SetId(Utils::ConvertToLowerIdValue(input->GetId()));
 		const auto inputId = input->GetId();
 
-		auto glowTag = std::make_shared<QmlTag>("Glow");
-		glowTag->Property("samples", "25");
-		glowTag->Property("color", "'skyblue'");
-
 		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
 		backgroundTag->Property("radius", "5");
 		//TODO: These color styling should come from css
@@ -626,8 +616,6 @@ namespace RendererQml
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
 		backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : 'grey'");
-		backgroundTag->Property("layer.enabled", Formatter() << inputId + "_contentItem" << ".activeFocus ? true : false");
-		backgroundTag->Property("layer.effect", glowTag->ToString());
 
 		auto contentItemTag = std::make_shared<QmlTag>("TextField");
 		contentItemTag->Property("id", inputId + "_contentItem");
@@ -1256,18 +1244,12 @@ namespace RendererQml
 
         std::string calendar_box_id = input->GetId() + "_cal_box";
 
-        auto glowTag = std::make_shared<QmlTag>("Glow");
-        glowTag->Property("samples", "25");
-        glowTag->Property("color", "'skyblue'");
-
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
         backgroundTag->Property("border.width", "1");
-        backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
-        backgroundTag->Property("layer.effect", glowTag->ToString());
         uiDateInput->Property("background", backgroundTag->ToString());
 
         const std::string iconId = input->GetId() + "_icon";
@@ -1675,10 +1657,6 @@ namespace RendererQml
 
 		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << "if(getText(0,2) === '--' || getText(3,5) === '--'){" << id << ".selectedTime ='';} else{" << id << ".selectedTime =" << id << ".text;}}");
 
-		auto glowTag = std::make_shared<QmlTag>("Glow");
-		glowTag->Property("samples", "25");
-		glowTag->Property("color", "'skyblue'");
-
 		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
 		backgroundTag->Property("radius", "5");
 		//TODO: These color styling should come from css
@@ -1686,8 +1664,6 @@ namespace RendererQml
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
 		backgroundTag->Property("border.width", "1");
-		backgroundTag->Property("layer.enabled", Formatter() << input->GetId() << ".activeFocus ? true : false");
-		backgroundTag->Property("layer.effect", glowTag->ToString());
 		uiTimeInput->Property("background", backgroundTag->ToString());
 
         const std::string iconId = id + "_icon";
@@ -1721,8 +1697,6 @@ namespace RendererQml
 		timeBoxTag->Property("width", "105");
 		timeBoxTag->Property("height", "200");
 		timeBoxTag->Property("visible", "false");
-		timeBoxTag->Property("layer.enabled", "true");
-		timeBoxTag->Property("layer.effect", glowTag->ToString());
 
 		//ListView for DropDown Selection
 		std::map<std::string, std::map<std::string, std::string>> ListViewHoursProperties;
@@ -3191,13 +3165,13 @@ namespace RendererQml
 
 	const std::string RendererQml::AdaptiveCardQmlRenderer::getMinWidthFactSet()
 	{
-		std::string minWidthFactSet =  R"(function getMinWidthFactSet(childrens, spacing){		
-			var min = 0		
-			for(var j=0;j<childrens.length;j+=2)		
-			{		
-				min = Math.max(min,childrens[j].implicitWidth + childrens[j+1].implicitWidth + spacing)		
-			}		
-			return min;		
+		std::string minWidthFactSet =  R"(function getMinWidthFactSet(childrens, spacing){
+			var min = 0
+			for(var j=0;j<childrens.length;j+=2)
+			{
+				min = Math.max(min,childrens[j].implicitWidth + childrens[j+1].implicitWidth + spacing)
+			}
+			return min;
 		})";
 
 		minWidthFactSet.erase(std::remove(minWidthFactSet.begin(), minWidthFactSet.end(), '\t'), minWidthFactSet.end());
