@@ -1574,14 +1574,6 @@ namespace RendererQml
 		case AdaptiveCards::ImageStyle::Default:
 			break;
 		case AdaptiveCards::ImageStyle::Person:
-			maskTag = std::make_shared<QmlTag>("OpacityMask");
-			maskSourceTag = std::make_shared<QmlTag>("Rectangle");
-			maskSourceTag->Property("width", image->GetId() + ".width");
-			maskSourceTag->Property("height", image->GetId() + ".height");
-			maskSourceTag->Property("radius", image->GetId() + ".radius");
-			maskTag->Property("maskSource", maskSourceTag->ToString());
-			uiImage->Property("layer.enabled", "true");
-			uiImage->Property("layer.effect", maskTag->ToString());
 			uiRectangle->Property("radius", "width/2");
 			break;
 		}
