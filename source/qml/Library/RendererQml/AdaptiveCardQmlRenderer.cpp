@@ -68,7 +68,6 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick 2.15");
         uiCard->AddImports("import QtQuick.Layouts 1.3");
         uiCard->AddImports("import QtQuick.Controls 2.15");
-        uiCard->AddImports("import QtGraphicalEffects 1.15");
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);
@@ -946,10 +945,6 @@ namespace RendererQml
 		dropIcon->Property("fillMode", "Image.PreserveAspectFit");
 		dropIcon->Property("mipmap", "true");
 
-
-		auto ColorOverlayTag = GetColorOverlay(iconId, textColor);
-        uiComboBox->AddChild(ColorOverlayTag);
-
 		uiComboBox->Property("indicator", dropIcon->ToString());
 		uiComboBox->Property("model", GetModel(choiceset.choices));
 
@@ -1269,10 +1264,6 @@ namespace RendererQml
         mouseAreaTag->Property("enabled", "true");
         std::string onClicked_value = "{ parent.forceActiveFocus(); " + calendar_box_id + ".visible=!" + calendar_box_id + ".visible; parent.z=" + calendar_box_id + ".visible?1:0; }";
         mouseAreaTag->Property("onClicked", onClicked_value);
-
-        auto ColorOverlayTag = GetColorOverlay(iconId, context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-        mouseAreaTag->AddChild(ColorOverlayTag);
-
         uiDateInput->AddChild(mouseAreaTag);
 
         auto calendarTag = std::make_shared<QmlTag>("Calendar");
@@ -1682,10 +1673,6 @@ namespace RendererQml
 		mouseAreaTag->Property("anchors.right", "parent.right");
 		mouseAreaTag->Property("enabled", "true");
 		mouseAreaTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n" << "}");
-
-        auto ColorOverlayTag = GetColorOverlay(iconId, context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-        mouseAreaTag->AddChild(ColorOverlayTag);
-
 		uiTimeInput->AddChild(mouseAreaTag);
 
 		//Rectangle that contains the hours and min ListViews
@@ -2458,9 +2445,6 @@ namespace RendererQml
                 showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
                 showCardIcon->Property("source", RendererQml::arrow_down_12, true);
                 showCardIconItem->AddChild(showCardIcon);
-
-                auto ColorOverlayTag = GetColorOverlay(iconId, overlayTagColor);
-                showCardIconItem->AddChild(ColorOverlayTag);
                 textLayout->AddChild(showCardIconItem);
             }
 
@@ -3178,14 +3162,5 @@ namespace RendererQml
 
 		return minWidthFactSet;
 	}
-
-    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetColorOverlay(const std::string& parent, const std::string& color)
-    {
-        auto colorOverlay = std::make_shared<QmlTag>("ColorOverlay");
-        colorOverlay->Property("anchors.fill", parent);
-        colorOverlay->Property("source", parent);
-        colorOverlay->Property("color", color);
-        return colorOverlay;
-    }
 }
 
