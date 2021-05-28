@@ -393,15 +393,7 @@ namespace RendererQml
         return Formatter() << time_split[0] << ":" << time_split[1];
     }
 
-    std::string Utils::ConvertToLowerIdValue(const std::string& value)
-    {
-        std::string newId = value;
-
-        transform(newId.begin(), newId.end(), newId.begin(), ::tolower);
-        return newId;
-    }
-
-	std::string Utils::FetchSystemDateTime(const std::string& fetchFormat)
+    std::string Utils::FetchSystemDateTime(const std::string& fetchFormat)
 	{
 		char dateTimeBuffer[50];
 		struct tm newtime;
