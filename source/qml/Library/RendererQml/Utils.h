@@ -117,6 +117,9 @@ namespace RendererQml
 
 		static const bool isValidDate(const std::string& date);
 
+        static bool hasNonAlphaNumeric(const std::string& id);
+        static const std::string HandleKeywords(const std::string& id);
+
     private:
         Utils() {}
 		static std::string FetchSystemDateTime(const std::string& fetchFormat);
