@@ -938,27 +938,14 @@ namespace RendererQml
 		//TODO : Add Height
 
         const std::string iconId = choiceset.id + "_icon";
-		auto iconBackgroundTag = std::make_shared<QmlTag>("Rectangle");
-        iconBackgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        iconBackgroundTag->Property("width", "parent.width");
-        iconBackgroundTag->Property("height", "parent.height");
-
-        auto iconTag = std::make_shared<QmlTag>("Button");
+		auto iconTag = GetIconTag(context);
         iconTag->Property("id", iconId);
-        iconTag->Property("background", iconBackgroundTag->ToString());
-        iconTag->Property("width", "30");
-        iconTag->Property("anchors.top", "parent.top");
-        iconTag->Property("anchors.bottom", "parent.bottom");
-        iconTag->Property("anchors.right", "parent.right");
-        iconTag->Property("anchors.margins", "2");
         iconTag->Property("horizontalPadding", "9");
         iconTag->Property("verticalPadding", "9");
         iconTag->Property("icon.source", RendererQml::arrow_down_12, true);
+        iconTag->Property("enabled", "false");
         iconTag->Property("icon.width", "12");
         iconTag->Property("icon.height", "12");
-        iconTag->Property("focusPolicy", "Qt.NoFocus");
-        iconTag->Property("enabled", "false");
-        iconTag->Property("icon.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
         uiComboBox->Property("indicator", iconTag->ToString());
 		uiComboBox->Property("model", GetModel(choiceset.choices));
@@ -1265,27 +1252,10 @@ namespace RendererQml
         const std::string iconId = input->GetId() + "_icon";
         std::string onClicked_value = "{ parent.forceActiveFocus(); " + calendar_box_id + ".visible=!" + calendar_box_id + ".visible; parent.z=" + calendar_box_id + ".visible?1:0; }";
         
-        auto iconBackgroundTag = std::make_shared<QmlTag>("Rectangle");
-        iconBackgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        iconBackgroundTag->Property("width", "parent.width");
-        iconBackgroundTag->Property("height", "parent.height");
-
-        auto iconTag = std::make_shared<QmlTag>("Button");
+        auto iconTag = GetIconTag(context);
         iconTag->Property("id", iconId);
-        iconTag->Property("background", iconBackgroundTag->ToString());
-        iconTag->Property("width", "30");
-        iconTag->Property("anchors.top", "parent.top");
-        iconTag->Property("anchors.bottom", "parent.bottom");
-        iconTag->Property("anchors.right", "parent.right");
-        iconTag->Property("anchors.margins", "2");
-        iconTag->Property("horizontalPadding", "4");
-        iconTag->Property("verticalPadding", "4");
         iconTag->Property("icon.source", RendererQml::calendar_icon_18, true);
-        iconTag->Property("icon.width", "18");
-        iconTag->Property("icon.height", "18");
-        iconTag->Property("focusPolicy", "Qt.NoFocus");
         iconTag->Property("onClicked", onClicked_value);
-        iconTag->Property("icon.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
         uiDateInput->AddChild(iconTag);
 
         auto calendarTag = std::make_shared<QmlTag>("Calendar");
@@ -1672,27 +1642,10 @@ namespace RendererQml
 		uiTimeInput->Property("background", backgroundTag->ToString());
 
         const std::string iconId = id + "_icon";
-		auto iconBackgroundTag = std::make_shared<QmlTag>("Rectangle");
-        iconBackgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        iconBackgroundTag->Property("width", "parent.width");
-        iconBackgroundTag->Property("height", "parent.height");
-
-        auto iconTag = std::make_shared<QmlTag>("Button");
+        auto iconTag = GetIconTag(context);
         iconTag->Property("id", iconId);
-        iconTag->Property("background", iconBackgroundTag->ToString());
-        iconTag->Property("width", "30");
-        iconTag->Property("anchors.top", "parent.top");
-        iconTag->Property("anchors.bottom", "parent.bottom");
-        iconTag->Property("anchors.right", "parent.right");
-        iconTag->Property("anchors.margins", "2");
-        iconTag->Property("horizontalPadding", "4");
-        iconTag->Property("verticalPadding", "4");
         iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
-        iconTag->Property("icon.width", "18");
-        iconTag->Property("icon.height", "18");
-        iconTag->Property("focusPolicy", "Qt.NoFocus");
         iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n" << "}");
-        iconTag->Property("icon.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
         uiTimeInput->AddChild(iconTag);
 
 		//Rectangle that contains the hours and min ListViews
@@ -3177,5 +3130,28 @@ namespace RendererQml
 
 		return minWidthFactSet;
 	}
+
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetIconTag(std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        auto iconBackgroundTag = std::make_shared<QmlTag>("Rectangle");
+        iconBackgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+        iconBackgroundTag->Property("width", "parent.width");
+        iconBackgroundTag->Property("height", "parent.height");
+
+        auto iconTag = std::make_shared<QmlTag>("Button");
+        iconTag->Property("background", iconBackgroundTag->ToString());
+        iconTag->Property("width", "30");
+        iconTag->Property("anchors.top", "parent.top");
+        iconTag->Property("anchors.bottom", "parent.bottom");
+        iconTag->Property("anchors.right", "parent.right");
+        iconTag->Property("anchors.margins", "2");
+        iconTag->Property("horizontalPadding", "4");
+        iconTag->Property("verticalPadding", "4");
+        iconTag->Property("icon.width", "18");
+        iconTag->Property("icon.height", "18");
+        iconTag->Property("focusPolicy", "Qt.NoFocus");
+        iconTag->Property("icon.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        return iconTag;
+    }
 }
 
