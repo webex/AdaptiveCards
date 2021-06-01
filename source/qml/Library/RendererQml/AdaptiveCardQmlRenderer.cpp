@@ -1263,23 +1263,8 @@ namespace RendererQml
         uiDateInput->Property("background", backgroundTag->ToString());
 
         const std::string iconId = input->GetId() + "_icon";
-        auto imageTag = std::make_shared<QmlTag>("Image");
-        imageTag->Property("id", iconId);
-        imageTag->Property("anchors.fill", "parent");
-        imageTag->Property("anchors.margins", "5");
-		imageTag->Property("fillMode", "Image.PreserveAspectFit");
-		imageTag->Property("mipmap", "true");
-        imageTag->Property("source", RendererQml::calendar_icon_18, true);
-
-        auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
-        mouseAreaTag->AddChild(imageTag);
-        mouseAreaTag->Property("height", "parent.height");
-        mouseAreaTag->Property("width", "height");
-        mouseAreaTag->Property("anchors.right", "parent.right");
-        mouseAreaTag->Property("enabled", "true");
         std::string onClicked_value = "{ parent.forceActiveFocus(); " + calendar_box_id + ".visible=!" + calendar_box_id + ".visible; parent.z=" + calendar_box_id + ".visible?1:0; }";
-        mouseAreaTag->Property("onClicked", onClicked_value);
-
+        
         auto iconBackgroundTag = std::make_shared<QmlTag>("Rectangle");
         iconBackgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         iconBackgroundTag->Property("width", "parent.width");
