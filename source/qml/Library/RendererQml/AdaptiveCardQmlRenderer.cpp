@@ -1269,7 +1269,7 @@ namespace RendererQml
         imageTag->Property("anchors.margins", "5");
 		imageTag->Property("fillMode", "Image.PreserveAspectFit");
 		imageTag->Property("mipmap", "true");
-        imageTag->Property("source", RendererQml::calendar_icon_32, true);
+        imageTag->Property("source", RendererQml::calendar_icon_18, true);
 
         auto mouseAreaTag = std::make_shared<QmlTag>("MouseArea");
         mouseAreaTag->AddChild(imageTag);
@@ -1295,9 +1295,9 @@ namespace RendererQml
         iconTag->Property("anchors.margins", "2");
         iconTag->Property("horizontalPadding", "4");
         iconTag->Property("verticalPadding", "4");
-        iconTag->Property("icon.source", RendererQml::calendar_icon_32, true);
-        iconTag->Property("icon.width", "20");
-        iconTag->Property("icon.height", "20");
+        iconTag->Property("icon.source", RendererQml::calendar_icon_18, true);
+        iconTag->Property("icon.width", "18");
+        iconTag->Property("icon.height", "18");
         iconTag->Property("focusPolicy", "Qt.NoFocus");
         iconTag->Property("onClicked", onClicked_value);
         iconTag->Property("icon.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
@@ -1702,9 +1702,9 @@ namespace RendererQml
         iconTag->Property("anchors.margins", "2");
         iconTag->Property("horizontalPadding", "4");
         iconTag->Property("verticalPadding", "4");
-        iconTag->Property("icon.source", RendererQml::clock_icon_30, true);
-        iconTag->Property("icon.width", "20");
-        iconTag->Property("icon.height", "20");
+        iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
+        iconTag->Property("icon.width", "18");
+        iconTag->Property("icon.height", "18");
         iconTag->Property("focusPolicy", "Qt.NoFocus");
         iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n" << "}");
         iconTag->Property("icon.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
