@@ -58,7 +58,7 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
                                 attributedStringCopy.addAttribute(.underlineStyle, value: config.hyperlinkColorConfig.underlineStyle.rawValue, range: range)
                             }
                         })
-                    valueView.attributedTextValue = attributedStringCopy
+                        valueView.attributedTextValue = attributedStringCopy
                     }
                 }
             }
