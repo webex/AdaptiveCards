@@ -26,6 +26,16 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         view.isBordered = true
        return view
     }()
+    
+    private (set) lazy var clearButton: NSButtonWithImageSpacing = {
+        let resourceName = isDarkMode ? "clear_18_w" : "clear_18"
+        let view = NSButtonWithImageSpacing(image: BundleUtils.getImage(resourceName, ofType: "png") ?? NSImage(), target: self, action: #selector(handleClearAction))
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.wantsLayer = true
+        view.layer?.backgroundColor = NSColor.clear.cgColor
+        view.isBordered = false
+        return view
+    }()
 
     private lazy var iconButton: NSButtonWithImageSpacing = {
         let resourceName = isDarkMode ? "calendar-month-dark" : "calendar-month-light"
@@ -60,6 +70,9 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
             if let dateValue = dateValue, let date = dateFormatter.date(from: dateValue) {
                 textField.stringValue = dateFormatterOut.string(from: date)
                 selectedDate = date
+                clearButton.isHidden = false
+            } else {
+                clearButton.isHidden = true
             }
         }
     }
@@ -105,6 +118,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     
     private func setupViews() {
         addSubview(textField)
+        addSubview(clearButton)
         addSubview(iconButton)
     }
     
@@ -113,6 +127,8 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
         textField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         textField.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        clearButton.trailingAnchor.constraint(equalTo: iconButton.leadingAnchor).isActive = true
+        clearButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         iconButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         iconButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
@@ -120,6 +136,13 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     private func setupTrackingArea() {
         let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
         addTrackingArea(trackingArea)
+    }
+    
+    @objc private func handleClearAction() {
+        textField.stringValue = ""
+        dateValue = ""
+        selectedDate = .none
+        clearButton.isHidden = true
     }
     
     override func mouseEntered(with event: NSEvent) {
@@ -178,6 +201,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         selectedDate = datePicker.dateValue
         datePickerCalendar.dateValue = datePicker.dateValue
         datePickerTextfield.dateValue = datePicker.dateValue
+        clearButton.isHidden = false
     }
 }
 

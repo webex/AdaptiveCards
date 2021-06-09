@@ -45,6 +45,42 @@ class InputTimeRendererTest: XCTestCase {
         let inputTimeField = renderTimeInput()
         XCTAssertEqual(inputTimeField.maxDateValue, "16:00")
     }
+    
+    func testClearsText() {
+        let val: String = "16:23:30"
+        inputTime = .make(value: val)
+
+        let inputTimeField = renderTimeInput()
+        inputTimeField.clearButton.performClick()
+        XCTAssertEqual(inputTimeField.dateValue, "")
+        XCTAssertTrue(inputTimeField.clearButton.isHidden)
+    }
+    
+    func testClearButtonHiddenWithPlaceholder() {
+        let placeholderString: String = "Sample Placeholder"
+        inputTime = .make(placeholder: placeholderString)
+
+        let inputTimeField = renderTimeInput()
+        inputTimeField.clearButton.performClick()
+        XCTAssertTrue(inputTimeField.clearButton.isHidden)
+    }
+
+    func testClearButtonHiddenWithNoText() {
+        inputTime = .make()
+
+        let inputTimeField = renderTimeInput()
+        inputTimeField.clearButton.performClick()
+        XCTAssertTrue(inputTimeField.clearButton.isHidden)
+    }
+
+    func testClearButtonVisibleWithText() {
+        let val: String = "4:30"
+        inputTime = .make(value: val)
+
+        let inputTimeField = renderTimeInput()
+        XCTAssertFalse(inputTimeField.clearButton.isHidden)
+    }
+
 
     private func renderTimeInput() -> ACRDateField {
         let view = inputTimeRenderer.render(element: inputTime, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
@@ -55,3 +91,10 @@ class InputTimeRendererTest: XCTestCase {
     }
 }
 
+private extension NSButton {
+    func performClick() {
+        if let target = target, let action = action {
+            sendAction(action, to: target)
+        }
+    }
+}
