@@ -120,9 +120,8 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     }
     
     func clearSelectedRange() {
-        let range = self.selectedRange()
-        let str = self.string as NSString?
-        if let selectedStr = str?.substring(with: range), !selectedStr.isEmpty {
+        let selectedString = (string as NSString).substring(with: selectedRange())
+        if !selectedString.isEmpty {
             setSelectedRange(NSRange(location: 0, length: 0))
         }
     }
