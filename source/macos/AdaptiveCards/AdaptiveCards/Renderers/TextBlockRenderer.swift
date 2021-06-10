@@ -90,6 +90,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     
     override func resignFirstResponder() -> Bool {
         self.needsDisplay = true
+        clearSelectedRange()
         return super.resignFirstResponder()
     }
     
@@ -116,6 +117,14 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
             }
         }
         return super.hitTest(point)
+    }
+    
+    func clearSelectedRange() {
+        let range = self.selectedRange()
+        let str = self.string as NSString?
+        if let selectedStr = str?.substring(with: range), !selectedStr.isEmpty {
+            setSelectedRange(NSRange(location: 0, length: 0))
+        }
     }
 }
 
