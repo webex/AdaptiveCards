@@ -52,7 +52,8 @@ class InputDateRendererTest: XCTestCase {
 
         let inputDateField = renderDateInput()
         inputDateField.clearButton.performClick()
-        XCTAssertEqual(inputDateField.dateValue, "")
+        XCTAssertEqual(inputDateField.textField.stringValue, "")
+        XCTAssertNil(inputDateField.dateValue)
         XCTAssertTrue(inputDateField.clearButton.isHidden)
     }
     
@@ -77,6 +78,15 @@ class InputDateRendererTest: XCTestCase {
         
         let inputDateField = renderDateInput()
         XCTAssertFalse(inputDateField.clearButton.isHidden)
+    }
+    
+    func testValueShownOnlyForRightInputFormat() {
+        let val: String = "12/10/2000"
+        inputDate = .make(value: val)
+
+        let inputDateField = renderDateInput()
+        XCTAssertNil(inputDateField.dateValue)
+        XCTAssertEqual(inputDateField.textField.stringValue, "")
     }
 
     private func renderDateInput() -> ACRDateField {

@@ -18,7 +18,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         return formatter
     }()
     
-    private lazy var textField: NSTextField = {
+    private (set) lazy var textField: NSTextField = {
         let view = NSTextField()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isEditable = true
@@ -61,18 +61,35 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     let isTimeMode: Bool
     let isDarkMode: Bool
     
-    var selectedDate: Date? = Date()
+    var selectedDate: Date? {
+        didSet {
+            if let selectedDate = selectedDate {
+                textField.stringValue = dateFormatterOut.string(from: selectedDate)
+                datePickerCalendar.dateValue = selectedDate
+                datePickerTextfield.dateValue = selectedDate
+                clearButton.isHidden = false
+            } else {
+                textField.stringValue = ""
+                clearButton.isHidden = true
+            }
+        }
+    }
+    var initialDateValue: String? {
+        didSet {
+            if let initialDateValue = initialDateValue {
+                selectedDate = dateFormatter.date(from: initialDateValue)
+            }
+        }
+    }
     var minDateValue: String?
     var maxDateValue: String?
     var idString: String?
     var dateValue: String? {
-        didSet {
-            if let dateValue = dateValue, let date = dateFormatter.date(from: dateValue) {
-                textField.stringValue = dateFormatterOut.string(from: date)
-                selectedDate = date
-                clearButton.isHidden = false
+        get {
+            if let selectedDate = selectedDate {
+                return dateFormatter.string(from: selectedDate)
             } else {
-                clearButton.isHidden = true
+                return nil
             }
         }
     }
@@ -139,10 +156,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     @objc private func handleClearAction() {
-        textField.stringValue = ""
-        dateValue = ""
-        selectedDate = .none
-        clearButton.isHidden = true
+        selectedDate = nil
     }
     
     override func mouseEntered(with event: NSEvent) {
@@ -197,11 +211,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     @objc private func handleDateAction(_ datePicker: NSDatePicker) {
-        textField.stringValue = dateFormatterOut.string(from: datePicker.dateValue)
         selectedDate = datePicker.dateValue
-        datePickerCalendar.dateValue = datePicker.dateValue
-        datePickerTextfield.dateValue = datePicker.dateValue
-        clearButton.isHidden = false
     }
 }
 

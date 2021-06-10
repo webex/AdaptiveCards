@@ -52,7 +52,8 @@ class InputTimeRendererTest: XCTestCase {
 
         let inputTimeField = renderTimeInput()
         inputTimeField.clearButton.performClick()
-        XCTAssertEqual(inputTimeField.dateValue, "")
+        XCTAssertNil(inputTimeField.dateValue)
+        XCTAssertEqual(inputTimeField.textField.stringValue, "")
         XCTAssertTrue(inputTimeField.clearButton.isHidden)
     }
     
@@ -77,6 +78,15 @@ class InputTimeRendererTest: XCTestCase {
 
         let inputTimeField = renderTimeInput()
         XCTAssertFalse(inputTimeField.clearButton.isHidden)
+    }
+    
+    func testValueShownOnlyForRightInputFormat() {
+        let val: String = "5:30am"
+        inputTime = .make(value: val)
+
+        let inputTimeField = renderTimeInput()
+        XCTAssertNil(inputTimeField.dateValue)
+        XCTAssertEqual(inputTimeField.textField.stringValue, "")
     }
 
 
