@@ -61,7 +61,6 @@ class InputDateRendererTest: XCTestCase {
         inputDate = .make(placeholder: placeholderString)
 
         let inputDateField = renderDateInput()
-        inputDateField.clearButton.performClick()
         XCTAssertTrue(inputDateField.clearButton.isHidden)
     }
     
@@ -69,7 +68,6 @@ class InputDateRendererTest: XCTestCase {
         inputDate = .make()
         
         let inputDateField = renderDateInput()
-        inputDateField.clearButton.performClick()
         XCTAssertTrue(inputDateField.clearButton.isHidden)
     }
     
@@ -92,6 +90,7 @@ class InputDateRendererTest: XCTestCase {
 
 private extension NSButton {
     func performClick() {
+        guard !isHidden else { return }
         if let target = target, let action = action {
             sendAction(action, to: target)
         }

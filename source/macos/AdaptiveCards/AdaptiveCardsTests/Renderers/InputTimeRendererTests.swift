@@ -61,7 +61,6 @@ class InputTimeRendererTest: XCTestCase {
         inputTime = .make(placeholder: placeholderString)
 
         let inputTimeField = renderTimeInput()
-        inputTimeField.clearButton.performClick()
         XCTAssertTrue(inputTimeField.clearButton.isHidden)
     }
 
@@ -69,7 +68,6 @@ class InputTimeRendererTest: XCTestCase {
         inputTime = .make()
 
         let inputTimeField = renderTimeInput()
-        inputTimeField.clearButton.performClick()
         XCTAssertTrue(inputTimeField.clearButton.isHidden)
     }
 
@@ -93,6 +91,7 @@ class InputTimeRendererTest: XCTestCase {
 
 private extension NSButton {
     func performClick() {
+        guard !isHidden else { return }
         if let target = target, let action = action {
             sendAction(action, to: target)
         }
