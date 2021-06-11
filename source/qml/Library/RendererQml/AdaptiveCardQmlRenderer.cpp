@@ -451,7 +451,7 @@ namespace RendererQml
 
 		//CSS Property for underline, striketrhough,etc
 		const std::string textDecoration = "none";
-		text = context->MarkdownUrlToHtml(text, linkColor, textDecoration);
+		text = Utils::MarkdownUrlToHtml(text, linkColor, textDecoration);
 		
 		uiTextBlock->Property("text", text, true);
 

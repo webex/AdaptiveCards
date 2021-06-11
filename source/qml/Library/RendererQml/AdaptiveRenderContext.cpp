@@ -332,13 +332,4 @@ namespace RendererQml
 
         return newId;
     }
-
-    const std::string AdaptiveRenderContext::MarkdownUrlToHtml(std::string& text, const std::string& linkColor, const std::string& textDecoration)
-    {
-        static std::regex re("\\[([^\\]]*)\\]\\(([^\\]]*)\\)");
-        static std::string replacement = Formatter() << "<a href=\\\"$2\\\" style=\\\"color:" << linkColor << "; text-decoration: " << textDecoration << ";\\\">$1</a>";
-        text = std::regex_replace(text, re, replacement);
-
-        return text;
-    }
 }
