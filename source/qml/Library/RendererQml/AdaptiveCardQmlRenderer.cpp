@@ -444,8 +444,6 @@ namespace RendererQml
             uiTextBlock->Property("font.family", fontFamily, true);
         }
 
-		//uiTextBlock->Property("onLinkActivated", "Qt.openUrlExternally(link)");
-
 		std::string text = TextUtils::ApplyTextFunctions(textBlock->GetText(), context->GetLang());
 		text = Utils::HandleEscapeSequences(text);
 
@@ -469,6 +467,7 @@ namespace RendererQml
 			<< "console.log(link);"
 			<< "}";
 		uiTextBlock->Property("onLinkActivated", onLinkActivatedFunction);
+
 		return uiTextBlock;
 
 	}
