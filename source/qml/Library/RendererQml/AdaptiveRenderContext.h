@@ -72,6 +72,8 @@ namespace RendererQml
 
         const std::string ConvertToValidId(const std::string& id);
 
+        const std::string MarkdownUrlToHtml(std::string& text, const std::string& linkColor, const std::string& textDecoration);
+
     private:
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
