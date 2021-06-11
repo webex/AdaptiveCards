@@ -464,6 +464,11 @@ namespace RendererQml
 		MouseAreaTag->Property("acceptedButtons", "Qt.NoButton");
 		uiTextBlock->AddChild(MouseAreaTag);
 
+		std::string onLinkActivatedFunction = Formatter() << "{"
+			<< "adaptiveCard.buttonClicked(\"\", \"Action.OpenUrl\", link);"
+			<< "console.log(link);"
+			<< "}";
+		uiTextBlock->Property("onLinkActivated", onLinkActivatedFunction);
 		return uiTextBlock;
 
 	}
