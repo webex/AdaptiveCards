@@ -456,10 +456,7 @@ namespace RendererQml
 		uiTextBlock->Property("text", text, true);
 
 		//MouseArea to Change Cursor on Hovering Links
-		auto MouseAreaTag = std::make_shared<QmlTag>("MouseArea");
-		MouseAreaTag->Property("anchors.fill", "parent");
-		MouseAreaTag->Property("cursorShape", "parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor");
-		MouseAreaTag->Property("acceptedButtons", "Qt.NoButton");
+		auto MouseAreaTag = GetTextBlockMouseArea();
 		uiTextBlock->AddChild(MouseAreaTag);
 
 		std::string onLinkActivatedFunction = Formatter() << "{"
@@ -813,6 +810,10 @@ namespace RendererQml
 		}
 		uiTextBlock->Property("text", textrun_all, true);
 
+		//MouseArea to Change Cursor on Hovering Links
+		auto MouseAreaTag = GetTextBlockMouseArea();
+		uiTextBlock->AddChild(MouseAreaTag);
+
         context->addToTextRunSelectActionList(uiTextBlock, selectActionList);
 
 		return uiTextBlock;
@@ -855,7 +856,12 @@ namespace RendererQml
 
         if (textRun->GetSelectAction() != nullptr)
         {
-            uiTextRun.append("<a href='" + selectaction + "'>");
+			const std::string linkColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
+			//CSS Property for underline, striketrhough,etc
+			std::string textDecoration = "none";
+			const std::string styleString = Formatter() << "style=\\\"color:" << linkColor << ";" << "text-decoration:" << textDecoration << ";\\\"";
+
+            uiTextRun.append(Formatter() << "<a href='" << selectaction << "'" << styleString << " >");
             std::string text = TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang());
             text = Utils::HandleEscapeSequences(text);
             uiTextRun.append(text);
@@ -3180,5 +3186,15 @@ namespace RendererQml
         iconTag->Property("icon.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
         return iconTag;
     }
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetTextBlockMouseArea()
+	{
+		auto MouseAreaTag = std::make_shared<QmlTag>("MouseArea");
+		MouseAreaTag->Property("anchors.fill", "parent");
+		MouseAreaTag->Property("cursorShape", "parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor");
+		MouseAreaTag->Property("acceptedButtons", "Qt.NoButton");
+
+		return MouseAreaTag;
+	}
 }
 
