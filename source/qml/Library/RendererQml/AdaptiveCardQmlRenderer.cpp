@@ -262,10 +262,11 @@ namespace RendererQml
 
 						auto uiLoader = std::make_shared<QmlTag>("Loader");
                         uiLoader->Property("id", loaderId);
-						//1px shift to avoid merging with parent card border
+						//1px shift to avoid child card displaying over parent card's border
                         uiLoader->Property("x", "-margins + 1");
                         uiLoader->Property("sourceComponent", componentId);
                         uiLoader->Property("visible", "false");
+						//2 px reduction in width to avoid child card displaying over parent card's border
 						uiLoader->Property("width", Formatter() << context->getCardRootId() << ".width - 2");
                         uiContainer->AddChild(uiLoader);
                     }
@@ -658,42 +659,33 @@ namespace RendererQml
 		contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
         contentItemTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-		auto upIndicatorTag = std::make_shared<QmlTag>("Rectangle");
+		//Dummy indicator element to remove the default indicators of SpinBox
+		auto upDummyTag = getDummyElementforNumberInput(true);
+
+		auto upIndicatorTag = GetIconTag(context);
+		upIndicatorTag->RemoveProperty("anchors.bottom");
 		upIndicatorTag->Property("width", "20");
 		upIndicatorTag->Property("height", "parent.height/2");
-		upIndicatorTag->Property("x", inputId + ".mirrored ? 0 : parent.width - width");
-		upIndicatorTag->Property("radius", "5");
-		upIndicatorTag->Property("color", inputId + ".up.pressed ? '#08000000' : 'transparent'");
+		upIndicatorTag->Property("horizontalPadding", "2");
+		upIndicatorTag->Property("verticalPadding", "2");
+		upIndicatorTag->Property("icon.width", "12");
+		upIndicatorTag->Property("icon.height", "12");
+		upIndicatorTag->Property("icon.source", RendererQml::arrow_up_12, true);
+		upIndicatorTag->Property("onClicked", Formatter() << inputId << ".increase();");
+		
+		//Dummy indicator element to remove the default indicators of SpinBox
+		auto downDummyTag = getDummyElementforNumberInput(false);
 
-		auto upIndicatorImage = std::make_shared<QmlTag>("Text");
-        upIndicatorImage->Property("text", "<div>&#708;</div>", true);
-		upIndicatorImage->Property("textFormat", "Text.RichText");
-		upIndicatorImage->Property("font.pixelSize", Formatter() << inputId << ".font.pixelSize");
-        upIndicatorImage->Property("anchors.fill", "parent");
-        upIndicatorImage->Property("fontSizeMode", "Text.Fit");
-        upIndicatorImage->Property("horizontalAlignment", "Text.AlignHCenter");
-        upIndicatorImage->Property("verticalAlignment", "Text.AlignVCenter");
-        upIndicatorImage->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-		upIndicatorTag->AddChild(upIndicatorImage);
-
-		auto downIndicatorTag = std::make_shared<QmlTag>("Rectangle");
+		auto downIndicatorTag = GetIconTag(context);
+		downIndicatorTag->RemoveProperty("anchors.top");
 		downIndicatorTag->Property("width", "20");
 		downIndicatorTag->Property("height", "parent.height/2");
-		downIndicatorTag->Property("x", inputId + ".mirrored ? 0 : parent.width - width");
-		downIndicatorTag->Property("y", "parent.height/2");
-		downIndicatorTag->Property("radius", "5");
-		downIndicatorTag->Property("color", inputId + ".down.pressed ? '#08000000' : 'transparent'");
-
-        auto downIndicatorImage = std::make_shared<QmlTag>("Text");
-        downIndicatorImage->Property("text", "<div>&#709;</div>", true);
-        downIndicatorImage->Property("textFormat", "Text.RichText");
-        downIndicatorImage->Property("font.pixelSize", Formatter() << inputId << ".font.pixelSize");
-        downIndicatorImage->Property("anchors.fill", "parent");
-        downIndicatorImage->Property("fontSizeMode", "Text.Fit");
-        downIndicatorImage->Property("horizontalAlignment", "Text.AlignHCenter");
-        downIndicatorImage->Property("verticalAlignment", "Text.AlignVCenter");
-        downIndicatorImage->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-        downIndicatorTag->AddChild(downIndicatorImage);
+		downIndicatorTag->Property("horizontalPadding", "2");
+		downIndicatorTag->Property("verticalPadding", "2");
+		downIndicatorTag->Property("icon.width", "12");
+		downIndicatorTag->Property("icon.height", "12");
+		downIndicatorTag->Property("icon.source", RendererQml::arrow_down_12, true);
+		downIndicatorTag->Property("onClicked", Formatter() << inputId << ".decrease();");
 
 		auto doubleValidatorTag = std::make_shared<QmlTag>("DoubleValidator");
 
@@ -760,8 +752,11 @@ namespace RendererQml
 
 		uiNumberInput->Property("contentItem", contentItemTag->ToString());
 		uiNumberInput->Property("background", backgroundTag->ToString());
-		uiNumberInput->Property("up.indicator", upIndicatorTag->ToString());
-		uiNumberInput->Property("down.indicator", downIndicatorTag->ToString());
+		uiNumberInput->Property("up.indicator", upDummyTag->ToString());
+		uiNumberInput->Property("down.indicator", downDummyTag->ToString());
+
+		uiNumberInput->AddChild(upIndicatorTag);
+		uiNumberInput->AddChild(downIndicatorTag);
 
         context->addToInputElementList(origionalElementId, (inputId + ".value"));
 
@@ -3201,6 +3196,28 @@ namespace RendererQml
 		MouseAreaTag->Property("acceptedButtons", "Qt.NoButton");
 
 		return MouseAreaTag;
+	}
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::getDummyElementforNumberInput(bool isTop)
+	{
+		auto DummyTag = std::make_shared<QmlTag>("Rectangle");
+		DummyTag->Property("width", "2");
+		DummyTag->Property("height", "2");
+		DummyTag->Property("anchors.right", "parent.right");
+
+		if (isTop)
+		{
+			DummyTag->Property("anchors.top", "parent.top");
+		}
+		else
+		{
+			DummyTag->Property("anchors.bottom", "parent.bottom");
+		}
+		DummyTag->Property("anchors.margins", "5");
+		DummyTag->Property("color", "'transparent'");
+		DummyTag->Property("z", "-1");
+
+		return DummyTag;
 	}
 }
 

@@ -114,5 +114,6 @@ namespace RendererQml
         static std::shared_ptr<QmlTag> GetIconTag(std::shared_ptr<AdaptiveRenderContext> context);
 
         static std::shared_ptr<QmlTag> GetTextBlockMouseArea();
+        static std::shared_ptr<QmlTag> getDummyElementforNumberInput(bool isTop);
     };
 }
