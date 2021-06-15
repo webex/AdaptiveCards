@@ -60,7 +60,7 @@ namespace RendererQml
         (*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
     }
 
-    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context, bool isChildCard)
     {
         context->setDefaultIdName("defaultId");
 		int margin = context->GetConfig()->GetSpacing().paddingSpacing;
@@ -78,7 +78,7 @@ namespace RendererQml
 		uiCard->Property("Layout.fillWidth", "true");
 		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         uiCard->Property("color", "bgColor");
-        uiCard->Property("border.color", "'#B2B2B2'");
+		uiCard->Property("border.color", isChildCard? " bgColor" : "'#B2B2B2'");
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
 		if (hasBackgroundImage)
@@ -102,7 +102,7 @@ namespace RendererQml
 		rectangle->Property("id", "adaptiveCardRectangle");
 		rectangle->Property("color", "'transparent'");
 		rectangle->Property("Layout.topMargin", "margins");
-		rectangle->Property("Layout.bottomMargin", "margins");
+		rectangle->Property("Layout.bottomMargin", isChildCard? "0" : "margins");
 		rectangle->Property("Layout.leftMargin", "margins");
 		rectangle->Property("Layout.rightMargin", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
@@ -262,10 +262,11 @@ namespace RendererQml
 
 						auto uiLoader = std::make_shared<QmlTag>("Loader");
                         uiLoader->Property("id", loaderId);
-                        uiLoader->Property("x", "-margins");
+						//1px shift to avoid merging with parent card border
+                        uiLoader->Property("x", "-margins + 1");
                         uiLoader->Property("sourceComponent", componentId);
                         uiLoader->Property("visible", "false");
-						uiLoader->Property("width", Formatter() << context->getCardRootId() << ".width");
+						uiLoader->Property("width", Formatter() << context->getCardRootId() << ".width - 2");
                         uiContainer->AddChild(uiLoader);
                     }
 
@@ -2526,7 +2527,7 @@ namespace RendererQml
                 subContext->addToInputElementList(inputElement.first, inputElement.second);
             }
 
-            auto uiCard = subContext->Render(componentElement.second->GetCard(), &AdaptiveCardRender);
+            auto uiCard = subContext->Render(componentElement.second->GetCard(), &AdaptiveCardRender, true);
             if (uiCard != nullptr)
             {
                 //TODO: Remove these hardcoded colors once config settings are finalised

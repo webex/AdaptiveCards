@@ -11,14 +11,14 @@
 namespace RendererQml
 {
     class AdaptiveRenderContext;
-    using CardRendererFunction = std::function<std::shared_ptr<QmlTag>(std::shared_ptr<AdaptiveCards::AdaptiveCard>, std::shared_ptr<AdaptiveRenderContext>)>;
+    using CardRendererFunction = std::function<std::shared_ptr<QmlTag>(std::shared_ptr<AdaptiveCards::AdaptiveCard>, std::shared_ptr<AdaptiveRenderContext>, bool)>;
 
     class AdaptiveRenderContext : public std::enable_shared_from_this<AdaptiveRenderContext>
     {
     public:
         AdaptiveRenderContext(std::shared_ptr<AdaptiveCards::HostConfig> hostConfig, std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> elementRenderers);
 
-        std::shared_ptr<QmlTag> Render(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, CardRendererFunction renderFunction);
+        std::shared_ptr<QmlTag> Render(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, CardRendererFunction renderFunction, bool isChildCard = false);
         std::shared_ptr<QmlTag> Render(std::shared_ptr<AdaptiveCards::BaseElement> element);
 
         const std::vector<AdaptiveWarning>& GetWarnings();

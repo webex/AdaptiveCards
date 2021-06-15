@@ -13,12 +13,12 @@ namespace RendererQml
         m_renderArgs.SetForegroundColors(m_hostConfig->GetContainerStyles().defaultPalette.foregroundColors);
     }
 
-    std::shared_ptr<QmlTag> AdaptiveRenderContext::Render(std::shared_ptr<AdaptiveCards::AdaptiveCard> element, CardRendererFunction renderFunction)
+    std::shared_ptr<QmlTag> AdaptiveRenderContext::Render(std::shared_ptr<AdaptiveCards::AdaptiveCard> element, CardRendererFunction renderFunction, bool isChildCard)
     {
         std::shared_ptr<QmlTag> qmlTagOut;
         try
         {
-            qmlTagOut = renderFunction(element, shared_from_this());
+            qmlTagOut = renderFunction(element, shared_from_this(), isChildCard);
         }
         catch (const AdaptiveFallbackException & e)
         {
