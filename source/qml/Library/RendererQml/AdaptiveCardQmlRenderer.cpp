@@ -78,7 +78,7 @@ namespace RendererQml
 		uiCard->Property("Layout.fillWidth", "true");
 		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         uiCard->Property("color", "bgColor");
-        uiCard->Property("border.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        uiCard->Property("border.color", "'#B2B2B2'");
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
 		if (hasBackgroundImage)
@@ -492,6 +492,7 @@ namespace RendererQml
 			uiTextInput->Property("selectedTextColor", "'white'");
 			uiTextInput->Property("padding", "10");
             uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+			uiTextInput->Property("leftPadding", "10");
 
 			if (input->GetMaxLength() > 0)
 			{
@@ -522,7 +523,7 @@ namespace RendererQml
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : '#CCCCCC'");
 		backgroundTag->Property("border.width", "1");
 		uiTextInput->Property("background", backgroundTag->ToString());
 
@@ -633,7 +634,7 @@ namespace RendererQml
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
-		backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : 'grey'");
+		backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : '#CCCCCC'");
 
 		auto contentItemTag = std::make_shared<QmlTag>("TextField");
 		contentItemTag->Property("id", inputId + "_contentItem");
@@ -1185,8 +1186,10 @@ namespace RendererQml
 		{
 			uiOuterRectangle->Property("radius", "3");
 		}
-		uiOuterRectangle->Property("border.color", checkbox.id + ".checked ? '#0075FF' : '767676'");
-		uiOuterRectangle->Property("color", checkbox.id + ".checked ? '#0075FF' : '#ffffff'");
+
+		auto highlightColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
+		uiOuterRectangle->Property("border.color", Formatter() << checkbox.id << ".checked ? " << highlightColor << ": '767676'");
+		uiOuterRectangle->Property("color", Formatter() << checkbox.id << ".checked ? " << highlightColor << " : '#ffffff'");
 
 		std::shared_ptr<QmlTag> uiInnerSegment;
 
@@ -1271,7 +1274,7 @@ namespace RendererQml
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : '#CCCCCC'");
         backgroundTag->Property("border.width", "1");
         uiDateInput->Property("background", backgroundTag->ToString());
 
@@ -1670,7 +1673,7 @@ namespace RendererQml
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : '#CCCCCC'");
 		backgroundTag->Property("border.width", "1");
 		uiTimeInput->Property("background", backgroundTag->ToString());
 
