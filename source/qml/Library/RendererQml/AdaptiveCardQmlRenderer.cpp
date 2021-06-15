@@ -1188,7 +1188,7 @@ namespace RendererQml
 		}
 
 		auto highlightColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
-		uiOuterRectangle->Property("border.color", Formatter() << checkbox.id << ".checked ? " << highlightColor << ": '767676'");
+		uiOuterRectangle->Property("border.color", Formatter() << checkbox.id << ".checked ? " << highlightColor << ": '#b0b0b0'");
 		uiOuterRectangle->Property("color", Formatter() << checkbox.id << ".checked ? " << highlightColor << " : '#ffffff'");
 
 		std::shared_ptr<QmlTag> uiInnerSegment;
@@ -2359,7 +2359,9 @@ namespace RendererQml
             auto textLayout = std::make_shared<QmlTag>("Row");
             textLayout->Property("spacing", "5");
 
+			const std::string contentTextId = buttonId + "_contentText";
             auto contentText = std::make_shared<QmlTag>("Text");
+			contentText->Property("id", contentTextId);
             if (!action->GetTitle().empty())
             {
                 contentText->Property("text", action->GetTitle(), true);
@@ -2437,7 +2439,7 @@ namespace RendererQml
             if (isShowCardButton)
             {
                 auto showCardIconItem = std::make_shared<QmlTag>("Item");
-                showCardIconItem->Property("height", Formatter() << fontSize);
+                showCardIconItem->Property("height", Formatter() << contentTextId << ".height");
                 showCardIconItem->Property("width", Formatter() << fontSize);
 
                 const std::string iconId = buttonId + "_icon";
