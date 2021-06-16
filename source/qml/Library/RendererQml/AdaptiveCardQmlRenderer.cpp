@@ -2447,20 +2447,12 @@ namespace RendererQml
 				showCardIcon->RemoveProperty("anchors.bottom");
 				showCardIcon->Property("width", Formatter() << contentTextId << ".font.pixelSize");
 				showCardIcon->Property("height", Formatter() << contentTextId << ".font.pixelSize");
-
-				if (isIconLeftOfTitle)
-				{
-					showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
-				}
-				else
-				{
-					showCardIcon->Property("anchors.horizontalCenter", "parent.horizontalCenter");
-				}
+				showCardIcon->Property("anchors.verticalCenter", Formatter() << contentTextId << ".verticalCenter");
 				showCardIcon->Property("horizontalPadding", "0");
 				showCardIcon->Property("verticalPadding", "0");
 				showCardIcon->Property("icon.color", Formatter() << contentTextId << ".color");
-				showCardIcon->Property("icon.width", Formatter() << "width");
-				showCardIcon->Property("icon.height", Formatter() << "height");
+				showCardIcon->Property("icon.width", Formatter() << contentTextId << ".font.pixelSize");
+				showCardIcon->Property("icon.height", Formatter() << contentTextId << ".font.pixelSize");
 				showCardIcon->Property("icon.source", RendererQml::arrow_down_12, true);
 				showCardIcon->Property("background", showCardIconBackground->ToString());
                 textLayout->AddChild(showCardIcon);
