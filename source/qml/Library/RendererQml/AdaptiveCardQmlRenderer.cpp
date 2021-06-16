@@ -2307,7 +2307,8 @@ namespace RendererQml
 
             //Add button background
             auto bgRectangle = std::make_shared<QmlTag>("Rectangle");
-            bgRectangle->Property("id", Formatter() << buttonId << "_bg");
+			const std::string bgRectangleId = Formatter() << buttonId << "_bg";
+            bgRectangle->Property("id", bgRectangleId);
             bgRectangle->Property("anchors.fill", "parent");
             bgRectangle->Property("radius", Formatter() << buttonId << ".height / 2");
             bgRectangle->Property("border.width", "1");
@@ -2434,20 +2435,35 @@ namespace RendererQml
 
             if (isShowCardButton)
             {
-                auto showCardIconItem = std::make_shared<QmlTag>("Item");
-                showCardIconItem->Property("height", Formatter() << contentTextId << ".height");
-                showCardIconItem->Property("width", Formatter() << fontSize);
+                auto showCardIconBackground = std::make_shared<QmlTag>("Rectangle");
+				showCardIconBackground->Property("anchors.fill", "parent");
+				showCardIconBackground->Property("color", Formatter() << bgRectangleId << ".color");
 
-                const std::string iconId = buttonId + "_icon";
-                auto showCardIcon = std::make_shared<QmlTag>("Image");
+                const std::string iconId = Formatter() << buttonId << "_icon";
+				auto showCardIcon = GetIconTag(context);
                 showCardIcon->Property("id", iconId);
-                showCardIcon->Property("anchors.fill", "parent");
-                showCardIcon->Property("fillMode", "Image.PreserveAspectFit");
-                showCardIcon->Property("mipmap", "true");
-                showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
-                showCardIcon->Property("source", RendererQml::arrow_down_12, true);
-                showCardIconItem->AddChild(showCardIcon);
-                textLayout->AddChild(showCardIconItem);
+				showCardIcon->RemoveProperty("anchors.right");
+                showCardIcon->RemoveProperty("anchors.top");
+				showCardIcon->RemoveProperty("anchors.bottom");
+				showCardIcon->Property("width", Formatter() << contentTextId << ".font.pixelSize");
+				showCardIcon->Property("height", Formatter() << contentTextId << ".font.pixelSize");
+
+				if (isIconLeftOfTitle)
+				{
+					showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
+				}
+				else
+				{
+					showCardIcon->Property("anchors.horizontalCenter", "parent.horizontalCenter");
+				}
+				showCardIcon->Property("horizontalPadding", "0");
+				showCardIcon->Property("verticalPadding", "0");
+				showCardIcon->Property("icon.color", Formatter() << contentTextId << ".color");
+				showCardIcon->Property("icon.width", Formatter() << "width");
+				showCardIcon->Property("icon.height", Formatter() << "height");
+				showCardIcon->Property("icon.source", RendererQml::arrow_down_12, true);
+				showCardIcon->Property("background", showCardIconBackground->ToString());
+                textLayout->AddChild(showCardIcon);
             }
 
             contentLayout->AddChild(textLayout);
@@ -2566,7 +2582,7 @@ namespace RendererQml
 
 		function << "\n" << buttonElement->GetId() << ".showCard = !" << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
-		function << "\n" << buttonElement->GetId() << "_icon.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
+		function << "\n" << buttonElement->GetId() << "_icon.icon.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
 
 		return function.str();
 	}
