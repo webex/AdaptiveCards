@@ -64,6 +64,7 @@ namespace RendererQml
     {
         context->setDefaultIdName("defaultId");
 		int margin = context->GetConfig()->GetSpacing().paddingSpacing;
+		const auto adaptiveCardRectangleId = "adaptiveCardRectangle";
 
         auto uiCard = std::make_shared<QmlTag>("Rectangle");
         uiCard->AddImports("import QtQuick 2.15");
@@ -73,6 +74,8 @@ namespace RendererQml
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);
 		uiCard->Property("readonly property int margins", std::to_string(margin));
+		//Custom Property to handle bottom margin of showCard
+		uiCard->Property("property alias bottomMargin", Formatter() << adaptiveCardRectangleId << ".bottomMargin");
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
 		uiCard->Property("Layout.fillWidth", "true");
@@ -99,10 +102,12 @@ namespace RendererQml
 		uiCard->AddChild(columnLayout);
 
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
-		rectangle->Property("id", "adaptiveCardRectangle");
+		rectangle->Property("id", adaptiveCardRectangleId);
+		//Added custom property to handle bottom margin in case of showCard
+		rectangle->Property("property int bottomMargin", std::to_string(margin));
 		rectangle->Property("color", "'transparent'");
 		rectangle->Property("Layout.topMargin", "margins");
-		rectangle->Property("Layout.bottomMargin", isChildCard? "0" : "margins");
+		rectangle->Property("Layout.bottomMargin", "bottomMargin");
 		rectangle->Property("Layout.leftMargin", "margins");
 		rectangle->Property("Layout.rightMargin", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
@@ -183,7 +188,7 @@ namespace RendererQml
 		}
     }
 
-    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context)
+    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context, bool isRootCard)
     {
         if (context->GetConfig()->GetSupportsInteractivity())
         {
@@ -268,6 +273,7 @@ namespace RendererQml
                         uiLoader->Property("visible", "false");
 						//2 px reduction in width to avoid child card displaying over parent card's border
 						uiLoader->Property("width", Formatter() << context->getCardRootId() << ".width - 2");
+						uiLoader->Property("readonly property bool isRootShowCard", isRootCard ? "true" : "false");
                         uiContainer->AddChild(uiLoader);
                     }
 
@@ -2278,7 +2284,7 @@ namespace RendererQml
 		actionsConfig.actionAlignment = (AdaptiveCards::ActionAlignment) actionSet->GetHorizontalAlignment();
 		context->GetConfig()->SetActions(actionsConfig);
 
-		AddActions(outerContainer, actionSet->GetActions(), context);
+		AddActions(outerContainer, actionSet->GetActions(), context, false);
 
 		actionsConfig.actionAlignment = oldActionAlignment;
 		context->GetConfig()->SetActions(actionsConfig);
@@ -2451,8 +2457,8 @@ namespace RendererQml
 				showCardIcon->Property("horizontalPadding", "0");
 				showCardIcon->Property("verticalPadding", "0");
 				showCardIcon->Property("icon.color", Formatter() << contentTextId << ".color");
-				showCardIcon->Property("icon.width", Formatter() << contentTextId << ".font.pixelSize");
-				showCardIcon->Property("icon.height", Formatter() << contentTextId << ".font.pixelSize");
+				showCardIcon->Property("icon.width", "12");
+				showCardIcon->Property("icon.height", "12");
 				showCardIcon->Property("icon.source", RendererQml::arrow_down_12, true);
 				showCardIcon->Property("background", showCardIconBackground->ToString());
                 textLayout->AddChild(showCardIcon);
@@ -2572,9 +2578,12 @@ namespace RendererQml
 			}
 		}
 
+		const int margin = context->GetConfig()->GetSpacing().paddingSpacing;
+
 		function << "\n" << buttonElement->GetId() << ".showCard = !" << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_icon.icon.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
+		function << "\n" << context->getCardRootId() << ".bottomMargin = " << buttonElement->GetId() << ".showCard && " << buttonElement->GetId() << "_loader.isRootShowCard ? " << "0" << " : " << std::to_string(margin) << ";";
 
 		return function.str();
 	}
