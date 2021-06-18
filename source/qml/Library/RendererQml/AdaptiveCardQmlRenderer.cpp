@@ -123,7 +123,13 @@ namespace RendererQml
         rectangle->Property("Layout.preferredHeight", "bodyLayout.height");
         rectangle->AddChild(bodyLayout);
 
+		if (!card->GetBody().empty())
+		{
+			CheckLastBodyElementIsShowCard(card->GetBody().back(), context);
+		}
+
         AddContainerElements(bodyLayout, card->GetBody(), context);
+		CheckShowCardInActions(card->GetActions(), context);
         AddActions(bodyLayout, card->GetActions(), context);
         addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context, hasBackgroundImage);
 
@@ -188,7 +194,7 @@ namespace RendererQml
 		}
     }
 
-    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context, bool isRootCard)
+    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context, bool isRemoveBottomMargin)
     {
         if (context->GetConfig()->GetSupportsInteractivity())
         {
@@ -273,7 +279,7 @@ namespace RendererQml
                         uiLoader->Property("visible", "false");
 						//2 px reduction in width to avoid child card displaying over parent card's border
 						uiLoader->Property("width", Formatter() << context->getCardRootId() << ".width - 2");
-						uiLoader->Property("readonly property bool isRootShowCard", isRootCard ? "true" : "false");
+						uiLoader->Property("readonly property bool isRemoveBottomMargin", isRemoveBottomMargin ? "true" : "false");
                         uiContainer->AddChild(uiLoader);
                     }
 
@@ -2284,7 +2290,12 @@ namespace RendererQml
 		actionsConfig.actionAlignment = (AdaptiveCards::ActionAlignment) actionSet->GetHorizontalAlignment();
 		context->GetConfig()->SetActions(actionsConfig);
 
-		AddActions(outerContainer, actionSet->GetActions(), context, false);
+		auto LastActionSetInternalId = context->GetLastActionSetInternalId();
+		auto tmp = LastActionSetInternalId;
+		auto isLastActionSet = (LastActionSetInternalId!=NULL && LastActionSetInternalId->Current() == actionSet->GetInternalId().Current());
+		auto isShowCardInAction = context->getIsShowCardInAction();
+		auto isRemoveBottomMargin = isShowCardInAction && isLastActionSet;
+		AddActions(outerContainer, actionSet->GetActions(), context, isRemoveBottomMargin);
 
 		actionsConfig.actionAlignment = oldActionAlignment;
 		context->GetConfig()->SetActions(actionsConfig);
@@ -2583,7 +2594,9 @@ namespace RendererQml
 		function << "\n" << buttonElement->GetId() << ".showCard = !" << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_icon.icon.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
-		function << "\n" << context->getCardRootId() << ".bottomMargin = " << buttonElement->GetId() << ".showCard && " << buttonElement->GetId() << "_loader.isRootShowCard ? " << "0" << " : " << std::to_string(margin) << ";";
+		function << "\n" << "if (" << buttonElement->GetId() << "_loader.isRemoveBottomMargin) {"
+			<< context->getCardRootId() << ".bottomMargin = " << buttonElement->GetId() << ".showCard ? " << "0" << " : " << std::to_string(margin) << ";"
+			<< "}";
 
 		return function.str();
 	}
@@ -3236,5 +3249,66 @@ namespace RendererQml
 
 		return DummyTag;
 	}
-}
 
+	void AdaptiveCardQmlRenderer::CheckLastBodyElementIsShowCard(std::shared_ptr<AdaptiveCards::BaseCardElement> cardElement, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		auto cardElementType = cardElement->GetElementType();
+
+		auto isElementActionSet = cardElementType == AdaptiveSharedNamespace::CardElementType::ActionSet;
+		
+		if (isElementActionSet)
+		{
+			auto ActionSetPtr = std::dynamic_pointer_cast<AdaptiveCards::ActionSet> (cardElement);
+			auto listOfActions = ActionSetPtr->GetActions();
+
+			for (const auto& action : listOfActions)
+			{
+				if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action))
+				{
+					auto InternalIdPtr = std::make_shared<AdaptiveCards::InternalId>(ActionSetPtr->GetInternalId());
+					context->SetIsShowCardLastInBody(true);
+					context->SetLastActionSetInternalId(InternalIdPtr);
+					return;
+				}
+			}
+		}
+
+		else if (cardElementType == AdaptiveSharedNamespace::CardElementType::Container)
+		{
+			auto ContainerPtr = std::dynamic_pointer_cast<AdaptiveCards::Container> (cardElement);
+
+			if (!ContainerPtr->GetItems().empty())
+			{
+				CheckLastBodyElementIsShowCard(ContainerPtr->GetItems().back(), context);
+			}
+		}
+
+		else if (cardElementType == AdaptiveSharedNamespace::CardElementType::ColumnSet)
+		{
+			auto ColumnSetPtr = std::dynamic_pointer_cast<AdaptiveCards::ColumnSet> (cardElement);
+			auto columnList = ColumnSetPtr->GetColumns();
+
+			for (auto& column : columnList)
+			{
+				if (!column->GetItems().empty())
+				{
+					CheckLastBodyElementIsShowCard(column->GetItems().back(), context);
+				}
+			}
+		}
+	}
+
+	void AdaptiveCardQmlRenderer::CheckShowCardInActions(const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		for (const auto& action : actions)
+		{
+			if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action))
+			{
+				context->setIsShowCardInAction(true);
+				return;
+			}
+		}
+
+		context->setIsShowCardInAction(false);
+	}
+}

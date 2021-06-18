@@ -332,4 +332,39 @@ namespace RendererQml
 
         return newId;
     }
+
+    const bool AdaptiveRenderContext::GetIsShowCardLastInBody()
+    {
+        return m_isShowCardLastInBody;
+    }
+
+    void AdaptiveRenderContext::SetIsShowCardLastInBody(const bool isShowCardLastInBody)
+    {
+        m_isShowCardLastInBody = isShowCardLastInBody;
+    }
+
+    const std::shared_ptr<AdaptiveCards::InternalId> AdaptiveRenderContext::GetLastActionSetInternalId()
+    {
+        if (GetIsShowCardLastInBody())
+        {
+            return m_LastActionSetInternalId;
+        }
+        //Can we return something else here?
+        return NULL;
+    }
+
+    void AdaptiveRenderContext::SetLastActionSetInternalId(const std::shared_ptr<AdaptiveCards::InternalId> LastActionSetInternalId)
+    {
+        m_LastActionSetInternalId = LastActionSetInternalId;
+    }
+
+    const bool AdaptiveRenderContext::getIsShowCardInAction()
+    {
+        return m_isShowCardinAction;
+    }
+
+    void AdaptiveRenderContext::setIsShowCardInAction(const bool isShowCardInAction)
+    {
+        m_isShowCardinAction = isShowCardInAction;
+    }
 }

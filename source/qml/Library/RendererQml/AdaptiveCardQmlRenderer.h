@@ -44,7 +44,7 @@ namespace RendererQml
     protected:
         static void addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context, const bool hasBackgroundImage = false);
         static void addTextRunSelectActions(const std::shared_ptr<AdaptiveRenderContext>& context);
-        static void AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context, bool isRootCard = true);
+        static void AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context, bool isRemoveBottomMargin = true);
 		static void AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context);
 		static void AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context, const bool isShowCard = false, const std::string loaderId = "");
         static std::shared_ptr<QmlTag> AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context, bool isChildCard);
@@ -115,5 +115,9 @@ namespace RendererQml
 
         static std::shared_ptr<QmlTag> GetTextBlockMouseArea();
         static std::shared_ptr<QmlTag> getDummyElementforNumberInput(bool isTop);
+
+        static void CheckLastBodyElementIsShowCard(std::shared_ptr<AdaptiveCards::BaseCardElement> cardElement, std::shared_ptr<AdaptiveRenderContext> context);
+        static void CheckShowCardInActions(const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context);
+
     };
 }
