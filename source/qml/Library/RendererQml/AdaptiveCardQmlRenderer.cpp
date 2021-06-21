@@ -64,7 +64,7 @@ namespace RendererQml
     {
         context->setDefaultIdName("defaultId");
 		int margin = context->GetConfig()->GetSpacing().paddingSpacing;
-		
+
         auto uiCard = std::make_shared<QmlTag>("Rectangle");
         uiCard->AddImports("import QtQuick 2.15");
         uiCard->AddImports("import QtQuick.Layouts 1.3");
@@ -73,7 +73,7 @@ namespace RendererQml
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);
 		uiCard->Property("readonly property int margins", std::to_string(margin));
-		uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
+        uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
 		uiCard->Property("Layout.fillWidth", "true");
 		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
@@ -3258,9 +3258,7 @@ namespace RendererQml
 	{
 		auto cardElementType = cardElement->GetElementType();
 
-		auto isElementActionSet = (cardElementType == AdaptiveSharedNamespace::CardElementType::ActionSet);
-		
-		if (isElementActionSet)
+		if (cardElementType == AdaptiveSharedNamespace::CardElementType::ActionSet)
 		{
 			auto ActionSetPtr = std::dynamic_pointer_cast<AdaptiveCards::ActionSet> (cardElement);
 			auto listOfActions = ActionSetPtr->GetActions();
