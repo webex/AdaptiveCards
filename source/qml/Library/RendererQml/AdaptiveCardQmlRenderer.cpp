@@ -74,7 +74,8 @@ namespace RendererQml
 		context->setCardRootElement(uiCard);
 		uiCard->Property("readonly property int margins", std::to_string(margin));
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
-        uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
+		//1px extra height to accomodate the border of a showCard if present at the bottom
+        uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight+1");
 		uiCard->Property("Layout.fillWidth", "true");
 		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
         uiCard->Property("color", "bgColor");
