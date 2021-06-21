@@ -363,15 +363,14 @@ namespace RendererQml
         return ++m_ActionSetCounter;
     }
 
-    //ShowCards that 
-    void AdaptiveRenderContext::addToShowCardsList(std::shared_ptr<QmlTag> buttonElement)
+    void AdaptiveRenderContext::addToShowCardsLoaderIdsList(const std::string &loaderId)
     {
-        m_ShowCardsList.push_back(buttonElement);
+        m_ShowCardLoaderIdList.push_back(loaderId);
     }
 
-    const std::vector<std::shared_ptr<QmlTag>>& AdaptiveRenderContext::getShowCardsList()
+    const std::vector<std::string>& AdaptiveRenderContext::getShowCardsLoaderIdsList()
     {
-        return m_ShowCardsList;
+        return m_ShowCardLoaderIdList;
     }
 
     void AdaptiveRenderContext::setIsShowCardLastBodyElement(bool isShowCardLastBodyElement)

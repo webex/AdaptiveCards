@@ -64,8 +64,7 @@ namespace RendererQml
     {
         context->setDefaultIdName("defaultId");
 		int margin = context->GetConfig()->GetSpacing().paddingSpacing;
-		const auto adaptiveCardRectangleId = "adaptiveCardRectangle";
-
+		
         auto uiCard = std::make_shared<QmlTag>("Rectangle");
         uiCard->AddImports("import QtQuick 2.15");
         uiCard->AddImports("import QtQuick.Layouts 1.3");
@@ -100,12 +99,12 @@ namespace RendererQml
 		uiCard->AddChild(columnLayout);
 
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
-		rectangle->Property("id", adaptiveCardRectangleId);
+		rectangle->Property("id", "adaptiveCardRectangle");
 		//Added custom property to handle bottom margin in case of showCard
 		rectangle->Property("property int bottomMargin", std::to_string(margin));
 		rectangle->Property("color", "'transparent'");
 		rectangle->Property("Layout.topMargin", "margins");
-		rectangle->Property("Layout.bottomMargin", "RemoveBottomMargin? 0 : margins");
+		rectangle->Property("Layout.bottomMargin", "removeBottomMargin? 0 : margins");
 		rectangle->Property("Layout.leftMargin", "margins");
 		rectangle->Property("Layout.rightMargin", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
@@ -131,9 +130,9 @@ namespace RendererQml
 		AddActions(bodyLayout, card->GetActions(), context);
         addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context, hasBackgroundImage);
 
-		auto showCardsList = context->getShowCardsList();
+		auto showCardsList = context->getShowCardsLoaderIdsList();
 		auto removeBottomMarginValue = RemoveBottomMarginValue(showCardsList);
-		rectangle->Property("property bool RemoveBottomMargin", removeBottomMarginValue);
+		rectangle->Property("property bool removeBottomMargin", removeBottomMarginValue);
 
 		//Remove Top and Bottom Paddin if bleed for first and last element is true
 		rectangle = applyVerticalBleed(bodyLayout, rectangle);
@@ -283,7 +282,7 @@ namespace RendererQml
 						uiLoader->Property("width", Formatter() << uiContainer->GetProperty("id") << ".width + 2*margins - 2");
 						uiLoader->Property("readonly property bool isRemoveBottomMargin", isRemoveBottomMargin ? "true" : "false");
 
-						context->addToShowCardsList(uiLoader);
+						context->addToShowCardsLoaderIdsList(loaderId);
                         uiContainer->AddChild(uiLoader);
                     }
 
@@ -3295,13 +3294,13 @@ namespace RendererQml
 		context->setIsShowCardInAction(false);
 	}
 
-	const std::string AdaptiveCardQmlRenderer::RemoveBottomMarginValue(std::vector<std::shared_ptr<RendererQml::QmlTag>> showCardsList)
+	const std::string AdaptiveCardQmlRenderer::RemoveBottomMarginValue(std::vector<std::string> showCardsList)
 	{
 		std::string value = "";
 
-		for (auto element : showCardsList)
+		for (auto id : showCardsList)
 		{
-			value.append(Formatter() << "(" << element->GetId() << ".visible && " << element->GetId() << ".isRemoveBottomMargin) || ");
+			value.append(Formatter() << "(" << id << ".visible && " << id << ".isRemoveBottomMargin) || ");
 		}
 
 		if (value == "")

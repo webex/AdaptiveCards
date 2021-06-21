@@ -80,8 +80,8 @@ namespace RendererQml
 
         const int GetActionSetCounter();
 
-        void addToShowCardsList(std::shared_ptr<QmlTag> buttonElement);
-        const std::vector<std::shared_ptr<QmlTag>>& getShowCardsList();
+        void addToShowCardsLoaderIdsList(const std::string &loaderId);
+        const std::vector<std::string>& getShowCardsLoaderIdsList();
 
         void setIsShowCardLastBodyElement(bool isShowCardLastBodyElement);
         const bool getIsShowCardLastBodyElement();
@@ -90,7 +90,7 @@ namespace RendererQml
         bool m_isShowCardinAction{ false };
         bool m_isShowCardLastBodyElement{ false };
         AdaptiveCards::InternalId m_LastActionSetInternalIds;
-        std::vector<std::shared_ptr<QmlTag>> m_ShowCardsList;
+        std::vector<std::string> m_ShowCardLoaderIdList;
 
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
