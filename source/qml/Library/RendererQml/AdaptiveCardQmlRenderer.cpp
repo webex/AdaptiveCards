@@ -100,8 +100,6 @@ namespace RendererQml
 
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
 		rectangle->Property("id", "adaptiveCardRectangle");
-		//Added custom property to handle bottom margin in case of showCard
-		rectangle->Property("property int bottomMargin", std::to_string(margin));
 		rectangle->Property("color", "'transparent'");
 		rectangle->Property("Layout.topMargin", "margins");
 		rectangle->Property("Layout.bottomMargin", "removeBottomMargin? 0 : margins");
