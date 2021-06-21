@@ -3258,7 +3258,7 @@ namespace RendererQml
 	{
 		auto cardElementType = cardElement->GetElementType();
 
-		auto isElementActionSet = cardElementType == AdaptiveSharedNamespace::CardElementType::ActionSet;
+		auto isElementActionSet = (cardElementType == AdaptiveSharedNamespace::CardElementType::ActionSet);
 		
 		if (isElementActionSet)
 		{
@@ -3269,15 +3269,12 @@ namespace RendererQml
 			{
 				if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action))
 				{
-					auto InternalIdPtr = std::make_shared<AdaptiveCards::InternalId>(ActionSetPtr->GetInternalId());
 					context->setLastActionSetInternalId(ActionSetPtr->GetInternalId());
 					context->setIsShowCardLastBodyElement(true);
 					return;
 				}
 			}
 		}
-
-		return;
 	}
 
 	void AdaptiveCardQmlRenderer::CheckShowCardInActions(const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context)
@@ -3290,8 +3287,6 @@ namespace RendererQml
 				return;
 			}
 		}
-
-		context->setIsShowCardInAction(false);
 	}
 
 	const std::string AdaptiveCardQmlRenderer::RemoveBottomMarginValue(std::vector<std::string> showCardsList)
