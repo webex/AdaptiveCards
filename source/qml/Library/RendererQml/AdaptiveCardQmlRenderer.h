@@ -119,5 +119,7 @@ namespace RendererQml
         static void CheckLastBodyElementIsShowCard(std::shared_ptr<AdaptiveCards::BaseCardElement> cardElement, std::shared_ptr<AdaptiveRenderContext> context);
         static void CheckShowCardInActions(const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context);
 
+        static const std::string RemoveBottomMarginValue(std::vector<std::shared_ptr<RendererQml::QmlTag>> showCardsList);
+
     };
 }

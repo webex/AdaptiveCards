@@ -333,29 +333,19 @@ namespace RendererQml
         return newId;
     }
 
-    const bool AdaptiveRenderContext::GetIsShowCardLastInBody()
+    AdaptiveCards::InternalId AdaptiveRenderContext::getLastActionSetInternalId()
     {
-        return m_isShowCardLastInBody;
-    }
-
-    void AdaptiveRenderContext::SetIsShowCardLastInBody(const bool isShowCardLastInBody)
-    {
-        m_isShowCardLastInBody = isShowCardLastInBody;
-    }
-
-    const std::shared_ptr<AdaptiveCards::InternalId> AdaptiveRenderContext::GetLastActionSetInternalId()
-    {
-        if (GetIsShowCardLastInBody())
+        if (getIsShowCardLastBodyElement())
         {
-            return m_LastActionSetInternalId;
+            return m_LastActionSetInternalIds;
         }
-        //Can we return something else here?
-        return NULL;
+
+        return AdaptiveCards::InternalId();
     }
 
-    void AdaptiveRenderContext::SetLastActionSetInternalId(const std::shared_ptr<AdaptiveCards::InternalId> LastActionSetInternalId)
+    void AdaptiveRenderContext::setLastActionSetInternalId(AdaptiveCards::InternalId LastActionSetInternalId)
     {
-        m_LastActionSetInternalId = LastActionSetInternalId;
+        m_LastActionSetInternalIds=LastActionSetInternalId;
     }
 
     const bool AdaptiveRenderContext::getIsShowCardInAction()
@@ -366,5 +356,31 @@ namespace RendererQml
     void AdaptiveRenderContext::setIsShowCardInAction(const bool isShowCardInAction)
     {
         m_isShowCardinAction = isShowCardInAction;
+    }
+
+    const int AdaptiveRenderContext::GetActionSetCounter()
+    {
+        return ++m_ActionSetCounter;
+    }
+
+    //ShowCards that 
+    void AdaptiveRenderContext::addToShowCardsList(std::shared_ptr<QmlTag> buttonElement)
+    {
+        m_ShowCardsList.push_back(buttonElement);
+    }
+
+    const std::vector<std::shared_ptr<QmlTag>>& AdaptiveRenderContext::getShowCardsList()
+    {
+        return m_ShowCardsList;
+    }
+
+    void AdaptiveRenderContext::setIsShowCardLastBodyElement(bool isShowCardLastBodyElement)
+    {
+        m_isShowCardLastBodyElement = isShowCardLastBodyElement;
+    }
+
+    const bool AdaptiveRenderContext::getIsShowCardLastBodyElement()
+    {
+        return m_isShowCardLastBodyElement;
     }
 }

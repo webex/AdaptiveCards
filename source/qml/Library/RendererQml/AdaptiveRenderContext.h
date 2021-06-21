@@ -72,19 +72,25 @@ namespace RendererQml
 
         const std::string ConvertToValidId(const std::string& id);
 
-        const bool GetIsShowCardLastInBody();
-        void SetIsShowCardLastInBody(const bool isShowCardLastInBody);
-
         const bool getIsShowCardInAction();
         void setIsShowCardInAction(const bool isShowCardInAction);
 
-        const std::shared_ptr<AdaptiveCards::InternalId> GetLastActionSetInternalId();
-        void SetLastActionSetInternalId(const std::shared_ptr<AdaptiveCards::InternalId> LastActionSetInternalId);
+        AdaptiveCards::InternalId getLastActionSetInternalId();
+        void setLastActionSetInternalId(AdaptiveCards::InternalId LastActionSetInternalId);
+
+        const int GetActionSetCounter();
+
+        void addToShowCardsList(std::shared_ptr<QmlTag> buttonElement);
+        const std::vector<std::shared_ptr<QmlTag>>& getShowCardsList();
+
+        void setIsShowCardLastBodyElement(bool isShowCardLastBodyElement);
+        const bool getIsShowCardLastBodyElement();
 
     private:
-        bool m_isShowCardLastInBody{ false };
-        bool m_isShowCardinAction;
-        std::shared_ptr<AdaptiveCards::InternalId> m_LastActionSetInternalId;
+        bool m_isShowCardinAction{ false };
+        bool m_isShowCardLastBodyElement{ false };
+        AdaptiveCards::InternalId m_LastActionSetInternalIds;
+        std::vector<std::shared_ptr<QmlTag>> m_ShowCardsList;
 
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
@@ -111,6 +117,7 @@ namespace RendererQml
         int m_ButtonCounter{ 0 };
         int m_SelectActionCounter{ 0 };
         int m_DefaultIdCounter{ 0 };
+        int m_ActionSetCounter{ 0 };
 
     };
 }
