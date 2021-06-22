@@ -957,6 +957,7 @@ namespace RendererQml
 		const auto fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
 		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
 		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
+		const auto defaultSpacing = context->GetConfig()->GetSpacing().smallSpacing;
 
 		int dropDownHeight = 250;
 
@@ -964,9 +965,8 @@ namespace RendererQml
 		uiComboBox->Property("textRole", "'text'");
 		uiComboBox->Property("valueRole", "'value'");
 		uiComboBox->Property("width", "parent.width");
-		uiComboBox->Property("height", "30");
-		//TODO : Add Height
-
+		uiComboBox->Property("height", "contentItem.contentHeight + 2*contentItem.padding < 30 ? 30 : contentItem.contentHeight + 2*contentItem.padding ");
+		
         const std::string iconId = choiceset.id + "_icon";
 		auto iconTag = GetIconTag(context);
         iconTag->Property("id", iconId);
@@ -1008,8 +1008,8 @@ namespace RendererQml
 		auto uiItemDelegate = std::make_shared<QmlTag>("ItemDelegate");
 		uiItemDelegate->Property("id", itemDelegateId);
 		uiItemDelegate->Property("width", "parent.width");
-		uiItemDelegate->Property("verticalPadding", "5");
-		uiItemDelegate->Property("horizontalPadding", "5");
+		uiItemDelegate->Property("verticalPadding", std::to_string(defaultSpacing));
+		uiItemDelegate->Property("horizontalPadding", std::to_string(defaultSpacing));
 		uiItemDelegate->Property("highlighted", "ListView.isCurrentItem");
 
         auto backgroundTagDelegate = std::make_shared<QmlTag>("Rectangle");
@@ -1036,7 +1036,7 @@ namespace RendererQml
 		uiContentItem_Text->Property("text", "parent.displayText");
 		uiContentItem_Text->Property("font.pixelSize", std::to_string(fontSize));
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
-		uiContentItem_Text->Property("padding", std::to_string(context->GetConfig()->GetSpacing().paddingSpacing));
+		uiContentItem_Text->Property("padding", std::to_string(defaultSpacing));
 		uiContentItem_Text->Property("elide", "Text.ElideRight");
 		uiContentItem_Text->Property("color", textColor);
 
@@ -1052,8 +1052,7 @@ namespace RendererQml
 		contentListViewTag->Property("clip", "true");
 		contentListViewTag->Property("model", Formatter() << choiceset.id << ".delegateModel");
 		contentListViewTag->Property("currentIndex", Formatter() << choiceset.id << ".highlightedIndex");
-		contentListViewTag->Property("highlightRangeMode", "ListView.StrictlyEnforceRange");
-
+		
 		auto scrollBarTag = std::make_shared<QmlTag>("ScrollBar");
 		scrollBarTag->Property("width", "10");
 		scrollBarTag->Property("policy", Formatter() << contentListViewId << ".contentHeight > " << std::to_string(dropDownHeight) << "?" << "ScrollBar.AlwaysOn : ScrollBar.AsNeeded");
@@ -1077,15 +1076,6 @@ namespace RendererQml
 
 		uiComboBox->Property("popup", popupTag->ToString());
 
-		uiComboBox->Property("Keys.onUpPressed", Formatter() << "{" << "if(" << choiceset.id << ".currentIndex>0) {\n"
-			<< choiceset.id << ".currentIndex-=1;\n"
-			<< "}\n"
-			<< contentListViewId << ".currentIndex=" << choiceset.id << ".currentIndex;" << "}");
-
-		uiComboBox->Property("Keys.onDownPressed", Formatter() << "{" << "if(" << choiceset.id << ".currentIndex<" << contentListViewId << ".count-1" << ") {\n"
-			<< choiceset.id << ".currentIndex+=1;\n"
-			<< "}\n"
-			<< contentListViewId << ".currentIndex=" << choiceset.id << ".currentIndex;" << "}");
 		return uiComboBox;
 	}
 
