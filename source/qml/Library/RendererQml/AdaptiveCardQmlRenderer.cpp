@@ -958,7 +958,7 @@ namespace RendererQml
 		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
 		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
 
-		int dropDownHeight = 150;
+		int dropDownHeight = 250;
 
 		uiComboBox->Property("id",choiceset.id);
 		uiComboBox->Property("textRole", "'text'");
@@ -1004,21 +1004,24 @@ namespace RendererQml
 			uiComboBox->Property("displayText", "currentText");
 		}
 
+		auto itemDelegateId = choiceset.id + "_itemDelegate";
 		auto uiItemDelegate = std::make_shared<QmlTag>("ItemDelegate");
+		uiItemDelegate->Property("id", itemDelegateId);
 		uiItemDelegate->Property("width", "parent.width");
 		uiItemDelegate->Property("verticalPadding", "5");
 		uiItemDelegate->Property("horizontalPadding", "5");
+		uiItemDelegate->Property("highlighted", "ListView.isCurrentItem");
 
         auto backgroundTagDelegate = std::make_shared<QmlTag>("Rectangle");
         //TODO: These color styling should come from css
-        backgroundTagDelegate->Property("color", Formatter() << choiceset.id << ".currentIndex==index?" << context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false) << ":" << "hovered? 'lightblue' : " << backgroundColor);
+        backgroundTagDelegate->Property("color", Formatter() << itemDelegateId << ".highlighted?" << context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false) << " : " << backgroundColor);
         uiItemDelegate->Property("background", backgroundTagDelegate->ToString());
 
 		auto uiItemDelegate_Text = std::make_shared<QmlTag>("Text");
 		uiItemDelegate_Text->Property("text", "modelData.text");
 		uiItemDelegate_Text->Property("font.pixelSize", std::to_string(fontSize));
 		uiItemDelegate_Text->Property("verticalAlignment", "Text.AlignVCenter");
-		uiItemDelegate_Text->Property("color", Formatter() << choiceset.id << ".currentIndex==index || hovered? '#FFFFFF' : " << textColor);
+		uiItemDelegate_Text->Property("color", Formatter() << itemDelegateId << ".highlighted?" << "'white' : " << textColor);
 
 		if (choiceset.choices[0].isWrap)
 		{
