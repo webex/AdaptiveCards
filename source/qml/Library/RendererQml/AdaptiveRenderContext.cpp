@@ -335,7 +335,7 @@ namespace RendererQml
 
     AdaptiveCards::InternalId AdaptiveRenderContext::getLastActionSetInternalId()
     {
-        if (getIsShowCardLastBodyElement())
+        if (isShowCardLastBodyElement())
         {
             return m_LastActionSetInternalIds;
         }
@@ -345,10 +345,10 @@ namespace RendererQml
 
     void AdaptiveRenderContext::setLastActionSetInternalId(AdaptiveCards::InternalId LastActionSetInternalId)
     {
-        m_LastActionSetInternalIds=LastActionSetInternalId;
+        m_LastActionSetInternalIds = LastActionSetInternalId;
     }
 
-    const bool AdaptiveRenderContext::getIsShowCardInAction()
+    const bool AdaptiveRenderContext::isShowCardInAction()
     {
         return m_isShowCardinAction;
     }
@@ -378,7 +378,7 @@ namespace RendererQml
         m_isShowCardLastBodyElement = isShowCardLastBodyElement;
     }
 
-    const bool AdaptiveRenderContext::getIsShowCardLastBodyElement()
+    const bool AdaptiveRenderContext::isShowCardLastBodyElement()
     {
         return m_isShowCardLastBodyElement;
     }

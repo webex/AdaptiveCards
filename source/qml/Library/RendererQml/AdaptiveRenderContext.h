@@ -72,7 +72,7 @@ namespace RendererQml
 
         const std::string ConvertToValidId(const std::string& id);
 
-        const bool getIsShowCardInAction();
+        const bool isShowCardInAction();
         void setIsShowCardInAction(const bool isShowCardInAction);
 
         AdaptiveCards::InternalId getLastActionSetInternalId();
@@ -84,7 +84,7 @@ namespace RendererQml
         const std::vector<std::string>& getShowCardsLoaderIdsList();
 
         void setIsShowCardLastBodyElement(bool isShowCardLastBodyElement);
-        const bool getIsShowCardLastBodyElement();
+        const bool isShowCardLastBodyElement();
 
     private:
         bool m_isShowCardinAction{ false };

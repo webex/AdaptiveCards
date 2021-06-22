@@ -78,7 +78,8 @@ namespace RendererQml
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight+1");
 		uiCard->Property("Layout.fillWidth", "true");
 		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        uiCard->Property("color", "bgColor");
+		uiCard->Property("readonly property string inputElementsBorderColor", "'#CCCCCC'");
+		uiCard->Property("color", "bgColor");
 		uiCard->Property("border.color", isChildCard? " bgColor" : "'#B2B2B2'");
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
@@ -119,12 +120,9 @@ namespace RendererQml
         rectangle->Property("Layout.preferredHeight", "bodyLayout.height");
         rectangle->AddChild(bodyLayout);
 
-		if (!card->GetBody().empty())
-		{
-			CheckLastBodyElementIsShowCard(card->GetBody().back(), context);
-		}
-
-		CheckShowCardInActions(card->GetActions(), context);
+		ValidateLastBodyElementIsShowCard(card->GetBody(), context);
+		
+		ValidateShowCardInActions(card->GetActions(), context);
 		AddContainerElements(bodyLayout, card->GetBody(), context);
 		AddActions(bodyLayout, card->GetActions(), context);
         addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context, hasBackgroundImage);
@@ -194,7 +192,7 @@ namespace RendererQml
 		}
     }
 
-    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context, bool isRemoveBottomMargin)
+    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context, bool removeBottomMargin)
     {
         if (context->GetConfig()->GetSupportsInteractivity())
         {
@@ -279,7 +277,7 @@ namespace RendererQml
                         uiLoader->Property("visible", "false");
 						//2 px reduction in width to avoid child card displaying over parent card's border
 						uiLoader->Property("width", Formatter() << uiContainer->GetProperty("id") << ".width + 2*margins - 2");
-						uiLoader->Property("readonly property bool isRemoveBottomMargin", isRemoveBottomMargin ? "true" : "false");
+						uiLoader->Property("readonly property bool removeBottomMargin", removeBottomMargin ? "true" : "false");
 
 						context->addToShowCardsLoaderIdsList(loaderId);
                         uiContainer->AddChild(uiLoader);
@@ -539,7 +537,7 @@ namespace RendererQml
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : '#CCCCCC'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
 		backgroundTag->Property("border.width", "1");
 		uiTextInput->Property("background", backgroundTag->ToString());
 
@@ -650,7 +648,7 @@ namespace RendererQml
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
-		backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : '#CCCCCC'");
+		backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : inputElementsBorderColor");
 
 		auto contentItemTag = std::make_shared<QmlTag>("TextField");
 		contentItemTag->Property("id", inputId + "_contentItem");
@@ -1284,7 +1282,7 @@ namespace RendererQml
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : '#CCCCCC'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
         backgroundTag->Property("border.width", "1");
         uiDateInput->Property("background", backgroundTag->ToString());
 
@@ -1683,7 +1681,7 @@ namespace RendererQml
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : '#CCCCCC'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
 		backgroundTag->Property("border.width", "1");
 		uiTimeInput->Property("background", backgroundTag->ToString());
 
@@ -2300,9 +2298,9 @@ namespace RendererQml
 		context->GetConfig()->SetActions(actionsConfig);
 
 		auto isLastActionSet = (context->getLastActionSetInternalId() == actionSet->GetInternalId());
-		auto isShowCardInAction = context->getIsShowCardInAction();
-		auto isRemoveBottomMargin = (!isShowCardInAction && isLastActionSet);
-		AddActions(outerContainer, actionSet->GetActions(), context, isRemoveBottomMargin);
+		auto isShowCardInAction = context->isShowCardInAction();
+		auto removeBottomMargin = (!isShowCardInAction && isLastActionSet);
+		AddActions(outerContainer, actionSet->GetActions(), context, removeBottomMargin);
 
 		actionsConfig.actionAlignment = oldActionAlignment;
 		context->GetConfig()->SetActions(actionsConfig);
@@ -3251,8 +3249,14 @@ namespace RendererQml
 		return DummyTag;
 	}
 
-	void AdaptiveCardQmlRenderer::CheckLastBodyElementIsShowCard(std::shared_ptr<AdaptiveCards::BaseCardElement> cardElement, std::shared_ptr<AdaptiveRenderContext> context)
+	void AdaptiveCardQmlRenderer::ValidateLastBodyElementIsShowCard(const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& bodyElements, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+		if (bodyElements.empty())
+		{
+			return;
+		}
+		auto cardElement = bodyElements.back();
+
 		auto cardElementType = cardElement->GetElementType();
 
 		if (cardElementType == AdaptiveSharedNamespace::CardElementType::ActionSet)
@@ -3272,7 +3276,7 @@ namespace RendererQml
 		}
 	}
 
-	void AdaptiveCardQmlRenderer::CheckShowCardInActions(const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context)
+	void AdaptiveCardQmlRenderer::ValidateShowCardInActions(const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		for (const auto& action : actions)
 		{
@@ -3290,7 +3294,7 @@ namespace RendererQml
 
 		for (auto id : showCardsList)
 		{
-			value.append(Formatter() << "(" << id << ".visible && " << id << ".isRemoveBottomMargin) || ");
+			value.append(Formatter() << "(" << id << ".visible && " << id << ".removeBottomMargin) || ");
 		}
 
 		if (value == "")
