@@ -996,7 +996,7 @@ namespace RendererQml
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         backgroundTag->Property("color", backgroundColor);
-        backgroundTag->Property("border.color", "'grey'");
+        backgroundTag->Property("border.color", "inputElementsBorderColor");
         backgroundTag->Property("border.width", "1");
 		uiComboBox->Property("background", backgroundTag->ToString());
 
@@ -1075,7 +1075,7 @@ namespace RendererQml
 		auto popupBackgroundTag = std::make_shared<QmlTag>("Rectangle");
 		popupBackgroundTag->Property("anchors.fill", "parent");
 		popupBackgroundTag->Property("color", backgroundColor);
-		popupBackgroundTag->Property("border.color", "'grey'");
+		popupBackgroundTag->Property("border.color", "inputElementsBorderColor");
 
 		auto popupTag = std::make_shared<QmlTag>("Popup");
 		popupTag->Property("y", Formatter() << choiceset.id << ".height-1");
