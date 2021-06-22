@@ -957,9 +957,12 @@ namespace RendererQml
 		const auto fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
 		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
 		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
-		const auto defaultSpacing = context->GetConfig()->GetSpacing().smallSpacing;
 
-		int dropDownHeight = 250;
+		//TODO: Make Padding uniform across all input elements
+		//Padding for top, bottom and right
+		const auto padding = context->GetConfig()->GetSpacing().smallSpacing;
+		const auto leftPadding = 10;
+		const int dropDownHeight = 250;
 
 		uiComboBox->Property("id",choiceset.id);
 		uiComboBox->Property("textRole", "'text'");
@@ -983,7 +986,6 @@ namespace RendererQml
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
-        //TODO: Add hover effect
         backgroundTag->Property("color", backgroundColor);
         backgroundTag->Property("border.color", "'grey'");
         backgroundTag->Property("border.width", "1");
@@ -1008,8 +1010,9 @@ namespace RendererQml
 		auto uiItemDelegate = std::make_shared<QmlTag>("ItemDelegate");
 		uiItemDelegate->Property("id", itemDelegateId);
 		uiItemDelegate->Property("width", "parent.width");
-		uiItemDelegate->Property("verticalPadding", std::to_string(defaultSpacing));
-		uiItemDelegate->Property("horizontalPadding", std::to_string(defaultSpacing));
+		uiItemDelegate->Property("verticalPadding", std::to_string(padding));
+		uiItemDelegate->Property("horizontalPadding", std::to_string(padding));
+		uiItemDelegate->Property("leftPadding", std::to_string(leftPadding));
 		uiItemDelegate->Property("highlighted", "ListView.isCurrentItem");
 
         auto backgroundTagDelegate = std::make_shared<QmlTag>("Rectangle");
@@ -1036,7 +1039,8 @@ namespace RendererQml
 		uiContentItem_Text->Property("text", "parent.displayText");
 		uiContentItem_Text->Property("font.pixelSize", std::to_string(fontSize));
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
-		uiContentItem_Text->Property("padding", std::to_string(defaultSpacing));
+		uiContentItem_Text->Property("padding", std::to_string(padding));
+		uiContentItem_Text->Property("leftPadding", std::to_string(leftPadding));
 		uiContentItem_Text->Property("elide", "Text.ElideRight");
 		uiContentItem_Text->Property("color", textColor);
 
