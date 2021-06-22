@@ -963,6 +963,7 @@ namespace RendererQml
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComboBox(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto uiComboBox = std::make_shared<QmlTag>("ComboBox");
+		const auto fontFamily = context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default);
 		const auto fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
 		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
 		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
@@ -1031,6 +1032,7 @@ namespace RendererQml
 
 		auto uiItemDelegate_Text = std::make_shared<QmlTag>("Text");
 		uiItemDelegate_Text->Property("text", "modelData.text");
+		uiItemDelegate_Text->Property("font.family", fontFamily, true);
 		uiItemDelegate_Text->Property("font.pixelSize", std::to_string(fontSize));
 		uiItemDelegate_Text->Property("verticalAlignment", "Text.AlignVCenter");
 		uiItemDelegate_Text->Property("color", Formatter() << itemDelegateId << ".highlighted?" << "'white' : " << textColor);
@@ -1046,6 +1048,7 @@ namespace RendererQml
 
 		auto uiContentItem_Text = std::make_shared<QmlTag>("Text");
 		uiContentItem_Text->Property("text", "parent.displayText");
+		uiItemDelegate_Text->Property("font.family", fontFamily, true);
 		uiContentItem_Text->Property("font.pixelSize", std::to_string(fontSize));
 		uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
 		uiContentItem_Text->Property("padding", std::to_string(padding));
