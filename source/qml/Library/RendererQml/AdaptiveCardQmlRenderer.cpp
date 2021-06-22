@@ -60,7 +60,7 @@ namespace RendererQml
         (*GetElementRenderers()).Set<AdaptiveCards::SubmitAction>(AdaptiveCardQmlRenderer::AdaptiveActionRender);
     }
 
-    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context)
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context, bool isChildCard)
     {
         context->setDefaultIdName("defaultId");
 		int margin = context->GetConfig()->GetSpacing().paddingSpacing;
@@ -74,11 +74,13 @@ namespace RendererQml
 		context->setCardRootElement(uiCard);
 		uiCard->Property("readonly property int margins", std::to_string(margin));
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
-        uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
+		//1px extra height to accomodate the border of a showCard if present at the bottom
+        uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight+1");
 		uiCard->Property("Layout.fillWidth", "true");
 		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        uiCard->Property("color", "bgColor");
-        uiCard->Property("border.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+		uiCard->Property("readonly property string inputElementsBorderColor", "'#CCCCCC'");
+		uiCard->Property("color", "bgColor");
+		uiCard->Property("border.color", isChildCard? " bgColor" : "'#B2B2B2'");
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
 		if (hasBackgroundImage)
@@ -102,7 +104,7 @@ namespace RendererQml
 		rectangle->Property("id", "adaptiveCardRectangle");
 		rectangle->Property("color", "'transparent'");
 		rectangle->Property("Layout.topMargin", "margins");
-		rectangle->Property("Layout.bottomMargin", "margins");
+		rectangle->Property("Layout.bottomMargin", "removeBottomMargin? 0 : margins");
 		rectangle->Property("Layout.leftMargin", "margins");
 		rectangle->Property("Layout.rightMargin", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
@@ -118,9 +120,16 @@ namespace RendererQml
         rectangle->Property("Layout.preferredHeight", "bodyLayout.height");
         rectangle->AddChild(bodyLayout);
 
-        AddContainerElements(bodyLayout, card->GetBody(), context);
-        AddActions(bodyLayout, card->GetActions(), context);
+		ValidateLastBodyElementIsShowCard(card->GetBody(), context);
+		
+		ValidateShowCardInActions(card->GetActions(), context);
+		AddContainerElements(bodyLayout, card->GetBody(), context);
+		AddActions(bodyLayout, card->GetActions(), context);
         addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context, hasBackgroundImage);
+
+		auto showCardsList = context->getShowCardsLoaderIdsList();
+		auto removeBottomMarginValue = RemoveBottomMarginValue(showCardsList);
+		rectangle->Property("property bool removeBottomMargin", removeBottomMarginValue);
 
 		//Remove Top and Bottom Paddin if bleed for first and last element is true
 		rectangle = applyVerticalBleed(bodyLayout, rectangle);
@@ -151,7 +160,7 @@ namespace RendererQml
         addShowCardLoaderComponents(context);
         addTextRunSelectActions(context);
 
-        // Add height and width calculation function
+		// Add height and width calculation function
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchWidth());
         uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
@@ -183,7 +192,7 @@ namespace RendererQml
 		}
     }
 
-    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context)
+    void AdaptiveCardQmlRenderer::AddActions(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context, bool removeBottomMargin)
     {
         if (context->GetConfig()->GetSupportsInteractivity())
         {
@@ -262,10 +271,15 @@ namespace RendererQml
 
 						auto uiLoader = std::make_shared<QmlTag>("Loader");
                         uiLoader->Property("id", loaderId);
-                        uiLoader->Property("x", "-margins");
+						//1px shift to avoid child card displaying over parent card's border
+                        uiLoader->Property("x", "-margins + 1");
                         uiLoader->Property("sourceComponent", componentId);
                         uiLoader->Property("visible", "false");
-						uiLoader->Property("width", Formatter() << context->getCardRootId() << ".width");
+						//2 px reduction in width to avoid child card displaying over parent card's border
+						uiLoader->Property("width", Formatter() << uiContainer->GetProperty("id") << ".width + 2*margins - 2");
+						uiLoader->Property("readonly property bool removeBottomMargin", removeBottomMargin ? "true" : "false");
+
+						context->addToShowCardsLoaderIdsList(loaderId);
                         uiContainer->AddChild(uiLoader);
                     }
 
@@ -407,10 +421,6 @@ namespace RendererQml
 		uiTextBlock->Property("clip", "true");
 		uiTextBlock->Property("textFormat", "Text.MarkdownText");
 
-		std::string text = TextUtils::ApplyTextFunctions(textBlock->GetText(), context->GetLang());
-		text = Utils::HandleEscapeSequences(text);
-		uiTextBlock->Property("text", text, true);
-
 		uiTextBlock->Property("horizontalAlignment", Utils::GetHorizontalAlignment(horizontalAlignment));
 
 		std::string color = context->GetColor(textBlock->GetTextColor(), textBlock->GetIsSubtle(), false);
@@ -448,6 +458,27 @@ namespace RendererQml
             uiTextBlock->Property("font.family", fontFamily, true);
         }
 
+		std::string text = TextUtils::ApplyTextFunctions(textBlock->GetText(), context->GetLang());
+		text = Utils::HandleEscapeSequences(text);
+
+		const std::string linkColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
+
+		//CSS Property for underline, striketrhough,etc
+		const std::string textDecoration = "none";
+		text = Utils::MarkdownUrlToHtml(text, linkColor, textDecoration);
+		
+		uiTextBlock->Property("text", text, true);
+
+		//MouseArea to Change Cursor on Hovering Links
+		auto MouseAreaTag = GetTextBlockMouseArea();
+		uiTextBlock->AddChild(MouseAreaTag);
+
+		std::string onLinkActivatedFunction = Formatter() << "{"
+			<< "adaptiveCard.buttonClicked(\"\", \"Action.OpenUrl\", link);"
+			<< "console.log(link);"
+			<< "}";
+		uiTextBlock->Property("onLinkActivated", onLinkActivatedFunction);
+
 		return uiTextBlock;
 
 	}
@@ -475,6 +506,7 @@ namespace RendererQml
 			uiTextInput->Property("selectedTextColor", "'white'");
 			uiTextInput->Property("padding", "10");
             uiTextInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+			uiTextInput->Property("leftPadding", "10");
 
 			if (input->GetMaxLength() > 0)
 			{
@@ -505,7 +537,7 @@ namespace RendererQml
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
 		backgroundTag->Property("border.width", "1");
 		uiTextInput->Property("background", backgroundTag->ToString());
 
@@ -616,7 +648,7 @@ namespace RendererQml
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
-		backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : 'grey'");
+		backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : inputElementsBorderColor");
 
 		auto contentItemTag = std::make_shared<QmlTag>("TextField");
 		contentItemTag->Property("id", inputId + "_contentItem");
@@ -639,42 +671,33 @@ namespace RendererQml
 		contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
         contentItemTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-		auto upIndicatorTag = std::make_shared<QmlTag>("Rectangle");
+		//Dummy indicator element to remove the default indicators of SpinBox
+		auto upDummyTag = getDummyElementforNumberInput(true);
+
+		auto upIndicatorTag = GetIconTag(context);
+		upIndicatorTag->RemoveProperty("anchors.bottom");
 		upIndicatorTag->Property("width", "20");
 		upIndicatorTag->Property("height", "parent.height/2");
-		upIndicatorTag->Property("x", inputId + ".mirrored ? 0 : parent.width - width");
-		upIndicatorTag->Property("radius", "5");
-		upIndicatorTag->Property("color", inputId + ".up.pressed ? '#08000000' : 'transparent'");
+		upIndicatorTag->Property("horizontalPadding", "2");
+		upIndicatorTag->Property("verticalPadding", "2");
+		upIndicatorTag->Property("icon.width", "12");
+		upIndicatorTag->Property("icon.height", "12");
+		upIndicatorTag->Property("icon.source", RendererQml::arrow_up_12, true);
+		upIndicatorTag->Property("onClicked", Formatter() << inputId << ".increase();");
+		
+		//Dummy indicator element to remove the default indicators of SpinBox
+		auto downDummyTag = getDummyElementforNumberInput(false);
 
-		auto upIndicatorImage = std::make_shared<QmlTag>("Text");
-        upIndicatorImage->Property("text", "<div>&#708;</div>", true);
-		upIndicatorImage->Property("textFormat", "Text.RichText");
-		upIndicatorImage->Property("font.pixelSize", Formatter() << inputId << ".font.pixelSize");
-        upIndicatorImage->Property("anchors.fill", "parent");
-        upIndicatorImage->Property("fontSizeMode", "Text.Fit");
-        upIndicatorImage->Property("horizontalAlignment", "Text.AlignHCenter");
-        upIndicatorImage->Property("verticalAlignment", "Text.AlignVCenter");
-        upIndicatorImage->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-		upIndicatorTag->AddChild(upIndicatorImage);
-
-		auto downIndicatorTag = std::make_shared<QmlTag>("Rectangle");
+		auto downIndicatorTag = GetIconTag(context);
+		downIndicatorTag->RemoveProperty("anchors.top");
 		downIndicatorTag->Property("width", "20");
 		downIndicatorTag->Property("height", "parent.height/2");
-		downIndicatorTag->Property("x", inputId + ".mirrored ? 0 : parent.width - width");
-		downIndicatorTag->Property("y", "parent.height/2");
-		downIndicatorTag->Property("radius", "5");
-		downIndicatorTag->Property("color", inputId + ".down.pressed ? '#08000000' : 'transparent'");
-
-        auto downIndicatorImage = std::make_shared<QmlTag>("Text");
-        downIndicatorImage->Property("text", "<div>&#709;</div>", true);
-        downIndicatorImage->Property("textFormat", "Text.RichText");
-        downIndicatorImage->Property("font.pixelSize", Formatter() << inputId << ".font.pixelSize");
-        downIndicatorImage->Property("anchors.fill", "parent");
-        downIndicatorImage->Property("fontSizeMode", "Text.Fit");
-        downIndicatorImage->Property("horizontalAlignment", "Text.AlignHCenter");
-        downIndicatorImage->Property("verticalAlignment", "Text.AlignVCenter");
-        downIndicatorImage->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-        downIndicatorTag->AddChild(downIndicatorImage);
+		downIndicatorTag->Property("horizontalPadding", "2");
+		downIndicatorTag->Property("verticalPadding", "2");
+		downIndicatorTag->Property("icon.width", "12");
+		downIndicatorTag->Property("icon.height", "12");
+		downIndicatorTag->Property("icon.source", RendererQml::arrow_down_12, true);
+		downIndicatorTag->Property("onClicked", Formatter() << inputId << ".decrease();");
 
 		auto doubleValidatorTag = std::make_shared<QmlTag>("DoubleValidator");
 
@@ -741,8 +764,11 @@ namespace RendererQml
 
 		uiNumberInput->Property("contentItem", contentItemTag->ToString());
 		uiNumberInput->Property("background", backgroundTag->ToString());
-		uiNumberInput->Property("up.indicator", upIndicatorTag->ToString());
-		uiNumberInput->Property("down.indicator", downIndicatorTag->ToString());
+		uiNumberInput->Property("up.indicator", upDummyTag->ToString());
+		uiNumberInput->Property("down.indicator", downDummyTag->ToString());
+
+		uiNumberInput->AddChild(upIndicatorTag);
+		uiNumberInput->AddChild(downIndicatorTag);
 
         context->addToInputElementList(origionalElementId, (inputId + ".value"));
 
@@ -793,6 +819,10 @@ namespace RendererQml
 		}
 		uiTextBlock->Property("text", textrun_all, true);
 
+		//MouseArea to Change Cursor on Hovering Links
+		auto MouseAreaTag = GetTextBlockMouseArea();
+		uiTextBlock->AddChild(MouseAreaTag);
+
         context->addToTextRunSelectActionList(uiTextBlock, selectActionList);
 
 		return uiTextBlock;
@@ -835,7 +865,12 @@ namespace RendererQml
 
         if (textRun->GetSelectAction() != nullptr)
         {
-            uiTextRun.append("<a href='" + selectaction + "'>");
+			const std::string linkColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
+			//CSS Property for underline, striketrhough,etc
+			std::string textDecoration = "none";
+			const std::string styleString = Formatter() << "style=\\\"color:" << linkColor << ";" << "text-decoration:" << textDecoration << ";\\\"";
+
+            uiTextRun.append(Formatter() << "<a href='" << selectaction << "'" << styleString << " >");
             std::string text = TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang());
             text = Utils::HandleEscapeSequences(text);
             uiTextRun.append(text);
@@ -1159,8 +1194,10 @@ namespace RendererQml
 		{
 			uiOuterRectangle->Property("radius", "3");
 		}
-		uiOuterRectangle->Property("border.color", checkbox.id + ".checked ? '#0075FF' : '767676'");
-		uiOuterRectangle->Property("color", checkbox.id + ".checked ? '#0075FF' : '#ffffff'");
+
+		auto highlightColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
+		uiOuterRectangle->Property("border.color", Formatter() << checkbox.id << ".checked ? " << highlightColor << ": '#b0b0b0'");
+		uiOuterRectangle->Property("color", Formatter() << checkbox.id << ".checked ? " << highlightColor << " : '#ffffff'");
 
 		std::shared_ptr<QmlTag> uiInnerSegment;
 
@@ -1245,7 +1282,7 @@ namespace RendererQml
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
         backgroundTag->Property("border.width", "1");
         uiDateInput->Property("background", backgroundTag->ToString());
 
@@ -1644,7 +1681,7 @@ namespace RendererQml
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : 'grey'");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
 		backgroundTag->Property("border.width", "1");
 		uiTimeInput->Property("background", backgroundTag->ToString());
 
@@ -2238,6 +2275,13 @@ namespace RendererQml
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ActionSetRender(std::shared_ptr<AdaptiveCards::ActionSet> actionSet, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto outerContainer = std::make_shared<QmlTag>("Column");
+
+		if (actionSet->GetId().empty())
+		{
+			actionSet->SetId(Formatter() << "actionSet_auto_" << std::to_string(context->GetActionSetCounter()));
+		}
+
+		outerContainer->Property("id", actionSet->GetId());
 		outerContainer->Property("width", "parent.width");
 
 		if (!actionSet->GetIsVisible())
@@ -2253,7 +2297,10 @@ namespace RendererQml
 		actionsConfig.actionAlignment = (AdaptiveCards::ActionAlignment) actionSet->GetHorizontalAlignment();
 		context->GetConfig()->SetActions(actionsConfig);
 
-		AddActions(outerContainer, actionSet->GetActions(), context);
+		auto isLastActionSet = (context->getLastActionSetInternalId() == actionSet->GetInternalId());
+		auto isShowCardInAction = context->isShowCardInAction();
+		auto removeBottomMargin = (!isShowCardInAction && isLastActionSet);
+		AddActions(outerContainer, actionSet->GetActions(), context, removeBottomMargin);
 
 		actionsConfig.actionAlignment = oldActionAlignment;
 		context->GetConfig()->SetActions(actionsConfig);
@@ -2282,7 +2329,8 @@ namespace RendererQml
 
             //Add button background
             auto bgRectangle = std::make_shared<QmlTag>("Rectangle");
-            bgRectangle->Property("id", Formatter() << buttonId << "_bg");
+			const std::string bgRectangleId = Formatter() << buttonId << "_bg";
+            bgRectangle->Property("id", bgRectangleId);
             bgRectangle->Property("anchors.fill", "parent");
             bgRectangle->Property("radius", Formatter() << buttonId << ".height / 2");
             bgRectangle->Property("border.width", "1");
@@ -2330,7 +2378,9 @@ namespace RendererQml
             auto textLayout = std::make_shared<QmlTag>("Row");
             textLayout->Property("spacing", "5");
 
+			const std::string contentTextId = buttonId + "_contentText";
             auto contentText = std::make_shared<QmlTag>("Text");
+			contentText->Property("id", contentTextId);
             if (!action->GetTitle().empty())
             {
                 contentText->Property("text", action->GetTitle(), true);
@@ -2407,20 +2457,27 @@ namespace RendererQml
 
             if (isShowCardButton)
             {
-                auto showCardIconItem = std::make_shared<QmlTag>("Item");
-                showCardIconItem->Property("height", Formatter() << fontSize);
-                showCardIconItem->Property("width", Formatter() << fontSize);
+                auto showCardIconBackground = std::make_shared<QmlTag>("Rectangle");
+				showCardIconBackground->Property("anchors.fill", "parent");
+				showCardIconBackground->Property("color", Formatter() << bgRectangleId << ".color");
 
-                const std::string iconId = buttonId + "_icon";
-                auto showCardIcon = std::make_shared<QmlTag>("Image");
+                const std::string iconId = Formatter() << buttonId << "_icon";
+				auto showCardIcon = GetIconTag(context);
                 showCardIcon->Property("id", iconId);
-                showCardIcon->Property("anchors.fill", "parent");
-                showCardIcon->Property("fillMode", "Image.PreserveAspectFit");
-                showCardIcon->Property("mipmap", "true");
-                showCardIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
-                showCardIcon->Property("source", RendererQml::arrow_down_12, true);
-                showCardIconItem->AddChild(showCardIcon);
-                textLayout->AddChild(showCardIconItem);
+				showCardIcon->RemoveProperty("anchors.right");
+                showCardIcon->RemoveProperty("anchors.top");
+				showCardIcon->RemoveProperty("anchors.bottom");
+				showCardIcon->Property("width", Formatter() << contentTextId << ".font.pixelSize");
+				showCardIcon->Property("height", Formatter() << contentTextId << ".font.pixelSize");
+				showCardIcon->Property("anchors.verticalCenter", Formatter() << contentTextId << ".verticalCenter");
+				showCardIcon->Property("horizontalPadding", "0");
+				showCardIcon->Property("verticalPadding", "0");
+				showCardIcon->Property("icon.color", Formatter() << contentTextId << ".color");
+				showCardIcon->Property("icon.width", "12");
+				showCardIcon->Property("icon.height", "12");
+				showCardIcon->Property("icon.source", RendererQml::arrow_down_12, true);
+				showCardIcon->Property("background", showCardIconBackground->ToString());
+                textLayout->AddChild(showCardIcon);
             }
 
             contentLayout->AddChild(textLayout);
@@ -2495,7 +2552,7 @@ namespace RendererQml
                 subContext->addToInputElementList(inputElement.first, inputElement.second);
             }
 
-            auto uiCard = subContext->Render(componentElement.second->GetCard(), &AdaptiveCardRender);
+            auto uiCard = subContext->Render(componentElement.second->GetCard(), &AdaptiveCardRender, true);
             if (uiCard != nullptr)
             {
                 //TODO: Remove these hardcoded colors once config settings are finalised
@@ -2539,8 +2596,7 @@ namespace RendererQml
 
 		function << "\n" << buttonElement->GetId() << ".showCard = !" << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
-		function << "\n" << buttonElement->GetId() << "_icon.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
-
+		function << "\n" << buttonElement->GetId() << "_icon.icon.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
 		return function.str();
 	}
 
@@ -3160,5 +3216,96 @@ namespace RendererQml
         iconTag->Property("icon.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
         return iconTag;
     }
-}
 
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetTextBlockMouseArea()
+	{
+		auto MouseAreaTag = std::make_shared<QmlTag>("MouseArea");
+		MouseAreaTag->Property("anchors.fill", "parent");
+		MouseAreaTag->Property("cursorShape", "parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor");
+		MouseAreaTag->Property("acceptedButtons", "Qt.NoButton");
+
+		return MouseAreaTag;
+	}
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::getDummyElementforNumberInput(bool isTop)
+	{
+		auto DummyTag = std::make_shared<QmlTag>("Rectangle");
+		DummyTag->Property("width", "2");
+		DummyTag->Property("height", "2");
+		DummyTag->Property("anchors.right", "parent.right");
+
+		if (isTop)
+		{
+			DummyTag->Property("anchors.top", "parent.top");
+		}
+		else
+		{
+			DummyTag->Property("anchors.bottom", "parent.bottom");
+		}
+		DummyTag->Property("anchors.margins", "5");
+		DummyTag->Property("color", "'transparent'");
+		DummyTag->Property("z", "-1");
+
+		return DummyTag;
+	}
+
+	void AdaptiveCardQmlRenderer::ValidateLastBodyElementIsShowCard(const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& bodyElements, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		if (bodyElements.empty())
+		{
+			return;
+		}
+		auto cardElement = bodyElements.back();
+
+		auto cardElementType = cardElement->GetElementType();
+
+		if (cardElementType == AdaptiveSharedNamespace::CardElementType::ActionSet)
+		{
+			auto ActionSetPtr = std::dynamic_pointer_cast<AdaptiveCards::ActionSet> (cardElement);
+			auto listOfActions = ActionSetPtr->GetActions();
+
+			for (const auto& action : listOfActions)
+			{
+				if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action))
+				{
+					context->setLastActionSetInternalId(ActionSetPtr->GetInternalId());
+					context->setIsShowCardLastBodyElement(true);
+					return;
+				}
+			}
+		}
+	}
+
+	void AdaptiveCardQmlRenderer::ValidateShowCardInActions(const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		for (const auto& action : actions)
+		{
+			if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action))
+			{
+				context->setIsShowCardInAction(true);
+				return;
+			}
+		}
+	}
+
+	const std::string AdaptiveCardQmlRenderer::RemoveBottomMarginValue(std::vector<std::string> showCardsList)
+	{
+		std::string value = "";
+
+		for (auto id : showCardsList)
+		{
+			value.append(Formatter() << "(" << id << ".visible && " << id << ".removeBottomMargin) || ");
+		}
+
+		if (value == "")
+		{
+			value = "false";
+		}
+		else
+		{
+			value.erase(value.length() - 3);
+		}
+
+		return value;
+	}
+}
