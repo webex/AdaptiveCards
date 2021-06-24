@@ -1757,6 +1757,8 @@ namespace RendererQml
 		//Popup that contains the hours and min ListViews
 		auto PopupBgrTag = std::make_shared<QmlTag>("Rectangle");
 		PopupBgrTag->Property("anchors.fill", "parent");
+
+		//TODO: Consult with UX for border color of the popup
 		PopupBgrTag->Property("border.color", "'grey'");
 
 		auto timePopupTag = std::make_shared<QmlTag>("Popup");
