@@ -1334,8 +1334,7 @@ namespace RendererQml
         iconTag->Property("id", iconId);
         iconTag->Property("icon.source", RendererQml::calendar_icon_18, true);
         iconTag->Property("onClicked", onClicked_value);
-        //uiTextField->AddChild(iconTag);
-
+        
         auto calendarTag = std::make_shared<QmlTag>("Calendar");
         calendarTag->AddImports("import QtQuick.Controls 1.4");
         calendarTag->AddImports("import QtQuick 2.15");
@@ -1373,7 +1372,6 @@ namespace RendererQml
 
         auto calendarBoxTag = std::make_shared<QmlTag>("Popup");
         calendarBoxTag->Property("id", calendar_box_id);
-        //calendarBoxTag->Property("visible", "false");
         calendarBoxTag->Property("y", Formatter() << uiTextFieldId << ".height-1");
         calendarBoxTag->Property("width", "300");
         calendarBoxTag->Property("height", "300");
@@ -1755,8 +1753,7 @@ namespace RendererQml
         iconTag->Property("id", iconId);
         iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
         iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
-        //uiTimeInput->AddChild(iconTag);
-
+        
 		//Popup that contains the hours and min ListViews
 		auto PopupBgrTag = std::make_shared<QmlTag>("Rectangle");
 		PopupBgrTag->Property("anchors.fill", "parent");
