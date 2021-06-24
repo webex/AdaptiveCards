@@ -1690,6 +1690,9 @@ namespace RendererQml
 
         input->SetId(context->ConvertToValidId(input->GetId()));
 
+		auto uiTimeComboBox = std::make_shared<QmlTag>("ComboBox");
+		uiTimeComboBox->Property("width", "parent.width");
+
 		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
 		const std::string id = input->GetId();
         const std::string value = input->GetValue();
@@ -1731,10 +1734,10 @@ namespace RendererQml
 		std::string listViewHours_id = id + "_hours";
 		std::string listViewMin_id = id + "_min";
 		std::string listViewtt_id = id + "_tt";
-		std::string timeBox_id = id + "_timeBox";
+		std::string timePopup_id = id + "_timeBox";
 
 		uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus===true) inputMask=\"xx:xx;-\";"
-			<< " if(focus===false){ z=0;" << "if(text===\":\") { inputMask=\"\" }" << "if(" << timeBox_id << ".visible===true)" << timeBox_id << ".visible=false ;" << "}}");
+			<< " if(focus===false){ z=0;" << "if(text===\":\") { inputMask=\"\" }" << "}}");
 
 		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << "if(getText(0,2) === '--' || getText(3,5) === '--'){" << id << ".selectedTime ='';} else{" << id << ".selectedTime =" << id << ".text;}}");
 
@@ -1751,19 +1754,25 @@ namespace RendererQml
         auto iconTag = GetIconTag(context);
         iconTag->Property("id", iconId);
         iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
-        iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n" << "}");
-        uiTimeInput->AddChild(iconTag);
+        iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
+        //uiTimeInput->AddChild(iconTag);
 
-		//Rectangle that contains the hours and min ListViews
+		//Popup that contains the hours and min ListViews
+		auto PopupBgrTag = std::make_shared<QmlTag>("Rectangle");
+		PopupBgrTag->Property("anchors.fill", "parent");
+		PopupBgrTag->Property("border.color", "'grey'");
+
+		auto timePopupTag = std::make_shared<QmlTag>("Popup");
+		timePopupTag->Property("id", timePopup_id);
+		timePopupTag->Property("width", "105");
+		timePopupTag->Property("height", "200");
+		timePopupTag->Property("y", Formatter() << id << ".height - 1");
+		timePopupTag->Property("background", PopupBgrTag->ToString());
+
 		auto timeBoxTag = std::make_shared<QmlTag>("Rectangle");
-		timeBoxTag->Property("id", timeBox_id);
-		timeBoxTag->Property("anchors.topMargin", "1");
-		timeBoxTag->Property("anchors.left", "parent.left");
-		timeBoxTag->Property("anchors.top", "parent.bottom");
-		timeBoxTag->Property("width", "105");
-		timeBoxTag->Property("height", "200");
-		timeBoxTag->Property("visible", "false");
-
+		timeBoxTag->Property("anchors.fill", "parent");
+		timeBoxTag->Property("anchors.margins", "1");
+		
 		//ListView for DropDown Selection
 		std::map<std::string, std::map<std::string, std::string>> ListViewHoursProperties;
 		std::map<std::string, std::map<std::string, std::string>> ListViewMinProperties;
@@ -1772,13 +1781,13 @@ namespace RendererQml
 
 		if (is12hour == true)
 		{
-			timeBoxTag->Property("width", "155");
+			timePopupTag->Property("width", "155");
 			uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01]-|0\\d|1[0-2]):(--|[0-5]-|[0-5]\\d)\\s(--|A-|AM|P-|PM)$/}");
 			uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus===true) inputMask=\"xx:xx >xx;-\";" <<
-				" if(focus===false){ z=0;" << "if(text===\": \" ) { inputMask=\"\" }" << "if(" << timeBox_id << ".visible===true)" << timeBox_id << ".visible=false ;" << "}}");
+				" if(focus===false){ z=0;" << "if(text===\": \" ) { inputMask=\"\" }" << "}}");
 			uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2))-1;" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));"
 				<< "var tt_index=3;var hh = getText(0,2);" << "switch(getText(6,8)){ case 'PM':tt_index = 1; if(parseInt(getText(0,2))!==12){hh=parseInt(getText(0,2))+12;} break;case 'AM':tt_index = 0; if(parseInt(getText(0,2))===12){hh=parseInt(getText(0,2))-12;} break;}" << listViewtt_id << ".currentIndex=tt_index;" << "if(getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--'){" << id <<".selectedTime ='';} else{" << id <<".selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);}}");
-			iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timeBox_id << ".visible=!" << timeBox_id << ".visible;\n" << "parent.z=" << timeBox_id << ".visible?1:0;\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2))-1;\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n"
+			iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(parent.getText(0,2))-1;\n" << listViewMin_id << ".currentIndex=parseInt(parent.getText(3,5));\n"
 				<< "var tt_index=3;" << "switch(parent.getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}" << listViewtt_id << ".currentIndex=tt_index;" << "}");
 
 
@@ -1811,12 +1820,14 @@ namespace RendererQml
 
 		timeBoxTag->AddChild(ListViewHoursTag);
 		timeBoxTag->AddChild(ListViewMinTag);
-		uiTimeInput->AddChild(timeBoxTag);
-
+		timePopupTag->Property("contentItem", timeBoxTag->ToString());
+		uiTimeComboBox->Property("indicator", iconTag->ToString());
+		uiTimeComboBox->Property("popup", timePopupTag->ToString());
+		uiTimeComboBox->Property("background", uiTimeInput->ToString());
+		
         context->addToInputElementList(origionalElementId, (uiTimeInput->GetId() + ".selectedTime"));
 
-		return uiTimeInput;
-
+		return uiTimeComboBox;
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ListViewTagforTimeInput(const std::string& parent_id, const std::string& listView_id, std::map<std::string, std::map<std::string, std::string>>& properties)
