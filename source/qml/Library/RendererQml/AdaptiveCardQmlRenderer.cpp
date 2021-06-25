@@ -1101,11 +1101,14 @@ namespace RendererQml
 	std::string AdaptiveCardQmlRenderer::GetModel(std::vector<Checkbox>& Choices)
 	{
 		std::ostringstream model;
+		std::string choice_Text;
+		std::string choice_Value;
+
 		model << "[";
 		for (const auto& choice : Choices)
 		{
-			std::string choice_Text = choice.text;
-			std::string choice_Value = choice.value;
+			choice_Text = choice.text;
+			choice_Value = choice.value;
 			model << "{ value: '" << Utils::HandleEscapeSequences(choice_Value) << "', text: '" << Utils::HandleEscapeSequences(choice_Text) << "'},\n";
 		}
 		model << "]";
