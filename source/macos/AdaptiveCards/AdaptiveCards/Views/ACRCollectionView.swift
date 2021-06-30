@@ -2,19 +2,10 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRCollectionView: NSScrollView {
-    var dataSource: NSCollectionViewDataSource? {
-        get { return collectionView.dataSource }
-        set { collectionView.dataSource = newValue }
-    }
-    
-    var delegate: NSCollectionViewDelegate? {
-        get { return collectionView.delegate }
-        set { collectionView.delegate = newValue }
-    }
-    
     private let imageSet: ACSImageSet
     private let imageSize: ACSImageSize
     private let hostConfig: ACSHostConfig
+    private let imageViews: [ImageSetImageView]
     
     private var itemSize: CGSize {
         switch imageSize {
@@ -41,11 +32,16 @@ class ACRCollectionView: NSScrollView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(frame frameRect: NSRect, imageSet: ACSImageSet, hostConfig: ACSHostConfig) {
+    init(rootView: ACRView, imageSet: ACSImageSet, hostConfig: ACSHostConfig) {
         self.imageSet = imageSet
         self.hostConfig = hostConfig
         self.imageSize = imageSet.getImageSize()
-        super.init(frame: frameRect)
+        self.imageViews = imageSet.getImages().map {
+            let imageView = ImageSetImageView(imageSize: imageSet.getImageSize(), hostConfig: hostConfig)
+            rootView.registerImageHandlingView(imageView, for: $0.getUrl() ?? "")
+            return imageView
+        }
+        super.init(frame: .zero)
         
         let spacing: CGFloat = 0
         let layout = NSCollectionViewFlowLayout()
@@ -55,6 +51,8 @@ class ACRCollectionView: NSScrollView {
 
         collectionView.collectionViewLayout = layout
         collectionView.register(ACRCollectionViewItem.self, forItemWithIdentifier: ACRCollectionViewItem.identifier)
+        collectionView.dataSource = self
+        collectionView.delegate = self
         
         autoresizingMask = [.minXMargin, .minYMargin, .maxXMargin, .maxYMargin, .width, .height]
         wantsLayer = true
@@ -123,77 +121,46 @@ class ACRCollectionView: NSScrollView {
     }
 }
 
-// MARK: DataSource for CollectionView
-class ACRCollectionViewDatasource: NSObject, NSCollectionViewDataSource {
-    let imageViews: [ImageSetImageView]
-    let images: [ACSImage]
-    let hostConfig: ACSHostConfig
-    let imageSize: ACSImageSize
-    
-    init(acsImages: [ACSImage], rootView: ACRView, size: ACSImageSize, hostConfig: ACSHostConfig) {
-        self.images = acsImages
-        self.hostConfig = hostConfig
-        self.imageSize = size
-        var imageViews: [ImageSetImageView] = []
-        for image in images {
-            let imageView = ImageSetImageView()
-            imageView.hostConfig = hostConfig
-            imageView.imageSize = size
-            let url = image.getUrl() ?? ""
-            rootView.registerImageHandlingView(imageView, for: url)
-            imageViews.append(imageView)
-        }
-        self.imageViews = imageViews
-    }
-    
-    func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        guard let item = collectionView.makeItem(withIdentifier: ACRCollectionViewItem.identifier, for: indexPath) as? ACRCollectionViewItem else { return NSCollectionViewItem() }
-        
-        item.setupBounds(with: imageViews[indexPath.item])
-        return item
-    }
-    
-    func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
-    }
-    
+extension ACRCollectionView: NSCollectionViewDataSource {
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
         return 1
     }
     
+    func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+        return imageSet.getImages().count
+    }
+    
+    func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
+        guard let item = collectionView.makeItem(withIdentifier: ACRCollectionViewItem.identifier, for: indexPath) as? ACRCollectionViewItem else { return NSCollectionViewItem() }
+        item.setupBounds(with: imageViews[indexPath.item])
+        return item
+    }
+}
+
+extension ACRCollectionView: NSCollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> NSSize {
-        let resolvedSize: ACSImageSize
-        let frameWidth = collectionView.bounds.width
-        var itemSize: NSSize
-        switch imageSize {
-        case .stretch, .none:
-            resolvedSize = .medium
-        default:
-            resolvedSize = imageSize
-        }
-        itemSize = ImageUtils.getImageSizeAsCGSize(imageSize: resolvedSize, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
-        if imageSize == .auto {
-            let mediumImageSize = ImageUtils.getImageSizeAsCGSize(imageSize: .medium, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
-            let itemWidth = min(mediumImageSize.width, frameWidth)
-            itemSize = NSSize(width: itemWidth, height: itemWidth)
-        }
         return itemSize
     }
 }
 
 class ImageSetImageView: NSImageView, ImageHoldingView {
-    var imageSize: ACSImageSize = .medium
-    var hostConfig: ACSHostConfig?
+    let imageSize: ACSImageSize
+    let hostConfig: ACSHostConfig
+    
+    init(imageSize: ACSImageSize, hostConfig: ACSHostConfig) {
+        self.imageSize = imageSize.collectionItemResolvedSize
+        self.hostConfig = hostConfig
+        super.init(frame: .zero)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     func setImage(_ image: NSImage) {
-        guard let config = hostConfig else {
-            self.image = image
-            return
-        }
-        
         // If Image is smaller than cell, make image fit cell and maintain aspectRatio
         let imageRatio = ImageUtils.getAspectRatio(from: image.size)
-        var maxImageSize = ImageUtils.getImageSizeAsCGSize(imageSize: imageSize, width: 0, height: 0, with: config, explicitDimensions: false)
+        var maxImageSize = ImageUtils.getImageSizeAsCGSize(imageSize: imageSize, with: hostConfig)
         if imageRatio.height < 1 {
             maxImageSize.height *= imageRatio.height
         }
@@ -202,6 +169,11 @@ class ImageSetImageView: NSImageView, ImageHoldingView {
     }
 }
 
-extension ACRCollectionViewDatasource: NSCollectionViewDelegate { }
-
-extension ACRCollectionViewDatasource: NSCollectionViewDelegateFlowLayout { }
+extension ACSImageSize {
+    var collectionItemResolvedSize: ACSImageSize {
+        switch self {
+        case .auto, .stretch, .none: return .medium
+        default: return self
+        }
+    }
+}

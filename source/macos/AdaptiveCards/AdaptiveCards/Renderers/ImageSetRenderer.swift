@@ -15,13 +15,8 @@ class ImageSetRenderer: NSObject, BaseCardElementRendererProtocol {
             imageSize = .medium
         }
         
-        let datasource = ACRCollectionViewDatasource(acsImages: imageSet.getImages(), rootView: rootView, size: imageSize, hostConfig: hostConfig)
-        rootView.addImageSetDatasource(datasource)
-        
-        let colView = ACRCollectionView(frame: .zero, imageSet: imageSet, hostConfig: hostConfig)
+        let colView = ACRCollectionView(rootView: rootView, imageSet: imageSet, hostConfig: hostConfig)
         colView.translatesAutoresizingMaskIntoConstraints = false
-        colView.dataSource = datasource
-        colView.delegate = datasource
         return colView
     }
 }
