@@ -1337,15 +1337,7 @@ namespace RendererQml
 
 		//Clear Icon
 		const std::string clearIconId = Formatter() << input->GetId() << "_clear" << "_icon";
-		auto clearIconTag = GetIconTag(context);
-
-		clearIconTag->RemoveProperty("anchors.top");
-		clearIconTag->RemoveProperty("anchors.bottom");
-		clearIconTag->RemoveProperty("anchors.right");
-		clearIconTag->RemoveProperty("anchors.margins");
-
-		clearIconTag->Property("id", clearIconId);
-		clearIconTag->Property("icon.source", RendererQml::clear_icon_18, true);
+		auto clearIconTag = GetClearIconTag(clearIconId, context);
 
 		std::string clearIcon_visible_value = Formatter() << "(!" << uiTextFieldId << ".focus && " << uiTextFieldId << ".selectedDate !==\"\") || (" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !== " << "\"\\/\\/\")";
 		clearIconTag->Property("visible", clearIcon_visible_value);
@@ -1794,15 +1786,7 @@ namespace RendererQml
 
 		//Clear Icon
 		const std::string clearIconId = Formatter() << id << "_clear" << "_icon";
-		auto clearIconTag = GetIconTag(context);
-
-		clearIconTag->RemoveProperty("anchors.top");
-		clearIconTag->RemoveProperty("anchors.bottom");
-		clearIconTag->RemoveProperty("anchors.right");
-		clearIconTag->RemoveProperty("anchors.margins");
-
-		clearIconTag->Property("id", clearIconId);
-		clearIconTag->Property("icon.source", RendererQml::clear_icon_18, true);
+		auto clearIconTag = GetClearIconTag(clearIconId, context);
 
 		std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".selectedTime !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour? "\": \"" : "\":\"") << ")" ;
 		clearIconTag->Property("visible", clearIcon_visible_value);
@@ -3457,5 +3441,20 @@ namespace RendererQml
 		}
 
 		return value;
+	}
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetClearIconTag(const std::string& id, std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		auto clearIconTag = GetIconTag(context);
+
+		clearIconTag->RemoveProperty("anchors.top");
+		clearIconTag->RemoveProperty("anchors.bottom");
+		clearIconTag->RemoveProperty("anchors.right");
+		clearIconTag->RemoveProperty("anchors.margins");
+
+		clearIconTag->Property("id", id);
+		clearIconTag->Property("icon.source", RendererQml::clear_icon_18, true);
+
+		return clearIconTag;
 	}
 }
