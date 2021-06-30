@@ -1,11 +1,41 @@
 import AdaptiveCards_bridge
 import AppKit
 
-class ACRCollectionView: NSCollectionView {
-    let imageSet: ACSImageSet
-    let imageSize: ACSImageSize
-    let hostConfig: ACSHostConfig
-    var itemSize: CGSize
+class ACRCollectionView: NSScrollView {
+    var dataSource: NSCollectionViewDataSource? {
+        get { return collectionView.dataSource }
+        set { collectionView.dataSource = newValue }
+    }
+    
+    var delegate: NSCollectionViewDelegate? {
+        get { return collectionView.delegate }
+        set { collectionView.delegate = newValue }
+    }
+    
+    private let imageSet: ACSImageSet
+    private let imageSize: ACSImageSize
+    private let hostConfig: ACSHostConfig
+    
+    private var itemSize: CGSize {
+        switch imageSize {
+        case .stretch, .none:
+            return ImageUtils.getImageSizeAsCGSize(imageSize: .medium, with: hostConfig)
+        case .auto:
+            let mediumSize = ImageUtils.getImageSizeAsCGSize(imageSize: .medium, with: hostConfig)
+            let itemWidth = min(mediumSize.width, bounds.width)
+            return CGSize(width: itemWidth, height: itemWidth)
+        default:
+            return ImageUtils.getImageSizeAsCGSize(imageSize: imageSize, with: hostConfig)
+        }
+    }
+    
+    private lazy var collectionView: NSCollectionView = {
+        let view = NSCollectionView()
+        view.autoresizingMask = [.minXMargin, .minYMargin, .maxXMargin, .maxYMargin, .width, .height]
+        view.itemPrototype = nil
+        view.backgroundColors = [.clear]
+        return view
+    }()
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -14,14 +44,7 @@ class ACRCollectionView: NSCollectionView {
     init(frame frameRect: NSRect, imageSet: ACSImageSet, hostConfig: ACSHostConfig) {
         self.imageSet = imageSet
         self.hostConfig = hostConfig
-        // Initialise to nonzero Value
-        self.itemSize = .init(width: 50, height: 50)
-        switch imageSet.getImageSize() {
-        case .stretch, .none:
-            self.imageSize = .medium
-        default:
-            self.imageSize = imageSet.getImageSize()
-        }
+        self.imageSize = imageSet.getImageSize()
         super.init(frame: frameRect)
         
         let spacing: CGFloat = 0
@@ -29,46 +52,68 @@ class ACRCollectionView: NSCollectionView {
         layout.sectionInset = .init(top: spacing, left: spacing, bottom: spacing, right: spacing)
         layout.minimumLineSpacing = spacing
         layout.minimumInteritemSpacing = spacing
-        if self.imageSize != .auto {
-            itemSize = ImageUtils.getImageSizeAsCGSize(imageSize: self.imageSize, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
-        }
-        collectionViewLayout = layout
+
+        collectionView.collectionViewLayout = layout
+        collectionView.register(ACRCollectionViewItem.self, forItemWithIdentifier: ACRCollectionViewItem.identifier)
         
-        self.backgroundColors = [.clear]
-        
-        register(ACRCollectionViewItem.self, forItemWithIdentifier: ACRCollectionViewItem.identifier)
+        autoresizingMask = [.minXMargin, .minYMargin, .maxXMargin, .maxYMargin, .width, .height]
+        wantsLayer = true
+        documentView = collectionView
+        hasVerticalScroller = false
+        hasHorizontalScroller = false
+        scrollerStyle = .overlay
+        autohidesScrollers = true
     }
     
     // Calculate ContentSize for CollectionView
-    func newIntrinsicContentSize() -> CGSize {
-        guard let layout = collectionViewLayout as? NSCollectionViewFlowLayout else { return CGSize(width: 0, height: 0) }
+    private func calculateContentSize() -> CGSize? {
+        guard let layout = collectionView.collectionViewLayout as? NSCollectionViewFlowLayout, bounds.width > 0 else {
+            return nil
+        }
+        
         let cellCounts = imageSet.getImages().count
         let spacing = layout.minimumInteritemSpacing
         let lineSpacing = layout.minimumLineSpacing
-        let frameWidth = frame.size.width
-
-        if frameWidth > 0, imageSize == .auto {
-            let mediumImageSize = ImageUtils.getImageSizeAsCGSize(imageSize: .medium, width: 0, height: 0, with: hostConfig, explicitDimensions: false)
-            let itemWidth = min(mediumImageSize.width, frameWidth)
-            itemSize = NSSize(width: itemWidth, height: itemWidth)
-        }
-        
+        let boundsWidth = bounds.width
         let itemSizeWithSpacing = itemSize.width + spacing
         
-        var numberOfItemsPerRow = Int(frameWidth / itemSizeWithSpacing)
-        if CGFloat(numberOfItemsPerRow) * itemSizeWithSpacing + itemSize.width <= frameWidth {
+        var numberOfItemsPerRow = floor(boundsWidth / itemSizeWithSpacing)
+        // if addtional image can be fit by removing spacing, do so
+        if (numberOfItemsPerRow * itemSizeWithSpacing) + itemSize.width <= boundsWidth {
             numberOfItemsPerRow += 1
         }
         
-        guard numberOfItemsPerRow > 0 else { return CGSize(width: 0, height: 0) }
+        guard numberOfItemsPerRow > 0 else {
+            return nil
+        }
         
-        let numberOfRows = Int(ceil(Float(cellCounts) / Float(numberOfItemsPerRow)))
+        let numberOfRows = ceil(CGFloat(cellCounts) / numberOfItemsPerRow)
+        return CGSize(width: boundsWidth,
+                      height: (numberOfRows * itemSize.height) + (numberOfRows - 1) * lineSpacing)
+    }
     
-        return CGSize(width: frameWidth, height: (CGFloat(numberOfRows) * (itemSize.height) + ((CGFloat(numberOfRows) - 1) * lineSpacing)))
+    var pBoundsWidth: CGFloat?
+    var pContentSize: CGSize?
+    override func layout() {
+        super.layout()
+        guard window != nil, pBoundsWidth != bounds.width else { return }
+        pBoundsWidth = bounds.width
+        pContentSize = nil
     }
     
     override var intrinsicContentSize: NSSize {
-        return newIntrinsicContentSize()
+        guard let contentSize = pContentSize else {
+            guard let calcSize = calculateContentSize() else {
+                return super.intrinsicContentSize
+            }
+            pContentSize = calcSize
+            return calcSize
+        }
+        return contentSize
+    }
+    
+    override func scrollWheel(with event: NSEvent) {
+        nextResponder?.scrollWheel(with: event)
     }
     
     override func viewDidMoveToSuperview() {
