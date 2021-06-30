@@ -1335,14 +1335,50 @@ namespace RendererQml
         backgroundTag->Property("border.width", "1");
         uiTextField->Property("background", backgroundTag->ToString());
 
+		//Clear Icon
+		const std::string clearIconId = Formatter() << input->GetId() << "_clear" << "_icon";
+		auto clearIconTag = GetIconTag(context);
+
+		clearIconTag->RemoveProperty("anchors.top");
+		clearIconTag->RemoveProperty("anchors.bottom");
+		clearIconTag->RemoveProperty("anchors.right");
+		clearIconTag->RemoveProperty("anchors.margins");
+
+		clearIconTag->Property("id", clearIconId);
+		clearIconTag->Property("icon.source", RendererQml::clear_icon_18, true);
+
+		std::string clearIcon_visible_value = Formatter() << "(!" << uiTextFieldId << ".focus && " << uiTextFieldId << ".selectedDate !==\"\") || (" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !== " << "\"\\/\\/\")";
+		clearIconTag->Property("visible", clearIcon_visible_value);
+		
+		std::string clearIcon_OnClicked_value = Formatter() << " { if(!" << uiTextFieldId << ".focus)" << "{"
+			<< uiTextFieldId << ".forceActiveFocus();" << "}" << "\n"
+			<< uiTextFieldId << ".clear();\n" << "}";
+		clearIconTag->Property("onClicked", clearIcon_OnClicked_value);
+
+		//Date Icon
         const std::string iconId = input->GetId() + "_icon";
         std::string onClicked_value = "{ " + uiTextFieldId + ".forceActiveFocus(); " + calendar_box_id + ".open();}";
 
         auto iconTag = GetIconTag(context);
-        iconTag->Property("id", iconId);
+
+		iconTag->RemoveProperty("anchors.top");
+		iconTag->RemoveProperty("anchors.bottom");
+		iconTag->RemoveProperty("anchors.right");
+		iconTag->RemoveProperty("anchors.margins");
+
+		iconTag->Property("id", iconId);
         iconTag->Property("icon.source", RendererQml::calendar_icon_18, true);
         iconTag->Property("onClicked", onClicked_value);
-        
+
+		//Row that contains both the icons
+		auto iconsRowTag = std::make_shared<QmlTag>("Row");
+		iconsRowTag->Property("anchors.top", "parent.top");
+		iconsRowTag->Property("anchors.bottom", "parent.bottom");
+		iconsRowTag->Property("anchors.right", "parent.right");
+		iconsRowTag->Property("anchors.margins", "2");
+		iconsRowTag->AddChild(clearIconTag);
+		iconsRowTag->AddChild(iconTag);
+
         auto calendarTag = std::make_shared<QmlTag>("Calendar");
         calendarTag->AddImports("import QtQuick.Controls 1.4");
         calendarTag->AddImports("import QtQuick 2.15");
@@ -1483,7 +1519,7 @@ namespace RendererQml
         uiDateInput->Property("width", "parent.width");
         uiDateInput->Property("background", uiTextField->ToString());
         uiDateInput->Property("popup", calendarBoxTag->ToString());
-        uiDateInput->Property("indicator", iconTag->ToString());
+        uiDateInput->Property("indicator", iconsRowTag->ToString());
 
         context->addToInputElementList(origionalElementId, (uiTextField->GetId() + ".selectedDate"));
 
