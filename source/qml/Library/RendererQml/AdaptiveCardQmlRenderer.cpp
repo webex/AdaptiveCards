@@ -1792,12 +1792,47 @@ namespace RendererQml
 		backgroundTag->Property("border.width", "1");
 		uiTimeInput->Property("background", backgroundTag->ToString());
 
+		//Clear Icon
+		const std::string clearIconId = Formatter() << id << "_clear" << "_icon";
+		auto clearIconTag = GetIconTag(context);
+
+		clearIconTag->RemoveProperty("anchors.top");
+		clearIconTag->RemoveProperty("anchors.bottom");
+		clearIconTag->RemoveProperty("anchors.right");
+		clearIconTag->RemoveProperty("anchors.margins");
+
+		clearIconTag->Property("id", clearIconId);
+		clearIconTag->Property("icon.source", RendererQml::clear_icon_18, true);
+
+		std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".selectedTime !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour? "\": \"" : "\":\"") << ")" ;
+		clearIconTag->Property("visible", clearIcon_visible_value);
+
+		std::string clearIcon_OnClicked_value = Formatter() << " { if(!" << id << ".focus)" << "{"
+			<< id << ".forceActiveFocus();" << "}" << "\n"
+			<< id << ".clear();\n" << "}";
+		clearIconTag->Property("onClicked", clearIcon_OnClicked_value);
+
+		//Time Icon
         const std::string iconId = id + "_icon";
         auto iconTag = GetIconTag(context);
+		iconTag->RemoveProperty("anchors.top");
+		iconTag->RemoveProperty("anchors.bottom");
+		iconTag->RemoveProperty("anchors.right");
+		iconTag->RemoveProperty("anchors.margins");
+
         iconTag->Property("id", iconId);
         iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
         iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
-        
+
+		//Row that contains both the icons
+		auto iconsRowTag = std::make_shared<QmlTag>("Row");
+		iconsRowTag->Property("anchors.top", "parent.top");
+		iconsRowTag->Property("anchors.bottom", "parent.bottom");
+		iconsRowTag->Property("anchors.right", "parent.right");
+		iconsRowTag->Property("anchors.margins", "2");
+		iconsRowTag->AddChild(clearIconTag);
+		iconsRowTag->AddChild(iconTag);
+
 		//Popup that contains the hours and min ListViews
 		auto PopupBgrTag = std::make_shared<QmlTag>("Rectangle");
 		PopupBgrTag->Property("anchors.fill", "parent");
@@ -1863,7 +1898,7 @@ namespace RendererQml
 		timeBoxTag->AddChild(ListViewHoursTag);
 		timeBoxTag->AddChild(ListViewMinTag);
 		timePopupTag->Property("contentItem", timeBoxTag->ToString());
-		uiTimeComboBox->Property("indicator", iconTag->ToString());
+		uiTimeComboBox->Property("indicator", iconsRowTag->ToString());
 		uiTimeComboBox->Property("popup", timePopupTag->ToString());
 		uiTimeComboBox->Property("background", uiTimeInput->ToString());
 		
