@@ -1337,7 +1337,9 @@ namespace RendererQml
 
 		//Clear Icon
 		const std::string clearIconId = Formatter() << input->GetId() << "_clear" << "_icon";
-		auto clearIconTag = GetClearIconTag(clearIconId, context);
+		auto rowIconTag = GetRowWithClearIconTag(clearIconId, context);
+
+		auto clearIconTag = rowIconTag->GetChildren().front();
 		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
 
 		std::string clearIcon_visible_value = Formatter() << "(!" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !==\"\") || (" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !== " << "\"\\/\\/\")";
@@ -1368,18 +1370,8 @@ namespace RendererQml
         iconTag->Property("icon.source", RendererQml::calendar_icon_18, true);
         iconTag->Property("onClicked", onClicked_value);
 
-		//Row that contains both the icons
-		auto iconsRowTag = std::make_shared<QmlTag>("Row");
-		iconsRowTag->Property("anchors.top", "parent.top");
-		iconsRowTag->Property("anchors.bottom", "parent.bottom");
-		iconsRowTag->Property("anchors.right", "parent.right");
-		iconsRowTag->Property("anchors.margins", "2");
-		iconsRowTag->Property("padding", "2");
-		iconsRowTag->Property("rightPadding", "5");
-		iconsRowTag->Property("spacing", "10");
-		iconsRowTag->AddChild(clearIconTag);
-		iconsRowTag->AddChild(iconTag);
-
+		rowIconTag->AddChild(iconTag);
+		
         auto calendarTag = std::make_shared<QmlTag>("Calendar");
         calendarTag->AddImports("import QtQuick.Controls 1.4");
         calendarTag->AddImports("import QtQuick 2.15");
@@ -1520,7 +1512,7 @@ namespace RendererQml
         uiDateInput->Property("width", "parent.width");
         uiDateInput->Property("background", uiTextField->ToString());
         uiDateInput->Property("popup", calendarBoxTag->ToString());
-        uiDateInput->Property("indicator", iconsRowTag->ToString());
+        uiDateInput->Property("indicator", rowIconTag->ToString());
 
         context->addToInputElementList(origionalElementId, (uiTextField->GetId() + ".selectedDate"));
 
@@ -1798,7 +1790,9 @@ namespace RendererQml
 
 		//Clear Icon
 		const std::string clearIconId = Formatter() << id << "_clear" << "_icon";
-		auto clearIconTag = GetClearIconTag(clearIconId, context);
+		auto rowIconTag = GetRowWithClearIconTag(clearIconId, context);
+
+		auto clearIconTag = rowIconTag->GetChildren().front();
 		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
 
 		std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".text !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour? "\": \"" : "\":\"") << ")" ;
@@ -1827,16 +1821,7 @@ namespace RendererQml
         iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
 
 		//Row that contains both the icons
-		auto iconsRowTag = std::make_shared<QmlTag>("Row");
-		iconsRowTag->Property("anchors.top", "parent.top");
-		iconsRowTag->Property("anchors.bottom", "parent.bottom");
-		iconsRowTag->Property("anchors.right", "parent.right");
-		iconsRowTag->Property("anchors.margins", "2");
-		iconsRowTag->Property("padding", "2");
-		iconsRowTag->Property("rightPadding", "5");
-		iconsRowTag->Property("spacing", "10");
-		iconsRowTag->AddChild(clearIconTag);
-		iconsRowTag->AddChild(iconTag);
+		rowIconTag->AddChild(iconTag);
 
 		//Popup that contains the hours and min ListViews
 		auto PopupBgrTag = std::make_shared<QmlTag>("Rectangle");
@@ -1903,7 +1888,7 @@ namespace RendererQml
 		timeBoxTag->AddChild(ListViewHoursTag);
 		timeBoxTag->AddChild(ListViewMinTag);
 		timePopupTag->Property("contentItem", timeBoxTag->ToString());
-		uiTimeComboBox->Property("indicator", iconsRowTag->ToString());
+		uiTimeComboBox->Property("indicator", rowIconTag->ToString());
 		uiTimeComboBox->Property("popup", timePopupTag->ToString());
 		uiTimeComboBox->Property("background", uiTimeInput->ToString());
 		
@@ -3464,7 +3449,7 @@ namespace RendererQml
 		return value;
 	}
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetClearIconTag(const std::string& id, std::shared_ptr<AdaptiveRenderContext> context)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetRowWithClearIconTag(const std::string& id, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto clearIconTag = GetIconTag(context);
 
@@ -3481,6 +3466,16 @@ namespace RendererQml
 		clearIconTag->Property("verticalPadding", "0");
 		clearIconTag->Property("icon.source", RendererQml::clear_icon_18, true);
 
-		return clearIconTag;
+		auto iconsRowTag = std::make_shared<QmlTag>("Row");
+		iconsRowTag->Property("anchors.top", "parent.top");
+		iconsRowTag->Property("anchors.bottom", "parent.bottom");
+		iconsRowTag->Property("anchors.right", "parent.right");
+		iconsRowTag->Property("anchors.margins", "2");
+		iconsRowTag->Property("padding", "2");
+		iconsRowTag->Property("rightPadding", "5");
+		iconsRowTag->Property("spacing", "10");
+		iconsRowTag->AddChild(clearIconTag);
+
+		return iconsRowTag;
 	}
 }
