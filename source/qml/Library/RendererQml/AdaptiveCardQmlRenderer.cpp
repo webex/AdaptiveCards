@@ -1339,7 +1339,7 @@ namespace RendererQml
 		const std::string clearIconId = Formatter() << input->GetId() << "_clear" << "_icon";
 		auto clearIconTag = GetClearIconTag(clearIconId, context);
 
-		std::string clearIcon_visible_value = Formatter() << "(!" << uiTextFieldId << ".focus && " << uiTextFieldId << ".selectedDate !==\"\") || (" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !== " << "\"\\/\\/\")";
+		std::string clearIcon_visible_value = Formatter() << "(!" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !==\"\") || (" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !== " << "\"\\/\\/\")";
 		clearIconTag->Property("visible", clearIcon_visible_value);
 		
 		std::string clearIcon_OnClicked_value = Formatter() << " { if(!" << uiTextFieldId << ".focus)" << "{"
@@ -1359,6 +1359,10 @@ namespace RendererQml
 		iconTag->RemoveProperty("anchors.margins");
 
 		iconTag->Property("id", iconId);
+		iconTag->Property("width", "icon.width");
+		iconTag->Property("height", "icon.height");
+		iconTag->Property("horizontalPadding", "0");
+		iconTag->Property("verticalPadding", "0");
         iconTag->Property("icon.source", RendererQml::calendar_icon_18, true);
         iconTag->Property("onClicked", onClicked_value);
 
@@ -1368,6 +1372,9 @@ namespace RendererQml
 		iconsRowTag->Property("anchors.bottom", "parent.bottom");
 		iconsRowTag->Property("anchors.right", "parent.right");
 		iconsRowTag->Property("anchors.margins", "2");
+		iconsRowTag->Property("padding", "2");
+		iconsRowTag->Property("rightPadding", "5");
+		iconsRowTag->Property("spacing", "10");
 		iconsRowTag->AddChild(clearIconTag);
 		iconsRowTag->AddChild(iconTag);
 
@@ -1730,8 +1737,11 @@ namespace RendererQml
 		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
 		const std::string id = input->GetId();
         const std::string value = input->GetValue();
+		const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
 
 		uiTimeInput->Property("id", id);
+		uiTimeInput->Property("font.family", context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
+		uiTimeInput->Property("font.pixelSize", std::to_string(fontSize));
 		uiTimeInput->Property("selectByMouse", "true");
 		uiTimeInput->Property("selectedTextColor", "'white'");
         uiTimeInput->Property("property string selectedTime", "", true);
@@ -1788,7 +1798,7 @@ namespace RendererQml
 		const std::string clearIconId = Formatter() << id << "_clear" << "_icon";
 		auto clearIconTag = GetClearIconTag(clearIconId, context);
 
-		std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".selectedTime !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour? "\": \"" : "\":\"") << ")" ;
+		std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".text !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour? "\": \"" : "\":\"") << ")" ;
 		clearIconTag->Property("visible", clearIcon_visible_value);
 
 		std::string clearIcon_OnClicked_value = Formatter() << " { if(!" << id << ".focus)" << "{"
@@ -1805,6 +1815,10 @@ namespace RendererQml
 		iconTag->RemoveProperty("anchors.margins");
 
         iconTag->Property("id", iconId);
+		iconTag->Property("width", "icon.width");
+		iconTag->Property("height", "icon.height");
+		iconTag->Property("horizontalPadding", "0");
+		iconTag->Property("verticalPadding", "0");
         iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
         iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
 
@@ -1814,6 +1828,9 @@ namespace RendererQml
 		iconsRowTag->Property("anchors.bottom", "parent.bottom");
 		iconsRowTag->Property("anchors.right", "parent.right");
 		iconsRowTag->Property("anchors.margins", "2");
+		iconsRowTag->Property("padding", "2");
+		iconsRowTag->Property("rightPadding", "5");
+		iconsRowTag->Property("spacing", "10");
 		iconsRowTag->AddChild(clearIconTag);
 		iconsRowTag->AddChild(iconTag);
 
@@ -3342,6 +3359,7 @@ namespace RendererQml
         iconTag->Property("anchors.bottom", "parent.bottom");
         iconTag->Property("anchors.right", "parent.right");
         iconTag->Property("anchors.margins", "2");
+		iconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
         iconTag->Property("horizontalPadding", "4");
         iconTag->Property("verticalPadding", "4");
         iconTag->Property("icon.width", "18");
@@ -3453,6 +3471,10 @@ namespace RendererQml
 		clearIconTag->RemoveProperty("anchors.margins");
 
 		clearIconTag->Property("id", id);
+		clearIconTag->Property("width", "icon.width");
+		clearIconTag->Property("height", "icon.height");
+		clearIconTag->Property("horizontalPadding", "0");
+		clearIconTag->Property("verticalPadding", "0");
 		clearIconTag->Property("icon.source", RendererQml::clear_icon_18, true);
 
 		return clearIconTag;
