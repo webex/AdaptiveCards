@@ -3452,19 +3452,18 @@ namespace RendererQml
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetRowWithClearIconTag(const std::string& id, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		auto clearIconTag = GetIconTag(context);
-
 		clearIconTag->RemoveProperty("anchors.top");
 		clearIconTag->RemoveProperty("anchors.bottom");
 		clearIconTag->RemoveProperty("anchors.right");
 		clearIconTag->RemoveProperty("anchors.margins");
-		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
-
+		
 		clearIconTag->Property("id", id);
 		clearIconTag->Property("width", "icon.width");
 		clearIconTag->Property("height", "icon.height");
 		clearIconTag->Property("horizontalPadding", "0");
 		clearIconTag->Property("verticalPadding", "0");
 		clearIconTag->Property("icon.source", RendererQml::clear_icon_18, true);
+		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
 
 		auto iconsRowTag = std::make_shared<QmlTag>("Row");
 		iconsRowTag->Property("anchors.top", "parent.top");
