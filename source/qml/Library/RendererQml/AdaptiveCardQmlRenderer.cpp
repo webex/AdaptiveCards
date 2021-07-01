@@ -1338,6 +1338,7 @@ namespace RendererQml
 		//Clear Icon
 		const std::string clearIconId = Formatter() << input->GetId() << "_clear" << "_icon";
 		auto clearIconTag = GetClearIconTag(clearIconId, context);
+		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
 
 		std::string clearIcon_visible_value = Formatter() << "(!" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !==\"\") || (" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !== " << "\"\\/\\/\")";
 		clearIconTag->Property("visible", clearIcon_visible_value);
@@ -1363,6 +1364,7 @@ namespace RendererQml
 		iconTag->Property("height", "icon.height");
 		iconTag->Property("horizontalPadding", "0");
 		iconTag->Property("verticalPadding", "0");
+		iconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
         iconTag->Property("icon.source", RendererQml::calendar_icon_18, true);
         iconTag->Property("onClicked", onClicked_value);
 
@@ -1797,6 +1799,7 @@ namespace RendererQml
 		//Clear Icon
 		const std::string clearIconId = Formatter() << id << "_clear" << "_icon";
 		auto clearIconTag = GetClearIconTag(clearIconId, context);
+		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
 
 		std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".text !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour? "\": \"" : "\":\"") << ")" ;
 		clearIconTag->Property("visible", clearIcon_visible_value);
@@ -1819,6 +1822,7 @@ namespace RendererQml
 		iconTag->Property("height", "icon.height");
 		iconTag->Property("horizontalPadding", "0");
 		iconTag->Property("verticalPadding", "0");
+		iconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
         iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
         iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
 
@@ -3359,7 +3363,6 @@ namespace RendererQml
         iconTag->Property("anchors.bottom", "parent.bottom");
         iconTag->Property("anchors.right", "parent.right");
         iconTag->Property("anchors.margins", "2");
-		iconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
         iconTag->Property("horizontalPadding", "4");
         iconTag->Property("verticalPadding", "4");
         iconTag->Property("icon.width", "18");
@@ -3469,6 +3472,7 @@ namespace RendererQml
 		clearIconTag->RemoveProperty("anchors.bottom");
 		clearIconTag->RemoveProperty("anchors.right");
 		clearIconTag->RemoveProperty("anchors.margins");
+		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
 
 		clearIconTag->Property("id", id);
 		clearIconTag->Property("width", "icon.width");
