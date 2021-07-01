@@ -2,6 +2,10 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRCollectionView: NSScrollView {
+    private struct Constants {
+        static let padding: CGFloat = 0
+    }
+    
     private let imageSet: ACSImageSet
     private let imageSize: ACSImageSize
     private let hostConfig: ACSHostConfig
@@ -13,7 +17,7 @@ class ACRCollectionView: NSScrollView {
             return ImageUtils.getImageSizeAsCGSize(imageSize: .medium, with: hostConfig)
         case .auto:
             let mediumSize = ImageUtils.getImageSizeAsCGSize(imageSize: .medium, with: hostConfig)
-            let itemWidth = min(mediumSize.width, bounds.width)
+            let itemWidth = min(mediumSize.width, bounds.width - (2 * Constants.padding))
             return CGSize(width: itemWidth, height: itemWidth)
         default:
             return ImageUtils.getImageSizeAsCGSize(imageSize: imageSize, with: hostConfig)
@@ -43,11 +47,10 @@ class ACRCollectionView: NSScrollView {
         }
         super.init(frame: .zero)
         
-        let spacing: CGFloat = 0
         let layout = NSCollectionViewFlowLayout()
-        layout.sectionInset = .init(top: spacing, left: spacing, bottom: spacing, right: spacing)
-        layout.minimumLineSpacing = spacing
-        layout.minimumInteritemSpacing = spacing
+        layout.sectionInset = NSEdgeInsets(top: Constants.padding, left: Constants.padding, bottom: Constants.padding, right: Constants.padding)
+        layout.minimumLineSpacing = Constants.padding
+        layout.minimumInteritemSpacing = Constants.padding
 
         collectionView.collectionViewLayout = layout
         collectionView.register(ACRCollectionViewItem.self, forItemWithIdentifier: ACRCollectionViewItem.identifier)
@@ -57,23 +60,25 @@ class ACRCollectionView: NSScrollView {
         autoresizingMask = [.minXMargin, .minYMargin, .maxXMargin, .maxYMargin, .width, .height]
         wantsLayer = true
         documentView = collectionView
+        
+        // hide scroller
         hasVerticalScroller = false
         hasHorizontalScroller = false
+        scrollerInsets = NSEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
         scrollerStyle = .overlay
         autohidesScrollers = true
     }
     
     // Calculate ContentSize for CollectionView
     private func calculateContentSize() -> CGSize? {
-        guard let layout = collectionView.collectionViewLayout as? NSCollectionViewFlowLayout, bounds.width > 0 else {
+        guard bounds.width > 0 else {
             return nil
         }
         
         let cellCounts = imageSet.getImages().count
-        let spacing = layout.minimumInteritemSpacing
-        let lineSpacing = layout.minimumLineSpacing
-        let boundsWidth = bounds.width
-        let itemSizeWithSpacing = itemSize.width + spacing
+        let insets = 2 * Constants.padding
+        let boundsWidth = bounds.width - insets
+        let itemSizeWithSpacing = itemSize.width + Constants.padding
         
         var numberOfItemsPerRow = floor(boundsWidth / itemSizeWithSpacing)
         // if addtional image can be fit by removing spacing, do so
@@ -86,8 +91,9 @@ class ACRCollectionView: NSScrollView {
         }
         
         let numberOfRows = ceil(CGFloat(cellCounts) / numberOfItemsPerRow)
+        let calcHeight = (numberOfRows * itemSize.height) + insets + (numberOfRows - 1) * Constants.padding
         return CGSize(width: boundsWidth,
-                      height: (numberOfRows * itemSize.height) + (numberOfRows - 1) * lineSpacing)
+                      height: calcHeight - 1) // subracting 1pt because sometimes cells don't render if exact ht is passed
     }
     
     var pBoundsWidth: CGFloat?
@@ -111,6 +117,7 @@ class ACRCollectionView: NSScrollView {
     }
     
     override func scrollWheel(with event: NSEvent) {
+        // to disable scroll always
         nextResponder?.scrollWheel(with: event)
     }
     
@@ -122,10 +129,6 @@ class ACRCollectionView: NSScrollView {
 }
 
 extension ACRCollectionView: NSCollectionViewDataSource {
-    func numberOfSections(in collectionView: NSCollectionView) -> Int {
-        return 1
-    }
-    
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return imageSet.getImages().count
     }
