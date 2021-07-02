@@ -59,7 +59,6 @@ class ACRActionSetView: NSView {
     }
     
     private func customLayout() {
-        print("@running custom layout")
         // first empty the stackview and remove all the views
         removeElements()
         var accumulatedWidth: CGFloat = 0
