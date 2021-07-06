@@ -28,18 +28,6 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("WARNING: Some actions were not rendered due to exceeding the maximum number \(maxAllowedActions) actions are allowed")
         }
         
-        let resolvedCount = min(actions.count, maxAllowedActions)
-        let filteredActions = actions[0 ..< resolvedCount]
-        let actionViews: [NSView] = filteredActions.map {
-            let renderer = RendererManager.shared.actionRenderer(for: $0.getType())
-            return renderer.render(action: $0, with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [], config: config)
-        }
-        
-        guard !filteredActions.isEmpty else {
-            logError("Actions is empty")
-            return NSView()
-        }
-        
         let orientation: NSUserInterfaceLayoutOrientation
         switch actionsOrientation {
         case .horizontal: orientation = .horizontal
@@ -54,7 +42,22 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         case .right: resolvedAlignment = .trailing
         @unknown default: resolvedAlignment = .leading
         }
+        let actionSetView = ACRActionSetView(orientation: orientation, alignment: resolvedAlignment, spacing: CGFloat(exactly: actionsButtonSpacing) ?? 8)
         
-        return ACRActionSetView(actions: actionViews, orientation: orientation, alignment: resolvedAlignment, spacing: CGFloat(exactly: actionsButtonSpacing) ?? 8)
+        let resolvedCount = min(actions.count, maxAllowedActions)
+        let filteredActions = actions[0 ..< resolvedCount]
+        let actionViews: [NSView] = filteredActions.map {
+            let renderer = RendererManager.shared.actionRenderer(for: $0.getType())
+            return renderer.render(action: $0, with: hostConfig, style: style, rootView: rootView, parentView: rootView, targetHandlerDelegate: actionSetView, inputs: [], config: config)
+        }
+        
+        guard !filteredActions.isEmpty else {
+            logError("Actions is empty")
+            return NSView()
+        }
+        
+        actionSetView.setActions(actionViews)
+        actionSetView.delegate = rootView
+        return actionSetView
     }
 }
