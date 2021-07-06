@@ -22,6 +22,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         let actionsConfig = hostConfig.getActions()
         let actionsOrientation = actionsConfig?.actionsOrientation ?? .vertical
         let actionsButtonSpacing = actionsConfig?.buttonSpacing ?? 8
+        let exteriorPadding = hostConfig.getSpacing()?.paddingSpacing ?? 0
         let maxAllowedActions = Int(truncating: actionsConfig?.maxActions ?? 10)
         
         if actions.count > maxAllowedActions {
@@ -42,7 +43,12 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         case .right: resolvedAlignment = .trailing
         @unknown default: resolvedAlignment = .leading
         }
-        let actionSetView = ACRActionSetView(orientation: orientation, alignment: resolvedAlignment, spacing: CGFloat(exactly: actionsButtonSpacing) ?? 8)
+        
+        let actionSetView = ACRActionSetView(
+            orientation: orientation,
+            alignment: resolvedAlignment,
+            buttonSpacing: CGFloat(exactly: actionsButtonSpacing) ?? 8,
+            exteriorPadding: CGFloat(exactly: exteriorPadding) ?? 0)
         
         let resolvedCount = min(actions.count, maxAllowedActions)
         let filteredActions = actions[0 ..< resolvedCount]

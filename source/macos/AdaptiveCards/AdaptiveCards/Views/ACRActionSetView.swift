@@ -15,7 +15,8 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
     private var actions: [NSView] = []
     private let orientation: NSUserInterfaceLayoutOrientation
     private let alignment: NSLayoutConstraint.Attribute
-    private let spacing: CGFloat
+    private let buttonSpacing: CGFloat
+    private let exteriorPadding: CGFloat
     
     private (set) var showCardsMap: [NSNumber: NSView] = [:]
     private (set) var currentShowCardItems: ShowCardItems?
@@ -24,15 +25,25 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         let view = NSStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.orientation = orientation
-        view.spacing = spacing
+        view.spacing = buttonSpacing
         view.alignment = alignment
         return view
     }()
     
-    init(orientation: NSUserInterfaceLayoutOrientation, alignment: NSLayoutConstraint.Attribute, spacing: CGFloat) {
+    private lazy var showCardStackView: NSStackView = {
+        let view = NSStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.orientation = .vertical
+        view.alignment = .leading
+        view.spacing = 0
+        return view
+    }()
+    
+    init(orientation: NSUserInterfaceLayoutOrientation, alignment: NSLayoutConstraint.Attribute, buttonSpacing: CGFloat, exteriorPadding: CGFloat) {
         self.orientation = orientation
         self.alignment = alignment
-        self.spacing = spacing
+        self.buttonSpacing = buttonSpacing
+        self.exteriorPadding = exteriorPadding
         super.init(frame: .zero)
         initialize()
     }
@@ -41,7 +52,8 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         self.actions = []
         self.orientation = .vertical
         self.alignment = .leading
-        self.spacing = 8
+        self.buttonSpacing = 8
+        self.exteriorPadding = 0
         super.init(coder: coder)
         initialize()
     }
@@ -50,6 +62,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         wantsLayer = true
         layer = NoClippingLayer()
         addSubview(stackView)
+        addSubview(showCardStackView)
         setupConstraints()
     }
     
@@ -78,7 +91,11 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        
+        showCardStackView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: exteriorPadding).isActive = true
+        showCardStackView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: -exteriorPadding).isActive = true
+        showCardStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: exteriorPadding).isActive = true
+        showCardStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: exteriorPadding).isActive = true
     }
     
     private func removeElements() {
@@ -106,7 +123,8 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
             return NSView()
         }
         let cardView = rDelegate.actionSetView(self, renderShowCardFor: card)
-        // Add card
+        showCardStackView.addArrangedSubview(cardView)
+        cardView.widthAnchor.constraint(equalTo: showCardStackView.widthAnchor).isActive = true
         return cardView
     }
     
@@ -126,7 +144,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         // new child stackview for horizontal orientation
         var curview = NSStackView()
         curview.translatesAutoresizingMaskIntoConstraints = false
-        curview.spacing = spacing
+        curview.spacing = buttonSpacing
         
         // adding new child stackview to parent stackview and the parent stackview will align child stackview vertically
         stackView.addArrangedSubview(curview)
@@ -143,14 +161,14 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
                 curview = newStackView
                 curview.orientation = .horizontal
                 curview.addView(view, in: gravityArea)
-                curview.spacing = spacing
+                curview.spacing = buttonSpacing
                 accumulatedWidth = 0
                 accumulatedWidth += view.intrinsicContentSize.width
-                accumulatedWidth += spacing
+                accumulatedWidth += buttonSpacing
                 stackView.addArrangedSubview(curview)
             } else {
                 curview.addView(view, in: gravityArea)
-                accumulatedWidth += spacing
+                accumulatedWidth += buttonSpacing
             }
         }
     }

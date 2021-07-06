@@ -13,15 +13,6 @@ class ACRView: ACRColumnView {
     private (set) var imageViewMap: [String: [ImageHoldingView]] = [:]
     private (set) var renderedShowCards: [NSView] = []
     
-    private (set) lazy var showCardStackView: NSStackView = {
-        let view = NSStackView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.orientation = .vertical
-        view.alignment = .leading
-        view.spacing = 0
-        return view
-    }()
-    
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         self.renderConfig = renderConfig
         super.init(style: style, parentStyle: nil, hostConfig: hostConfig, superview: nil, needsPadding: true)
@@ -42,19 +33,6 @@ class ACRView: ACRColumnView {
             delegate?.adaptiveCard(self, didUpdateBoundsFrom: pBounds, to: bounds)
         }
         previousBounds = bounds
-    }
-    
-    override func setupViews() {
-        super.setupViews()
-        addSubview(showCardStackView)
-    }
-    
-    override func setupConstraints() {
-        super.setupConstraints()
-        anchorBottomConstraint(with: showCardStackView.topAnchor)
-        showCardStackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        showCardStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        showCardStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     
     func addTarget(_ target: TargetHandler) {
