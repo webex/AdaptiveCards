@@ -2,53 +2,79 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRActionSetView: NSView {
-    private lazy var stackview: NSStackView = {
+    private lazy var stackView: NSStackView = {
         let view = NSStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.orientation = orientation
+        view.spacing = spacing
+        view.alignment = alignment
         return view
     }()
     
-    private var frameWidth: CGFloat = 0
-    private var maxFrameWidth: CGFloat = 0
-    private var renderAction = true
+    private let actions: [NSView]
+    private let orientation: NSUserInterfaceLayoutOrientation
+    private let alignment: NSLayoutConstraint.Attribute
+    private let spacing: CGFloat
     
-    public var totalWidth: CGFloat = 0
-    public var actions: [NSView] = []
-    public var elementSpacing: CGFloat = 0
+    init(actions: [NSView], orientation: NSUserInterfaceLayoutOrientation, alignment: NSLayoutConstraint.Attribute, spacing: CGFloat) {
+        self.actions = actions
+        self.orientation = orientation
+        self.alignment = alignment
+        self.spacing = spacing
+        super.init(frame: .zero)
+        initialize()
+    }
     
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-        addSubview(stackview)
+    required init?(coder: NSCoder) {
+        self.actions = []
+        self.orientation = .vertical
+        self.alignment = .leading
+        self.spacing = 8
+        super.init(coder: coder)
+        initialize()
+    }
+    
+    private func initialize() {
+        wantsLayer = true
+        layer = NoClippingLayer()
+        addSubview(stackView)
         setupConstraints()
+        arrangeElementsIfNeeded()
     }
     
-    public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    private var initialLayoutDone = false
+    private var previousWidth: CGFloat?
     override func layout() {
         super.layout()
-        frameWidth = frame.width
-        if orientation == .horizontal, totalWidth > frameWidth, totalWidth > maxFrameWidth, frameWidth != 0 {
-            maxFrameWidth = frameWidth
-            customLayout()
-        }
-        if orientation == .horizontal, frameWidth != 0, renderAction {
-            renderAction = false
-            customLayout()
-        }
+        guard window != nil, bounds.width > 0, !initialLayoutDone, previousWidth != bounds.width else { return }
+        arrangeElementsIfNeeded()
+        initialLayoutDone = true
+        previousWidth = bounds.width
     }
     
     private func setupConstraints() {
-        stackview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        stackview.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     
     private func removeElements() {
-        for view in stackview.arrangedSubviews {
+        for view in stackView.arrangedSubviews {
             view.removeFromSuperview()
+        }
+    }
+    
+    private func arrangeElementsIfNeeded() {
+        switch orientation {
+        case .horizontal:
+            layoutHorizontally()
+        case .vertical:
+            layoutVertically()
+            initialLayoutDone = true
+        @unknown default:
+            layoutVertically()
+            initialLayoutDone = true
         }
     }
     
@@ -58,7 +84,15 @@ class ACRActionSetView: NSView {
         widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
     }
     
-    private func customLayout() {
+    private func layoutVertically() {
+        removeElements()
+        actions.forEach {
+            stackView.addArrangedSubview($0)
+            $0.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
+        }
+    }
+    
+    private func layoutHorizontally() {
         // first empty the stackview and remove all the views
         removeElements()
         var accumulatedWidth: CGFloat = 0
@@ -66,17 +100,15 @@ class ACRActionSetView: NSView {
         // new child stackview for horizontal orientation
         var curview = NSStackView()
         curview.translatesAutoresizingMaskIntoConstraints = false
-        curview.spacing = elementSpacing
+        curview.spacing = spacing
         
         // adding new child stackview to parent stackview and the parent stackview will align child stackview vertically
-        stackview.addArrangedSubview(curview)
-        stackview.orientation = .vertical
-        let gravityArea: NSStackView.Gravity = stackview.alignment == .centerY ? .center: (stackview.alignment == .trailing ? .trailing: .leading)
-        totalWidth = 0
+        stackView.addArrangedSubview(curview)
+        stackView.orientation = .vertical
+        let gravityArea: NSStackView.Gravity = stackView.alignment == .centerY ? .center: (stackView.alignment == .trailing ? .trailing: .leading)
         for view in actions {
             accumulatedWidth += view.intrinsicContentSize.width
-            totalWidth = max(totalWidth, accumulatedWidth)
-            if accumulatedWidth > frameWidth {
+            if accumulatedWidth > bounds.width {
                 let newStackView: NSStackView = {
                     let view = NSStackView()
                     view.translatesAutoresizingMaskIntoConstraints = false
@@ -85,40 +117,15 @@ class ACRActionSetView: NSView {
                 curview = newStackView
                 curview.orientation = .horizontal
                 curview.addView(view, in: gravityArea)
-                curview.spacing = elementSpacing
+                curview.spacing = spacing
                 accumulatedWidth = 0
                 accumulatedWidth += view.intrinsicContentSize.width
-                accumulatedWidth += elementSpacing
-                stackview.addArrangedSubview(curview)
+                accumulatedWidth += spacing
+                stackView.addArrangedSubview(curview)
             } else {
                 curview.addView(view, in: gravityArea)
-                accumulatedWidth += elementSpacing
+                accumulatedWidth += spacing
             }
         }
-    }
-    
-    var orientation: NSUserInterfaceLayoutOrientation {
-        get { stackview.orientation }
-        set {
-            stackview.orientation = newValue
-        }
-    }
-    
-    var alignment: NSLayoutConstraint.Attribute {
-        get { stackview.alignment }
-        set {
-            stackview.alignment = newValue
-        }
-    }
-    
-     var spacing: CGFloat {
-        get { stackview.spacing }
-        set {
-            stackview.spacing = newValue
-        }
-    }
-    
-    func addArrangedSubView(_ view: NSView) {
-        stackview.addArrangedSubview(view)
     }
 }
