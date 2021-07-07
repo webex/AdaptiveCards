@@ -12,16 +12,16 @@ protocol ACRActionSetViewDelegate: AnyObject {
 class ACRActionSetView: NSView, ShowCardHandlingView {
     weak var delegate: ACRActionSetViewDelegate?
     
-    private var actions: [NSView] = []
-    private let orientation: NSUserInterfaceLayoutOrientation
-    private let alignment: NSLayoutConstraint.Attribute
-    private let buttonSpacing: CGFloat
-    private let exteriorPadding: CGFloat
+    let orientation: NSUserInterfaceLayoutOrientation
+    let alignment: NSLayoutConstraint.Attribute
+    let buttonSpacing: CGFloat
+    let exteriorPadding: CGFloat
+    private (set) var actions: [NSView] = []
     
     private (set) var showCardsMap: [NSNumber: NSView] = [:]
     private (set) var currentShowCardItems: ShowCardItems?
     
-    private lazy var stackView: NSStackView = {
+    private (set) lazy var stackView: NSStackView = {
         let view = NSStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.orientation = orientation
@@ -30,7 +30,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         return view
     }()
     
-    private lazy var showCardStackView: NSStackView = {
+    private (set) lazy var showCardStackView: NSStackView = {
         let view = NSStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.orientation = .vertical
@@ -70,7 +70,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
     private var previousWidth: CGFloat?
     override func layout() {
         super.layout()
-        guard window != nil, bounds.width > 0, !actions.isEmpty, !initialLayoutDone, previousWidth != bounds.width else { return }
+        guard bounds.width > 0, !actions.isEmpty, !initialLayoutDone, previousWidth != bounds.width else { return }
         arrangeElementsIfNeeded()
         initialLayoutDone = true
         previousWidth = bounds.width
