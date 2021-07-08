@@ -66,14 +66,10 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         setupConstraints()
     }
     
-    private var initialLayoutDone = false
-    private var previousWidth: CGFloat?
-    override func layout() {
-        super.layout()
-        guard bounds.width > 0, !actions.isEmpty, !initialLayoutDone, previousWidth != bounds.width else { return }
+    override func resizeSubviews(withOldSize oldSize: NSSize) {
+        super.resizeSubviews(withOldSize: oldSize)
+        guard bounds.width > 0, orientation == .horizontal, !actions.isEmpty, abs(bounds.width - oldSize.width) > 10 else { return }
         arrangeElementsIfNeeded()
-        initialLayoutDone = true
-        previousWidth = bounds.width
     }
     
     override func viewDidMoveToSuperview() {
@@ -90,7 +86,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
     private func setupConstraints() {
         stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor, constant: 6).isActive = true
         
         showCardStackView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: exteriorPadding).isActive = true
         showCardStackView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: -exteriorPadding).isActive = true
@@ -110,10 +106,8 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
             layoutHorizontally()
         case .vertical:
             layoutVertically()
-            initialLayoutDone = true
         @unknown default:
             layoutVertically()
-            initialLayoutDone = true
         }
     }
     

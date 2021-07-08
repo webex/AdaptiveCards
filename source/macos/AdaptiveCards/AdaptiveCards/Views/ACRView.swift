@@ -12,6 +12,8 @@ class ACRView: ACRColumnView {
     private (set) var inputHandlers: [InputHandlingViewProtocol] = []
     private (set) var imageViewMap: [String: [ImageHoldingView]] = [:]
     private (set) var renderedShowCards: [NSView] = []
+    private (set) var initialLayoutDone = false
+    private var currentFocusedActionElement: NSCell?
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         self.renderConfig = renderConfig
@@ -29,8 +31,10 @@ class ACRView: ACRColumnView {
         super.layout()
         guard window != nil else { return }
         if let pBounds = previousBounds, bounds.height != pBounds.height {
-            logInfo("AdaptiveCards: layout change called from \(pBounds.height) to \(bounds.height) for id: \(identifier?.rawValue ?? "nil")")
             delegate?.adaptiveCard(self, didUpdateBoundsFrom: pBounds, to: bounds)
+            initialLayoutDone = true
+            parent?.resetKeyboardFocus()
+            resetKeyboardFocus()
         }
         previousBounds = bounds
     }
@@ -62,6 +66,19 @@ class ACRView: ACRColumnView {
         for url in imageViewMap.keys {
             resolverDelegate?.adaptiveCard(self, requestImageFor: url)
         }
+    }
+    
+    func resetKeyboardFocus() {
+        guard isInitialLayoutComplete, let lastFocusedElement = currentFocusedActionElement else { return }
+        lastFocusedElement.setAccessibilityFocused(true)
+        currentFocusedActionElement = nil
+    }
+    
+    private var isInitialLayoutComplete: Bool {
+        guard let firstOpenChildCard = renderedShowCards.first(where: { !$0.isHidden }) as? ACRView else {
+            return initialLayoutDone
+        }
+        return firstOpenChildCard.initialLayoutDone && initialLayoutDone
     }
     
     private func submitCardInputs(actionView: NSView, dataJSON: String?) {
@@ -101,6 +118,9 @@ extension ACRView: ACRActionSetViewDelegate {
     
     func actionSetView(_ view: ACRActionSetView, willShowCardWith button: NSButton) {
         boundsBeforeShowCard = bounds
+        if let buttonCell = button.cell, buttonCell.isAccessibilityFocused() {
+            currentFocusedActionElement = buttonCell
+        }
     }
     
     func actionSetView(_ view: ACRActionSetView, didShowCardWith button: NSButton) {
