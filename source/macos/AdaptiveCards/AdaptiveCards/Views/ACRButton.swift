@@ -1,3 +1,4 @@
+import AdaptiveCards_bridge
 import AppKit
 
 enum ActionStyle: String {
@@ -22,15 +23,13 @@ class ACRButton: FlatButton, ImageHoldingView {
         setupButtonStyle(style: .default, buttonConfig: .default)
     }
     
-    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconNamed: String = "", iconImageFileType: String = "", iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default, buttonConfig: ButtonConfig = .default) {
+    init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default, buttonConfig: ButtonConfig = .default) {
         super.init(frame: frame)
         if wantsChevron {
             showsChevron = wantsChevron
         }
         if wantsIcon {
             showsIcon = wantsIcon
-            iconImageName = iconNamed
-            iconFileType = iconImageFileType
             iconPositioned = iconPosition
         }
         initialize()
@@ -44,7 +43,6 @@ class ACRButton: FlatButton, ImageHoldingView {
         offAnimationDuration = 0.0
         momentary = !showsChevron
         if showsIcon {
-            image = BundleUtils.getImage(iconImageName, ofType: iconFileType)
             imagePosition = iconPositioned
         }
     }
@@ -93,5 +91,14 @@ class ACRButton: FlatButton, ImageHoldingView {
         
         textColor = colorConfig.textColor
         selectedTextColor = colorConfig.selectedTextColor
+    }
+}
+
+extension ACRButton {
+    convenience init(actionElement: ACSBaseActionElement, iconPlacement: ACSIconPlacement?, buttonConfig: ButtonConfig, style: ActionStyle? = nil) {
+        let buttonStyle = style ?? ActionStyle(rawValue: actionElement.getStyle() ?? "") ?? .default
+        let position = iconPlacement?.imagePosition ?? .imageLeft
+        self.init(wantsChevron: actionElement is ACSShowCardAction, wantsIcon: actionElement.hasValidIcon, iconPosition: position, style: buttonStyle, buttonConfig: buttonConfig)
+        title = actionElement.getTitle() ?? ""
     }
 }
