@@ -25,13 +25,9 @@ class ACRButton: FlatButton, ImageHoldingView {
     
     init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default, buttonConfig: ButtonConfig = .default) {
         super.init(frame: frame)
-        if wantsChevron {
-            showsChevron = wantsChevron
-        }
-        if wantsIcon {
-            showsIcon = wantsIcon
-            iconPositioned = iconPosition
-        }
+        showsChevron = wantsChevron
+        showsIcon = wantsIcon
+        imagePosition = wantsIcon ? iconPosition : .noImage
         initialize()
         buttonActionStyle = style
         setupButtonStyle(style: style, buttonConfig: buttonConfig)
@@ -42,9 +38,6 @@ class ACRButton: FlatButton, ImageHoldingView {
         onAnimationDuration = 0.0
         offAnimationDuration = 0.0
         momentary = !showsChevron
-        if showsIcon {
-            imagePosition = iconPositioned
-        }
     }
     
     override func awakeFromNib() {

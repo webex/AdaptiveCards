@@ -306,6 +306,7 @@
 		083EAA2125C19E1000DE2BF7 /* ACSImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8E425C19E1000DE2BF7 /* ACSImage.mm */; };
 		083EAA2225C19E1000DE2BF7 /* ACSCollectionTypeElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8E525C19E1000DE2BF7 /* ACSCollectionTypeElement.mm */; };
 		083EAA2325C19E1000DE2BF7 /* ACSToggleVisibilityTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA8E625C19E1000DE2BF7 /* ACSToggleVisibilityTarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0846FDA6269D774800090F1A /* FakeActionsConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0846FDA5269D774800090F1A /* FakeActionsConfig.swift */; };
 		0872608825E6AD420036061C /* ACRColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0872608725E6AD420036061C /* ACRColumnView.swift */; };
 		0872609025E6AF530036061C /* ColumnSetRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0872608F25E6AF530036061C /* ColumnSetRenderer.swift */; };
 		0872609525E6AF5F0036061C /* ColumnRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0872609425E6AF5F0036061C /* ColumnRenderer.swift */; };
@@ -986,6 +987,7 @@
 		083EA8E425C19E1000DE2BF7 /* ACSImage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSImage.mm; sourceTree = "<group>"; };
 		083EA8E525C19E1000DE2BF7 /* ACSCollectionTypeElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSCollectionTypeElement.mm; sourceTree = "<group>"; };
 		083EA8E625C19E1000DE2BF7 /* ACSToggleVisibilityTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSToggleVisibilityTarget.h; sourceTree = "<group>"; };
+		0846FDA5269D774800090F1A /* FakeActionsConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeActionsConfig.swift; sourceTree = "<group>"; };
 		0872608725E6AD420036061C /* ACRColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRColumnView.swift; sourceTree = "<group>"; };
 		0872608F25E6AF530036061C /* ColumnSetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnSetRenderer.swift; sourceTree = "<group>"; };
 		0872609425E6AF5F0036061C /* ColumnRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnRenderer.swift; sourceTree = "<group>"; };
@@ -1361,6 +1363,7 @@
 				08FFAC312608DBCA00296D62 /* FakeOpenURLAction.swift */,
 				2982B3FE26289F1700E7561C /* FakeBackgroundImage.swift */,
 				08352EA42695CFB300B544C3 /* FakeInternalId.swift */,
+				0846FDA5269D774800090F1A /* FakeActionsConfig.swift */,
 			);
 			path = Fakes;
 			sourceTree = "<group>";
@@ -2393,6 +2396,7 @@
 				0801EDB925F78EC800D64C86 /* FakeColumn.swift in Sources */,
 				A0805F5825E40CB400B3F8EA /* RichTextBlockRendererTest.swift in Sources */,
 				13B13E4E25E75239005D9380 /* InputDateRendererTests.swift in Sources */,
+				0846FDA6269D774800090F1A /* FakeActionsConfig.swift in Sources */,
 				13C41B0B25F25836008A1F2E /* InputTimeRendererTests.swift in Sources */,
 				2910CF112600D2CC000910C8 /* ActionSetRendererTests.swift in Sources */,
 				08352EA22695C09100B544C3 /* ACRActionSetViewTests.swift in Sources */,
