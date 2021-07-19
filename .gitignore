@@ -306,6 +306,10 @@ twp.json
 # Image folder
 source/qml/Samples/QmlVisualizer/Images
 
+# VS Code files
+.vscode/*
+.vscode/tasks.json
+
 ### CMake ###
 CMakeLists.txt.user
 CMakeCache.txt
@@ -322,3 +326,4 @@ _deps
 ### CMake Patch ###
 # External projects
 *-prefix/
+
