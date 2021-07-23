@@ -65,8 +65,9 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
                     textRunContent.addAttributes([.selectAction: actionTarget], range: NSRange(location: 0, length: textRunContent.length))
                     textRunContent.addAttributes([.foregroundColor: NSColor.linkColor], range: NSRange(location: 0, length: textRunContent.length))
                     textRunContent.addAttributes([.underlineStyle: 1], range: NSRange(location: 0, length: textRunContent.length))
-                    // Rootview add target
-                    rootView.addTarget(actionTarget)
+                    
+                    // setup textView to handle selectAction events
+                    textView.setupSelectAction(textRun.getSelectAction(), rootView: rootView)
                 }
             }
                                 
