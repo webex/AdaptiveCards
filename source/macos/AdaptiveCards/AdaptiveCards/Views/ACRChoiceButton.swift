@@ -6,18 +6,25 @@ protocol ACRChoiceButtonDelegate: NSObjectProtocol {
 
 class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     weak var delegate: ACRChoiceButtonDelegate?
+    public var choiceSetButtonConfig: ChoiceSetButtonConfig = .default
     public var buttonValue: String?
-    public var buttonType: NSButton.ButtonType = .switch
     public var idString: String?
     public var valueOn: String?
     public var valueOff: String?
     
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
+    private let renderConfig: RenderConfig
+    private let isMultiSelect: Bool
+    
+    init(renderConfig: RenderConfig, isMultiSelect: Bool) {
+        self.renderConfig = renderConfig
+        self.isMultiSelect = isMultiSelect
+        super.init(frame: .zero)
+        button.setButtonType(.switch)
         setupViews()
         setupConstraints()
         setupActions()
         setupTrackingArea()
+        setupButtonImage()
     }
     
     public required init?(coder: NSCoder) {
@@ -50,6 +57,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         if  state == .on {
             handleButtonAction()
         }
+        setupButtonImage()
     }
     
     private func setupViews() {
@@ -65,8 +73,9 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     
     private func setupConstraints() {
         button.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        button.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        button.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        button.topAnchor.constraint(lessThanOrEqualTo: topAnchor).isActive = true
+        button.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor).isActive = true
         label.leadingAnchor.constraint(equalTo: button.trailingAnchor).isActive = true
         label.topAnchor.constraint(equalTo: topAnchor).isActive = true
         label.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -79,12 +88,26 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     override func mouseEntered(with event: NSEvent) {
-        guard let contentView = event.trackingArea?.owner as? ACRChoiceButton else { return }
-        contentView.button.isHighlighted = true
+        button.isHighlighted = true
     }
     override func mouseExited(with event: NSEvent) {
-        guard let contentView = event.trackingArea?.owner as? ACRChoiceButton else { return }
-        contentView.button.isHighlighted = false
+        button.isHighlighted = false
+    }
+    
+    private func setupButtonImage() {
+        switch state {
+        case .on:
+            button.image = !isMultiSelect ? choiceSetButtonConfig.checkOnHoverIcon : choiceSetButtonConfig.radioOnHoverIcon
+            button.alternateImage = !isMultiSelect ? choiceSetButtonConfig.checkOnIcon : choiceSetButtonConfig.radioOnIcon
+        case .off:
+            button.alternateImage = !isMultiSelect ? choiceSetButtonConfig.checkOffHoverIcon : choiceSetButtonConfig.radioOffHoverIcon
+            button.image = !isMultiSelect ? choiceSetButtonConfig.checkOffIcon : choiceSetButtonConfig.radioOffIcon
+        default:
+            break
+        }
+        button.image?.size = NSSize(width: 16, height: 16)
+        button.alternateImage?.size = NSSize(width: 16, height: 16)
+        button.imageScaling = .scaleProportionallyUpOrDown
     }
     
     @objc private func handleButtonAction() {
@@ -127,6 +150,7 @@ extension ACRChoiceButton {
         get { button.state }
         set {
             button.state = newValue
+            setupButtonImage()
         }
     }
     
@@ -134,14 +158,6 @@ extension ACRChoiceButton {
         get { ((label.cell?.wraps) ) }
         set {
             label.cell?.wraps = newValue ?? false
-        }
-    }
-    
-    var type: NSButton.ButtonType {
-        get { buttonType }
-        set {
-            button.setButtonType(newValue)
-            buttonType = newValue
         }
     }
     

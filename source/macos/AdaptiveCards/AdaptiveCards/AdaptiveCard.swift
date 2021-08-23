@@ -110,3 +110,33 @@ public struct HyperlinkColorConfig {
         self.underlineStyle = underlineStyle
     }
 }
+public struct ChoiceSetButtonConfig {
+    public static let `default` = ChoiceSetButtonConfig(checkOnIcon: BundleUtils.getImage("checkOn", ofType: "png"),
+                                                        checkOffIcon: BundleUtils.getImage("checkOff", ofType: "png"),
+                                                        checkOnHoverIcon: BundleUtils.getImage("checkHoverOn", ofType: "png"),
+                                                        checkOffHoverIcon: BundleUtils.getImage("checkHoverOff", ofType: "png"),
+                                                        radioOnIcon: BundleUtils.getImage("radioOn", ofType: "png"),
+                                                        radioOffIcon: BundleUtils.getImage("radioOff", ofType: "png"),
+                                                        radioOnHoverIcon: BundleUtils.getImage("radioHoverOn", ofType: "png"),
+                                                        radioOffHoverIcon: BundleUtils.getImage("radioHoverOff", ofType: "png"))
+    
+    let checkOnIcon: NSImage?
+    let checkOffIcon: NSImage?
+    let checkOnHoverIcon: NSImage?
+    let checkOffHoverIcon: NSImage?
+    let radioOnIcon: NSImage?
+    let radioOffIcon: NSImage?
+    let radioOnHoverIcon: NSImage?
+    let radioOffHoverIcon: NSImage?
+    
+    public init(checkOnIcon: NSImage?, checkOffIcon: NSImage?, checkOnHoverIcon: NSImage?, checkOffHoverIcon: NSImage?, radioOnIcon: NSImage?, radioOffIcon: NSImage?, radioOnHoverIcon: NSImage?, radioOffHoverIcon: NSImage?) {
+        self.checkOnIcon = checkOnIcon
+        self.checkOffIcon = checkOffIcon
+        self.checkOnHoverIcon = checkOnHoverIcon
+        self.checkOffHoverIcon = checkOffHoverIcon
+        self.radioOnIcon = radioOnIcon
+        self.radioOffIcon = radioOffIcon
+        self.radioOnHoverIcon = radioOnHoverIcon
+        self.radioOffHoverIcon = radioOffHoverIcon
+    }
+}

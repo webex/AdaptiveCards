@@ -526,6 +526,14 @@
 		81C0371B26047C1E00B33324 /* ACRBackgroundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C0371A26047C1E00B33324 /* ACRBackgroundImageView.swift */; };
 		81C037242604AB9D00B33324 /* BackgroundImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C037232604AB9D00B33324 /* BackgroundImageViewTests.swift */; };
 		81C037292604B1F700B33324 /* cisco.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 81C037282604B1F700B33324 /* cisco.jpg */; };
+		81D5F5FB26D3829100064B4B /* checkOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 81D5F5F726D3829000064B4B /* checkOn.png */; };
+		81D5F5FC26D3829100064B4B /* checkOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 81D5F5F826D3829000064B4B /* checkOff.png */; };
+		81D5F5FD26D3829100064B4B /* radioOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 81D5F5F926D3829000064B4B /* radioOn.png */; };
+		81D5F5FE26D3829100064B4B /* radioOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 81D5F5FA26D3829100064B4B /* radioOff.png */; };
+		81D5F60626D3ABAA00064B4B /* radioHoverOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 81D5F60226D3ABAA00064B4B /* radioHoverOff.png */; };
+		81D5F60726D3ABAA00064B4B /* checkHoverOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 81D5F60326D3ABAA00064B4B /* checkHoverOff.png */; };
+		81D5F60826D3ABAA00064B4B /* checkHoverOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 81D5F60426D3ABAA00064B4B /* checkHoverOn.png */; };
+		81D5F60926D3ABAA00064B4B /* radioHoverOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 81D5F60526D3ABAA00064B4B /* radioHoverOn.png */; };
 		A01CA38625DFE3E400A07E21 /* RichTextBlockRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01CA38525DFE3E400A07E21 /* RichTextBlockRenderer.swift */; };
 		A01CA38D25DFE85D00A07E21 /* BaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01CA38C25DFE85D00A07E21 /* BaseProtocol.swift */; };
 		A032271B25E9176D00E7172E /* ACRContentHoldingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A032271A25E9176D00E7172E /* ACRContentHoldingView.swift */; };
@@ -1095,6 +1103,14 @@
 		81C0371A26047C1E00B33324 /* ACRBackgroundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRBackgroundImageView.swift; sourceTree = "<group>"; };
 		81C037232604AB9D00B33324 /* BackgroundImageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageViewTests.swift; sourceTree = "<group>"; };
 		81C037282604B1F700B33324 /* cisco.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cisco.jpg; sourceTree = "<group>"; };
+		81D5F5F726D3829000064B4B /* checkOn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkOn.png; sourceTree = "<group>"; };
+		81D5F5F826D3829000064B4B /* checkOff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkOff.png; sourceTree = "<group>"; };
+		81D5F5F926D3829000064B4B /* radioOn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radioOn.png; sourceTree = "<group>"; };
+		81D5F5FA26D3829100064B4B /* radioOff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radioOff.png; sourceTree = "<group>"; };
+		81D5F60226D3ABAA00064B4B /* radioHoverOff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radioHoverOff.png; sourceTree = "<group>"; };
+		81D5F60326D3ABAA00064B4B /* checkHoverOff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkHoverOff.png; sourceTree = "<group>"; };
+		81D5F60426D3ABAA00064B4B /* checkHoverOn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkHoverOn.png; sourceTree = "<group>"; };
+		81D5F60526D3ABAA00064B4B /* radioHoverOn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radioHoverOn.png; sourceTree = "<group>"; };
 		A01CA38525DFE3E400A07E21 /* RichTextBlockRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextBlockRenderer.swift; sourceTree = "<group>"; };
 		A01CA38C25DFE85D00A07E21 /* BaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseProtocol.swift; sourceTree = "<group>"; };
 		A032271A25E9176D00E7172E /* ACRContentHoldingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRContentHoldingView.swift; sourceTree = "<group>"; };
@@ -1846,6 +1862,14 @@
 		81A94A6E25FF80D60018213A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				81D5F60326D3ABAA00064B4B /* checkHoverOff.png */,
+				81D5F60426D3ABAA00064B4B /* checkHoverOn.png */,
+				81D5F60226D3ABAA00064B4B /* radioHoverOff.png */,
+				81D5F60526D3ABAA00064B4B /* radioHoverOn.png */,
+				81D5F5F826D3829000064B4B /* checkOff.png */,
+				81D5F5F726D3829000064B4B /* checkOn.png */,
+				81D5F5FA26D3829100064B4B /* radioOff.png */,
+				81D5F5F926D3829000064B4B /* radioOn.png */,
 				080DD9272689F4430058914A /* recents_20_w.png */,
 				080DD9262689F4430058914A /* recents_20.png */,
 				13BE7602261C5F4600FC9636 /* calendar-month-light.png */,
@@ -2247,14 +2271,22 @@
 			files = (
 				28F812DE2670B4E80052AD0B /* clear_18_w.png in Resources */,
 				13BE7603261C5F4600FC9636 /* calendar-month-light.png in Resources */,
+				81D5F60626D3ABAA00064B4B /* radioHoverOff.png in Resources */,
 				13BE7607261C7EDA00FC9636 /* calendar-month-dark.png in Resources */,
 				81A94A7025FF80D60018213A /* arrowdown.png in Resources */,
 				81C037292604B1F700B33324 /* cisco.jpg in Resources */,
+				81D5F60826D3ABAA00064B4B /* checkHoverOn.png in Resources */,
+				81D5F5FC26D3829100064B4B /* checkOff.png in Resources */,
+				81D5F5FB26D3829100064B4B /* checkOn.png in Resources */,
 				08299F9E25AF279E00799C66 /* AdaptiveCards.xcconfig in Resources */,
 				81A94A7A25FF86E70018213A /* arrowup.png in Resources */,
 				28F812D92670B47D0052AD0B /* clear_18.png in Resources */,
+				81D5F5FD26D3829100064B4B /* radioOn.png in Resources */,
 				28CE1A7D25E7553700BFCFD9 /* ACRFactTextField.xib in Resources */,
 				81A94A7925FF86E70018213A /* attachment.png in Resources */,
+				81D5F60926D3ABAA00064B4B /* radioHoverOn.png in Resources */,
+				81D5F5FE26D3829100064B4B /* radioOff.png in Resources */,
+				81D5F60726D3ABAA00064B4B /* checkHoverOff.png in Resources */,
 				080DD9282689F4430058914A /* recents_20.png in Resources */,
 				080DD9292689F4430058914A /* recents_20_w.png in Resources */,
 				2871B11D25DD225C0040AB27 /* ACRMultilineInputTextView.xib in Resources */,

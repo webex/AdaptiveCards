@@ -34,7 +34,6 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
             let title = choice.getTitle() ?? ""
             let attributedString = getAttributedString(title: title, with: hostConfig, style: style)
             let choiceButton = view.setupButton(attributedString: attributedString, value: choice.getValue())
-            choiceButton.type = isMultiSelect ? .switch : .radio
             if defaultParsedValues.contains(choice.getValue() ?? "") {
                 choiceButton.state = .on
                 choiceButton.buttonValue = choice.getValue()

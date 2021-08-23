@@ -47,7 +47,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     public func setupButton(attributedString: NSMutableAttributedString, value: String?) -> ACRChoiceButton {
-        let newButton = ACRChoiceButton()
+        let newButton = ACRChoiceButton(renderConfig: RenderConfig.default, isMultiSelect: isRadioGroup)
         newButton.labelAttributedString = attributedString
         newButton.wrap = self.wrap
         newButton.buttonValue = value
