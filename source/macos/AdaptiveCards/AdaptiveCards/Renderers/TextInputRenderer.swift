@@ -15,7 +15,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             view.translatesAutoresizingMaskIntoConstraints = false
             return view
         }()
-        let textView = ACRTextInputView(frame: .zero)
+        let textView = ACRTextInputView(frame: .zero, config: config)
         textView.idString = inputBlock.getId()
         var attributedInitialValue: NSMutableAttributedString
         
@@ -141,7 +141,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
     }
 }
-class ACRTextInputView: NSTextField, InputHandlingViewProtocol {
+class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     var value: String {
         return stringValue
     }
@@ -160,9 +160,11 @@ class ACRTextInputView: NSTextField, InputHandlingViewProtocol {
     
     var maxLen: Int = 0
     var idString: String?
+    var config: RenderConfig?
     
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
+    override init(frame frameRect: NSRect, config: RenderConfig) {
+        self.config = config
+        super.init(frame: frameRect, config: config)
         setupTrackingArea()
     }
     
@@ -187,12 +189,12 @@ class ACRTextInputView: NSTextField, InputHandlingViewProtocol {
     }
     
     override func mouseEntered(with event: NSEvent) {
-        guard let textView = event.trackingArea?.owner as? ACRTextInputView else { return }
-        textView.backgroundColor = ColorUtils.hoverColorOnMouseEnter()
+        super.mouseEntered(with: event)
+        self.layer?.backgroundColor = config?.inputFieldConfig.highlightedColor.cgColor
     }
     
     override func mouseExited(with event: NSEvent) {
-        guard let textView = event.trackingArea?.owner as? ACRTextInputView else { return }
-        textView.backgroundColor = ColorUtils.hoverColorOnMouseExit()
+        super.mouseExited(with: event)
+        self.layer?.backgroundColor = config?.inputFieldConfig.backgroundColor.cgColor
     }
 }
