@@ -39,18 +39,22 @@ open class AdaptiveCard {
 }
 
 public struct RenderConfig {
-    public static let `default` = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default)
+    public static let `default` = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, checkButtonConfig: .default, radioButtonConfig: .default)
     let isDarkMode: Bool
     let buttonConfig: ButtonConfig
     // swiftlint:disable identifier_name
     let supportsSchemeV1_3: Bool
     let hyperlinkColorConfig: HyperlinkColorConfig
+    let checkButtonConfig: ChoiceSetButtonConfig
+    let radioButtonConfig: ChoiceSetButtonConfig
     
-    public init(isDarkMode: Bool, buttonConfig: ButtonConfig, supportsSchemeV1_3: Bool, hyperlinkColorConfig: HyperlinkColorConfig) {
+    public init(isDarkMode: Bool, buttonConfig: ButtonConfig, supportsSchemeV1_3: Bool, hyperlinkColorConfig: HyperlinkColorConfig, checkButtonConfig: ChoiceSetButtonConfig, radioButtonConfig: ChoiceSetButtonConfig) {
         self.isDarkMode = isDarkMode
         self.buttonConfig = buttonConfig
 		self.supportsSchemeV1_3 = supportsSchemeV1_3
         self.hyperlinkColorConfig = hyperlinkColorConfig
+        self.checkButtonConfig = checkButtonConfig
+        self.radioButtonConfig = radioButtonConfig
     }
 }
 
@@ -110,33 +114,19 @@ public struct HyperlinkColorConfig {
         self.underlineStyle = underlineStyle
     }
 }
+
 public struct ChoiceSetButtonConfig {
-    public static let `default` = ChoiceSetButtonConfig(checkOnIcon: BundleUtils.getImage("checkOn", ofType: "png"),
-                                                        checkOffIcon: BundleUtils.getImage("checkOff", ofType: "png"),
-                                                        checkOnHoverIcon: BundleUtils.getImage("checkHoverOn", ofType: "png"),
-                                                        checkOffHoverIcon: BundleUtils.getImage("checkHoverOff", ofType: "png"),
-                                                        radioOnIcon: BundleUtils.getImage("radioOn", ofType: "png"),
-                                                        radioOffIcon: BundleUtils.getImage("radioOff", ofType: "png"),
-                                                        radioOnHoverIcon: BundleUtils.getImage("radioHoverOn", ofType: "png"),
-                                                        radioOffHoverIcon: BundleUtils.getImage("radioHoverOff", ofType: "png"))
+    public static let `default` = ChoiceSetButtonConfig(onIcon: nil, offIcon: nil, onHoverIcon: nil, offHoverIcon: nil)
     
-    let checkOnIcon: NSImage?
-    let checkOffIcon: NSImage?
-    let checkOnHoverIcon: NSImage?
-    let checkOffHoverIcon: NSImage?
-    let radioOnIcon: NSImage?
-    let radioOffIcon: NSImage?
-    let radioOnHoverIcon: NSImage?
-    let radioOffHoverIcon: NSImage?
+    let onIcon: NSImage?
+    let offIcon: NSImage?
+    let onHoverIcon: NSImage?
+    let offHoverIcon: NSImage?
     
-    public init(checkOnIcon: NSImage?, checkOffIcon: NSImage?, checkOnHoverIcon: NSImage?, checkOffHoverIcon: NSImage?, radioOnIcon: NSImage?, radioOffIcon: NSImage?, radioOnHoverIcon: NSImage?, radioOffHoverIcon: NSImage?) {
-        self.checkOnIcon = checkOnIcon
-        self.checkOffIcon = checkOffIcon
-        self.checkOnHoverIcon = checkOnHoverIcon
-        self.checkOffHoverIcon = checkOffHoverIcon
-        self.radioOnIcon = radioOnIcon
-        self.radioOffIcon = radioOffIcon
-        self.radioOnHoverIcon = radioOnHoverIcon
-        self.radioOffHoverIcon = radioOffHoverIcon
+    public init(onIcon: NSImage?, offIcon: NSImage?, onHoverIcon: NSImage?, offHoverIcon: NSImage?) {
+        self.onIcon = onIcon
+        self.offIcon = offIcon
+        self.onHoverIcon = onHoverIcon
+        self.offHoverIcon = offHoverIcon
     }
 }

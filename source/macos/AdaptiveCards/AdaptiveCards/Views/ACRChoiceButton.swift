@@ -1,30 +1,34 @@
 import AppKit
 
+enum ChoiceSetButtonType {
+    case radio
+    case `switch`
+}
+
 protocol ACRChoiceButtonDelegate: NSObjectProtocol {
     func acrChoiceButtonDidSelect(_ button: ACRChoiceButton)
 }
 
 class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     weak var delegate: ACRChoiceButtonDelegate?
-    public var choiceSetButtonConfig: ChoiceSetButtonConfig = .default
     public var buttonValue: String?
     public var idString: String?
     public var valueOn: String?
     public var valueOff: String?
     
-    private let renderConfig: RenderConfig
-    private let isMultiSelect: Bool
+    private let buttonConfig: ChoiceSetButtonConfig
+    private let buttonType: ChoiceSetButtonType
     
-    init(renderConfig: RenderConfig, isMultiSelect: Bool) {
-        self.renderConfig = renderConfig
-        self.isMultiSelect = isMultiSelect
+    init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType) {
+        self.buttonType = buttonType
+        self.buttonConfig = buttonType == .switch ? renderConfig.checkButtonConfig : renderConfig.radioButtonConfig
         super.init(frame: .zero)
-        button.setButtonType(.switch)
+        button.setButtonType(buttonType == .switch ? .switch : .radio)
         setupViews()
         setupConstraints()
         setupActions()
+        updateButtonImage()
         setupTrackingArea()
-        setupButtonImage()
     }
     
     public required init?(coder: NSCoder) {
@@ -57,7 +61,6 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         if  state == .on {
             handleButtonAction()
         }
-        setupButtonImage()
     }
     
     private func setupViews() {
@@ -73,9 +76,8 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     
     private func setupConstraints() {
         button.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        button.topAnchor.constraint(lessThanOrEqualTo: topAnchor).isActive = true
-        button.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor).isActive = true
+        button.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        button.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         label.leadingAnchor.constraint(equalTo: button.trailingAnchor).isActive = true
         label.topAnchor.constraint(equalTo: topAnchor).isActive = true
         label.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -94,14 +96,14 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         button.isHighlighted = false
     }
     
-    private func setupButtonImage() {
+    private func updateButtonImage() {
         switch state {
         case .on:
-            button.image = !isMultiSelect ? choiceSetButtonConfig.checkOnHoverIcon : choiceSetButtonConfig.radioOnHoverIcon
-            button.alternateImage = !isMultiSelect ? choiceSetButtonConfig.checkOnIcon : choiceSetButtonConfig.radioOnIcon
+            button.image = buttonConfig.onHoverIcon
+            button.alternateImage = buttonConfig.onIcon
         case .off:
-            button.alternateImage = !isMultiSelect ? choiceSetButtonConfig.checkOffHoverIcon : choiceSetButtonConfig.radioOffHoverIcon
-            button.image = !isMultiSelect ? choiceSetButtonConfig.checkOffIcon : choiceSetButtonConfig.radioOffIcon
+            button.alternateImage = buttonConfig.offHoverIcon
+            button.image = buttonConfig.offIcon
         default:
             break
         }
@@ -112,6 +114,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     
     @objc private func handleButtonAction() {
         delegate?.acrChoiceButtonDidSelect(self)
+        updateButtonImage()
     }
     
     var value: String {
@@ -150,7 +153,7 @@ extension ACRChoiceButton {
         get { button.state }
         set {
             button.state = newValue
-            setupButtonImage()
+            updateButtonImage()
         }
     }
     
