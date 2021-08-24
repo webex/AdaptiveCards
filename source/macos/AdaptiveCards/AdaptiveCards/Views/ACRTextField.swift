@@ -80,7 +80,8 @@ class ACRTextField: NSTextField {
         titleRect.origin.y += (titleRect.height - minimumHeight) / 2
         titleRect.size.height = minimumHeight
         titleRect.origin.x += leftPadding
-        titleRect.size.width -= rightPadding + leftPadding
+        // 16px is the image size(clear button)
+        titleRect.size.width -= rightPadding + leftPadding + 16
         return titleRect
     }
 
