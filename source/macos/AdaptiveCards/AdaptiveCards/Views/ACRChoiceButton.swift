@@ -16,12 +16,12 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     public var valueOn: String?
     public var valueOff: String?
     
-    private let buttonConfig: ChoiceSetButtonConfig
+    private let buttonConfig: ChoiceSetButtonConfig?
     private let buttonType: ChoiceSetButtonType
     
     init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType) {
         self.buttonType = buttonType
-        self.buttonConfig = buttonType == .switch ? renderConfig.checkButtonConfig : renderConfig.radioButtonConfig
+        self.buttonConfig = buttonType == .switch ? renderConfig.checkBoxButtonConfig : renderConfig.radioButtonConfig
         super.init(frame: .zero)
         button.setButtonType(buttonType == .switch ? .switch : .radio)
         setupViews()
@@ -61,6 +61,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         if  state == .on {
             handleButtonAction()
         }
+        updateButtonImage()
     }
     
     private func setupViews() {
@@ -78,7 +79,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         button.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         button.topAnchor.constraint(equalTo: topAnchor).isActive = true
         button.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        label.leadingAnchor.constraint(equalTo: button.trailingAnchor).isActive = true
+        label.leadingAnchor.constraint(equalTo: button.trailingAnchor, constant: buttonConfig?.elementSpacing ?? 0).isActive = true
         label.topAnchor.constraint(equalTo: topAnchor).isActive = true
         label.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         label.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
@@ -99,11 +100,11 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     private func updateButtonImage() {
         switch state {
         case .on:
-            button.image = buttonConfig.onHoverIcon
-            button.alternateImage = buttonConfig.onIcon
+            button.image = buttonConfig?.selectedHighlightedIcon
+            button.alternateImage = buttonConfig?.selectedIcon
         case .off:
-            button.alternateImage = buttonConfig.offHoverIcon
-            button.image = buttonConfig.offIcon
+            button.alternateImage = buttonConfig?.highlightedIcon
+            button.image = buttonConfig?.normalIcon
         default:
             break
         }

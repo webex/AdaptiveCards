@@ -13,8 +13,8 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     private let webexConfig: String = "webex_light_config.json"
     private var darkTheme = false
     private var buttonConfig: ButtonConfig = .default
-    private var checkButtonConfig: ChoiceSetButtonConfig = .default
-    private var radioButtonConfig: ChoiceSetButtonConfig = .default
+    private var checkButtonConfig: ChoiceSetButtonConfig?
+    private var radioButtonConfig: ChoiceSetButtonConfig?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,7 +66,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         setupRadioButton()
         switch AdaptiveCard.parseHostConfig(from: hostConfigString) {
         case .success(let config):
-            let cardView = AdaptiveCard.render(card: card, with: config, width: 350, actionDelegate: self, resourceResolver: self, config: RenderConfig(isDarkMode: darkTheme, buttonConfig: buttonConfig, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, checkButtonConfig: checkButtonConfig, radioButtonConfig: radioButtonConfig))
+            let cardView = AdaptiveCard.render(card: card, with: config, width: 350, actionDelegate: self, resourceResolver: self, config: RenderConfig(isDarkMode: darkTheme, buttonConfig: buttonConfig, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, checkBoxButtonConfig: checkButtonConfig, radioButtonConfig: radioButtonConfig))
             
             if let renderedView = stackView.arrangedSubviews.first {
                 renderedView.removeFromSuperview()
@@ -128,21 +128,21 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     }
     
     private func setupRadioButton() {
-        let onHoverIcon = NSImage(named: "radioHoverOn")
-        let offHoverIcon = NSImage(named: "radioHoverOff")
-        let onIcon = NSImage(named: "radioOn")
-        let offIcon = NSImage(named: "radioOff")
+        let onHoverIcon = NSImage(named: "radioHoverOn") ?? NSImage()
+        let offHoverIcon = NSImage(named: "radioHoverOff") ?? NSImage()
+        let onIcon = NSImage(named: "radioOn") ?? NSImage()
+        let offIcon = NSImage(named: "radioOff") ?? NSImage()
         
-        self.radioButtonConfig = ChoiceSetButtonConfig(onIcon: onIcon, offIcon: offIcon, onHoverIcon: onHoverIcon, offHoverIcon: offHoverIcon)
+        self.radioButtonConfig = ChoiceSetButtonConfig(selectedIcon: onIcon, normalIcon: offIcon, selectedHighlightedIcon: onHoverIcon, highlightedIcon: offHoverIcon, elementSpacing: 8)
     }
     
     private func setupCheckButton() {
-        let onHoverIcon = NSImage(named: "checkHoverOn")
-        let offHoverIcon = NSImage(named: "checkHoverOff")
-        let onIcon = NSImage(named: "checkOn")
-        let offIcon = NSImage(named: "checkOff")
+        let onHoverIcon = NSImage(named: "checkHoverOn") ?? NSImage()
+        let offHoverIcon = NSImage(named: "checkHoverOff") ?? NSImage()
+        let onIcon = NSImage(named: "checkOn") ?? NSImage()
+        let offIcon = NSImage(named: "checkOff") ?? NSImage()
         
-        self.checkButtonConfig = ChoiceSetButtonConfig(onIcon: onIcon, offIcon: offIcon, onHoverIcon: onHoverIcon, offHoverIcon: offHoverIcon)
+        self.checkButtonConfig = ChoiceSetButtonConfig(selectedIcon: onIcon, normalIcon: offIcon, selectedHighlightedIcon: onHoverIcon, highlightedIcon: offHoverIcon, elementSpacing: 8)
     }
     
     // MARK: TableView Datasource

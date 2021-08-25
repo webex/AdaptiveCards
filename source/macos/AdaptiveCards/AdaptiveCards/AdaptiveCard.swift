@@ -39,21 +39,21 @@ open class AdaptiveCard {
 }
 
 public struct RenderConfig {
-    public static let `default` = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, checkButtonConfig: .default, radioButtonConfig: .default)
+    public static let `default` = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil)
     let isDarkMode: Bool
     let buttonConfig: ButtonConfig
     // swiftlint:disable identifier_name
     let supportsSchemeV1_3: Bool
     let hyperlinkColorConfig: HyperlinkColorConfig
-    let checkButtonConfig: ChoiceSetButtonConfig
-    let radioButtonConfig: ChoiceSetButtonConfig
+    let checkBoxButtonConfig: ChoiceSetButtonConfig?
+    let radioButtonConfig: ChoiceSetButtonConfig?
     
-    public init(isDarkMode: Bool, buttonConfig: ButtonConfig, supportsSchemeV1_3: Bool, hyperlinkColorConfig: HyperlinkColorConfig, checkButtonConfig: ChoiceSetButtonConfig, radioButtonConfig: ChoiceSetButtonConfig) {
+    public init(isDarkMode: Bool, buttonConfig: ButtonConfig, supportsSchemeV1_3: Bool, hyperlinkColorConfig: HyperlinkColorConfig, checkBoxButtonConfig: ChoiceSetButtonConfig?, radioButtonConfig: ChoiceSetButtonConfig?) {
         self.isDarkMode = isDarkMode
         self.buttonConfig = buttonConfig
 		self.supportsSchemeV1_3 = supportsSchemeV1_3
         self.hyperlinkColorConfig = hyperlinkColorConfig
-        self.checkButtonConfig = checkButtonConfig
+        self.checkBoxButtonConfig = checkBoxButtonConfig
         self.radioButtonConfig = radioButtonConfig
     }
 }
@@ -116,17 +116,17 @@ public struct HyperlinkColorConfig {
 }
 
 public struct ChoiceSetButtonConfig {
-    public static let `default` = ChoiceSetButtonConfig(onIcon: nil, offIcon: nil, onHoverIcon: nil, offHoverIcon: nil)
+    let selectedIcon: NSImage
+    let normalIcon: NSImage
+    let selectedHighlightedIcon: NSImage
+    let highlightedIcon: NSImage
+    let elementSpacing: CGFloat
     
-    let onIcon: NSImage?
-    let offIcon: NSImage?
-    let onHoverIcon: NSImage?
-    let offHoverIcon: NSImage?
-    
-    public init(onIcon: NSImage?, offIcon: NSImage?, onHoverIcon: NSImage?, offHoverIcon: NSImage?) {
-        self.onIcon = onIcon
-        self.offIcon = offIcon
-        self.onHoverIcon = onHoverIcon
-        self.offHoverIcon = offHoverIcon
+    public init(selectedIcon: NSImage, normalIcon: NSImage, selectedHighlightedIcon: NSImage, highlightedIcon: NSImage, elementSpacing: CGFloat) {
+        self.selectedIcon = selectedIcon
+        self.normalIcon = normalIcon
+        self.selectedHighlightedIcon = selectedHighlightedIcon
+        self.highlightedIcon = highlightedIcon
+        self.elementSpacing = elementSpacing
     }
 }
