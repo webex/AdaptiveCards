@@ -164,7 +164,19 @@ protected:
     enum
     {
         Left = 0,
-        Right = 1,
+        Right = 1
+	};
+    public:
+        MarkDownNewLineHtmlGenerator() = delete;
+        MarkDownNewLineHtmlGenerator(const MarkDownNewLineHtmlGenerator&) = delete;
+        MarkDownNewLineHtmlGenerator(MarkDownNewLineHtmlGenerator&&) = delete;
+        MarkDownNewLineHtmlGenerator& operator=(const MarkDownNewLineHtmlGenerator&) = delete;
+        MarkDownNewLineHtmlGenerator& operator=(MarkDownNewLineHtmlGenerator&&) = delete;
+        ~MarkDownNewLineHtmlGenerator() = default;
+
+        MarkDownNewLineHtmlGenerator(std::string& token) : MarkDownStringHtmlGenerator(token){};
+        bool IsNewLine() override { return true; }
+        std::string GenerateHtmlString() override;
     };
 
     int AdjustEmphasisCounts(int leftOver, MarkDownEmphasisHtmlGenerator& rightToken);
