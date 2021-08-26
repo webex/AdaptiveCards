@@ -36,7 +36,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     // Label
-    private lazy var label: NSTextField = {
+    private (set) lazy var label: NSTextField = {
         let view = NSTextField()
         view.isEditable = false
         view.delegate = self
@@ -48,7 +48,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }()
     
     // Button
-    private lazy var button: NSButton = {
+    private (set) lazy var button: NSButton = {
         let view = NSButton()
         view.title = ""
         view.translatesAutoresizingMaskIntoConstraints = false
