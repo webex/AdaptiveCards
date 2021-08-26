@@ -127,9 +127,11 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     
     private func setupInputFieldConfig() {
         if darkTheme {
-            self.inputFieldConfig = .init(height: 26, leftPadding: 8, rightPadding: 8, yPadding: 0, focusRingCornerRadius: 8, borderWidth: 0.3, wantsClearButton: true, fontSize: 14, highlightedColor: .init(red: 1, green: 1, blue: 1, alpha: 0.11), backgroundColor: .init(red: 0.148, green: 0.148, blue: 0.148, alpha: 1))
+            let image = NSImage(named: "cancel_16_w")
+            inputFieldConfig = InputFieldConfig(height: 26, leftPadding: 8, rightPadding: 8, yPadding: 0, focusRingCornerRadius: 8, borderWidth: 0.3, wantsClearButton: true, buttonImage: image, font: .systemFont(ofSize: 14), highlightedColor: NSColor(red: 1, green: 1, blue: 1, alpha: 0.11), backgroundColor: NSColor(red: 0.148, green: 0.148, blue: 0.148, alpha: 1), borderColor: NSColor(red: 1, green: 1, blue: 1, alpha: 0.9))
         } else {
-            self.inputFieldConfig = .init(height: 26, leftPadding: 8, rightPadding: 8, yPadding: 0, focusRingCornerRadius: 8, borderWidth: 0.3, wantsClearButton: true, fontSize: 14, highlightedColor: .init(red: 0, green: 0, blue: 0, alpha: 0.11), backgroundColor: .white)
+            let image = NSImage(named: "cancel_16")
+            inputFieldConfig = InputFieldConfig(height: 26, leftPadding: 8, rightPadding: 8, yPadding: 0, focusRingCornerRadius: 8, borderWidth: 0.3, wantsClearButton: true, buttonImage: image, font: .systemFont(ofSize: 14), highlightedColor: NSColor(red: 0, green: 0, blue: 0, alpha: 0.11), backgroundColor: NSColor(red: 1, green: 1, blue: 1, alpha: 1), borderColor: NSColor(red: 0, green: 0, blue: 0, alpha: 0.3))
         }
     }
     // MARK: TableView Datasource

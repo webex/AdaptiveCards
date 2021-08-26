@@ -160,7 +160,7 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     
     var maxLen: Int = 0
     var idString: String?
-    var config: RenderConfig?
+    private let config: RenderConfig?
     
     override init(frame frameRect: NSRect, config: RenderConfig) {
         self.config = config
@@ -173,14 +173,21 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     }
     
     override func textDidChange(_ notification: Notification) {
-        guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
+        guard maxLen > 0  else {
+            super.textDidChange(notification)
+            return
+        } // maxLen returns 0 if propery not set
         // This stops the user from exceeding the maxLength property of Inut.Text if prroperty was set
-        guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
+        guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else {
+            super.textDidChange(notification)
+            return
+        }
         textView.string = String(textView.string.dropLast())
         // Below check added to ensure prefilled value doesn't exceede the maxLength property if set
         if textView.string.count > maxLen {
             textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
         }
+        super.textDidChange(notification)
     }
     
     func setupTrackingArea() {

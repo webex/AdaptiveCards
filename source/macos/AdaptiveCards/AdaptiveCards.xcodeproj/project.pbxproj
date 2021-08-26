@@ -481,8 +481,7 @@
 		2871B15025DD4C4D0040AB27 /* TextInputRedererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B14F25DD4C4D0040AB27 /* TextInputRedererTest.swift */; };
 		2871B16625DF722A0040AB27 /* MultilineInputTextRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B16525DF72290040AB27 /* MultilineInputTextRendererTest.swift */; };
 		2887215B26CE2D17007F7910 /* ACRTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2887215A26CE2D17007F7910 /* ACRTextField.swift */; };
-		28A13DC826D4F1BA008C1476 /* cancel_16_w.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A13DC626D4F1BA008C1476 /* cancel_16_w.png */; };
-		28A13DC926D4F1BA008C1476 /* cancel_16.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A13DC726D4F1BA008C1476 /* cancel_16.png */; };
+		2890094326D62B270045293A /* ACRTextFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2890094226D62B270045293A /* ACRTextFieldTests.swift */; };
 		28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */; };
 		28CE1A4425DFD64B00BFCFD9 /* FactSetRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A4325DFD64B00BFCFD9 /* FactSetRenderer.swift */; };
 		28CE1A6B25E4B67B00BFCFD9 /* FakeFactSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A6A25E4B67B00BFCFD9 /* FakeFactSet.swift */; };
@@ -1053,8 +1052,7 @@
 		2871B14F25DD4C4D0040AB27 /* TextInputRedererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputRedererTest.swift; sourceTree = "<group>"; };
 		2871B16525DF72290040AB27 /* MultilineInputTextRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineInputTextRendererTest.swift; sourceTree = "<group>"; };
 		2887215A26CE2D17007F7910 /* ACRTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTextField.swift; sourceTree = "<group>"; };
-		28A13DC626D4F1BA008C1476 /* cancel_16_w.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancel_16_w.png; sourceTree = "<group>"; };
-		28A13DC726D4F1BA008C1476 /* cancel_16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancel_16.png; sourceTree = "<group>"; };
+		2890094226D62B270045293A /* ACRTextFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTextFieldTests.swift; sourceTree = "<group>"; };
 		28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputRenderer.swift; sourceTree = "<group>"; };
 		28CE1A4325DFD64B00BFCFD9 /* FactSetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactSetRenderer.swift; sourceTree = "<group>"; };
 		28CE1A6A25E4B67B00BFCFD9 /* FakeFactSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeFactSet.swift; sourceTree = "<group>"; };
@@ -1857,8 +1855,6 @@
 				080DD9262689F4430058914A /* recents_20.png */,
 				13BE7602261C5F4600FC9636 /* calendar-month-light.png */,
 				13BE7606261C7EDA00FC9636 /* calendar-month-dark.png */,
-				28A13DC626D4F1BA008C1476 /* cancel_16_w.png */,
-				28A13DC726D4F1BA008C1476 /* cancel_16.png */,
 				28F812DD2670B4E80052AD0B /* clear_18_w.png */,
 				81C037282604B1F700B33324 /* cisco.jpg */,
 				28F812D82670B47D0052AD0B /* clear_18.png */,
@@ -1874,6 +1870,7 @@
 			children = (
 				81C037232604AB9D00B33324 /* BackgroundImageViewTests.swift */,
 				08C86F47260E0843005252B0 /* ACRViewTests.swift */,
+				2890094226D62B270045293A /* ACRTextFieldTests.swift */,
 				81AFEA7526281B9400DD47E0 /* ACRNumericTextFieldTests.swift */,
 				08352EA12695C09100B544C3 /* ACRActionSetViewTests.swift */,
 				08E9A59C268DA48F009D7151 /* ImageSetImageViewTests.swift */,
@@ -2261,13 +2258,11 @@
 				81C037292604B1F700B33324 /* cisco.jpg in Resources */,
 				08299F9E25AF279E00799C66 /* AdaptiveCards.xcconfig in Resources */,
 				81A94A7A25FF86E70018213A /* arrowup.png in Resources */,
-				28A13DC926D4F1BA008C1476 /* cancel_16.png in Resources */,
 				28F812D92670B47D0052AD0B /* clear_18.png in Resources */,
 				28CE1A7D25E7553700BFCFD9 /* ACRFactTextField.xib in Resources */,
 				81A94A7925FF86E70018213A /* attachment.png in Resources */,
 				080DD9282689F4430058914A /* recents_20.png in Resources */,
 				080DD9292689F4430058914A /* recents_20_w.png in Resources */,
-				28A13DC826D4F1BA008C1476 /* cancel_16_w.png in Resources */,
 				2871B11D25DD225C0040AB27 /* ACRMultilineInputTextView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2429,6 +2424,7 @@
 				086D82DF26AAA0CC00CD2D0D /* FakeToggleVisibilityTarget.swift in Sources */,
 				0846FDA6269D774800090F1A /* FakeActionsConfig.swift in Sources */,
 				086D82DD26AA9E4700CD2D0D /* FakeToggleVisibilityAction.swift in Sources */,
+				2890094326D62B270045293A /* ACRTextFieldTests.swift in Sources */,
 				13C41B0B25F25836008A1F2E /* InputTimeRendererTests.swift in Sources */,
 				2910CF112600D2CC000910C8 /* ActionSetRendererTests.swift in Sources */,
 				08352EA22695C09100B544C3 /* ACRActionSetViewTests.swift in Sources */,

@@ -114,7 +114,7 @@ public struct HyperlinkColorConfig {
 }
 
 public struct InputFieldConfig {
-    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.1, wantsClearButton: false, fontSize: 12, highlightedColor: .lightGray, backgroundColor: .white)
+    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: -16, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.1, wantsClearButton: false, buttonImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .black)
     
     let height: CGFloat
     let leftPadding: CGFloat
@@ -123,11 +123,13 @@ public struct InputFieldConfig {
     let focusRingCornerRadius: CGFloat
     let borderWidth: CGFloat
     let wantsClearButton: Bool
-    let fontSize: CGFloat
+    let buttonImage: NSImage?
+    let font: NSFont
     let highlightedColor: NSColor
     let backgroundColor: NSColor
+    let borderColor: NSColor
     
-    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, fontSize: CGFloat, highlightedColor: NSColor, backgroundColor: NSColor) {
+    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, buttonImage: NSImage?, font: NSFont, highlightedColor: NSColor, backgroundColor: NSColor, borderColor: NSColor) {
         self.height = height
         self.leftPadding = leftPadding
         self.rightPadding = rightPadding
@@ -135,8 +137,10 @@ public struct InputFieldConfig {
         self.focusRingCornerRadius = focusRingCornerRadius
         self.borderWidth = borderWidth
         self.wantsClearButton = wantsClearButton
-        self.fontSize = fontSize
+        self.buttonImage = buttonImage
+        self.font = font
         self.highlightedColor = highlightedColor
         self.backgroundColor = backgroundColor
+        self.borderColor = borderColor
     }
 }

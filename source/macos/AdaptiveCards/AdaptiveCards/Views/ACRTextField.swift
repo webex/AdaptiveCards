@@ -2,42 +2,43 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRTextField: NSTextField {
-    var isDarkMode: Bool = false
+    private let config: InputFieldConfig
     
     init(frame frameRect: NSRect, config: RenderConfig) {
+        self.config = config.inputFieldConfig
         super.init(frame: frameRect)
-        initialise(config: config)
-        setupConstraints(config: config)
+        initialise()
+        setupConstraints()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func initialise(config: RenderConfig) {
-        self.isDarkMode = config.isDarkMode
-        let myCell = VerticallyCenteredTextFieldCell()
-        let inputConfig = config.inputFieldConfig
-        myCell.setupSpacing(rightPadding: inputConfig.rightPadding, leftPadding: inputConfig.leftPadding, focusRingCornerRadius: inputConfig.focusRingCornerRadius, borderWidth: inputConfig.borderWidth)
-        self.cell = myCell
-        self.font = .systemFont(ofSize: inputConfig.fontSize)
-        if inputConfig.wantsClearButton {
-            self.addSubview(clearButton)
+    private func initialise() {
+        let customCell = VerticallyCenteredTextFieldCell()
+        customCell.setupSpacing(rightPadding: config.rightPadding, leftPadding: config.leftPadding, focusRingCornerRadius: config.focusRingCornerRadius, borderWidth: config.borderWidth, borderColor: config.borderColor)
+        cell = customCell
+        font = config.font
+        if config.wantsClearButton {
+            addSubview(clearButton)
+            clearButton.isHidden = true
         }
+        // Add inintial backgound color to text box
+        wantsLayer = true
+        layer?.backgroundColor = config.backgroundColor.cgColor
     }
     
-    func setupConstraints(config: RenderConfig) {
-        let inputConfig = config.inputFieldConfig
-        self.heightAnchor.constraint(equalToConstant: inputConfig.height).isActive = true
-        if inputConfig.wantsClearButton {
-            clearButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -inputConfig.rightPadding).isActive = true
-            clearButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+    private func setupConstraints() {
+        heightAnchor.constraint(equalToConstant: config.height).isActive = true
+        if config.wantsClearButton {
+            clearButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -config.rightPadding).isActive = true
+            clearButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         }
     }
     
     private (set) lazy var clearButton: NSButtonWithImageSpacing = {
-        let resourceName = isDarkMode ? "cancel_16_w" : "cancel_16"
-        let view = NSButtonWithImageSpacing(image: BundleUtils.getImage(resourceName, ofType: "png") ?? NSImage(), target: self, action: #selector(handleClearAction))
+        let view = NSButtonWithImageSpacing(image: config.buttonImage ?? NSImage(), target: self, action: #selector(handleClearAction))
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.clear.cgColor
@@ -45,32 +46,55 @@ class ACRTextField: NSTextField {
         return view
     }()
     
+    private var textFieldIsEmpty: Bool = true {
+        didSet {
+            if textFieldIsEmpty == false {
+                clearButton.isHidden = false
+            } else {
+                clearButton.isHidden = true
+            }
+        }
+    }
+    
     @objc private func handleClearAction() {
         self.stringValue = ""
+        textFieldIsEmpty = true
+    }
+
+    override func textDidChange(_ notification: Notification) {
+        if textFieldIsEmpty == true {
+            textFieldIsEmpty = false
+        }
+        if stringValue.isEmpty && textFieldIsEmpty == false {
+            textFieldIsEmpty = true
+        }
+        super.textDidChange(notification)
+    }
+    
+    override var attributedStringValue: NSAttributedString {
+        didSet {
+            if !attributedStringValue.string.isEmpty && textFieldIsEmpty == true {
+                textFieldIsEmpty = false
+            }
+        }
     }
 }
 
  class VerticallyCenteredTextFieldCell: NSTextFieldCell {
-    var rightPadding: CGFloat = 0
-    var leftPadding: CGFloat = 0
-    var yPadding: CGFloat = 0
-    var focusRingCornerRadius: CGFloat = 0
-    var borderWidth: CGFloat = 0.1
-    
-    override init(textCell string: String) {
-        super.init(textCell: string)
-    }
+    private var rightPadding: CGFloat = 0
+    private var leftPadding: CGFloat = 0
+    private var yPadding: CGFloat = 0
+    private var focusRingCornerRadius: CGFloat = 0
+    private var borderWidth: CGFloat = 0.1
+    private var borderColor: NSColor = .black
 
-    required init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func setupSpacing(rightPadding: CGFloat = 0, leftPadding: CGFloat = 0, yPadding: CGFloat = 0, focusRingCornerRadius: CGFloat = 0, borderWidth: CGFloat = 0.1) {
+    func setupSpacing(rightPadding: CGFloat = 0, leftPadding: CGFloat = 0, yPadding: CGFloat = 0, focusRingCornerRadius: CGFloat = 0, borderWidth: CGFloat = 0.1, borderColor: NSColor = .black) {
         self.leftPadding = leftPadding
         self.rightPadding = rightPadding
         self.yPadding = yPadding
         self.focusRingCornerRadius = focusRingCornerRadius
         self.borderWidth = borderWidth
+        self.borderColor = borderColor
     }
 
     override func titleRect(forBounds rect: NSRect) -> NSRect {
@@ -88,12 +112,14 @@ class ACRTextField: NSTextField {
     override func drawInterior(withFrame cellFrame: NSRect, in controlView: NSView) {
         controlView.layer?.cornerRadius = focusRingCornerRadius
         controlView.layer?.borderWidth = borderWidth
+        controlView.layer?.borderColor = borderColor.cgColor
         super.drawInterior(withFrame: titleRect(forBounds: cellFrame), in: controlView)
     }
 
     override func select(withFrame rect: NSRect, in controlView: NSView, editor textObj: NSText, delegate: Any?, start selStart: Int, length selLength: Int) {
         controlView.layer?.cornerRadius = focusRingCornerRadius
         controlView.layer?.borderWidth = borderWidth
+        controlView.layer?.borderColor = borderColor.cgColor
         super.select(withFrame: titleRect(forBounds: rect), in: controlView, editor: textObj, delegate: delegate, start: selStart, length: selLength)
     }
     
