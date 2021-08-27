@@ -38,7 +38,7 @@ class ACRTextField: NSTextField {
     }
     
     private (set) lazy var clearButton: NSButtonWithImageSpacing = {
-        let view = NSButtonWithImageSpacing(image: config.buttonImage ?? NSImage(), target: self, action: #selector(handleClearAction))
+        let view = NSButtonWithImageSpacing(image: config.clearButtonImage ?? NSImage(), target: self, action: #selector(handleClearAction))
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.clear.cgColor
@@ -48,11 +48,7 @@ class ACRTextField: NSTextField {
     
     private var textFieldIsEmpty: Bool = true {
         didSet {
-            if textFieldIsEmpty == false {
-                clearButton.isHidden = false
-            } else {
-                clearButton.isHidden = true
-            }
+            clearButton.isHidden = textFieldIsEmpty
         }
     }
     
