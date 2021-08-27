@@ -372,6 +372,7 @@
 /* Begin XCBuildConfiguration section */
 		08299E7625AF258900799C66 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 08D365D325B1F2E1001C1B53 /* ADCMacOSVisualizer.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -433,6 +434,7 @@
 		};
 		08299E7725AF258900799C66 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 08D365D325B1F2E1001C1B53 /* ADCMacOSVisualizer.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
