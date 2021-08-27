@@ -21,23 +21,31 @@ class ACRChoiceSetButtontests: XCTestCase {
     }
     
     func testCheckBoxButtonImagesOff() {
+        XCTAssertNotNil(choiceCheckBoxButtonView.button.image)
+        XCTAssertNotNil(choiceCheckBoxButtonView.button.alternateImage)
         XCTAssertEqual(choiceCheckBoxButtonView.button.image, renderConfig.checkBoxButtonConfig?.normalIcon)
         XCTAssertEqual(choiceCheckBoxButtonView.button.alternateImage, renderConfig.checkBoxButtonConfig?.highlightedIcon)
     }
     
     func testCheckBoxButtonImagesOn() {
         choiceCheckBoxButtonView.state = .on
+        XCTAssertNotNil(choiceCheckBoxButtonView.button.image)
+        XCTAssertNotNil(choiceCheckBoxButtonView.button.alternateImage)
         XCTAssertEqual(choiceCheckBoxButtonView.button.image, renderConfig.checkBoxButtonConfig?.selectedHighlightedIcon)
         XCTAssertEqual(choiceCheckBoxButtonView.button.alternateImage, renderConfig.checkBoxButtonConfig?.selectedIcon)
     }
 
     func testRadioButtonImagesOff() {
+        XCTAssertNotNil(choiceRadioButtonView.button.image)
+        XCTAssertNotNil(choiceRadioButtonView.button.alternateImage)
         XCTAssertEqual(choiceRadioButtonView.button.image, renderConfig.radioButtonConfig?.normalIcon)
         XCTAssertEqual(choiceRadioButtonView.button.alternateImage, renderConfig.radioButtonConfig?.highlightedIcon)
     }
     
     func testRadioButtonImagesOn() {
         choiceRadioButtonView.state = .on
+        XCTAssertNotNil(choiceRadioButtonView.button.image)
+        XCTAssertNotNil(choiceRadioButtonView.button.alternateImage)
         XCTAssertEqual(choiceRadioButtonView.button.image, renderConfig.radioButtonConfig?.selectedHighlightedIcon)
         XCTAssertEqual(choiceRadioButtonView.button.alternateImage, renderConfig.radioButtonConfig?.selectedIcon)
     }
@@ -71,11 +79,6 @@ class ACRChoiceSetButtontests: XCTestCase {
         let onIcon = NSImage()
         let offIcon = NSImage()
         
-        onHoverIcon.size = NSSize(width: 16, height: 16)
-        onIcon.size = NSSize(width: 16, height: 16)
-        offIcon.size = NSSize(width: 16, height: 16)
-        offHoverIcon.size = NSSize(width: 16, height: 16)
-        
         return ChoiceSetButtonConfig(selectedIcon: onIcon, normalIcon: offIcon, selectedHighlightedIcon: onHoverIcon, highlightedIcon: offHoverIcon, elementSpacing: 12)
     }
     
@@ -84,11 +87,6 @@ class ACRChoiceSetButtontests: XCTestCase {
         let offHoverIcon = NSImage()
         let onIcon = NSImage()
         let offIcon = NSImage()
-        
-        onIcon.setName("onIcon")
-        offIcon.setName("offIcon")
-        onHoverIcon.setName("onHoverIcon")
-        offHoverIcon.setName("offHoverIcon")
         
         return ChoiceSetButtonConfig(selectedIcon: onIcon, normalIcon: offIcon, selectedHighlightedIcon: onHoverIcon, highlightedIcon: offHoverIcon, elementSpacing: 12)
     }
