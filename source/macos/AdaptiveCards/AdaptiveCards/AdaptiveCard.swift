@@ -39,15 +39,17 @@ open class AdaptiveCard {
 }
 
 public struct RenderConfig {
-    public static let `default` = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: .default)
+    public static let `default` = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil)
     let isDarkMode: Bool
     let buttonConfig: ButtonConfig
     // swiftlint:disable identifier_name
     let supportsSchemeV1_3: Bool
     let hyperlinkColorConfig: HyperlinkColorConfig
+    let checkBoxButtonConfig: ChoiceSetButtonConfig?
+    let radioButtonConfig: ChoiceSetButtonConfig?
     let inputFieldConfig: InputFieldConfig
     
-    public init(isDarkMode: Bool, buttonConfig: ButtonConfig, supportsSchemeV1_3: Bool, hyperlinkColorConfig: HyperlinkColorConfig, inputFieldConfig: InputFieldConfig) {
+    public init(isDarkMode: Bool, buttonConfig: ButtonConfig, supportsSchemeV1_3: Bool, hyperlinkColorConfig: HyperlinkColorConfig, inputFieldConfig: InputFieldConfig, checkBoxButtonConfig: ChoiceSetButtonConfig?, radioButtonConfig: ChoiceSetButtonConfig?) {
         self.isDarkMode = isDarkMode
         self.buttonConfig = buttonConfig
 		self.supportsSchemeV1_3 = supportsSchemeV1_3
@@ -128,7 +130,8 @@ public struct ChoiceSetButtonConfig {
         self.selectedHighlightedIcon = selectedHighlightedIcon
         self.highlightedIcon = highlightedIcon
         self.elementSpacing = elementSpacing
-		
+    }
+}
 public struct InputFieldConfig {
     public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: -16, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.1, wantsClearButton: false, clearButtonImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .black)
     
