@@ -126,6 +126,7 @@ class ColorUtils {
         }
     }
     
+    // TODO: Discard these from here
     static func hoverColorOnMouseEnter() -> NSColor {
         if #available(OSX 10.14, *) {
             return .unemphasizedSelectedTextBackgroundColor
@@ -144,7 +145,14 @@ class TextUtils {
         guard parserResult.isHTML, let attributedString = view.resolveAttributedString(for: parserResult.parsedString) else {
             return getMarkdownString(parserResult: parserResult)
         }
-        return NSMutableAttributedString(attributedString: attributedString)
+        
+        let trimmedString = attributedString.string.trimmingCharacters(in: .newlines)
+        let range = (attributedString.string as NSString).range(of: trimmedString)
+        
+        guard !trimmedString.isEmpty, range.lowerBound > 0, range.upperBound < attributedString.length else {
+            return NSMutableAttributedString(attributedString: attributedString)
+        }
+        return NSMutableAttributedString(attributedString: attributedString.attributedSubstring(from: range))
     }
     
     private static func getMarkdownString(parserResult: ACSMarkdownParserResult) -> NSMutableAttributedString {
