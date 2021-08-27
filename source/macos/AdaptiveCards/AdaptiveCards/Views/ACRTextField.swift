@@ -27,6 +27,7 @@ class ACRTextField: NSTextField {
         // Add inintial backgound color to text box
         wantsLayer = true
         layer?.backgroundColor = config.backgroundColor.cgColor
+        setupTrackingArea()
     }
     
     private func setupConstraints() {
@@ -46,33 +47,43 @@ class ACRTextField: NSTextField {
         return view
     }()
     
-    private var textFieldIsEmpty: Bool = true {
-        didSet {
-            clearButton.isHidden = textFieldIsEmpty
-        }
+    private var isEmpty: Bool {
+        return stringValue.isEmpty && attributedStringValue.string.isEmpty
     }
     
     @objc private func handleClearAction() {
         self.stringValue = ""
-        textFieldIsEmpty = true
+        updateClearButton()
     }
 
     override func textDidChange(_ notification: Notification) {
-        if textFieldIsEmpty == true {
-            textFieldIsEmpty = false
-        }
-        if stringValue.isEmpty && textFieldIsEmpty == false {
-            textFieldIsEmpty = true
-        }
         super.textDidChange(notification)
+        updateClearButton()
     }
     
     override var attributedStringValue: NSAttributedString {
         didSet {
-            if !attributedStringValue.string.isEmpty && textFieldIsEmpty == true {
-                textFieldIsEmpty = false
-            }
+            updateClearButton()
         }
+    }
+    
+    private func setupTrackingArea() {
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        super.mouseEntered(with: event)
+        self.layer?.backgroundColor = config.highlightedColor.cgColor
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        super.mouseExited(with: event)
+        self.layer?.backgroundColor = config.backgroundColor.cgColor
+    }
+    
+    private func updateClearButton() {
+        clearButton.isHidden = isEmpty
     }
 }
 

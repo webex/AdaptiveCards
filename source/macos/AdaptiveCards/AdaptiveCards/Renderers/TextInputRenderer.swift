@@ -160,12 +160,9 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     
     var maxLen: Int = 0
     var idString: String?
-    private let config: RenderConfig?
     
     init(config: RenderConfig) {
-        self.config = config
         super.init(frame: .zero, config: config)
-        setupTrackingArea()
     }
     
     required init?(coder: NSCoder) {
@@ -182,20 +179,5 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
         if textView.string.count > maxLen {
             textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
         }
-    }
-    
-    func setupTrackingArea() {
-        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
-        addTrackingArea(trackingArea)
-    }
-    
-    override func mouseEntered(with event: NSEvent) {
-        super.mouseEntered(with: event)
-        self.layer?.backgroundColor = config?.inputFieldConfig.highlightedColor.cgColor
-    }
-    
-    override func mouseExited(with event: NSEvent) {
-        super.mouseExited(with: event)
-        self.layer?.backgroundColor = config?.inputFieldConfig.backgroundColor.cgColor
     }
 }
