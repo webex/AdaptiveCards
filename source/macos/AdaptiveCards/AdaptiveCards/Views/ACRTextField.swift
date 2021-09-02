@@ -3,11 +3,19 @@ import AppKit
 
 class ACRTextField: NSTextField {
     private let config: InputFieldConfig
+    weak var textFieldDelegate: ACRTextFieldDelegate?
     
-    init(frame frameRect: NSRect, config: RenderConfig) {
-        self.config = config.inputFieldConfig
-        super.init(frame: frameRect)
-        initialise()
+    init(dateTimeFieldConfig config: InputFieldConfig) {
+        self.config = config
+        super.init(frame: .zero)
+        initialise(isDateTime: true)
+        setupConstraints()
+    }
+    
+    init(textFieldConfig config: InputFieldConfig) {
+        self.config = config
+        super.init(frame: .zero)
+        initialise(isDateTime: false)
         setupConstraints()
     }
 
@@ -15,9 +23,10 @@ class ACRTextField: NSTextField {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func initialise() {
+    private func initialise(isDateTime: Bool) {
         let customCell = VerticallyCenteredTextFieldCell()
-        customCell.setupSpacing(rightPadding: config.rightPadding, leftPadding: config.leftPadding, focusRingCornerRadius: config.focusRingCornerRadius, borderWidth: config.borderWidth, borderColor: config.borderColor)
+        // 20 points extra padding for calendar/clock icons
+        customCell.setupSpacing(rightPadding: config.rightPadding, leftPadding: isDateTime ? config.leftPadding + 18 : config.leftPadding, focusRingCornerRadius: config.focusRingCornerRadius, borderWidth: config.borderWidth, borderColor: config.borderColor)
         cell = customCell
         font = config.font
         if config.wantsClearButton {
@@ -53,6 +62,7 @@ class ACRTextField: NSTextField {
     
     @objc private func handleClearAction() {
         self.stringValue = ""
+        textFieldDelegate?.acrTextFieldDidSelectClear(self)
         updateClearButton()
     }
 
@@ -62,6 +72,12 @@ class ACRTextField: NSTextField {
     }
     
     override var attributedStringValue: NSAttributedString {
+        didSet {
+            updateClearButton()
+        }
+    }
+    
+    override var stringValue: String {
         didSet {
             updateClearButton()
         }
@@ -135,3 +151,7 @@ class ACRTextField: NSTextField {
         path.fill()
     }
  }
+
+protocol ACRTextFieldDelegate: AnyObject {
+    func acrTextFieldDidSelectClear(_ textField: ACRTextField)
+}
