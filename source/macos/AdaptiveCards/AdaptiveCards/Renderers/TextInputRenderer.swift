@@ -15,7 +15,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             view.translatesAutoresizingMaskIntoConstraints = false
             return view
         }()
-        let textView = ACRTextInputView(textFieldConfig: config.inputFieldConfig)
+        let textView = ACRTextInputView(config: config.inputFieldConfig)
         textView.idString = inputBlock.getId()
         var attributedInitialValue: NSMutableAttributedString
         

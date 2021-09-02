@@ -19,7 +19,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }()
     
     private (set) lazy var textField: ACRTextField = {
-        let view = ACRTextField(dateTimeFieldConfig: inputFieldConfig)
+        let view = ACRTextField(dateTimeFieldWith: inputFieldConfig)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isEditable = true
         view.isSelectable = false
@@ -236,8 +236,6 @@ extension NSPopover {
 
 extension ACRDateField: ACRTextFieldDelegate {
     func acrTextFieldDidSelectClear(_ textField: ACRTextField) {
-        if textField == self.textField {
-            selectedDate = nil
-        }
+        selectedDate = nil
     }
 }

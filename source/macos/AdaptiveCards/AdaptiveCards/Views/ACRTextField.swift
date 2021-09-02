@@ -5,14 +5,14 @@ class ACRTextField: NSTextField {
     private let config: InputFieldConfig
     weak var textFieldDelegate: ACRTextFieldDelegate?
     
-    init(dateTimeFieldConfig config: InputFieldConfig) {
+    init(dateTimeFieldWith config: InputFieldConfig) {
         self.config = config
         super.init(frame: .zero)
         initialise(isDateTime: true)
         setupConstraints()
     }
     
-    init(textFieldConfig config: InputFieldConfig) {
+    init(config: InputFieldConfig) {
         self.config = config
         super.init(frame: .zero)
         initialise(isDateTime: false)
