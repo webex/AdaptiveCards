@@ -10,4 +10,8 @@ class ACRScrollView: NSScrollView {
             nextResponder?.scrollWheel(with: event)
         }
     }
+    override open func drawFocusRingMask() {
+        let path = NSBezierPath(roundedRect: self.bounds, xRadius: self.layer?.cornerRadius ?? 0, yRadius: self.layer?.cornerRadius ?? 0)
+        path.fill()
+    }
 }
