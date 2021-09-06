@@ -39,7 +39,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         if inputBlock.getIsMultiline() {
-            let multilineView = ACRMultilineInputTextView(renderConfig: config)
+            let multilineView = ACRMultilineInputTextView(config: config.inputFieldConfig)
             multilineView.setId(inputBlock.getId())
             multilineView.setVisibilty(to: inputBlock.getIsVisible())
             if let placeholderString = inputBlock.getPlaceholder() {

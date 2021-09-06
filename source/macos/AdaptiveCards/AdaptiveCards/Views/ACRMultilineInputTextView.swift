@@ -11,8 +11,8 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     var maxLen: Int = 0
     var id: String?
     
-    init(renderConfig: RenderConfig) {
-        config = renderConfig.inputFieldConfig
+    init(config: InputFieldConfig) {
+        self.config = config
         super.init(frame: .zero)
         BundleUtils.loadNibNamed("ACRMultilineInputTextView", owner: self)
         textView.allowsUndo = true
