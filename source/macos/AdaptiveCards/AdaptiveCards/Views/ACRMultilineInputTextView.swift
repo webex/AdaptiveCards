@@ -40,7 +40,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     override func awakeFromNib() {
         super.awakeFromNib()
         scrollView.wantsLayer = true
-        scrollView.layer?.cornerRadius = config.focusRingCornerRadius
+        scrollView.focusRingCornerRadius = config.focusRingCornerRadius
         scrollView.focusRingType = .exterior
         scrollView.autohidesScrollers = true
         scrollView.disableScroll = true
