@@ -7,7 +7,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     @IBOutlet var textView: ACRTextView!
     
     private var placeholderAttrString: NSAttributedString?
-    private var config: InputFieldConfig
+    private let config: InputFieldConfig
     var maxLen: Int = 0
     var id: String?
     
