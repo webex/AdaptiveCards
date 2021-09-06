@@ -65,7 +65,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     
     func setPlaceholder(placeholder: String) {
         let placeholderValue = NSMutableAttributedString(string: placeholder)
-        placeholderValue.addAttributes([.foregroundColor: NSColor.placeholderTextColor], range: NSRange(location: 0, length: placeholderValue.length))
+        placeholderValue.addAttributes([.foregroundColor: NSColor.placeholderTextColor, .font: config.font], range: NSRange(location: 0, length: placeholderValue.length))
         textView.placeholderAttrString = placeholderValue
     }
     
