@@ -19,11 +19,10 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }()
     
     private (set) lazy var textField: ACRTextField = {
-        let view = ACRTextField(dateTimeFieldWith: inputFieldConfig)
+        let view = ACRTextField(dateTimeFieldWith: config)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isEditable = true
         view.isSelectable = false
-        view.isBordered = true
         view.cell?.lineBreakMode = .byTruncatingTail
         view.stringValue = ""
         view.textFieldDelegate = self
@@ -35,7 +34,8 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         let clockResourceName = isDarkMode ? "recents_20_w" : "recents_20"
         let calendarImage = BundleUtils.getImage(calendarResourceName, ofType: "png")
         let clockImage = BundleUtils.getImage(clockResourceName, ofType: "png")
-        let view = NSButtonWithImageSpacing(image: (isTimeMode ? inputFieldConfig.clockImage ?? calendarImage : inputFieldConfig.calendarImage ?? clockImage) ?? NSImage(), target: self, action: #selector(mouseDown(with:)))
+        let inputFieldConfig = config.inputFieldConfig
+        let view = NSButtonWithImageSpacing(image: (isTimeMode ? inputFieldConfig.clockImage ?? clockImage : inputFieldConfig.calendarImage ?? calendarImage) ?? NSImage(), target: self, action: #selector(mouseDown(with:)))
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.clear.cgColor
@@ -56,7 +56,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     private var popover: NSPopover?
     let isTimeMode: Bool
     let isDarkMode: Bool
-    let inputFieldConfig: InputFieldConfig
+    let config: RenderConfig
 
     var selectedDate: Date? {
         didSet {
@@ -116,7 +116,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     init(isTimeMode: Bool, config: RenderConfig) {
         self.isTimeMode = isTimeMode
         self.isDarkMode = config.isDarkMode
-        self.inputFieldConfig = config.inputFieldConfig
+        self.config = config
         super.init(frame: .zero)
         setupViews()
         setupConstraints()
@@ -132,11 +132,11 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     private func setupConstraints() {
-        textField.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        textField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2).isActive = true
         textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
         textField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        textField.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        iconButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
+        textField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -2).isActive = true
+        iconButton.leadingAnchor.constraint(equalTo: textField.leadingAnchor, constant: config.inputFieldConfig.leftPadding).isActive = true
         iconButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
     
