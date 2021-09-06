@@ -35,7 +35,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         let calendarImage = BundleUtils.getImage(calendarResourceName, ofType: "png")
         let clockImage = BundleUtils.getImage(clockResourceName, ofType: "png")
         let inputFieldConfig = config.inputFieldConfig
-        let view = NSButtonWithImageSpacing(image: (isTimeMode ? inputFieldConfig.clockImage ?? clockImage : inputFieldConfig.calendarImage ?? calendarImage) ?? NSImage(), target: self, action: #selector(mouseDown(with:)))
+        let view = NSButtonWithImageSpacing(image: (isTimeMode ? inputFieldConfig.clockImage ?? clockImage : inputFieldConfig.calendarImage ?? calendarImage) ?? NSImage(), target: self, action: #selector(handleOpenPickerAction))
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.clear.cgColor
@@ -132,6 +132,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     private func setupConstraints() {
+        // To display the curved border which is drawn in ACRTextField, 2px additional space is needed
         textField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2).isActive = true
         textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
         textField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -141,6 +142,11 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     override func mouseDown(with event: NSEvent) {
+        handleOpenPickerAction()
+        super.mouseDown(with: event)
+    }
+    
+    @objc private func handleOpenPickerAction() {
         let frame = isTimeMode ? NSRect(x: 0, y: 0, width: 122, height: 122) : NSRect(x: 0, y: 0, width: 138, height: 147)
         if let dateValue = selectedDate {
             datePickerCalendar.dateValue = dateValue

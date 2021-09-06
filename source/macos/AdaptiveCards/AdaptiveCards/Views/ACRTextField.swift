@@ -1,9 +1,13 @@
 import AdaptiveCards_bridge
 import AppKit
 
+protocol ACRTextFieldDelegate: AnyObject {
+    func acrTextFieldDidSelectClear(_ textField: ACRTextField)
+}
+
 class ACRTextField: NSTextField {
-    private let config: InputFieldConfig
     weak var textFieldDelegate: ACRTextFieldDelegate?
+    private let config: InputFieldConfig
     private let isDarkMode: Bool?
     private let isDateTimeMode: Bool
     
@@ -67,7 +71,7 @@ class ACRTextField: NSTextField {
     
     private (set) lazy var clearButton: NSButtonWithImageSpacing = {
         let clearImage: NSImage?
-        if let isDarkMode = isDarkMode, config.clearButtonImage == nil && wantsClearButton {
+        if let isDarkMode = isDarkMode, config.clearButtonImage == nil, wantsClearButton {
             // displaying old clear button
             let resourceName = isDarkMode ? "clear_18_w" : "clear_18"
             clearImage = BundleUtils.getImage(resourceName, ofType: "png")
@@ -129,9 +133,7 @@ class ACRTextField: NSTextField {
     }
     
     private var wantsClearButton: Bool {
-        get {
-            return config.wantsClearButton || isDateTimeMode
-        }
+        return config.wantsClearButton || isDateTimeMode
     }
 }
 
@@ -185,7 +187,3 @@ class ACRTextField: NSTextField {
         path.fill()
     }
  }
-
-protocol ACRTextFieldDelegate: AnyObject {
-    func acrTextFieldDidSelectClear(_ textField: ACRTextField)
-}
