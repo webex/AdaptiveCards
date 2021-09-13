@@ -87,6 +87,19 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         }
     }
     
+    func customizeForFactSetCell(isTitleView: Bool, config: RenderConfig) {
+        setContentCompressionResistancePriority(.required, for: .vertical)
+        alignment = .left
+        isEditable = false
+        let titleViewFontDescriptor = (config.inputFieldConfig.font.fontDescriptor).withSymbolicTraits(.bold)
+        font = isTitleView ? NSFont(descriptor: titleViewFontDescriptor, size: config.inputFieldConfig.font.pointSize) : config.inputFieldConfig.font
+        linkTextAttributes = [
+            NSAttributedString.Key.foregroundColor: config.hyperlinkColorConfig.foregroundColor,
+            NSAttributedString.Key.underlineColor: config.hyperlinkColorConfig.underlineColor,
+            NSAttributedString.Key.underlineStyle: config.hyperlinkColorConfig.underlineStyle.rawValue
+        ]
+    }
+    
     override var canBecomeKeyView: Bool {
         return isEditable
     }
