@@ -91,6 +91,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         setContentCompressionResistancePriority(.required, for: .vertical)
         alignment = .left
         isEditable = false
+        backgroundColor = .clear
         let titleViewFontDescriptor = (config.inputFieldConfig.font.fontDescriptor).withSymbolicTraits(.bold)
         font = isTitleView ? NSFont(descriptor: titleViewFontDescriptor, size: config.inputFieldConfig.font.pointSize) : config.inputFieldConfig.font
         linkTextAttributes = [
