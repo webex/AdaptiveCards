@@ -29,27 +29,37 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         var requiredWidth: CGFloat = 0
         // Main loop to iterate over Array of facts
         for fact in factArray {
-            let markdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig)
-            let markdownString = TextUtils.getMarkdownString(for: rootView, with: markdownParserResult)
-            let attributedContent = TextUtils.addFontProperties(attributedString: markdownString, textProperties: BridgeTextUtils.convertFact(toRichTextElementProperties: fact), hostConfig: hostConfig)
+            let valueViewMarkdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig, isTitleField: false)
+            let valueViewMarkdownString = TextUtils.getMarkdownString(for: rootView, with: valueViewMarkdownParserResult)
+            let valueViewAttributedContent = TextUtils.addFontProperties(attributedString: valueViewMarkdownString, textProperties: BridgeTextUtils.convertFact(toRichTextElementProperties: fact), hostConfig: hostConfig)
+            
+            let titleViewMarkdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig, isTitleField: true)
+            let titleViewMarkdownString = TextUtils.getMarkdownString(for: rootView, with: titleViewMarkdownParserResult)
+            let titleViewAttributedContent = TextUtils.addFontProperties(attributedString: titleViewMarkdownString, textProperties: BridgeTextUtils.convertFact(toRichTextElementProperties: fact), hostConfig: hostConfig)
                          
             let titleView = ACRTextView()
             let valueView = ACRTextView()
-            titleView.customizeForFactSetCell(isTitleView: true, config: config)
-            valueView.customizeForFactSetCell(isTitleView: false, config: config)
-            titleView.string = fact.getTitle() ?? ""
             
             // If not markdown use plain text
-            if !markdownParserResult.isHTML {
+            if !valueViewMarkdownParserResult.isHTML {
                 valueView.string = fact.getValue() ?? ""
             } else {
-                valueView.textStorage?.setAttributedString(attributedContent)
+                valueView.textStorage?.setAttributedString(valueViewAttributedContent)
             }
+            
+            if !titleViewMarkdownParserResult.isHTML {
+                titleView.string = fact.getTitle() ?? ""
+            } else {
+                titleView.textStorage?.setAttributedString(titleViewAttributedContent)
+            }
+            
+            titleView.customizeForFactSetCell(isTitleView: true, config: config)
+            valueView.customizeForFactSetCell(isTitleView: false, config: config)
             
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
                 titleView.textColor = textColor
                 valueView.textColor = textColor
-                if markdownParserResult.isHTML {
+                if valueViewMarkdownParserResult.isHTML {
                     let attributedString = valueView.attributedString()
                     let attributedStringCopy = NSMutableAttributedString(attributedString: attributedString)
                     attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length), options: .longestEffectiveRangeNotRequired, using: { attributes, range, _ in

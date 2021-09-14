@@ -92,8 +92,10 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         alignment = .left
         isEditable = false
         backgroundColor = .clear
-        let titleViewFontDescriptor = (config.inputFieldConfig.font.fontDescriptor).withSymbolicTraits(.bold)
-        font = isTitleView ? NSFont(descriptor: titleViewFontDescriptor, size: config.inputFieldConfig.font.pointSize) : config.inputFieldConfig.font
+        if isTitleView {
+            let fontManager = NSFontManager.shared
+            font = fontManager.convert(font ?? NSFont.systemFont(ofSize: config.inputFieldConfig.font.pointSize), toHaveTrait: NSFontTraitMask.boldFontMask)
+        }
         linkTextAttributes = [
             NSAttributedString.Key.foregroundColor: config.hyperlinkColorConfig.foregroundColor,
             NSAttributedString.Key.underlineColor: config.hyperlinkColorConfig.underlineColor,
