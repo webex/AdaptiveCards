@@ -75,6 +75,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         if let textfield = obj.object as? ACRTextField {
             var stringValue = textfield.stringValue
             
+            stepper.doubleValue = Double(textField.accessibilityValue() ?? "") ?? stepper.doubleValue
             let charSet = NSCharacterSet(charactersIn: "1234567890.").inverted
             let chars = stringValue.components(separatedBy: charSet)
             stringValue = chars.joined()
@@ -93,6 +94,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
 
             // replace string
             textfield.stringValue = stringValue
+            previousValue = textField.accessibilityValue() ?? ""
         }
     }
     
