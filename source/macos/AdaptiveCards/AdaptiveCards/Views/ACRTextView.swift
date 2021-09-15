@@ -87,7 +87,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         }
     }
     
-    convenience init(config: HyperlinkColorConfig) {
+    convenience init(asFactSetFieldWith config: HyperlinkColorConfig) {
         self.init()
         setContentCompressionResistancePriority(.required, for: .vertical)
         alignment = .left

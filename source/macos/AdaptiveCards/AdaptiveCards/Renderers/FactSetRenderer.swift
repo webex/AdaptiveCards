@@ -37,8 +37,8 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
             let titleMarkdownString = TextUtils.getMarkdownString(for: rootView, with: titleMarkdownParserResult)
             let titleAttributedContent = TextUtils.addFontProperties(attributedString: titleMarkdownString, textProperties: BridgeTextUtils.convertFact(toRichTextElementProperties: fact), hostConfig: hostConfig)
                          
-            let titleView = ACRTextView(config: config.hyperlinkColorConfig)
-            let valueView = ACRTextView(config: config.hyperlinkColorConfig)
+            let titleView = ACRTextView(asFactSetFieldWith: config.hyperlinkColorConfig)
+            let valueView = ACRTextView(asFactSetFieldWith: config.hyperlinkColorConfig)
             
             // If not markdown use plain text
             if !valueMarkdownParserResult.isHTML {
