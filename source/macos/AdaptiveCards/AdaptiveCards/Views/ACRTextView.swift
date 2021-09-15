@@ -87,20 +87,22 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         }
     }
     
-    func customizeForFactSetCell(isTitleView: Bool, config: RenderConfig) {
+    convenience init(config: HyperlinkColorConfig) {
+        self.init()
         setContentCompressionResistancePriority(.required, for: .vertical)
         alignment = .left
         isEditable = false
         backgroundColor = .clear
-        if isTitleView {
-            let fontManager = NSFontManager.shared
-            font = fontManager.convert(font ?? NSFont.systemFont(ofSize: config.inputFieldConfig.font.pointSize), toHaveTrait: NSFontTraitMask.boldFontMask)
-        }
         linkTextAttributes = [
-            NSAttributedString.Key.foregroundColor: config.hyperlinkColorConfig.foregroundColor,
-            NSAttributedString.Key.underlineColor: config.hyperlinkColorConfig.underlineColor,
-            NSAttributedString.Key.underlineStyle: config.hyperlinkColorConfig.underlineStyle.rawValue
+            .foregroundColor: config.foregroundColor,
+            .underlineColor: config.underlineColor,
+            .underlineStyle: config.underlineStyle.rawValue
         ]
+    }
+    
+    public func makeContentBold() {
+        let fontManager = NSFontManager.shared
+        font = fontManager.convert(font ?? NSFont.systemFont(ofSize: 14), toHaveTrait: NSFontTraitMask.boldFontMask)
     }
     
     override var canBecomeKeyView: Bool {

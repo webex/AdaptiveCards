@@ -29,46 +29,35 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         var requiredWidth: CGFloat = 0
         // Main loop to iterate over Array of facts
         for fact in factArray {
-            let valueViewMarkdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig, isTitleField: false)
-            let valueViewMarkdownString = TextUtils.getMarkdownString(for: rootView, with: valueViewMarkdownParserResult)
-            let valueViewAttributedContent = TextUtils.addFontProperties(attributedString: valueViewMarkdownString, textProperties: BridgeTextUtils.convertFact(toRichTextElementProperties: fact), hostConfig: hostConfig)
+            let valueMarkdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig, isTitle: false)
+            let valueMarkdownString = TextUtils.getMarkdownString(for: rootView, with: valueMarkdownParserResult)
+            let valueAttributedContent = TextUtils.addFontProperties(attributedString: valueMarkdownString, textProperties: BridgeTextUtils.convertFact(toRichTextElementProperties: fact), hostConfig: hostConfig)
             
-            let titleViewMarkdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig, isTitleField: true)
-            let titleViewMarkdownString = TextUtils.getMarkdownString(for: rootView, with: titleViewMarkdownParserResult)
-            let titleViewAttributedContent = TextUtils.addFontProperties(attributedString: titleViewMarkdownString, textProperties: BridgeTextUtils.convertFact(toRichTextElementProperties: fact), hostConfig: hostConfig)
+            let titleMarkdownParserResult = BridgeTextUtils.processText(from: fact, hostConfig: hostConfig, isTitle: true)
+            let titleMarkdownString = TextUtils.getMarkdownString(for: rootView, with: titleMarkdownParserResult)
+            let titleAttributedContent = TextUtils.addFontProperties(attributedString: titleMarkdownString, textProperties: BridgeTextUtils.convertFact(toRichTextElementProperties: fact), hostConfig: hostConfig)
                          
-            let titleView = ACRTextView()
-            let valueView = ACRTextView()
+            let titleView = ACRTextView(config: config.hyperlinkColorConfig)
+            let valueView = ACRTextView(config: config.hyperlinkColorConfig)
             
             // If not markdown use plain text
-            if !valueViewMarkdownParserResult.isHTML {
+            if !valueMarkdownParserResult.isHTML {
                 valueView.string = fact.getValue() ?? ""
             } else {
-                valueView.textStorage?.setAttributedString(valueViewAttributedContent)
+                valueView.textStorage?.setAttributedString(valueAttributedContent)
             }
             
-            if !titleViewMarkdownParserResult.isHTML {
+            if !titleMarkdownParserResult.isHTML {
                 titleView.string = fact.getTitle() ?? ""
             } else {
-                titleView.textStorage?.setAttributedString(titleViewAttributedContent)
+                titleView.textStorage?.setAttributedString(titleAttributedContent)
             }
             
-            titleView.customizeForFactSetCell(isTitleView: true, config: config)
-            valueView.customizeForFactSetCell(isTitleView: false, config: config)
+            titleView.makeContentBold()
             
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
                 titleView.textColor = textColor
                 valueView.textColor = textColor
-                if valueViewMarkdownParserResult.isHTML {
-                    let attributedString = valueView.attributedString()
-                    let attributedStringCopy = NSMutableAttributedString(attributedString: attributedString)
-                    attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length), options: .longestEffectiveRangeNotRequired, using: { attributes, range, _ in
-                        if (attributes[.foregroundColor] as? NSColor) != nil {
-                            attributedStringCopy.addAttribute(.foregroundColor, value: textColor as Any, range: range)
-                        }
-                    })
-                    valueView.textStorage?.setAttributedString(attributedStringCopy)
-                }
             }
             
             if !(titleView.string.isEmpty) || !(valueView.string.isEmpty) {

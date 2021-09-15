@@ -14,8 +14,8 @@ class ACRChoiceSetViewtests: XCTestCase {
     
     func testRadioButtonClickAction() {
         choiceSetView.isRadioGroup = true
-        let button1 = choiceSetView.setupButton(attributedString: .init(string: "1"), value: "Button1")
-        let button2 = choiceSetView.setupButton(attributedString: .init(string: "2"), value: "Button2")
+        let button1 = choiceSetView.setupButton(attributedString: NSMutableAttributedString(string: "1"), value: "Button1")
+        let button2 = choiceSetView.setupButton(attributedString: NSMutableAttributedString(string: "2"), value: "Button2")
         // The clicking of the button is handled in ACRChoiceButton and ACRChoiceSetView parallely, with ACRChoiceSetView only making sure the previous radio button is turned off when another radio button is pressed
         // Therefore, to click on the button, button.performClick() is called, and to turn the other button off, choiceSetView.acrChoiceButtondidSelect() is called
         
