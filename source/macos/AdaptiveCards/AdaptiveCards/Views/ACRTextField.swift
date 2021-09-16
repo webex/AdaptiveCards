@@ -5,18 +5,24 @@ protocol ACRTextFieldDelegate: AnyObject {
     func acrTextFieldDidSelectClear(_ textField: ACRTextField)
 }
 
+private enum textFieldMode {
+    case inputText
+    case inputDateTime
+    case inputNumber
+}
+
 class ACRTextField: NSTextField {
     weak var textFieldDelegate: ACRTextFieldDelegate?
     private let config: InputFieldConfig
     private let isDarkMode: Bool?
-    private let isDateTimeMode: Bool
-    private var isNumericField: Bool
+//    private let isDateTimeMode: Bool
+//    private var isNumericField: Bool
+    private let textFieldMode: textFieldMode
     
     init(dateTimeFieldWith config: RenderConfig) {
         self.config = config.inputFieldConfig
-        self.isDateTimeMode = true
+        textFieldMode = .inputDateTime
         isDarkMode = config.isDarkMode
-        isNumericField = false
         super.init(frame: .zero)
         initialise()
         setupConstraints()
@@ -24,9 +30,8 @@ class ACRTextField: NSTextField {
     
     init(config: InputFieldConfig) {
         self.config = config
-        self.isDateTimeMode = false
+        textFieldMode = .inputText
         self.isDarkMode = nil
-        isNumericField = false
         super.init(frame: .zero)
         initialise()
         setupConstraints()
@@ -34,9 +39,8 @@ class ACRTextField: NSTextField {
     
     init(numericFieldWith config: InputFieldConfig) {
         self.config = config
-        isDateTimeMode = false
+        textFieldMode = .inputNumber
         isDarkMode = nil
-        isNumericField = true
         super.init(frame: .zero)
         initialise()
         setupConstraints()
@@ -52,7 +56,7 @@ class ACRTextField: NSTextField {
         customCell.backgroundColor = .clear
         // 20 points extra padding for calendar/clock icons
         var leftPadding: CGFloat = 0
-        if isDateTimeMode {
+        if textFieldMode == .inputDateTime {
             // 20 is image width and 12 is the spacing after image to text
             leftPadding += 32
             if config.clearButtonImage == nil {
@@ -62,7 +66,7 @@ class ACRTextField: NSTextField {
         } else {
             leftPadding += config.leftPadding
         }
-        customCell.setupSpacing(rightPadding: config.rightPadding, leftPadding: leftPadding, focusRingCornerRadius: config.focusRingCornerRadius, borderWidth: config.borderWidth, borderColor: config.borderColor, wantsClearButton: wantsClearButton, isNumericField: isNumericField)
+        customCell.setupSpacing(rightPadding: config.rightPadding, leftPadding: leftPadding, focusRingCornerRadius: config.focusRingCornerRadius, borderWidth: config.borderWidth, borderColor: config.borderColor, wantsClearButton: wantsClearButton, isNumericField: textFieldMode == .inputNumber)
         cell = customCell
         font = config.font
         if wantsClearButton {
@@ -154,7 +158,7 @@ class ACRTextField: NSTextField {
     }
     
     private var wantsClearButton: Bool {
-        return config.wantsClearButton || isDateTimeMode
+        return config.wantsClearButton || (textFieldMode == .inputDateTime)
     }
 }
 

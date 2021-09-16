@@ -56,7 +56,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         if #available(OSX 10.13, *) {
             view.layer?.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
         } else {
-            // Do nothing as UX Rebrand only part of 41.11 which has minimum requirement of OSX 10.13
+            // Do nothing
         }
         return view
     }()
@@ -72,30 +72,29 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     }
     
     public func controlTextDidChange(_ obj: Notification) {
-        if let textfield = obj.object as? ACRTextField {
-            var stringValue = textfield.stringValue
-            
-            stepper.doubleValue = Double(textField.accessibilityValue() ?? "") ?? stepper.doubleValue
-            let charSet = NSCharacterSet(charactersIn: "1234567890.").inverted
-            let chars = stringValue.components(separatedBy: charSet)
-            stringValue = chars.joined()
+        guard let textfield = obj.object as? ACRTextField else { return }
+        var stringValue = textfield.stringValue
+        
+        stepper.doubleValue = Double(textField.stringValue) ?? stepper.doubleValue
+        let charSet = NSCharacterSet(charactersIn: "1234567890.").inverted
+        let chars = stringValue.components(separatedBy: charSet)
+        stringValue = chars.joined()
 
-            // Only 1 "." should be
-            let comma = NSCharacterSet(charactersIn: ".")
-            let chuncks = stringValue.components(separatedBy: comma as CharacterSet)
-            switch chuncks.count {
-            case 0:
-                stringValue = ""
-            case 1:
-                stringValue = "\(chuncks[0])"
-            default:
-                stringValue = "\(chuncks[0]).\(chuncks[1])"
-            }
-
-            // replace string
-            textfield.stringValue = stringValue
-            previousValue = textField.accessibilityValue() ?? ""
+        // Only 1 "." should be
+        let comma = NSCharacterSet(charactersIn: ".")
+        let chuncks = stringValue.components(separatedBy: comma as CharacterSet)
+        switch chuncks.count {
+        case 0:
+            stringValue = ""
+        case 1:
+            stringValue = "\(chuncks[0])"
+        default:
+            stringValue = "\(chuncks[0]).\(chuncks[1])"
         }
+
+        // replace string
+        textfield.stringValue = stringValue
+        previousValue = textField.stringValue
     }
     
     func setupViews() {
