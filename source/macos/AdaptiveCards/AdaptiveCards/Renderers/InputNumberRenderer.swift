@@ -53,10 +53,11 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         view.delegate = self
         view.isEditable = true
         view.stringValue = ""
+        view.cell?.usesSingleLineMode = true
+        view.maximumNumberOfLines = 1
+        view.cell?.lineBreakMode = .byTruncatingTail
         if #available(OSX 10.13, *) {
             view.layer?.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
-        } else {
-            // Do nothing
         }
         return view
     }()
