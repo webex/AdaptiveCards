@@ -117,13 +117,6 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         stepper.target = self
         stepper.action = #selector(handleStepperAction(_:))
     }
-    
-    func setUpTheme() {
-        textField.wantsLayer = true
-        textField.layer?.backgroundColor = .clear
-        stepper.wantsLayer = true
-        stepper.layer?.backgroundColor = .clear
-    }
 }
 
 // MARK: - EXTENSION
