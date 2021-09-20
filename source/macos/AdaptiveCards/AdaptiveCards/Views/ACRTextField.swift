@@ -8,7 +8,7 @@ protocol ACRTextFieldDelegate: AnyObject {
 class ACRTextField: NSTextField {
     weak var textFieldDelegate: ACRTextFieldDelegate?
     private let config: InputFieldConfig
-    private let isDarkMode: Bool?
+    private let isDarkMode: Bool
     private let textFieldMode: Mode
     
     init(dateTimeFieldWith config: RenderConfig) {
@@ -20,19 +20,19 @@ class ACRTextField: NSTextField {
         setupConstraints()
     }
     
-    init(config: InputFieldConfig) {
-        self.config = config
+    init(config: RenderConfig) {
+        self.config = config.inputFieldConfig
         textFieldMode = .text
-        self.isDarkMode = nil
+        self.isDarkMode = config.isDarkMode
         super.init(frame: .zero)
         initialise()
         setupConstraints()
     }
     
-    init(numericFieldWith config: InputFieldConfig) {
-        self.config = config
+    init(numericFieldWith config: RenderConfig) {
+        self.config = config.inputFieldConfig
         textFieldMode = .number
-        isDarkMode = nil
+        isDarkMode = config.isDarkMode
         super.init(frame: .zero)
         initialise()
         setupConstraints()
@@ -82,7 +82,7 @@ class ACRTextField: NSTextField {
     
     private (set) lazy var clearButton: NSButtonWithImageSpacing = {
         let clearImage: NSImage?
-        if let isDarkMode = isDarkMode, config.clearButtonImage == nil, wantsClearButton {
+        if config.clearButtonImage == nil, wantsClearButton {
             // displaying old clear button
             let resourceName = isDarkMode ? "clear_18_w" : "clear_18"
             clearImage = BundleUtils.getImage(resourceName, ofType: "png")
@@ -157,6 +157,12 @@ class ACRTextField: NSTextField {
         case text
         case dateTime
         case number
+    }
+    
+    override func becomeFirstResponder() -> Bool {
+        let textView = window?.fieldEditor(true, for: nil) as? NSTextView
+        textView?.insertionPointColor = isDarkMode ? .white : .black
+        return super.becomeFirstResponder()
     }
 }
 

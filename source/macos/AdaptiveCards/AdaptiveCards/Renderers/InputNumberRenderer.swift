@@ -12,7 +12,7 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
         
         // setting up basic properties for Input.Number TextField
         let inputField: ACRNumericTextField = {
-            let view = ACRNumericTextField(config: config.inputFieldConfig)
+            let view = ACRNumericTextField(config: config)
             view.placeholder = inputElement.getPlaceholder() ?? ""
             view.maxValue = inputElement.getMax()?.doubleValue ?? ACRNumericTextField.MAXVAL
             view.minValue = inputElement.getMin()?.doubleValue ?? ACRNumericTextField.MINVAL
@@ -33,9 +33,9 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
 open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     var id: String?
     private var previousValue = ""
-    private var config: InputFieldConfig
+    private var config: RenderConfig
     
-    init(config: InputFieldConfig) {
+    init(config: RenderConfig) {
         self.config = config
         super.init(frame: .zero)
         setupViews()
