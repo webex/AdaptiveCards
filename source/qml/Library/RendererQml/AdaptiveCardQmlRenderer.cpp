@@ -81,6 +81,7 @@ namespace RendererQml
 		uiCard->Property("readonly property string inputElementsBorderColor", "'#CCCCCC'");
 		uiCard->Property("color", "bgColor");
 		uiCard->Property("border.color", isChildCard? " bgColor" : "'#B2B2B2'");
+        uiCard->AddFunctions("MouseArea{anchors.fill: parent;onClicked: forceActiveFocus();}");
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
 		if (hasBackgroundImage)
@@ -171,6 +172,8 @@ namespace RendererQml
 
     void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context)
     {
+        std::shared_ptr <QmlTag> first = nullptr, last = nullptr;
+
 		for (const auto& cardElement : elements)
 		{
 			auto uiElement = context->Render(cardElement);
@@ -186,6 +189,11 @@ namespace RendererQml
 				{
 					uiElement->Property("readonly property bool stretch", "true");
 				}
+
+                /*if (Utils::EndsWith(cardElement->GetElementTypeString(), "Input"))
+                {
+                    uiElement = addAccessibility(cardElement, uiElement);
+                }*/
 
 				uiContainer->AddChild(uiElement);
 			}
@@ -537,7 +545,7 @@ namespace RendererQml
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? '#1170CF' : inputElementsBorderColor");
 		backgroundTag->Property("border.width", "1");
 		uiTextInput->Property("background", backgroundTag->ToString());
 
@@ -642,13 +650,8 @@ namespace RendererQml
         input->SetId(context->ConvertToValidId(input->GetId()));
 		const auto inputId = input->GetId();
 
-		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-		backgroundTag->Property("radius", "5");
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
-        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-
-		backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : inputElementsBorderColor");
 
 		auto contentItemTag = std::make_shared<QmlTag>("TextField");
 		contentItemTag->Property("id", inputId + "_contentItem");
@@ -667,6 +670,10 @@ namespace RendererQml
 
 		auto textBackgroundTag = std::make_shared<QmlTag>("Rectangle");
 		textBackgroundTag->Property("color", "'transparent'");
+        textBackgroundTag->Property("radius", "5");
+        textBackgroundTag->Property("width", Formatter() << inputId << ".width - 24");
+        textBackgroundTag->Property("border.color", Formatter() << contentItemTag->GetId() << ".activeFocus ? '#1170CF' : inputElementsBorderColor");
+
 		contentItemTag->Property("background", textBackgroundTag->ToString());
 		contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
         contentItemTag->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
@@ -763,14 +770,31 @@ namespace RendererQml
 		}
 
 		uiNumberInput->Property("contentItem", contentItemTag->ToString());
-		uiNumberInput->Property("background", backgroundTag->ToString());
 		uiNumberInput->Property("up.indicator", upDummyTag->ToString());
 		uiNumberInput->Property("down.indicator", downDummyTag->ToString());
 
-		uiNumberInput->AddChild(upIndicatorTag);
-		uiNumberInput->AddChild(downIndicatorTag);
+        auto uiSplitterRactangle = std::make_shared<QmlTag>("Rectangle");
+
+        uiSplitterRactangle->Property("width", "24");
+        uiSplitterRactangle->Property("radius", "5");
+        uiSplitterRactangle->Property("height", "parent.height");
+        uiSplitterRactangle->Property("anchors.right", "parent.right");
+        uiSplitterRactangle->Property("border.color", Formatter() << "activeFocus ? '#1170CF' : inputElementsBorderColor");
+        uiSplitterRactangle->Property("activeFocusOnTab", "true");
+        uiSplitterRactangle->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+
+        uiNumberInput->AddChild(uiSplitterRactangle);
+
+        uiSplitterRactangle->AddChild(upIndicatorTag);
+        uiSplitterRactangle->AddChild(downIndicatorTag);
 
         context->addToInputElementList(origionalElementId, (inputId + ".value"));
+
+        auto numberInputBackgroundTag = std::make_shared<QmlTag>("Rectangle");
+        numberInputBackgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+        numberInputBackgroundTag->Property("radius", "5");
+
+        uiNumberInput->Property("background", numberInputBackgroundTag->ToString());
 
 		return uiNumberInput;
 	}
@@ -979,6 +1003,8 @@ namespace RendererQml
 		uiComboBox->Property("valueRole", "'value'");
 		uiComboBox->Property("width", "parent.width");
 		uiComboBox->Property("height", "contentItem.contentHeight + 2*contentItem.padding < 30 ? 30 : contentItem.contentHeight + 2*contentItem.padding ");
+        uiComboBox->Property(" Keys.onReturnPressed", Formatter() << choiceset.id << ".popup.open()");
+        uiComboBox->Property(" onAccepted", Formatter() << choiceset.id << ".popup.close()");
 		
         const std::string iconId = choiceset.id + "_icon";
 		auto iconTag = GetIconTag(context);
@@ -997,7 +1023,7 @@ namespace RendererQml
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         backgroundTag->Property("color", backgroundColor);
-        backgroundTag->Property("border.color", "inputElementsBorderColor");
+        backgroundTag->Property("border.color", Formatter() << choiceset.id << ".activeFocus? '#1170CF' : inputElementsBorderColor");
         backgroundTag->Property("border.width", "1");
 		uiComboBox->Property("background", backgroundTag->ToString());
 
@@ -1071,6 +1097,8 @@ namespace RendererQml
 		contentListViewTag->Property("clip", "true");
 		contentListViewTag->Property("model", Formatter() << choiceset.id << ".delegateModel");
 		contentListViewTag->Property("currentIndex", Formatter() << choiceset.id << ".highlightedIndex");
+		contentListViewTag->Property("onCurrentIndexChanged", Formatter() << "{if(currentIndex !== -1){" << choiceset.id << ".currentIndex = currentIndex}}");
+		contentListViewTag->Property("Keys.onReturnPressed", Formatter() << choiceset.id << ".accepted()");
 		
 		auto scrollBarTag = std::make_shared<QmlTag>("ScrollBar");
 		scrollBarTag->Property("width", "10");
@@ -1089,6 +1117,8 @@ namespace RendererQml
 		popupTag->Property("horizontalPadding", "2");
 		popupTag->Property("verticalPadding", "2");
 		popupTag->Property("height", Formatter() << contentListViewId << ".contentHeight" << " > " << std::to_string(dropDownHeight) << " ? " << std::to_string(dropDownHeight) << ":" << contentListViewId << ".contentHeight");
+        popupTag->Property("onOpened", Formatter() << contentListViewId << ".forceActiveFocus()");
+        popupTag->Property("onClosed", Formatter() << uiComboBox->GetId() << ".forceActiveFocus()");
 
 		popupTag->Property("background", popupBackgroundTag->ToString());
 		popupTag->Property("contentItem", contentListViewTag->ToString());
@@ -1245,7 +1275,7 @@ namespace RendererQml
 		}
 
 		auto highlightColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
-		uiOuterRectangle->Property("border.color", Formatter() << checkbox.id << ".checked ? " << highlightColor << ": '#b0b0b0'");
+		uiOuterRectangle->Property("border.color", Formatter() << "(" << checkbox.id << ".checked || " << checkbox.id << ".activeFocus ) ? " << highlightColor << ": '#b0b0b0'");
 		uiOuterRectangle->Property("color", Formatter() << checkbox.id << ".checked ? " << highlightColor << " : '#ffffff'");
 
 		std::shared_ptr<QmlTag> uiInnerSegment;
@@ -1260,6 +1290,7 @@ namespace RendererQml
 			uiInnerSegment->Property("radius", "height/2");
 			uiInnerSegment->Property("color", checkbox.id + ".checked ? '#ffffff' : 'defaultPalette.backgroundColor'");
 			uiInnerSegment->Property("visible", checkbox.id + ".checked");
+            uiButton->Property("Keys.onReturnPressed", "{if(!checked){checked = !checked;}}");
 		}
 		else
 		{
@@ -1270,6 +1301,7 @@ namespace RendererQml
 			uiInnerSegment->Property("visible", checkbox.id + ".checked");
 
 			uiInnerSegment->Property("source", RendererQml::check_icon_12, true);
+            uiButton->Property("Keys.onReturnPressed", "{checked = !checked;}");
 		}
 
 		uiOuterRectangle->AddChild(uiInnerSegment);
@@ -1331,7 +1363,7 @@ namespace RendererQml
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << uiTextFieldId << ".activeFocus? 'black' : inputElementsBorderColor");
+        backgroundTag->Property("border.color", Formatter() << uiTextFieldId << ".activeFocus? '#1170CF' : inputElementsBorderColor");
         backgroundTag->Property("border.width", "1");
         uiTextField->Property("background", backgroundTag->ToString());
 
@@ -1725,176 +1757,276 @@ namespace RendererQml
 
         input->SetId(context->ConvertToValidId(input->GetId()));
 
-		auto uiTimeComboBox = std::make_shared<QmlTag>("ComboBox");
-		uiTimeComboBox->Property("width", "parent.width");
+        auto uiTimeInputWrapper = std::make_shared<QmlTag>("Rectangle");
+        uiTimeInputWrapper->Property("id", Formatter() << input->GetId() << "_wrapper");
+        uiTimeInputWrapper->Property("width", "parent.width");
+        uiTimeInputWrapper->Property("height", Formatter() << input->GetId() << ".implicitHeight");
+        uiTimeInputWrapper->Property("radius", "5");
+        uiTimeInputWrapper->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+        uiTimeInputWrapper->Property("border.color", Formatter() << input->GetId() << ".activeFocus? '#1170CF' : inputElementsBorderColor");
+        uiTimeInputWrapper->Property("border.width", "1");
 
-		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
-		const std::string id = input->GetId();
+        auto uiTimeComboBox = std::make_shared<QmlTag>("ComboBox");
+
+        auto uiTimeInput = std::make_shared<QmlTag>("TextField");
+        const std::string id = input->GetId();
         const std::string value = input->GetValue();
-		const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
+        const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
 
-		uiTimeInput->Property("id", id);
-		uiTimeInput->Property("font.family", context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
-		uiTimeInput->Property("font.pixelSize", std::to_string(fontSize));
-		uiTimeInput->Property("selectByMouse", "true");
-		uiTimeInput->Property("selectedTextColor", "'white'");
+        uiTimeInput->Property("id", id);
+        uiTimeInput->Property("font.family", context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
+        uiTimeInput->Property("font.pixelSize", std::to_string(fontSize));
+        uiTimeInput->Property("selectByMouse", "true");
+        uiTimeInput->Property("selectedTextColor", "'white'");
         uiTimeInput->Property("property string selectedTime", "", true);
-		uiTimeInput->Property("width", "parent.width");
-		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select time", true);
+        uiTimeInput->Property("width", "parent.width");
+        uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select time", true);
         uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
-		uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
+        uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
 
-		if (!input->GetValue().empty() && Utils::isValidTime(value))
-		{
-			std::string defaultTime = value;
+        if (!input->GetValue().empty() && Utils::isValidTime(value))
+        {
+            std::string defaultTime = value;
             std::string defaultSelectedTime = value;
-			if (is12hour == true)
-			{
-				defaultTime = Utils::defaultTimeto12hour(defaultTime);
+            if (is12hour == true)
+            {
+                defaultTime = Utils::defaultTimeto12hour(defaultTime);
                 defaultSelectedTime = Utils::defaultTimeto24hour(defaultSelectedTime);
-			}
+            }
             else
             {
                 defaultTime = defaultSelectedTime = Utils::defaultTimeto24hour(defaultTime);
             }
-			uiTimeInput->Property("text", defaultTime, true);
+            uiTimeInput->Property("text", defaultTime, true);
             uiTimeInput->Property("property string selectedTime", defaultSelectedTime, true);
-		}
+        }
 
-		if (!input->GetIsVisible())
-		{
-			uiTimeInput->Property("visible", "false");
-		}
+        if (!input->GetIsVisible())
+        {
+            uiTimeInput->Property("visible", "false");
+        }
 
-		//TODO: Height Property
-		// Time Format: hh:mm tt -> 03:30 AM or hh:mm -> 15:30
-		std::string listViewHours_id = id + "_hours";
-		std::string listViewMin_id = id + "_min";
-		std::string listViewtt_id = id + "_tt";
-		std::string timePopup_id = id + "_timeBox";
+        // TODO: Height Property
+        // Time Format: hh:mm tt -> 03:30 AM or hh:mm -> 15:30
+        std::string listViewHours_id = id + "_hours";
+        std::string listViewMin_id = id + "_min";
+        std::string listViewtt_id = id + "_tt";
+        std::string timePopup_id = id + "_timeBox";
 
-		uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus===true) inputMask=\"xx:xx;-\";"
-			<< " if(focus===false){ " << "if(text===\":\") { inputMask=\"\" }" << "}}");
+        uiTimeInput->Property("onFocusChanged",
+            Formatter() << "{ if (focus===true) inputMask=\"xx:xx;-\";"
+            << " if(focus===false){ "
+            << "if(text===\":\") { inputMask=\"\" }"
+            << "}}");
 
-		uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));" << "if(getText(0,2) === '--' || getText(3,5) === '--'){" << id << ".selectedTime ='';} else{" << id << ".selectedTime =" << id << ".text;}}");
+        uiTimeInput->Property("onTextChanged",
+            Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2));"
+            << listViewMin_id << ".currentIndex=parseInt(getText(3,5));"
+            << "if(getText(0,2) === '--' || getText(3,5) === '--'){" << id
+            << ".selectedTime ='';} else{" << id << ".selectedTime =" << id << ".text;}}");
 
-		auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-		backgroundTag->Property("radius", "5");
-		//TODO: These color styling should come from css
-        //TODO: Add hover effect
-        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
-		backgroundTag->Property("border.width", "1");
-		uiTimeInput->Property("background", backgroundTag->ToString());
+        uiTimeInput->Property("onActiveFocusChanged",
+            Formatter() << "{"
+            << "if(activeFocus){\n"
+            << "onTextChanged()\n"
+            << "}\n}"
+        );
 
-		//Clear Icon
-		const std::string clearIconId = Formatter() << id << "_clear" << "_icon";
-		auto rowIconTag = GetRowWithClearIconTag(clearIconId, context);
+        uiTimeInput->Property("activeFocusOnTab", "true");
 
-		auto clearIconTag = rowIconTag->GetChildren().front();
-		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
+        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
+        backgroundTag->Property("color", "'transparent'");
+        uiTimeInput->Property("background", backgroundTag->ToString());
 
-		std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".text !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour? "\": \"" : "\":\"") << ")" ;
-		clearIconTag->Property("visible", clearIcon_visible_value);
+        // TODO: These color styling should come from css
+        // Clear Icon
+        const std::string clearIconId = Formatter() << id << "_clear"
+            << "_icon";
+        auto rowIconTag = GetRowWithClearIconTag(clearIconId, context);
+        rowIconTag->Property("id", Formatter() << input->GetId() << "_icon_set");
 
-		std::string clearIcon_OnClicked_value = Formatter() << " { if(!" << id << ".focus)" << "{"
-			<< id << ".forceActiveFocus();" << "}" << "\n"
-			<< id << ".clear();\n" << "}";
-		clearIconTag->Property("onClicked", clearIcon_OnClicked_value);
+        auto clearIconTag = rowIconTag->GetChildren().front();
+        clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
 
-		//Time Icon
+        std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".text !==\"\") || (" << id << ".focus && "
+            << id << ".text !== " << (is12hour ? "\": \"" : "\":\"") << ")";
+        clearIconTag->Property("visible", clearIcon_visible_value);
+
+        std::string clearIcon_OnClicked_value = Formatter() << " { "
+            << id << ".forceActiveFocus();\n"
+            << id << ".clear();\n"
+            << timePopup_id << ".close();\n"
+            << "}";
+        clearIconTag->Property("onClicked", clearIcon_OnClicked_value);
+        clearIconTag->Property("Keys.onReturnPressed", "onClicked()");
+        clearIconTag->RemoveProperty("focusPolicy");
+        clearIconTag->Property("icon.color", Formatter() << "activeFocus ? '#1170CF' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+
+        // Time Icon
         const std::string iconId = id + "_icon";
         auto iconTag = GetIconTag(context);
-		iconTag->RemoveProperty("anchors.top");
-		iconTag->RemoveProperty("anchors.bottom");
-		iconTag->RemoveProperty("anchors.right");
-		iconTag->RemoveProperty("anchors.margins");
+        iconTag->RemoveProperty("anchors.top");
+        iconTag->RemoveProperty("anchors.bottom");
+        iconTag->RemoveProperty("anchors.right");
+        iconTag->RemoveProperty("anchors.margins");
+        iconTag->RemoveProperty("focusPolicy");
 
         iconTag->Property("id", iconId);
-		iconTag->Property("width", "icon.width");
-		iconTag->Property("height", "icon.height");
-		iconTag->Property("horizontalPadding", "0");
-		iconTag->Property("verticalPadding", "0");
-		iconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
+        iconTag->Property("width", "icon.width");
+        iconTag->Property("height", "icon.height");
+        iconTag->Property("horizontalPadding", "0");
+        iconTag->Property("verticalPadding", "0");
+        iconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
         iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
-        iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
+        iconTag->Property("onClicked",
+            Formatter() << "{\n"
+            << timePopup_id << ".open();\n"
+            << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n"
+            << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n"
+            << listViewHours_id << ".forceActiveFocus();\n"
+            << "}");
+        iconTag->Property("icon.color", Formatter() << "activeFocus ? '#1170CF' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        iconTag->Property("Keys.onReturnPressed", "onClicked()");
 
-		//Row that contains both the icons
-		rowIconTag->AddChild(iconTag);
+        // Row that contains both the icons
+        rowIconTag->AddChild(iconTag);
 
-		//Popup that contains the hours and min ListViews
-		auto PopupBgrTag = std::make_shared<QmlTag>("Rectangle");
-		PopupBgrTag->Property("anchors.fill", "parent");
-		//TODO: Finalize color for popup
-		PopupBgrTag->Property("border.color", "'grey'");
+        // Popup that contains the hours and min ListViews
+        auto PopupBgrTag = std::make_shared<QmlTag>("Rectangle");
+        PopupBgrTag->Property("anchors.fill", "parent");
+        // TODO: Finalize color for popup
+        PopupBgrTag->Property("border.color", "'grey'");
 
-		auto timePopupTag = std::make_shared<QmlTag>("Popup");
-		timePopupTag->Property("id", timePopup_id);
-		timePopupTag->Property("width", "105");
-		timePopupTag->Property("height", "200");
-		timePopupTag->Property("y", Formatter() << id << ".height - 1");
-		timePopupTag->Property("background", PopupBgrTag->ToString());
+        auto timePopupTag = std::make_shared<QmlTag>("Popup");
+        timePopupTag->Property("id", timePopup_id);
+        timePopupTag->Property("width", "105");
+        timePopupTag->Property("height", "200");
+        timePopupTag->Property("y", Formatter() << id << ".height - 1");
+        timePopupTag->Property("background", PopupBgrTag->ToString());
+        timePopupTag->Property("onOpened", Formatter() << listViewHours_id << ".forceActiveFocus()");
+        timePopupTag->Property("onClosed", Formatter() << "{\n"
+            << "var x = String(" << listViewHours_id << ".currentIndex).padStart(2, '0');\n"
+            << "var y = String(" << listViewMin_id << ".currentIndex).padStart(2, '0');\n"
+            << id << ".insert(0, x);\n"
+            << id << ".insert(2, y);\n"
+            << id << ".forceActiveFocus();\n"
+            << "}");
 
-		auto timeBoxTag = std::make_shared<QmlTag>("Rectangle");
-		timeBoxTag->Property("anchors.fill", "parent");
-		timeBoxTag->Property("anchors.margins", "1");
-		
-		//ListView for DropDown Selection
-		std::map<std::string, std::map<std::string, std::string>> ListViewHoursProperties;
-		std::map<std::string, std::map<std::string, std::string>> ListViewMinProperties;
-		std::map<std::string, std::map<std::string, std::string>> ListViewttProperties;
-		int hoursRange = 24;
+        auto timeBoxTag = std::make_shared<QmlTag>("Rectangle");
+        timeBoxTag->Property("anchors.fill", "parent");
+        timeBoxTag->Property("anchors.margins", "1");
 
-		if (is12hour == true)
-		{
-			timePopupTag->Property("width", "155");
-			uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01]-|0\\d|1[0-2]):(--|[0-5]-|[0-5]\\d)\\s(--|A-|AM|P-|PM)$/}");
-			uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus===true) inputMask=\"xx:xx >xx;-\";" <<
-				" if(focus===false){ " << "if(text===\": \" ) { inputMask=\"\" }" << "}}");
-			uiTimeInput->Property("onTextChanged", Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2))-1;" << listViewMin_id << ".currentIndex=parseInt(getText(3,5));"
-				<< "var tt_index=3;var hh = getText(0,2);" << "switch(getText(6,8)){ case 'PM':tt_index = 1; if(parseInt(getText(0,2))!==12){hh=parseInt(getText(0,2))+12;} break;case 'AM':tt_index = 0; if(parseInt(getText(0,2))===12){hh=parseInt(getText(0,2))-12;} break;}" << listViewtt_id << ".currentIndex=tt_index;" << "if(getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--'){" << id <<".selectedTime ='';} else{" << id <<".selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);}}");
-			iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2))-1;\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n"
-				<< "var tt_index=3;" << "switch(" << id << ".getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}" << listViewtt_id << ".currentIndex=tt_index;" << "}");
+        // ListView for DropDown Selection
+        std::map<std::string, std::map<std::string, std::string>> ListViewHoursProperties;
+        std::map<std::string, std::map<std::string, std::string>> ListViewMinProperties;
+        std::map<std::string, std::map<std::string, std::string>> ListViewttProperties;
+        int hoursRange = 24;
 
+        if (is12hour == true)
+        {
+            timePopupTag->Property("width", "155");
+            uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01]-|0\\d|1[0-2]):(--|[0-5]-|[0-5]\\d)\\s(--|A-|AM|P-|PM)$/}");
+            uiTimeInput->Property("onFocusChanged",
+                Formatter() << "{ if (focus===true) inputMask=\"xx:xx >xx;-\";"
+                << " if(focus===false){ "
+                << "if(text===\": \" ) { inputMask=\"\" }"
+                << "}}");
+            uiTimeInput->Property("onTextChanged",
+                Formatter() << "{" << listViewHours_id << ".currentIndex=parseInt(getText(0,2))-1;"
+                << listViewMin_id << ".currentIndex=parseInt(getText(3,5));"
+                << "var tt_index=-1;var hh = getText(0,2);"
+                << "switch(getText(6,8)){ case 'PM':tt_index = 1; if(parseInt(getText(0,2))!==12){hh=parseInt(getText(0,2))+12;} break;case 'AM':tt_index = 0; if(parseInt(getText(0,2))===12){hh=parseInt(getText(0,2))-12;} break;}"
+                << listViewtt_id << ".currentIndex=tt_index;"
+                << "if(getText(0,2) === '--' || getText(3,5) === '--' || getText(6,8) === '--'){"
+                << id << ".selectedTime ='';} else{" << id
+                << ".selectedTime = (hh === 0 ? '00' : hh) + ':' + getText(3,5);}}");
+            iconTag->Property("onClicked",
+                Formatter() << "{" << id << ".forceActiveFocus();\n"
+                << timePopup_id << ".open();\n"
+                << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2))-1;\n"
+                << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n"
+                << "var tt_index=3;"
+                << "switch(" << id << ".getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}"
+                << listViewtt_id << ".currentIndex=tt_index;"
+                << "}");
 
-			ListViewHoursProperties["Text"].insert(std::pair<std::string, std::string>("text", "String(index+1).padStart(2, '0')"));
-			ListViewHoursProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{" << listViewHours_id << ".currentIndex=index;" << "var x=String(index+1).padStart(2, '0') ;" << id << ".insert(0,x);" << "}"));
+            ListViewHoursProperties["Text"].insert(std::pair<std::string, std::string>("text", "String(index+1).padStart(2, '0')"));
+            ListViewHoursProperties["MouseArea"].insert(
+                std::pair<std::string, std::string>("onClicked",
+                    Formatter() << "{ forceActiveFocus();" << listViewHours_id << ".currentIndex=index;"
+                    << "var x=String(index+1).padStart(2, '0') ;" << id << ".insert(0,x);"
+                    << "}"));
 
-			hoursRange = 12;
+            hoursRange = 12;
 
-			ListViewttProperties["ListView"].insert(std::pair<std::string, std::string>("anchors.right", "parent.right"));
-			ListViewttProperties["ListView"].insert(std::pair<std::string, std::string>("model", "ListModel{ListElement { name: \"AM\"} ListElement { name: \"PM\"}}"));
-			ListViewttProperties["Text"].insert(std::pair<std::string, std::string>("text", "model.name"));
-			ListViewttProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{" << listViewtt_id << ".currentIndex=index;" << id << ".insert(6,model.name);" << "}"));
+            ListViewttProperties["ListView"].insert(std::pair<std::string, std::string>("anchors.right", "parent.right"));
+            ListViewttProperties["ListView"].insert(
+                std::pair<std::string, std::string>("model", "ListModel{ListElement { name: \"AM\"} ListElement { name: \"PM\"}}"));
+            ListViewttProperties["Text"].insert(std::pair<std::string, std::string>("text", "model.name"));
+            ListViewttProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked",
+                Formatter() << "{ forceActiveFocus(); " << listViewtt_id << ".currentIndex=index;"
+                << id << ".insert(6,model.name);"
+                << "}"));
+            ListViewttProperties["Text"].insert(std::pair<std::string, std::string>("KeyNavigation.left", listViewMin_id));
+            ListViewttProperties["ListView"].insert(std::pair<std::string, std::string>("Keys.onReturnPressed", Formatter() << timePopup_id << ".close()"));
 
-			auto listViewttTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewtt_id, ListViewttProperties);
-			timeBoxTag->AddChild(listViewttTag);
+            auto listViewttTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewtt_id, ListViewttProperties);
+            timeBoxTag->AddChild(listViewttTag);
 
-		}
+            ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("KeyNavigation.right", listViewtt_id));
+            timePopupTag->Property("onClosed", Formatter() << "{\n"
+                << "var x = String(" << listViewHours_id << ".currentIndex).padStart(2, '0');\n"
+                << "var y = String(" << listViewMin_id << ".currentIndex).padStart(2, '0');\n"
+                << "var z = (" << listViewtt_id << ".currentIndex == 0) ? 'AM' : 'PM';\n"
+                << id << ".insert(0, x);\n"
+                << id << ".insert(2, y);\n"
+                << id << ".insert(6, z);\n"
+                << id << ".forceActiveFocus();\n"
+                << "}");
+        }
 
-		ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("anchors.left", "parent.left"));
-		ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("model", std::to_string(hoursRange)));
-		ListViewHoursProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{" << listViewHours_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0') ;" << id << ".insert(0,x);" << "}"));
+        ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("anchors.left", "parent.left"));
+        ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("model", std::to_string(hoursRange)));
+        ListViewHoursProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked",
+            Formatter() << "{ forceActiveFocus();" << listViewHours_id << ".currentIndex=index;"
+            << "var x=String(index).padStart(2, '0') ;"
+            << id << ".insert(0,x);"
+            << "}"));
+        ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("KeyNavigation.right", listViewMin_id));
+        ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("Keys.onReturnPressed", Formatter() << timePopup_id << ".close()"));
 
-		auto ListViewHoursTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewHours_id, ListViewHoursProperties);
+        auto ListViewHoursTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewHours_id, ListViewHoursProperties);
 
-		ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("anchors.left", listViewHours_id + ".right"));
-		ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("model", "60"));
-		ListViewMinProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{" << listViewMin_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0') ;" << id << ".insert(2,x);" << "}"));
+        ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("anchors.left", listViewHours_id + ".right"));
+        ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("model", "60"));
+        ListViewMinProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked",
+            Formatter() << "{ forceActiveFocus();" << listViewMin_id << ".currentIndex=index;"
+            << "var x=String(index).padStart(2, '0') ;"
+            << id << ".insert(2,x);"
+            << "}"));
+        ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("KeyNavigation.left", listViewHours_id));
+        ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("Keys.onReturnPressed", Formatter() << timePopup_id << ".close()"));
 
-		auto ListViewMinTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewMin_id, ListViewMinProperties);
+        auto ListViewMinTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewMin_id, ListViewMinProperties);
 
-		timeBoxTag->AddChild(ListViewHoursTag);
-		timeBoxTag->AddChild(ListViewMinTag);
-		timePopupTag->Property("contentItem", timeBoxTag->ToString());
-		uiTimeComboBox->Property("indicator", rowIconTag->ToString());
-		uiTimeComboBox->Property("popup", timePopupTag->ToString());
-		uiTimeComboBox->Property("background", uiTimeInput->ToString());
-		
+        uiTimeComboBox->Property("width", Formatter() << "parent.width - " << rowIconTag->GetId() << ".width");
+        uiTimeComboBox->Property("Keys.onReturnPressed", Formatter() << timePopup_id << ".open()");
+        uiTimeComboBox->Property("focusPolicy", "Qt.NoFocus");
+
+        timeBoxTag->AddChild(ListViewHoursTag);
+        timeBoxTag->AddChild(ListViewMinTag);
+        timePopupTag->Property("contentItem", timeBoxTag->ToString());
+        uiTimeComboBox->Property("indicator", "Rectangle{}");
+        uiTimeComboBox->Property("popup", timePopupTag->ToString());
+        uiTimeComboBox->Property("background", uiTimeInput->ToString());
+        uiTimeInputWrapper->AddChild(uiTimeComboBox);
+        uiTimeInputWrapper->AddChild(rowIconTag);
+
         context->addToInputElementList(origionalElementId, (uiTimeInput->GetId() + ".selectedTime"));
 
-		return uiTimeComboBox;
+        return uiTimeInputWrapper;
+
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ListViewTagforTimeInput(const std::string& parent_id, const std::string& listView_id, std::map<std::string, std::map<std::string, std::string>>& properties)
@@ -2461,6 +2593,7 @@ namespace RendererQml
 
             auto buttonElement = std::make_shared<QmlTag>("Button");
             buttonElement->Property("id", buttonId);
+            buttonElement->Property("Keys.onReturnPressed", "onReleased()");
 
             if (isShowCardButton)
             {
@@ -2591,6 +2724,8 @@ namespace RendererQml
 					contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
 				}
             }
+
+            bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : 1");
 
             textLayout->AddChild(contentText);
             buttonElement->Property("background", bgRectangle->ToString());
