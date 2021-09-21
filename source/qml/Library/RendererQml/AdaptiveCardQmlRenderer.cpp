@@ -172,8 +172,6 @@ namespace RendererQml
 
     void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context)
     {
-        std::shared_ptr <QmlTag> first = nullptr, last = nullptr;
-
 		for (const auto& cardElement : elements)
 		{
 			auto uiElement = context->Render(cardElement);
@@ -189,11 +187,6 @@ namespace RendererQml
 				{
 					uiElement->Property("readonly property bool stretch", "true");
 				}
-
-                /*if (Utils::EndsWith(cardElement->GetElementTypeString(), "Input"))
-                {
-                    uiElement = addAccessibility(cardElement, uiElement);
-                }*/
 
 				uiContainer->AddChild(uiElement);
 			}
@@ -650,8 +643,13 @@ namespace RendererQml
         input->SetId(context->ConvertToValidId(input->GetId()));
 		const auto inputId = input->GetId();
 
-		//TODO: These color styling should come from css
+        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
+        backgroundTag->Property("radius", "5");
+        //TODO: These color styling should come from css
         //TODO: Add hover effect
+        backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+
+        backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : inputElementsBorderColor");
 
 		auto contentItemTag = std::make_shared<QmlTag>("TextField");
 		contentItemTag->Property("id", inputId + "_contentItem");
@@ -770,6 +768,7 @@ namespace RendererQml
 		}
 
 		uiNumberInput->Property("contentItem", contentItemTag->ToString());
+        uiNumberInput->Property("background", backgroundTag->ToString());
 		uiNumberInput->Property("up.indicator", upDummyTag->ToString());
 		uiNumberInput->Property("down.indicator", downDummyTag->ToString());
 
@@ -789,12 +788,6 @@ namespace RendererQml
         uiSplitterRactangle->AddChild(downIndicatorTag);
 
         context->addToInputElementList(origionalElementId, (inputId + ".value"));
-
-        auto numberInputBackgroundTag = std::make_shared<QmlTag>("Rectangle");
-        numberInputBackgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        numberInputBackgroundTag->Property("radius", "5");
-
-        uiNumberInput->Property("background", numberInputBackgroundTag->ToString());
 
 		return uiNumberInput;
 	}
@@ -1003,8 +996,8 @@ namespace RendererQml
 		uiComboBox->Property("valueRole", "'value'");
 		uiComboBox->Property("width", "parent.width");
 		uiComboBox->Property("height", "contentItem.contentHeight + 2*contentItem.padding < 30 ? 30 : contentItem.contentHeight + 2*contentItem.padding ");
-        uiComboBox->Property(" Keys.onReturnPressed", Formatter() << choiceset.id << ".popup.open()");
-        uiComboBox->Property(" onAccepted", Formatter() << choiceset.id << ".popup.close()");
+        uiComboBox->Property("Keys.onReturnPressed", Formatter() << choiceset.id << ".popup.open()");
+        uiComboBox->Property("onAccepted", Formatter() << choiceset.id << ".popup.close()");
 		
         const std::string iconId = choiceset.id + "_icon";
 		auto iconTag = GetIconTag(context);
@@ -2724,8 +2717,6 @@ namespace RendererQml
 					contentText->Property("color", Formatter() << buttonId << ".hovered ? '#FFFFFF' : '#007EA8'");
 				}
             }
-
-            bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : 1");
 
             textLayout->AddChild(contentText);
             buttonElement->Property("background", bgRectangle->ToString());
