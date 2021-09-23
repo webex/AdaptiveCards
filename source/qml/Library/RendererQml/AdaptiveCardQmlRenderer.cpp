@@ -1326,7 +1326,7 @@ namespace RendererQml
         }
 
         //std::string calendar_box_id = input->GetId() + "_cal_box";
-		auto calendar_box_id = GetCalendar(context)->GetId();
+		auto calendar_box_id = GetCalendar(context, uiTextFieldId, "temp")->GetId();
 
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("radius", "5");
@@ -1506,22 +1506,21 @@ namespace RendererQml
         calendarContentItemTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "', parent ,'calendar')}");
         calendarBoxTag->Property("contentItem", calendarContentItemTag->ToString());
 
-        uiTextField->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select date") << " in " << Utils::ToLower(StringDateFormat), true);
-
         auto uiDateInput = std::make_shared<QmlTag>("ComboBox");
         uiDateInput->Property("id", input->GetId());
         uiDateInput->Property("width", "parent.width");
-        uiDateInput->Property("background", uiTextField->ToString());
+		uiDateInput->Property("popup", GetCalendar(context, uiTextFieldId, StringDateFormat)->ToString());
+		uiTextField->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select date") << " in " << Utils::ToLower(StringDateFormat), true);
+		uiDateInput->Property("background", uiTextField->ToString());
         //uiDateInput->Property("popup", calendarBoxTag->ToString());
-        uiDateInput->Property("popup", GetCalendar(context)->ToString());
         uiDateInput->Property("indicator", rowIconTag->ToString());
-
+				
         context->addToInputElementList(origionalElementId, (uiTextField->GetId() + ".selectedDate"));
 
         return uiDateInput;
     }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCalendar(std::shared_ptr<AdaptiveRenderContext> context)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCalendar(std::shared_ptr<AdaptiveRenderContext> context, const std::string textFieldId, const std::string stringDateFormat)
 	{
 		//yyyy,mm,dd
 		const std::vector<int>upperDateLimit{ 3000,0,1 };
@@ -1529,6 +1528,7 @@ namespace RendererQml
 
 		auto popupTag = std::make_shared<QmlTag>("Popup");
 		popupTag->Property("id", "popupRect");
+		popupTag->Property("y", Formatter() << textFieldId << ".height + 2");
 		popupTag->Property("width", "248");
 		popupTag->Property("height", "293");
 		popupTag->Property("bottomInset", "0");
@@ -1562,10 +1562,26 @@ namespace RendererQml
 			<< "curCalendarMonth = selectedDate.getMonth();"
 			<< "positionViewAtIndex((selectedDate.getFullYear()) * 12 + selectedDate.getMonth(), ListView.Center);" << " }");
 
+		listviewCalendar->AddFunctions(Formatter() << "function setCalendarDateFromString(dateString)\n"
+			<< "{\n"
+			<< "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};\n"
+			<< "var y=dateString.match(/[0-9]{4}/);\n"
+			<< "dateString=dateString.replace(y,\"\");\n"
+			<< "var m=dateString.match(/[a-zA-Z]{3}/);\n"
+			<< "var d=dateString.match(/[0-9]{2}/);\n"
+			<< "if (d!==null && m!==null && y!==null){selectedDate=new Date(y[0],Months[m[0]],d[0]) }\n"
+			<< "setDate(selectedDate)\n"
+			<< "}");
+
+		listviewCalendar->Property("Component.onCompleted", Formatter() << "{"
+			<< textFieldId << "." << "textChanged" << textFieldId << ".connect(setCalendarDateFromString);"
+			<< textFieldId << "." << "textChanged" << textFieldId << "( " << textFieldId << ".text)"
+			<< "}");
+
 		listviewCalendar->Property("snapMode", "ListView.SnapOneItem");
 		listviewCalendar->Property("orientation", "Qt.Horizontal");
 		listviewCalendar->Property("clip", "true");
-		listviewCalendar->Property("Component.onCompleted", "{ setDate(new Date()) }");
+		//listviewCalendar->Property("Component.onCompleted", "{ setDate(new Date()) }");
 		listviewCalendar->Property("model", std::to_string((upperDateLimit.at(0)-lowerDateLimit.at(0)) * 12));
 		listviewCalendar->Property("onClicked", Formatter() << "{" << "setDate(clickedDate)" << "}");
 
@@ -1628,6 +1644,10 @@ namespace RendererQml
 		delegateMouseArea->Property("onClicked", Formatter() << "{"
 			<< "var selectedDate = new Date(year, month, date);"
 			<< listviewCalendar->GetId() << ".clicked(selectedDate)" << "}");
+		delegateMouseArea->Property("onReleased", Formatter() << "{\n"
+			<< popupTag->GetId() << ".close();\n"
+			<< textFieldId << ".text = " << listviewCalendar->GetId() << ".selectedDate.toLocaleString(Qt.locale(\"en_US\"),\"" << stringDateFormat << "\")\n"
+			<< "}");
 
 		delegateRectangle->Property("property int day", "index - 7");
 		delegateRectangle->Property("property int date", Formatter() <<"day - " << listViewDelegate->GetId() << ".firstDay + 1");
