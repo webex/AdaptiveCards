@@ -1325,7 +1325,8 @@ namespace RendererQml
             uiTextField->Property("visible", "false");
         }
 
-        std::string calendar_box_id = input->GetId() + "_cal_box";
+        //std::string calendar_box_id = input->GetId() + "_cal_box";
+		auto calendar_box_id = GetCalendar(context)->GetId();
 
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("radius", "5");
@@ -1511,13 +1512,191 @@ namespace RendererQml
         uiDateInput->Property("id", input->GetId());
         uiDateInput->Property("width", "parent.width");
         uiDateInput->Property("background", uiTextField->ToString());
-        uiDateInput->Property("popup", calendarBoxTag->ToString());
+        //uiDateInput->Property("popup", calendarBoxTag->ToString());
+        uiDateInput->Property("popup", GetCalendar(context)->ToString());
         uiDateInput->Property("indicator", rowIconTag->ToString());
 
         context->addToInputElementList(origionalElementId, (uiTextField->GetId() + ".selectedDate"));
 
         return uiDateInput;
     }
+
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCalendar(std::shared_ptr<AdaptiveRenderContext> context)
+	{
+		//yyyy,mm,dd
+		const std::vector<int>upperDateLimit{ 3000,0,1 };
+		const std::vector<int>lowerDateLimit{ 0,0,1 };
+
+		auto popupTag = std::make_shared<QmlTag>("Popup");
+		popupTag->Property("id", "popupRect");
+		popupTag->Property("width", "248");
+		popupTag->Property("height", "293");
+		popupTag->Property("bottomInset", "0");
+		popupTag->Property("topInset", "0");
+		popupTag->Property("rightInset", "0");
+		popupTag->Property("leftInset", "0");
+
+		auto backgroundRectangle = std::make_shared<QmlTag>("Rectangle");
+		backgroundRectangle->Property("radius", "12");
+		backgroundRectangle->Property("border.color", "black", true);
+
+		popupTag->Property("background", backgroundRectangle->ToString());
+
+		//outerRectangle->Property("radius", "12");
+
+		auto listviewCalendar = std::make_shared<QmlTag>("ListView");
+		listviewCalendar->Property("property int curCalendarYear", "0");
+		listviewCalendar->Property("property int curCalendarMonth", "0");
+		listviewCalendar->Property("property date minimumDate", Formatter() << "new Date(" << std::to_string(lowerDateLimit.at(0)) << "," << std::to_string(lowerDateLimit.at(1)) << "," << std::to_string(lowerDateLimit.at(2)) << ")");
+		listviewCalendar->Property("property date maximumDate", Formatter() << "new Date(" << std::to_string(upperDateLimit.at(0)) << "," << std::to_string(upperDateLimit.at(1)) << "," << std::to_string(upperDateLimit.at(2)) << ")");
+		listviewCalendar->Property("property date selectedDate", "new Date()");
+
+		listviewCalendar->Property("id", "calendarRoot");
+
+		listviewCalendar->Property("anchors.fill", "parent");
+		listviewCalendar->AddFunctions("signal clicked(date clickedDate)");
+
+		listviewCalendar->AddFunctions(Formatter() << "function setDate(clickedDate)" << "{"
+			<< "selectedDate = clickedDate;"
+			<< "curCalendarYear = selectedDate.getFullYear();"
+			<< "curCalendarMonth = selectedDate.getMonth();"
+			<< "positionViewAtIndex((selectedDate.getFullYear()) * 12 + selectedDate.getMonth(), ListView.Center);" << " }");
+
+		listviewCalendar->Property("snapMode", "ListView.SnapOneItem");
+		listviewCalendar->Property("orientation", "Qt.Horizontal");
+		listviewCalendar->Property("clip", "true");
+		listviewCalendar->Property("Component.onCompleted", "{ setDate(new Date()) }");
+		listviewCalendar->Property("model", std::to_string((upperDateLimit.at(0)-lowerDateLimit.at(0)) * 12));
+		listviewCalendar->Property("onClicked", Formatter() << "{" << "setDate(clickedDate)" << "}");
+
+		auto listViewDelegate = std::make_shared<QmlTag>("Item");
+		listViewDelegate->Property("id", "listViewDelegate");
+		listViewDelegate->Property("property int year", "Math.floor(index/12)");
+		listViewDelegate->Property("property int month", "index%12");
+		listViewDelegate->Property("property int firstDay", "(new Date(year, month, 1).getDay()-1 < 0 ? 6 : new Date(year, month, 1).getDay() - 1)");
+		listViewDelegate->Property("width", Formatter() << listviewCalendar->GetId() << ".width");
+		listViewDelegate->Property("height", Formatter() << listviewCalendar->GetId() << ".height");
+
+		auto headerText = std::make_shared<QmlTag>("Text");
+		headerText->Property("id", "headerText");
+		headerText->Property("anchors.left", "parent.left");
+		//headerText->Property("anchors.topMargin", "11");
+		//headerText->Property("anchors.leftMargin", "13");
+		headerText->Property("text", Formatter() << "['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'][" << listViewDelegate->GetId() << ".month] + ' ' + " << listViewDelegate->GetId() << ".year");
+		headerText->Property("font.pixelSize", "16");
+		listViewDelegate->AddChild(headerText);
+
+		auto monthGrid = std::make_shared<QmlTag>("Grid");
+		const auto monthGridId = "gridId";
+		monthGrid->Property("id", monthGridId);
+		monthGrid->Property("anchors.top", Formatter() << headerText->GetId() << ".bottom");
+		monthGrid->Property("anchors.right", "parent.right");
+		monthGrid->Property("anchors.left", "parent.left");
+		monthGrid->Property("anchors.bottom", "parent.bottom");
+		monthGrid->Property("anchors.topMargin", "14");
+		//monthGrid->Property("anchors.margins", "12");
+		monthGrid->Property("clip", "true");
+		monthGrid->Property("columns", "7");
+		monthGrid->Property("rows", "7");
+		//monthGrid->Property("property real cellWidth", "width/columns");
+		//monthGrid->Property("property real cellHeight", "height/rows");
+		listViewDelegate->AddChild(monthGrid);
+
+		auto repeaterTag = std::make_shared<QmlTag>("Repeater");
+		repeaterTag->Property("model", Formatter() << monthGridId << ".columns * " << monthGridId << ".rows");
+
+		auto delegateRectangle = std::make_shared<QmlTag>("Rectangle");
+		delegateRectangle->Property("id", "delegateRectangle");
+
+		auto delegateText = std::make_shared<QmlTag>("Text");
+		delegateText->Property("id", "delegateText");
+		delegateText->Property("anchors.centerIn", "parent");
+		delegateText->Property("font.pixelSize", "day < 0 ? 16 : 14");
+		delegateText->Property("color", Formatter() << "new Date(year,month,date).toDateString() === " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateRectangle->GetId() << ".date>=0" << "?\"white\": cellDate.getMonth() === month || day <0?\"black\":\"grey\"");
+		delegateText->Property("text", Formatter() << "{" << "if (day < 0)"
+			<< "['M', 'T', 'W', 'T', 'F', 'S', 'S'][index]" << "\n"
+			<< "else if (new Date(year, month, date).getMonth() == month)" << "\n"
+			<< "date" << "\n"
+			<< "else" << "\n"
+			<< "cellDate.getDate()" << "}");
+
+		auto delegateMouseArea = std::make_shared<QmlTag>("MouseArea");
+		delegateMouseArea->Property("id", "delegateMouseArea");
+		delegateMouseArea->Property("anchors.fill", "parent");
+		delegateMouseArea->Property("enabled", Formatter() << delegateText->GetId() << ".text &&  day >= 0 && (new Date(year,month,date) >= " << listviewCalendar->GetId() << ".minimumDate ) && (new Date(year,month,date) <= " << listviewCalendar->GetId() << ".maximumDate )");
+		delegateMouseArea->Property("hoverEnabled", "true");
+		delegateMouseArea->Property("onClicked", Formatter() << "{"
+			<< "var selectedDate = new Date(year, month, date);"
+			<< listviewCalendar->GetId() << ".clicked(selectedDate)" << "}");
+
+		delegateRectangle->Property("property int day", "index - 7");
+		delegateRectangle->Property("property int date", Formatter() <<"day - " << listViewDelegate->GetId() << ".firstDay + 1");
+		//delegateRectangle->Property("width", Formatter() << monthGridId << ".cellWidth");
+		//delegateRectangle->Property("height", Formatter() << monthGridId << ".cellHeight");
+		delegateRectangle->Property("width", "32");
+		delegateRectangle->Property("height", "32");
+		delegateRectangle->Property("color", Formatter() << "new Date(year,month,date).toDateString() == " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateRectangle->GetId() << ".date >= 0 " << "?\"blue\": " << delegateMouseArea->GetId() << ".containsMouse?\"lightgrey\" :\"white\"");
+		delegateRectangle->Property("radius", "0.5 * width");
+		delegateRectangle->Property("property date cellDate", "new Date(year,month,date)");
+
+		delegateRectangle->AddChild(delegateText);
+		delegateRectangle->AddChild(delegateMouseArea);
+		repeaterTag->Property("delegate",delegateRectangle->ToString());
+
+		monthGrid->AddChild(repeaterTag);
+
+		listviewCalendar->Property("delegate",listViewDelegate->ToString());
+		auto contentItemRectangle = std::make_shared<QmlTag>("Rectangle");
+		contentItemRectangle->Property("radius", "12");
+		contentItemRectangle->AddChild(listviewCalendar);
+
+		auto rightArrowButton = GetIconTag(context);
+		rightArrowButton->Property("id", "rightArrow");
+		rightArrowButton->RemoveProperty("anchors.bottom");
+		rightArrowButton->Property("width","icon.width");
+		rightArrowButton->Property("height","icon.height");
+		rightArrowButton->Property("icon.width", "28");
+		rightArrowButton->Property("icon.height", "28");
+		rightArrowButton->Property("horizontalPadding", "0");
+		rightArrowButton->Property("verticalPadding", "0");
+		rightArrowButton->Property("anchors.margins", "0");
+		//rightArrowButton->Property("anchors.topMargin", "9");
+		//rightArrowButton->Property("anchors.rightMargin", "8");
+		rightArrowButton->Property("icon.source", RendererQml::right_arrow_28, true);
+
+		std::string rightArrowOnClicked = Formatter() << "{\n"
+			<< listviewCalendar->GetId() << ".curCalendarYear = " << listviewCalendar->GetId() << ".curCalendarMonth ==11? " << listviewCalendar->GetId() << ".curCalendarYear + 1 : " << listviewCalendar->GetId() << ".curCalendarYear;\n"
+			<< listviewCalendar->GetId() << ".curCalendarMonth = (" << listviewCalendar->GetId() << ".curCalendarMonth + 1)%12;\n"
+			<< listviewCalendar->GetId() << ".positionViewAtIndex((" << listviewCalendar->GetId() << ".curCalendarYear) * 12 + (" << listviewCalendar->GetId() << ".curCalendarMonth), ListView.Center);\n"
+			<< "}\n";
+		rightArrowButton->Property("onClicked", rightArrowOnClicked);
+
+		auto leftArrowButton = GetIconTag(context);
+		leftArrowButton->Property("id", "leftArrow");
+		leftArrowButton->RemoveProperty("anchors.bottom");
+		leftArrowButton->Property("width", "icon.width");
+		leftArrowButton->Property("height", "icon.height");
+		leftArrowButton->Property("horizontalPadding", "0");
+		leftArrowButton->Property("verticalPadding", "0");
+		leftArrowButton->Property("anchors.margins", "0");
+		leftArrowButton->Property("icon.width", "28");
+		leftArrowButton->Property("icon.height", "28");
+		leftArrowButton->Property("anchors.right", Formatter() << rightArrowButton->GetId() << ".left");
+		//rightArrowButton->Property("anchors.rightMargin", "8");
+		leftArrowButton->Property("icon.source", RendererQml::left_arrow_28, true);
+
+		std::string leftArrowOnClicked = Formatter() << "{\n"
+			<< listviewCalendar->GetId() << ".curCalendarYear = " << listviewCalendar->GetId() << ".curCalendarMonth - 1 < 0 ? " << listviewCalendar->GetId() << ".curCalendarYear - 1 : " << listviewCalendar->GetId() << ".curCalendarYear;\n"
+			<< listviewCalendar->GetId() << ".curCalendarMonth = " << listviewCalendar->GetId() << ".curCalendarMonth - 1 < 0 ? 11 : " << listviewCalendar->GetId() << ".curCalendarMonth - 1;\n"
+			<< listviewCalendar->GetId() << ".positionViewAtIndex((" << listviewCalendar->GetId() << ".curCalendarYear) * 12 + (" << listviewCalendar->GetId() << ".curCalendarMonth), ListView.Center);\n"
+			<< "}\n";
+		leftArrowButton->Property("onClicked", leftArrowOnClicked);
+
+		popupTag->AddChild(rightArrowButton);
+		popupTag->AddChild(leftArrowButton);
+		popupTag->Property("contentItem",contentItemRectangle->ToString());
+		return popupTag;
+	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::FactSetRender(std::shared_ptr<AdaptiveCards::FactSet> factSet, std::shared_ptr<AdaptiveRenderContext> context)
 	{
