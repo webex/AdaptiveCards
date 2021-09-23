@@ -51,7 +51,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         textView.isAutomaticTextReplacementEnabled = false
         textView.smartInsertDeleteEnabled = false
         textView.font = config.font
-        // 2 is added as padding in case the left padding is 0
+        // 2 is added as extra padding to match single line input text element
         textView.textContainer?.lineFragmentPadding = config.leftPadding + 2
         wantsLayer = true
         layer?.borderColor = config.borderColor.cgColor
@@ -67,7 +67,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     func setPlaceholder(placeholder: String) {
         let placeholderValue = NSMutableAttributedString(string: placeholder)
         placeholderValue.addAttributes([.foregroundColor: NSColor.placeholderTextColor, .font: config.font], range: NSRange(location: 0, length: placeholderValue.length))
-        // 2 is added as padding in case the left padding is 0
+        // 2 is added as extra padding to match single line input text element
         textView.placeholderLeftPadding = config.leftPadding + 2
         textView.placeholderAttrString = placeholderValue
     }
