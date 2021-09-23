@@ -1526,8 +1526,14 @@ namespace RendererQml
 		const std::vector<int>upperDateLimit{ 3000,0,1 };
 		const std::vector<int>lowerDateLimit{ 0,0,1 };
 
+		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
+		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
+		const auto headerTextSize = "16";
+		const auto hoverColor = "lightgrey";
+		const auto selectedColor = "#1170CF";
+
 		auto popupTag = std::make_shared<QmlTag>("Popup");
-		popupTag->Property("id", "popupRect");
+		popupTag->Property("id", Formatter() << textFieldId << "_popupRect");
 		popupTag->Property("y", Formatter() << textFieldId << ".height + 2");
 		popupTag->Property("width", "248");
 		popupTag->Property("height", "293");
@@ -1535,11 +1541,12 @@ namespace RendererQml
 		popupTag->Property("topInset", "0");
 		popupTag->Property("rightInset", "0");
 		popupTag->Property("leftInset", "0");
-
+		
 		auto backgroundRectangle = std::make_shared<QmlTag>("Rectangle");
 		backgroundRectangle->Property("radius", "12");
 		backgroundRectangle->Property("border.color", "black", true);
-
+		backgroundRectangle->Property("color", backgroundColor);
+				
 		popupTag->Property("background", backgroundRectangle->ToString());
 
 		//outerRectangle->Property("radius", "12");
@@ -1551,7 +1558,7 @@ namespace RendererQml
 		listviewCalendar->Property("property date maximumDate", Formatter() << "new Date(" << std::to_string(upperDateLimit.at(0)) << "," << std::to_string(upperDateLimit.at(1)) << "," << std::to_string(upperDateLimit.at(2)) << ")");
 		listviewCalendar->Property("property date selectedDate", "new Date()");
 
-		listviewCalendar->Property("id", "calendarRoot");
+		listviewCalendar->Property("id", Formatter() << textFieldId << "_calendarRoot");
 
 		listviewCalendar->Property("anchors.fill", "parent");
 		listviewCalendar->AddFunctions("signal clicked(date clickedDate)");
@@ -1586,7 +1593,7 @@ namespace RendererQml
 		listviewCalendar->Property("onClicked", Formatter() << "{" << "setDate(clickedDate)" << "}");
 
 		auto listViewDelegate = std::make_shared<QmlTag>("Item");
-		listViewDelegate->Property("id", "listViewDelegate");
+		listViewDelegate->Property("id", Formatter() << textFieldId << "listViewDelegate");
 		listViewDelegate->Property("property int year", "Math.floor(index/12)");
 		listViewDelegate->Property("property int month", "index%12");
 		listViewDelegate->Property("property int firstDay", "(new Date(year, month, 1).getDay()-1 < 0 ? 6 : new Date(year, month, 1).getDay() - 1)");
@@ -1594,16 +1601,17 @@ namespace RendererQml
 		listViewDelegate->Property("height", Formatter() << listviewCalendar->GetId() << ".height");
 
 		auto headerText = std::make_shared<QmlTag>("Text");
-		headerText->Property("id", "headerText");
+		headerText->Property("id", Formatter() << textFieldId << "headerText");
 		headerText->Property("anchors.left", "parent.left");
 		//headerText->Property("anchors.topMargin", "11");
 		//headerText->Property("anchors.leftMargin", "13");
+		headerText->Property("color", textColor);
 		headerText->Property("text", Formatter() << "['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'][" << listViewDelegate->GetId() << ".month] + ' ' + " << listViewDelegate->GetId() << ".year");
 		headerText->Property("font.pixelSize", "16");
 		listViewDelegate->AddChild(headerText);
 
 		auto monthGrid = std::make_shared<QmlTag>("Grid");
-		const auto monthGridId = "gridId";
+		const std::string monthGridId = Formatter() << textFieldId << "gridId";
 		monthGrid->Property("id", monthGridId);
 		monthGrid->Property("anchors.top", Formatter() << headerText->GetId() << ".bottom");
 		monthGrid->Property("anchors.right", "parent.right");
@@ -1622,13 +1630,13 @@ namespace RendererQml
 		repeaterTag->Property("model", Formatter() << monthGridId << ".columns * " << monthGridId << ".rows");
 
 		auto delegateRectangle = std::make_shared<QmlTag>("Rectangle");
-		delegateRectangle->Property("id", "delegateRectangle");
-
+		delegateRectangle->Property("id", Formatter() << textFieldId << "delegateRectangle");
+		
 		auto delegateText = std::make_shared<QmlTag>("Text");
-		delegateText->Property("id", "delegateText");
+		delegateText->Property("id", Formatter() << textFieldId << "delegateText");
 		delegateText->Property("anchors.centerIn", "parent");
 		delegateText->Property("font.pixelSize", "day < 0 ? 16 : 14");
-		delegateText->Property("color", Formatter() << "new Date(year,month,date).toDateString() === " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateRectangle->GetId() << ".date>=0" << "?\"white\": cellDate.getMonth() === month || day <0?\"black\":\"grey\"");
+		delegateText->Property("color", Formatter() << "new Date(year,month,date).toDateString() === " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateRectangle->GetId() << ".date>=0" << "?\"white\": cellDate.getMonth() === month || day <0?" << textColor << ":\"grey\"");
 		delegateText->Property("text", Formatter() << "{" << "if (day < 0)"
 			<< "['M', 'T', 'W', 'T', 'F', 'S', 'S'][index]" << "\n"
 			<< "else if (new Date(year, month, date).getMonth() == month)" << "\n"
@@ -1637,7 +1645,7 @@ namespace RendererQml
 			<< "cellDate.getDate()" << "}");
 
 		auto delegateMouseArea = std::make_shared<QmlTag>("MouseArea");
-		delegateMouseArea->Property("id", "delegateMouseArea");
+		delegateMouseArea->Property("id", Formatter() << textFieldId << "delegateMouseArea");
 		delegateMouseArea->Property("anchors.fill", "parent");
 		delegateMouseArea->Property("enabled", Formatter() << delegateText->GetId() << ".text &&  day >= 0 && (new Date(year,month,date) >= " << listviewCalendar->GetId() << ".minimumDate ) && (new Date(year,month,date) <= " << listviewCalendar->GetId() << ".maximumDate )");
 		delegateMouseArea->Property("hoverEnabled", "true");
@@ -1655,7 +1663,7 @@ namespace RendererQml
 		//delegateRectangle->Property("height", Formatter() << monthGridId << ".cellHeight");
 		delegateRectangle->Property("width", "32");
 		delegateRectangle->Property("height", "32");
-		delegateRectangle->Property("color", Formatter() << "new Date(year,month,date).toDateString() == " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateRectangle->GetId() << ".date >= 0 " << "?\"blue\": " << delegateMouseArea->GetId() << ".containsMouse?\"lightgrey\" :\"white\"");
+		delegateRectangle->Property("color", Formatter() << "new Date(year,month,date).toDateString() == " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateRectangle->GetId() << ".date >= 0 " << "?\"" << selectedColor << "\": " << delegateMouseArea->GetId() << ".containsMouse? \"" << hoverColor << "\" :" << backgroundColor);
 		delegateRectangle->Property("radius", "0.5 * width");
 		delegateRectangle->Property("property date cellDate", "new Date(year,month,date)");
 
@@ -1668,10 +1676,11 @@ namespace RendererQml
 		listviewCalendar->Property("delegate",listViewDelegate->ToString());
 		auto contentItemRectangle = std::make_shared<QmlTag>("Rectangle");
 		contentItemRectangle->Property("radius", "12");
+		contentItemRectangle->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 		contentItemRectangle->AddChild(listviewCalendar);
 
 		auto rightArrowButton = GetIconTag(context);
-		rightArrowButton->Property("id", "rightArrow");
+		rightArrowButton->Property("id", Formatter() << textFieldId << "_rightArrow");
 		rightArrowButton->RemoveProperty("anchors.bottom");
 		rightArrowButton->Property("width","icon.width");
 		rightArrowButton->Property("height","icon.height");
@@ -1692,7 +1701,7 @@ namespace RendererQml
 		rightArrowButton->Property("onClicked", rightArrowOnClicked);
 
 		auto leftArrowButton = GetIconTag(context);
-		leftArrowButton->Property("id", "leftArrow");
+		leftArrowButton->Property("id", Formatter() << textFieldId << "_leftArrow");
 		leftArrowButton->RemoveProperty("anchors.bottom");
 		leftArrowButton->Property("width", "icon.width");
 		leftArrowButton->Property("height", "icon.height");
