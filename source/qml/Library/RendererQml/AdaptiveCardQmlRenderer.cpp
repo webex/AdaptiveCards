@@ -1624,6 +1624,7 @@ namespace RendererQml
 			<< listviewCalendar->GetId() << ".clicked(selectedDate)" << "}");
 		delegateMouseArea->Property("onReleased", Formatter() << "{\n"
 			<< popupTag->GetId() << ".close();\n"
+			<< listviewCalendar->GetId() << ".selectedDate = " << delegateRectangle->GetId() << ".cellDate\n"
 			<< textFieldId << ".text = " << listviewCalendar->GetId() << ".selectedDate.toLocaleString(Qt.locale(\"en_US\"),\"" << stringDateFormat << "\")\n"
 			<< "}");
 
