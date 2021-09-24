@@ -1326,7 +1326,7 @@ namespace RendererQml
         }
 
         //std::string calendar_box_id = input->GetId() + "_cal_box";
-		auto calendar_box_id = GetCalendar(context, uiTextFieldId, "temp")->GetId();
+		auto calendar_box_id = GetCalendar(context, uiTextFieldId, "temp","","")->GetId();
 
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("radius", "5");
@@ -1378,14 +1378,19 @@ namespace RendererQml
         calendarTag->AddImports("import QtQuick 2.15");
         calendarTag->Property("anchors.fill", "parent");
 
+		std::string minimumDate = "";
+		std::string maximumDate = "";
+
         if (!input->GetMin().empty() && Utils::isValidDate(input->GetMin()))
         {
-            calendarTag->Property("minimumDate", Utils::GetDate(input->GetMin()));
+            //calendarTag->Property("minimumDate", Utils::GetDate(input->GetMin()));
+			minimumDate = Utils::GetDate(input->GetMin());
         }
 
         if (!input->GetMax().empty() && Utils::isValidDate(input->GetMax()))
         {
-            calendarTag->Property("maximumDate", Utils::GetDate(input->GetMax()));
+            //calendarTag->Property("maximumDate", Utils::GetDate(input->GetMax()));
+			maximumDate = Utils::GetDate(input->GetMax());
         }
 
         //Supporting function to handle the signal of the TextField
@@ -1509,7 +1514,7 @@ namespace RendererQml
         auto uiDateInput = std::make_shared<QmlTag>("ComboBox");
         uiDateInput->Property("id", input->GetId());
         uiDateInput->Property("width", "parent.width");
-		uiDateInput->Property("popup", GetCalendar(context, uiTextFieldId, StringDateFormat)->ToString());
+		uiDateInput->Property("popup", GetCalendar(context, uiTextFieldId, StringDateFormat, minimumDate, maximumDate)->ToString());
 		uiTextField->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select date") << " in " << Utils::ToLower(StringDateFormat), true);
 		uiDateInput->Property("background", uiTextField->ToString());
         //uiDateInput->Property("popup", calendarBoxTag->ToString());
@@ -1520,7 +1525,7 @@ namespace RendererQml
         return uiDateInput;
     }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCalendar(std::shared_ptr<AdaptiveRenderContext> context, const std::string textFieldId, const std::string stringDateFormat)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCalendar(std::shared_ptr<AdaptiveRenderContext> context, const std::string textFieldId, const std::string stringDateFormat, const std::string minimumDate, const std::string maximumDate)
 	{
 		//yyyy,mm,dd
 		const std::vector<int>upperDateLimit{ 3000,0,1 };
@@ -1529,7 +1534,8 @@ namespace RendererQml
 		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
 		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
 		const auto headerTextSize = "16";
-		const auto hoverColor = "lightgrey";
+		const auto hoverColor = "Qt.rgba(0, 0, 0, 0.11)";
+		const auto notAvailableColor = "\"grey\"";
 		const auto selectedColor = "#1170CF";
 
 		auto popupTag = std::make_shared<QmlTag>("Popup");
@@ -1554,8 +1560,8 @@ namespace RendererQml
 		auto listviewCalendar = std::make_shared<QmlTag>("ListView");
 		listviewCalendar->Property("property int curCalendarYear", "0");
 		listviewCalendar->Property("property int curCalendarMonth", "0");
-		listviewCalendar->Property("property date minimumDate", Formatter() << "new Date(" << std::to_string(lowerDateLimit.at(0)) << "," << std::to_string(lowerDateLimit.at(1)) << "," << std::to_string(lowerDateLimit.at(2)) << ")");
-		listviewCalendar->Property("property date maximumDate", Formatter() << "new Date(" << std::to_string(upperDateLimit.at(0)) << "," << std::to_string(upperDateLimit.at(1)) << "," << std::to_string(upperDateLimit.at(2)) << ")");
+		listviewCalendar->Property("property date minimumDate", minimumDate != "" ? minimumDate : Formatter() << "new Date(" << std::to_string(lowerDateLimit.at(0)) << "," << std::to_string(lowerDateLimit.at(1)) << "," << std::to_string(lowerDateLimit.at(2)) << ")");
+		listviewCalendar->Property("property date maximumDate", maximumDate != "" ? maximumDate : Formatter() << "new Date(" << std::to_string(upperDateLimit.at(0)) << "," << std::to_string(upperDateLimit.at(1)) << "," << std::to_string(upperDateLimit.at(2)) << ")");
 		listviewCalendar->Property("property date selectedDate", "new Date()");
 
 		listviewCalendar->Property("id", Formatter() << textFieldId << "_calendarRoot");
@@ -1631,21 +1637,29 @@ namespace RendererQml
 
 		auto delegateRectangle = std::make_shared<QmlTag>("Rectangle");
 		delegateRectangle->Property("id", Formatter() << textFieldId << "delegateRectangle");
-		
+
+		auto delegateMouseArea = std::make_shared<QmlTag>("MouseArea");
+		delegateMouseArea->Property("id", Formatter() << textFieldId << "delegateMouseArea");
+
 		auto delegateText = std::make_shared<QmlTag>("Text");
 		delegateText->Property("id", Formatter() << textFieldId << "delegateText");
 		delegateText->Property("anchors.centerIn", "parent");
 		delegateText->Property("font.pixelSize", "day < 0 ? 16 : 14");
-		delegateText->Property("color", Formatter() << "new Date(year,month,date).toDateString() === " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateRectangle->GetId() << ".date>=0" << "?\"white\": cellDate.getMonth() === month || day <0?" << textColor << ":\"grey\"");
+		delegateText->Property("color", Formatter() << "{\n"
+			<< "if (" << delegateRectangle->GetId() << ".cellDate.toDateString() === " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateMouseArea->GetId() << ".enabled)\n"
+			<< "\"white\"\n"
+			<< "else if (" << delegateRectangle->GetId() << ".cellDate.getMonth() === " << listViewDelegate->GetId() << ".month && " << delegateMouseArea->GetId() << ".enabled)\n"
+			<< textColor << "\n"
+			<< "else\n"
+			<< notAvailableColor << "\n"
+			<< "}");
 		delegateText->Property("text", Formatter() << "{" << "if (day < 0)"
-			<< "['M', 'T', 'W', 'T', 'F', 'S', 'S'][index]" << "\n"
+			<< delegateRectangle->GetId() << ".dayArray[index]" << "\n"
 			<< "else if (new Date(year, month, date).getMonth() == month)" << "\n"
 			<< "date" << "\n"
 			<< "else" << "\n"
 			<< "cellDate.getDate()" << "}");
 
-		auto delegateMouseArea = std::make_shared<QmlTag>("MouseArea");
-		delegateMouseArea->Property("id", Formatter() << textFieldId << "delegateMouseArea");
 		delegateMouseArea->Property("anchors.fill", "parent");
 		delegateMouseArea->Property("enabled", Formatter() << delegateText->GetId() << ".text &&  day >= 0 && (new Date(year,month,date) >= " << listviewCalendar->GetId() << ".minimumDate ) && (new Date(year,month,date) <= " << listviewCalendar->GetId() << ".maximumDate )");
 		delegateMouseArea->Property("hoverEnabled", "true");
@@ -1663,7 +1677,8 @@ namespace RendererQml
 		//delegateRectangle->Property("height", Formatter() << monthGridId << ".cellHeight");
 		delegateRectangle->Property("width", "32");
 		delegateRectangle->Property("height", "32");
-		delegateRectangle->Property("color", Formatter() << "new Date(year,month,date).toDateString() == " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateRectangle->GetId() << ".date >= 0 " << "?\"" << selectedColor << "\": " << delegateMouseArea->GetId() << ".containsMouse? \"" << hoverColor << "\" :" << backgroundColor);
+		delegateRectangle->Property("property variant dayArray", "['M', 'T', 'W', 'T', 'F', 'S', 'S']");
+		delegateRectangle->Property("color", Formatter() << "new Date(year,month,date).toDateString() == " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateMouseArea->GetId() << ".enabled" << "? '" << selectedColor << "' : " << delegateMouseArea->GetId() << ".containsMouse? " << hoverColor << " :" << backgroundColor);
 		delegateRectangle->Property("radius", "0.5 * width");
 		delegateRectangle->Property("property date cellDate", "new Date(year,month,date)");
 
