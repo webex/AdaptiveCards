@@ -1494,6 +1494,7 @@ namespace RendererQml
 		const std::vector<int>upperDateLimit{ 3000,0,1 };
 		const std::vector<int>lowerDateLimit{ 0,0,1 };
 
+		//TODO: Move hardcoded colors, fonts to a config file
 		const auto textColor = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
 		const auto backgroundColor = context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor);
 		const auto headerTextSize = "16";
