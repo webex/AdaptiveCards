@@ -1519,8 +1519,6 @@ namespace RendererQml
 				
 		popupTag->Property("background", backgroundRectangle->ToString());
 
-		//outerRectangle->Property("radius", "12");
-
 		auto listviewCalendar = std::make_shared<QmlTag>("ListView");
 		listviewCalendar->Property("property int curCalendarYear", "0");
 		listviewCalendar->Property("property int curCalendarMonth", "0");
