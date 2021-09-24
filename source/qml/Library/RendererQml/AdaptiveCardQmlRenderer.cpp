@@ -1326,7 +1326,7 @@ namespace RendererQml
         }
 
         //std::string calendar_box_id = input->GetId() + "_cal_box";
-		auto calendar_box_id = GetCalendar(context, uiTextFieldId, "temp","","")->GetId();
+		const std::string calendar_box_id = Formatter() << input->GetId() << "_calendarBox";
 
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("radius", "5");
@@ -1373,51 +1373,18 @@ namespace RendererQml
 
 		rowIconTag->AddChild(iconTag);
 		
-        auto calendarTag = std::make_shared<QmlTag>("Calendar");
-        calendarTag->AddImports("import QtQuick.Controls 1.4");
-        calendarTag->AddImports("import QtQuick 2.15");
-        calendarTag->Property("anchors.fill", "parent");
-
 		std::string minimumDate = "";
 		std::string maximumDate = "";
 
         if (!input->GetMin().empty() && Utils::isValidDate(input->GetMin()))
         {
-            //calendarTag->Property("minimumDate", Utils::GetDate(input->GetMin()));
-			minimumDate = Utils::GetDate(input->GetMin());
+            minimumDate = Utils::GetDate(input->GetMin());
         }
 
         if (!input->GetMax().empty() && Utils::isValidDate(input->GetMax()))
         {
-            //calendarTag->Property("maximumDate", Utils::GetDate(input->GetMax()));
-			maximumDate = Utils::GetDate(input->GetMax());
+            maximumDate = Utils::GetDate(input->GetMax());
         }
-
-        //Supporting function to handle the signal of the TextField
-        calendarTag->AddFunctions(Formatter() << "function setCalendarDate(dateString)"
-            << "{"
-            << "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};"
-            << "var y=dateString.match(/\\\\d{4}/);"
-            << "dateString=dateString.replace(y,\"\");"
-            << "var m=dateString.match(/[a-zA-Z]{3}/);"
-            << "var d=dateString.match(/\\\\d{2}/);"
-            << "if (d!==null && m!==null && y!==null){selectedDate=new Date(y[0],Months[m[0]],d[0]) }"
-            << "}");
-
-        calendarTag->Property("Component.onCompleted", Formatter() << "{"
-            << uiTextField->GetId() << "." << "textChanged" << uiTextField->GetId() << ".connect(setCalendarDate);"
-            << uiTextField->GetId() << "." << "textChanged" << uiTextField->GetId() << "( " << uiTextField->GetId() << ".text)"
-            << "}");
-
-        auto calendarContentItemTag = std::make_shared<QmlTag>("Rectangle");
-        calendarContentItemTag->Property("anchors.fill", "parent");
-        calendarContentItemTag->Property("anchors.margins", "2");
-
-        auto calendarBoxTag = std::make_shared<QmlTag>("Popup");
-        calendarBoxTag->Property("id", calendar_box_id);
-        calendarBoxTag->Property("y", Formatter() << uiTextFieldId << ".height-1");
-        calendarBoxTag->Property("width", "300");
-        calendarBoxTag->Property("height", "300");
 
         auto EnumDateFormat = Utils::GetSystemDateFormat();
 
@@ -1505,19 +1472,15 @@ namespace RendererQml
             << "if(focus === false){ "
             << "if(text === \"" << std::string(dateSeparator) + std::string(dateSeparator) << "\"){ inputMask = \"\" ; } "
             << "}} ");
-        calendarTag->Property("onReleased", Formatter() << "{" << calendar_box_id << ".close(); " << uiTextFieldId << ".text=selectedDate.toLocaleString(Qt.locale(\"en_US\"),"
-            << "\"" << StringDateFormat << "\")}");
 
-        calendarContentItemTag->Property("Component.onCompleted", "{ Qt.createQmlObject('" + calendarTag->ToString() + "', parent ,'calendar')}");
-        calendarBoxTag->Property("contentItem", calendarContentItemTag->ToString());
+		auto dateFormat = StringDateFormat;
+		uiTextField->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select date") << " in " << Utils::ToLower(dateFormat), true);
 
         auto uiDateInput = std::make_shared<QmlTag>("ComboBox");
         uiDateInput->Property("id", input->GetId());
         uiDateInput->Property("width", "parent.width");
-		uiDateInput->Property("popup", GetCalendar(context, uiTextFieldId, StringDateFormat, minimumDate, maximumDate)->ToString());
-		uiTextField->Property("placeholderText", Formatter() << (!input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select date") << " in " << Utils::ToLower(StringDateFormat), true);
+		uiDateInput->Property("popup", GetCalendar(context, uiTextFieldId, calendar_box_id, StringDateFormat, minimumDate, maximumDate)->ToString());
 		uiDateInput->Property("background", uiTextField->ToString());
-        //uiDateInput->Property("popup", calendarBoxTag->ToString());
         uiDateInput->Property("indicator", rowIconTag->ToString());
 				
         context->addToInputElementList(origionalElementId, (uiTextField->GetId() + ".selectedDate"));
@@ -1525,7 +1488,7 @@ namespace RendererQml
         return uiDateInput;
     }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCalendar(std::shared_ptr<AdaptiveRenderContext> context, const std::string textFieldId, const std::string stringDateFormat, const std::string minimumDate, const std::string maximumDate)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCalendar(std::shared_ptr<AdaptiveRenderContext> context, const std::string textFieldId, const std::string calendarBoxId, const std::string stringDateFormat, const std::string minimumDate, const std::string maximumDate)
 	{
 		//yyyy,mm,dd
 		const std::vector<int>upperDateLimit{ 3000,0,1 };
@@ -1539,7 +1502,7 @@ namespace RendererQml
 		const auto selectedColor = "#1170CF";
 
 		auto popupTag = std::make_shared<QmlTag>("Popup");
-		popupTag->Property("id", Formatter() << textFieldId << "_popupRect");
+		popupTag->Property("id", calendarBoxId);
 		popupTag->Property("y", Formatter() << textFieldId << ".height + 2");
 		popupTag->Property("width", "248");
 		popupTag->Property("height", "293");
@@ -1594,7 +1557,6 @@ namespace RendererQml
 		listviewCalendar->Property("snapMode", "ListView.SnapOneItem");
 		listviewCalendar->Property("orientation", "Qt.Horizontal");
 		listviewCalendar->Property("clip", "true");
-		//listviewCalendar->Property("Component.onCompleted", "{ setDate(new Date()) }");
 		listviewCalendar->Property("model", std::to_string((upperDateLimit.at(0)-lowerDateLimit.at(0)) * 12));
 		listviewCalendar->Property("onClicked", Formatter() << "{" << "setDate(clickedDate)" << "}");
 
@@ -1609,8 +1571,6 @@ namespace RendererQml
 		auto headerText = std::make_shared<QmlTag>("Text");
 		headerText->Property("id", Formatter() << textFieldId << "headerText");
 		headerText->Property("anchors.left", "parent.left");
-		//headerText->Property("anchors.topMargin", "11");
-		//headerText->Property("anchors.leftMargin", "13");
 		headerText->Property("color", textColor);
 		headerText->Property("text", Formatter() << "['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'][" << listViewDelegate->GetId() << ".month] + ' ' + " << listViewDelegate->GetId() << ".year");
 		headerText->Property("font.pixelSize", "16");
@@ -1624,12 +1584,9 @@ namespace RendererQml
 		monthGrid->Property("anchors.left", "parent.left");
 		monthGrid->Property("anchors.bottom", "parent.bottom");
 		monthGrid->Property("anchors.topMargin", "14");
-		//monthGrid->Property("anchors.margins", "12");
 		monthGrid->Property("clip", "true");
 		monthGrid->Property("columns", "7");
 		monthGrid->Property("rows", "7");
-		//monthGrid->Property("property real cellWidth", "width/columns");
-		//monthGrid->Property("property real cellHeight", "height/rows");
 		listViewDelegate->AddChild(monthGrid);
 
 		auto repeaterTag = std::make_shared<QmlTag>("Repeater");
@@ -1673,8 +1630,6 @@ namespace RendererQml
 
 		delegateRectangle->Property("property int day", "index - 7");
 		delegateRectangle->Property("property int date", Formatter() <<"day - " << listViewDelegate->GetId() << ".firstDay + 1");
-		//delegateRectangle->Property("width", Formatter() << monthGridId << ".cellWidth");
-		//delegateRectangle->Property("height", Formatter() << monthGridId << ".cellHeight");
 		delegateRectangle->Property("width", "32");
 		delegateRectangle->Property("height", "32");
 		delegateRectangle->Property("property variant dayArray", "['M', 'T', 'W', 'T', 'F', 'S', 'S']");
@@ -1704,8 +1659,6 @@ namespace RendererQml
 		rightArrowButton->Property("horizontalPadding", "0");
 		rightArrowButton->Property("verticalPadding", "0");
 		rightArrowButton->Property("anchors.margins", "0");
-		//rightArrowButton->Property("anchors.topMargin", "9");
-		//rightArrowButton->Property("anchors.rightMargin", "8");
 		rightArrowButton->Property("icon.source", RendererQml::right_arrow_28, true);
 
 		std::string rightArrowOnClicked = Formatter() << "{\n"
@@ -1726,7 +1679,6 @@ namespace RendererQml
 		leftArrowButton->Property("icon.width", "28");
 		leftArrowButton->Property("icon.height", "28");
 		leftArrowButton->Property("anchors.right", Formatter() << rightArrowButton->GetId() << ".left");
-		//rightArrowButton->Property("anchors.rightMargin", "8");
 		leftArrowButton->Property("icon.source", RendererQml::left_arrow_28, true);
 
 		std::string leftArrowOnClicked = Formatter() << "{\n"
