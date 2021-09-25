@@ -1744,10 +1744,10 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TimeInputRender(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		const std::string origionalElementId = input->GetId();
+        const std::string origionalElementId = input->GetId();
 		const bool is12hour = Utils::isSystemTime12Hour();
 
-		input->SetId(context->ConvertToValidId(input->GetId()));
+        input->SetId(context->ConvertToValidId(input->GetId()));
 
 		auto uiTimeInputWrapper = std::make_shared<QmlTag>("Rectangle");
 		uiTimeInputWrapper->Property("id", Formatter() << input->GetId() << "_wrapper");
@@ -1762,7 +1762,7 @@ namespace RendererQml
 
 		auto uiTimeInput = std::make_shared<QmlTag>("TextField");
 		const std::string id = input->GetId();
-		const std::string value = input->GetValue();
+        const std::string value = input->GetValue();
 		const int fontSize = context->GetConfig()->GetFontSize(AdaptiveCards::FontType::Default, AdaptiveCards::TextSize::Default);
 
 		uiTimeInput->Property("id", id);
@@ -1770,28 +1770,28 @@ namespace RendererQml
 		uiTimeInput->Property("font.pixelSize", std::to_string(fontSize));
 		uiTimeInput->Property("selectByMouse", "true");
 		uiTimeInput->Property("selectedTextColor", "'white'");
-		uiTimeInput->Property("property string selectedTime", "", true);
+        uiTimeInput->Property("property string selectedTime", "", true);
 		uiTimeInput->Property("width", "parent.width");
 		uiTimeInput->Property("placeholderText", !input->GetPlaceholder().empty() ? input->GetPlaceholder() : "Select time", true);
-		uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        uiTimeInput->Property("color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 		uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
 
 		if (!input->GetValue().empty() && Utils::isValidTime(value))
 		{
 			std::string defaultTime = value;
-			std::string defaultSelectedTime = value;
+            std::string defaultSelectedTime = value;
 			if (is12hour == true)
 			{
-				defaultTime = Utils::defaultTimeto12hour(defaultTime);
+                defaultTime = Utils::defaultTimeto12hour(defaultTime);
 				defaultSelectedTime = Utils::defaultTimeto24hour(defaultSelectedTime);
 			}
-			else
-			{
-				defaultTime = defaultSelectedTime = Utils::defaultTimeto24hour(defaultTime);
-			}
+            else
+            {
+                defaultTime = defaultSelectedTime = Utils::defaultTimeto24hour(defaultTime);
+            }
 			uiTimeInput->Property("text", defaultTime, true);
-			uiTimeInput->Property("property string selectedTime", defaultSelectedTime, true);
+            uiTimeInput->Property("property string selectedTime", defaultSelectedTime, true);
 		}
 
 		if (!input->GetIsVisible())
@@ -1833,7 +1833,7 @@ namespace RendererQml
 		auto clearIconTag = rowIconTag->GetChildren().front();
 		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
 
-		std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".text !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour ? "\": \"" : "\":\"") << ")";
+		std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".text !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour ? "\": \"" : "\":\"") << ")" ;
 		clearIconTag->Property("visible", clearIcon_visible_value);
 
 		std::string clearIcon_OnClicked_value = Formatter() << " { "
@@ -1847,24 +1847,24 @@ namespace RendererQml
 		clearIconTag->Property("icon.color", Formatter() << "activeFocus ? '#1170CF' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
 		//Time Icon
-		const std::string iconId = id + "_icon";
-		auto iconTag = GetIconTag(context);
+        const std::string iconId = id + "_icon";
+        auto iconTag = GetIconTag(context);
 		iconTag->RemoveProperty("anchors.top");
 		iconTag->RemoveProperty("anchors.bottom");
 		iconTag->RemoveProperty("anchors.right");
 		iconTag->RemoveProperty("anchors.margins");
 		iconTag->RemoveProperty("focusPolicy");
 
-		iconTag->Property("id", iconId);
+        iconTag->Property("id", iconId);
 		iconTag->Property("width", "icon.width");
 		iconTag->Property("height", "icon.height");
 		iconTag->Property("horizontalPadding", "0");
 		iconTag->Property("verticalPadding", "0");
 		iconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
-		iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
-		iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
-		iconTag->Property("icon.color", Formatter() << "activeFocus ? '#1170CF' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-		iconTag->Property("Keys.onReturnPressed", "onClicked()");
+        iconTag->Property("icon.source", RendererQml::clock_icon_18, true);
+        iconTag->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
+        iconTag->Property("icon.color", Formatter() << "activeFocus ? '#1170CF' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        iconTag->Property("Keys.onReturnPressed", "onClicked()");
 
 		//Row that contains both the icons
 		rowIconTag->AddChild(iconTag);
@@ -1893,7 +1893,7 @@ namespace RendererQml
 		auto timeBoxTag = std::make_shared<QmlTag>("Rectangle");
 		timeBoxTag->Property("anchors.fill", "parent");
 		timeBoxTag->Property("anchors.margins", "1");
-
+		
 		//ListView for DropDown Selection
 		std::map<std::string, std::map<std::string, std::string>> ListViewHoursProperties;
 		std::map<std::string, std::map<std::string, std::string>> ListViewMinProperties;
