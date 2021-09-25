@@ -76,12 +76,13 @@ namespace RendererQml
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
 		//1px extra height to accomodate the border of a showCard if present at the bottom
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight+1");
-		uiCard->Property("Layout.fillWidth", "true");
-		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-		uiCard->Property("readonly property string inputElementsBorderColor", "'#CCCCCC'");
-		uiCard->Property("color", "bgColor");
-		uiCard->Property("border.color", isChildCard? " bgColor" : "'#B2B2B2'");
-        uiCard->AddFunctions("MouseArea{anchors.fill: parent;onClicked: forceActiveFocus();}");
+        uiCard->Property("Layout.fillWidth", "true");
+        uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
+        uiCard->Property("readonly property string inputElementsBorderColor", "'#CCCCCC'");
+        uiCard->Property("color", "bgColor");
+        uiCard->Property("border.color", isChildCard ? " bgColor" : "'#B2B2B2'");
+        uiCard->AddFunctions("MouseArea{anchors.fill: parent;onClicked: adaptiveCard.nextItemInFocusChain().forceActiveFocus();}");
+        uiCard->Property("activeFocusOnTab", "false");
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
 		if (hasBackgroundImage)
@@ -538,7 +539,7 @@ namespace RendererQml
 		//TODO: These color styling should come from css
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? '#1170CF' : inputElementsBorderColor");
+        backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
 		backgroundTag->Property("border.width", "1");
 		uiTextInput->Property("background", backgroundTag->ToString());
 
@@ -649,8 +650,6 @@ namespace RendererQml
         //TODO: Add hover effect
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
-        backgroundTag->Property("border.color", Formatter() << inputId << "_contentItem" << ".activeFocus? 'black' : inputElementsBorderColor");
-
 		auto contentItemTag = std::make_shared<QmlTag>("TextField");
 		contentItemTag->Property("id", inputId + "_contentItem");
 		contentItemTag->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
@@ -670,7 +669,7 @@ namespace RendererQml
 		textBackgroundTag->Property("color", "'transparent'");
         textBackgroundTag->Property("radius", "5");
         textBackgroundTag->Property("width", Formatter() << inputId << ".width - 24");
-        textBackgroundTag->Property("border.color", Formatter() << contentItemTag->GetId() << ".activeFocus ? '#1170CF' : inputElementsBorderColor");
+        textBackgroundTag->Property("border.color", Formatter() << contentItemTag->GetId() << ".activeFocus ? 'black' : inputElementsBorderColor");
 
 		contentItemTag->Property("background", textBackgroundTag->ToString());
 		contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
@@ -778,7 +777,7 @@ namespace RendererQml
         uiSplitterRactangle->Property("radius", "5");
         uiSplitterRactangle->Property("height", "parent.height");
         uiSplitterRactangle->Property("anchors.right", "parent.right");
-        uiSplitterRactangle->Property("border.color", Formatter() << "activeFocus ? '#1170CF' : inputElementsBorderColor");
+        uiSplitterRactangle->Property("border.color", Formatter() << "activeFocus ? 'black' : inputElementsBorderColor");
         uiSplitterRactangle->Property("activeFocusOnTab", "true");
         uiSplitterRactangle->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 
@@ -1016,7 +1015,7 @@ namespace RendererQml
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         backgroundTag->Property("color", backgroundColor);
-        backgroundTag->Property("border.color", Formatter() << choiceset.id << ".activeFocus? '#1170CF' : inputElementsBorderColor");
+        backgroundTag->Property("border.color", Formatter() << choiceset.id << ".activeFocus? 'black' : inputElementsBorderColor");
         backgroundTag->Property("border.width", "1");
 		uiComboBox->Property("background", backgroundTag->ToString());
 
@@ -1356,7 +1355,7 @@ namespace RendererQml
         backgroundTag->Property("radius", "5");
         //TODO: These color styling should come from css
         backgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        backgroundTag->Property("border.color", Formatter() << uiTextFieldId << ".activeFocus? '#1170CF' : inputElementsBorderColor");
+        backgroundTag->Property("border.color", Formatter() << uiTextFieldId << ".activeFocus? 'black' : inputElementsBorderColor");
         backgroundTag->Property("border.width", "1");
         uiTextField->Property("background", backgroundTag->ToString());
 
@@ -1756,7 +1755,7 @@ namespace RendererQml
         uiTimeInputWrapper->Property("height", Formatter() << input->GetId() << ".implicitHeight");
         uiTimeInputWrapper->Property("radius", "5");
         uiTimeInputWrapper->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        uiTimeInputWrapper->Property("border.color", Formatter() << input->GetId() << ".activeFocus? '#1170CF' : inputElementsBorderColor");
+        uiTimeInputWrapper->Property("border.color", Formatter() << input->GetId() << ".activeFocus? 'black' : inputElementsBorderColor");
         uiTimeInputWrapper->Property("border.width", "1");
 
         auto uiTimeComboBox = std::make_shared<QmlTag>("ComboBox");
@@ -1854,7 +1853,7 @@ namespace RendererQml
         clearIconTag->Property("onClicked", clearIcon_OnClicked_value);
         clearIconTag->Property("Keys.onReturnPressed", "onClicked()");
         clearIconTag->RemoveProperty("focusPolicy");
-        clearIconTag->Property("icon.color", Formatter() << "activeFocus ? '#1170CF' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        clearIconTag->Property("icon.color", Formatter() << "activeFocus ? 'black' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
         // Time Icon
         const std::string iconId = id + "_icon";
@@ -1879,7 +1878,7 @@ namespace RendererQml
             << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n"
             << listViewHours_id << ".forceActiveFocus();\n"
             << "}");
-        iconTag->Property("icon.color", Formatter() << "activeFocus ? '#1170CF' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        iconTag->Property("icon.color", Formatter() << "activeFocus ? black' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
         iconTag->Property("Keys.onReturnPressed", "onClicked()");
 
         // Row that contains both the icons
@@ -1939,7 +1938,7 @@ namespace RendererQml
                 << timePopup_id << ".open();\n"
                 << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2))-1;\n"
                 << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n"
-                << "var tt_index=3;"
+                << "var tt_index=-1;"
                 << "switch(" << id << ".getText(6,8)){ case 'PM':tt_index = 1; break;case 'AM':tt_index = 0; break;}"
                 << listViewtt_id << ".currentIndex=tt_index;"
                 << "}");
@@ -2599,7 +2598,7 @@ namespace RendererQml
             bgRectangle->Property("id", bgRectangleId);
             bgRectangle->Property("anchors.fill", "parent");
             bgRectangle->Property("radius", Formatter() << buttonId << ".height / 2");
-            bgRectangle->Property("border.width", "1");
+            bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : 1");
 
             //Add button content item
             auto contentItem = std::make_shared<QmlTag>("Item");
@@ -2783,12 +2782,12 @@ namespace RendererQml
     {
         for (auto& element : context->getSubmitActionButtonList())
         {
-            std::string onClickedFunction;
+            std::string onReleasedFunction;
             const auto buttonElement = element.first;
             const auto action = element.second;
 
-            onClickedFunction = getActionSubmitClickFunc(action, context);
-            buttonElement->Property("onReleased", Formatter() << "{\n" << onClickedFunction << "}\n");
+            onReleasedFunction = getActionSubmitClickFunc(action, context);
+            buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
         }
     }
 
@@ -2796,12 +2795,12 @@ namespace RendererQml
     {
         for (auto& element : context->getShowCardButtonList())
         {
-            std::string onClickedFunction;
+            std::string onReleasedFunction;
             const auto buttonElement = element.first;
             const auto action = element.second;
 
-            onClickedFunction = getActionShowCardClickFunc(buttonElement, context);
-            buttonElement->Property("onReleased", Formatter() << "{\n" << onClickedFunction << "}\n");
+            onReleasedFunction = getActionShowCardClickFunc(buttonElement, context);
+            buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
         }
 
         context->clearShowCardButtonList();
