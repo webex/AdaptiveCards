@@ -654,6 +654,7 @@ namespace RendererQml
 		contentItemTag->Property("id", inputId + "_contentItem");
 		contentItemTag->Property("font.pixelSize", std::to_string(context->GetConfig()->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default)));
 		contentItemTag->Property("anchors.left", "parent.left");
+		contentItemTag->Property("anchors.right", "parent.right");
 		contentItemTag->Property("selectByMouse", "true");
 		contentItemTag->Property("selectedTextColor", "'white'");
 		contentItemTag->Property("readOnly", Formatter() << "!" << inputId << ".editable");
@@ -687,7 +688,6 @@ namespace RendererQml
 		upIndicatorTag->Property("icon.width", "12");
 		upIndicatorTag->Property("icon.height", "12");
 		upIndicatorTag->Property("icon.source", RendererQml::arrow_up_12, true);
-		upIndicatorTag->Property("onClicked", Formatter() << inputId << ".increase();");
 		
 		//Dummy indicator element to remove the default indicators of SpinBox
 		auto downDummyTag = getDummyElementforNumberInput(false);
@@ -701,7 +701,6 @@ namespace RendererQml
 		downIndicatorTag->Property("icon.width", "12");
 		downIndicatorTag->Property("icon.height", "12");
 		downIndicatorTag->Property("icon.source", RendererQml::arrow_down_12, true);
-		downIndicatorTag->Property("onClicked", Formatter() << inputId << ".decrease();");
 
 		auto doubleValidatorTag = std::make_shared<QmlTag>("DoubleValidator");
 
@@ -772,7 +771,7 @@ namespace RendererQml
 		uiNumberInput->Property("down.indicator", downDummyTag->ToString());
 
         auto uiSplitterRactangle = std::make_shared<QmlTag>("Rectangle");
-
+        uiSplitterRactangle->Property("id", Formatter() << uiNumberInput->GetId() << "_icon_set");
         uiSplitterRactangle->Property("width", "24");
         uiSplitterRactangle->Property("radius", "5");
         uiSplitterRactangle->Property("height", "parent.height");
@@ -783,6 +782,8 @@ namespace RendererQml
 
         uiNumberInput->AddChild(uiSplitterRactangle);
 
+        upIndicatorTag->Property("onClicked", Formatter() << "{ " << inputId << ".increase(); " << uiSplitterRactangle->GetId() << ".forceActiveFocus(); }");
+        downIndicatorTag->Property("onClicked", Formatter() << "{ " << inputId << ".decrease(); " << uiSplitterRactangle->GetId() << ".forceActiveFocus(); }");
         uiSplitterRactangle->AddChild(upIndicatorTag);
         uiSplitterRactangle->AddChild(downIndicatorTag);
 
@@ -1950,8 +1951,14 @@ namespace RendererQml
 		ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("anchors.left", listViewHours_id + ".right"));
 		ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("model", "60"));
 		ListViewMinProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{ forceActiveFocus();" << listViewMin_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0') ;" << id << ".insert(2,x);" << "}"));
+        ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("KeyNavigation.left", listViewHours_id));
+        ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("Keys.onReturnPressed", Formatter() << timePopup_id << ".close()"));
 
 		auto ListViewMinTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewMin_id, ListViewMinProperties);
+
+        uiTimeComboBox->Property("width", Formatter() << "parent.width - " << rowIconTag->GetId() << ".width");
+        uiTimeComboBox->Property("Keys.onReturnPressed", Formatter() << timePopup_id << ".open()");
+        uiTimeComboBox->Property("focusPolicy", "Qt.NoFocus");
 
 		timeBoxTag->AddChild(ListViewHoursTag);
 		timeBoxTag->AddChild(ListViewMinTag);
