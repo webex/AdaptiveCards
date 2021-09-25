@@ -1853,7 +1853,7 @@ namespace RendererQml
         clearIconTag->Property("onClicked", clearIcon_OnClicked_value);
         clearIconTag->Property("Keys.onReturnPressed", "onClicked()");
         clearIconTag->RemoveProperty("focusPolicy");
-        clearIconTag->Property("icon.color", Formatter() << "activeFocus ? 'black' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        clearIconTag->Property("icon.color", Formatter() << "activeFocus ? '#1170CF' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
 
         // Time Icon
         const std::string iconId = id + "_icon";
@@ -1878,7 +1878,7 @@ namespace RendererQml
             << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n"
             << listViewHours_id << ".forceActiveFocus();\n"
             << "}");
-        iconTag->Property("icon.color", Formatter() << "activeFocus ? black' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
+        iconTag->Property("icon.color", Formatter() << "activeFocus ? '#1170CF' :" << context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
         iconTag->Property("Keys.onReturnPressed", "onClicked()");
 
         // Row that contains both the icons
