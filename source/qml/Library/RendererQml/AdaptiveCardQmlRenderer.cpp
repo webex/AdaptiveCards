@@ -75,7 +75,7 @@ namespace RendererQml
 		uiCard->Property("readonly property int margins", std::to_string(margin));
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
 		//1px extra height to accomodate the border of a showCard if present at the bottom
-		uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight+1");
+        uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight+1");
 		uiCard->Property("Layout.fillWidth", "true");
 		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 		uiCard->Property("readonly property string inputElementsBorderColor", "'#CCCCCC'");
@@ -1783,8 +1783,8 @@ namespace RendererQml
             std::string defaultSelectedTime = value;
 			if (is12hour == true)
 			{
-                defaultTime = Utils::defaultTimeto12hour(defaultTime);
-				defaultSelectedTime = Utils::defaultTimeto24hour(defaultSelectedTime);
+				defaultTime = Utils::defaultTimeto12hour(defaultTime);
+                defaultSelectedTime = Utils::defaultTimeto24hour(defaultSelectedTime);
 			}
             else
             {
