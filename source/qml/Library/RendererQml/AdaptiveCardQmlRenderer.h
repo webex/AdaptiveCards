@@ -30,6 +30,7 @@
 #include "OpenUrlAction.h"
 #include "ShowCardAction.h"
 #include "ToggleVisibilityAction.h"
+#include "RenderConfig.h"
 
 namespace RendererQml
 {
@@ -40,6 +41,7 @@ namespace RendererQml
         AdaptiveCardQmlRenderer(std::shared_ptr<AdaptiveCards::HostConfig> hostConfig);
 
         std::shared_ptr<RenderedQmlAdaptiveCard> RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card);
+        static std::shared_ptr<RenderConfig> renderConfig;
 
     protected:
         static void addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context, const bool hasBackgroundImage = false);

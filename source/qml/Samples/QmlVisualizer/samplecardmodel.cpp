@@ -2,6 +2,7 @@
 #include "samplecardlist.h"
 #include "adaptivecard_light_config.h"
 #include "adaptivecard_dark_config.h"
+#include "RenderConfig.h"
 
 #include <windows.h>
 #include <shellapi.h>
@@ -223,6 +224,14 @@ const std::map<std::string, std::string> SampleCardModel::rehostImage(const std:
 
 void SampleCardModel::setTheme(const QString& theme)
 {
+    auto renderConfig=std::make_shared<RenderConfig>();
+    RendererQml::InputTextConfig textInputConfig;
+    textInputConfig.height = "16";
+    textInputConfig.leftPadding = "16";
+    textInputConfig.rightPadding = "16";
+    textInputConfig.radius = "16";
+    renderConfig->textInputConfig = textInputConfig;
+
     std::shared_ptr<AdaptiveSharedNamespace::HostConfig> hostConfig;
     if(theme.toStdString() == "Light")
     {
@@ -233,6 +242,7 @@ void SampleCardModel::setTheme(const QString& theme)
         hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
     }
     renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig));
+    RendererQml::AdaptiveCardQmlRenderer::tmp = renderConfig;
     emit reloadCardOnThemeChange();
 }
 
