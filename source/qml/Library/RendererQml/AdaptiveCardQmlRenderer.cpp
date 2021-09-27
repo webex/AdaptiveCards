@@ -485,9 +485,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextInputRender(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-		auto t1 = renderConfig->textInputConfig.height;
-
-        const std::string origionalElementId = input->GetId();
+		const std::string origionalElementId = input->GetId();
 
 		std::shared_ptr<QmlTag> uiTextInput;
 		std::shared_ptr<QmlTag> scrollViewTag;

@@ -189,7 +189,6 @@
     <ClInclude Include="ImageDataURI.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QmlTag.h" />
-    <ClInclude Include="RenderConfig.h" />
     <ClInclude Include="RenderedQmlAdaptiveCardBase.h" />
     <ClInclude Include="RenderedQmlAdaptiveCard.h" />
     <ClInclude Include="RenderEnums.h" />

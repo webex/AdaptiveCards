@@ -98,8 +98,5 @@
     <ClInclude Include="ImageDataURI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderConfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
