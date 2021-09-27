@@ -1325,8 +1325,7 @@ namespace RendererQml
             uiTextField->Property("visible", "false");
         }
 
-        //std::string calendar_box_id = input->GetId() + "_cal_box";
-		const std::string calendar_box_id = Formatter() << input->GetId() << "_calendarBox";
+        const std::string calendar_box_id = Formatter() << input->GetId() << "_calendarBox";
 
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("radius", "5");
