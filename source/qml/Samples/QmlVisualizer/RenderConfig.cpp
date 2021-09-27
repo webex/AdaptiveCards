@@ -3,16 +3,22 @@
 RenderConfig::RenderConfig(bool isDark)
 {
     this->isDark = isDark;
-    this->textInputConfig = InputTextConfig::getInputTextConfig(isDark);
+    this->textInputConfig =std::make_shared<InputTextConfig>(isDark);
 }
 
-std::shared_ptr<InputTextConfig> InputTextConfig::getInputTextConfig(bool isDark)
+InputFieldConfig::InputFieldConfig(bool isDark)
 {
-    auto textInputConfig = std::make_shared<InputTextConfig>();
-    textInputConfig->height = "16";
-    textInputConfig->leftPadding = "16";
-    textInputConfig->rightPadding = "16";
-    textInputConfig->radius = "16";
+    this->isDark = isDark;
+    //Sample values filled, will be changed
+    this->height = "16";
+    this->leftPadding = "16";
+    this->rightPadding = "16";
+    this->radius = "16";
+}
 
-    return textInputConfig;
+InputTextConfig::InputTextConfig(bool isDark)
+    :InputFieldConfig(isDark)
+{
+    //Sample value
+    this->multiLineTextHeight = "20";
 }
