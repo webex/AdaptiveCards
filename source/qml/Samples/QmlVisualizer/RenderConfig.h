@@ -16,7 +16,7 @@ class InputFieldConfig
 };
 
 //Specific Properties for InputText
-class InputTextConfig:InputFieldConfig
+class InputTextConfig: public InputFieldConfig
 {
 
 public:

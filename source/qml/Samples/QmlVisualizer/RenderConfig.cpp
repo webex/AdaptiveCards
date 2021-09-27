@@ -3,7 +3,7 @@
 RenderConfig::RenderConfig(bool isDark)
 {
     this->isDark = isDark;
-    this->textInputConfig =std::make_shared<InputTextConfig>(isDark);
+    this->textInputConfig = std::make_shared<InputTextConfig>(isDark);
 }
 
 InputFieldConfig::InputFieldConfig(bool isDark)

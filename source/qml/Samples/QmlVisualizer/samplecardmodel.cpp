@@ -19,6 +19,7 @@ SampleCardModel::SampleCardModel(QObject *parent)
 
     std::shared_ptr<AdaptiveSharedNamespace::HostConfig> hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(LightConfig::lightConfig));
     renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig));
+    RendererQml::AdaptiveCardQmlRenderer::renderConfig = std::make_shared<RenderConfig>(false);
 }
 
 int SampleCardModel::rowCount(const QModelIndex &parent) const
