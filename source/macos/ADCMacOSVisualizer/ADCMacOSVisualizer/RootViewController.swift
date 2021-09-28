@@ -69,7 +69,6 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         switch AdaptiveCard.parseHostConfig(from: hostConfigString) {
         case .success(let config):
             let cardView = AdaptiveCard.render(card: card, with: config, width: 350, actionDelegate: self, resourceResolver: self, config: RenderConfig(isDarkMode: darkTheme, buttonConfig: buttonConfig, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: inputFieldConfig, checkBoxButtonConfig: checkButtonConfig, radioButtonConfig: radioButtonConfig))
-//            let cardView = AdaptiveCard.render(card: card, with: config, width: 350, actionDelegate: self, resourceResolver: self, config: .default)
             
             if let renderedView = stackView.arrangedSubviews.first {
                 renderedView.removeFromSuperview()
