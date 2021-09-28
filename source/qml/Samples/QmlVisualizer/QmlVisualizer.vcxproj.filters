@@ -41,7 +41,7 @@
     <ClCompile Include="ImageDownloader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RenderConfig.cpp">
+    <ClCompile Include="AdaptiveCardRenderConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -64,7 +64,7 @@
     <ClInclude Include="ImageDownloader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderConfig.h">
+    <ClInclude Include="AdaptiveCardRenderConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

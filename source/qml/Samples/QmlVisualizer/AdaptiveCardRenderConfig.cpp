@@ -1,6 +1,6 @@
-#include "RenderConfig.h"
+#include "AdaptiveCardRenderConfig.h"
 
-RenderConfig::RenderConfig(bool isDark)
+AdaptiveCardRenderConfig::AdaptiveCardRenderConfig(bool isDark)
 {
     this->isDark = isDark;
     this->textInputConfig = std::make_shared<InputTextConfig>(isDark);

@@ -26,10 +26,10 @@ public:
 };
 
 //Holds references to all elements
-class RenderConfig
+class AdaptiveCardRenderConfig
 {
 public:
-	RenderConfig(bool isDark);
+	AdaptiveCardRenderConfig(bool isDark);
 
 	bool isDark;
 	std::shared_ptr<InputTextConfig> textInputConfig;

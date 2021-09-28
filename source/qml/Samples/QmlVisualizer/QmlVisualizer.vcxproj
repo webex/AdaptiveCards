@@ -115,9 +115,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AdaptiveCardRenderConfig.cpp" />
     <ClCompile Include="ImageDownloader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="RenderConfig.cpp" />
     <ClCompile Include="samplecardlist.cpp" />
     <ClCompile Include="samplecardmodel.cpp" />
     <ClCompile Include="stdafx.cpp" />
@@ -139,10 +139,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AdaptiveCardRenderConfig.h" />
     <ClInclude Include="adaptivecard_dark_config.h" />
     <ClInclude Include="adaptivecard_light_config.h" />
     <ClInclude Include="ImageDownloader.h" />
-    <ClInclude Include="RenderConfig.h" />
     <ClInclude Include="SampleCardJson.h" />
     <ClInclude Include="samplecardlist.h" />
     <QtMoc Include="samplecardmodel.h" />
