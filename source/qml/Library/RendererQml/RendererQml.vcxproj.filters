@@ -98,5 +98,8 @@
     <ClInclude Include="ImageDataURI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AdaptiveCardRenderConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

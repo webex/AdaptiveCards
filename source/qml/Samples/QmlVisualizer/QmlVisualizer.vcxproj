@@ -115,7 +115,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AdaptiveCardRenderConfig.cpp" />
     <ClCompile Include="ImageDownloader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="samplecardlist.cpp" />
@@ -139,7 +138,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AdaptiveCardRenderConfig.h" />
     <ClInclude Include="adaptivecard_dark_config.h" />
     <ClInclude Include="adaptivecard_light_config.h" />
     <ClInclude Include="ImageDownloader.h" />

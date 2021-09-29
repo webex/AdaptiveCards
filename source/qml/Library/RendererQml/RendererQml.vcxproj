@@ -179,6 +179,7 @@
   <ItemGroup>
     <ClInclude Include="AdaptiveCardDependency.h" />
     <ClInclude Include="AdaptiveCardQmlRenderer.h" />
+    <ClInclude Include="AdaptiveCardRenderConfig.h" />
     <ClInclude Include="AdaptiveCardsRendererBase.h" />
     <ClInclude Include="AdaptiveElementRenderers.h" />
     <ClInclude Include="AdaptiveFallbackException.h" />

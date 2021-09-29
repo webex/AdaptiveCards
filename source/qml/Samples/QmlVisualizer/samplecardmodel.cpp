@@ -18,8 +18,8 @@ SampleCardModel::SampleCardModel(QObject *parent)
 {
 
     std::shared_ptr<AdaptiveSharedNamespace::HostConfig> hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(LightConfig::lightConfig));
-    renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig));
-    RendererQml::AdaptiveCardQmlRenderer::renderConfig = std::make_shared<AdaptiveCardRenderConfig>(false);
+    auto renderConfig = getRenderConfig(false);
+    renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig, renderConfig));
 }
 
 int SampleCardModel::rowCount(const QModelIndex &parent) const
@@ -237,10 +237,9 @@ void SampleCardModel::setTheme(const QString& theme)
     {
         hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
     }
-    renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig));
 
-    auto renderConfig = std::make_shared<AdaptiveCardRenderConfig>(isDark);
-    RendererQml::AdaptiveCardQmlRenderer::renderConfig = renderConfig;
+    auto renderConfig = getRenderConfig(false);
+    renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig, renderConfig));
 
     emit reloadCardOnThemeChange();
 }
@@ -305,4 +304,34 @@ const std::string SampleCardModel::getImagePath(const std::string& imageName)
 	dir_path = std::string("file:/") + dir_path;
 
 	return dir_path;
+}
+
+std::shared_ptr<AdaptiveCardRenderConfig> SampleCardModel::getRenderConfig(const bool isDark)
+{
+    auto renderConfig = std::make_shared<AdaptiveCardRenderConfig>(isDark);
+    renderConfig->textInputConfig = getInputTextConfig(isDark, false);
+    return renderConfig;
+}
+
+InputTextConfig SampleCardModel::getInputTextConfig(const bool isDark, const bool isRebrand)
+{
+    InputTextConfig textInputConfig;
+    if (isRebrand)
+    {
+        //Rebrand Light Values, rebrand dark values will be default values in the struct
+        textInputConfig.height = "5";
+    }
+    else
+    {
+        if (isDark)
+        {
+            textInputConfig.height = "4";
+        }
+        else
+        {
+            textInputConfig.height = "6";
+        }
+    }
+
+    return textInputConfig;
 }
