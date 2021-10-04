@@ -309,28 +309,18 @@ const std::string SampleCardModel::getImagePath(const std::string& imageName)
 std::shared_ptr<AdaptiveCardRenderConfig> SampleCardModel::getRenderConfig(const bool isDark)
 {
     auto renderConfig = std::make_shared<AdaptiveCardRenderConfig>(isDark);
-    renderConfig->textInputConfig = getInputTextConfig(isDark, false);
+    renderConfig->setInputTextConfig(getInputTextConfig(isDark));
     return renderConfig;
 }
 
-InputTextConfig SampleCardModel::getInputTextConfig(const bool isDark, const bool isRebrand)
+InputTextConfig SampleCardModel::getInputTextConfig(const bool isDark)
 {
     InputTextConfig textInputConfig;
-    if (isRebrand)
+
+    //Dark Values are default in the struct
+    if (!isDark)
     {
-        //Rebrand Light Values, rebrand dark values will be default values in the struct
-        textInputConfig.height = "5";
-    }
-    else
-    {
-        if (isDark)
-        {
-            textInputConfig.height = "4";
-        }
-        else
-        {
-            textInputConfig.height = "6";
-        }
+        textInputConfig.height = "4";
     }
 
     return textInputConfig;

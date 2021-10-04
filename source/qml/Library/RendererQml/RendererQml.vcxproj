@@ -165,6 +165,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AdaptiveCardQmlRenderer.cpp" />
+    <ClCompile Include="AdaptiveCardRenderConfig.cpp" />
     <ClCompile Include="AdaptiveFallbackException.cpp" />
     <ClCompile Include="AdaptiveRenderArgs.cpp" />
     <ClCompile Include="AdaptiveRenderContext.cpp" />

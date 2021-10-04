@@ -7,28 +7,29 @@ namespace RendererQml
     struct InputFieldConfig
     {
         //Sample Values
-        std::string height = "16";
-        std::string leftPadding = "12";
-        std::string rightPadding = "12";
-        std::string radius = "5";
+        std::string height{ "16" };
+        std::string leftPadding{ "12" };
+        std::string rightPadding{ "12" };
+        std::string radius{ "5" };
     };
 
     //Specific Properties for InputText
     struct InputTextConfig : InputFieldConfig
     {
         //Sample Values
-        std::string multiLineTextHeight = "20";
+        std::string multiLineTextHeight{ "20" };
     };
 
     //Holds references to all elements
     class AdaptiveCardRenderConfig
     {
     public:
-        AdaptiveCardRenderConfig(bool isDark = true)
-        {
-            this->isDark = isDark;
-        };
+        AdaptiveCardRenderConfig(bool isDarkMode = true);
+        const bool isDarkMode();
+        InputTextConfig getInputTextConfig();
+        void setInputTextConfig(InputTextConfig config);
 
+    private:
         bool isDark;
         InputTextConfig textInputConfig;
     };
