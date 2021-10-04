@@ -238,7 +238,7 @@ void SampleCardModel::setTheme(const QString& theme)
         hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
     }
 
-    auto renderConfig = getRenderConfig(false);
+    auto renderConfig = getRenderConfig(isDark);
     renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig, renderConfig));
 
     emit reloadCardOnThemeChange();
