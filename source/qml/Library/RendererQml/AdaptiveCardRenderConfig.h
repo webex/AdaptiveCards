@@ -25,12 +25,12 @@ namespace RendererQml
     {
     public:
         AdaptiveCardRenderConfig(bool isDarkMode = true);
-        const bool isDarkMode();
-        InputTextConfig getInputTextConfig();
+        bool isDarkMode() const;
+        InputTextConfig getInputTextConfig() const;
         void setInputTextConfig(InputTextConfig config);
 
     private:
-        bool isDark;
-        InputTextConfig textInputConfig;
+        bool m_isDark;
+        InputTextConfig m_textInputConfig;
     };
 }

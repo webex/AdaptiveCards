@@ -4,22 +4,22 @@ namespace RendererQml
 {
    
     AdaptiveCardRenderConfig::AdaptiveCardRenderConfig(bool isDarkMode)
+        : m_isDark(isDarkMode)
     {
-        isDark = isDarkMode;
     }
 
-    const bool AdaptiveCardRenderConfig::isDarkMode()
+    bool AdaptiveCardRenderConfig::isDarkMode() const
     {
-        return isDark;
+        return m_isDark;
     }
 
-    InputTextConfig AdaptiveCardRenderConfig::getInputTextConfig()
+    InputTextConfig AdaptiveCardRenderConfig::getInputTextConfig() const
     {
-        return textInputConfig;
+        return m_textInputConfig;
     }
 
     void AdaptiveCardRenderConfig::setInputTextConfig(InputTextConfig config)
     {
-        textInputConfig = config;
+        m_textInputConfig = config;
     }
 }
