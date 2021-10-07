@@ -120,6 +120,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         super.init(frame: .zero)
         setupViews()
         setupConstraints()
+        setupPopover()
     }
     
     required init?(coder: NSCoder) {
@@ -139,6 +140,11 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         textField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -2).isActive = true
         iconButton.leadingAnchor.constraint(equalTo: textField.leadingAnchor, constant: config.inputFieldConfig.leftPadding).isActive = true
         iconButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+    }
+    
+    private func setupPopover() {
+        datePickerCalendar.dateValue = Date()
+        datePickerTextfield.dateValue = Date()
     }
     
     override func mouseDown(with event: NSEvent) {

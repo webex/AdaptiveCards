@@ -77,6 +77,24 @@ class ActionSetRendererTests: XCTestCase {
         XCTAssertEqual(actionSetView.alignment, .centerY)
     }
     
+    func testNumberOfAction() {
+        let hostConfigActions = ACSActionsConfig(showCard: .init(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .vertical, actionAlignment: .center, buttonSpacing: 2, maxActions: 5, spacing: .default, iconPlacement: .aboveTitle, iconSize: .init(value: 1))
+        hostConfig = .make(actions: hostConfigActions)
+        actionSet = .make(actions: [FakeSubmitAction.make(), FakeShowCardAction.make(), FakeOpenURLAction.make()])
+        
+        let actionSetView = renderActionSetView()
+        XCTAssertEqual(actionSetView.actions.count, 3)
+    }
+    
+    func testNumberOfActionExceeded() {
+        let hostConfigActions = ACSActionsConfig(showCard: .init(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .vertical, actionAlignment: .center, buttonSpacing: 2, maxActions: 2, spacing: .default, iconPlacement: .aboveTitle, iconSize: .init(value: 1))
+        hostConfig = .make(actions: hostConfigActions)
+        actionSet = .make(actions: [FakeSubmitAction.make(), FakeShowCardAction.make(), FakeOpenURLAction.make()])
+        
+        let actionSetView = renderActionSetView()
+        XCTAssertEqual(actionSetView.actions.count, 2)
+    }
+    
     private func renderActionSetView() -> ACRActionSetView {
         let view = actionSetRenderer.render(element: actionSet, with: hostConfig, style: .default, rootView: rootView, parentView: NSView(), inputs: [], config: .default)
         

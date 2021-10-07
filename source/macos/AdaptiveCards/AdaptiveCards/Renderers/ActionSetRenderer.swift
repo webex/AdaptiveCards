@@ -23,7 +23,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         let actionsOrientation = actionsConfig?.actionsOrientation ?? .vertical
         let actionsButtonSpacing = actionsConfig?.buttonSpacing ?? 8
         let exteriorPadding = hostConfig.getSpacing()?.paddingSpacing ?? 0
-        let maxAllowedActions = Int(truncating: actionsConfig?.maxActions ?? 10)
+        let maxAllowedActions = Int(truncating: actionsConfig?.maxActions ?? 20)
         
         if actions.count > maxAllowedActions {
             logError("WARNING: Some actions were not rendered due to exceeding the maximum number \(maxAllowedActions) actions are allowed")
