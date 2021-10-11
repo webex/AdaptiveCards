@@ -13,8 +13,8 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
     }
     
     func renderActionButtons(actions: [ACSBaseActionElement], with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
-        // This renders Action in AdaptiveCards, as it has no
-        // horizontal alignment property, hardcode it to .left
+        // This renders Action in AdaptiveCards if it has horizontal orientation,
+        // vertical card are always stretched to fill full width
         let actionAlignment: ACSHorizontalAlignment
         switch hostConfig.getActions()?.actionAlignment {
         case .left : actionAlignment = .left
