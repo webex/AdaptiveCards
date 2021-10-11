@@ -15,7 +15,14 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
     func renderActionButtons(actions: [ACSBaseActionElement], with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         // This renders Action in AdaptiveCards, as it has no
         // horizontal alignment property, hardcode it to .left
-        return renderView(actions: actions, aligned: .left, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
+        let actionAlignment: ACSHorizontalAlignment
+        switch hostConfig.getActions()?.actionAlignment {
+        case .left : actionAlignment = .left
+        case .center: actionAlignment = .center
+        case .right: actionAlignment = .right
+        case _: actionAlignment = .left
+        }
+        return renderView(actions: actions, aligned: actionAlignment, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
     }
     
     private func renderView(actions: [ACSBaseActionElement], aligned alignment: ACSHorizontalAlignment, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
@@ -23,7 +30,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         let actionsOrientation = actionsConfig?.actionsOrientation ?? .vertical
         let actionsButtonSpacing = actionsConfig?.buttonSpacing ?? 8
         let exteriorPadding = hostConfig.getSpacing()?.paddingSpacing ?? 0
-        let maxAllowedActions = Int(truncating: actionsConfig?.maxActions ?? 20)
+        let maxAllowedActions = Int(truncating: actionsConfig?.maxActions ?? 10)
         
         if actions.count > maxAllowedActions {
             logError("WARNING: Some actions were not rendered due to exceeding the maximum number \(maxAllowedActions) actions are allowed")

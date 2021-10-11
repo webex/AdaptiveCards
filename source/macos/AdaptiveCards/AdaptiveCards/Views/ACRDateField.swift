@@ -51,8 +51,8 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
        return view
     }()
        
-    private let datePickerCalendar = NSDatePicker()
-    private let datePickerTextfield = NSDatePicker()
+    let datePickerCalendar = NSDatePicker()
+    let datePickerTextfield = NSDatePicker()
     private var popover: NSPopover?
     let isTimeMode: Bool
     let isDarkMode: Bool
