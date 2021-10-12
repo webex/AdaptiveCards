@@ -10,7 +10,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     private var items: [String] = []
     private var configs: [String] = []
     private var hostConfigString = sampleHostConfig // default config string
-    private let webexConfig: String = "webex_light_config.json"
+    private let webexConfig: String = "webex_rebranded_light.json"
     private var darkTheme = false
     private var buttonConfig: ButtonConfig = .default
     private var checkButtonConfig: ChoiceSetButtonConfig?
