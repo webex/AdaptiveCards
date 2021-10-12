@@ -50,10 +50,11 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
        view.translatesAutoresizingMaskIntoConstraints = false
        return view
     }()
+    
+    private var popover: NSPopover?
        
     let datePickerCalendar = NSDatePicker()
     let datePickerTextfield = NSDatePicker()
-    private var popover: NSPopover?
     let isTimeMode: Bool
     let isDarkMode: Bool
     let config: RenderConfig
