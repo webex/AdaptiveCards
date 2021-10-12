@@ -20,7 +20,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         case .left : actionAlignment = .left
         case .center: actionAlignment = .center
         case .right: actionAlignment = .right
-        case _: actionAlignment = .left
+        default: actionAlignment = .left
         }
         return renderView(actions: actions, aligned: actionAlignment, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
     }
