@@ -159,7 +159,6 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
         get { return textField.placeholderString ?? "" }
         set {
             textField.placeholderString = newValue
-            textField.placeholderColor = config.inputFieldConfig.placeholderTextColor
         }
     }
     

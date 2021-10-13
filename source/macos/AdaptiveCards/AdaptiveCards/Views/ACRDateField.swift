@@ -91,7 +91,6 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         didSet {
             if let placeholder = placeholder {
                 textField.placeholderString = placeholder
-                textField.placeholderColor = config.inputFieldConfig.placeholderTextColor
             }
         }
     }
