@@ -71,6 +71,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         // Create placeholder and initial value string if they exist
         if let placeholderString = inputBlock.getPlaceholder() {
             textView.placeholderString = placeholderString
+            textView.placeholderColor = config.inputFieldConfig.placeholderTextColor
         }
         
         if let valueString = inputBlock.getValue() {

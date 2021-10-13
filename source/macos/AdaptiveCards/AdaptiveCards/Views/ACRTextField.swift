@@ -109,6 +109,21 @@ class ACRTextField: NSTextField {
         return stringValue.isEmpty && attributedStringValue.string.isEmpty
     }
     
+    public var placeholderColor: NSColor? {
+        get {
+            var range = NSRange(location: 0, length: placeholderAttributedString?.length ?? 0)
+            return placeholderAttributedString?.attribute(.foregroundColor, at: 0, effectiveRange: &range) as? NSColor
+        }
+        set {
+            guard let newValue = newValue else { return }
+            let placeholderAttrString = NSAttributedString(string: placeholderString ?? "")
+            let range = NSRange(location: 0, length: placeholderAttrString.length )
+            let attributedString = NSMutableAttributedString(attributedString: placeholderAttrString)
+            attributedString.addAttributes([.foregroundColor: newValue, .font: config.font], range: range)
+            placeholderAttributedString = attributedString
+        }
+    }
+    
     @objc private func handleClearAction() {
         self.stringValue = ""
         textFieldDelegate?.acrTextFieldDidSelectClear(self)

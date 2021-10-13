@@ -157,7 +157,10 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     
     var placeholder: String {
         get { return textField.placeholderString ?? "" }
-        set { textField.placeholderString = newValue }
+        set {
+            textField.placeholderString = newValue
+            textField.placeholderColor = config.inputFieldConfig.placeholderTextColor
+        }
     }
     
     func setNumericFormatter(_ formatter: NumberFormatter) {
