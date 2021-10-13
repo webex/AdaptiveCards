@@ -325,15 +325,15 @@ InputConfig SampleCardModel::getInputFieldConfig(InputConfig inputConfig, const 
     //Dark Values are default in the struct
     if (!isDark)
     {
-        inputConfig.backgroundColorNormal = "#ffffffff";
-        inputConfig.backgroundColorOnHovered = "#0a000000";
-        inputConfig.backgroundColorOnPressed = "#4d000000";
+        inputConfig.backgroundColorNormal = "#FFFFFFFF";
+        inputConfig.backgroundColorOnHovered = "#0A000000";
+        inputConfig.backgroundColorOnPressed = "#4D000000";
         inputConfig.borderColorNormal = "#80000000";
-        inputConfig.borderColorOnFocus = "#ff1170cf";
+        inputConfig.borderColorOnFocus = "#FF1170CF";
         inputConfig.placeHolderColor = "#99000000";
-        inputConfig.textColor = "#f2000000";
+        inputConfig.textColor = "#F2000000";
         inputConfig.clearIconColorNormal = "#99000000";
-        inputConfig.clearIconColorOnFocus = "#ff1170cf";
+        inputConfig.clearIconColorOnFocus = "#FF1170CF";
     }
 
     return inputConfig;
@@ -353,7 +353,7 @@ InputNumberConfig SampleCardModel::getInputNumberConfig(const bool isDark)
 
     if (!isDark)
     {
-        numberInputConfig.upDownIconColor = "#f2000000";
+        numberInputConfig.upDownIconColor = "#F2000000";
     }
 
     return numberInputConfig;
@@ -366,14 +366,14 @@ InputTimeConfig SampleCardModel::getInputTimeConfig(const bool isDark)
 
     if (!isDark)
     {
-        timeInputConfig.timeIconColorNormal = "#f2000000";
-        timeInputConfig.timeIconColorOnFocus = "#ff1170cf";
+        timeInputConfig.timeIconColorNormal = "#F2000000";
+        timeInputConfig.timeIconColorOnFocus = "#FF1170CF";
         timeInputConfig.timePickerBorderColor = "#80000000";
-        timeInputConfig.timePickerBackgroundColor = "#ffffffff";
-        timeInputConfig.timePickerElementColorNormal = "#ffffffff";
+        timeInputConfig.timePickerBackgroundColor = "#FFFFFFFF";
+        timeInputConfig.timePickerElementColorNormal = "#FFFFFFFF";
         timeInputConfig.timePickerElementColorOnHover = "#12000000";
-        timeInputConfig.timePickerElementColorOnFocus = "#ff1170cf";
-        timeInputConfig.timePickerElementTextColorNormal = "#f2000000";
+        timeInputConfig.timePickerElementColorOnFocus = "#FF1170CF";
+        timeInputConfig.timePickerElementTextColorNormal = "#F2000000";
     }
 
     return timeInputConfig;
@@ -386,14 +386,14 @@ InputDateConfig SampleCardModel::getInputDateConfig(const bool isDark)
 
     if (!isDark)
     {
-        dateInputConfig.dateIconColorNormal = "#f2000000";
-        dateInputConfig.dateIconColorOnFocus = "#ff1170cf";
+        dateInputConfig.dateIconColorNormal = "#F2000000";
+        dateInputConfig.dateIconColorOnFocus = "#FF1170CF";
         dateInputConfig.calendarBorderColor = "#80000000";
         dateInputConfig.calendarBackgroundColor = "#FFFFFFFF";
         dateInputConfig.dateElementColorNormal = "#FFFFFFFF";
         dateInputConfig.dateElementColorOnHover = "#12000000";
-        dateInputConfig.dateElementColorOnFocus = "#ff1170cf";
-        dateInputConfig.dateElementTextColorNormal = "#f2000000";
+        dateInputConfig.dateElementColorOnFocus = "#FF1170CF";
+        dateInputConfig.dateElementTextColorNormal = "#F2000000";
         dateInputConfig.notAvailabledateElementTextColor = "#99000000";
     }
 
@@ -407,12 +407,12 @@ InputChoiceSetDropDownConfig SampleCardModel::getInputChoiceSetDropDownConfig(co
 
     if (!isDark)
     {
-        choiceSetDropdownInputConfig.arrowIconColor = "#f2000000";
-        choiceSetDropdownInputConfig.dropDownElementColorPressed = "#4d000000";
-        choiceSetDropdownInputConfig.dropDownElementColorHovered = "#0a000000";
-        choiceSetDropdownInputConfig.dropDownElementColorNormal = "#ffffffff";
+        choiceSetDropdownInputConfig.arrowIconColor = "#F2000000";
+        choiceSetDropdownInputConfig.dropDownElementColorPressed = "#4D000000";
+        choiceSetDropdownInputConfig.dropDownElementColorHovered = "#0A000000";
+        choiceSetDropdownInputConfig.dropDownElementColorNormal = "#FFFFFFFF";
         choiceSetDropdownInputConfig.dropDownBorderColor = "#80000000";
-        choiceSetDropdownInputConfig.dropDownBackgroundColor = "#ffffffff";
+        choiceSetDropdownInputConfig.dropDownBackgroundColor = "#FFFFFFFF";
     }
 
     return choiceSetDropdownInputConfig;
@@ -424,20 +424,20 @@ ToggleButtonConfig SampleCardModel::getToggleButtonConfig(const bool isDark)
 
     if (!isDark)
     {
-        toggleButtonConfig.colorOnCheckedAndPressed = "#ff063a75";
-        toggleButtonConfig.colorOnCheckedAndHovered = "#ff0353a8";
-        toggleButtonConfig.colorOnChecked = "#ff1170cf";
+        toggleButtonConfig.colorOnCheckedAndPressed = "#FF063A75";
+        toggleButtonConfig.colorOnCheckedAndHovered = "#FF0353A8";
+        toggleButtonConfig.colorOnChecked = "#FF1170CF";
         toggleButtonConfig.colorOnUncheckedAndPressed = "#33000000";
         toggleButtonConfig.colorOnUncheckedAndHovered = "#33000000";
-        toggleButtonConfig.colorOnUnchecked = "#1c000000";
-        toggleButtonConfig.borderColorOnCheckedAndPressed = "#ff063a75";
-        toggleButtonConfig.borderColorOnCheckedAndHovered = "#ff0353a8";
-        toggleButtonConfig.borderColorOnChecked = "#ff1170cf";
+        toggleButtonConfig.colorOnUnchecked = "#1C000000";
+        toggleButtonConfig.borderColorOnCheckedAndPressed = "#FF063A75";
+        toggleButtonConfig.borderColorOnCheckedAndHovered = "#FF0353A8";
+        toggleButtonConfig.borderColorOnChecked = "#FF1170CF";
         toggleButtonConfig.borderColorOnUncheckedAndPressed = "#33000000";
         toggleButtonConfig.borderColorOnUncheckedAndHovered = "#33000000";
-        toggleButtonConfig.borderColorOnUnchecked = "#1c000000";
-        toggleButtonConfig.textColor = "#f2000000";
-        toggleButtonConfig.radioButtonInnerCircleColorOnChecked = "#ffffffff";
+        toggleButtonConfig.borderColorOnUnchecked = "#1C000000";
+        toggleButtonConfig.textColor = "#F2000000";
+        toggleButtonConfig.radioButtonInnerCircleColorOnChecked = "#FFFFFFFF";
     }
 
     return toggleButtonConfig;
@@ -449,49 +449,49 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
 
     if (!isDark)
     {
-        actionButtonsConfig.primaryColorConfig.buttonColorNormal = "#f2000000";
-        actionButtonsConfig.primaryColorConfig.buttonColorHovered = "#cc000000";
-        actionButtonsConfig.primaryColorConfig.buttonColorPressed = "#b3000000";
-        actionButtonsConfig.primaryColorConfig.borderColorNormal = "#f2000000";
-        actionButtonsConfig.primaryColorConfig.borderColorHovered = "#f2000000";
-        actionButtonsConfig.primaryColorConfig.borderColorPressed = "#f2000000";
-        actionButtonsConfig.primaryColorConfig.borderColorFocussed = "#ff1170cf";
-        actionButtonsConfig.primaryColorConfig.textColorNormal = "#f2ffffff";
-        actionButtonsConfig.primaryColorConfig.textColorHovered = "#f2ffffff";
-        actionButtonsConfig.primaryColorConfig.textColorPressed = "#f2ffffff";
+        actionButtonsConfig.primaryColorConfig.buttonColorNormal = "#F2000000";
+        actionButtonsConfig.primaryColorConfig.buttonColorHovered = "#CC000000";
+        actionButtonsConfig.primaryColorConfig.buttonColorPressed = "#B3000000";
+        actionButtonsConfig.primaryColorConfig.borderColorNormal = "#F2000000";
+        actionButtonsConfig.primaryColorConfig.borderColorHovered = "#F2000000";
+        actionButtonsConfig.primaryColorConfig.borderColorPressed = "#F2000000";
+        actionButtonsConfig.primaryColorConfig.borderColorFocussed = "#FF1170CF";
+        actionButtonsConfig.primaryColorConfig.textColorNormal = "#F2FFFFFF";
+        actionButtonsConfig.primaryColorConfig.textColorHovered = "#F2FFFFFF";
+        actionButtonsConfig.primaryColorConfig.textColorPressed = "#F2FFFFFF";
 
         actionButtonsConfig.secondaryColorConfig.buttonColorNormal = "#00000000";
         actionButtonsConfig.secondaryColorConfig.buttonColorHovered = "#12000000";
         actionButtonsConfig.secondaryColorConfig.buttonColorPressed = "#33000000";
-        actionButtonsConfig.secondaryColorConfig.borderColorNormal = "#4d000000";
-        actionButtonsConfig.secondaryColorConfig.borderColorHovered = "#4d000000";
-        actionButtonsConfig.secondaryColorConfig.borderColorPressed = "#4d000000";
-        actionButtonsConfig.secondaryColorConfig.borderColorFocussed = "#ff1170cf";
-        actionButtonsConfig.secondaryColorConfig.textColorNormal = "#f2000000";
-        actionButtonsConfig.secondaryColorConfig.textColorHovered = "#f2000000";
-        actionButtonsConfig.secondaryColorConfig.textColorPressed = "#f2000000";
+        actionButtonsConfig.secondaryColorConfig.borderColorNormal = "#4D000000";
+        actionButtonsConfig.secondaryColorConfig.borderColorHovered = "#4D000000";
+        actionButtonsConfig.secondaryColorConfig.borderColorPressed = "#4D000000";
+        actionButtonsConfig.secondaryColorConfig.borderColorFocussed = "#FF1170CF";
+        actionButtonsConfig.secondaryColorConfig.textColorNormal = "#F2000000";
+        actionButtonsConfig.secondaryColorConfig.textColorHovered = "#F2000000";
+        actionButtonsConfig.secondaryColorConfig.textColorPressed = "#F2000000";
 
         actionButtonsConfig.positiveColorConfig.buttonColorNormal = "#00000000";
-        actionButtonsConfig.positiveColorConfig.buttonColorHovered = "#ff185e46";
-        actionButtonsConfig.positiveColorConfig.buttonColorPressed = "#ff134231";
-        actionButtonsConfig.positiveColorConfig.borderColorNormal = "#ff185e46";
-        actionButtonsConfig.positiveColorConfig.borderColorHovered = "#ff185e46";
-        actionButtonsConfig.positiveColorConfig.borderColorPressed = "#ff134231";
-        actionButtonsConfig.positiveColorConfig.borderColorFocussed = "#ff1170cf";
-        actionButtonsConfig.positiveColorConfig.textColorNormal = "#ff185e46";
-        actionButtonsConfig.positiveColorConfig.textColorHovered = "#f2ffffff";
-        actionButtonsConfig.positiveColorConfig.textColorPressed = "#f2ffffff";
+        actionButtonsConfig.positiveColorConfig.buttonColorHovered = "#FF185E46";
+        actionButtonsConfig.positiveColorConfig.buttonColorPressed = "#FF134231";
+        actionButtonsConfig.positiveColorConfig.borderColorNormal = "#FF185E46";
+        actionButtonsConfig.positiveColorConfig.borderColorHovered = "#FF185E46";
+        actionButtonsConfig.positiveColorConfig.borderColorPressed = "#FF134231";
+        actionButtonsConfig.positiveColorConfig.borderColorFocussed = "#FF1170CF";
+        actionButtonsConfig.positiveColorConfig.textColorNormal = "#FF185E46";
+        actionButtonsConfig.positiveColorConfig.textColorHovered = "#F2FFFFFF";
+        actionButtonsConfig.positiveColorConfig.textColorPressed = "#F2FFFFFF";
 
         actionButtonsConfig.destructiveColorConfig.buttonColorNormal = "#00000000";
-        actionButtonsConfig.destructiveColorConfig.buttonColorHovered = "#ffab0a15";
-        actionButtonsConfig.destructiveColorConfig.buttonColorPressed = "#ff780d13";
-        actionButtonsConfig.destructiveColorConfig.borderColorNormal = "#ffab0a15";
-        actionButtonsConfig.destructiveColorConfig.borderColorHovered = "#ffab0a15";
-        actionButtonsConfig.destructiveColorConfig.borderColorPressed = "#ff780d13";
-        actionButtonsConfig.destructiveColorConfig.borderColorFocussed = "#ff1170cf";
-        actionButtonsConfig.destructiveColorConfig.textColorNormal = "#ffab0a15";
-        actionButtonsConfig.destructiveColorConfig.textColorHovered = "#f2ffffff";
-        actionButtonsConfig.destructiveColorConfig.textColorPressed = "#f2ffffff";
+        actionButtonsConfig.destructiveColorConfig.buttonColorHovered = "#FFAB0A15";
+        actionButtonsConfig.destructiveColorConfig.buttonColorPressed = "#FF780D13";
+        actionButtonsConfig.destructiveColorConfig.borderColorNormal = "#FFAB0A15";
+        actionButtonsConfig.destructiveColorConfig.borderColorHovered = "#FFAB0A15";
+        actionButtonsConfig.destructiveColorConfig.borderColorPressed = "#FF780D13";
+        actionButtonsConfig.destructiveColorConfig.borderColorFocussed = "#FF1170CF";
+        actionButtonsConfig.destructiveColorConfig.textColorNormal = "#FFAB0A15";
+        actionButtonsConfig.destructiveColorConfig.textColorHovered = "#F2FFFFFF";
+        actionButtonsConfig.destructiveColorConfig.textColorPressed = "#F2FFFFFF";
     }
 
     return actionButtonsConfig;

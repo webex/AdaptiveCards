@@ -1233,8 +1233,8 @@ namespace RendererQml
 
         auto popupBackgroundTag = std::make_shared<QmlTag>("Rectangle");
         popupBackgroundTag->Property("anchors.fill", "parent");
-        popupBackgroundTag->Property("color", context->GetRGBColor(choiceSetConfig.dropDownBackgroundColor));
-        popupBackgroundTag->Property("border.color", context->GetRGBColor(choiceSetConfig.dropDownBorderColor));
+        popupBackgroundTag->Property("color", context->GetHexColor(choiceSetConfig.dropDownBackgroundColor));
+        popupBackgroundTag->Property("border.color", context->GetHexColor(choiceSetConfig.dropDownBorderColor));
         popupBackgroundTag->Property("radius", Formatter() << choiceSetConfig.dropDownRadius);
 
         auto popupTag = std::make_shared<QmlTag>("Popup");
