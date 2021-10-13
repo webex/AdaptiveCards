@@ -518,12 +518,12 @@ namespace RendererQml
             uiTextInput->Property("wrapMode", "Text.Wrap");
             uiTextInput->Property("selectByMouse", "true");
             uiTextInput->Property("selectedTextColor", "'white'");
-            uiTextInput->Property("topPadding", textConfig.multiLineTextTopPadding);
-            uiTextInput->Property("bottomPadding", textConfig.multiLineTextBottomPadding);
+            uiTextInput->Property("topPadding", Formatter() << textConfig.multiLineTextTopPadding);
+            uiTextInput->Property("bottomPadding", Formatter() << textConfig.multiLineTextBottomPadding);
             uiTextInput->Property("color", context->GetHexColor(textConfig.textColor));
             uiTextInput->Property("placeholderTextColor", context->GetHexColor(textConfig.placeHolderColor));
-            uiTextInput->Property("leftPadding", textConfig.textHorizontalPadding);
-            uiTextInput->Property("rightPadding", textConfig.textHorizontalPadding);
+            uiTextInput->Property("leftPadding", Formatter() << textConfig.textHorizontalPadding);
+            uiTextInput->Property("rightPadding", Formatter() << textConfig.textHorizontalPadding);
 
             if (input->GetMaxLength() > 0)
             {
@@ -531,11 +531,11 @@ namespace RendererQml
             }
 
             auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-            backgroundTag->Property("radius", textConfig.borderRadius); 
+            backgroundTag->Property("radius", Formatter() << textConfig.borderRadius);
             backgroundTag->Property("id", Formatter() << input->GetId() << "_background");
             backgroundTag->Property("color", context->GetHexColor(textConfig.backgroundColorNormal));
             backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? " << context->GetHexColor(textConfig.borderColorOnFocus) << " : " << context->GetHexColor(textConfig.borderColorNormal));
-            backgroundTag->Property("border.width", textConfig.borderWidth);
+            backgroundTag->Property("border.width", Formatter() << textConfig.borderWidth);
             uiTextInput->Property("background", backgroundTag->ToString());
 
             uiTextInput->AddFunctions(colorFunction);
@@ -551,9 +551,9 @@ namespace RendererQml
             inputWrapper = std::make_shared<QmlTag>("Rectangle");
             inputWrapper->Property("id", Formatter() << input->GetId() << "_wrapper");
             inputWrapper->Property("border.color", Formatter() << input->GetId() << ".activeFocus? " << context->GetHexColor(textConfig.borderColorOnFocus) << " : " << context->GetHexColor(textConfig.borderColorNormal));
-            inputWrapper->Property("border.width", textConfig.borderWidth);
-            inputWrapper->Property("radius", textConfig.borderRadius);
-            inputWrapper->Property("height", textConfig.height);
+            inputWrapper->Property("border.width", Formatter() << textConfig.borderWidth);
+            inputWrapper->Property("radius", Formatter() << textConfig.borderRadius);
+            inputWrapper->Property("height", Formatter() << textConfig.height);
             inputWrapper->Property("width", "parent.width");
             inputWrapper->Property("color", context->GetHexColor(textConfig.backgroundColorNormal));
 
@@ -589,7 +589,7 @@ namespace RendererQml
             inputWrapper->AddChild(clearIcon);
         }
 
-        uiTextInput->Property("font.pixelSize", textConfig.pixelSize); // Get Size from config
+        uiTextInput->Property("font.pixelSize", Formatter() << textConfig.pixelSize);
 
         if (!input->GetValue().empty())
         {
@@ -699,14 +699,14 @@ namespace RendererQml
         auto numberInputRow = std::make_shared<QmlTag>("Row");
         numberInputRow->Property("id", Formatter() << inputId << "_input_row");
         numberInputRow->Property("width", "parent.width");
-        numberInputRow->Property("height", numberConfig.height);
+        numberInputRow->Property("height", Formatter() << numberConfig.height);
 
         auto numberInputRectangle = std::make_shared<QmlTag>("Rectangle");
         numberInputRectangle->Property("id", Formatter() << inputId << "_input");
 
-        numberInputRectangle->Property("border.width", numberConfig.borderWidth);
+        numberInputRectangle->Property("border.width", Formatter() << numberConfig.borderWidth);
         numberInputRectangle->Property("border.color", Formatter() << inputId << ".activeFocus ? " << context->GetHexColor(numberConfig.borderColorOnFocus) << " : " << context->GetHexColor(numberConfig.borderColorNormal));
-        numberInputRectangle->Property("radius", numberConfig.borderRadius);
+        numberInputRectangle->Property("radius", Formatter() << numberConfig.borderRadius);
         numberInputRectangle->Property("height", "parent.height");
         numberInputRectangle->Property("color", Formatter() << inputId << ".pressed ? " << context->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << inputId << ".hovered ? " << context->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << context->GetHexColor(numberConfig.backgroundColorNormal));
 
@@ -724,7 +724,7 @@ namespace RendererQml
 
         auto contentItemTag = std::make_shared<QmlTag>("TextField");
         contentItemTag->Property("id", inputId + "_contentItem");
-        contentItemTag->Property("font.pixelSize", numberConfig.pixelSize);
+        contentItemTag->Property("font.pixelSize", Formatter() << numberConfig.pixelSize);
         contentItemTag->Property("anchors.left", "parent.left");
         contentItemTag->Property("anchors.right", "parent.right");
         contentItemTag->Property("selectByMouse", "true");
@@ -762,8 +762,8 @@ namespace RendererQml
         upDownIcon->Property("id", Formatter() << inputId << "_up_down_icon");
         upDownIcon->Property("width", "parent.width");
         upDownIcon->Property("height", "parent.height");
-        upDownIcon->Property("icon.width", numberConfig.upDownIconSize);
-        upDownIcon->Property("icon.height", numberConfig.upDownIconSize);
+        upDownIcon->Property("icon.width", Formatter() << numberConfig.upDownIconSize);
+        upDownIcon->Property("icon.height", Formatter() << numberConfig.upDownIconSize);
         upDownIcon->Property("icon.color", context->GetHexColor(numberConfig.upDownIconColor));
         upDownIcon->Property("icon.source", RendererQml::vector_up_down, true);
         upDownIcon->Property("background", textBackgroundTag->ToString());
@@ -839,8 +839,8 @@ namespace RendererQml
 
         auto uiSplitterRactangle = std::make_shared<QmlTag>("Rectangle");
         uiSplitterRactangle->Property("id", Formatter() << uiNumberInput->GetId() << "_icon_set");
-        uiSplitterRactangle->Property("width", numberConfig.upDownButtonWidth);
-        uiSplitterRactangle->Property("radius", numberConfig.borderRadius);
+        uiSplitterRactangle->Property("width", Formatter() << numberConfig.upDownButtonWidth);
+        uiSplitterRactangle->Property("radius", Formatter() << numberConfig.borderRadius);
         uiSplitterRactangle->Property("height", "parent.height");
         uiSplitterRactangle->Property("border.color", Formatter() << "activeFocus ? " << context->GetHexColor(numberConfig.borderColorOnFocus) << " : " << context->GetHexColor(numberConfig.borderColorNormal));
         uiSplitterRactangle->Property("activeFocusOnTab", "true");
@@ -1004,7 +1004,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ToggleInputRender(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        auto checkBoxConfig = context->GetRenderConfig()->getCheckBoxConfig();
+        auto toggleButtonConfig = context->GetRenderConfig()->getToggleButtonConfig();
         const std::string origionalElementId = input->GetId();
         input->SetId(context->ConvertToValidId(input->GetId()));
 
@@ -1025,8 +1025,11 @@ namespace RendererQml
 
 
         checkbox->AddFunctions(Formatter() << "function colorChange(item,isPressed){\n"
-            "if (isPressed) item.indicator.color = item.checked ? " << context->GetHexColor(checkBoxConfig.colorOnCheckedAndPressed) << " : " << context->GetHexColor(checkBoxConfig.colorOnPressed) << ";\n"
-            "else  item.indicator.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(checkBoxConfig.colorOnCheckedAndHovered) << " : " << context->GetHexColor(checkBoxConfig.colorOnHovered) << ") : (item.checked ? " << context->GetHexColor(checkBoxConfig.colorOnCheckedNormal) << " : " << context->GetHexColor(checkBoxConfig.colorNormal) << ")\n}\n"
+            "if (isPressed) item.indicator.color = item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndPressed) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndPressed) << ";\n"
+            "else  item.indicator.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUnchecked) << ")\n"
+            "if (isPressed) item.indicator.border.color = item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndPressed) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndPressed) << ";\n"
+            "else  item.indicator.border.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUnchecked) << ")\n"
+            "}\n"
         );
         checkbox->Property("onPressed", Formatter() << checkbox->GetId() << ".colorChange(" << checkbox->GetId() << ", true)");
         checkbox->Property("onReleased", Formatter() << checkbox->GetId() << ".colorChange(" << checkbox->GetId() << ", false)");
@@ -1102,7 +1105,7 @@ namespace RendererQml
         uiComboBox->Property("textRole", "'text'");
         uiComboBox->Property("valueRole", "'value'");
         uiComboBox->Property("width", "parent.width");
-        uiComboBox->Property("height", choiceSetConfig.height);
+        uiComboBox->Property("height", Formatter() << choiceSetConfig.height);
         uiComboBox->Property("Keys.onReturnPressed", Formatter() << choiceset.id << ".popup.open()");
         uiComboBox->Property("onAccepted", Formatter() << choiceset.id << ".popup.close()");
         uiComboBox->AddFunctions(Formatter() << "function colorChange(isPressed){\n"
@@ -1125,11 +1128,11 @@ namespace RendererQml
         iconTag->Property("icon.source", Formatter() << choiceset.id << ".popup.visible ? " << "\"" << RendererQml::vector_up << "\"" << ":" << "\"" << RendererQml::vector_down << "\"");
         iconTag->Property("enabled", "false");
         iconTag->Property("width", "35");
-        iconTag->Property("horizontalPadding", choiceSetConfig.arrowIconHorizontalPadding);
-        iconTag->Property("verticalPadding", choiceSetConfig.arrowIconVerticalPadding);
+        iconTag->Property("horizontalPadding", Formatter() << choiceSetConfig.arrowIconHorizontalPadding);
+        iconTag->Property("verticalPadding", Formatter() << choiceSetConfig.arrowIconVerticalPadding);
         iconTag->Property("icon.color", context->GetHexColor(choiceSetConfig.arrowIconColor));
-        iconTag->Property("icon.height", choiceSetConfig.arrowIconHeight);
-        iconTag->Property("icon.width", choiceSetConfig.arrowIconWidth);
+        iconTag->Property("icon.height", Formatter() << choiceSetConfig.arrowIconHeight);
+        iconTag->Property("icon.width", Formatter() << choiceSetConfig.arrowIconWidth);
 
         auto iconBackground = std::make_shared<QmlTag>("Rectangle");
         iconBackground->Property("color", "'transparent'");
@@ -1142,11 +1145,11 @@ namespace RendererQml
         uiComboBox->Property("model", GetModel(choiceset.choices));
 
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-        backgroundTag->Property("radius", choiceSetConfig.borderRadius);
+        backgroundTag->Property("radius", Formatter() << choiceSetConfig.borderRadius);
         //TODO: These color styling should come from css
         backgroundTag->Property("color", context->GetHexColor(choiceSetConfig.backgroundColorNormal));
         backgroundTag->Property("border.color", Formatter() << "(" << choiceset.id << ".activeFocus || " << choiceset.id << ".popup.visible) ? " << context->GetHexColor(choiceSetConfig.borderColorOnFocus) << " : " << context->GetHexColor(choiceSetConfig.borderColorNormal));
-        backgroundTag->Property("border.width", choiceSetConfig.borderWidth);
+        backgroundTag->Property("border.width", Formatter() << choiceSetConfig.borderWidth);
         uiComboBox->Property("background", backgroundTag->ToString());
 
         if (!choiceset.placeholder.empty())
@@ -1170,21 +1173,21 @@ namespace RendererQml
         auto uiItemDelegate = std::make_shared<QmlTag>("ItemDelegate");
         uiItemDelegate->Property("id", itemDelegateId);
         uiItemDelegate->Property("width", "parent.width");
-        uiItemDelegate->Property("height", choiceSetConfig.dropDownElementHeight);
-        uiItemDelegate->Property("verticalPadding", choiceSetConfig.dropDownElementVerticalPadding);
-        uiItemDelegate->Property("horizontalPadding", choiceSetConfig.dropDownElementHorizontalPadding);
+        uiItemDelegate->Property("height", Formatter() << choiceSetConfig.dropDownElementHeight);
+        uiItemDelegate->Property("verticalPadding", Formatter() << choiceSetConfig.dropDownElementVerticalPadding);
+        uiItemDelegate->Property("horizontalPadding", Formatter() << choiceSetConfig.dropDownElementHorizontalPadding);
         uiItemDelegate->Property("highlighted", "ListView.isCurrentItem");
 
         auto backgroundTagDelegate = std::make_shared<QmlTag>("Rectangle");
         //TODO: These color styling should come from css
         backgroundTagDelegate->Property("color", Formatter() << itemDelegateId << ".pressed ? " << context->GetHexColor(choiceSetConfig.dropDownElementColorPressed) << " : " << itemDelegateId << ".highlighted? " << context->GetHexColor(choiceSetConfig.dropDownElementColorHovered) << " : " << context->GetHexColor(choiceSetConfig.dropDownElementColorNormal));
-        backgroundTagDelegate->Property("radius", choiceSetConfig.dropDownElementRadius);
+        backgroundTagDelegate->Property("radius", Formatter() << choiceSetConfig.dropDownElementRadius);
         uiItemDelegate->Property("background", backgroundTagDelegate->ToString());
 
         auto uiItemDelegate_Text = std::make_shared<QmlTag>("Text");
         uiItemDelegate_Text->Property("text", "modelData.text");
         uiItemDelegate_Text->Property("font.family", fontFamily, true);
-        uiItemDelegate_Text->Property("font.pixelSize", choiceSetConfig.pixelSize);
+        uiItemDelegate_Text->Property("font.pixelSize", Formatter() << choiceSetConfig.pixelSize);
         uiItemDelegate_Text->Property("textFormat", "Text.RichText");
         uiItemDelegate_Text->Property("color", context->GetHexColor(choiceSetConfig.textColor));
 
@@ -1200,10 +1203,10 @@ namespace RendererQml
         auto uiContentItem_Text = std::make_shared<QmlTag>("Text");
         uiContentItem_Text->Property("text", "parent.displayText");
         uiItemDelegate_Text->Property("font.family", fontFamily, true);
-        uiContentItem_Text->Property("font.pixelSize", choiceSetConfig.pixelSize);
+        uiContentItem_Text->Property("font.pixelSize", Formatter() << choiceSetConfig.pixelSize);
         uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
-        uiContentItem_Text->Property("padding", choiceSetConfig.textHorizontalPadding);
-        uiContentItem_Text->Property("leftPadding", choiceSetConfig.textHorizontalPadding);
+        uiContentItem_Text->Property("padding", Formatter() << choiceSetConfig.textHorizontalPadding);
+        uiContentItem_Text->Property("leftPadding", Formatter() << choiceSetConfig.textHorizontalPadding);
         uiContentItem_Text->Property("elide", "Text.ElideRight");
         uiContentItem_Text->Property("color", context->GetHexColor(choiceSetConfig.textColor));
 
@@ -1232,12 +1235,12 @@ namespace RendererQml
         popupBackgroundTag->Property("anchors.fill", "parent");
         popupBackgroundTag->Property("color", context->GetRGBColor(choiceSetConfig.dropDownBackgroundColor));
         popupBackgroundTag->Property("border.color", context->GetRGBColor(choiceSetConfig.dropDownBorderColor));
-        popupBackgroundTag->Property("radius", choiceSetConfig.dropDownRadius);
+        popupBackgroundTag->Property("radius", Formatter() << choiceSetConfig.dropDownRadius);
 
         auto popupTag = std::make_shared<QmlTag>("Popup");
         popupTag->Property("y", Formatter() << choiceset.id << ".height + 5");
         popupTag->Property("width", Formatter() << choiceset.id << ".width");
-        popupTag->Property("padding", choiceSetConfig.dropDownPadding);
+        popupTag->Property("padding", Formatter() << choiceSetConfig.dropDownPadding);
         popupTag->Property("height", Formatter() << contentListViewId << ".contentHeight + (2 * " << choiceSetConfig.dropDownPadding << ")" << " > " << choiceSetConfig.dropDownHeight << " ? " << choiceSetConfig.dropDownHeight << " :" << contentListViewId << ".contentHeight + ( 2 * " << choiceSetConfig.dropDownPadding << ")"); // Get from config
         popupTag->Property("onOpened", Formatter() << contentListViewId << ".forceActiveFocus()");
         popupTag->Property("onClosed", Formatter() << uiComboBox->GetId() << ".forceActiveFocus()");
@@ -1275,7 +1278,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetButtonGroup(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        auto checkBoxConfig = context->GetRenderConfig()->getCheckBoxConfig();
+        auto toggleButtonConfig = context->GetRenderConfig()->getToggleButtonConfig();
         auto uiColumn = std::make_shared<QmlTag>("Column");
         uiColumn->Property("id", choiceset.id);
 
@@ -1321,8 +1324,11 @@ namespace RendererQml
         }
 
         uiColumn->AddFunctions(Formatter() << "function colorChange(item,isPressed){\n"
-            "if (isPressed) item.indicator.color = item.checked ? " << context->GetHexColor(checkBoxConfig.colorOnCheckedAndPressed) << " : " << context->GetHexColor(checkBoxConfig.colorOnPressed) << ";\n"
-            "else  item.indicator.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(checkBoxConfig.colorOnCheckedAndHovered) << " : " << context->GetHexColor(checkBoxConfig.colorOnHovered) << ") : (item.checked ? " << context->GetHexColor(checkBoxConfig.colorOnCheckedNormal) << " : " << context->GetHexColor(checkBoxConfig.colorNormal) << ")\n}\n"
+            "if (isPressed) item.indicator.color = item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndPressed) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndPressed) << ";\n"
+            "else  item.indicator.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUnchecked) << ")\n"
+            "if (isPressed) item.indicator.border.color = item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndPressed) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndPressed) << ";\n"
+            "else  item.indicator.border.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUnchecked) << ")\n"
+            "}\n"
         );
 
         uiColumn->AddChild(uiInnerColumn);
@@ -1359,8 +1365,7 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetCheckBox(Checkbox checkbox, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        auto checkBoxConfig = context->GetRenderConfig()->getCheckBoxConfig();
-        auto radioButtonConfig = context->GetRenderConfig()->getRadioButtonConfig();
+        auto toggleButtonConfig = context->GetRenderConfig()->getToggleButtonConfig();
 
         std::shared_ptr<QmlTag> uiButton;
 
@@ -1389,7 +1394,7 @@ namespace RendererQml
         }
 
         uiButton->Property("text", checkbox.text, true);
-        uiButton->Property("font.pixelSize", radioButtonConfig.pixelSize);
+        uiButton->Property("font.pixelSize", Formatter() << toggleButtonConfig.pixelSize);
 
         if (!checkbox.isVisible)
         {
@@ -1402,8 +1407,8 @@ namespace RendererQml
         }
 
         auto uiOuterRectangle = std::make_shared<QmlTag>("Rectangle");
-        uiOuterRectangle->Property("width", radioButtonConfig.outerCircleSize);
-        uiOuterRectangle->Property("height", radioButtonConfig.outerCircleSize);
+        uiOuterRectangle->Property("width", Formatter() << toggleButtonConfig.radioButtonOuterCircleSize);
+        uiOuterRectangle->Property("height", Formatter() << toggleButtonConfig.radioButtonOuterCircleSize);
         uiOuterRectangle->Property("y", "parent.topPadding + (parent.availableHeight - height) / 2");
         if (checkbox.type == CheckBoxType::RadioButton)
         {
@@ -1411,7 +1416,7 @@ namespace RendererQml
         }
         else
         {
-            uiOuterRectangle->Property("radius", checkBoxConfig.checkBoxBorderRadius);
+            uiOuterRectangle->Property("radius", Formatter() << toggleButtonConfig.checkBoxBorderRadius);
         }
 
         std::shared_ptr<QmlTag> uiInnerSegment;
@@ -1419,12 +1424,12 @@ namespace RendererQml
         if (checkbox.type == CheckBoxType::RadioButton)
         {
             uiInnerSegment = std::make_shared<QmlTag>("Rectangle");
-            uiInnerSegment->Property("width", radioButtonConfig.innerCircleSize);
-            uiInnerSegment->Property("height", radioButtonConfig.innerCircleSize);
+            uiInnerSegment->Property("width", Formatter() << toggleButtonConfig.radioButtonInnerCircleSize);
+            uiInnerSegment->Property("height", Formatter() << toggleButtonConfig.radioButtonInnerCircleSize);
             uiInnerSegment->Property("x", "(parent.width - width)/2");
             uiInnerSegment->Property("y", "(parent.height - height)/2");
             uiInnerSegment->Property("radius", "height/2");
-            uiInnerSegment->Property("color", Formatter() << checkbox.id << ".checked ? " << context->GetHexColor(radioButtonConfig.innerCircleColorOnChecked) << " : 'transparent'");
+            uiInnerSegment->Property("color", Formatter() << checkbox.id << ".checked ? " << context->GetHexColor(toggleButtonConfig.radioButtonInnerCircleColorOnChecked) << " : 'transparent'");
             uiInnerSegment->Property("visible", checkbox.id + ".checked");
             uiButton->Property("Keys.onReturnPressed", "{if(!checked){checked = !checked;}}");
         }
@@ -1440,8 +1445,7 @@ namespace RendererQml
         }
 
         uiOuterRectangle->AddChild(uiInnerSegment);
-        uiOuterRectangle->Property("border.width", Formatter() << "parent.checked ? 0 : " << radioButtonConfig.borderWidth);
-        uiOuterRectangle->Property("border.color", context->GetHexColor(radioButtonConfig.buttonBorderColor));
+        uiOuterRectangle->Property("border.width", Formatter() << "parent.checked ? 0 : " << toggleButtonConfig.borderWidth);
 
         uiButton->Property("indicator", uiOuterRectangle->ToString());
 
@@ -1451,7 +1455,7 @@ namespace RendererQml
         uiText->Property("horizontalAlignment", "Text.AlignLeft");
         uiText->Property("verticalAlignment", "Text.AlignVCenter");
         uiText->Property("leftPadding", "parent.indicator.width + parent.spacing");
-        uiText->Property("color", context->GetHexColor(radioButtonConfig.textColor));
+        uiText->Property("color", context->GetHexColor(toggleButtonConfig.textColor));
 
         if (checkbox.isWrap)
         {
@@ -1479,7 +1483,7 @@ namespace RendererQml
         uiTextField->Property("width", "parent.width");
         uiTextField->Property("height", "parent.height");
         uiTextField->Property("font.family", context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
-        uiTextField->Property("font.pixelSize", dateInputConfig.pixelSize);
+        uiTextField->Property("font.pixelSize", Formatter() << dateInputConfig.pixelSize);
         uiTextField->Property("selectByMouse", "true");
         uiTextField->Property("selectedTextColor", "'white'");
         uiTextField->Property("color", context->GetHexColor(dateInputConfig.textColor));
@@ -1618,11 +1622,11 @@ namespace RendererQml
 
         uiDateInputWrapper->Property("id", Formatter() << input->GetId() << "_wrapper");
         uiDateInputWrapper->Property("width", "parent.width");
-        uiDateInputWrapper->Property("height", dateInputConfig.height);
-        uiDateInputWrapper->Property("radius", dateInputConfig.borderRadius);
+        uiDateInputWrapper->Property("height", Formatter() << dateInputConfig.height);
+        uiDateInputWrapper->Property("radius", Formatter() << dateInputConfig.borderRadius);
         uiDateInputWrapper->Property("color", context->GetHexColor(dateInputConfig.backgroundColorNormal));
         uiDateInputWrapper->Property("border.color", Formatter() << input->GetId() << ".activeFocus? " << context->GetHexColor(dateInputConfig.borderColorOnFocus) << " : " << context->GetHexColor(dateInputConfig.borderColorNormal));
-        uiDateInputWrapper->Property("border.width", dateInputConfig.borderWidth);
+        uiDateInputWrapper->Property("border.width", Formatter() << dateInputConfig.borderWidth);
         uiDateInputWrapper->AddFunctions(Formatter() << "function colorChange(isPressed){\n"
             "if (isPressed)  color = " << context->GetHexColor(dateInputConfig.backgroundColorOnPressed) << ";\n"
             "else color = " << input->GetId() << ".activeFocus ? " << context->GetHexColor(dateInputConfig.backgroundColorOnPressed) << " : " << input->GetId() << ".hovered ? " << context->GetHexColor(dateInputConfig.backgroundColorOnHovered) << " : " << context->GetHexColor(dateInputConfig.backgroundColorNormal) << "}"
@@ -1645,10 +1649,12 @@ namespace RendererQml
         dateIcon->RemoveProperty("anchors.margins");
         dateIcon->RemoveProperty("anchors.verticalCenter");
         dateIcon->Property("id", Formatter() << input->GetId() << "_icon");
-        dateIcon->Property("Layout.leftMargin", dateInputConfig.dateIconHorizontalPadding);
+        dateIcon->Property("Layout.leftMargin", Formatter() << dateInputConfig.dateIconHorizontalPadding);
         dateIcon->Property("focusPolicy", "Qt.NoFocus");
+        dateIcon->Property("width", "18");
+        dateIcon->Property("height", "18");
         dateIcon->Property("icon.color", Formatter() << input->GetId() << ".activeFocus ? " << context->GetHexColor(dateInputConfig.dateIconColorOnFocus) << " : " << context->GetHexColor(dateInputConfig.dateIconColorNormal));
-        dateIcon->Property("icon.source", RendererQml::calendar_icon_18, true);
+        dateIcon->Property("icon.source", RendererQml::calendar_icon, true);
         std::string onClicked_value = "{ " + uiTextFieldId + ".forceActiveFocus(); " + calendar_box_id + ".open();}";
         dateIcon->Property("onClicked", onClicked_value);
 
@@ -1656,7 +1662,7 @@ namespace RendererQml
         clearIcon->RemoveProperty("anchors.margins");
         clearIcon->RemoveProperty("anchors.verticalCenter");
         clearIcon->Property("id", Formatter() << input->GetId() << "_clear_icon");
-        clearIcon->Property("Layout.rightMargin", dateInputConfig.clearIconHorizontalPadding);
+        clearIcon->Property("Layout.rightMargin", Formatter() << dateInputConfig.clearIconHorizontalPadding);
         std::string clearIcon_visible_value = Formatter() << "(!" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !==\"\") || (" << uiTextFieldId << ".focus && " << uiTextFieldId << ".text !== " << "\"\\/\\/\")";
         clearIcon->Property("visible", clearIcon_visible_value);
         std::string clearIcon_OnClicked_value = Formatter() << " {"
@@ -1686,15 +1692,15 @@ namespace RendererQml
 		popupTag->Property("id", calendarBoxId);
 		popupTag->Property("y", Formatter() << textFieldId << ".height + 2");
         popupTag->Property("x", Formatter() << "-" << dateInputConfig.clearIconSize << "-" << dateInputConfig.dateIconHorizontalPadding);
-		popupTag->Property("width", dateInputConfig.calendarWidth);
-		popupTag->Property("height", dateInputConfig.calendarHeight);
+		popupTag->Property("width", Formatter() << dateInputConfig.calendarWidth);
+		popupTag->Property("height", Formatter() << dateInputConfig.calendarHeight);
 		popupTag->Property("bottomInset", "0");
 		popupTag->Property("topInset", "0");
 		popupTag->Property("rightInset", "0");
 		popupTag->Property("leftInset", "0");
 		
 		auto backgroundRectangle = std::make_shared<QmlTag>("Rectangle");
-		backgroundRectangle->Property("radius", dateInputConfig.calendarBorderRadius);
+		backgroundRectangle->Property("radius", Formatter() << dateInputConfig.calendarBorderRadius);
 		backgroundRectangle->Property("border.color", context->GetHexColor(dateInputConfig.calendarBorderColor));
 		backgroundRectangle->Property("color", context->GetHexColor(dateInputConfig.calendarBackgroundColor));
 				
@@ -1780,7 +1786,7 @@ namespace RendererQml
 		headerText->Property("anchors.left", "parent.left");
 		headerText->Property("color", context->GetHexColor(dateInputConfig.textColor));
 		headerText->Property("text", Formatter() << "['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'][" << listViewDelegate->GetId() << ".month] + ' ' + " << listViewDelegate->GetId() << ".year");
-		headerText->Property("font.pixelSize", dateInputConfig.calendarHeaderTextSize);
+		headerText->Property("font.pixelSize", Formatter() << dateInputConfig.calendarHeaderTextSize);
 		listViewDelegate->AddChild(headerText);
 
 		auto monthGrid = std::make_shared<QmlTag>("Grid");
@@ -1790,7 +1796,7 @@ namespace RendererQml
 		monthGrid->Property("anchors.right", "parent.right");
 		monthGrid->Property("anchors.left", "parent.left");
 		monthGrid->Property("anchors.bottom", "parent.bottom");
-		monthGrid->Property("anchors.topMargin", dateInputConfig.dateGridTopMargin);
+		monthGrid->Property("anchors.topMargin", Formatter() << dateInputConfig.dateGridTopMargin);
 		monthGrid->Property("clip", "true");
 		monthGrid->Property("columns", "7");
 		monthGrid->Property("rows", "7");
@@ -1838,8 +1844,8 @@ namespace RendererQml
 
 		delegateRectangle->Property("property int day", "index - 7");
 		delegateRectangle->Property("property int date", Formatter() <<"day - " << listViewDelegate->GetId() << ".firstDay + 1");
-		delegateRectangle->Property("width", dateInputConfig.dateElementSize);
-		delegateRectangle->Property("height", dateInputConfig.dateElementSize);
+		delegateRectangle->Property("width", Formatter() << dateInputConfig.dateElementSize);
+		delegateRectangle->Property("height", Formatter() << dateInputConfig.dateElementSize);
 		delegateRectangle->Property("property variant dayArray", "['M', 'T', 'W', 'T', 'F', 'S', 'S']");
 		delegateRectangle->Property("color", Formatter() << "new Date(year,month,date).toDateString() == " << listviewCalendar->GetId() << ".selectedDate.toDateString() && " << delegateMouseArea->GetId() << ".enabled" << "? " << context->GetHexColor(dateInputConfig.dateElementColorOnFocus) << " : " << delegateMouseArea->GetId() << ".containsMouse? " << context->GetHexColor(dateInputConfig.dateElementColorOnHover) << " :" << context->GetHexColor(dateInputConfig.dateElementColorNormal));
 		delegateRectangle->Property("radius", "0.5 * width");
@@ -1853,7 +1859,7 @@ namespace RendererQml
 
 		listviewCalendar->Property("delegate",listViewDelegate->ToString());
 		auto contentItemRectangle = std::make_shared<QmlTag>("Rectangle");
-		contentItemRectangle->Property("radius", dateInputConfig.calendarBorderRadius);
+		contentItemRectangle->Property("radius", Formatter() << dateInputConfig.calendarBorderRadius);
 		contentItemRectangle->Property("color", context->GetHexColor(dateInputConfig.calendarBackgroundColor));
 		contentItemRectangle->AddChild(listviewCalendar);
 
@@ -1865,8 +1871,8 @@ namespace RendererQml
 		rightArrowButton->RemoveProperty("anchors.bottom");
 		rightArrowButton->Property("width","icon.width");
 		rightArrowButton->Property("height","icon.height");
-		rightArrowButton->Property("icon.width", dateInputConfig.arrowIconSize);
-		rightArrowButton->Property("icon.height", dateInputConfig.arrowIconSize);
+		rightArrowButton->Property("icon.width", Formatter() << dateInputConfig.arrowIconSize);
+		rightArrowButton->Property("icon.height", Formatter() << dateInputConfig.arrowIconSize);
 		rightArrowButton->Property("horizontalPadding", "0");
 		rightArrowButton->Property("verticalPadding", "0");
 		rightArrowButton->Property("anchors.margins", "0");
@@ -1888,8 +1894,8 @@ namespace RendererQml
 		leftArrowButton->Property("horizontalPadding", "0");
 		leftArrowButton->Property("verticalPadding", "0");
 		leftArrowButton->Property("anchors.margins", "0");
-		leftArrowButton->Property("icon.width", dateInputConfig.arrowIconSize);
-		leftArrowButton->Property("icon.height", dateInputConfig.arrowIconSize);
+		leftArrowButton->Property("icon.width", Formatter() << dateInputConfig.arrowIconSize);
+		leftArrowButton->Property("icon.height", Formatter() << dateInputConfig.arrowIconSize);
 		leftArrowButton->Property("anchors.right", Formatter() << rightArrowButton->GetId() << ".left");
 		leftArrowButton->Property("icon.source", RendererQml::left_arrow_28, true);
         leftArrowButton->Property("background", iconBackground->ToString());
@@ -2127,11 +2133,11 @@ namespace RendererQml
 
         uiTimeInputWrapper->Property("id", Formatter() << input->GetId() << "_wrapper");
         uiTimeInputWrapper->Property("width", "parent.width");
-        uiTimeInputWrapper->Property("height", timeConfig.height);
-        uiTimeInputWrapper->Property("radius", timeConfig.borderRadius);
+        uiTimeInputWrapper->Property("height", Formatter() << timeConfig.height);
+        uiTimeInputWrapper->Property("radius", Formatter() << timeConfig.borderRadius);
         uiTimeInputWrapper->Property("color", context->GetHexColor(timeConfig.backgroundColorNormal));
         uiTimeInputWrapper->Property("border.color", Formatter() << input->GetId() << ".activeFocus? " << context->GetHexColor(timeConfig.borderColorOnFocus) << " : " << context->GetHexColor(timeConfig.borderColorNormal));
-        uiTimeInputWrapper->Property("border.width", timeConfig.borderWidth);
+        uiTimeInputWrapper->Property("border.width", Formatter() << timeConfig.borderWidth);
         uiTimeInputWrapper->AddFunctions(Formatter() << "function colorChange(isPressed){\n"
             "if (isPressed)  color = " << context->GetHexColor(timeConfig.backgroundColorOnPressed) << ";\n"
             "else color = " << uiTimeComboBox->GetId() << ".activeFocus ? " << context->GetHexColor(timeConfig.backgroundColorOnPressed) << " : " << id << ".hovered ? " << context->GetHexColor(timeConfig.backgroundColorOnHovered) << " : " << context->GetHexColor(timeConfig.backgroundColorNormal) << "}"
@@ -2143,7 +2149,7 @@ namespace RendererQml
 
         uiTimeInput->Property("id", id);
         uiTimeInput->Property("font.family", context->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
-        uiTimeInput->Property("font.pixelSize", timeConfig.pixelSize);
+        uiTimeInput->Property("font.pixelSize", Formatter() << timeConfig.pixelSize);
         uiTimeInput->Property("selectByMouse", "true");
         uiTimeInput->Property("selectedTextColor", "'white'");
         uiTimeInput->Property("property string selectedTime", "", true);
@@ -2213,17 +2219,19 @@ namespace RendererQml
         timeIcon->RemoveProperty("anchors.margins");
         timeIcon->RemoveProperty("anchors.verticalCenter");
         timeIcon->Property("id", Formatter() << id << "_icon");
-        timeIcon->Property("Layout.leftMargin", timeConfig.timeIconHorizontalPadding);
+        timeIcon->Property("Layout.leftMargin", Formatter() << timeConfig.timeIconHorizontalPadding);
         timeIcon->Property("focusPolicy", "Qt.NoFocus");
+        timeIcon->Property("width", "18");
+        timeIcon->Property("height", "18");
         timeIcon->Property("icon.color", Formatter() << uiTimeComboBox->GetId() << ".activeFocus ? " << context->GetHexColor(timeConfig.timeIconColorOnFocus) << " : " << context->GetHexColor(timeConfig.timeIconColorNormal));
-        timeIcon->Property("icon.source", RendererQml::clock_icon_18, true);
+        timeIcon->Property("icon.source", RendererQml::clock_icon, true);
         timeIcon->Property("onClicked", Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopup_id << ".open();\n" << listViewHours_id << ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMin_id << ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
 
         clearIcon->RemoveProperty("anchors.right");
         clearIcon->RemoveProperty("anchors.margins");
         clearIcon->RemoveProperty("anchors.verticalCenter");
         clearIcon->Property("id", Formatter() << id << "_clear_icon");
-        clearIcon->Property("Layout.rightMargin", timeConfig.clearIconHorizontalPadding);
+        clearIcon->Property("Layout.rightMargin", Formatter() << timeConfig.clearIconHorizontalPadding);
         std::string clearIcon_visible_value = Formatter() << "(!" << id << ".focus && " << id << ".text !==\"\") || (" << id << ".focus && " << id << ".text !== " << (is12hour ? "\": \"" : "\":\"") << ")";
         clearIcon->Property("visible", clearIcon_visible_value);
 
@@ -2239,13 +2247,13 @@ namespace RendererQml
         PopupBgrTag->Property("anchors.fill", "parent");
         //TODO: Finalize color for popup
         PopupBgrTag->Property("border.color", context->GetHexColor(timeConfig.timePickerBorderColor));
-        PopupBgrTag->Property("radius", timeConfig.timePickerBorderRadius);
+        PopupBgrTag->Property("radius", Formatter() << timeConfig.timePickerBorderRadius);
         PopupBgrTag->Property("color", context->GetHexColor(timeConfig.timePickerBackgroundColor));
 
         auto timePopupTag = std::make_shared<QmlTag>("Popup");
         timePopupTag->Property("id", timePopup_id);
-        timePopupTag->Property("width", timeConfig.timePickerWidth24Hour);
-        timePopupTag->Property("height", timeConfig.timePickerHeight);
+        timePopupTag->Property("width", Formatter() << timeConfig.timePickerWidth24Hour);
+        timePopupTag->Property("height", Formatter() << timeConfig.timePickerHeight);
         timePopupTag->Property("y", Formatter() << id << ".height + 2");
         timePopupTag->Property("x", Formatter() << "-" << timeIcon->GetId() << ".width - " << timeConfig.clearIconHorizontalPadding);
         timePopupTag->Property("background", PopupBgrTag->ToString());
@@ -2265,7 +2273,7 @@ namespace RendererQml
         auto timeBoxRow = std::make_shared<QmlTag>("RowLayout");
         timeBoxRow->Property("width", "parent.width");
         timeBoxRow->Property("height", "parent.height");
-        timeBoxRow->Property("spacing", timeConfig.timePickerColumnSpacing);
+        timeBoxRow->Property("spacing", Formatter() << timeConfig.timePickerColumnSpacing);
 
         //ListView for DropDown Selection
         std::map<std::string, std::map<std::string, std::string>> ListViewHoursProperties;
@@ -2276,7 +2284,7 @@ namespace RendererQml
 
         if (is12hour == true)
         {
-            timePopupTag->Property("width", timeConfig.timePickerWidth12Hour);
+            timePopupTag->Property("width", Formatter() << timeConfig.timePickerWidth12Hour);
             uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01]-|0\\d|1[0-2]):(--|[0-5]-|[0-5]\\d)\\s(--|A-|AM|P-|PM)$/}");
             uiTimeInput->Property("onFocusChanged", Formatter() << "{ if (focus===true) inputMask=\"xx:xx >xx;-\";" <<
                 " if(focus===false){ " << "if(text===\": \" ) { inputMask=\"\" }" << "}}");
@@ -2296,7 +2304,7 @@ namespace RendererQml
             ListViewttProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{ forceActiveFocus(); " << listViewtt_id << ".currentIndex=index;" << id << ".insert(6,model.name);" << "}"));
             ListViewttProperties["Text"].insert(std::pair<std::string, std::string>("KeyNavigation.left", listViewMin_id));
             ListViewttProperties["ListView"].insert(std::pair<std::string, std::string>("Keys.onReturnPressed", Formatter() << timePopup_id << ".close()"));
-            ListViewttProperties["ListView"].insert(std::pair<std::string, std::string>("Layout.rightMargin", timeConfig.timePickerColumnSpacing));
+            ListViewttProperties["ListView"].insert(std::pair<std::string, std::string>("Layout.rightMargin", Formatter() << timeConfig.timePickerColumnSpacing));
 
             listViewttTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewtt_id, ListViewttProperties, true, context);
 
@@ -2311,7 +2319,7 @@ namespace RendererQml
                 << id << ".forceActiveFocus();\n"
                 << "}");
         }
-        ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("Layout.leftMargin", timeConfig.timePickerColumnSpacing));
+        ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("Layout.leftMargin", Formatter() << timeConfig.timePickerColumnSpacing));
         ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("model", std::to_string(hoursRange)));
         ListViewHoursProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{ forceActiveFocus();" << listViewHours_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0') ;" << id << ".insert(0,x);" << "}"));
         ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("KeyNavigation.right", listViewMin_id));
@@ -2325,7 +2333,7 @@ namespace RendererQml
         ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("Keys.onReturnPressed", Formatter() << timePopup_id << ".close()"));
         if (is12hour == false)
         {
-            ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("Layout.rightMargin", timeConfig.timePickerColumnSpacing));
+            ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("Layout.rightMargin", Formatter() << timeConfig.timePickerColumnSpacing));
         }
 
         auto ListViewMinTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewMin_id, ListViewMinProperties, false, context);
@@ -2364,9 +2372,9 @@ namespace RendererQml
         ListViewTag->Property("id", listView_id);
 
         //TODO:Avoid fixed values inside ListView
-        ListViewTag->Property("width", timeConfig.timePickerHoursAndMinutesTagWidth);
+        ListViewTag->Property("width", Formatter() << timeConfig.timePickerHoursAndMinutesTagWidth);
         ListViewTag->Property("height", Formatter() << "parent.height-" << timeConfig.timePickerMargins);
-        ListViewTag->Property("spacing", timeConfig.timePickerSpacing);
+        ListViewTag->Property("spacing", Formatter() << timeConfig.timePickerSpacing);
         ListViewTag->Property("flickableDirection", "Flickable.VerticalFlick");
         ListViewTag->Property("boundsBehavior", "Flickable.StopAtBounds");
         ListViewTag->Property("clip", "true");
@@ -2386,19 +2394,19 @@ namespace RendererQml
         TextTag->Property("anchors.fill", "parent");
         TextTag->Property("horizontalAlignment", "Text.AlignHCenter");
         TextTag->Property("verticalAlignment", "Text.AlignVCenter");
-        TextTag->Property("font.pixelSize", timeConfig.pixelSize);
+        TextTag->Property("font.pixelSize", Formatter() << timeConfig.pixelSize);
         TextTag->Property("color", Formatter() << listView_id << ".currentIndex==index ? " << context->GetHexColor(timeConfig.timePickerElementTextColorOnHighlighted) << " : " << context->GetHexColor(timeConfig.timePickerElementTextColorNormal));
 
         auto delegateRectTag = std::make_shared<QmlTag>("Rectangle");
-        delegateRectTag->Property("width", timeConfig.timePickerHoursAndMinutesTagWidth);
-        delegateRectTag->Property("height", timeConfig.timePickerElementHeight);
-        delegateRectTag->Property("radius", timeConfig.timePickerElementRadius);
+        delegateRectTag->Property("width", Formatter() << timeConfig.timePickerHoursAndMinutesTagWidth);
+        delegateRectTag->Property("height", Formatter() << timeConfig.timePickerElementHeight);
+        delegateRectTag->Property("radius", Formatter() << timeConfig.timePickerElementRadius);
         delegateRectTag->Property("color", Formatter() << listView_id << ".currentIndex==index ? " << context->GetHexColor(timeConfig.timePickerElementColorOnFocus) << " : " << MouseArea_id << ".containsMouse? " << context->GetHexColor(timeConfig.timePickerElementColorOnHover) << " : " << context->GetHexColor(timeConfig.timePickerElementColorNormal));
 
         if (isThirdTag)
         {
-            delegateRectTag->Property("width", timeConfig.timePickerAMPMTagWidth);
-            ListViewTag->Property("width", timeConfig.timePickerAMPMTagWidth);
+            delegateRectTag->Property("width", Formatter() << timeConfig.timePickerAMPMTagWidth);
+            ListViewTag->Property("width", Formatter() << timeConfig.timePickerAMPMTagWidth);
         }
 
         std::map<std::string, std::map<std::string, std::string>>::iterator outer_iterator;
@@ -2929,7 +2937,8 @@ namespace RendererQml
 
             auto buttonElement = std::make_shared<QmlTag>("Button");
             buttonElement->Property("id", buttonId);
-            buttonElement->Property("Keys.onReturnPressed", "{down = true;onReleased();}");
+            buttonElement->Property("Keys.onPressed", "{if(event.key === Qt.Key_Return){down=true;event.accepted=true;}}");
+            buttonElement->Property("Keys.onReleased", Formatter() << "{if(event.key === Qt.Key_Return){down=false;" << buttonId << ".onReleased();event.accepted=true;}}");
 
             if (isShowCardButton)
             {
@@ -3003,36 +3012,34 @@ namespace RendererQml
                 if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
                 {
                     colorConfig = context->GetRenderConfig()->getActionButtonsConfig().positiveColorConfig;
-                    bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : " << "(" << buttonId << ".showCard || " << buttonId << ".pressed ||" << buttonId << ".hovered ) ? 0 : 1");
                 }
                 else if (Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
                 {
                     colorConfig = context->GetRenderConfig()->getActionButtonsConfig().destructiveColorConfig;
-                    bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : " << "(" << buttonId << ".showCard || " << buttonId << ".pressed ||" << buttonId << ".hovered ) ? 0 : 1");
                 }
                 else
                 {
                     colorConfig = context->GetRenderConfig()->getActionButtonsConfig().primaryColorConfig;
-                    bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : 0");
                 }
             }
             else
             {
                 colorConfig = context->GetRenderConfig()->getActionButtonsConfig().primaryColorConfig;
-                bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : 0");
             }
+
+            bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : 1");
 
             if (isShowCardButton)
             {
-                bgRectangle->Property("border.color", Formatter() << buttonId << ".activeFocus ? " << context->GetHexColor(colorConfig.borderColorFocussed) << " : " << context->GetHexColor(colorConfig.borderColor));
-                bgRectangle->Property("color", Formatter() << "(" << buttonId << ".showCard || " << buttonId << ".pressed )? " << context->GetHexColor(colorConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(colorConfig.buttonColorHovered) << " : " << context->GetHexColor(colorConfig.buttonColorNormal));
-                contentText->Property("color", Formatter() << "( " << buttonId << ".showCard || " << buttonId << ".hovered || " << buttonId << ".pressed) ? " << context->GetHexColor(colorConfig.textColorFocused) << " : " << context->GetHexColor(colorConfig.textColorNormal));
+                bgRectangle->Property("border.color", Formatter() << buttonId << ".activeFocus ? " << context->GetHexColor(colorConfig.borderColorFocussed) << " : " << context->GetHexColor(colorConfig.borderColorNormal));
+                bgRectangle->Property("color", Formatter() << "(" << buttonId << ".showCard || " << buttonId << ".down )? " << context->GetHexColor(colorConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(colorConfig.buttonColorHovered) << " : " << context->GetHexColor(colorConfig.buttonColorNormal));
+                contentText->Property("color", Formatter() << "( " << buttonId << ".showCard || " << buttonId << ".hovered || " << buttonId << ".down) ? " << context->GetHexColor(colorConfig.textColorHovered) << " : " << context->GetHexColor(colorConfig.textColorNormal));
             }
             else
             {
-                bgRectangle->Property("border.color", Formatter() << buttonId << ".activeFocus ? " << context->GetHexColor(colorConfig.borderColorFocussed) << " : " << context->GetHexColor(colorConfig.borderColor));
-                bgRectangle->Property("color", Formatter() << buttonId << ".pressed ? " << context->GetHexColor(colorConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(colorConfig.buttonColorHovered) << " : " << context->GetHexColor(colorConfig.buttonColorNormal));
-                contentText->Property("color", Formatter() << "( " << buttonId << ".hovered || " << buttonId << ".pressed )? " << context->GetHexColor(colorConfig.textColorFocused) << " : " << context->GetHexColor(colorConfig.textColorNormal));
+                bgRectangle->Property("border.color", Formatter() << buttonId << ".activeFocus ? " << context->GetHexColor(colorConfig.borderColorFocussed) << " : " << context->GetHexColor(colorConfig.borderColorNormal));
+                bgRectangle->Property("color", Formatter() << buttonId << ".down ? " << context->GetHexColor(colorConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(colorConfig.buttonColorHovered) << " : " << context->GetHexColor(colorConfig.buttonColorNormal));
+                contentText->Property("color", Formatter() << "( " << buttonId << ".hovered || " << buttonId << ".down )? " << context->GetHexColor(colorConfig.textColorHovered) << " : " << context->GetHexColor(colorConfig.textColorNormal));
             }
 
             textLayout->AddChild(contentText);
@@ -3060,7 +3067,7 @@ namespace RendererQml
 				showCardIcon->Property("icon.height", "12");
 				showCardIcon->Property("icon.source", RendererQml::arrow_down_12, true);
 				showCardIcon->Property("background", showCardIconBackground->ToString());
-                showCardIcon->Property("onReleased", Formatter() << buttonId << ".released()");
+                showCardIcon->Property("onReleased", Formatter() << "{" << buttonId << ".released();" << buttonId << ".forceActiveFocus()}");
                 textLayout->AddChild(showCardIcon);
             }
 
@@ -3893,35 +3900,6 @@ namespace RendererQml
 		return value;
 	}
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetRowWithClearIconTag(const std::string& id, std::shared_ptr<AdaptiveRenderContext> context)
-	{
-		auto clearIconTag = GetIconTag(context);
-		clearIconTag->RemoveProperty("anchors.top");
-		clearIconTag->RemoveProperty("anchors.bottom");
-		clearIconTag->RemoveProperty("anchors.right");
-		clearIconTag->RemoveProperty("anchors.margins");
-		
-		clearIconTag->Property("id", id);
-		clearIconTag->Property("width", "icon.width");
-		clearIconTag->Property("height", "icon.height");
-		clearIconTag->Property("horizontalPadding", "0");
-		clearIconTag->Property("verticalPadding", "0");
-		clearIconTag->Property("icon.source", RendererQml::clear_icon_18, true);
-		clearIconTag->Property("anchors.verticalCenter", "parent.verticalCenter");
-
-		auto iconsRowTag = std::make_shared<QmlTag>("Row");
-		iconsRowTag->Property("anchors.top", "parent.top");
-		iconsRowTag->Property("anchors.bottom", "parent.bottom");
-		iconsRowTag->Property("anchors.right", "parent.right");
-		iconsRowTag->Property("anchors.margins", "2");
-		iconsRowTag->Property("padding", "2");
-		iconsRowTag->Property("rightPadding", "5");
-		iconsRowTag->Property("spacing", "10");
-		iconsRowTag->AddChild(clearIconTag);
-
-		return iconsRowTag;
-	}
-
     std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetClearIconButton(std::shared_ptr<AdaptiveRenderContext> context)
     {
         auto iconConfig = context->GetRenderConfig()->getInputTextConfig();
@@ -3936,12 +3914,12 @@ namespace RendererQml
         clearIcon->RemoveProperty("anchors.left");
         clearIcon->RemoveProperty("focusPolicy");
         clearIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
-        clearIcon->Property("anchors.margins", iconConfig.clearIconHorizontalPadding);
-        clearIcon->Property("width", iconConfig.clearIconSize);
+        clearIcon->Property("anchors.margins", Formatter() << iconConfig.clearIconHorizontalPadding);
+        clearIcon->Property("width", Formatter() << iconConfig.clearIconSize);
         clearIcon->Property("horizontalPadding", "0");
         clearIcon->Property("verticalPadding", "0");
-        clearIcon->Property("icon.width", iconConfig.clearIconSize);
-        clearIcon->Property("icon.height", iconConfig.clearIconSize);
+        clearIcon->Property("icon.width", Formatter() << iconConfig.clearIconSize);
+        clearIcon->Property("icon.height", Formatter() << iconConfig.clearIconSize);
         clearIcon->Property("icon.color", Formatter() << "activeFocus ? " << context->GetHexColor(iconConfig.clearIconColorOnFocus) << " : " << context->GetHexColor(iconConfig.clearIconColorNormal));
         clearIcon->Property("icon.source", RendererQml::cancel_icon_10, true);
         clearIcon->Property("background", backgroundTag->ToString());

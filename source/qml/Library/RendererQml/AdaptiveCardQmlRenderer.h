@@ -113,7 +113,6 @@ namespace RendererQml
 		static const std::shared_ptr<QmlTag> addColumnSetElements(std::shared_ptr<AdaptiveCards::ColumnSet> columnSet, std::shared_ptr<QmlTag> uiFrame, std::shared_ptr<AdaptiveRenderContext> context);
 
         static std::shared_ptr<QmlTag> GetIconTag(std::shared_ptr<AdaptiveRenderContext> context);
-        static std::shared_ptr<QmlTag> GetRowWithClearIconTag(const std::string& id, std::shared_ptr<AdaptiveRenderContext> context);
 
         static std::shared_ptr<QmlTag> GetTextBlockMouseArea();
         static std::shared_ptr<QmlTag> getDummyElementforNumberInput(bool isTop);

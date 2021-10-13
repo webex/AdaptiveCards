@@ -6,150 +6,147 @@ namespace RendererQml
 {
     struct InputFieldConfig
     {
-        std::string backgroundColorNormal{ "#FF000000" };
-        std::string backgroundColorOnHovered{ "#12FFFFFF" };
-        std::string backgroundColorOnPressed{ "#1CFFFFFF" };
+        std::string backgroundColorNormal{ "#FF0F0F0F" };
+        std::string backgroundColorOnHovered{ "#0DFFFFFF" };
+        std::string backgroundColorOnPressed{ "#4DFFFFFF" };
         std::string borderColorNormal{ "#80FFFFFF" };
         std::string borderColorOnFocus{ "#FF64B4FA" };
-        std::string placeHolderColor{ "#B2FFFFFF" };
+        std::string placeHolderColor{ "#B3FFFFFF" };
         std::string textColor{ "#F2FFFFFF" };
-        std::string clearIconColorNormal{ "#B2FFFFFF" };
+        std::string clearIconColorNormal{ "#B3FFFFFF" };
         std::string clearIconColorOnFocus{ "#FF64B4FA" };
-        std::string height{ "32" };
-        std::string pixelSize{ "16" };
-        std::string borderRadius{ "8" };
-        std::string borderWidth{ "1" };
-        std::string clearIconSize{ "16" };
-        std::string clearIconHorizontalPadding{ "12" };
+        int height{ 32 };
+        int pixelSize{ 16 };
+        int borderRadius{ 8 };
+        int borderWidth{ 1 };
+        int clearIconSize{ 16 };
+        int clearIconHorizontalPadding{ 12 };
     };
 
     struct InputTextConfig : InputFieldConfig
     {
-        std::string multiLineTextHeight{ "96" };
-        std::string textHorizontalPadding{ "12" };
-        std::string textVerticalPadding{ "4" };
-        std::string multiLineTextTopPadding{ "7" };
-        std::string multiLineTextBottomPadding{ "4" };
+        int multiLineTextHeight{ 96 };
+        int textHorizontalPadding{ 12 };
+        int textVerticalPadding{ 4 };
+        int multiLineTextTopPadding{ 7 };
+        int multiLineTextBottomPadding{ 4 };
     };
 
     struct InputNumberConfig : InputFieldConfig
     {
         std::string upDownIconColor{ "#F2FFFFFF" };
-        std::string upDownButtonWidth{ "31" };
-        std::string upDownIconSize{ "16" };
+        int upDownButtonWidth{ 31 };
+        int upDownIconSize{ 16 };
     };
 
     struct InputTimeConfig : InputFieldConfig
     {
         std::string timeIconColorNormal{ "#F2FFFFFF" };
         std::string timeIconColorOnFocus{ "#FF64B4FA" };
-        std::string timePickerBorderColor{ "#33FFFFFF" };
-        std::string timePickerBackgroundColor{ "#FF000000" };
-        std::string timePickerElementColorNormal{ "#FF000000" };
-        std::string timePickerElementColorOnFocus{ "#FF1170CF" };
-        std::string timePickerElementColorOnHover{ "#33FFFFFF" };
-        std::string timePickerElementTextColorOnHighlighted{ "#F2FFFFFF" };
+        std::string timePickerBorderColor{ "#80FFFFFF" };
+        std::string timePickerBackgroundColor{ "#FF0F0F0F" };
+        std::string timePickerElementColorNormal{ "#FF0F0F0F" };
+        std::string timePickerElementColorOnHover{ "#0DFFFFFF" };
+        std::string timePickerElementColorOnFocus{ "#FF64B4FA" };
         std::string timePickerElementTextColorNormal{ "#F2FFFFFF" };
-        std::string timeIconHorizontalPadding{ "12" };
-        std::string timePickerBorderRadius{ "12" };
-        std::string timePickerWidth12Hour{ "200" };
-        std::string timePickerWidth24Hour{ "134" };
-        std::string timePickerHeight{ "280" };
-        std::string timePickerColumnSpacing{ "16" };
-        std::string timePickerHoursAndMinutesTagWidth{ "43" };
-        std::string timePickerAMPMTagWidth{ "50" };
-        std::string timePickerElementHeight{ "32" };
-        std::string timePickerMargins{ "16" };
-        std::string timePickerSpacing{ "4" };
-        std::string timePickerElementRadius{ "4" };
-    };
-
-    struct InputChoiceSetDropDownConfig : InputFieldConfig
-    {
-        std::string arrowIconColor{ "#F2FFFFFF" };
-        std::string dropDownElementColorPressed{ "#4DFFFFFF" };
-        std::string dropDownElementColorHovered{ "#33FFFFFF" };
-        std::string dropDownElementColorNormal{ "#FF000000" };
-        std::string dropDownBorderColor{ "#33FFFFFF" };
-        std::string dropDownBackgroundColor{ "#FF000000" };
-        std::string arrowIconHorizontalPadding{ "9.5" };
-        std::string arrowIconVerticalPadding{ "8" };
-        std::string arrowIconWidth{ "13" };
-        std::string arrowIconHeight{ "7" };
-        std::string textHorizontalPadding{ "12" };
-        std::string dropDownElementHeight{ "40" };
-        std::string dropDownElementHorizontalPadding{ "12" };
-        std::string dropDownElementVerticalPadding{ "8" };
-        std::string dropDownElementRadius{ "8" };
-        std::string dropDownElementTextHorizontalPadding{ "12" };
-        std::string dropDownRadius{ "12" };
-        std::string dropDownPadding{ "8" };
-        std::string dropDownHeight{ "216" };
-    };
-
-    struct RadioButtonConfig : InputFieldConfig
-    {
-        std::string buttonBorderColor{ "#80FFFFFF" };
-        std::string innerCircleColorOnChecked{ "#F2000000" };
-        std::string colorOnCheckedAndPressed{ "#FF1170CF" };
-        std::string colorOnPressed{ "#66FFFFFF" };
-        std::string colorOnCheckedAndHovered{ "#FF3492EB" };
-        std::string colorOnHovered{ "#4DFFFFFF" };
-        std::string colorOnCheckedNormal{ "#FF64B4FA" };
-        std::string colorNormal{ "#33FFFFFF" };
-        std::string outerCircleSize{ "16" };
-        std::string innerCircleSize{ "6" };
-    };
-
-    struct CheckBoxConfig : InputFieldConfig
-    {
-        std::string buttonBorderColor{ "#80FFFFFF" };
-        std::string colorOnCheckedAndPressed{ "#FF1170CF" };
-        std::string colorOnPressed{ "#66FFFFFF" };
-        std::string colorOnCheckedAndHovered{ "#FF3492EB" };
-        std::string colorOnHovered{ "#4DFFFFFF" };
-        std::string colorOnCheckedNormal{ "#FF64B4FA" };
-        std::string colorNormal{ "#33FFFFFF" };
-        std::string checkBoxSize{ "16" };
-        std::string checkBoxBorderRadius{ "2" };
+        std::string timePickerElementTextColorOnHighlighted{ "#F2FFFFFF" };
+        int timeIconHorizontalPadding{ 12 };
+        int timePickerBorderRadius{ 12 };
+        int timePickerWidth12Hour{ 200 };
+        int timePickerWidth24Hour{ 134 };
+        int timePickerHeight{ 280 };
+        int timePickerColumnSpacing{ 16 };
+        int timePickerHoursAndMinutesTagWidth{ 43 };
+        int timePickerAMPMTagWidth{ 50 };
+        int timePickerElementHeight{ 32 };
+        int timePickerMargins{ 16 };
+        int timePickerSpacing{ 4 };
+        int timePickerElementRadius{ 4 };
     };
 
     struct InputDateConfig : InputFieldConfig
     {
         std::string dateIconColorNormal{ "#F2FFFFFF" };
         std::string dateIconColorOnFocus{ "#FF64B4FA" };
-        std::string calendarBorderColor{ "#33FFFFFF" };
-        std::string calendarBackgroundColor{ "#FF000000" };
-        std::string dateElementColorNormal{ "#FF000000" };
-        std::string dateElementColorOnHover{ "#33FFFFFF" };
-        std::string dateElementColorOnFocus{ "#FF1170CF" };
-        std::string dateElementTextColorOnHighlighted{ "#F2FFFFFF" };
+        std::string calendarBorderColor{ "#80FFFFFF" };
+        std::string calendarBackgroundColor{ "#FF0F0F0F" };
+        std::string dateElementColorNormal{ "#FF0F0F0F" };
+        std::string dateElementColorOnHover{ "#0DFFFFFF" };
+        std::string dateElementColorOnFocus{ "#FF64B4FA" };
         std::string dateElementTextColorNormal{ "#F2FFFFFF" };
-        std::string notAvailabledateElementTextColor{ "#B2FFFFFF" };
-        std::string dateElementSize{ "32" };
-        std::string dateIconHorizontalPadding{ "12" };
-        std::string calendarBorderRadius{ "12" };
-        std::string calendarWidth{ "248" };
-        std::string calendarHeight{ "293" };
-        std::string calendarHeaderTextSize{ "16" };
-        std::string dateGridTopMargin{ "14" };
-        std::string calendarDayTextSize{ "16" };
-        std::string calendarDateTextSize{ "16" };
-        std::string arrowIconSize{ "28" };
+        std::string dateElementTextColorOnHighlighted{ "#F2FFFFFF" };
+        std::string notAvailabledateElementTextColor{ "#B3FFFFFF" };
+        int dateElementSize{ 32 };
+        int dateIconHorizontalPadding{ 12 };
+        int calendarBorderRadius{ 12 };
+        int calendarWidth{ 248 };
+        int calendarHeight{ 293 };
+        int calendarHeaderTextSize{ 16 };
+        int dateGridTopMargin{ 14 };
+        int calendarDayTextSize{ 16 };
+        int calendarDateTextSize{ 16 };
+        int arrowIconSize{ 28 };
+    };
 
+    struct InputChoiceSetDropDownConfig : InputFieldConfig
+    {
+        std::string arrowIconColor{ "#F2FFFFFF" };
+        std::string dropDownElementColorPressed{ "#4DFFFFFF" };
+        std::string dropDownElementColorHovered{ "#0DFFFFFF" };
+        std::string dropDownElementColorNormal{ "#FF0F0F0F" };
+        std::string dropDownBorderColor{ "#80FFFFFF" };
+        std::string dropDownBackgroundColor{ "#FF0F0F0F" };
+        float arrowIconHorizontalPadding{ 9.5 };
+        int arrowIconVerticalPadding{ 8 };
+        int arrowIconWidth{ 13 };
+        int arrowIconHeight{ 7 };
+        int textHorizontalPadding{ 12 };
+        int dropDownElementHeight{ 40 };
+        int dropDownElementHorizontalPadding{ 12 };
+        int dropDownElementVerticalPadding{ 8 };
+        int dropDownElementRadius{ 8 };
+        int dropDownElementTextHorizontalPadding{ 12 };
+        int dropDownRadius{ 12 };
+        int dropDownPadding{ 8 };
+        int dropDownHeight{ 216 };
+    };
+
+    struct ToggleButtonConfig
+    {
+        std::string colorOnCheckedAndPressed{ "#FF1170CF" };
+        std::string colorOnCheckedAndHovered{ "#FF3492EB" };
+        std::string colorOnChecked{ "#FF64B4FA" };
+        std::string colorOnUncheckedAndPressed{ "#33FFFFFF" };
+        std::string colorOnUncheckedAndHovered{ "#33FFFFFF" };
+        std::string colorOnUnchecked{ "#1CFFFFFF" };
+        std::string borderColorOnCheckedAndPressed{ "#FF1170CF" };
+        std::string borderColorOnCheckedAndHovered{ "#FF3492EB" };
+        std::string borderColorOnChecked{ "#FF64B4FA" };
+        std::string borderColorOnUncheckedAndPressed{ "#33FFFFFF" };
+        std::string borderColorOnUncheckedAndHovered{ "#33FFFFFF" };
+        std::string borderColorOnUnchecked{ "#1CFFFFFF" };
+        std::string textColor{ "#F2FFFFFF" };
+        std::string radioButtonInnerCircleColorOnChecked{ "#FF0F0F0F" };
+        int radioButtonOuterCircleSize{ 16 };
+        int radioButtonInnerCircleSize{ 6 };
+        int checkBoxSize{ 16 };
+        int checkBoxBorderRadius{ 2 };
+        int pixelSize{ 16 };
+        int borderWidth{ 1 };
     };
 
     struct ActionButtonColorConfig
     {
         std::string buttonColorNormal{ "#F2FFFFFF" };
         std::string buttonColorHovered{ "#CCFFFFFF" };
-        std::string buttonColorPressed{ "#B2FFFFFF" };
-        std::string buttonColorDisabled{ "#33FFFFFF" };
-        std::string borderColor{ "#80000000" };
+        std::string buttonColorPressed{ "#B3FFFFFF" };
+        std::string borderColorNormal{ "#F2FFFFFF" };
+        std::string borderColorHovered{ "#F2FFFFFF" };
+        std::string borderColorPressed{ "#F2FFFFFF" };
         std::string borderColorFocussed{ "#FF64B4FA" };
         std::string textColorNormal{ "#F2000000" };
-        std::string textColorFocused{ "#F2000000" };
-        std::string textColorDisabled{ "#66FFFFFF" };
+        std::string textColorHovered{ "#F2000000" };
+        std::string textColorPressed{ "#F2000000" };
     };
 
     struct ActionButtonsConfig
@@ -164,23 +161,35 @@ namespace RendererQml
             secondaryColorConfig.buttonColorNormal = "#00FFFFFF";
             secondaryColorConfig.buttonColorHovered = "#12FFFFFF";
             secondaryColorConfig.buttonColorPressed = "#33FFFFFF";
-            secondaryColorConfig.borderColor = "#4DFFFFFF";
+            secondaryColorConfig.borderColorNormal = "#4DFFFFFF";
+            secondaryColorConfig.borderColorHovered = "#4DFFFFFF";
+            secondaryColorConfig.borderColorPressed = "#4DFFFFFF";
+            secondaryColorConfig.borderColorFocussed = "#FF64B4FA";
             secondaryColorConfig.textColorNormal = "#F2FFFFFF";
-            secondaryColorConfig.textColorFocused = "#F2FFFFFF";
+            secondaryColorConfig.textColorHovered = "#F2FFFFFF";
+            secondaryColorConfig.textColorPressed = "#F2FFFFFF";
 
             positiveColorConfig.buttonColorNormal = "#00FFFFFF";
             positiveColorConfig.buttonColorHovered = "#FF185E46";
             positiveColorConfig.buttonColorPressed = "#FF134231";
-            positiveColorConfig.borderColor = "#FF3CC29A";
+            positiveColorConfig.borderColorNormal = "#FF3CC29A";
+            positiveColorConfig.borderColorHovered = "#FF185E46";
+            positiveColorConfig.borderColorPressed = "#FF134231";
+            positiveColorConfig.borderColorFocussed = "#FF64B4FA";
             positiveColorConfig.textColorNormal = "#FF3CC29A";
-            positiveColorConfig.textColorFocused = "#F2FFFFFF";
+            positiveColorConfig.textColorHovered = "#F2FFFFFF";
+            positiveColorConfig.textColorPressed = "#F2FFFFFF";
 
             destructiveColorConfig.buttonColorNormal = "#00FFFFFF";
             destructiveColorConfig.buttonColorHovered = "#FFAB0A15";
             destructiveColorConfig.buttonColorPressed = "#FF780D13";
-            destructiveColorConfig.borderColor = "#FFFC8B98";
+            destructiveColorConfig.borderColorNormal = "#FFFC8B98";
+            destructiveColorConfig.borderColorHovered = "#FFAB0A15";
+            destructiveColorConfig.borderColorPressed = "#FF780D13";
+            destructiveColorConfig.borderColorFocussed = "#FF64B4FA";
             destructiveColorConfig.textColorNormal = "#FFFC8B98";
-            destructiveColorConfig.textColorFocused = "#F2FFFFFF";
+            destructiveColorConfig.textColorHovered = "#F2FFFFFF";
+            destructiveColorConfig.textColorPressed = "#F2FFFFFF";
         }
     };
 
@@ -198,10 +207,8 @@ namespace RendererQml
         void setInputTimeConfig(InputTimeConfig config);
         InputChoiceSetDropDownConfig getInputChoiceSetDropDownConfig() const;
         void setInputChoiceSetDropDownConfig(InputChoiceSetDropDownConfig config);
-        CheckBoxConfig getCheckBoxConfig() const;
-        void setCheckBoxConfig(CheckBoxConfig config);
-        RadioButtonConfig getRadioButtonConfig() const;
-        void setRadioButtonConfig(RadioButtonConfig config);
+        ToggleButtonConfig getToggleButtonConfig() const;
+        void setToggleButtonConfig(ToggleButtonConfig config);
         InputDateConfig getInputDateConfig() const;
         void setInputDateConfig(InputDateConfig config);
         ActionButtonsConfig getActionButtonsConfig() const;
@@ -213,8 +220,7 @@ namespace RendererQml
         InputNumberConfig m_numberInputConfig;
         InputTimeConfig m_timeInputConfig;
         InputChoiceSetDropDownConfig m_choiceSetDropdownInputConfig;
-        CheckBoxConfig m_checkBoxConfig;
-        RadioButtonConfig m_radioButtonConfig;
+        ToggleButtonConfig m_toggleButtonConfig;
         InputDateConfig m_dateInputConfig;
         ActionButtonsConfig m_actionButtonsConfig;
     };

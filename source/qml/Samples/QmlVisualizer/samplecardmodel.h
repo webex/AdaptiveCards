@@ -63,8 +63,7 @@ private:
     InputNumberConfig getInputNumberConfig(const bool isDark);
     InputTimeConfig getInputTimeConfig(const bool isDark);
     InputChoiceSetDropDownConfig getInputChoiceSetDropDownConfig(const bool isDark);
-    CheckBoxConfig getCheckBoxConfig(const bool isDark);
-    RadioButtonConfig getRadioButtonConfig(const bool isDark);
+    ToggleButtonConfig getToggleButtonConfig(const bool isDark);
     InputDateConfig getInputDateConfig(const bool isDark);
     ActionButtonsConfig getActionButtonsConfig(const bool isDark);
 };

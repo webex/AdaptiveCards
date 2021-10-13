@@ -53,24 +53,14 @@ namespace RendererQml
         m_choiceSetDropdownInputConfig = config;
     }
 
-    CheckBoxConfig AdaptiveCardRenderConfig::getCheckBoxConfig() const
+    ToggleButtonConfig AdaptiveCardRenderConfig::getToggleButtonConfig() const
     {
-        return m_checkBoxConfig;
+        return m_toggleButtonConfig;
     }
 
-    void AdaptiveCardRenderConfig::setCheckBoxConfig(CheckBoxConfig config)
+    void AdaptiveCardRenderConfig::setToggleButtonConfig(ToggleButtonConfig config)
     {
-        m_checkBoxConfig = config;
-    }
-
-    RadioButtonConfig AdaptiveCardRenderConfig::getRadioButtonConfig() const
-    {
-        return m_radioButtonConfig;
-    }
-
-    void AdaptiveCardRenderConfig::setRadioButtonConfig(RadioButtonConfig config)
-    {
-        m_radioButtonConfig = config;
+        m_toggleButtonConfig = config;
     }
 
     InputDateConfig AdaptiveCardRenderConfig::getInputDateConfig() const
