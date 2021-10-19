@@ -31,6 +31,8 @@ class ACRButton: FlatButton, ImageHoldingView {
         initialize()
         buttonActionStyle = style
         setupButtonStyle(style: style, buttonConfig: buttonConfig)
+        font = buttonConfig.font
+        contentInsets = buttonConfig.buttonContentInsets
     }
     
     private func initialize() {
