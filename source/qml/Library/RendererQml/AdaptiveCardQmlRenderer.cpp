@@ -1533,44 +1533,44 @@ namespace RendererQml
 
         switch (EnumDateFormat)
         {
-        case RendererQml::DateFormat::ddmmyy:
-        {
-            StringDateFormat = Formatter() << "dd" << dateSeparator << "MMM" << dateSeparator << "yyyy";
-            inputMask = Formatter() << "xx" << dateSeparator << ">x<xx" << dateSeparator << "xxxx;-";
-            DateRegex = Formatter() << "/^" << day_Regex << dateSeparator << month_Regex << dateSeparator << year_Regex << "$/";
+            case RendererQml::DateFormat::ddmmyy:
+            {
+                StringDateFormat = Formatter() << "dd" << dateSeparator << "MMM" << dateSeparator << "yyyy";
+                inputMask = Formatter() << "xx" << dateSeparator << ">x<xx" << dateSeparator << "xxxx;-";
+                DateRegex = Formatter() << "/^" << day_Regex << dateSeparator << month_Regex << dateSeparator << year_Regex << "$/";
 
-            day_Text = "getText(0,2)";
-            month_Text = "getText(3,6)";
-            year_Text = "getText(7,11)";
-            break;
-        }
-        case RendererQml::DateFormat::yymmdd:
-        {
-            StringDateFormat = Formatter() << "yyyy" << dateSeparator << "MMM" << dateSeparator << "dd";
-            inputMask = Formatter() << "xxxx" << dateSeparator << ">x<xx" << dateSeparator << "xx;-";
-            DateRegex = Formatter() << "/^" << year_Regex << dateSeparator << month_Regex << dateSeparator << day_Regex << "$/";
+                day_Text = "getText(0,2)";
+                month_Text = "getText(3,6)";
+                year_Text = "getText(7,11)";
+                break;
+            }
+            case RendererQml::DateFormat::yymmdd:
+            {
+                StringDateFormat = Formatter() << "yyyy" << dateSeparator << "MMM" << dateSeparator << "dd";
+                inputMask = Formatter() << "xxxx" << dateSeparator << ">x<xx" << dateSeparator << "xx;-";
+                DateRegex = Formatter() << "/^" << year_Regex << dateSeparator << month_Regex << dateSeparator << day_Regex << "$/";
 
-            day_Text = "getText(9,11)";
-            month_Text = "getText(5,8)";
-            year_Text = "getText(0,4)";
-            break;
-        }
-        case RendererQml::DateFormat::yyddmm:
-        {
-            StringDateFormat = Formatter() << "yyyy" << dateSeparator << "dd" << dateSeparator << "MMM";
-            inputMask = Formatter() << "xxxx" << dateSeparator << "xx" << dateSeparator << ">x<xx;-";
-            DateRegex = Formatter() << "/^" << year_Regex << dateSeparator << day_Regex << dateSeparator << month_Regex << "$/";
+                day_Text = "getText(9,11)";
+                month_Text = "getText(5,8)";
+                year_Text = "getText(0,4)";
+                break;
+            }
+            case RendererQml::DateFormat::yyddmm:
+            {
+                StringDateFormat = Formatter() << "yyyy" << dateSeparator << "dd" << dateSeparator << "MMM";
+                inputMask = Formatter() << "xxxx" << dateSeparator << "xx" << dateSeparator << ">x<xx;-";
+                DateRegex = Formatter() << "/^" << year_Regex << dateSeparator << day_Regex << dateSeparator << month_Regex << "$/";
 
-            day_Text = "getText(5,7)";
-            month_Text = "getText(8,11)";
-            year_Text = "getText(0,4)";
-            break;
-        }
-        //Default case: mm-dd-yyyy
-        default:
-        {
-            break;
-        }
+                day_Text = "getText(5,7)";
+                month_Text = "getText(8,11)";
+                year_Text = "getText(0,4)";
+                break;
+            }
+            //Default case: mm-dd-yyyy
+            default:
+            {
+                break;
+            }
         }
 
         uiTextField->AddFunctions(Formatter() << "function setValidDate(dateString)"
