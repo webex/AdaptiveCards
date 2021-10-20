@@ -135,7 +135,7 @@ namespace RendererQml
         int borderWidth{ 1 };
     };
 
-    struct ActionButtonColorConfig
+    struct ActionButtonConfig
     {
         std::string buttonColorNormal{ "#F2FFFFFF" };
         std::string buttonColorHovered{ "#CCFFFFFF" };
@@ -147,14 +147,22 @@ namespace RendererQml
         std::string textColorNormal{ "#F2000000" };
         std::string textColorHovered{ "#F2000000" };
         std::string textColorPressed{ "#F2000000" };
+        int buttonRadius = 16;
+        int horizotalPadding = 10;
+        int verticalPadding = 5;
+        int buttonHeight = 32;
+        int iconWidth = 14;
+        int iconHeight = 14;
+        int imageSize = 14;
+        int iconTextSpacing = 5;
     };
 
     struct ActionButtonsConfig
     {
-        ActionButtonColorConfig primaryColorConfig;
-        ActionButtonColorConfig secondaryColorConfig;
-        ActionButtonColorConfig positiveColorConfig;
-        ActionButtonColorConfig destructiveColorConfig;
+        ActionButtonConfig primaryColorConfig;
+        ActionButtonConfig secondaryColorConfig;
+        ActionButtonConfig positiveColorConfig;
+        ActionButtonConfig destructiveColorConfig;
 
         ActionButtonsConfig()
         {
