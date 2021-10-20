@@ -27,8 +27,8 @@ class ACRButton: FlatButton, ImageHoldingView {
         super.init(frame: frame)
         font = buttonConfig.font
         contentInsets = buttonConfig.buttonContentInsets
-        chevronUpIcon = buttonConfig.chevronUpImage
-        chevronDownIcon = buttonConfig.chevronDownImage
+        chevronUpIcon = buttonConfig.chevronUpImage ?? BundleUtils.getImage("arrowup", ofType: "png")
+        chevronDownIcon = buttonConfig.chevronDownImage ?? BundleUtils.getImage("arrowdown", ofType: "png")
         showsChevron = wantsChevron
         showsIcon = wantsIcon
         imagePosition = wantsIcon ? iconPosition : .noImage
