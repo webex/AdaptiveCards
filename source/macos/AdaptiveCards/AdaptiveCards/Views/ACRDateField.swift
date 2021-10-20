@@ -134,7 +134,6 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     private func setupConstraints() {
-        // To display the curved border which is drawn in ACRTextField, 2px additional space is needed
         textField.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
         textField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true

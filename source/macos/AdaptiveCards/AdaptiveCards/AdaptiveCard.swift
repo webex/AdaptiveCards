@@ -90,22 +90,26 @@ public struct ButtonColorConfig {
 }
 
 public struct ButtonConfig {
-    public static let `default` = ButtonConfig(positive: .init(buttonColor: .green, selectedButtonColor: .systemGreen, hoverButtonColor: .systemGreen, textColor: .white, selectedTextColor: .white, borderColor: .green, selectedBorderColor: .systemGreen, wantsBorder: true), destructive: .init(buttonColor: .systemRed, selectedButtonColor: .red, hoverButtonColor: .red, textColor: .white, selectedTextColor: .white, borderColor: .systemRed, selectedBorderColor: .red, wantsBorder: true), default: .init(buttonColor: .systemBlue, selectedButtonColor: .blue, hoverButtonColor: .blue, textColor: .white, selectedTextColor: .white, borderColor: .systemBlue, selectedBorderColor: .blue, wantsBorder: true), inline: .init(buttonColor: .systemBlue, selectedButtonColor: .blue, hoverButtonColor: .blue, textColor: .white, selectedTextColor: .white, borderColor: .systemBlue, selectedBorderColor: .blue, wantsBorder: true), font: .systemFont(ofSize: 12), buttonContentInsets: NSEdgeInsets(top: 5, left: 16, bottom: 5, right: 16))
+    public static let `default` = ButtonConfig(positive: .init(buttonColor: .green, selectedButtonColor: .systemGreen, hoverButtonColor: .systemGreen, textColor: .white, selectedTextColor: .white, borderColor: .green, selectedBorderColor: .systemGreen, wantsBorder: true), destructive: .init(buttonColor: .systemRed, selectedButtonColor: .red, hoverButtonColor: .red, textColor: .white, selectedTextColor: .white, borderColor: .systemRed, selectedBorderColor: .red, wantsBorder: true), default: .init(buttonColor: .systemBlue, selectedButtonColor: .blue, hoverButtonColor: .blue, textColor: .white, selectedTextColor: .white, borderColor: .systemBlue, selectedBorderColor: .blue, wantsBorder: true), inline: .init(buttonColor: .systemBlue, selectedButtonColor: .blue, hoverButtonColor: .blue, textColor: .white, selectedTextColor: .white, borderColor: .systemBlue, selectedBorderColor: .blue, wantsBorder: true), font: .systemFont(ofSize: 12), buttonContentInsets: NSEdgeInsets(top: 5, left: 16, bottom: 5, right: 16), chevronUpImage: BundleUtils.getImage("arrowup", ofType: "png") ?? NSImage(), chevronDownImage: BundleUtils.getImage("arrowdown", ofType: "png") ?? NSImage())
     
     let positive: ButtonColorConfig
     let destructive: ButtonColorConfig
     let `default`: ButtonColorConfig
     let inline: ButtonColorConfig
-    let font: NSFont
-    let buttonContentInsets: NSEdgeInsets
+    public let font: NSFont
+    public let buttonContentInsets: NSEdgeInsets
+    public let chevronUpImage: NSImage
+    public let chevronDownImage: NSImage
         
-    public init(positive: ButtonColorConfig, destructive: ButtonColorConfig, default: ButtonColorConfig, inline: ButtonColorConfig, font: NSFont, buttonContentInsets: NSEdgeInsets) {
+    public init(positive: ButtonColorConfig, destructive: ButtonColorConfig, default: ButtonColorConfig, inline: ButtonColorConfig, font: NSFont, buttonContentInsets: NSEdgeInsets, chevronUpImage: NSImage, chevronDownImage: NSImage) {
         self.positive = positive
         self.destructive = destructive
         self.default = `default`
         self.inline = inline
         self.font = font
         self.buttonContentInsets = buttonContentInsets
+        self.chevronUpImage = chevronUpImage
+        self.chevronDownImage = chevronDownImage
     }
 }
 
