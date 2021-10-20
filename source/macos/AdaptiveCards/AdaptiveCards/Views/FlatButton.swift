@@ -162,8 +162,8 @@ open class FlatButton: NSButton, CALayerDelegate {
     
     public var iconImageSize: NSSize = NSSize(width: 16, height: 16)
     public var chevronImageSize: NSSize = NSSize(width: 16, height: 14)
-    public var chevronUpIcon: NSImage? = BundleUtils.getImage("arrowdown", ofType: "png")
-    public var chevronDownIcon: NSImage? = BundleUtils.getImage("arrowup", ofType: "png")
+    public var chevronUpIcon: NSImage? = BundleUtils.getImage("arrowup", ofType: "png")
+    public var chevronDownIcon: NSImage? = BundleUtils.getImage("arrowdown", ofType: "png")
     private let horizontalInternalSpacing: CGFloat = 5
     private let verticalInternalSpacing: CGFloat = 3
     private var currentTrackingArea: NSTrackingArea?
