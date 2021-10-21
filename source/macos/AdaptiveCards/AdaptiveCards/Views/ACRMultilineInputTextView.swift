@@ -53,6 +53,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         textView.isAutomaticTextReplacementEnabled = false
         textView.smartInsertDeleteEnabled = false
         textView.font = config.font
+        textView.textContainer?.lineFragmentPadding = 0
         textView.textContainerInset = NSSize(width: config.multilineFieldInsets.left, height: config.multilineFieldInsets.top)
         wantsLayer = true
         layer?.borderColor = config.borderColor.cgColor
@@ -68,8 +69,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     func setPlaceholder(_ placeholder: String) {
         let placeholderValue = NSMutableAttributedString(string: placeholder)
         placeholderValue.addAttributes([.foregroundColor: config.placeholderTextColor, .font: config.font], range: NSRange(location: 0, length: placeholderValue.length))
-        // Adding 5 since the placeholder string is getting drawn in the textView, and the textContainer already has an inherent padding of 5 px on the left to the textView
-        textView.placeholderLeftPadding = config.multilineFieldInsets.left + 5
+        textView.placeholderLeftPadding = config.multilineFieldInsets.left
         textView.placeholderTopPadding = config.multilineFieldInsets.top
         textView.placeholderAttrString = placeholderValue
     }
