@@ -13,7 +13,11 @@ class MultiLineInputTextViewTests: XCTestCase {
     }
     
     func testLeftPadding() {
-        XCTAssertEqual(multiLineInputTextView.textView.textContainer?.lineFragmentPadding, renderConfig.inputFieldConfig.leftPadding + 2)
+        XCTAssertEqual(multiLineInputTextView.textView.textContainerInset.width, renderConfig.inputFieldConfig.leftPadding - 3)
+    }
+    
+    func testTopPadding() {
+        XCTAssertEqual(multiLineInputTextView.textView.textContainerInset.height, renderConfig.inputFieldConfig.yPadding + 5)
     }
     
     func testInitialBackgroundColor() {
