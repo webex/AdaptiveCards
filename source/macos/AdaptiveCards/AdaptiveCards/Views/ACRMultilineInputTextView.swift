@@ -53,8 +53,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         textView.isAutomaticTextReplacementEnabled = false
         textView.smartInsertDeleteEnabled = false
         textView.font = config.font
-        // -3 in width and +5 in height is present to match the single line input field paddings
-        textView.textContainerInset = NSSize(width: config.leftPadding - 3, height: config.yPadding + 5)
+        textView.textContainerInset = NSSize(width: config.multilineFieldInsets.left, height: config.multilineFieldInsets.top)
         wantsLayer = true
         layer?.borderColor = config.borderColor.cgColor
         layer?.borderWidth = config.borderWidth
@@ -69,9 +68,8 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     func setPlaceholder(_ placeholder: String) {
         let placeholderValue = NSMutableAttributedString(string: placeholder)
         placeholderValue.addAttributes([.foregroundColor: config.placeholderTextColor, .font: config.font], range: NSRange(location: 0, length: placeholderValue.length))
-        // +2 in left padding and +5 in top padding is present to match the single line input field paddings
-        textView.placeholderLeftPadding = config.leftPadding + 2
-        textView.placeholderTopPadding = config.yPadding + 5
+        textView.placeholderLeftPadding = config.multilineFieldInsets.left
+        textView.placeholderTopPadding = config.multilineFieldInsets.top
         textView.placeholderAttrString = placeholderValue
     }
     
