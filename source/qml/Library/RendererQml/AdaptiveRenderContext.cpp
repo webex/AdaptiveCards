@@ -236,6 +236,21 @@ namespace RendererQml
         return ++m_SelectActionCounter;
     }
 
+    const int RendererQml::AdaptiveRenderContext::getContentCounter()
+    {
+        return m_ContentCounter;
+    }
+
+    void RendererQml::AdaptiveRenderContext::setContentCounter(int contentCounter)
+    {
+        m_ContentCounter = contentCounter;
+    }
+
+    void RendererQml::AdaptiveRenderContext::incrementContentCounter()
+    {
+        m_ContentCounter++;
+    }
+
     void AdaptiveRenderContext::setCardRootId(const std::string& rootId)
     {
         m_CardRootId = rootId;
@@ -392,5 +407,30 @@ namespace RendererQml
     const bool AdaptiveRenderContext::isShowCardLastBodyElement()
     {
         return m_isShowCardLastBodyElement;
+    }
+
+    void RendererQml::AdaptiveRenderContext::setImagesDirectory(std::string imagesDirectory)
+    {
+        m_ImagesDirectory = imagesDirectory;
+    }
+
+    const std::string RendererQml::AdaptiveRenderContext::getImagesDirectory()
+    {
+        return m_ImagesDirectory;
+    }
+
+    void RendererQml::AdaptiveRenderContext::setImageUrls(std::map<int, std::string> imageUrls)
+    {
+        m_ImageUrls = imageUrls; 
+    }
+
+    std::map<int, std::string> RendererQml::AdaptiveRenderContext::getImageUrls()
+    {
+        return m_ImageUrls;
+    }
+
+    void RendererQml::AdaptiveRenderContext::addImageUrl(int count, std::string url)
+    {
+        m_ImageUrls[count] = url;
     }
 }

@@ -17,11 +17,12 @@ namespace RendererQml
 		SetRenderConfig(renderConfig);
 	}
 
-	std::shared_ptr<RenderedQmlAdaptiveCard> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card)
+	std::pair<std::shared_ptr<RenderedQmlAdaptiveCard>, std::map<int, std::string>> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::string imagesDirectory)
 	{
 		std::shared_ptr<RenderedQmlAdaptiveCard> output;
 		auto context = std::make_shared<AdaptiveRenderContext>(GetHostConfig(), GetElementRenderers(), GetRenderConfig());
 		std::shared_ptr<QmlTag> tag;
+        context->setImagesDirectory(imagesDirectory);
 
 		try
 		{
@@ -34,7 +35,7 @@ namespace RendererQml
 			context->AddWarning(AdaptiveWarning(Code::RenderException, e.what()));
 		}
 
-		return output;
+		return std::make_pair(output, context->getImageUrls());
 	}
 
     void AdaptiveCardQmlRenderer::SetObjectTypes()
@@ -93,7 +94,7 @@ namespace RendererQml
 			auto uiFrame = std::make_shared<QmlTag>("Frame");
             uiFrame->Property("id", Formatter() << uiCard->GetId() << "_frame");
 			uiFrame->Property("readonly property bool hasBackgroundImage", "true");
-            uiFrame->Property("property var imgSource", card->GetBackgroundImage()->GetUrl(), true);
+            uiFrame->Property("property var imgSource", GetImagePath(context, card->GetBackgroundImage()->GetUrl()), true);
 			uiFrame->Property("anchors.fill", "parent");
 			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context, "parent.imgSource")->ToString());
 			uiCard->Property("clip", "true");
@@ -2007,7 +2008,7 @@ namespace RendererQml
 		uiImage->Property("id", Formatter() << image->GetId() << "_img");
 		uiImage->Property("readonly property bool isImage", "true");
         uiImage->Property("cache", "false");
-		uiImage->Property("source", image->GetUrl(), true);
+		uiImage->Property("source", GetImagePath(context, image->GetUrl()), true);
 		uiImage->Property("anchors.fill", "parent");
 		uiImage->Property("visible", "parent.visible");
 
@@ -2816,7 +2817,7 @@ namespace RendererQml
         if (hasBackgroundImage)
         {
             uiContainer->Property("readonly property bool hasBackgroundImage", "true");
-            uiContainer->Property("property var imgSource", cardElement->GetBackgroundImage()->GetUrl(), true);
+            uiContainer->Property("property var imgSource", GetImagePath(context, cardElement->GetBackgroundImage()->GetUrl()), true);
 			auto backgroundImg = AdaptiveCardQmlRenderer::GetBackgroundImage(cardElement->GetBackgroundImage(), context, id + ".imgSource");
             backgroundRect->AddChild(backgroundImg);
         }
@@ -3013,7 +3014,7 @@ namespace RendererQml
             if (!action->GetIconUrl().empty())
             {
 				buttonElement->Property("readonly property bool hasIconUrl", "true");
-                buttonElement->Property("property var imgSource", action->GetIconUrl(), true);
+                buttonElement->Property("property var imgSource", GetImagePath(context, action->GetIconUrl()), true);
 
                 auto contentImage = std::make_shared<QmlTag>("Image");
                 contentImage->Property("id", Formatter() << buttonId << "_img");
@@ -3163,6 +3164,9 @@ namespace RendererQml
         for (const auto& componentElement : context->getShowCardLoaderComponentList())
         {
             auto subContext = std::make_shared<AdaptiveRenderContext>(context->GetConfig(), context->GetElementRenderers(), context->GetRenderConfig());
+            subContext->setContentCounter(context->getContentCounter());
+            subContext->setImageUrls(context->getImageUrls());
+            subContext->setImagesDirectory(context->getImagesDirectory());
 
             // Add parent input input elements to the child card
             for (const auto& inputElement : context->getInputElementList())
@@ -3182,6 +3186,9 @@ namespace RendererQml
                 const auto showCardComponent = GetComponent(componentElement.first, uiCard);
                 context->getCardRootElement()->AddChild(showCardComponent);
             }
+
+            context->setContentCounter(subContext->getContentCounter());
+            context->setImageUrls(subContext->getImageUrls());
         }
     }
 
@@ -3953,5 +3960,20 @@ namespace RendererQml
         clearIcon->Property("Keys.onReturnPressed", "onClicked()");
 
         return clearIcon;
+    }
+
+    const std::string RendererQml::AdaptiveCardQmlRenderer::GetImagePath(std::shared_ptr<AdaptiveRenderContext> context, const std::string url)
+    {
+        auto contentNumber = context->getContentCounter();
+        context->incrementContentCounter();
+        const std::string imageName = Formatter() << contentNumber << ".jpg";
+        std::string file_path = context->getImagesDirectory();
+        file_path.append("\\Images\\" + imageName);
+        std::replace(file_path.begin(), file_path.end(), '\\', '/');
+        file_path = std::string("file:/") + file_path;
+
+        context->addImageUrl(contentNumber, url);
+
+        return file_path;
     }
 }
