@@ -4,6 +4,11 @@
 
 namespace RendererQml
 {
+    struct CardConfig
+    {
+        int cardRadius{ 8 };
+    };
+
     struct InputFieldConfig
     {
         std::string backgroundColorNormal{ "#FF0F0F0F" };
@@ -207,6 +212,8 @@ namespace RendererQml
     public:
         AdaptiveCardRenderConfig(bool isDarkMode = true);
         bool isDarkMode() const;
+        CardConfig getCardConfig() const;
+        void setCardConfig(CardConfig config);
         InputTextConfig getInputTextConfig() const;
         void setInputTextConfig(InputTextConfig config);
         InputNumberConfig getInputNumberConfig() const;
@@ -224,6 +231,7 @@ namespace RendererQml
 
     private:
         bool m_isDark;
+        CardConfig m_cardConfig;
         InputTextConfig m_textInputConfig;
         InputNumberConfig m_numberInputConfig;
         InputTimeConfig m_timeInputConfig;

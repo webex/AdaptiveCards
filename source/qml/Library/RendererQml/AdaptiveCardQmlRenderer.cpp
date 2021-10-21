@@ -63,6 +63,7 @@ namespace RendererQml
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveCardRender(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::shared_ptr<AdaptiveRenderContext> context, bool isChildCard)
     {
+        auto cardConfig = context->GetRenderConfig()->getCardConfig();
         context->setDefaultIdName("defaultId");
 		int margin = context->GetConfig()->GetSpacing().paddingSpacing;
 
@@ -84,6 +85,7 @@ namespace RendererQml
 		uiCard->Property("border.color", isChildCard? " bgColor" : "'#B2B2B2'");
         uiCard->AddFunctions("MouseArea{anchors.fill: parent;onClicked: adaptiveCard.nextItemInFocusChain().forceActiveFocus();}");
         uiCard->Property("activeFocusOnTab", "false");
+        uiCard->Property("radius", Formatter() << (isChildCard ? 0 : cardConfig.cardRadius));
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
 		if (hasBackgroundImage)
