@@ -38,7 +38,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         super.draw(dirtyRect)
 
         guard string.isEmpty else { return }
-        placeholderAttrString?.draw(in: dirtyRect.offsetBy(dx: placeholderLeftPadding ?? 5, dy: placeholderTopPadding ?? 0))
+        placeholderAttrString?.draw(in: dirtyRect.insetBy(dx: placeholderLeftPadding ?? 5, dy: placeholderTopPadding ?? 0))
     }
     
     override func resignFirstResponder() -> Bool {
