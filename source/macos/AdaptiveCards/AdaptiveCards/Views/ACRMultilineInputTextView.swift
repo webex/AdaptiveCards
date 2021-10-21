@@ -17,7 +17,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         BundleUtils.loadNibNamed("ACRMultilineInputTextView", owner: self)
         textView.allowsUndo = true
         setupViews()
-        setupConstaints()
+        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -28,7 +28,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         addSubview(contentView)
     }
     
-    private func setupConstaints() {
+    private func setupConstraints() {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         contentView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         contentView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
@@ -68,7 +68,8 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     func setPlaceholder(_ placeholder: String) {
         let placeholderValue = NSMutableAttributedString(string: placeholder)
         placeholderValue.addAttributes([.foregroundColor: config.placeholderTextColor, .font: config.font], range: NSRange(location: 0, length: placeholderValue.length))
-        textView.placeholderLeftPadding = config.multilineFieldInsets.left
+        // Adding 5 since the placeholder string is getting drawn in the textView, and the textContainer already has an inherent padding of 5 px on the left to the textView
+        textView.placeholderLeftPadding = config.multilineFieldInsets.left + 5
         textView.placeholderTopPadding = config.multilineFieldInsets.top
         textView.placeholderAttrString = placeholderValue
     }
