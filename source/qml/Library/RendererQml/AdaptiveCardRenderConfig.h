@@ -154,12 +154,13 @@ namespace RendererQml
         std::string textColorPressed{ "#F2000000" };
         int buttonRadius = 16;
         int horizotalPadding = 10;
-        int verticalPadding = 5;
-        int buttonHeight = 32;
-        int iconWidth = 14;
-        int iconHeight = 14;
-        int imageSize = 14;
+        int verticalPadding = 3;
+        int buttonHeight = 24;
+        int iconWidth = 12;
+        int iconHeight = 12;
+        int imageSize = 12;
         int iconTextSpacing = 5;
+        int pixelSize = 12;
     };
 
     struct ActionButtonsConfig

@@ -631,42 +631,7 @@ namespace RendererQml
                 uiContainer->Property("width", "parent.width");
                 const auto actionsConfig = context->GetConfig()->GetActions();
 
-                auto buttonElement = context->Render(input->GetInlineAction());
-                buttonElement->RemoveProperty("background");
-                buttonElement->RemoveProperty("contentItem");
-
-                // Append the icon to the button
-                // NOTE: always using icon size since it's difficult
-                // to match icon's height with text's height
-                auto bgRectangle = std::make_shared<QmlTag>("Rectangle");
-                bgRectangle->Property("id", Formatter() << buttonElement->GetId() << "_bg");
-                bgRectangle->Property("anchors.fill", "parent");
-                bgRectangle->Property("color", Formatter() << buttonElement->GetId() << ".pressed ? " << context->GetHexColor(textConfig.backgroundColorOnPressed) << " : " << buttonElement->GetId() << ".hovered ? " << context->GetHexColor(textConfig.backgroundColorOnHovered) << " : " << context->GetHexColor(textConfig.backgroundColorNormal));
-                bgRectangle->Property("border.color", context->GetHexColor(textConfig.borderColorOnFocus));
-                bgRectangle->Property("border.width", Formatter() << buttonElement->GetId() << ".activeFocus? " << textConfig.borderWidth << ": 0");
-                buttonElement->Property("background", bgRectangle->ToString());
-
-                if (!input->GetInlineAction()->GetIconUrl().empty())
-                {
-                    buttonElement->Property("height", std::to_string(actionsConfig.iconSize));
-                    buttonElement->Property("width", std::to_string(actionsConfig.iconSize));
-
-                    auto iconItem = std::make_shared<QmlTag>("Item");
-                    iconItem->Property("anchors.fill", "parent");
-                    auto iconImage = std::make_shared<QmlTag>("Image");
-                    iconImage->Property("id", Formatter() << buttonElement->GetId() << "_img");
-                    iconImage->Property("height", std::to_string(actionsConfig.iconSize));
-                    iconImage->Property("width", std::to_string(actionsConfig.iconSize));
-                    iconImage->Property("fillMode", "Image.PreserveAspectFit");
-                    iconImage->Property("cache", "false");
-                    iconImage->Property("source", Formatter() << buttonElement->GetId() + ".imgSource");
-                    iconItem->AddChild(iconImage);
-                    buttonElement->Property("contentItem", iconItem->ToString());
-                }
-                else
-                {
-                    buttonElement->Property("text", input->GetInlineAction()->GetTitle(), true);
-                }
+                auto buttonElement = AdaptiveActionRender(input->GetInlineAction(), context);
 
                 if (input->GetIsMultiline())
                 {
@@ -2963,7 +2928,6 @@ namespace RendererQml
             const auto config = context->GetConfig();
             const auto actionsConfig = config->GetActions();
             const std::string buttonId = Formatter() << "button_auto_" << context->getButtonCounter();
-            const auto fontSize = config->GetFontSize(AdaptiveSharedNamespace::FontType::Default, AdaptiveSharedNamespace::TextSize::Default);
             const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
             const bool isIconLeftOfTitle = actionsConfig.iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle;
 
@@ -3051,7 +3015,7 @@ namespace RendererQml
             {
                 contentText->Property("text", action->GetTitle(), true);
             }
-            contentText->Property("font.pixelSize", Formatter() << fontSize);
+            contentText->Property("font.pixelSize", Formatter() << buttonConfig.pixelSize);
             contentText->Property("elide", "Text.ElideRight");
 
             bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : 1");
