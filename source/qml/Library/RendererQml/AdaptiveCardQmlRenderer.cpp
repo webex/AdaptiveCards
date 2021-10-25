@@ -17,12 +17,11 @@ namespace RendererQml
 		SetRenderConfig(renderConfig);
 	}
 
-	std::pair<std::shared_ptr<RenderedQmlAdaptiveCard>, std::map<int, std::string>> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::string imagesDirectory)
+	std::pair<std::shared_ptr<RenderedQmlAdaptiveCard>, int> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, int contentIndex)
 	{
 		std::shared_ptr<RenderedQmlAdaptiveCard> output;
 		auto context = std::make_shared<AdaptiveRenderContext>(GetHostConfig(), GetElementRenderers(), GetRenderConfig());
 		std::shared_ptr<QmlTag> tag;
-        context->setImagesDirectory(imagesDirectory);
 
 		try
 		{
@@ -35,7 +34,7 @@ namespace RendererQml
 			context->AddWarning(AdaptiveWarning(Code::RenderException, e.what()));
 		}
 
-		return std::make_pair(output, context->getImageUrls());
+		return std::make_pair(output, context->getContentIndex());
 	}
 
     void AdaptiveCardQmlRenderer::SetObjectTypes()
@@ -3164,9 +3163,7 @@ namespace RendererQml
         for (const auto& componentElement : context->getShowCardLoaderComponentList())
         {
             auto subContext = std::make_shared<AdaptiveRenderContext>(context->GetConfig(), context->GetElementRenderers(), context->GetRenderConfig());
-            subContext->setContentCounter(context->getContentCounter());
-            subContext->setImageUrls(context->getImageUrls());
-            subContext->setImagesDirectory(context->getImagesDirectory());
+            subContext->setContentIndex(context->getContentIndex());
 
             // Add parent input input elements to the child card
             for (const auto& inputElement : context->getInputElementList())
@@ -3187,8 +3184,7 @@ namespace RendererQml
                 context->getCardRootElement()->AddChild(showCardComponent);
             }
 
-            context->setContentCounter(subContext->getContentCounter());
-            context->setImageUrls(subContext->getImageUrls());
+            context->setContentIndex(subContext->getContentIndex());
         }
     }
 
@@ -3964,16 +3960,16 @@ namespace RendererQml
 
     const std::string RendererQml::AdaptiveCardQmlRenderer::GetImagePath(std::shared_ptr<AdaptiveRenderContext> context, const std::string url)
     {
-        auto contentNumber = context->getContentCounter();
-        context->incrementContentCounter();
+        auto contentNumber = context->getContentIndex();
+        context->incrementContentIndex();
         const std::string imageName = Formatter() << contentNumber << ".jpg";
-        std::string file_path = context->getImagesDirectory();
-        file_path.append("\\Images\\" + imageName);
-        std::replace(file_path.begin(), file_path.end(), '\\', '/');
-        file_path = std::string("file:/") + file_path;
-
-        context->addImageUrl(contentNumber, url);
-
-        return file_path;
+        std::string file_path = __FILE__;
+        std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
+        dir_path = dir_path.substr(0, dir_path.rfind("\\"));
+        dir_path = dir_path.substr(0, dir_path.rfind("\\"));
+        dir_path.append("\\Samples\\QmlVisualizer\\Images\\" + imageName);
+        std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
+        dir_path = std::string("file:/") + dir_path;
+        return dir_path;
     }
 }

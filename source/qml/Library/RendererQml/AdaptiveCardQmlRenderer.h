@@ -40,7 +40,7 @@ namespace RendererQml
         AdaptiveCardQmlRenderer();
         AdaptiveCardQmlRenderer(std::shared_ptr<AdaptiveCards::HostConfig> hostConfig, std::shared_ptr<AdaptiveCardRenderConfig> renderConfig);
 
-        std::pair<std::shared_ptr<RenderedQmlAdaptiveCard>, std::map<int, std::string>> RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::string imagesDirectory);
+        std::pair<std::shared_ptr<RenderedQmlAdaptiveCard>, int> RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, int contentIndex);
 
     protected:
         static void addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context, const bool hasBackgroundImage = false);

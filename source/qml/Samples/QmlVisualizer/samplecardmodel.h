@@ -54,6 +54,9 @@ private:
     void actionSubmitButtonClicked(const QString& title, const QString& type, const QString& data);
 	static const std::map<std::string, std::string> rehostImage(const std::map<std::string, std::string>& urls);
 
+    static std::map<int, std::string> GetImageUrls(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, std::map<int, std::string> urls);
+    static std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>>> GetCardImageUrls(std::shared_ptr<AdaptiveCards::BaseCardElement> cardElement, std::map<int, std::string> urls, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>> showCards);
+    static std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>>> GetActionImageUrls(std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>> cardElement, std::map<int, std::string> urls, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>> showCards);
 	static const std::string getImagePath(const std::string& imageName);
 
     std::shared_ptr<AdaptiveCardRenderConfig> getRenderConfig(const bool isDark);

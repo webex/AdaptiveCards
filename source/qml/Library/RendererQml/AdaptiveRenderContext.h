@@ -45,9 +45,9 @@ namespace RendererQml
         const int getButtonCounter();
         const int getSelectActionCounter();
 
-        const int getContentCounter();
-        void setContentCounter(int contentCounter);
-        void incrementContentCounter();
+        const int getContentIndex();
+        void setContentIndex(int contentCounter);
+        void incrementContentIndex();
 
         void setCardRootId(const std::string& rootId);
         const std::string getCardRootId();
@@ -93,13 +93,6 @@ namespace RendererQml
         void setIsShowCardLastBodyElement(bool isShowCardLastBodyElement);
         const bool isShowCardLastBodyElement();
 
-        void setImagesDirectory(std::string imagesDirectory);
-        const std::string getImagesDirectory();
-
-        void setImageUrls(std::map<int, std::string> imageUrls);
-        std::map<int, std::string> getImageUrls();
-        void addImageUrl(int count, std::string url);
-
     private:
         bool m_isShowCardinAction{ false };
         bool m_isShowCardLastBodyElement{ false };
@@ -113,7 +106,6 @@ namespace RendererQml
         AdaptiveRenderArgs m_renderArgs;
         AdaptiveCards::FeatureRegistration m_featureRegistration;
         std::string m_lang;
-        std::string m_ImagesDirectory;
 
         std::string m_CardRootId;
         std::string m_defaultId;
@@ -125,7 +117,6 @@ namespace RendererQml
         std::map<std::shared_ptr<QmlTag>, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardButtonList;
         std::map<std::string, std::shared_ptr<AdaptiveCards::ShowCardAction>> m_showCardLoaderComponentList;
         std::map<std::shared_ptr<QmlTag>, std::map<std::string, std::shared_ptr<AdaptiveCards::BaseActionElement>>> m_textRunSelectActionList;
-        std::map<int, std::string> m_ImageUrls;
 
         int m_ContainerCounter{ 0 };
         int m_ImageCounter{ 0 };
@@ -135,7 +126,7 @@ namespace RendererQml
         int m_SelectActionCounter{ 0 };
         int m_DefaultIdCounter{ 0 };
         int m_ActionSetCounter{ 0 };
-        int m_ContentCounter{ 0 };
+        int m_ContentIndex{ 0 };
 
     };
 }

@@ -236,19 +236,19 @@ namespace RendererQml
         return ++m_SelectActionCounter;
     }
 
-    const int RendererQml::AdaptiveRenderContext::getContentCounter()
+    const int RendererQml::AdaptiveRenderContext::getContentIndex()
     {
-        return m_ContentCounter;
+        return m_ContentIndex;
     }
 
-    void RendererQml::AdaptiveRenderContext::setContentCounter(int contentCounter)
+    void RendererQml::AdaptiveRenderContext::setContentIndex(int contentIndex)
     {
-        m_ContentCounter = contentCounter;
+        m_ContentIndex = contentIndex;
     }
 
-    void RendererQml::AdaptiveRenderContext::incrementContentCounter()
+    void RendererQml::AdaptiveRenderContext::incrementContentIndex()
     {
-        m_ContentCounter++;
+        m_ContentIndex++;
     }
 
     void AdaptiveRenderContext::setCardRootId(const std::string& rootId)
@@ -407,30 +407,5 @@ namespace RendererQml
     const bool AdaptiveRenderContext::isShowCardLastBodyElement()
     {
         return m_isShowCardLastBodyElement;
-    }
-
-    void RendererQml::AdaptiveRenderContext::setImagesDirectory(std::string imagesDirectory)
-    {
-        m_ImagesDirectory = imagesDirectory;
-    }
-
-    const std::string RendererQml::AdaptiveRenderContext::getImagesDirectory()
-    {
-        return m_ImagesDirectory;
-    }
-
-    void RendererQml::AdaptiveRenderContext::setImageUrls(std::map<int, std::string> imageUrls)
-    {
-        m_ImageUrls = imageUrls; 
-    }
-
-    std::map<int, std::string> RendererQml::AdaptiveRenderContext::getImageUrls()
-    {
-        return m_ImageUrls;
-    }
-
-    void RendererQml::AdaptiveRenderContext::addImageUrl(int count, std::string url)
-    {
-        m_ImageUrls[count] = url;
     }
 }
