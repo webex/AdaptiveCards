@@ -111,8 +111,6 @@ std::shared_ptr<AdaptiveCards::HostConfig> SampleCardModel::getHostConfig()
 QString SampleCardModel::generateQml(const QString& cardQml)
 {
     std::shared_ptr<int> imgCounter{ 0 };
-    std::string file_path = __FILE__;
-    std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
 
     std::shared_ptr<AdaptiveCards::ParseResult> mainCard = AdaptiveCards::AdaptiveCard::DeserializeFromString(cardQml.toStdString(), "2.0");
     std::map<int, std::string> urls = GetImageUrls(mainCard->GetAdaptiveCard(), std::map<int, std::string>());
@@ -261,7 +259,17 @@ const std::string SampleCardModel::getImagePath(const std::string& imageName)
 std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>>> SampleCardModel::GetCardImageUrls(std::shared_ptr<AdaptiveCards::BaseCardElement> cardElement, std::map<int, std::string> urls, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>> showCards)
 {
     int contentIndex = urls.size();
-    if (cardElement->GetElementType() == AdaptiveCards::CardElementType::Image)
+    if (cardElement->GetElementType() == AdaptiveCards::CardElementType::TextInput)
+    {
+        auto textInput = std::dynamic_pointer_cast<AdaptiveCards::TextInput>(cardElement);
+        auto action = textInput->GetInlineAction();
+        if (action && !action->GetIconUrl().empty() && !action->GetIconUrl().rfind("data:image", 0) == 0)
+        {
+            urls[contentIndex] = action->GetIconUrl();
+            contentIndex++;
+        }
+    }
+    else if (cardElement->GetElementType() == AdaptiveCards::CardElementType::Image)
     {
         auto image = std::dynamic_pointer_cast<AdaptiveCards::Image>(cardElement);
         if (!image->GetUrl().empty() && !image->GetUrl().rfind("data:image", 0) == 0)
@@ -287,9 +295,7 @@ std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards:
     {
         auto actionSet = std::dynamic_pointer_cast<AdaptiveCards::ActionSet>(cardElement);
         auto actions = actionSet->GetActions();
-        auto [tempUrls, tempShowCards] = GetActionImageUrls(actions, urls, showCards);
-        urls = tempUrls;
-        showCards = tempShowCards;
+        std::tie(urls, showCards) = GetActionImageUrls(actions, urls, showCards);
     }
     else if (cardElement->GetElementType() == AdaptiveCards::CardElementType::ColumnSet)
     {
@@ -297,9 +303,7 @@ std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards:
         auto columns = columnSet->GetColumns();
         for (auto& column : columns)
         {
-            auto [tempUrls, tempShowCards] = GetCardImageUrls(column, urls, showCards);
-            urls = tempUrls;
-            showCards = tempShowCards;
+            std::tie(urls, showCards) = GetCardImageUrls(column, urls, showCards);
         }
     }
     else if (cardElement->GetElementType() == AdaptiveCards::CardElementType::Column)
@@ -313,9 +317,7 @@ std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards:
         auto body = column->GetItems();
         for (auto& item : body)
         {
-            auto [tempUrls, tempShowCards] = GetCardImageUrls(item, urls, showCards);
-            urls = tempUrls;
-            showCards = tempShowCards;
+            std::tie(urls, showCards) = GetCardImageUrls(item, urls, showCards);
         }
     }
     else if (cardElement->GetElementType() == AdaptiveCards::CardElementType::Container)
@@ -329,9 +331,7 @@ std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards:
         auto body = container->GetItems();
         for (auto& item : body)
         {
-            auto [tempUrls, tempShowCards] = GetCardImageUrls(item, urls, showCards);
-            urls = tempUrls;
-            showCards = tempShowCards;
+            std::tie(urls, showCards) = GetCardImageUrls(item, urls, showCards);
         }
     }
     else if (cardElement->GetElementType() == AdaptiveCards::CardElementType::AdaptiveCard)
@@ -377,15 +377,11 @@ std::map<int, std::string> SampleCardModel::GetImageUrls(std::shared_ptr<Adaptiv
     auto body = card->GetBody();
     for (auto& item : body)
     {
-        auto [tempUrls, tempShowCards] = GetCardImageUrls(item, urls, showCards);
-        urls = tempUrls;
-        showCards = tempShowCards;
+        std::tie(urls, showCards) = GetCardImageUrls(item, urls, showCards);
     }
 
     auto actions = card->GetActions();
-    auto [tempUrls, tempShowCards] = GetActionImageUrls(actions, urls, showCards);
-    urls = tempUrls;
-    showCards = tempShowCards;
+    std::tie(urls, showCards) = GetActionImageUrls(actions, urls, showCards);
 
     for (auto& showCard : showCards)
     {
