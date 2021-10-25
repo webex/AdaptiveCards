@@ -3964,9 +3964,7 @@ namespace RendererQml
         context->incrementContentIndex();
         const std::string imageName = Formatter() << contentNumber << ".jpg";
         std::string file_path = __FILE__;
-        std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-        dir_path = dir_path.substr(0, dir_path.rfind("\\"));
-        dir_path = dir_path.substr(0, dir_path.rfind("\\"));
+        std::string dir_path = file_path.substr(0, file_path.rfind("\\Library"));
         dir_path.append("\\Samples\\QmlVisualizer\\Images\\" + imageName);
         std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
         dir_path = std::string("file:/") + dir_path;

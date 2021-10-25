@@ -245,17 +245,6 @@ void SampleCardModel::actionSubmitButtonClicked(const QString& title, const QStr
     emit sendCardResponseToQml(output);
 }
 
-const std::string SampleCardModel::getImagePath(const std::string& imageName)
-{
-	std::string file_path = __FILE__;
-	std::string dir_path = file_path.substr(0, file_path.rfind("\\"));
-    dir_path.append("\\Images\\" + imageName);
-	std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
-	dir_path = std::string("file:/") + dir_path;
-
-	return dir_path;
-}
-
 std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>>> SampleCardModel::GetCardImageUrls(std::shared_ptr<AdaptiveCards::BaseCardElement> cardElement, std::map<int, std::string> urls, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>> showCards)
 {
     int contentIndex = urls.size();
