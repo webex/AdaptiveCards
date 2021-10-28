@@ -631,8 +631,6 @@ namespace RendererQml
                 uiContainer->Property("width", "parent.width");
                 const auto actionsConfig = context->GetConfig()->GetActions();
 
-                auto tmp = input->GetInlineAction();
-                auto tmp2 = tmp->GetIconUrl();
                 auto buttonElement = AdaptiveActionRender(input->GetInlineAction(), context);
 
                 if (input->GetIsMultiline())
