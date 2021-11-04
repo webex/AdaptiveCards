@@ -509,8 +509,8 @@ namespace RendererQml
         //Handles tab space in RichText, works for MarkdownText as well
         text = Replace(text, "\t", "<span style='white-space:pre'>\t</span>");
         text = Replace(text, "'", "&#39;");
-		text = Replace(text, "\"", "&quot;");
-		text = Replace(text, "\\", "&#92;");
+        text = Replace(text, "\"", "&quot;");
+        text = Replace(text, "\\", "&#92;");
 		return text;
 	}
 
