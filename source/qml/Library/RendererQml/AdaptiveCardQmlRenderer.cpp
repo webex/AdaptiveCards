@@ -1240,9 +1240,9 @@ namespace RendererQml
 		model << "[";
 		for (const auto& choice : Choices)
 		{
-			choice_Text = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(choice.text)->TransformToHtml();
-            choice_Value = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(choice.value)->TransformToHtml();
-			model << "{ value: '" << Utils::HandleEscapeSequences(choice_Value) << "', text: '" << Utils::HandleEscapeSequences(choice_Text) << "'},\n";
+            choice_Text = choice.text;
+            choice_Value = choice.value;
+            model << "{ value: '" << Utils::HandleEscapeSequences(choice_Value) << "', text: '" << Utils::HandleEscapeSequences(choice_Text) << "'},\n";
 		}
 		model << "]";
 		return model.str();
