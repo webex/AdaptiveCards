@@ -26,13 +26,13 @@ namespace RendererQml
         int borderWidth{ 1 };
         int clearIconSize{ 16 };
         int clearIconHorizontalPadding{ 12 };
+        int textHorizontalPadding{ 12 };
+        int textVerticalPadding{ 4 };
     };
 
     struct InputTextConfig : InputFieldConfig
     {
         int multiLineTextHeight{ 96 };
-        int textHorizontalPadding{ 12 };
-        int textVerticalPadding{ 4 };
         int multiLineTextTopPadding{ 7 };
         int multiLineTextBottomPadding{ 4 };
     };
@@ -154,13 +154,13 @@ namespace RendererQml
         std::string textColorPressed{ "#F2000000" };
         int buttonRadius = 16;
         int horizotalPadding = 10;
-        int verticalPadding = 3;
-        int buttonHeight = 24;
+        int verticalPadding = 5;
+        int buttonHeight = 28;
         int iconWidth = 12;
         int iconHeight = 12;
-        int imageSize = 12;
+        int imageSize = 14;
         int iconTextSpacing = 5;
-        int pixelSize = 12;
+        int pixelSize = 14;
     };
 
     struct ActionButtonsConfig
