@@ -111,7 +111,7 @@ namespace RendererQml
 		rectangle->Property("id", "adaptiveCardRectangle");
 		rectangle->Property("color", "'transparent'");
 		rectangle->Property("Layout.topMargin", "margins");
-		rectangle->Property("Layout.bottomMargin", "removeBottomMargin? 0 : margins");
+		rectangle->Property("Layout.bottomMargin", "removeBottomMargin? 1 : margins");
 		rectangle->Property("Layout.leftMargin", "margins");
 		rectangle->Property("Layout.rightMargin", "margins");
 		rectangle->Property("Layout.fillWidth", "true");
@@ -1078,9 +1078,9 @@ namespace RendererQml
 
         checkbox->AddFunctions(Formatter() << "function colorChange(item,isPressed){\n"
             "if (isPressed) item.indicator.color = item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndPressed) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndPressed) << ";\n"
-            "else  item.indicator.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUnchecked) << ")\n"
+            "else  item.indicator.color = item.hovered ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUnchecked) << ")\n"
             "if (isPressed) item.indicator.border.color = item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndPressed) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndPressed) << ";\n"
-            "else  item.indicator.border.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUnchecked) << ")\n"
+            "else  item.indicator.border.color = item.hovered ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUnchecked) << ")\n"
             "}\n"
         );
         checkbox->Property("onPressed", Formatter() << checkbox->GetId() << ".colorChange(" << checkbox->GetId() << ", true)");
@@ -1384,9 +1384,9 @@ namespace RendererQml
 
         uiColumn->AddFunctions(Formatter() << "function colorChange(item,isPressed){\n"
             "if (isPressed) item.indicator.color = item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndPressed) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndPressed) << ";\n"
-            "else  item.indicator.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUnchecked) << ")\n"
+            "else  item.indicator.color = item.hovered ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.colorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.colorOnUnchecked) << ")\n"
             "if (isPressed) item.indicator.border.color = item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndPressed) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndPressed) << ";\n"
-            "else  item.indicator.border.color = (item.hovered || item.activeFocus) ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUnchecked) << ")\n"
+            "else  item.indicator.border.color = item.hovered ? (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndHovered) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << context->GetHexColor(toggleButtonConfig.borderColorOnChecked) << " : " << context->GetHexColor(toggleButtonConfig.borderColorOnUnchecked) << ")\n"
             "}\n"
         );
 
@@ -1494,12 +1494,19 @@ namespace RendererQml
         }
         else
         {
-            uiInnerSegment = std::make_shared<QmlTag>("Image");
+            uiInnerSegment = std::make_shared<QmlTag>("Button");
             uiInnerSegment->Property("anchors.centerIn", "parent");
             uiInnerSegment->Property("width", "parent.width - 3");
             uiInnerSegment->Property("height", "parent.height - 3");
+            uiInnerSegment->Property("verticalPadding", "0");
+            uiInnerSegment->Property("horizontalPadding", "0");
+            uiInnerSegment->Property("enabled", "false");
+            uiInnerSegment->Property("background", "Rectangle{color:'transparent'}");
+            uiInnerSegment->Property("icon.width", "width");
+            uiInnerSegment->Property("icon.height", "height");
+            uiInnerSegment->Property("icon.color", context->GetHexColor(toggleButtonConfig.checkBoxIconColorOnChecked));
+            uiInnerSegment->Property("icon.source", RendererQml::check_icon_12, true);
             uiInnerSegment->Property("visible", checkbox.id + ".checked");
-            uiInnerSegment->Property("source", RendererQml::check_icon_12, true);
             uiButton->Property("Keys.onReturnPressed", "{checked = !checked;}");
         }
 
@@ -3117,6 +3124,7 @@ namespace RendererQml
                 contentText->Property("text", action->GetTitle(), true);
             }
             contentText->Property("font.pixelSize", Formatter() << buttonConfig.pixelSize);
+            contentText->Property("font.weight", buttonConfig.fontWeight);
             contentText->Property("elide", "Text.ElideRight");
 
             bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : 1");
@@ -4075,6 +4083,12 @@ namespace RendererQml
         rightRectangle->Property("height", Formatter() << rectangleSize);
         rightRectangle->Property("x", Formatter() << uiCard->GetId() << ".width - 1 - " << rectangleSize);
         rightRectangle->Property("y", Formatter() << uiCard->GetId() << ".y + 1");
+
+        if (uiCard->HasProperty("layer.effect"))
+        {
+            leftRectangle->Property("z", "-1");
+            rightRectangle->Property("z", "-1");
+        }
 
         uiCard->AddChild(leftRectangle);
         uiCard->AddChild(rightRectangle);
