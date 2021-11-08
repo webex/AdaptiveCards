@@ -125,7 +125,7 @@ namespace RendererQml
         static std::shared_ptr<QmlTag> GetClearIconButton(std::shared_ptr<AdaptiveRenderContext> context);
 
         static const std::string GetImagePath(std::shared_ptr<AdaptiveRenderContext> context, const std::string url);
-        static std::shared_ptr<QmlTag> GetOpacityMask(std::string parentId);
+
         static std::shared_ptr<QmlTag> AddCornerRectangles(std::shared_ptr<QmlTag> uiCard, int rectangleSize);
     };
 }

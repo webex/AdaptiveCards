@@ -71,7 +71,6 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick 2.15");
         uiCard->AddImports("import QtQuick.Layouts 1.3");
         uiCard->AddImports("import QtQuick.Controls 2.15");
-        uiCard->AddImports("import QtGraphicalEffects 1.15");
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);
@@ -97,8 +96,6 @@ namespace RendererQml
 			uiFrame->Property("anchors.fill", "parent");
 			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context, "parent.imgSource")->ToString());
 			uiCard->Property("clip", "true");
-            uiCard->Property("layer.enabled", "true");
-            uiCard->Property("layer.effect", GetOpacityMask(uiCard->GetId())->ToString());
 			uiCard->AddChild(uiFrame);
 		}
 
@@ -155,10 +152,6 @@ namespace RendererQml
 
         if ((!rectangle->HasProperty("Layout.topMargin") || !rectangle->HasProperty("Layout.bottomMargin")) && !isChildCard)
         {
-            uiCard->Property("clip", "true");
-            uiCard->Property("layer.enabled", "true");
-            uiCard->Property("layer.effect", GetOpacityMask(uiCard->GetId())->ToString());
-
             if (!rectangle->HasProperty("Layout.topMargin"))
             {
                 rectangle->Property("Layout.topMargin", "1");
@@ -178,19 +171,6 @@ namespace RendererQml
 		{
 			rectangle->Property("Layout.minimumHeight", std::to_string(card->GetMinHeight() - tempMargin));
 		}
-
-        if (!isChildCard)
-        {
-            auto clipRectangle = std::make_shared<QmlTag>("Rectangle");
-            clipRectangle->Property("anchors.fill", "parent");
-            clipRectangle->Property("clip", "true");
-            clipRectangle->Property("radius", Formatter() << cardConfig.cardRadius);
-            clipRectangle->Property("border.color", "'#B2B2B2'");
-            clipRectangle->Property("border.width", "1");
-            clipRectangle->Property("color", "'transparent'");
-            clipRectangle->Property("z", "1");
-            uiCard->AddChild(clipRectangle);
-        }
 
         //Add submit onclick event
         addSubmitActionButtonClickFunc(context);
@@ -2176,8 +2156,6 @@ namespace RendererQml
 			break;
 		case AdaptiveCards::ImageStyle::Person:
 			uiRectangle->Property("radius", "width/2");
-            uiRectangle->Property("layer.enabled", "true");
-            uiRectangle->Property("layer.effect", GetOpacityMask(uiRectangle->GetId())->ToString());
 			break;
 		}
 
@@ -4050,21 +4028,6 @@ namespace RendererQml
         std::replace(dir_path.begin(), dir_path.end(), '\\', '/');
         dir_path = std::string("file:/") + dir_path;
         return dir_path;
-    }
-
-    std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetOpacityMask(std::string parentId)
-    {
-        auto opacityMask = std::make_shared<QmlTag>("OpacityMask");
-
-        auto rectangle = std::make_shared<QmlTag>("Rectangle");
-        rectangle->Property("x", Formatter() << parentId << ".x");
-        rectangle->Property("y", Formatter() << parentId << ".y");
-        rectangle->Property("width", Formatter() << parentId << ".width");
-        rectangle->Property("height", Formatter() << parentId << ".height");
-        rectangle->Property("radius", Formatter() << parentId << ".radius");
-
-        opacityMask->Property("maskSource", rectangle->ToString());
-        return opacityMask;
     }
 
     std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::AddCornerRectangles(std::shared_ptr<QmlTag> uiCard, int rectangleSize)
