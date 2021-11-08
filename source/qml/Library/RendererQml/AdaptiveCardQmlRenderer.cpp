@@ -163,6 +163,19 @@ namespace RendererQml
             }
         }
 
+        if (!isChildCard)
+        {
+            auto clipRectangle = std::make_shared<QmlTag>("Rectangle");
+            clipRectangle->Property("anchors.fill", "parent");
+            clipRectangle->Property("clip", "true");
+            clipRectangle->Property("radius", Formatter() << cardConfig.cardRadius);
+            clipRectangle->Property("border.color", "'#B2B2B2'");
+            clipRectangle->Property("border.width", "1");
+            clipRectangle->Property("color", "'transparent'");
+            clipRectangle->Property("z", "1");
+            uiCard->AddChild(clipRectangle);
+        }
+
 		bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
 
 		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
