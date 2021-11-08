@@ -4047,12 +4047,6 @@ namespace RendererQml
         rightRectangle->Property("x", Formatter() << uiCard->GetId() << ".width - 1 - " << rectangleSize);
         rightRectangle->Property("y", Formatter() << uiCard->GetId() << ".y + 1");
 
-        if (uiCard->HasProperty("layer.effect"))
-        {
-            leftRectangle->Property("z", "-1");
-            rightRectangle->Property("z", "-1");
-        }
-
         uiCard->AddChild(leftRectangle);
         uiCard->AddChild(rightRectangle);
 
