@@ -166,6 +166,7 @@ namespace RendererQml
         if (!isChildCard)
         {
             auto clipRectangle = std::make_shared<QmlTag>("Rectangle");
+            clipRectangle->Property("id", "clipRectangle");
             clipRectangle->Property("anchors.fill", "parent");
             clipRectangle->Property("clip", "true");
             clipRectangle->Property("radius", Formatter() << cardConfig.cardRadius);
