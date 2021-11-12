@@ -626,6 +626,8 @@ namespace RendererQml
             clearIcon->Property("id", Formatter() << input->GetId() << "_clear_icon");
             clearIcon->Property("visible", Formatter() << input->GetId() << ".text.length != 0");
             clearIcon->Property("onClicked", Formatter() << "{nextItemInFocusChain().forceActiveFocus();" << input->GetId() << ".clear()}");
+            clearIcon->Property("Accessible.name", Formatter() << (input->GetPlaceholder().empty() ? "Text" : input->GetPlaceholder()) << " clear", true);
+            clearIcon->Property("Accessible.role", "Accessible.Button");
 
             uiTextInput->Property("width", Formatter() << "parent.width - " << clearIcon->GetId() << ".width - " << textConfig.clearIconHorizontalPadding);
 
@@ -634,6 +636,8 @@ namespace RendererQml
         }
 
         uiTextInput->Property("font.pixelSize", Formatter() << textConfig.pixelSize);
+        uiTextInput->Property("Accessible.name", input->GetPlaceholder().empty() ? "Text Field" : input->GetPlaceholder(), true);
+        uiTextInput->Property("Accessible.role", "Accessible.EditableText");
 
         if (!input->GetValue().empty())
         {
@@ -755,6 +759,8 @@ namespace RendererQml
         {
             contentItemTag->Property("placeholderText", input->GetPlaceholder(), true);
         }
+        contentItemTag->Property("Accessible.name", input->GetPlaceholder().empty() ? "Number Input Field" : input->GetPlaceholder(), true);
+        contentItemTag->Property("Accessible.role", "Accessible.EditableText");
 
         auto textBackgroundTag = std::make_shared<QmlTag>("Rectangle");
         textBackgroundTag->Property("color", "'transparent'");
@@ -862,7 +868,7 @@ namespace RendererQml
         uiSplitterRactangle->Property("color", Formatter() << "(" << upDownIcon->GetId() << ".pressed || activeFocus) ? " << context->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << upDownIcon->GetId() << ".hovered ? " << context->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << context->GetHexColor(numberConfig.backgroundColorNormal));
         uiSplitterRactangle->Property("Keys.onPressed", Formatter() << "{\n"
             "if (event.key === Qt.Key_Up || event.key === Qt.Key_Down)\n"
-            "{" << uiNumberInput->GetId() << ".changeValue(event.key);event.accepted = true;}}\n"
+            "{" << uiNumberInput->GetId() << ".changeValue(event.key);accessiblityPrefix = '';event.accepted = true;}}\n"
         );
 
         uiNumberInput->Property("contentItem", contentItemTag->ToString());
@@ -901,6 +907,17 @@ namespace RendererQml
         uiSplitterRactangle->AddChild(downIndicatorTag);
 
         context->addToInputElementList(origionalElementId, (inputId + ".value"));
+
+        uiNumberInput->Property("Accessible.ignored", "true");
+        clearIcon->Property("Accessible.name", Formatter() << (input->GetPlaceholder().empty() ? "Number Input" : input->GetPlaceholder()) << " clear", true);
+        clearIcon->Property("Accessible.role", "Accessible.Button");
+
+        uiSplitterRactangle->Property("property string accessiblityPrefix", "''");
+        uiSplitterRactangle->Property("onActiveFocusChanged", Formatter() << "{"
+            << "if (activeFocus)"
+            << "accessiblityPrefix = '" << (input->GetPlaceholder().empty() ? "Number Input " : input->GetPlaceholder()) << "stepper. Current number is '}");
+        uiSplitterRactangle->Property("Accessible.name", Formatter() << "accessiblityPrefix + " << contentItemTag->GetId() << ".displayText");
+        uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
 
         return numberInputRow;
 	}
@@ -1526,6 +1543,8 @@ namespace RendererQml
         uiTextField->Property("topPadding", Formatter() << dateInputConfig.textVerticalPadding);
         uiTextField->Property("bottomPadding", Formatter() << dateInputConfig.textVerticalPadding);
         uiTextField->Property("padding", "0");
+        uiTextField->Property("Accessible.name", "placeholderText");
+        uiTextField->Property("Accessible.role", "Accessible.EditableText");
 
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("color", "'transparent'");
@@ -1708,6 +1727,8 @@ namespace RendererQml
             << "nextItemInFocusChain().forceActiveFocus();\n"
             << uiTextFieldId << ".clear();\n" << "}";
         clearIcon->Property("onClicked", clearIcon_OnClicked_value);
+        clearIcon->Property("Accessible.name", Formatter() << (input->GetPlaceholder().empty() ? "Date Input" : input->GetPlaceholder()) << " clear", true);
+        clearIcon->Property("Accessible.role", "Accessible.Button");
 				
         context->addToInputElementList(origionalElementId, (uiTextField->GetId() + ".selectedDate"));
 
@@ -1716,6 +1737,8 @@ namespace RendererQml
         uiDateInputRow->AddChild(clearIcon);
 
         uiDateInputWrapper->AddChild(uiDateInputRow);
+
+        uiDateInputCombobox->Property("Accessible.ignored", "true");
 
         return uiDateInputWrapper;
     }
@@ -1751,6 +1774,8 @@ namespace RendererQml
 		listviewCalendar->Property("property date minimumDate", minimumDate != "" ? minimumDate : Formatter() << "new Date(" << std::to_string(lowerDateLimit.at(0)) << "," << std::to_string(lowerDateLimit.at(1)) << "," << std::to_string(lowerDateLimit.at(2)) << ")");
 		listviewCalendar->Property("property date maximumDate", maximumDate != "" ? maximumDate : Formatter() << "new Date(" << std::to_string(upperDateLimit.at(0)) << "," << std::to_string(upperDateLimit.at(1)) << "," << std::to_string(upperDateLimit.at(2)) << ")");
 		listviewCalendar->Property("property date selectedDate", "new Date()");
+		listviewCalendar->Property("property string accessibilityPrefix", "Date Picker. The current date is", true);
+		listviewCalendar->Property("property string dateForSc", "''");
 
 		listviewCalendar->Property("id", Formatter() << textFieldId << "_calendarRoot");
 
@@ -1763,7 +1788,7 @@ namespace RendererQml
 			<< "curCalendarMonth = selectedDate.getMonth();"
             << "var curIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth();"
             << "currentIndex = curIndex;"
-			<< "positionViewAtIndex(curIndex, ListView.Center);" << " }");
+			<< "positionViewAtIndex(curIndex, ListView.Center);" << "getDateForSC(clickedDate); }");
 
 		listviewCalendar->AddFunctions(Formatter() << "function setCalendarDateFromString(dateString)\n"
 			<< "{\n"
@@ -1776,28 +1801,14 @@ namespace RendererQml
 			<< "setDate(selectedDate)\n"
 			<< "}");
 
-        listviewCalendar->Property("Keys.onPressed", Formatter() << "{"
-            << "var date = new Date(selectedDate)\n"
-            << "if (event.key === Qt.Key_Right)\n"
-            << "date.setDate(date.getDate() + 1)\n"
-            << "else if (event.key === Qt.Key_Left)\n"
-            << "date.setDate(date.getDate() - 1)\n"
-            << "else if (event.key === Qt.Key_Up)\n"
-            << "date.setDate(date.getDate() - 7)\n"
-            << "else if (event.key === Qt.Key_Down)\n"
-            << "date.setDate(date.getDate() + 7)\n"
-            << "else if (event.key === Qt.Key_Return)\n"
-            << "{\n"
-            << popupTag->GetId() << ".close();\n"
-            << textFieldId << ".text = selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"dd\\/MMM\\/yyyy\")\n"
-            << "}\n"
-            << "if (date >= minimumDate && date <= maximumDate)\n"
-            << "{\n"
-            << "selectedDate = new Date(date)\n"
-            << "currentIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth()\n"
-            << "}"
-            << "event.accepted = true\n"
-        "}\n");
+		listviewCalendar->AddFunctions(Formatter() << "function getDateForSC(clickedDate)\n"
+			<< "{\n"
+			<< "var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']\n"
+			<< "var d = clickedDate.getDate()\n"
+			<< "var m = months[clickedDate.getMonth()]\n"
+			<< "var y = clickedDate.getFullYear()\n"
+			<< listviewCalendar->GetId() << ".dateForSc = m + ' ' + d + ' ' + y\n"
+			<< "}");
 
 		listviewCalendar->Property("Component.onCompleted", Formatter() << "{"
 			<< textFieldId << "." << "textChanged" << textFieldId << ".connect(setCalendarDateFromString);"
@@ -1846,6 +1857,10 @@ namespace RendererQml
 
 		auto delegateRectangle = std::make_shared<QmlTag>("Rectangle");
 		delegateRectangle->Property("id", Formatter() << textFieldId << "delegateRectangle");
+		delegateRectangle->Property("property bool datePickerFocusCheck", Formatter() << listviewCalendar->GetId() << ".activeFocus && " << listviewCalendar->GetId() << ".activeFocus && new Date(year,month,date).toDateString() == " << listviewCalendar->GetId() << ".selectedDate.toDateString()");
+		delegateRectangle->Property("onDatePickerFocusCheckChanged", "{if (datePickerFocusCheck)forceActiveFocus()}");
+		delegateRectangle->Property("Accessible.name", Formatter() << listviewCalendar->GetId() << ".accessibilityPrefix + " << listviewCalendar->GetId() << ".dateForSc");
+		delegateRectangle->Property("Accessible.role", "Accessible.NoRole");
 
 		auto delegateMouseArea = std::make_shared<QmlTag>("MouseArea");
 		delegateMouseArea->Property("id", Formatter() << textFieldId << "delegateMouseArea");
@@ -1890,6 +1905,14 @@ namespace RendererQml
 		delegateRectangle->Property("radius", "0.5 * width");
 		delegateRectangle->Property("property date cellDate", "new Date(year,month,date)");
 
+        auto borderFocusRectangle = std::make_shared<QmlTag>("Rectangle");
+        borderFocusRectangle->Property("width", Formatter() << dateInputConfig.dateElementSize);
+        borderFocusRectangle->Property("height", Formatter() << dateInputConfig.dateElementSize);
+        borderFocusRectangle->Property("color", "'transparent'");
+        borderFocusRectangle->Property("border.width", Formatter() << listviewCalendar->GetId() << ".activeFocus && new Date(year,month,date).toDateString() == " << listviewCalendar->GetId() << ".selectedDate.toDateString() ? 1 : 0");
+        borderFocusRectangle->Property("border.color", context->GetHexColor(dateInputConfig.calendarBorderColor));
+
+        delegateRectangle->AddChild(borderFocusRectangle);
 		delegateRectangle->AddChild(delegateText);
 		delegateRectangle->AddChild(delegateMouseArea);
 		repeaterTag->Property("delegate",delegateRectangle->ToString());
@@ -1904,6 +1927,14 @@ namespace RendererQml
 
         auto iconBackground = std::make_shared<QmlTag>("Rectangle");
         iconBackground->Property("color", context->GetHexColor(dateInputConfig.calendarBackgroundColor));
+        iconBackground->Property("border.width", "parent.activeFocus ? 1 : 0");
+        iconBackground->Property("border.color", context->GetHexColor(dateInputConfig.calendarBorderColor));
+
+        std::string setMonthDate = Formatter() << "var tempDate = new Date()\n"
+            << "tempDate.setMonth(" << listviewCalendar->GetId() << ".curCalendarMonth)\n"
+            << "tempDate.setYear(" << listviewCalendar->GetId() << ".curCalendarYear)\n"
+            << "tempDate.setDate(1)\n"
+            << listviewCalendar->GetId() << ".setDate(tempDate);" << listviewCalendar->GetId() << ".getDateForSC(tempDate)\n";
 
 		auto rightArrowButton = GetIconTag(context);
 		rightArrowButton->Property("id", Formatter() << textFieldId << "_rightArrow");
@@ -1917,13 +1948,16 @@ namespace RendererQml
 		rightArrowButton->Property("anchors.margins", "0");
 		rightArrowButton->Property("icon.source", RendererQml::right_arrow_28, true);
         rightArrowButton->Property("background", iconBackground->ToString());
+        rightArrowButton->Property("Keys.onReturnPressed", "onReleased()");
+        rightArrowButton->Property("Accessible.name", "Next Month", true);
+        rightArrowButton->Property("Accessible.role", "Accessible.Button");
 
 		std::string rightArrowOnClicked = Formatter() << "{\n"
 			<< listviewCalendar->GetId() << ".curCalendarYear = " << listviewCalendar->GetId() << ".curCalendarMonth ==11? " << listviewCalendar->GetId() << ".curCalendarYear + 1 : " << listviewCalendar->GetId() << ".curCalendarYear;\n"
 			<< listviewCalendar->GetId() << ".curCalendarMonth = (" << listviewCalendar->GetId() << ".curCalendarMonth + 1)%12;\n"
 			<< listviewCalendar->GetId() << ".positionViewAtIndex((" << listviewCalendar->GetId() << ".curCalendarYear) * 12 + (" << listviewCalendar->GetId() << ".curCalendarMonth), ListView.Center);\n"
-			<< "}\n";
-		rightArrowButton->Property("onClicked", rightArrowOnClicked);
+			<< setMonthDate << "}\n";
+		rightArrowButton->Property("onReleased", rightArrowOnClicked);
 
 		auto leftArrowButton = GetIconTag(context);
 		leftArrowButton->Property("id", Formatter() << textFieldId << "_leftArrow");
@@ -1938,13 +1972,49 @@ namespace RendererQml
 		leftArrowButton->Property("anchors.right", Formatter() << rightArrowButton->GetId() << ".left");
 		leftArrowButton->Property("icon.source", RendererQml::left_arrow_28, true);
         leftArrowButton->Property("background", iconBackground->ToString());
+        leftArrowButton->Property("Keys.onReturnPressed", "onReleased()");
+        leftArrowButton->Property("Accessible.name", "Previous Month", true);
+        leftArrowButton->Property("Accessible.role", "Accessible.Button");
 
 		std::string leftArrowOnClicked = Formatter() << "{\n"
 			<< listviewCalendar->GetId() << ".curCalendarYear = " << listviewCalendar->GetId() << ".curCalendarMonth - 1 < 0 ? " << listviewCalendar->GetId() << ".curCalendarYear - 1 : " << listviewCalendar->GetId() << ".curCalendarYear;\n"
 			<< listviewCalendar->GetId() << ".curCalendarMonth = " << listviewCalendar->GetId() << ".curCalendarMonth - 1 < 0 ? 11 : " << listviewCalendar->GetId() << ".curCalendarMonth - 1;\n"
 			<< listviewCalendar->GetId() << ".positionViewAtIndex((" << listviewCalendar->GetId() << ".curCalendarYear) * 12 + (" << listviewCalendar->GetId() << ".curCalendarMonth), ListView.Center);\n"
-			<< "}\n";
-		leftArrowButton->Property("onClicked", leftArrowOnClicked);
+            << setMonthDate << "}\n";
+		leftArrowButton->Property("onReleased", leftArrowOnClicked);
+
+        leftArrowButton->Property("KeyNavigation.tab", rightArrowButton->GetId());
+        rightArrowButton->Property("KeyNavigation.tab", listviewCalendar->GetId());
+        leftArrowButton->Property("KeyNavigation.backtab", listviewCalendar->GetId());
+        rightArrowButton->Property("KeyNavigation.backtab", leftArrowButton->GetId());
+
+        listviewCalendar->Property("Keys.onPressed", Formatter() << "{"
+            << "var date = new Date(selectedDate)\n"
+            << "if (event.key === Qt.Key_Right)\n"
+            << "date.setDate(date.getDate() + 1)\n"
+            << "else if (event.key === Qt.Key_Left)\n"
+            << "date.setDate(date.getDate() - 1)\n"
+            << "else if (event.key === Qt.Key_Up)\n"
+            << "date.setDate(date.getDate() - 7)\n"
+            << "else if (event.key === Qt.Key_Down)\n"
+            << "date.setDate(date.getDate() + 7)\n"
+            << "else if (event.key === Qt.Key_Return)\n"
+            << "{\n"
+            << popupTag->GetId() << ".close();\n"
+            << textFieldId << ".text = selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"dd\\/MMM\\/yyyy\")\n"
+            << "}\n"
+            << "else if (event.key === Qt.Key_Tab) {\n"
+            << leftArrowButton->GetId() << ".forceActiveFocus()}\n"
+            << "else if (event.key === Qt.Key_Backtab) {\n"
+            << rightArrowButton->GetId() << ".forceActiveFocus()}\n"
+            << "if (date >= minimumDate && date <= maximumDate)\n"
+            << "{\n"
+            << "selectedDate = new Date(date)\n"
+            << "currentIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth()\n"
+            << "}\n"
+            << listviewCalendar->GetId() << ".accessibilityPrefix = '';getDateForSC(selectedDate);"
+            << "event.accepted = true\n"
+            "}\n");
 
 		popupTag->AddChild(rightArrowButton);
 		popupTag->AddChild(leftArrowButton);
