@@ -1154,6 +1154,7 @@ namespace RendererQml
         );
         uiComboBox->Property("onActiveFocusChanged", "colorChange(false)");
         uiComboBox->Property("onHoveredChanged", "colorChange(false)");
+        uiComboBox->Property("Accessible.name", "displayText");
 
         const std::string iconId = choiceset.id + "_icon";
         auto iconTag = GetIconTag(context);
@@ -1213,6 +1214,7 @@ namespace RendererQml
         uiItemDelegate->Property("verticalPadding", Formatter() << choiceSetConfig.dropDownElementVerticalPadding);
         uiItemDelegate->Property("horizontalPadding", Formatter() << choiceSetConfig.dropDownElementHorizontalPadding);
         uiItemDelegate->Property("highlighted", "ListView.isCurrentItem");
+        uiItemDelegate->Property("Accessible.name", "modelData.text");
 
         auto backgroundTagDelegate = std::make_shared<QmlTag>("Rectangle");
         //TODO: These color styling should come from css
@@ -1362,6 +1364,44 @@ namespace RendererQml
                 << choiceset.id << ".colorChange(" << button->GetId() << ", false);}\n"
             );
             uiInnerColumn->AddChild(button);
+        }
+
+        if (!choiceset.isMultiSelect && uiInnerColumn->GetChildren().size() > 1)
+        {
+            uiColumn->Property("activeFocusOnTab", "true");
+            uiColumn->Property("onActiveFocusChanged", Formatter() << "{"
+                "if(activeFocus){"
+                "if(" << uiButtonGroup->GetId() << ".checkedButton !== null){"
+                << uiButtonGroup->GetId() << ".checkedButton.forceActiveFocus();}"
+                "else{"
+                << uiInnerColumn->GetChildren()[0]->GetId() << ".forceActiveFocus()}}}");
+
+            for (int i = 0; i < uiInnerColumn->GetChildren().size(); i++)
+            {
+                std::string upString = "";
+                std::string downString = "";
+                std::string tabString = Formatter() << "if(event.key == Qt.Key_Tab)\n"
+                    << "{" << uiColumn->GetId() << ".nextItemInFocusChain().forceActiveFocus(); event.accepted = true;}\n";
+
+                auto button = uiInnerColumn->GetChildren()[i];
+
+                if (i != 0)
+                {
+                    auto prevButtonId = uiInnerColumn->GetChildren()[i - 1]->GetId();
+                    upString = Formatter() << "if(event.key == Qt.Key_Up)\n"
+                        << "{" << prevButtonId << ".checked = true; " << prevButtonId << ".forceActiveFocus(); event.accepted = true;}\n";
+                }
+
+                if (i != uiInnerColumn->GetChildren().size() - 1)
+                {
+                    auto nextButtonId = uiInnerColumn->GetChildren()[i + 1]->GetId();
+                    downString = Formatter() << "if(event.key == Qt.Key_Down)\n"
+                        << "{" << nextButtonId << ".checked = true; " << nextButtonId << ".forceActiveFocus(); event.accepted = true;}\n";
+                }
+
+                button->Property("Keys.onPressed", Formatter() << "{"<< upString << downString << tabString << "}");
+                button->Property("activeFocusOnTab", "false");
+            }
         }
 
         uiColumn->AddFunctions(Formatter() << "function colorChange(item,isPressed){\n"
@@ -1545,6 +1585,9 @@ namespace RendererQml
         uiTextField->Property("padding", "0");
         uiTextField->Property("Accessible.name", "placeholderText");
         uiTextField->Property("Accessible.role", "Accessible.EditableText");
+        uiTextField->Property("Keys.onReleased", Formatter() << "{"
+            "if (event.key === Qt.Key_Escape)\n"
+            "{event.accepted = true}\n}");
 
         auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
         backgroundTag->Property("color", "'transparent'");
@@ -2277,6 +2320,11 @@ namespace RendererQml
         uiTimeInput->Property("topPadding", Formatter() << timeConfig.textVerticalPadding);
         uiTimeInput->Property("bottomPadding", Formatter() << timeConfig.textVerticalPadding);
         uiTimeInput->Property("padding", "0");
+        uiTimeInput->Property("Accessible.name", "placeholderText");
+        uiTimeInput->Property("Accessible.role", "Accessible.EditableText");
+        uiTimeInput->Property("Keys.onReleased", Formatter() << "{"
+            "if (event.key === Qt.Key_Escape)\n"
+            "{event.accepted = true}\n}");
 
         uiTimeInput->Property("validator", "RegExpValidator { regExp: /^(--|[01][0-9|-]|2[0-3|-]):(--|[0-5][0-9|-])$/}");
 
@@ -2359,6 +2407,8 @@ namespace RendererQml
             << timePopup_id << ".close();\n"
             << "}";
         clearIcon->Property("onClicked", clearIcon_OnClicked_value);
+        clearIcon->Property("Accessible.name", Formatter() << (input->GetPlaceholder().empty() ? "Time Input" : input->GetPlaceholder()) << " clear", true);
+        clearIcon->Property("Accessible.role", "Accessible.Button");
 
         //Popup that contains the hours and min ListViews
         auto PopupBgrTag = std::make_shared<QmlTag>("Rectangle");
@@ -2387,6 +2437,7 @@ namespace RendererQml
         auto timeBoxTag = std::make_shared<QmlTag>("Rectangle");
         timeBoxTag->Property("anchors.fill", "parent");
         timeBoxTag->Property("color", "'transparent'");
+        timeBoxTag->Property("Accessible.name", "Time Picker", true);
 
         auto timeBoxRow = std::make_shared<QmlTag>("RowLayout");
         timeBoxRow->Property("width", "parent.width");
@@ -2423,6 +2474,8 @@ namespace RendererQml
             ListViewttProperties["Text"].insert(std::pair<std::string, std::string>("KeyNavigation.left", listViewMin_id));
             ListViewttProperties["ListView"].insert(std::pair<std::string, std::string>("Keys.onReturnPressed", Formatter() << timePopup_id << ".close()"));
             ListViewttProperties["ListView"].insert(std::pair<std::string, std::string>("Layout.rightMargin", Formatter() << timeConfig.timePickerColumnSpacing));
+            ListViewttProperties["Rectangle"].insert(std::pair<std::string, std::string>("Accessible.name", Formatter() << "(" << listViewtt_id << ".currentIndex < 0) ? ' ' : (" << listViewtt_id << ".currentIndex == 0 ? 'AM' : 'PM')"));
+            ListViewttProperties["Rectangle"].insert(std::pair<std::string, std::string>("Accessible.role", "Accessible.StaticText"));
 
             listViewttTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewtt_id, ListViewttProperties, true, context);
 
@@ -2442,6 +2495,8 @@ namespace RendererQml
         ListViewHoursProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{ forceActiveFocus();" << listViewHours_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0') ;" << id << ".insert(0,x);" << "}"));
         ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("KeyNavigation.right", listViewMin_id));
         ListViewHoursProperties["ListView"].insert(std::pair<std::string, std::string>("Keys.onReturnPressed", Formatter() << timePopup_id << ".close()"));
+        ListViewHoursProperties["Rectangle"].insert(std::pair<std::string, std::string>("Accessible.name", Formatter() << "(" << listViewHours_id << ".currentIndex < 0) ? ' ' : 'Hour ' + String(" << listViewHours_id << ".currentIndex" << (is12hour ? " + 1" : "") << ")"));
+        ListViewHoursProperties["Rectangle"].insert(std::pair<std::string, std::string>("Accessible.role", "Accessible.StaticText"));
 
         auto ListViewHoursTag = AdaptiveCardQmlRenderer::ListViewTagforTimeInput(id, listViewHours_id, ListViewHoursProperties, false, context);
 
@@ -2449,6 +2504,8 @@ namespace RendererQml
         ListViewMinProperties["MouseArea"].insert(std::pair<std::string, std::string>("onClicked", Formatter() << "{ forceActiveFocus();" << listViewMin_id << ".currentIndex=index;" << "var x=String(index).padStart(2, '0') ;" << id << ".insert(2,x);" << "}"));
         ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("KeyNavigation.left", listViewHours_id));
         ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("Keys.onReturnPressed", Formatter() << timePopup_id << ".close()"));
+        ListViewMinProperties["Rectangle"].insert(std::pair<std::string, std::string>("Accessible.name", Formatter() << "(" << listViewMin_id << ".currentIndex < 0) ? ' ' : 'Minute ' + String(" << listViewMin_id << ".currentIndex)"));
+        ListViewMinProperties["Rectangle"].insert(std::pair<std::string, std::string>("Accessible.role", "Accessible.StaticText"));
         if (is12hour == false)
         {
             ListViewMinProperties["ListView"].insert(std::pair<std::string, std::string>("Layout.rightMargin", Formatter() << timeConfig.timePickerColumnSpacing));
@@ -2460,6 +2517,7 @@ namespace RendererQml
         uiTimeComboBox->Property("Keys.onReturnPressed", Formatter() << timePopup_id << ".open()");
         uiTimeComboBox->Property("focusPolicy", "Qt.NoFocus");
         uiTimeComboBox->Property("onActiveFocusChanged", Formatter() << uiTimeInputWrapper->GetId() << ".colorChange(false)");
+        uiTimeComboBox->Property("Accessible.ignored", "true");
 
         timeBoxTag->AddChild(timeBoxRow);
 
@@ -2547,6 +2605,11 @@ namespace RendererQml
             else if (outer_iterator->first.compare("Text") == 0)
             {
                 propertyTag = TextTag;
+            }
+
+            else if (outer_iterator->first.compare("Rectangle") == 0)
+            {
+                propertyTag = delegateRectTag;
             }
 
             for (inner_iterator = outer_iterator->second.begin(); inner_iterator != outer_iterator->second.end(); inner_iterator++)
@@ -3232,6 +3295,9 @@ namespace RendererQml
             }
 
             buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
+
+            buttonElement->Property("Accessible.name", Formatter() << contentText->GetId() << ".text");
+            buttonElement->Property("Accessible.role", "Accessible.Button");
             return buttonElement;
         }
 
