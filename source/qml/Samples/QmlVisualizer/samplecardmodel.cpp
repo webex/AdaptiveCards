@@ -245,10 +245,10 @@ void SampleCardModel::actionSubmitButtonClicked(const QString& title, const QStr
     output.append("data: " + data);
     emit sendCardResponseToQml(output);
 
-    //To enable the button 3s after Action.Submit
+    //To enable the button 2s after Action.Submit
     std::thread thread_object([this]() {
         submit_mutex.lock();
-        std::chrono::seconds duration(3);
+        std::chrono::seconds duration(2);
         std::this_thread::sleep_for(duration);
         emit enableAdaptiveCardSubmitButton();
         submit_mutex.unlock();
