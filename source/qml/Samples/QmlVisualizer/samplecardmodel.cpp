@@ -11,6 +11,7 @@
 using namespace RendererQml;
 
 std::mutex images_mutex;
+std::mutex submit_mutex;
 
 SampleCardModel::SampleCardModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -243,6 +244,17 @@ void SampleCardModel::actionSubmitButtonClicked(const QString& title, const QStr
     output.append("Type: " + type + "\n");
     output.append("data: " + data);
     emit sendCardResponseToQml(output);
+
+    //To enable the button 3s after Action.Submit
+    std::thread thread_object([this]() {
+        submit_mutex.lock();
+        std::chrono::seconds duration(3);
+        std::this_thread::sleep_for(duration);
+        emit enableAdaptiveCardSubmitButton();
+        submit_mutex.unlock();
+        });
+
+    thread_object.detach();
 }
 
 std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>>> SampleCardModel::GetCardImageUrls(std::shared_ptr<AdaptiveCards::BaseCardElement> cardElement, std::map<int, std::string> urls, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>> showCards)
@@ -525,6 +537,7 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
         actionButtonsConfig.primaryColorConfig.buttonColorNormal = "#F2000000";
         actionButtonsConfig.primaryColorConfig.buttonColorHovered = "#CC000000";
         actionButtonsConfig.primaryColorConfig.buttonColorPressed = "#B3000000";
+        actionButtonsConfig.primaryColorConfig.buttonColorDisabled = "#33000000";
         actionButtonsConfig.primaryColorConfig.borderColorNormal = "#F2000000";
         actionButtonsConfig.primaryColorConfig.borderColorHovered = "#F2000000";
         actionButtonsConfig.primaryColorConfig.borderColorPressed = "#F2000000";
@@ -532,10 +545,12 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
         actionButtonsConfig.primaryColorConfig.textColorNormal = "#F2FFFFFF";
         actionButtonsConfig.primaryColorConfig.textColorHovered = "#F2FFFFFF";
         actionButtonsConfig.primaryColorConfig.textColorPressed = "#F2FFFFFF";
+        actionButtonsConfig.primaryColorConfig.textColorDisabled = "#66000000";
 
         actionButtonsConfig.secondaryColorConfig.buttonColorNormal = "#00000000";
         actionButtonsConfig.secondaryColorConfig.buttonColorHovered = "#12000000";
         actionButtonsConfig.secondaryColorConfig.buttonColorPressed = "#33000000";
+        actionButtonsConfig.secondaryColorConfig.buttonColorDisabled = "#33000000";
         actionButtonsConfig.secondaryColorConfig.borderColorNormal = "#4D000000";
         actionButtonsConfig.secondaryColorConfig.borderColorHovered = "#4D000000";
         actionButtonsConfig.secondaryColorConfig.borderColorPressed = "#4D000000";
@@ -543,10 +558,12 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
         actionButtonsConfig.secondaryColorConfig.textColorNormal = "#F2000000";
         actionButtonsConfig.secondaryColorConfig.textColorHovered = "#F2000000";
         actionButtonsConfig.secondaryColorConfig.textColorPressed = "#F2000000";
+        actionButtonsConfig.secondaryColorConfig.textColorDisabled = "#66000000";
 
         actionButtonsConfig.positiveColorConfig.buttonColorNormal = "#00000000";
         actionButtonsConfig.positiveColorConfig.buttonColorHovered = "#FF185E46";
         actionButtonsConfig.positiveColorConfig.buttonColorPressed = "#FF134231";
+        actionButtonsConfig.positiveColorConfig.buttonColorDisabled = "#33000000";
         actionButtonsConfig.positiveColorConfig.borderColorNormal = "#FF185E46";
         actionButtonsConfig.positiveColorConfig.borderColorHovered = "#FF185E46";
         actionButtonsConfig.positiveColorConfig.borderColorPressed = "#FF134231";
@@ -554,10 +571,12 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
         actionButtonsConfig.positiveColorConfig.textColorNormal = "#FF185E46";
         actionButtonsConfig.positiveColorConfig.textColorHovered = "#F2FFFFFF";
         actionButtonsConfig.positiveColorConfig.textColorPressed = "#F2FFFFFF";
+        actionButtonsConfig.positiveColorConfig.textColorDisabled = "#66000000";
 
         actionButtonsConfig.destructiveColorConfig.buttonColorNormal = "#00000000";
         actionButtonsConfig.destructiveColorConfig.buttonColorHovered = "#FFAB0A15";
         actionButtonsConfig.destructiveColorConfig.buttonColorPressed = "#FF780D13";
+        actionButtonsConfig.destructiveColorConfig.buttonColorDisabled = "#33000000";
         actionButtonsConfig.destructiveColorConfig.borderColorNormal = "#FFAB0A15";
         actionButtonsConfig.destructiveColorConfig.borderColorHovered = "#FFAB0A15";
         actionButtonsConfig.destructiveColorConfig.borderColorPressed = "#FF780D13";
@@ -565,6 +584,7 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
         actionButtonsConfig.destructiveColorConfig.textColorNormal = "#FFAB0A15";
         actionButtonsConfig.destructiveColorConfig.textColorHovered = "#F2FFFFFF";
         actionButtonsConfig.destructiveColorConfig.textColorPressed = "#F2FFFFFF";
+        actionButtonsConfig.destructiveColorConfig.textColorDisabled = "#66000000";
     }
 
     return actionButtonsConfig;
