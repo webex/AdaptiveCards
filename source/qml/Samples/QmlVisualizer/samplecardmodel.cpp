@@ -382,6 +382,7 @@ std::map<int, std::string> SampleCardModel::GetImageUrls(std::shared_ptr<Adaptiv
 std::shared_ptr<AdaptiveCardRenderConfig> SampleCardModel::getRenderConfig(const bool isDark)
 {
     auto renderConfig = std::make_shared<AdaptiveCardRenderConfig>(isDark);
+    renderConfig->setCardConfig(getCardConfig(isDark));
     renderConfig->setInputTextConfig(getInputTextConfig(isDark));
     renderConfig->setInputNumberConfig(getInputNumberConfig(isDark));
     renderConfig->setInputTimeConfig(getInputTimeConfig(isDark));
@@ -390,6 +391,17 @@ std::shared_ptr<AdaptiveCardRenderConfig> SampleCardModel::getRenderConfig(const
     renderConfig->setInputDateConfig(getInputDateConfig(isDark));
     renderConfig->setActionButtonsConfig(getActionButtonsConfig(isDark));
     return renderConfig;
+}
+
+CardConfig SampleCardModel::getCardConfig(const bool isDark)
+{
+    CardConfig cardConfig;
+    if (!isDark)
+    {
+        cardConfig.cardBorderColor = "#33000000";
+        cardConfig.focusRectangleColor = "#80000000";
+    }
+    return cardConfig;
 }
 
 template <typename InputConfig>
@@ -512,6 +524,7 @@ ToggleButtonConfig SampleCardModel::getToggleButtonConfig(const bool isDark)
         toggleButtonConfig.textColor = "#F2000000";
         toggleButtonConfig.radioButtonInnerCircleColorOnChecked = "#F2FFFFFF";
         toggleButtonConfig.checkBoxIconColorOnChecked = "#F2FFFFFF";
+        toggleButtonConfig.focusRectangleColor = "#80000000";
     }
 
     return toggleButtonConfig;
@@ -533,6 +546,7 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
         actionButtonsConfig.primaryColorConfig.textColorNormal = "#F2FFFFFF";
         actionButtonsConfig.primaryColorConfig.textColorHovered = "#F2FFFFFF";
         actionButtonsConfig.primaryColorConfig.textColorPressed = "#F2FFFFFF";
+        actionButtonsConfig.primaryColorConfig.focusRectangleColor = "#80000000";
 
         actionButtonsConfig.secondaryColorConfig.buttonColorNormal = "#00000000";
         actionButtonsConfig.secondaryColorConfig.buttonColorHovered = "#12000000";
@@ -544,6 +558,7 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
         actionButtonsConfig.secondaryColorConfig.textColorNormal = "#F2000000";
         actionButtonsConfig.secondaryColorConfig.textColorHovered = "#F2000000";
         actionButtonsConfig.secondaryColorConfig.textColorPressed = "#F2000000";
+        actionButtonsConfig.secondaryColorConfig.focusRectangleColor = "#80000000";
 
         actionButtonsConfig.positiveColorConfig.buttonColorNormal = "#00000000";
         actionButtonsConfig.positiveColorConfig.buttonColorHovered = "#FF185E46";
@@ -555,6 +570,7 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
         actionButtonsConfig.positiveColorConfig.textColorNormal = "#FF185E46";
         actionButtonsConfig.positiveColorConfig.textColorHovered = "#F2FFFFFF";
         actionButtonsConfig.positiveColorConfig.textColorPressed = "#F2FFFFFF";
+        actionButtonsConfig.positiveColorConfig.focusRectangleColor = "#80000000";
 
         actionButtonsConfig.destructiveColorConfig.buttonColorNormal = "#00000000";
         actionButtonsConfig.destructiveColorConfig.buttonColorHovered = "#FFAB0A15";
@@ -566,6 +582,7 @@ ActionButtonsConfig SampleCardModel::getActionButtonsConfig(const bool isDark)
         actionButtonsConfig.destructiveColorConfig.textColorNormal = "#FFAB0A15";
         actionButtonsConfig.destructiveColorConfig.textColorHovered = "#F2FFFFFF";
         actionButtonsConfig.destructiveColorConfig.textColorPressed = "#F2FFFFFF";
+        actionButtonsConfig.destructiveColorConfig.focusRectangleColor = "#80000000";
     }
 
     return actionButtonsConfig;
