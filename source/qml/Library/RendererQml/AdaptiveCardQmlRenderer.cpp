@@ -3166,6 +3166,8 @@ namespace RendererQml
             buttonElement->Property("height", Formatter() << buttonConfig.buttonHeight);
             buttonElement->Property("Keys.onPressed", "{if(event.key === Qt.Key_Return){down=true;event.accepted=true;}}");
             buttonElement->Property("Keys.onReleased", Formatter() << "{if(event.key === Qt.Key_Return){down=false;" << buttonId << ".onReleased();event.accepted=true;}}");
+            buttonElement->Property("property bool isButtonDisabled", "false");
+            buttonElement->Property("checkable", "!isButtonDisabled");          
 
             if (isShowCardButton)
             {
@@ -3199,6 +3201,18 @@ namespace RendererQml
             contentItem->AddChild(contentLayout);
             contentItem->Property("height", "parent.height");
             contentItem->Property("implicitWidth", Formatter() << contentLayout->GetId() << ".implicitWidth");
+            contentItem->Property("activeFocusOnTab", Formatter() << "!" << buttonElement->GetId() << ".isButtonDisabled");
+            contentItem->Property("Accessible.role", "Accessible.Button");
+
+            auto focusRectangle = std::make_shared<QmlTag>("Rectangle");
+            focusRectangle->Property("width", Formatter() << buttonElement->GetId() << ".width");
+            focusRectangle->Property("height", Formatter() << buttonElement->GetId() << ".height");
+            focusRectangle->Property("x", Formatter() << "-" << buttonConfig.horizotalPadding);
+            focusRectangle->Property("y", Formatter() << "-" << buttonConfig.verticalPadding);
+            focusRectangle->Property("color", "transparent", true);
+            focusRectangle->Property("border.color", context->GetHexColor(buttonConfig.focusRectangleColor));
+            focusRectangle->Property("border.width", "parent.activeFocus ? 1 : 0");
+            contentItem->AddChild(focusRectangle);
 
             //Add button icon
             if (!action->GetIconUrl().empty())
@@ -3245,18 +3259,33 @@ namespace RendererQml
             contentText->Property("font.pixelSize", Formatter() << buttonConfig.pixelSize);
             contentText->Property("font.weight", buttonConfig.fontWeight);
             contentText->Property("elide", "Text.ElideRight");
+            contentItem->Property("Accessible.name", Formatter() << contentText->GetId() << ".text");
 
-            bgRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 2 : 1");
+            auto connectionElement = std::make_shared<QmlTag>("Connections");
+            connectionElement->Property("id", Formatter() << buttonElement->GetId() << "_connection");
+            connectionElement->Property("target", "_aModel");
+            connectionElement->AddFunctions(Formatter() << "function onEnableAdaptiveCardSubmitButton()"
+                << "\n{"
+                << "\n if (" << buttonElement->GetId() << ".isButtonDisabled) {"
+                << "\n" << buttonElement->GetId() << ".isButtonDisabled = false;"
+                << "\n}"
+                << "\n}");
 
             if (isShowCardButton)
             {
-                bgRectangle->Property("border.color", Formatter() << buttonId << ".activeFocus ? " << context->GetHexColor(buttonConfig.borderColorFocussed) << " : " << context->GetHexColor(buttonConfig.borderColorNormal));
+                bgRectangle->Property("border.color", context->GetHexColor(buttonConfig.borderColorNormal));
                 bgRectangle->Property("color", Formatter() << "(" << buttonId << ".showCard || " << buttonId << ".down )? " << context->GetHexColor(buttonConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(buttonConfig.buttonColorHovered) << " : " << context->GetHexColor(buttonConfig.buttonColorNormal));
                 contentText->Property("color", Formatter() << "( " << buttonId << ".showCard || " << buttonId << ".hovered || " << buttonId << ".down) ? " << context->GetHexColor(buttonConfig.textColorHovered) << " : " << context->GetHexColor(buttonConfig.textColorNormal));
             }
+            else if (action->GetElementTypeString() == "Action.Submit")
+            {
+                bgRectangle->Property("border.color", Formatter() << buttonElement->GetId() << ".isButtonDisabled ? " << context->GetHexColor(buttonConfig.buttonColorDisabled) << " : " << context->GetHexColor(buttonConfig.borderColorNormal));
+                bgRectangle->Property("color", Formatter() << buttonElement->GetId() << ".isButtonDisabled ? " << context->GetHexColor(buttonConfig.buttonColorDisabled) << ": (" << buttonId << ".down ? " << context->GetHexColor(buttonConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(buttonConfig.buttonColorHovered) << " : " << context->GetHexColor(buttonConfig.buttonColorNormal) << ")");
+                contentText->Property("color", Formatter() << buttonElement->GetId() << ".isButtonDisabled ? " << context->GetHexColor(buttonConfig.textColorDisabled) << ": (" << "( " << buttonId << ".hovered || " << buttonId << ".down )? " << context->GetHexColor(buttonConfig.textColorHovered) << " : " << context->GetHexColor(buttonConfig.textColorNormal) << ")");
+            }
             else
             {
-                bgRectangle->Property("border.color", Formatter() << buttonId << ".activeFocus ? " << context->GetHexColor(buttonConfig.borderColorFocussed) << " : " << context->GetHexColor(buttonConfig.borderColorNormal));
+                bgRectangle->Property("border.color", context->GetHexColor(buttonConfig.borderColorNormal));
                 bgRectangle->Property("color", Formatter() << buttonId << ".down ? " << context->GetHexColor(buttonConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(buttonConfig.buttonColorHovered) << " : " << context->GetHexColor(buttonConfig.buttonColorNormal));
                 contentText->Property("color", Formatter() << "( " << buttonId << ".hovered || " << buttonId << ".down )? " << context->GetHexColor(buttonConfig.textColorHovered) << " : " << context->GetHexColor(buttonConfig.textColorNormal));
             }
@@ -3286,7 +3315,7 @@ namespace RendererQml
 				showCardIcon->Property("icon.height", "12");
 				showCardIcon->Property("icon.source", RendererQml::arrow_down_12, true);
 				showCardIcon->Property("background", showCardIconBackground->ToString());
-                showCardIcon->Property("onReleased", Formatter() << "{" << buttonId << ".released();" << buttonId << ".forceActiveFocus()}");
+                showCardIcon->Property("onReleased", Formatter() << buttonId << ".released();");
                 textLayout->AddChild(showCardIcon);
             }
 
@@ -3309,16 +3338,17 @@ namespace RendererQml
             else if (action->GetElementTypeString() == "Action.Submit")
             {
                 context->addToSubmitActionButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action));
+                buttonElement->AddChild(connectionElement);
+                buttonElement->Property("onIsButtonDisabledChanged", "{if(isButtonDisabled){contentItem.nextItemInFocusChain().forceActiveFocus();}}");
             }
             else
             {
                 onReleasedFunction = "";
             }
 
-            buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
-
-            buttonElement->Property("Accessible.name", Formatter() << contentText->GetId() << ".text");
-            buttonElement->Property("Accessible.role", "Accessible.Button");
+            buttonElement->Property("activeFocusOnTab", "false");
+            buttonElement->Property("onReleased", Formatter() << "{\ncontentItem.forceActiveFocus();" << onReleasedFunction << "}\n");
+            buttonElement->Property("Accessible.ignored", "true");
             return buttonElement;
         }
 
@@ -3347,7 +3377,7 @@ namespace RendererQml
             const auto action = element.second;
 
             onReleasedFunction = getActionShowCardClickFunc(buttonElement, context);
-            buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
+            buttonElement->Property("onReleased", Formatter() << "{\ncontentItem.forceActiveFocus();" << onReleasedFunction << "}\n");
         }
 
         context->clearShowCardButtonList();
@@ -3436,6 +3466,8 @@ namespace RendererQml
 
         function << "var paramJson = {};\n";
 
+        function << "if (!isButtonDisabled) \n{\n";
+
         if (!submitDataJson.empty() && submitDataJson != "null")
         {
             if (submitDataJson.front() == '{' && submitDataJson.back() == '}')
@@ -3458,6 +3490,8 @@ namespace RendererQml
 
         function << "var paramslist = JSON.stringify(paramJson);\n";
         function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\nconsole.log(paramslist);\n";
+        function << "isButtonDisabled = true;";
+        function << "}";
 
         return function.str();
     }
