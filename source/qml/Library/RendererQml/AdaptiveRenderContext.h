@@ -44,6 +44,7 @@ namespace RendererQml
 		const int getColumnCounter();
         const int getButtonCounter();
         const int getSelectActionCounter();
+        const int getTextBlockCounter();
 
         const int getContentIndex();
         void setContentIndex(int contentCounter);
@@ -96,6 +97,9 @@ namespace RendererQml
         void addToLastShowCardComponentIdsList(const std::string& componentId);
         const std::vector<std::string>& getLastShowCardComponentIdsList();
 
+        void setLastFocusableElementId(std::string id);
+        std::string getLastFocusableElementId();
+
     private:
         bool m_isShowCardinAction{ false };
         bool m_isShowCardLastBodyElement{ false };
@@ -114,6 +118,7 @@ namespace RendererQml
         std::string m_CardRootId;
         std::string m_defaultId;
 		std::shared_ptr<QmlTag> m_CardRootElement;
+        std::string m_LastFocusableElementId;
         std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
 
         std::map<std::string, std::string> m_inputElementList;
@@ -131,6 +136,7 @@ namespace RendererQml
         int m_DefaultIdCounter{ 0 };
         int m_ActionSetCounter{ 0 };
         int m_ContentIndex{ 0 };
+        int m_TextBlockCounter{ 0 };
 
     };
 }

@@ -98,7 +98,7 @@ namespace RendererQml
         static void addShowCardLoaderComponents(const std::shared_ptr<AdaptiveRenderContext>& context);
 
         static const std::string getActionOpenUrlClickFunc(const std::shared_ptr<AdaptiveCards::OpenUrlAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
-        static const std::string getActionSubmitClickFunc(const std::shared_ptr<AdaptiveCards::SubmitAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
+        static const std::string getActionSubmitClickFunc(const std::shared_ptr<AdaptiveCards::SubmitAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context, std::string elementType);
 		static const std::string getActionShowCardClickFunc(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveRenderContext>& context);
 		static const std::string getActionToggleVisibilityClickFunc(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
 
@@ -130,5 +130,8 @@ namespace RendererQml
 
         static std::shared_ptr<QmlTag> AddCornerRectangles(std::shared_ptr<QmlTag> uiCard, int rectangleSize);
         static std::shared_ptr<QmlTag> AddAccessibilityToTextBlock(std::shared_ptr<QmlTag> uiTextBlock, std::shared_ptr<AdaptiveRenderContext> context);
+
+        static void updateLastFocusElement(std::shared_ptr<QmlTag> firstElement, std::shared_ptr<QmlTag> lastElement, std::shared_ptr<AdaptiveRenderContext> context);
+        static void addLastFocusElementFunction(std::shared_ptr<QmlTag> uiCard, std::shared_ptr<AdaptiveRenderContext> context);
     };
 }
