@@ -192,7 +192,7 @@ namespace RendererQml
         addShowCardLoaderComponents(context);
         addTextRunSelectActions(context);
 
-        addLastFocusElementFunction(uiCard, context);
+        addLastFocusElement(uiCard, context);
         uiCard->Property("onLastFocusElementChanged", "lastFocusableElementChanged()");
 
 		// Add height and width calculation function
@@ -4377,26 +4377,26 @@ namespace RendererQml
         }
     }
 
-    void RendererQml::AdaptiveCardQmlRenderer::addLastFocusElementFunction(std::shared_ptr<QmlTag> uiCard, std::shared_ptr<AdaptiveRenderContext> context)
+    void RendererQml::AdaptiveCardQmlRenderer::addLastFocusElement(std::shared_ptr<QmlTag> uiCard, std::shared_ptr<AdaptiveRenderContext> context)
     {
-        std::ostringstream function;
-        std::ostringstream firstElementFunction;
+        std::ostringstream lastFocusElementfunction;
+        std::ostringstream lastFocusNavigationFunction;
 
         for (auto showCardId : context->getLastShowCardComponentIdsList())
         {
             auto pos = showCardId.find("_component");
             auto loaderId = showCardId.erase(pos, 10) + "_loader";
-            function << loaderId << ".visible ? " << loaderId << ".showCardLastElement : ";
-            firstElementFunction << loaderId << ".visible ? " << loaderId << ".showCardFirstElement : ";
+            lastFocusElementfunction << loaderId << ".visible ? " << loaderId << ".showCardLastElement : ";
+            lastFocusNavigationFunction << loaderId << ".visible ? " << loaderId << ".showCardFirstElement : ";
         }
 
-        function << (context->getLastFocusableElement() ? context->getLastFocusableElement()->GetId() : "null");
-        firstElementFunction << "null";
+        lastFocusElementfunction << (context->getLastFocusableElement() ? context->getLastFocusableElement()->GetId() : "null");
+        lastFocusNavigationFunction << "null";
 
-        uiCard->Property("property var lastFocusElement", function.str());
+        uiCard->Property("property var lastFocusElement", lastFocusElementfunction.str());
         if (context->getLastFocusableElement() && context->getLastFocusableElement()->GetElement() == "Button")
         {
-            context->getLastFocusableElement()->Property("KeyNavigation.tab", firstElementFunction.str());
+            context->getLastFocusableElement()->Property("KeyNavigation.tab", lastFocusNavigationFunction.str());
         }
 
     }

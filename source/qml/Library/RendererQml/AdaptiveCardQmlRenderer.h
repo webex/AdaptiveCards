@@ -132,6 +132,6 @@ namespace RendererQml
         static std::shared_ptr<QmlTag> AddAccessibilityToTextBlock(std::shared_ptr<QmlTag> uiTextBlock, std::shared_ptr<AdaptiveRenderContext> context);
 
         static void updateLastFocusElement(std::shared_ptr<QmlTag> element, std::shared_ptr<AdaptiveRenderContext> context);
-        static void addLastFocusElementFunction(std::shared_ptr<QmlTag> uiCard, std::shared_ptr<AdaptiveRenderContext> context);
+        static void addLastFocusElement(std::shared_ptr<QmlTag> uiCard, std::shared_ptr<AdaptiveRenderContext> context);
     };
 }
