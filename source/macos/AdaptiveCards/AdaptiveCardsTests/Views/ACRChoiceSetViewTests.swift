@@ -8,7 +8,7 @@ class ACRChoiceSetViewtests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: .default,checkBoxButtonConfig: nil, radioButtonConfig: nil)
+        renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: .default,checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
         choiceSetView = ACRChoiceSetView(renderConfig: renderConfig)
     }
     
