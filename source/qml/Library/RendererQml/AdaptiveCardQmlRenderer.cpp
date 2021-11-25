@@ -315,6 +315,7 @@ namespace RendererQml
 						uiLoader->Property("width", Formatter() << uiContainer->GetProperty("id") << ".width + 2*margins - 2");
 						uiLoader->Property("readonly property bool removeBottomMargin", removeBottomMargin ? "true" : "false");
 						uiLoader->Property("property var showCardLastElement", "null");
+                        uiLoader->Property("property var showCardFirstElement", "null");
 
                         if (removeBottomMargin)
                         {
@@ -453,7 +454,8 @@ namespace RendererQml
         uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.destroy()\n }\n");
         uiColumn->AddFunctions(Formatter() << "card = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\n");
         uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked);\n");
-        uiColumn->AddFunctions(Formatter() << loaderId << ".showCardLastElement = card.lastFocusElement;\n}\n}");
+        uiColumn->AddFunctions(Formatter() << loaderId << ".showCardLastElement = card.lastFocusElement;\n");
+        uiColumn->AddFunctions(Formatter() << loaderId << ".showCardFirstElement = card.firstFocusElement;\n }\n}");
 
 		uiComponent->AddChild(uiColumn);
 
@@ -657,6 +659,7 @@ namespace RendererQml
 
             inputWrapper->AddChild(uiTextInput);
             inputWrapper->AddChild(clearIcon);
+            uiTextInput->Property("KeyNavigation.tab", Formatter() << clearIcon->GetId() << ".visible ? " << clearIcon->GetId() << " : null");
         }
 
         uiTextInput->Property("font.pixelSize", Formatter() << textConfig.pixelSize);
@@ -1198,7 +1201,6 @@ namespace RendererQml
         );
         uiComboBox->Property("onActiveFocusChanged", "colorChange(false)");
         uiComboBox->Property("onHoveredChanged", "colorChange(false)");
-        uiComboBox->Property("Accessible.name", "displayText");
 
         const std::string iconId = choiceset.id + "_icon";
         auto iconTag = GetIconTag(context);
@@ -1839,6 +1841,7 @@ namespace RendererQml
 
         uiDateInputCombobox->Property("Accessible.ignored", "true");
 
+        uiTextField->Property("KeyNavigation.tab", Formatter() << clearIcon->GetId() << ".visible ? " << clearIcon->GetId() << " : null");
         updateLastFocusElement(uiTextField, context);
         uiDateInputCombobox->Property("background", uiTextField->ToString());
 
@@ -2578,6 +2581,7 @@ namespace RendererQml
         uiTimeComboBox->Property("onActiveFocusChanged", Formatter() << uiTimeInputWrapper->GetId() << ".colorChange(false)");
         uiTimeComboBox->Property("Accessible.ignored", "true");
 
+        uiTimeInput->Property("KeyNavigation.tab", Formatter() << clearIcon->GetId() << ".visible ? " << clearIcon->GetId() << " : null");
         updateLastFocusElement(uiTimeInput, context);
 
         timeBoxTag->AddChild(timeBoxRow);
@@ -4376,20 +4380,23 @@ namespace RendererQml
     void RendererQml::AdaptiveCardQmlRenderer::addLastFocusElementFunction(std::shared_ptr<QmlTag> uiCard, std::shared_ptr<AdaptiveRenderContext> context)
     {
         std::ostringstream function;
+        std::ostringstream firstElementFunction;
 
         for (auto showCardId : context->getLastShowCardComponentIdsList())
         {
             auto pos = showCardId.find("_component");
             auto loaderId = showCardId.erase(pos, 10) + "_loader";
             function << loaderId << ".visible ? " << loaderId << ".showCardLastElement : ";
+            firstElementFunction << loaderId << ".visible ? " << loaderId << ".showCardFirstElement : ";
         }
 
         function << (context->getLastFocusableElement() ? context->getLastFocusableElement()->GetId() : "null");
+        firstElementFunction << "null";
 
         uiCard->Property("property var lastFocusElement", function.str());
-        if (context->getLastFocusableElement())
+        if (context->getLastFocusableElement() && context->getLastFocusableElement()->GetElement() == "Button")
         {
-            context->getLastFocusableElement()->Property("KeyNavigation.tab", "null");
+            context->getLastFocusableElement()->Property("KeyNavigation.tab", firstElementFunction.str());
         }
 
     }
