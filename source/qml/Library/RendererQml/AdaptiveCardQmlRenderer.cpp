@@ -402,7 +402,7 @@ namespace RendererQml
 
             if (parentName != "Adaptive Card" || !context->getLastFocusableElement())
             {
-                updateLastFocusElement(parent, parent, context);
+                updateLastFocusElement(parent, context);
             }
         }
     }
@@ -549,7 +549,6 @@ namespace RendererQml
 	{
         auto textConfig = context->GetRenderConfig()->getInputTextConfig();
         const std::string origionalElementId = input->GetId();
-        std::shared_ptr<QmlTag> lastFocusElement = nullptr;
 
         std::shared_ptr<QmlTag> uiTextInput;
         std::shared_ptr<QmlTag> scrollViewTag;
@@ -607,8 +606,6 @@ namespace RendererQml
             uiTextInput->Property("onHoveredChanged", Formatter() << "colorChange(" << backgroundTag->GetId() << "," << input->GetId() << ",false)");
             uiTextInput->Property("onActiveFocusChanged", Formatter() << "colorChange(" << backgroundTag->GetId() << "," << input->GetId() << ",false)");
 
-            lastFocusElement = uiTextInput;
-
             scrollViewTag->AddChild(uiTextInput);
         }
         else
@@ -661,12 +658,13 @@ namespace RendererQml
             inputWrapper->AddChild(uiTextInput);
             inputWrapper->AddChild(clearIcon);
 
-            lastFocusElement = clearIcon;
+            uiTextInput->Property("KeyNavigation.tab", Formatter() << clearIcon->GetId() << ".visible ? " << clearIcon->GetId() << " : null");
         }
 
         uiTextInput->Property("font.pixelSize", Formatter() << textConfig.pixelSize);
         uiTextInput->Property("Accessible.name", input->GetPlaceholder().empty() ? "Text Field" : input->GetPlaceholder(), true);
         uiTextInput->Property("Accessible.role", "Accessible.EditableText");
+
 
         if (!input->GetValue().empty())
         {
@@ -677,6 +675,8 @@ namespace RendererQml
         {
             uiTextInput->Property("placeholderText", Formatter() << "activeFocus? \"\" : " << "\"" << input->GetPlaceholder() << "\"");
         }
+
+        updateLastFocusElement(uiTextInput, context);
 
         //TODO: Add stretch property
 
@@ -718,11 +718,10 @@ namespace RendererQml
                     uiContainer->AddChild(inputWrapper);
                 }
                 uiContainer->AddChild(buttonElement);
+                updateLastFocusElement(buttonElement, context);
                 return uiContainer;
             }
         }
-
-        updateLastFocusElement(uiTextInput, lastFocusElement, context);
 
         if (input->GetIsMultiline())
         {
@@ -950,7 +949,7 @@ namespace RendererQml
         uiSplitterRactangle->Property("Accessible.name", Formatter() << "accessiblityPrefix + " << contentItemTag->GetId() << ".displayText");
         uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
 
-        updateLastFocusElement(contentItemTag, uiSplitterRactangle, context);
+        updateLastFocusElement(uiSplitterRactangle, context);
 
         return numberInputRow;
 	}
@@ -1122,7 +1121,7 @@ namespace RendererQml
         );
 
         context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
-        updateLastFocusElement(checkbox, checkbox, context);
+        updateLastFocusElement(checkbox, context);
         return checkbox;
 	}
 
@@ -1339,7 +1338,7 @@ namespace RendererQml
 
         uiComboBox->Property("popup", popupTag->ToString());
 
-        updateLastFocusElement(uiComboBox, uiComboBox, context);
+        updateLastFocusElement(uiComboBox, context);
 
         return uiComboBox;
 	}
@@ -1459,7 +1458,7 @@ namespace RendererQml
                 button->Property("Keys.onPressed", Formatter() << "{"<< upString << downString << tabString << "}");
                 button->Property("activeFocusOnTab", "false");
             }
-            updateLastFocusElement(uiColumn, uiColumn, context);
+            updateLastFocusElement(uiColumn, context);
         }
 
         uiColumn->AddFunctions(Formatter() << "function colorChange(item,isPressed){\n"
@@ -1525,7 +1524,7 @@ namespace RendererQml
             uiButton->Property("readonly property string valueOff", checkbox.valueOff, true);
             uiButton->Property("property string value", "checked ? valueOn : valueOff");
             uiButton->Property("width", "parent.width");
-            updateLastFocusElement(uiButton, uiButton, context);
+            updateLastFocusElement(uiButton, context);
         }
         else
         {
@@ -1795,7 +1794,6 @@ namespace RendererQml
         uiTextField->Property("onReleased", Formatter() << uiDateInputWrapper->GetId() << ".colorChange(false)");
         uiTextField->Property("onHoveredChanged", Formatter() << uiDateInputWrapper->GetId() << ".colorChange(false)");
         uiDateInputCombobox->Property("onActiveFocusChanged", Formatter() << uiDateInputWrapper->GetId() << ".colorChange(false)");
-        uiDateInputCombobox->Property("background", uiTextField->ToString());
 
         uiDateInputRow->Property("width", "parent.width");
         uiDateInputRow->Property("height", "parent.height");
@@ -1842,7 +1840,9 @@ namespace RendererQml
 
         uiDateInputCombobox->Property("Accessible.ignored", "true");
 
-        updateLastFocusElement(uiTextField, clearIcon, context);
+        uiTextField->Property("KeyNavigation.tab", Formatter() << clearIcon->GetId() << ".visible ? " << clearIcon->GetId() << " : null");
+        updateLastFocusElement(uiTextField, context);
+        uiDateInputCombobox->Property("background", uiTextField->ToString());
 
         return uiDateInputWrapper;
     }
@@ -2580,6 +2580,9 @@ namespace RendererQml
         uiTimeComboBox->Property("onActiveFocusChanged", Formatter() << uiTimeInputWrapper->GetId() << ".colorChange(false)");
         uiTimeComboBox->Property("Accessible.ignored", "true");
 
+        uiTimeInput->Property("KeyNavigation.tab", Formatter() << clearIcon->GetId() << ".visible ? " << clearIcon->GetId() << " : null");
+        updateLastFocusElement(uiTimeInput, context);
+
         timeBoxTag->AddChild(timeBoxRow);
 
         timeBoxRow->AddChild(ListViewHoursTag);
@@ -2599,7 +2602,7 @@ namespace RendererQml
 
         context->addToInputElementList(origionalElementId, (uiTimeInput->GetId() + ".selectedTime"));
 
-        updateLastFocusElement(uiTimeInput, clearIcon, context);
+        updateLastFocusElement(uiTimeInput, context);
 
         return uiTimeInputWrapper;
 	}
@@ -3386,7 +3389,7 @@ namespace RendererQml
             }
 
             buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
-            updateLastFocusElement(buttonElement, buttonElement, context);
+            updateLastFocusElement(buttonElement, context);
             return buttonElement;
         }
 
@@ -4354,19 +4357,19 @@ namespace RendererQml
         uiFocusRectangle->Property("border.color", Formatter() << "parent.activeFocus ? '" << cardConfig.focusRectangleColor << "' : 'transparent'");
         uiTextBlock->AddChild(uiFocusRectangle);
 
-        updateLastFocusElement(uiTextBlock, uiTextBlock, context);
+        updateLastFocusElement(uiTextBlock, context);
 
         return uiTextBlock;
     }
 
-    void RendererQml::AdaptiveCardQmlRenderer::updateLastFocusElement(std::shared_ptr<QmlTag> firstElement, std::shared_ptr<QmlTag> lastElement, std::shared_ptr<AdaptiveRenderContext> context)
+    void RendererQml::AdaptiveCardQmlRenderer::updateLastFocusElement(std::shared_ptr<QmlTag> element, std::shared_ptr<AdaptiveRenderContext> context)
     {
-        context->setLastFocusableElement(lastElement);
+        context->setLastFocusableElement(element);
         if (context->getCardRootElement()->HasProperty("property var firstFocusElement"))
         {
             if (context->getCardRootElement()->GetProperty("property var firstFocusElement") == "null")
             {
-                context->getCardRootElement()->Property("property var firstFocusElement", firstElement->GetId());
+                context->getCardRootElement()->Property("property var firstFocusElement", element->GetId());
             }
         }
     }

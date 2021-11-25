@@ -131,7 +131,7 @@ namespace RendererQml
         static std::shared_ptr<QmlTag> AddCornerRectangles(std::shared_ptr<QmlTag> uiCard, int rectangleSize);
         static std::shared_ptr<QmlTag> AddAccessibilityToTextBlock(std::shared_ptr<QmlTag> uiTextBlock, std::shared_ptr<AdaptiveRenderContext> context);
 
-        static void updateLastFocusElement(std::shared_ptr<QmlTag> firstElement, std::shared_ptr<QmlTag> lastElement, std::shared_ptr<AdaptiveRenderContext> context);
+        static void updateLastFocusElement(std::shared_ptr<QmlTag> element, std::shared_ptr<AdaptiveRenderContext> context);
         static void addLastFocusElementFunction(std::shared_ptr<QmlTag> uiCard, std::shared_ptr<AdaptiveRenderContext> context);
     };
 }
