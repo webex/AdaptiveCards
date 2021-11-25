@@ -424,13 +424,13 @@ namespace RendererQml
         return m_LastShowCardComponentIdList;
     }
 
-    void RendererQml::AdaptiveRenderContext::setLastFocusableElementId(std::string id)
+    void RendererQml::AdaptiveRenderContext::setLastFocusableElement(std::shared_ptr<QmlTag> element)
     {
-        m_LastFocusableElementId = id;
+        m_LastFocusableElement = element;
     }
 
-    std::string RendererQml::AdaptiveRenderContext::getLastFocusableElementId()
+    std::shared_ptr<QmlTag> RendererQml::AdaptiveRenderContext::getLastFocusableElement()
     {
-        return m_LastFocusableElementId;
+        return m_LastFocusableElement;
     }
 }

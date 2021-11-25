@@ -97,8 +97,8 @@ namespace RendererQml
         void addToLastShowCardComponentIdsList(const std::string& componentId);
         const std::vector<std::string>& getLastShowCardComponentIdsList();
 
-        void setLastFocusableElementId(std::string id);
-        std::string getLastFocusableElementId();
+        void setLastFocusableElement(std::shared_ptr<QmlTag> id);
+        std::shared_ptr<QmlTag> getLastFocusableElement();
 
     private:
         bool m_isShowCardinAction{ false };
@@ -118,7 +118,7 @@ namespace RendererQml
         std::string m_CardRootId;
         std::string m_defaultId;
 		std::shared_ptr<QmlTag> m_CardRootElement;
-        std::string m_LastFocusableElementId;
+        std::shared_ptr<QmlTag> m_LastFocusableElement;
         std::shared_ptr<AdaptiveElementRenderers<QmlTag, AdaptiveRenderContext>> m_elementRenderers;
 
         std::map<std::string, std::string> m_inputElementList;

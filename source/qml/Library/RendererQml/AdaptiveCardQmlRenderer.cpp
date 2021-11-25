@@ -85,6 +85,7 @@ namespace RendererQml
         uiCard->AddFunctions("MouseArea{anchors.fill: parent;onClicked: adaptiveCard.nextItemInFocusChain().forceActiveFocus();}");
         uiCard->Property("activeFocusOnTab", "false");
         uiCard->Property("radius", Formatter() << (isChildCard ? 0 : cardConfig.cardRadius));
+        uiCard->Property("property var firstFocusElement", (card->GetSelectAction()) ? uiCard->GetId() : "null");
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
 		if (hasBackgroundImage)
@@ -125,15 +126,6 @@ namespace RendererQml
         rectangle->AddChild(bodyLayout);
 
 		ValidateLastBodyElementIsShowCard(card->GetBody(), context);
-
-        if (card->GetSelectAction() != nullptr)
-        {
-            context->setLastFocusableElementId("adaptiveCard_selectAction_mouseArea");
-        }
-        else if (!isChildCard)
-        {
-            uiCard->Property("property var firstFocusElement", card->GetSelectAction() ? "adaptiveCard_selectAction_mouseArea" : "null");
-        }
 		
 		ValidateShowCardInActions(card->GetActions(), context);
 		AddContainerElements(bodyLayout, card->GetBody(), context);
@@ -323,6 +315,7 @@ namespace RendererQml
 						uiLoader->Property("width", Formatter() << uiContainer->GetProperty("id") << ".width + 2*margins - 2");
 						uiLoader->Property("readonly property bool removeBottomMargin", removeBottomMargin ? "true" : "false");
 						uiLoader->Property("property var showCardLastElement", "null");
+                        uiLoader->Property("property var showCardFirstElement", "null");
 
                         if (removeBottomMargin)
                         {
@@ -407,9 +400,9 @@ namespace RendererQml
 
             parent->AddChild(mouseArea);
 
-            if (parentName != "Adaptive Card")
+            if (parentName != "Adaptive Card" || !context->getLastFocusableElement())
             {
-                updateLastFocusElement(mouseArea, mouseArea, context);
+                updateLastFocusElement(parent, parent, context);
             }
         }
     }
@@ -461,7 +454,8 @@ namespace RendererQml
         uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.destroy()\n }\n");
         uiColumn->AddFunctions(Formatter() << "card = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\n");
         uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked);\n");
-        uiColumn->AddFunctions(Formatter() << loaderId << ".showCardLastElement = card.lastFocusElement;\n }\n}");
+        uiColumn->AddFunctions(Formatter() << loaderId << ".showCardLastElement = card.lastFocusElement;\n");
+        uiColumn->AddFunctions(Formatter() << loaderId << ".showCardFirstElement = card.firstFocusElement;\n }\n}");
 
 		uiComponent->AddChild(uiColumn);
 
@@ -3215,7 +3209,7 @@ namespace RendererQml
             buttonElement->Property("Keys.onPressed", "{if(event.key === Qt.Key_Return){down=true;event.accepted=true;}}");
             buttonElement->Property("Keys.onReleased", Formatter() << "{if(event.key === Qt.Key_Return){down=false;" << buttonId << ".onReleased();event.accepted=true;}}");
             buttonElement->Property("property bool isButtonDisabled", "false");
-            buttonElement->Property("checkable", "!isButtonDisabled");          
+            buttonElement->Property("enabled", "!isButtonDisabled");
 
             if (isShowCardButton)
             {
@@ -3249,9 +3243,6 @@ namespace RendererQml
             contentItem->AddChild(contentLayout);
             contentItem->Property("height", "parent.height");
             contentItem->Property("implicitWidth", Formatter() << contentLayout->GetId() << ".implicitWidth");
-            contentItem->Property("activeFocusOnTab", Formatter() << "!" << buttonElement->GetId() << ".isButtonDisabled");
-            contentItem->Property("Accessible.role", "Accessible.Button");
-            contentItem->Property("id", Formatter() << buttonId << "_contentItem");
 
             auto focusRectangle = std::make_shared<QmlTag>("Rectangle");
             focusRectangle->Property("width", Formatter() << buttonElement->GetId() << ".width");
@@ -3260,7 +3251,7 @@ namespace RendererQml
             focusRectangle->Property("y", Formatter() << "-" << buttonConfig.verticalPadding);
             focusRectangle->Property("color", "transparent", true);
             focusRectangle->Property("border.color", context->GetHexColor(buttonConfig.focusRectangleColor));
-            focusRectangle->Property("border.width", "parent.activeFocus ? 1 : 0");
+            focusRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 1 : 0");
             contentItem->AddChild(focusRectangle);
 
             //Add button icon
@@ -3388,17 +3379,14 @@ namespace RendererQml
             {
                 context->addToSubmitActionButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action));
                 buttonElement->AddChild(connectionElement);
-                buttonElement->Property("onIsButtonDisabledChanged", "{if(isButtonDisabled){contentItem.nextItemInFocusChain().forceActiveFocus();}}");
             }
             else
             {
                 onReleasedFunction = "";
             }
 
-            buttonElement->Property("activeFocusOnTab", "false");
-            buttonElement->Property("onReleased", Formatter() << "{\ncontentItem.forceActiveFocus();" << onReleasedFunction << "}\n");
-            buttonElement->Property("Accessible.ignored", "true");
-            updateLastFocusElement(contentItem, contentItem, context);
+            buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
+            updateLastFocusElement(buttonElement, buttonElement, context);
             return buttonElement;
         }
 
@@ -3427,7 +3415,7 @@ namespace RendererQml
             const auto action = element.second;
 
             onReleasedFunction = getActionShowCardClickFunc(buttonElement, context);
-            buttonElement->Property("onReleased", Formatter() << "{\ncontentItem.forceActiveFocus();" << onReleasedFunction << "}\n");
+            buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
         }
 
         context->clearShowCardButtonList();
@@ -4373,7 +4361,7 @@ namespace RendererQml
 
     void RendererQml::AdaptiveCardQmlRenderer::updateLastFocusElement(std::shared_ptr<QmlTag> firstElement, std::shared_ptr<QmlTag> lastElement, std::shared_ptr<AdaptiveRenderContext> context)
     {
-        context->setLastFocusableElementId(lastElement->GetId());
+        context->setLastFocusableElement(lastElement);
         if (context->getCardRootElement()->HasProperty("property var firstFocusElement"))
         {
             if (context->getCardRootElement()->GetProperty("property var firstFocusElement") == "null")
@@ -4386,16 +4374,23 @@ namespace RendererQml
     void RendererQml::AdaptiveCardQmlRenderer::addLastFocusElementFunction(std::shared_ptr<QmlTag> uiCard, std::shared_ptr<AdaptiveRenderContext> context)
     {
         std::ostringstream function;
+        std::ostringstream firstElementFunction;
 
         for (auto showCardId : context->getLastShowCardComponentIdsList())
         {
             auto pos = showCardId.find("_component");
             auto loaderId = showCardId.erase(pos, 10) + "_loader";
             function << loaderId << ".visible ? " << loaderId << ".showCardLastElement : ";
+            firstElementFunction << loaderId << ".visible ? " << loaderId << ".showCardFirstElement : ";
         }
 
-        function << (context->getLastFocusableElementId().empty() ? "null" : context->getLastFocusableElementId());
+        function << (context->getLastFocusableElement() ? context->getLastFocusableElement()->GetId() : "null");
+        firstElementFunction << "null";
 
         uiCard->Property("property var lastFocusElement", function.str());
+        if (context->getLastFocusableElement() && context->getLastFocusableElement()->GetElement() == "Button")
+        {
+            context->getLastFocusableElement()->Property("KeyNavigation.tab", firstElementFunction.str());
+        }
     }
 }
