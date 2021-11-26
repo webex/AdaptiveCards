@@ -29,7 +29,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
        return view
     }()
 
-    private lazy var iconButton: NSButtonWithImageSpacing = {
+    private (set) lazy var iconButton: NSButtonWithImageSpacing = {
         let calendarResourceName = isDarkMode ? "calendar-month-dark" : "calendar-month-light"
         let clockResourceName = isDarkMode ? "recents_20_w" : "recents_20"
         let calendarImage = BundleUtils.getImage(calendarResourceName, ofType: "png")
