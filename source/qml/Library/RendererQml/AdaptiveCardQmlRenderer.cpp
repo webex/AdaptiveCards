@@ -75,7 +75,6 @@ namespace RendererQml
 		context->setCardRootElement(uiCard);
 		uiCard->Property("readonly property int margins", std::to_string(margin));
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
-        uiCard->AddFunctions("signal lastFocusableElementChanged()");
 		//1px extra height to accomodate the border of a showCard if present at the bottom
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
 		uiCard->Property("Layout.fillWidth", "true");
@@ -83,7 +82,6 @@ namespace RendererQml
 		uiCard->Property("color", "bgColor");
 		uiCard->Property("border.color", isChildCard? " bgColor" : context->GetHexColor(cardConfig.cardBorderColor));
         uiCard->AddFunctions("MouseArea{anchors.fill: parent;onClicked: adaptiveCard.nextItemInFocusChain().forceActiveFocus();}");
-        uiCard->Property("activeFocusOnTab", "false");
         uiCard->Property("radius", Formatter() << (isChildCard ? 0 : cardConfig.cardRadius));
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
@@ -174,6 +172,14 @@ namespace RendererQml
             clipRectangle->Property("border.width", "1");
             clipRectangle->Property("color", "'transparent'");
             clipRectangle->Property("z", "1");
+
+            uiCard->Property("activeFocusOnTab", "true");
+            clipRectangle->Property("activeFocusOnTab", "true");
+            uiCard->Property("Keys.onBacktabPressed", "{event.accepted = true}");
+            clipRectangle->Property("Keys.onTabPressed", "{event.accepted = true}");
+            clipRectangle->Property("Accessible.name", "To go out of Adaptive Card press escape", true);
+            uiCard->Property("Accessible.name", "To go out of Adaptive Card press escape", true);
+
             uiCard->AddChild(clipRectangle);
         }
 
@@ -432,8 +438,6 @@ namespace RendererQml
         uiCard_string = Utils::Replace(uiCard_string, "\\", "\\\\");
         uiCard_string = Utils::Replace(uiCard_string, "\"", "\\\"");
 
-        auto loaderId = componentId.substr(0, componentId.size() - 10) + "_loader";
-
         auto uiColumn = std::make_shared<QmlTag>("ColumnLayout");
         uiColumn->Property("id", layoutId);
         uiColumn->AddFunctions("property var card");
@@ -442,7 +446,7 @@ namespace RendererQml
         uiColumn->AddFunctions(Formatter() << "function reload(mCard)\n{\n");
         uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.destroy()\n }\n");
         uiColumn->AddFunctions(Formatter() << "card = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\n");
-        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked);\n }\n}");
+        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked)\n }\n}");
 
 		uiComponent->AddChild(uiColumn);
 
