@@ -236,11 +236,6 @@ namespace RendererQml
         return ++m_SelectActionCounter;
     }
 
-    const int AdaptiveRenderContext::getTextBlockCounter()
-    {
-        return ++m_TextBlockCounter;
-    }
-
     const int RendererQml::AdaptiveRenderContext::getContentIndex()
     {
         return m_ContentIndex;
@@ -422,15 +417,5 @@ namespace RendererQml
     const std::vector<std::string>& RendererQml::AdaptiveRenderContext::getLastShowCardComponentIdsList()
     {
         return m_LastShowCardComponentIdList;
-    }
-
-    void RendererQml::AdaptiveRenderContext::setLastFocusableElement(std::shared_ptr<QmlTag> element)
-    {
-        m_LastFocusableElement = element;
-    }
-
-    std::shared_ptr<QmlTag> RendererQml::AdaptiveRenderContext::getLastFocusableElement()
-    {
-        return m_LastFocusableElement;
     }
 }
