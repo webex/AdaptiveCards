@@ -178,7 +178,6 @@ namespace RendererQml
             uiCard->Property("Keys.onBacktabPressed", "{event.accepted = true}");
             clipRectangle->Property("Keys.onTabPressed", "{event.accepted = true}");
             clipRectangle->Property("Accessible.name", "To go out of Adaptive Card press escape", true);
-            uiCard->Property("Accessible.name", "To go out of Adaptive Card press escape", true);
 
             uiCard->AddChild(clipRectangle);
         }
