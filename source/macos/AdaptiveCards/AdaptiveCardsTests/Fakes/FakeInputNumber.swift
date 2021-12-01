@@ -73,7 +73,7 @@ class FakeInputNumber: ACSNumberInput {
 }
 
 extension FakeInputNumber {
-    static func make(value: NSNumber? = 0, placeholder: String? = "", max: NSNumber? = 0, min: NSNumber = 0, visible: Bool? = true, separator: Bool = false, spacing: ACSSpacing = .default, label: String? = nil) -> FakeInputNumber {
+    static func make(value: NSNumber? = 0, placeholder: String? = "", max: NSNumber? = .init(value: Double.greatestFiniteMagnitude), min: NSNumber? = .init(value: -Double.greatestFiniteMagnitude), visible: Bool? = true, separator: Bool = false, spacing: ACSSpacing = .default, label: String? = nil) -> FakeInputNumber {
         let fakeInputNumber = FakeInputNumber()
         fakeInputNumber.value = value
         fakeInputNumber.placeholder = placeholder
