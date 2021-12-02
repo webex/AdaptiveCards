@@ -1139,6 +1139,7 @@ namespace RendererQml
 		if (type == CheckBoxType::ComboBox)
 		{
             uiChoiceSet = GetComboBox(choiceSet,context);
+            uiChoiceSet->Property("visible", input->GetIsVisible() ? "true" : "false");
             context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".currentValue"));
 		}
 		else
