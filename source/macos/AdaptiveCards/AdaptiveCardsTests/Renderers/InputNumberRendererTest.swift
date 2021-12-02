@@ -152,9 +152,11 @@ class InputNumberRendererTest: XCTestCase {
         
         let inputNumberField = renderNumberInput()
         XCTAssertEqual(inputNumberField.value, "20")
-        inputNumberField.handleKeyDownAction(for: UInt16(kVK_UpArrow))
+        
+        keyPressed(for: UInt16(kVK_UpArrow), on: inputNumberField)
         XCTAssertEqual(inputNumberField.value, "21")
-        inputNumberField.handleKeyDownAction(for: UInt16(kVK_DownArrow))
+        
+        keyPressed(for: UInt16(kVK_DownArrow), on: inputNumberField)
         XCTAssertEqual(inputNumberField.value, "20")
     }
        
@@ -169,6 +171,11 @@ class InputNumberRendererTest: XCTestCase {
     private func getAssociatedStepper(of numericField: ACRNumericTextField) -> NSStepper? {
         guard let stepper = numericField.subviews.last as? NSStepper else { return nil }
         return stepper
+    }
+    
+    private func keyPressed(for keyCode: UInt16, on numericView: ACRNumericTextField) {
+        let event = NSEvent.keyEvent(with: NSEvent.EventType.keyDown, location: numericView.frame.origin, modifierFlags: [], timestamp: 0, windowNumber: 0, context: nil, characters: "", charactersIgnoringModifiers: "", isARepeat: false, keyCode: keyCode)
+        numericView.keyDown(with: event!)
     }
 }
 

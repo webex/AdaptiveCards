@@ -207,14 +207,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     override open func keyDown(with event: NSEvent) {
-        handleKeyDownAction(for: event.keyCode)
-        if event.keyCode != kVK_UpArrow && event.keyCode != kVK_DownArrow {
-            super.keyDown(with: event)
-        }
-    }
-    
-    func handleKeyDownAction(for keyCode: UInt16) {
-        switch Int(keyCode) {
+        switch Int(event.keyCode) {
         case kVK_UpArrow:
             stepper.doubleValue += 1
             inputValue = stepper.doubleValue
@@ -222,7 +215,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
             stepper.doubleValue -= 1
             inputValue = stepper.doubleValue
         default:
-            return
+            super.keyDown(with: event)
         }
     }
     
