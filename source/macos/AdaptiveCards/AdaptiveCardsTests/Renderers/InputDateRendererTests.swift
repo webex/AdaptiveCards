@@ -113,6 +113,26 @@ class InputDateRendererTest: XCTestCase {
         XCTAssertEqual(inputDateField.iconButton.accessibilityTitle(), "Date Picker Button")
         XCTAssertEqual(inputDateField.textField.accessibilityValue(), "10-Feb-2000")
     }
+    
+    func testAccessibilityLabel() {
+        inputDate = .make()
+        
+        let inputDateField = renderDateInput()
+        XCTAssertEqual(inputDateField.accessibilityLabel(), "")
+        
+        inputDateField.placeholder = "Enter Date"
+        XCTAssertEqual(inputDateField.accessibilityLabel(), "Enter Date")
+        
+        inputDateField.textField.stringValue = "10-Feb-2000"
+        XCTAssertEqual(inputDateField.accessibilityLabel(), "10-Feb-2000")
+    }
+    
+    func testPopoverCalendarAccessibility() {
+        inputDate = .make()
+        
+        let inputDateField = renderDateInput()
+        XCTAssertEqual(inputDateField.datePickerCalendar.accessibilityRole(), .none)
+    }
 
     private func renderDateInput() -> ACRDateField {
         let view = inputDateRenderer.render(element: inputDate, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
