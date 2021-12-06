@@ -1,6 +1,7 @@
 @testable import AdaptiveCards
 import AdaptiveCards_bridge
 import XCTest
+import Carbon.HIToolbox.Events
 
 class InputNumberRendererTest: XCTestCase {
     private var hostConfig: FakeHostConfig!
@@ -140,6 +141,23 @@ class InputNumberRendererTest: XCTestCase {
         XCTAssertEqual(inputNumberField.accessibilityChildren()?.count, 2)
         XCTAssertEqual(inputNumberField.textField.accessibilityTitle(), "Input Number")
         XCTAssertEqual(inputNumberField.textField.accessibilityValue(), "20")
+        // Checking Stepper Accessibility Value here
+        guard let stepper = getAssociatedStepper(of: inputNumberField), let stepperAccessibilityValue = stepper.accessibilityValue() as? String else { return XCTFail() }
+        XCTAssertEqual(stepperAccessibilityValue, "20")
+    }
+    
+    func testAccessibilityUpAndDownArrows() {
+        let val: NSNumber = 20.00
+        inputNumber = .make(value: val)
+        
+        let inputNumberField = renderNumberInput()
+        XCTAssertEqual(inputNumberField.value, "20")
+        
+        keyPressed(for: UInt16(kVK_UpArrow), on: inputNumberField)
+        XCTAssertEqual(inputNumberField.value, "21")
+        
+        keyPressed(for: UInt16(kVK_DownArrow), on: inputNumberField)
+        XCTAssertEqual(inputNumberField.value, "20")
     }
        
     private func renderNumberInput() -> ACRNumericTextField {
@@ -148,6 +166,16 @@ class InputNumberRendererTest: XCTestCase {
         XCTAssertTrue(view is ACRNumericTextField)
         guard let inputNumber = view as? ACRNumericTextField else { fatalError() }
         return inputNumber
+    }
+    
+    private func getAssociatedStepper(of numericField: ACRNumericTextField) -> NSStepper? {
+        guard let stepper = numericField.subviews.last as? NSStepper else { return nil }
+        return stepper
+    }
+    
+    private func keyPressed(for keyCode: UInt16, on numericView: ACRNumericTextField) {
+        let event = NSEvent.keyEvent(with: NSEvent.EventType.keyDown, location: numericView.frame.origin, modifierFlags: [], timestamp: 0, windowNumber: 0, context: nil, characters: "", charactersIgnoringModifiers: "", isARepeat: false, keyCode: keyCode)
+        numericView.keyDown(with: event!)
     }
 }
 

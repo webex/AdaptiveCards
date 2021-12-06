@@ -1,5 +1,6 @@
 import AdaptiveCards_bridge
 import AppKit
+import Carbon.HIToolbox.Events
 
 open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
     static let shared = InputNumberRenderer()
@@ -41,6 +42,8 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         setupViews()
         setupConstraints()
         setUpControls()
+        setAccessibilityLabel("")
+        setStepperAccessibilityValue(value: "")
     }
     
     public required init?(coder: NSCoder) {
@@ -71,6 +74,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
 
     @objc private func handleStepperAction(_ sender: NSStepper) {
         textField.stringValue = "\(sender.integerValue)"
+        setStepperAccessibilityValue(value: String(stepper.integerValue))
     }
     
     public func controlTextDidChange(_ obj: Notification) {
@@ -82,7 +86,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         let chars = stringValue.components(separatedBy: charSet)
         stringValue = chars.joined()
 
-        // Only 1 "." should be
+        // Only 1 "." should be handled
         let comma = NSCharacterSet(charactersIn: ".")
         let chuncks = stringValue.components(separatedBy: comma as CharacterSet)
         switch chuncks.count {
@@ -115,6 +119,12 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         previousValue = textField.stringValue
     }
     
+    public func controlTextDidEndEditing(_ obj: Notification) {
+        // Handling cases when the text entered is beyond the minimum and maximum allowed values in the field.
+        textField.stringValue = value
+        setStepperAccessibilityValue(value: value)
+    }
+    
     func setupViews() {
         addSubview(textField)
         addSubview(stepper)
@@ -134,6 +144,10 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         stepper.target = self
         stepper.action = #selector(handleStepperAction(_:))
     }
+    
+    func setStepperAccessibilityValue(value: String) {
+        stepper.setAccessibilityValue(value)
+    }
 }
 
 // MARK: - EXTENSION
@@ -142,9 +156,12 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     static let MINVAL = -MAXVAL
     
     var inputValue: Double {
-        get { return textField.doubleValue }
-        set { textField.doubleValue = newValue
-            stepper.doubleValue = newValue }
+        get { return stepper.doubleValue }
+        set {
+            textField.doubleValue = newValue
+            stepper.doubleValue = newValue
+            setStepperAccessibilityValue(value: textField.stringValue)
+        }
     }
     
     var inputString: String {
@@ -187,6 +204,19 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     
     func setId(idString: String?) {
         self.id = idString
+    }
+    
+    override open func keyDown(with event: NSEvent) {
+        switch Int(event.keyCode) {
+        case kVK_UpArrow:
+            stepper.doubleValue += 1
+            inputValue = stepper.doubleValue
+        case kVK_DownArrow:
+            stepper.doubleValue -= 1
+            inputValue = stepper.doubleValue
+        default:
+            super.keyDown(with: event)
+        }
     }
     
     var value: String {
