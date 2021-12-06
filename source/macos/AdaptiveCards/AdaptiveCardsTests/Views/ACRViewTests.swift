@@ -94,7 +94,7 @@ class ACRViewTests: XCTestCase {
     func testSubmitActionCount() {
         view.addInputHandler(FakeInputHandlingView())
         // Empty stringg or dataJson is a valid input
-        view.handleSubmitAction(actionView: NSView(), dataJson: nil)
+        view.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
         XCTAssertEqual(actionDelegate.submitActionCount, 1)
         XCTAssertEqual(actionDelegate.dictValues, 1)
     }
@@ -108,7 +108,7 @@ class ACRViewTests: XCTestCase {
         fakeShowCard.addInputHandler(FakeInputHandlingView())
         
         fakeShowCard.parent = view
-        fakeShowCard.handleSubmitAction(actionView: NSView(), dataJson: nil)
+        fakeShowCard.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
         
         XCTAssertEqual(actionDelegate.submitActionCount, 1)
         XCTAssertEqual(actionDelegate.dictValues, 2)
@@ -130,7 +130,7 @@ class ACRViewTests: XCTestCase {
         fakeShowCard.parent = view
         fakeShowCard2.parent = fakeShowCard
         
-        fakeShowCard2.handleSubmitAction(actionView: NSView(), dataJson: nil)
+        fakeShowCard2.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
         
         XCTAssertEqual(actionDelegate.dictValues, 4)
     }
@@ -149,7 +149,7 @@ class ACRViewTests: XCTestCase {
         fakeShowCard.parent = view
         fakeShowCard2.parent = view
         
-        fakeShowCard2.handleSubmitAction(actionView: NSView(), dataJson: nil)
+        fakeShowCard2.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
         
         XCTAssertEqual(actionDelegate.dictValues, 1)
     }
@@ -161,7 +161,7 @@ class ACRViewTests: XCTestCase {
         testinputHandler.isValid = true
         
         view.addInputHandler(testinputHandler)
-        view.handleSubmitAction(actionView: NSButton(), dataJson: nil)
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
         
         XCTAssertEqual("Value", actionDelegate.dict["Key"] as? String)
     }
@@ -173,7 +173,7 @@ class ACRViewTests: XCTestCase {
         testinputHandler.isValid = false
         
         view.addInputHandler(testinputHandler)
-        view.handleSubmitAction(actionView: NSButton(), dataJson: nil)
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
         
         XCTAssertEqual(0, actionDelegate.dict.count)
     }
@@ -191,7 +191,7 @@ class ACRViewTests: XCTestCase {
         testinputHandler2.isValid = true
         view.addInputHandler(testinputHandler2)
         
-        view.handleSubmitAction(actionView: NSButton(), dataJson: nil)
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
         
         XCTAssertEqual(2, actionDelegate.dict.count)
         XCTAssertEqual("Value1", actionDelegate.dict["Key1"] as? String)
@@ -204,11 +204,58 @@ class ACRViewTests: XCTestCase {
         testinputHandler.key = "Key"
         testinputHandler.isValid = true
         view.addInputHandler(testinputHandler)
-        view.handleSubmitAction(actionView: NSButton(), dataJson: "{\"id\":\"1234567890\"}\n")
+        view.handleSubmitAction(actionView: NSButton(), dataJson: "{\"id\":\"1234567890\"}\n", associatedInputs: true)
         
         XCTAssertEqual(2, actionDelegate.dict.count)
         XCTAssertEqual("Value", actionDelegate.dict["Key"] as? String)
         XCTAssertEqual("1234567890", actionDelegate.dict["id"] as? String)
+    }
+    
+    func testInputHandlerWithAutoAssociatedInputs() {
+        config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: config)
+        fakeResourceResolver = FakeResourceResolver()
+        actionDelegate = FakeAdaptiveCardActionDelegate()
+        view.resolverDelegate = fakeResourceResolver
+        view.delegate = actionDelegate
+        
+        let testinputHandler1 = FakeInputHandlingView()
+        testinputHandler1.value = "Value1"
+        testinputHandler1.key = "Key1"
+        testinputHandler1.isValid = true
+        view.addInputHandler(testinputHandler1)
+        
+        let testinputHandler2 = FakeInputHandlingView()
+        testinputHandler2.value = "Value2"
+        testinputHandler2.key = "Key2"
+        testinputHandler2.isValid = true
+        view.addInputHandler(testinputHandler2)
+        
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
+        
+        XCTAssertEqual(2, actionDelegate.dict.count)
+        XCTAssertEqual("Value1", actionDelegate.dict["Key1"] as? String)
+        XCTAssertEqual("Value2", actionDelegate.dict["Key2"] as? String)
+    }
+    
+    func testInputHandlerWithNoneAssociatedInputs() {
+        config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: config)
+        fakeResourceResolver = FakeResourceResolver()
+        actionDelegate = FakeAdaptiveCardActionDelegate()
+        view.resolverDelegate = fakeResourceResolver
+        view.delegate = actionDelegate
+        
+        let testinputHandler = FakeInputHandlingView()
+        testinputHandler.value = "Value"
+        testinputHandler.key = "Key"
+        testinputHandler.isValid = true
+        view.addInputHandler(testinputHandler)
+        
+        
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: false)
+        
+        XCTAssertEqual(0, actionDelegate.dict.count)
     }
     
     func testInputHandlers_WithHiddenViews() {
@@ -224,7 +271,7 @@ class ACRViewTests: XCTestCase {
         
         view.addInputHandler(inputView1)
         view.addInputHandler(inputView2)
-        view.handleSubmitAction(actionView: NSButton(), dataJson: nil)
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
         
         XCTAssertEqual(2, actionDelegate.dict.count)
         XCTAssertEqual("hello", actionDelegate.dict["id-1"] as? String)

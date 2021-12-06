@@ -99,24 +99,26 @@ class ACRView: ACRColumnView {
         return subview(with: identifier, in: self)
     }
     
-    private func submitCardInputs(actionView: NSView, dataJSON: String?) {
+    private func submitCardInputs(actionView: NSView, dataJSON: String?, associatedInputs: Bool) {
         var dict = [String: Any]()
         
         // recursively fetch input handlers dictionary from the parent
         var rootView = self
         var parentView: ACRView? = self
-        repeat {
-            if let handlers = parentView?.inputHandlers {
-                for handler in handlers {
-                    guard handler.isValid else { continue }
-                    dict[handler.key] = handler.value
+        if (!renderConfig.supportsSchemeV1_3) || (renderConfig.supportsSchemeV1_3 && associatedInputs) {
+            repeat {
+                if let handlers = parentView?.inputHandlers {
+                    for handler in handlers {
+                        guard handler.isValid else { continue }
+                        dict[handler.key] = handler.value
+                    }
                 }
-            }
-            if let curr = parentView, curr.parent == nil {
-                rootView = curr
-            }
-            parentView = parentView?.parent
-        } while parentView != nil
+                if let curr = parentView, curr.parent == nil {
+                    rootView = curr
+                }
+                parentView = parentView?.parent
+            } while parentView != nil
+        }
       
         if let data = dataJSON?.data(using: String.Encoding.utf8), let dataJsonDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
             dict.merge(dataJsonDict) { current, _ in current }
@@ -162,8 +164,8 @@ extension ACRView: ACRActionSetViewDelegate {
         delegate?.adaptiveCard(self, didSelectOpenURL: urlString, actionView: actionView)
     }
     
-    func actionSetView(_ view: ACRActionSetView, didSubmitInputsWith actionView: NSView, dataJson: String?) {
-        submitCardInputs(actionView: actionView, dataJSON: dataJson)
+    func actionSetView(_ view: ACRActionSetView, didSubmitInputsWith actionView: NSView, dataJson: String?, associatedInputs: Bool) {
+        submitCardInputs(actionView: actionView, dataJSON: dataJson, associatedInputs: associatedInputs)
     }
     
     func actionSetView(_ view: ACRActionSetView, didToggleVisibilityActionWith actionView: NSView, toggleTargets: [ACSToggleVisibilityTarget]) {
@@ -197,8 +199,8 @@ extension ACRView: TargetHandlerDelegate {
         delegate?.adaptiveCard(self, didSelectOpenURL: urlString, actionView: actionView)
     }
     
-    func handleSubmitAction(actionView: NSView, dataJson: String?) {
-        submitCardInputs(actionView: actionView, dataJSON: dataJson)
+    func handleSubmitAction(actionView: NSView, dataJson: String?, associatedInputs: Bool) {
+        submitCardInputs(actionView: actionView, dataJSON: dataJson, associatedInputs: associatedInputs)
     }
 }
 

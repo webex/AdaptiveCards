@@ -72,6 +72,22 @@ class ActionSubmitRendererTests: XCTestCase {
         actionSubmit = .make(iconUrl: "test.url")
         XCTAssertEqual(renderButton().imagePosition, .imageLeft)
     }
+    
+    func testAutoAssociatedInputIsSet() {
+        actionSubmit = .make(dataJson: "String", associatedInputs: .auto, inputText: FakeInputText.make())
+        let button = renderButton()
+        button.performClick()
+        XCTAssertEqual(targetHandlerDelegate.calledView, button)
+        XCTAssertTrue(targetHandlerDelegate.isInputAssociated!)
+    }
+    
+    func testNoneAssociatedInputIsSet() {
+        actionSubmit = .make(dataJson: "String", associatedInputs: .none, inputText: FakeInputText.make())
+        let button = renderButton()
+        button.performClick()
+        XCTAssertEqual(targetHandlerDelegate.calledView, button)
+        XCTAssertFalse(targetHandlerDelegate.isInputAssociated!)
+    }
 
     private func renderButton() -> ACRButton {
         let view = actionSubmitRenderer.render(action: actionSubmit, with: hostConfig, style: .default, rootView: acrView, parentView: NSView(), targetHandlerDelegate: targetHandlerDelegate, inputs: [], config: .default)

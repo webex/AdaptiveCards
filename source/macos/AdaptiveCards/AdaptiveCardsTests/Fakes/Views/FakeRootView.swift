@@ -66,9 +66,11 @@ class FakeTargetHandlerDelegate: ShowCardTargetHandlerDelegate {
     }
     
     var lastDataJSON: String?
-    func handleSubmitAction(actionView: NSView, dataJson: String?) {
+    var isInputAssociated: Bool?
+    func handleSubmitAction(actionView: NSView, dataJson: String?, associatedInputs: Bool) {
         calledView = actionView
         lastDataJSON = dataJson
+        isInputAssociated = associatedInputs
     }
     
     var lastToggleTargets: [ACSToggleVisibilityTarget]?
