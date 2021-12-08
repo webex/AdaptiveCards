@@ -129,7 +129,14 @@
 {
  
     auto getRegexCpp = mCppObj->GetRegex();
-    return [NSString stringWithUTF8String:getRegexCpp.c_str()];
+    auto regexString = [NSString stringWithUTF8String:getRegexCpp.c_str()];
+    
+    // if there is no regex supplied (regexString is empty), return regex that matches everything
+    if (regexString)
+    {
+        return @".*";
+    }
+    return regexString;
 
 }
 

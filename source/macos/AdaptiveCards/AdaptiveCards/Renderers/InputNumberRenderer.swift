@@ -113,6 +113,10 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         // replace string
         textfield.stringValue = stringValue
         previousValue = textField.stringValue
+        if !textField.hasError && textField.textFieldShowsError {
+            errorMessageHandler?.hideErrorMessage(for: self)
+            textField.setupColors(hasFocus: true)
+        }
     }
     
     func setupViews() {
@@ -138,6 +142,11 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
 
 // MARK: - EXTENSION
 extension ACRNumericTextField: InputHandlingViewProtocol {
+    func showError() {
+        textField.setupErrorColors()
+        errorMessageHandler?.showErrorMessage(for: self)
+    }
+    
     static let MAXVAL = Double.greatestFiniteMagnitude
     static let MINVAL = -MAXVAL
     
@@ -206,6 +215,15 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
+        return (minValue < inputValue) && (inputValue < maxValue)
+    }
+    
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
+        get {
+            return textField.errorMessageHandler
+        }
+        set {
+            textField.errorMessageHandler = newValue
+        }
     }
 }

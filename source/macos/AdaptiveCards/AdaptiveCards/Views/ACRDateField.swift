@@ -2,6 +2,10 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRDateField: NSView, InputHandlingViewProtocol {
+    func showError() {
+        // do nothing
+    }
+    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = isTimeMode ? "HH:mm" : "yyyy-MM-dd"
@@ -114,6 +118,15 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     var isValid: Bool {
         return true
     }
+    
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
+            get {
+                return textField.errorMessageHandler
+            }
+            set {
+                textField.errorMessageHandler = newValue
+            }
+        }
     
     init(isTimeMode: Bool, config: RenderConfig) {
         self.isTimeMode = isTimeMode

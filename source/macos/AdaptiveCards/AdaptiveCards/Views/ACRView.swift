@@ -105,10 +105,15 @@ class ACRView: ACRColumnView {
         // recursively fetch input handlers dictionary from the parent
         var rootView = self
         var parentView: ACRView? = self
+        var canSubmit: Bool = true
         repeat {
             if let handlers = parentView?.inputHandlers {
                 for handler in handlers {
-                    guard handler.isValid else { continue }
+                    guard handler.isValid else {
+                        handler.showError()
+                        canSubmit = false
+                        continue
+                    }
                     dict[handler.key] = handler.value
                 }
             }
@@ -117,14 +122,15 @@ class ACRView: ACRColumnView {
             }
             parentView = parentView?.parent
         } while parentView != nil
-      
-        if let data = dataJSON?.data(using: String.Encoding.utf8), let dataJsonDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-            dict.merge(dataJsonDict) { current, _ in current }
-        // data != "null\n" check is required as the objective String does not return nil if nno data present
-        } else if let data = dataJSON, data != "null\n", dict["data"] == nil {
-            dict["data"] = data
+        if canSubmit {
+            if let data = dataJSON?.data(using: String.Encoding.utf8), let dataJsonDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                dict.merge(dataJsonDict) { current, _ in current }
+            // data != "null\n" check is required as the objective String does not return nil if nno data present
+            } else if let data = dataJSON, data != "null\n", dict["data"] == nil {
+                dict["data"] = data
+            }
+            delegate?.adaptiveCard(rootView, didSubmitUserResponses: dict, actionView: actionView)
         }
-        delegate?.adaptiveCard(rootView, didSubmitUserResponses: dict, actionView: actionView)
     }
     
     private func toggleVisibity(of targets: [ACSToggleVisibilityTarget]) {

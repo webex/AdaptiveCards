@@ -31,6 +31,8 @@ protocol InputHandlingViewProtocol: NSView {
     var value: String { get }
     var key: String { get }
     var isValid: Bool { get }
+    var errorMessageHandler: ErrorMessageHandlerDelegate? { get set }
+    func showError()
 }
 
 protocol ShowCardHandlingView: NSView {

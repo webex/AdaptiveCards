@@ -28,7 +28,7 @@ class BaseCardElementRenderer {
             contentStackView.setMinimumHeight(collectionElement.getMinHeight())
         }
         
-        // For seperator
+        // For separator
         if element.getSeparator(), !isfirstElement {
             updatedView.addSeperator(true)
         }
@@ -52,6 +52,17 @@ class BaseCardElementRenderer {
         if view is ACRContentStackView {
             view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
         }
+        
+        if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let errorMessage = inputElement.getErrorMessage(), !errorMessage.isEmpty {
+            updatedView.setCustomSpacing(spacing: 3, after: view)
+            let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
+            attributedErrorMessageString.addAttributes([.font: config.inputFieldConfig.errorMessageFont, .foregroundColor: config.inputFieldConfig.errorMessageTextAndBorderColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
+            updatedView.setErrorMessage(with: attributedErrorMessageString)
+            if let view = view as? InputHandlingViewProtocol {
+                view.errorMessageHandler = updatedView
+            }
+        }
+        
         return updatedView
     }
     

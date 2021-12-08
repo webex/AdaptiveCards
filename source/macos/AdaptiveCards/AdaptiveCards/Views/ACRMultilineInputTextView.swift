@@ -7,10 +7,21 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     @IBOutlet var textView: ACRTextView!
     
     private var placeholderAttrString: NSAttributedString?
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
     private let config: RenderConfig
     private let inputConfig: InputFieldConfig
     var maxLen: Int = 0
     var id: String?
+    var regex: String?
+    var isRequired: Bool = false
+    var textFieldShowsError: Bool = false
+    var hasMouseInField: Bool = false
+    var hasError: Bool {
+        get {
+            // if string value is empty, then check if it is required. In case string has value, check if its valid regex
+            return textView.string.isEmpty ? isRequired : textView.string.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) == nil
+        }
+    }
     
     init(config: RenderConfig) {
         self.config = config
@@ -57,11 +68,10 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         textView.textContainer?.lineFragmentPadding = 0
         textView.textContainerInset = NSSize(width: inputConfig.multilineFieldInsets.left, height: inputConfig.multilineFieldInsets.top)
         wantsLayer = true
-        layer?.borderColor = inputConfig.borderColor.cgColor
         layer?.borderWidth = inputConfig.borderWidth
         layer?.cornerRadius = inputConfig.focusRingCornerRadius
-        textView.backgroundColor = inputConfig.backgroundColor
         textView.setAccessibilityTitle(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
+        setupColors(hasFocus: false)
         
         // For hover need tracking area
         let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
@@ -95,6 +105,12 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     }
     
     func textDidChange(_ notification: Notification) {
+        if !hasError && textFieldShowsError {
+            errorMessageHandler?.hideErrorMessage(for: self)
+            setupColors(hasFocus: true)
+            textFieldShowsError = false
+        }
+        
         guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
         // This stops the user from exceeding the maxLength property of Inut.Text if prroperty was set
         guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
@@ -106,15 +122,39 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     }
     
     override func mouseEntered(with event: NSEvent) {
-        textView.backgroundColor = inputConfig.highlightedColor
+        super.mouseEntered(with: event)
+        if !textFieldShowsError {
+            textView.backgroundColor = inputConfig.highlightedColor
+        }
+        hasMouseInField = true
     }
     
     override func mouseExited(with event: NSEvent) {
-        textView.backgroundColor = inputConfig.backgroundColor
+        super.mouseExited(with: event)
+        if !textFieldShowsError {
+            textView.backgroundColor = inputConfig.backgroundColor
+        }
+        hasMouseInField = false
+    }
+    
+    func setupColors(hasFocus: Bool) {
+        layer?.borderColor = hasFocus ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
+        textView.backgroundColor = hasMouseInField ? inputConfig.highlightedColor : inputConfig.backgroundColor
+    }
+    
+    func setupErrorColors() {
+        layer?.borderColor = config.inputFieldConfig.errorMessageTextAndBorderColor.cgColor
+        textView.backgroundColor = config.inputFieldConfig.errorBackgroundColor
+        textFieldShowsError = true
     }
 }
 
 extension ACRMultilineInputTextView: InputHandlingViewProtocol {
+    func showError() {
+        errorMessageHandler?.showErrorMessage(for: self)
+        setupErrorColors()
+    }
+    
     var value: String {
         textView.string
     }
@@ -128,18 +168,22 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
+        return !hasError
     }
 }
 
 extension ACRMultilineInputTextView: ACRTextViewResponderDelegate {
     func textViewDidBecomeFirstResponder() {
         scrollView.disableScroll = false
-        layer?.borderColor = inputConfig.activeBorderColor.cgColor
+        if !textFieldShowsError {
+            setupColors(hasFocus: true)
+        }
     }
     
     func textViewDidResignFirstResponder() {
         scrollView.disableScroll = true
-        layer?.borderColor = inputConfig.borderColor.cgColor
+        if !textFieldShowsError {
+            setupColors(hasFocus: false)
+        }
     }
 }

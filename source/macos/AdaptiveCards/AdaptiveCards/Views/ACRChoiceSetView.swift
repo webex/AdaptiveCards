@@ -3,6 +3,10 @@ import AppKit
 
 // MARK: ACRChoiceSetView
 class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
+    func showError() {
+        // do nothing
+    }
+    
     private lazy var stackview: NSStackView = {
         let view = NSStackView()
         view.orientation = .vertical
@@ -15,6 +19,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     public var previousButton: ACRChoiceButton?
     public var wrap = false
     public var idString: String?
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
     
     private let renderConfig: RenderConfig
     
@@ -92,11 +97,16 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
 
 // MARK: ACRChoiceSetFieldCompactView
 class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
+    func showError() {
+        // do nothing
+    }
+    
     public let type: ACSChoiceSetStyle = .compact
     private var trackingAreaDefined = false
     public var idString: String?
     public var valueSelected: String?
     public var arrayValues: [String] = []
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true

@@ -13,10 +13,21 @@ class ACRTextField: NSTextField {
     }
     
     weak var textFieldDelegate: ACRTextFieldDelegate?
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
     private let config: RenderConfig
     private let inputConfig: InputFieldConfig
     private let isDarkMode: Bool
     private let textFieldMode: Mode
+    var regex: String?
+    var isRequired: Bool = false
+    var textFieldShowsError: Bool = false
+    var hasMouseInField: Bool = false
+    var hasError: Bool {
+        get {
+            // if string value is empty, then check if it is required. In case string has value, check if its valid regex
+            return isEmpty ? isRequired : stringValue.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) == nil
+        }
+    }
     
     init(dateTimeFieldWith config: RenderConfig) {
         self.config = config
@@ -79,7 +90,7 @@ class ACRTextField: NSTextField {
         wantsLayer = true
         layer?.backgroundColor = inputConfig.backgroundColor.cgColor
         layer?.borderWidth = inputConfig.borderWidth
-        layer?.borderColor = inputConfig.borderColor.cgColor
+        setupColors(hasFocus: false)
         setupTrackingArea()
     }
     
@@ -161,31 +172,40 @@ class ACRTextField: NSTextField {
     
     override func mouseEntered(with event: NSEvent) {
         super.mouseEntered(with: event)
-        self.layer?.backgroundColor = inputConfig.highlightedColor.cgColor
+        if !textFieldShowsError {
+            layer?.backgroundColor = inputConfig.highlightedColor.cgColor
+        }
+        hasMouseInField = true
     }
     
     override func mouseExited(with event: NSEvent) {
         super.mouseExited(with: event)
-        self.layer?.backgroundColor = inputConfig.backgroundColor.cgColor
+        if !textFieldShowsError {
+            layer?.backgroundColor = inputConfig.backgroundColor.cgColor
+        }
+        hasMouseInField = false
     }
     
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
-        if textFieldMode != .dateTime {
-            layer?.borderColor = inputConfig.activeBorderColor.cgColor
-        }
     }
     
     override func textDidBeginEditing(_ notification: Notification) {
-        if textFieldMode != .dateTime {
-            layer?.borderColor = inputConfig.activeBorderColor.cgColor
-        }
         return super.textDidBeginEditing(notification)
     }
     
     override func textDidEndEditing(_ notification: Notification) {
-        layer?.borderColor = inputConfig.borderColor.cgColor
+        if !textFieldShowsError {
+            setupColors(hasFocus: false)
+        }
         return super.textDidEndEditing(notification)
+    }
+    
+    override func drawFocusRingMask() {
+        if !textFieldShowsError {
+            setupColors(hasFocus: true)
+        }
+        super.drawFocusRingMask()
     }
     
     private func updateClearButton() {
@@ -209,6 +229,17 @@ class ACRTextField: NSTextField {
             return temp
         }
         return super.accessibilityChildren()
+    }
+    
+    func setupColors(hasFocus: Bool) {
+        layer?.borderColor = hasFocus && textFieldMode != .dateTime ? config.inputFieldConfig.activeBorderColor.cgColor : config.inputFieldConfig.borderColor.cgColor
+        layer?.backgroundColor = hasMouseInField ? inputConfig.highlightedColor.cgColor : inputConfig.backgroundColor.cgColor
+    }
+    
+    func setupErrorColors() {
+        layer?.borderColor = NSColor.systemRed.cgColor
+        layer?.backgroundColor = inputConfig.errorBackgroundColor.cgColor
+        textFieldShowsError = true
     }
 }
 

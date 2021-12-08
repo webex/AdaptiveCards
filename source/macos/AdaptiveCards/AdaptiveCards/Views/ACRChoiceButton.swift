@@ -10,11 +10,16 @@ protocol ACRChoiceButtonDelegate: NSObjectProtocol {
 }
 
 class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
+    func showError() {
+        // do nothing
+    }
+    
     weak var delegate: ACRChoiceButtonDelegate?
     public var buttonValue: String?
     public var idString: String?
     public var valueOn: String?
     public var valueOff: String?
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
     
     private let buttonConfig: ChoiceSetButtonConfig?
     private let buttonType: ChoiceSetButtonType

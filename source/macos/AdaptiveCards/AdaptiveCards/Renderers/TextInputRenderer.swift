@@ -17,6 +17,8 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }()
         let textView = ACRTextInputView(config: config)
         textView.idString = inputBlock.getId()
+        textView.regex = inputBlock.getRegex()
+        textView.isRequired = inputBlock.getIsRequired()
         var attributedInitialValue: NSMutableAttributedString
         
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -52,6 +54,8 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
                 multilineView.setValue(value: valueString, maximumLen: inputBlock.getMaxLength())
             }
             multilineView.maxLen = inputBlock.getMaxLength() as? Int ?? 0
+            multilineView.regex = inputBlock.getRegex()
+            multilineView.isRequired = inputBlock.getIsRequired()
             // Add Input Handler
             
             rootView.addInputHandler(multilineView)
@@ -155,7 +159,7 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
+        return !hasError
     }
     
     var maxLen: Int = 0
@@ -163,6 +167,13 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     
     override func textDidChange(_ notification: Notification) {
         super.textDidChange(notification)
+        
+        if !hasError && textFieldShowsError {
+            errorMessageHandler?.hideErrorMessage(for: self)
+            setupColors(hasFocus: true)
+            textFieldShowsError = false
+        }
+        
         guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
         // This stops the user from exceeding the maxLength property of Input.Text if property was set
         guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
@@ -171,5 +182,10 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
         if textView.string.count > maxLen {
             textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
         }
+    }
+    
+    func showError() {
+        setupErrorColors()
+        errorMessageHandler?.showErrorMessage(for: self)
     }
 }
