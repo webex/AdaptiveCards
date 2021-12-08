@@ -238,4 +238,13 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     var isValid: Bool {
         return true
     }
+    
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
+        get {
+            return textField.errorMessageHandler
+        }
+        set {
+            textField.errorMessageHandler = newValue
+        }
+    }
 }

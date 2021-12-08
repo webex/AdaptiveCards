@@ -15,6 +15,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     public var idString: String?
     public var valueOn: String?
     public var valueOff: String?
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
     
     private let buttonConfig: ChoiceSetButtonConfig?
     private let buttonType: ChoiceSetButtonType
