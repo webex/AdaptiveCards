@@ -617,6 +617,11 @@ namespace RendererQml
             uiTextInput->Property("Keys.onBacktabPressed", "{nextItemInFocusChain(false).forceActiveFocus(); event.accepted = true;}");
 
             scrollViewTag->AddChild(uiTextInput);
+
+            if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
+            {
+                scrollViewTag->Property("height", "parent.height");
+            }
         }
         else
         {
@@ -722,6 +727,13 @@ namespace RendererQml
                 {
                     inputWrapper->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
                     uiContainer->AddChild(inputWrapper);
+
+                    if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
+                    {
+                        auto stretchRectangle = GetStretchRectangle(uiContainer);
+                        uiContainer->AddChild(buttonElement);
+                        return stretchRectangle;
+                    }
                 }
                 uiContainer->AddChild(buttonElement);
                 return uiContainer;
@@ -731,6 +743,11 @@ namespace RendererQml
         if (input->GetIsMultiline())
         {
             return scrollViewTag;
+        }
+
+        if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
+        {
+            return GetStretchRectangle(inputWrapper);
         }
 
         return inputWrapper;
@@ -954,6 +971,11 @@ namespace RendererQml
         uiSplitterRactangle->Property("Accessible.name", Formatter() << "accessiblityPrefix + " << contentItemTag->GetId() << ".displayText");
         uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
 
+        if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
+        {
+            return GetStretchRectangle(numberInputRow);
+        }
+
         return numberInputRow;
 	}
 
@@ -1048,8 +1070,6 @@ namespace RendererQml
 		uiTextRun.append("'>");
 
         std::string text = TextUtils::ApplyTextFunctions(textRun->GetText(), context->GetLang());
-        auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(text);
-        text = markdownParser->TransformToHtml();
         text = Utils::HandleEscapeSequences(text);
         const std::string linkColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
         //CSS Property for underline, striketrhough,etc
@@ -1120,6 +1140,12 @@ namespace RendererQml
         );
 
         context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
+
+        if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
+        {
+            return GetStretchRectangle(checkbox);
+        }
+
         return checkbox;
 	}
 
@@ -1167,9 +1193,13 @@ namespace RendererQml
 		else
 		{
             uiChoiceSet = GetButtonGroup(choiceSet, context);
-            uiChoiceSet->Property("visible", input->GetIsVisible() ? "true" : "false");
             context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
 		}
+
+        if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
+        {
+            return GetStretchRectangle(uiChoiceSet);
+        }
 
 		return uiChoiceSet;
 	}
@@ -1835,6 +1865,11 @@ namespace RendererQml
 
         uiDateInputCombobox->Property("Accessible.ignored", "true");
 
+        if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
+        {
+            return GetStretchRectangle(uiDateInputWrapper);
+        }
+
         return uiDateInputWrapper;
     }
 
@@ -2176,6 +2211,11 @@ namespace RendererQml
 			uiFactSet->AddChild(uiTitle);
 			uiFactSet->AddChild(uiValue);
 		}
+
+        if (factSet->GetHeight() == AdaptiveCards::HeightType::Stretch)
+        {
+            return GetStretchRectangle(uiFactSet);
+        }
 
 		return uiFactSet;
     }
@@ -2589,6 +2629,11 @@ namespace RendererQml
         uiTimeInputWrapper->AddChild(uiTimeInputRow);
 
         context->addToInputElementList(origionalElementId, (uiTimeInput->GetId() + ".selectedTime"));
+
+        if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
+        {
+            return GetStretchRectangle(uiTimeInputWrapper);
+        }
 
         return uiTimeInputWrapper;
 	}
@@ -4094,13 +4139,16 @@ namespace RendererQml
             if (next) {
                 element.cursorPosition = element.selectionEnd + 1;
                 element.deselect();
-                while (element.cursorPosition < element.length && element.linkAt(element.cursorRectangle.x, element.cursorRectangle.y) === "")element.cursorPosition++
+                while (element.cursorPosition < element.length && element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === "")element.cursorPosition++
                 if (element.cursorPosition !== element.length) {
-                    start = element.cursorPosition - 1;
-                    element.link = element.linkAt(element.cursorRectangle.x - 1, element.cursorRectangle.y);
-                    while (element.cursorPosition < element.length && element.linkAt(element.cursorRectangle.x - 1, element.cursorRectangle.y) === element.link)element.cursorPosition++
+                    start = element.selectionEnd - 1;
+                    element.link = element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2));
+                    while (element.cursorPosition < element.length && element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === element.link)element.cursorPosition++
                     if (element.cursorPosition <= element.length) {
-                        end = element.cursorPosition === element.length ? element.cursorPosition : element.cursorPosition - 1;
+                        element.cursorPosition--;
+                        if(element.linkAt(element.cursorRectangle.x + 1, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === element.link)
+                            element.cursorPosition++;
+                        end = element.cursorPosition;
                         element.select(start, end);
                         return true;
                     }
@@ -4108,11 +4156,11 @@ namespace RendererQml
             } else {
                 element.cursorPosition = element.selectionStart - 1;
                 element.deselect();
-                while (element.cursorPosition > 0 && element.linkAt(element.cursorRectangle.x + 1, element.cursorRectangle.y) === "")element.cursorPosition--
+                while (element.cursorPosition > 0 && element.linkAt(element.cursorRectangle.x + 1, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === "")element.cursorPosition--
                 if (element.cursorPosition !== 0) {
                     end = element.selectionStart + 1;
-                    element.link = element.linkAt(element.cursorRectangle.x, element.cursorRectangle.y);
-                    while (element.cursorPosition > 0 && element.linkAt(element.cursorRectangle.x, element.cursorRectangle.y) === element.link)element.cursorPosition--
+                    element.link = element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2));
+                    while (element.cursorPosition > 0 && element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === element.link)element.cursorPosition--
                     if (element.cursorPosition >= 0) {
                         start = element.cursorPosition;
                         element.select(end, start);
@@ -4364,5 +4412,16 @@ namespace RendererQml
         uiTextBlock->AddChild(uiFocusRectangle);
 
         return uiTextBlock;
+    }
+
+    std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetStretchRectangle(std::shared_ptr<QmlTag> element)
+    {
+        auto stretchRectangle = std::make_shared<QmlTag>("Rectangle");
+        stretchRectangle->Property("height", "parent.height");
+        stretchRectangle->Property("width", "parent.width");
+        stretchRectangle->Property("color", "transparent", true);
+        stretchRectangle->AddChild(element);
+
+        return stretchRectangle;
     }
 }
