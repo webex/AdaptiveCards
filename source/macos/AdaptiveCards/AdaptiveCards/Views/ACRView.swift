@@ -14,6 +14,7 @@ class ACRView: ACRColumnView {
     private (set) var renderedShowCards: [NSView] = []
     private (set) var initialLayoutDone = false
     private var currentFocusedActionElement: NSCell?
+    private var isLayoutDoneOnShowCard: Bool = false
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         self.renderConfig = renderConfig
@@ -37,6 +38,11 @@ class ACRView: ACRColumnView {
             resetKeyboardFocus()
         }
         previousBounds = bounds
+    }
+    
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+        isLayoutDoneOnShowCard = false
     }
     
     func addTarget(_ target: TargetHandler) {
@@ -69,16 +75,8 @@ class ACRView: ACRColumnView {
     }
     
     func resetKeyboardFocus() {
-        guard isInitialLayoutComplete, let lastFocusedElement = currentFocusedActionElement else { return }
-        lastFocusedElement.setAccessibilityFocused(true)
-        currentFocusedActionElement = nil
-    }
-    
-    private var isInitialLayoutComplete: Bool {
-        guard let firstOpenChildCard = renderedShowCards.first(where: { !$0.isHidden }) as? ACRView else {
-            return initialLayoutDone
-        }
-        return firstOpenChildCard.initialLayoutDone && initialLayoutDone
+        guard isLayoutDoneOnShowCard, let lastFocusedElement = currentFocusedActionElement else { return }
+        lastFocusedElement.controlView?.setAccessibilityFocused(true)
     }
     
     private func findSubview(with identifier: String) -> NSView? {
@@ -180,6 +178,7 @@ extension ACRView: ACRActionSetViewDelegate {
         boundsBeforeShowCard = bounds
         if let buttonCell = button.cell, buttonCell.isAccessibilityFocused() {
             currentFocusedActionElement = buttonCell
+            isLayoutDoneOnShowCard = true
         }
     }
     

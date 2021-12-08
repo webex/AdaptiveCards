@@ -8,6 +8,8 @@ class ACRNumericTestFieldTests: XCTestCase {
         super.setUp()
         numericView = ACRNumericTextField(config: .default)
         numericView.inputString = "20"
+        numericView.maxValue = Double.greatestFiniteMagnitude
+        numericView.minValue = -Double.greatestFiniteMagnitude
     }
     
     func testInvalidCharacterInputEnd() {
@@ -43,5 +45,12 @@ class ACRNumericTestFieldTests: XCTestCase {
         let object = Notification(name: NSNotification.Name.init("NSControlTextDidChangeNotification"), object: numericView.textField)
         numericView.controlTextDidChange(object)
         XCTAssertEqual(numericView.inputString, "2.5")
+    }
+    
+    func testNegativeNumberInputTest() {
+        numericView.textField.stringValue = "-20"
+        let object = Notification(name: NSNotification.Name.init("NSControlTextDidChangeNotification"), object: numericView.textField)
+        numericView.controlTextDidChange(object)
+        XCTAssertEqual(numericView.inputString, "-20.0")
     }
 }
