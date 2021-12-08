@@ -727,13 +727,6 @@ namespace RendererQml
                 {
                     inputWrapper->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
                     uiContainer->AddChild(inputWrapper);
-
-                    if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
-                    {
-                        auto stretchRectangle = GetStretchRectangle(uiContainer);
-                        uiContainer->AddChild(buttonElement);
-                        return stretchRectangle;
-                    }
                 }
                 uiContainer->AddChild(buttonElement);
                 return uiContainer;
@@ -1140,12 +1133,6 @@ namespace RendererQml
         );
 
         context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
-
-        if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
-        {
-            return GetStretchRectangle(checkbox);
-        }
-
         return checkbox;
 	}
 
@@ -4146,8 +4133,9 @@ namespace RendererQml
                     while (element.cursorPosition < element.length && element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === element.link)element.cursorPosition++
                     if (element.cursorPosition <= element.length) {
                         element.cursorPosition--;
-                        if(element.linkAt(element.cursorRectangle.x + 1, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === element.link)
+                        if(element.linkAt(element.cursorRectangle.x + 1, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === element.link){
                             element.cursorPosition++;
+                        }
                         end = element.cursorPosition;
                         element.select(start, end);
                         return true;
