@@ -2,10 +2,6 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRDateField: NSView, InputHandlingViewProtocol {
-    func showError() {
-        // do nothing
-    }
-    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = isTimeMode ? "HH:mm" : "yyyy-MM-dd"
@@ -71,6 +67,10 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
                 datePickerCalendar.dateValue = selectedDate
                 datePickerTextfield.dateValue = selectedDate
             }
+            if isValid && textField.textFieldShowsError {
+                textField.setupColors(hasFocus: true)
+                errorMessageHandler?.hideErrorMessage(for: self)
+            }
         }
     }
     var initialDateValue: String? {
@@ -116,17 +116,24 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
-    }
-    
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
-            get {
-                return textField.errorMessageHandler
+        get {
+            var hasValidInput = true
+            
+            if let minDate = dateFormatter.date(from: minDateValue ?? ""), let selectedDate = selectedDate, minDate > selectedDate {
+                hasValidInput = false
             }
-            set {
-                textField.errorMessageHandler = newValue
+            
+            if let maxDate = dateFormatter.date(from: maxDateValue ?? ""), let selectedDate = selectedDate, maxDate < selectedDate {
+                hasValidInput = false
             }
+            
+            if textField.hasError {
+                hasValidInput = false
+            }
+            
+            return hasValidInput
         }
+    }
     
     init(isTimeMode: Bool, config: RenderConfig) {
         self.isTimeMode = isTimeMode
@@ -185,14 +192,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
             datePickerCalendar.dateValue = dateValue
             datePickerTextfield.dateValue = dateValue
         }
-        if let minDate = minDateValue, let date = dateFormatter.date(from: minDate) {
-            datePickerCalendar.minDate = date
-            datePickerTextfield.minDate = date
-        }
-        if let maxDate = maxDateValue, let date = dateFormatter.date(from: maxDate) {
-            datePickerCalendar.maxDate = date
-            datePickerTextfield.maxDate = date
-        }
+        
         datePickerCalendar.datePickerStyle = .clockAndCalendar
         datePickerCalendar.datePickerElements = isTimeMode ? .hourMinute : .yearMonthDay
         datePickerCalendar.target = self
@@ -237,6 +237,21 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
             return placeholder
         }
         return nil
+    }
+    
+    func showError() {
+        textField.setupErrorColors()
+        errorMessageHandler?.showErrorMessage(for: self)
+    }
+    
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
+        get { return textField.errorMessageHandler }
+        set { textField.errorMessageHandler = newValue }
+    }
+    
+    var isRequired: Bool {
+        get { return textField.isRequired }
+        set { textField.isRequired = newValue }
     }
 }
 

@@ -18,6 +18,7 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
             view.maxValue = inputElement.getMax()?.doubleValue ?? ACRNumericTextField.MAXVAL
             view.minValue = inputElement.getMin()?.doubleValue ?? ACRNumericTextField.MINVAL
             view.inputString = inputElement.getValue()?.stringValue ?? ""
+            view.isRequired = inputElement.getIsRequired()
             return view
         }()
         
@@ -117,16 +118,17 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         // replace string
         textfield.stringValue = stringValue
         previousValue = textField.stringValue
-        if !textField.hasError && textField.textFieldShowsError {
+        if isValid && textField.textFieldShowsError {
             errorMessageHandler?.hideErrorMessage(for: self)
             textField.setupColors(hasFocus: true)
         }
     }
     
     public func controlTextDidEndEditing(_ obj: Notification) {
-        // Handling cases when the text entered is beyond the minimum and maximum allowed values in the field.
-        textField.stringValue = value
-        setStepperAccessibilityValue(value: value)
+        if !textField.textFieldShowsError {
+            textField.setupColors(hasFocus: false)
+        }
+        setStepperAccessibilityValue(value: inputString)
     }
     
     func setupViews() {
@@ -156,16 +158,11 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
 
 // MARK: - EXTENSION
 extension ACRNumericTextField: InputHandlingViewProtocol {
-    func showError() {
-        textField.setupErrorColors()
-        errorMessageHandler?.showErrorMessage(for: self)
-    }
-    
     static let MAXVAL = Double.greatestFiniteMagnitude
     static let MINVAL = -MAXVAL
     
     var inputValue: Double {
-        get { return stepper.doubleValue }
+        get { return textField.doubleValue }
         set {
             textField.doubleValue = newValue
             stepper.doubleValue = newValue
@@ -174,7 +171,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     var inputString: String {
-        get { return String(inputValue) }
+        get { return textField.stringValue }
         set {
             if !newValue.isEmpty, let doubleVal = Double(newValue) {
                 inputValue = doubleVal
@@ -215,6 +212,11 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
         self.id = idString
     }
     
+    func showError() {
+        textField.setupErrorColors()
+        errorMessageHandler?.showErrorMessage(for: self)
+    }
+    
     override open func keyDown(with event: NSEvent) {
         switch Int(event.keyCode) {
         case kVK_UpArrow:
@@ -245,15 +247,16 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return (minValue < inputValue) && (inputValue < maxValue)
+        return (minValue <= inputValue) && (inputValue <= maxValue) && !textField.hasError
     }
     
     weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
-        get {
-            return textField.errorMessageHandler
-        }
-        set {
-            textField.errorMessageHandler = newValue
-        }
+        get { return textField.errorMessageHandler }
+        set { textField.errorMessageHandler = newValue }
+    }
+    
+    var isRequired: Bool {
+        get { return textField.isRequired }
+        set { textField.isRequired = newValue }
     }
 }
