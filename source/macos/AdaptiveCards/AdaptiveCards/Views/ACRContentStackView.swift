@@ -19,7 +19,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     private var currentSpacingView: SpacingView?
     private var currentSeparatorView: SpacingView?
-    private var errorMessageView: NSTextField?
+    private (set) var errorMessageView: NSTextField?
     
     let style: ACSContainerStyle
     let hostConfig: ACSHostConfig
@@ -226,14 +226,15 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
     }
     
-    func setErrorMessage(with title: String) {
+    func setErrorMessage(with title: String, for view: InputHandlingViewProtocol) {
         errorMessageView = NSTextField()
         errorMessageView?.stringValue = title
-        errorMessageView?.isHidden = false
+        errorMessageView?.isHidden = true
         errorMessageView?.isEditable = false
         errorMessageView?.isBordered = false
         errorMessageView?.isSelectable = true
-        
+        errorMessageView?.backgroundColor = .clear
+        view.errorMessageHandler = self
         guard let errorMessageView = errorMessageView else { return }
         addArrangedSubview(errorMessageView)
     }

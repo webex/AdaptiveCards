@@ -16,6 +16,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     public var wrap = false
     public var idString: String?
     weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    private var toggleValue = false
     
     private let renderConfig: RenderConfig
     

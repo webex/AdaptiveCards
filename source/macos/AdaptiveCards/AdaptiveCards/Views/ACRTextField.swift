@@ -191,7 +191,6 @@ class ACRTextField: NSTextField {
     
     private func updateClearButton() {
         clearButton.isHidden = isEmpty
-        clearButton.isHidden ? errorMessageHandler?.hideErrorMessage(for: self) : errorMessageHandler?.showErrorMessage(for: self)
     }
     
     private var wantsClearButton: Bool {
