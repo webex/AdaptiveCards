@@ -43,6 +43,24 @@ class ACRActionSetViewTests: XCTestCase {
         XCTAssertEqual(delegate.lastDataJSON, "hello")
     }
     
+    func testNoneAssociatedInput() {
+        actions = [FakeSubmitAction.make(associatedInputs: .none)]
+        renderActionSetView()
+        actionButtons[0].performClick()
+        
+        XCTAssertTrue(delegate.submitInputsCalled)
+        XCTAssertFalse(delegate.isInputAssociated!)
+    }
+    
+    func testAutoAssociatedInput() {
+        actions = [FakeSubmitAction.make(associatedInputs: .auto)]
+        renderActionSetView()
+        actionButtons[0].performClick()
+        
+        XCTAssertTrue(delegate.submitInputsCalled)
+        XCTAssertTrue(delegate.isInputAssociated!)
+    }
+    
     func testToggleVisibilityActionCall() {
         let target = FakeToggleVisibilityTarget.make()
         actions = [FakeToggleVisibilityAction.make(targetElements: [target])]
@@ -127,9 +145,11 @@ private class FakeActionSetViewDelegate: ACRActionSetViewDelegate {
     
     var submitInputsCalled = false
     var lastDataJSON: String?
-    func actionSetView(_ view: ACRActionSetView, didSubmitInputsWith actionView: NSView, dataJson: String?) {
+    var isInputAssociated: Bool?
+    func actionSetView(_ view: ACRActionSetView, didSubmitInputsWith actionView: NSView, dataJson: String?, associatedInputs: Bool) {
         submitInputsCalled = true
         lastDataJSON = dataJson
+        isInputAssociated = associatedInputs
     }
     
     var toggleVisibilityCalled = false

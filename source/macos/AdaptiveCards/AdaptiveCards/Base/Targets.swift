@@ -27,10 +27,13 @@ class ActionOpenURLTarget: NSObject, TargetHandler {
 class ActionSubmitTarget: NSObject, TargetHandler {
     private (set) weak var delegate: TargetHandlerDelegate?
     let dataJson: String?
+    // true if need to associate inputs, false if none
+    let associatedInput: Bool
     
     init(element: ACSSubmitAction, delegate: TargetHandlerDelegate) {
         self.delegate = delegate
         self.dataJson = element.getDataJson()
+        self.associatedInput = element.getAssociatedInputs() == .auto
     }
     
     func configureAction(for button: NSButton) {
@@ -39,11 +42,11 @@ class ActionSubmitTarget: NSObject, TargetHandler {
     }
     
     func handleSelectionAction(for actionView: NSView) {
-        delegate?.handleSubmitAction(actionView: actionView, dataJson: self.dataJson)
+        delegate?.handleSubmitAction(actionView: actionView, dataJson: self.dataJson, associatedInputs: associatedInput)
     }
     
     @objc private func handleButtonAction(_ sender: NSButton) {
-        delegate?.handleSubmitAction(actionView: sender, dataJson: self.dataJson)
+        delegate?.handleSubmitAction(actionView: sender, dataJson: self.dataJson, associatedInputs: associatedInput)
     }
 }
 
