@@ -156,7 +156,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     static let MINVAL = -MAXVAL
     
     var inputValue: Double {
-        get { return stepper.doubleValue }
+        get { return textField.doubleValue }
         set {
             textField.doubleValue = newValue
             stepper.doubleValue = newValue
@@ -209,11 +209,9 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     override open func keyDown(with event: NSEvent) {
         switch Int(event.keyCode) {
         case kVK_UpArrow:
-            stepper.doubleValue += 1
-            inputValue = stepper.doubleValue
+            inputValue += 1
         case kVK_DownArrow:
-            stepper.doubleValue -= 1
-            inputValue = stepper.doubleValue
+            inputValue -= 1
         default:
             super.keyDown(with: event)
         }
