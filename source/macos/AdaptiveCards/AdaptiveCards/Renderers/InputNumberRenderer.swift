@@ -121,13 +121,11 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         if isValid && textField.textFieldShowsError {
             errorMessageHandler?.hideErrorMessage(for: self)
             textField.setupColors(hasFocus: true)
+            textField.textFieldShowsError = false
         }
     }
     
     public func controlTextDidEndEditing(_ obj: Notification) {
-        if !textField.textFieldShowsError {
-            textField.setupColors(hasFocus: false)
-        }
         setStepperAccessibilityValue(value: inputString)
     }
     

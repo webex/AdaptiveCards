@@ -10,12 +10,18 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     weak var errorMessageHandler: ErrorMessageHandlerDelegate?
     private let config: RenderConfig
     private let inputConfig: InputFieldConfig
-    var maxLen: Int = 0
+    var maxLen = 0
     var id: String?
-    var regex: String?
-    var isRequired: Bool = false
-    var textFieldShowsError: Bool = false
-    var hasMouseInField: Bool = false
+    var regex: String? {
+        didSet {
+            // handling case when regex is not supplied and is set to "". Replacing it with ".*"
+            guard let currValue = regex else { return }
+            regex = currValue.isEmpty ? ".*" : currValue
+        }
+    }
+    var isRequired = false
+    var textFieldShowsError = false
+    var hasMouseInField = false
     var hasError: Bool {
         get {
             // if string value is empty, then check if it is required. In case string has value, check if its valid regex

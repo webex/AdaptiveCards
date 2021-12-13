@@ -18,7 +18,13 @@ class ACRTextField: NSTextField {
     private let inputConfig: InputFieldConfig
     private let isDarkMode: Bool
     private let textFieldMode: Mode
-    var regex: String?
+    var regex: String? {
+        didSet {
+            // handling case when regex is not supplied and is set to "". Replacing it with ".*"
+            guard let currValue = regex else { return }
+            regex = currValue.isEmpty ? ".*" : currValue
+        }
+    }
     var isRequired: Bool = false
     var textFieldShowsError: Bool = false
     var hasMouseInField: Bool = false

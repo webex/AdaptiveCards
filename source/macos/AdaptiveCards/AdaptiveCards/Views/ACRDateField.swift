@@ -116,23 +116,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        get {
-            var hasValidInput = true
-            
-            if let minDate = dateFormatter.date(from: minDateValue ?? ""), let selectedDate = selectedDate, minDate > selectedDate {
-                hasValidInput = false
-            }
-            
-            if let maxDate = dateFormatter.date(from: maxDateValue ?? ""), let selectedDate = selectedDate, maxDate < selectedDate {
-                hasValidInput = false
-            }
-            
-            if textField.hasError {
-                hasValidInput = false
-            }
-            
-            return hasValidInput
-        }
+        return !textField.hasError
     }
     
     init(isTimeMode: Bool, config: RenderConfig) {
@@ -191,6 +175,14 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         if let dateValue = selectedDate {
             datePickerCalendar.dateValue = dateValue
             datePickerTextfield.dateValue = dateValue
+        }
+        if let minDate = minDateValue, let date = dateFormatter.date(from: minDate) {
+            datePickerCalendar.minDate = date
+            datePickerTextfield.minDate = date
+        }
+        if let maxDate = maxDateValue, let date = dateFormatter.date(from: maxDate) {
+            datePickerCalendar.maxDate = date
+            datePickerTextfield.maxDate = date
         }
         
         datePickerCalendar.datePickerStyle = .clockAndCalendar
