@@ -1,6 +1,8 @@
 #include "AdaptiveCardQmlRenderer.h"
 #include "ImageDataURI.h"
 #include "pch.h"
+#include "TextInputRender.h"
+#include <iostream>
 
 namespace RendererQml
 {
@@ -555,195 +557,9 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextInputRender(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        auto textConfig = context->GetRenderConfig()->getInputTextConfig();
-        const std::string origionalElementId = input->GetId();
-
-        std::shared_ptr<QmlTag> uiTextInput;
-        std::shared_ptr<QmlTag> scrollViewTag;
-        std::shared_ptr<QmlTag> inputWrapper;
-
-        std::string colorFunction = Formatter() << "function colorChange(colorItem,focusItem,isPressed) {\n"
-            "if (isPressed) {\n"
-            "colorItem.color = " << context->GetHexColor(textConfig.backgroundColorOnPressed) << "\n"
-            "}\n"
-            "else {\n"
-            "colorItem.color = focusItem.activeFocus ? " << context->GetHexColor(textConfig.backgroundColorOnPressed) << " : focusItem.hovered ? " << context->GetHexColor(textConfig.backgroundColorOnHovered) << " : " << context->GetHexColor(textConfig.backgroundColorNormal) << "\n"
-            "}\n"
-            "}\n";
-
-        input->SetId(context->ConvertToValidId(input->GetId()));
-
-        if (input->GetIsMultiline())
-        {
-            scrollViewTag = std::make_shared<QmlTag>("ScrollView");
-            scrollViewTag->Property("width", "parent.width");
-            scrollViewTag->Property("height", Formatter() << input->GetId() << ".visible ? " << textConfig.multiLineTextHeight << " : 0");
-            scrollViewTag->Property("ScrollBar.vertical.interactive", "true");
-            scrollViewTag->Property("ScrollBar.horizontal.interactive", "false");
-            scrollViewTag->Property("ScrollBar.horizontal.visible", "false");
-            scrollViewTag->Property("visible", input->GetIsVisible() ? "true" : "false");
-
-            uiTextInput = std::make_shared<QmlTag>("TextArea");
-            uiTextInput->Property("id", input->GetId());
-            uiTextInput->Property("wrapMode", "Text.Wrap");
-            uiTextInput->Property("selectByMouse", "true");
-            uiTextInput->Property("selectedTextColor", "'white'");
-            uiTextInput->Property("topPadding", Formatter() << textConfig.multiLineTextTopPadding);
-            uiTextInput->Property("bottomPadding", Formatter() << textConfig.multiLineTextBottomPadding);
-            uiTextInput->Property("color", context->GetHexColor(textConfig.textColor));
-            uiTextInput->Property("placeholderTextColor", context->GetHexColor(textConfig.placeHolderColor));
-            uiTextInput->Property("leftPadding", Formatter() << textConfig.textHorizontalPadding);
-            uiTextInput->Property("rightPadding", Formatter() << textConfig.textHorizontalPadding);
-
-            if (input->GetMaxLength() > 0)
-            {
-                uiTextInput->Property("onTextChanged", Formatter() << "remove(" << input->GetMaxLength() << ", length)");
-            }
-
-            auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-            backgroundTag->Property("radius", Formatter() << textConfig.borderRadius);
-            backgroundTag->Property("id", Formatter() << input->GetId() << "_background");
-            backgroundTag->Property("color", context->GetHexColor(textConfig.backgroundColorNormal));
-            backgroundTag->Property("border.color", Formatter() << input->GetId() << ".activeFocus? " << context->GetHexColor(textConfig.borderColorOnFocus) << " : " << context->GetHexColor(textConfig.borderColorNormal));
-            backgroundTag->Property("border.width", Formatter() << textConfig.borderWidth);
-            uiTextInput->Property("background", backgroundTag->ToString());
-
-            uiTextInput->AddFunctions(colorFunction);
-            uiTextInput->Property("onPressed", Formatter() << "colorChange(" << backgroundTag->GetId() << "," << input->GetId() << ",true)");
-            uiTextInput->Property("onReleased", Formatter() << "colorChange(" << backgroundTag->GetId() << "," << input->GetId() << ",false)");
-            uiTextInput->Property("onHoveredChanged", Formatter() << "colorChange(" << backgroundTag->GetId() << "," << input->GetId() << ",false)");
-            uiTextInput->Property("onActiveFocusChanged", Formatter() << "colorChange(" << backgroundTag->GetId() << "," << input->GetId() << ",false)");
-            uiTextInput->Property("Keys.onTabPressed", "{nextItemInFocusChain().forceActiveFocus(); event.accepted = true;}");
-            uiTextInput->Property("Keys.onBacktabPressed", "{nextItemInFocusChain(false).forceActiveFocus(); event.accepted = true;}");
-
-            scrollViewTag->AddChild(uiTextInput);
-
-            if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
-            {
-                scrollViewTag->Property("height", "parent.height");
-            }
-        }
-        else
-        {
-            inputWrapper = std::make_shared<QmlTag>("Rectangle");
-            inputWrapper->Property("id", Formatter() << input->GetId() << "_wrapper");
-            inputWrapper->Property("border.color", Formatter() << input->GetId() << ".activeFocus? " << context->GetHexColor(textConfig.borderColorOnFocus) << " : " << context->GetHexColor(textConfig.borderColorNormal));
-            inputWrapper->Property("border.width", Formatter() << textConfig.borderWidth);
-            inputWrapper->Property("radius", Formatter() << textConfig.borderRadius);
-            inputWrapper->Property("height", Formatter() << textConfig.height);
-            inputWrapper->Property("width", "parent.width");
-            inputWrapper->Property("color", context->GetHexColor(textConfig.backgroundColorNormal));
-            inputWrapper->Property("visible", input->GetIsVisible() ? "true" : "false");
-
-            uiTextInput = std::make_shared<QmlTag>("TextField");
-            uiTextInput->Property("id", input->GetId());
-            uiTextInput->Property("selectByMouse", "true");
-            uiTextInput->Property("selectedTextColor", "'white'");
-            uiTextInput->Property("color", context->GetHexColor(textConfig.textColor));
-            uiTextInput->Property("placeholderTextColor", context->GetHexColor(textConfig.placeHolderColor));
-
-            auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-            backgroundTag->Property("color", "'transparent'");
-            uiTextInput->Property("background", backgroundTag->ToString());
-            uiTextInput->AddFunctions(colorFunction);
-            uiTextInput->Property("onPressed", Formatter() << "colorChange(" << inputWrapper->GetId() << "," << input->GetId() << ",true)");
-            uiTextInput->Property("onReleased", Formatter() << "colorChange(" << inputWrapper->GetId() << "," << input->GetId() << ",false)");
-            uiTextInput->Property("onHoveredChanged", Formatter() << "colorChange(" << inputWrapper->GetId() << "," << input->GetId() << ",false)");
-            uiTextInput->Property("onActiveFocusChanged", Formatter() << "colorChange(" << inputWrapper->GetId() << "," << input->GetId() << ",false)");
-            uiTextInput->Property("leftPadding", Formatter() << textConfig.textHorizontalPadding);
-            uiTextInput->Property("rightPadding", Formatter() << textConfig.textHorizontalPadding);
-            uiTextInput->Property("topPadding", Formatter() << textConfig.textVerticalPadding);
-            uiTextInput->Property("bottomPadding", Formatter() << textConfig.textVerticalPadding);
-            uiTextInput->Property("padding", "0");
-
-            if (input->GetMaxLength() > 0)
-            {
-                uiTextInput->Property("maximumLength", std::to_string(input->GetMaxLength()));
-            }
-
-            auto clearIcon = GetClearIconButton(context);
-            clearIcon->Property("id", Formatter() << input->GetId() << "_clear_icon");
-            clearIcon->Property("visible", Formatter() << input->GetId() << ".text.length != 0");
-            clearIcon->Property("onClicked", Formatter() << "{nextItemInFocusChain().forceActiveFocus();" << input->GetId() << ".clear()}");
-            clearIcon->Property("Accessible.name", Formatter() << (input->GetPlaceholder().empty() ? "Text" : input->GetPlaceholder()) << " clear", true);
-            clearIcon->Property("Accessible.role", "Accessible.Button");
-
-            uiTextInput->Property("width", Formatter() << "parent.width - " << clearIcon->GetId() << ".width - " << textConfig.clearIconHorizontalPadding);
-
-            inputWrapper->AddChild(uiTextInput);
-            inputWrapper->AddChild(clearIcon);
-        }
-
-        uiTextInput->Property("font.pixelSize", Formatter() << textConfig.pixelSize);
-        uiTextInput->Property("Accessible.name", input->GetPlaceholder().empty() ? "Text Field" : input->GetPlaceholder(), true);
-        uiTextInput->Property("Accessible.role", "Accessible.EditableText");
-
-
-        if (!input->GetValue().empty())
-        {
-            uiTextInput->Property("text", input->GetValue(), true);
-        }
-
-        if (!input->GetPlaceholder().empty())
-        {
-            uiTextInput->Property("placeholderText", Formatter() << "activeFocus? \"\" : " << "\"" << input->GetPlaceholder() << "\"");
-        }
-
-        //TODO: Add stretch property
-
-        if (!input->GetIsVisible())
-        {
-            uiTextInput->Property("visible", "false");
-        }
-
-        context->addToInputElementList(origionalElementId, (uiTextInput->GetId() + ".text"));
-
-        // Add inline action mode
-        if (context->GetConfig()->GetSupportsInteractivity() && input->GetInlineAction() != nullptr)
-        {
-            // ShowCard Inline Action Mode is not supported
-            if (input->GetInlineAction()->GetElementType() == AdaptiveCards::ActionType::ShowCard &&
-                context->GetConfig()->GetActions().showCard.actionMode == AdaptiveCards::ActionMode::Inline)
-            {
-                context->AddWarning(AdaptiveWarning(Code::RenderException, "Inline ShowCard not supported for InlineAction"));
-            }
-            else
-            {
-                auto uiContainer = std::make_shared<QmlTag>("Row");
-                uiContainer->Property("id", Formatter() << input->GetId() << "_row");
-                uiContainer->Property("spacing", "5");
-                uiContainer->Property("width", "parent.width");
-                const auto actionsConfig = context->GetConfig()->GetActions();
-
-                auto buttonElement = AdaptiveActionRender(input->GetInlineAction(), context);
-
-                if (input->GetIsMultiline())
-                {
-                    buttonElement->Property("anchors.bottom", "parent.bottom");
-                    scrollViewTag->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
-                    uiContainer->AddChild(scrollViewTag);
-                }
-                else
-                {
-                    inputWrapper->Property("width", Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << uiContainer->GetId() << ".spacing");
-                    uiContainer->AddChild(inputWrapper);
-                }
-                uiContainer->AddChild(buttonElement);
-                return uiContainer;
-            }
-        }
-
-        if (input->GetIsMultiline())
-        {
-            return scrollViewTag;
-        }
-
-        if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
-        {
-            return GetStretchRectangle(inputWrapper);
-        }
-
-        return inputWrapper;
+        TextinputElement textInputElement(input, context);
+        textInputElement.initialize();
+        return textInputElement.getQmlString();
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::NumberInputRender(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<AdaptiveRenderContext> context)
@@ -964,6 +780,15 @@ namespace RendererQml
         uiSplitterRactangle->Property("Accessible.name", Formatter() << "accessiblityPrefix + " << contentItemTag->GetId() << ".displayText");
         uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
 
+        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        {
+            if (input->GetIsRequired())
+            {
+                context->addToRequiredInputElementsIdList(inputId);
+                uiNumberInput->Property("property bool showErrorMessage", "false");
+            }
+        }
+
         if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
         {
             return GetStretchRectangle(numberInputRow);
@@ -1055,6 +880,11 @@ namespace RendererQml
 			uiTextRun.append(Formatter() << "font-style:" << std::string("italic") << ";");
 		}
 
+        if (textRun->GetUnderline() && context->GetRenderConfig()->isVersion1_3Enabled())
+        {
+            uiTextRun.append(Formatter() << "text-decoration:" << std::string("underline") << ";");
+        }
+
 		if (textRun->GetStrikethrough())
 		{
 			uiTextRun.append(Formatter() << "text-decoration:" << std::string("line-through") << ";");
@@ -1133,6 +963,16 @@ namespace RendererQml
         );
 
         context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
+
+        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        {
+            if (input->GetIsRequired())
+            {
+                context->addToRequiredInputElementsIdList(checkbox->GetId());
+                checkbox->Property("property bool showErrorMessage", "false");
+            }
+        }
+
         return checkbox;
 	}
 
@@ -1182,6 +1022,15 @@ namespace RendererQml
             uiChoiceSet = GetButtonGroup(choiceSet, context);
             context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
 		}
+
+        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        {
+            if (input->GetIsRequired())
+            {
+                context->addToRequiredInputElementsIdList(uiChoiceSet->GetId());
+                uiChoiceSet->Property("property bool showErrorMessage", "false");
+            }
+        }
 
         if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
         {
@@ -1851,6 +1700,15 @@ namespace RendererQml
         uiDateInputWrapper->AddChild(uiDateInputRow);
 
         uiDateInputCombobox->Property("Accessible.ignored", "true");
+
+        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        {
+            if (input->GetIsRequired())
+            {
+                context->addToRequiredInputElementsIdList(uiTextField->GetId());
+                uiTextField->Property("property bool showErrorMessage", "false");
+            }
+        }
 
         if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
         {
@@ -2616,6 +2474,15 @@ namespace RendererQml
         uiTimeInputWrapper->AddChild(uiTimeInputRow);
 
         context->addToInputElementList(origionalElementId, (uiTimeInput->GetId() + ".selectedTime"));
+
+        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        {
+            if (input->GetIsRequired())
+            {
+                context->addToRequiredInputElementsIdList(uiTimeInput->GetId());
+                uiTimeInput->Property("property bool showErrorMessage", "false");
+            }
+        }
 
         if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
         {
@@ -3544,9 +3411,37 @@ namespace RendererQml
         }
 
 
-        for(const auto& element : context->getInputElementList())
+        if (context->GetRenderConfig()->isVersion1_3Enabled())
         {
-            function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
+            if (action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
+            {
+                std::string isNotSubmittable;
+                for (const auto& element : context->getRequiredInputElementsIdList())
+                {
+                    function << element << ".showErrorMessage = " << element << ".validate()\n";
+                    if (element == *(context->getRequiredInputElementsIdList().rbegin()))
+                    {
+                        isNotSubmittable += Formatter() << element << ".showErrorMessage";
+                    }
+                    else
+                    {
+                        isNotSubmittable += Formatter() << element << ".showErrorMessage && ";
+                    }
+                }
+                function << "var isNotSubmittable = " << (isNotSubmittable.empty() ? "false" : isNotSubmittable) << ";\n";
+                function << "if(isNotSubmittable){return};\n";
+                for (const auto& element : context->getInputElementList())
+                {
+                    function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
+                }
+            }
+        }
+        else
+        {
+            for (const auto& element : context->getInputElementList())
+            {
+                function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
+            }
         }
 
         function << "var paramslist = JSON.stringify(paramJson);\n";

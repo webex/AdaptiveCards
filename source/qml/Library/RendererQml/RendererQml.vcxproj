@@ -175,6 +175,7 @@
     <ClCompile Include="QmlTag.cpp" />
     <ClCompile Include="RenderedQmlAdaptiveCardBase.cpp" />
     <ClCompile Include="RenderedQmlAdaptiveCard.cpp" />
+    <ClCompile Include="TextInputRender.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>

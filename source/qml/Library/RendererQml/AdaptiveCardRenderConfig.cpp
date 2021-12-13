@@ -3,14 +3,19 @@
 namespace RendererQml
 {
    
-    AdaptiveCardRenderConfig::AdaptiveCardRenderConfig(bool isDarkMode)
-        : m_isDark(isDarkMode)
+    AdaptiveCardRenderConfig::AdaptiveCardRenderConfig(bool isDarkMode, bool isVersion1_3Enabled)
+        : m_isDark(isDarkMode), m_isVersion1_3Enabled(isVersion1_3Enabled)
     {
     }
 
     bool AdaptiveCardRenderConfig::isDarkMode() const
     {
         return m_isDark;
+    }
+
+    bool AdaptiveCardRenderConfig::isVersion1_3Enabled() const
+    {
+        return m_isVersion1_3Enabled;
     }
 
     CardConfig AdaptiveCardRenderConfig::getCardConfig() const

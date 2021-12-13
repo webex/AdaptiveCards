@@ -96,12 +96,16 @@ namespace RendererQml
         void addToLastShowCardComponentIdsList(const std::string& componentId);
         const std::vector<std::string>& getLastShowCardComponentIdsList();
 
+        void addToRequiredInputElementsIdList(const std::string& elementId);
+        const std::vector<std::string>& getRequiredInputElementsIdList();
+
     private:
         bool m_isShowCardinAction{ false };
         bool m_isShowCardLastBodyElement{ false };
         AdaptiveCards::InternalId m_LastActionSetInternalIds;
         std::vector<std::string> m_ShowCardLoaderIdList;
         std::vector<std::string> m_LastShowCardComponentIdList;
+        std::vector<std::string> m_RequiredInputElementsIdList;
 
         std::vector<AdaptiveWarning> m_warnings;
         bool m_ancestorHasFallback;
