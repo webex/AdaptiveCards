@@ -1,8 +1,6 @@
 #include "TextInputRender.h"
 #include "Formatter.h"
-#include "QmlScrollView.h"
 #include <iostream>
-#include "QmlRectangle.h"
 #include "utils.h"
 
 TextinputElement::TextinputElement(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
@@ -79,14 +77,15 @@ void TextinputElement::initSingleLine()
         }
     }
 
-    mTextinputElement = std::make_shared<QmlRectangle>(RendererQml::Formatter() << mTextinput->GetId() << "_wrapper", std::make_shared<RendererQml::QmlTag>("Rectangle"));
-    mTextinputElement.get()->setBorderColor(RendererQml::Formatter() << mTextinput->GetId() << ".activeFocus? " << mContext->GetHexColor(textConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(textConfig.borderColorNormal));
-    mTextinputElement->setBorderWidth(RendererQml::Formatter() << textConfig.borderWidth);
-    mTextinputElement->setRadius(RendererQml::Formatter() << textConfig.borderRadius);
-    mTextinputElement->setHeight(RendererQml::Formatter() << textConfig.height);
-    mTextinputElement->setWidth("parent.width");
-    mTextinputElement->setColor(mContext->GetHexColor(textConfig.backgroundColorNormal));
-    mTextinputElement->setVisible(mTextinput->GetIsVisible() ? "true" : "false");
+    mTextinputElement = std::make_shared<RendererQml::QmlTag>("Rectangle");
+    mTextinputElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_wrapper");
+    mTextinputElement->Property("border.color", RendererQml::Formatter() << mTextinput->GetId() << ".activeFocus? " << mContext->GetHexColor(textConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(textConfig.borderColorNormal));
+    mTextinputElement->Property("border.width", RendererQml::Formatter() << textConfig.borderWidth);
+    mTextinputElement->Property("radius", RendererQml::Formatter() << textConfig.borderRadius);
+    mTextinputElement->Property("height", RendererQml::Formatter() << textConfig.height);
+    mTextinputElement->Property("width", "parent.width");
+    mTextinputElement->Property("color", mContext->GetHexColor(textConfig.backgroundColorNormal));
+    mTextinputElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
 
     auto uiTextInput = createSingleLineTextFieldElement();
 
@@ -97,8 +96,8 @@ void TextinputElement::initSingleLine()
     clearIcon->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetPlaceholder().empty() ? "Text" : mTextinput->GetPlaceholder()) << " clear", true);
     clearIcon->Property("Accessible.role", "Accessible.Button");
     uiTextInput->Property("width", RendererQml::Formatter() << "parent.width - " << clearIcon->GetId() << ".width - " << textConfig.clearIconHorizontalPadding);
-    mTextinputElement->addChild(uiTextInput);
-    mTextinputElement->addChild(clearIcon);
+    mTextinputElement->AddChild(uiTextInput);
+    mTextinputElement->AddChild(clearIcon);
     mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
     this->addInlineActionMode();
 
@@ -128,16 +127,17 @@ void TextinputElement::initMultiLine()
             mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
         }
     }
-    mTextinputElement = std::make_shared<QmlScrollView>(RendererQml::Formatter() << mTextinput->GetId() << "_wrapper", std::make_shared<RendererQml::QmlTag>("ScrollView"));
-    mTextinputElement->setWidth("parent.width");
-    mTextinputElement->setHeight(RendererQml::Formatter() << mTextinput->GetId() << ".visible ? " << textConfig.multiLineTextHeight << " : 0");
-    mTextinputElement->setScrollViewVerticalInteractive("true");
-    mTextinputElement->setScrollViewHorizontalInteractive("false");
-    mTextinputElement->setScrollViewHorizontalVisible("false");
-    mTextinputElement->setVisible(mTextinput->GetIsVisible() ? "true" : "false");
+
+    mTextinputElement = std::make_shared<RendererQml::QmlTag>("ScrollView");
+    mTextinputElement->Property("width", "parent.width");
+    mTextinputElement->Property("height", RendererQml::Formatter() << mTextinput->GetId() << ".visible ? " << textConfig.multiLineTextHeight << " : 0");
+    mTextinputElement->Property("ScrollBar.vertical.interactive", "true");
+    mTextinputElement->Property("ScrollBar.horizontal.interactive", "false");
+    mTextinputElement->Property("ScrollBar.horizontal.visible", "false");
+    mTextinputElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
 
     auto uiTextInput = createMultiLineTextAreaElement();
-    mTextinputElement->addChild(uiTextInput);
+    mTextinputElement->AddChild(uiTextInput);
     mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
     this->addInlineActionMode();
 }
@@ -157,10 +157,10 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
     backgroundTag->Property("color", "'transparent'");
     uiTextInput->Property("background", backgroundTag->ToString());
     uiTextInput->AddFunctions(getColorFunction());
-    uiTextInput->Property("onPressed", RendererQml::Formatter() << "colorChange(" << mTextinputElement->getId() << "," << mTextinput->GetId() << ",true)");
-    uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << mTextinputElement->getId() << "," << mTextinput->GetId() << ",false)");
-    uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->getId() << "," << mTextinput->GetId() << ",false)");
-    uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->getId() << "," << mTextinput->GetId() << ",false)");
+    uiTextInput->Property("onPressed", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",true)");
+    uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
+    uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
+    uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("topPadding", RendererQml::Formatter() << textConfig.textVerticalPadding);
@@ -251,12 +251,13 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
 std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineBackgroundElement()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
-    auto backgroundTag = std::make_shared<QmlRectangle>(RendererQml::Formatter() << mTextinput->GetId() << "_background", std::make_shared<RendererQml::QmlTag>("Rectangle"));
-    backgroundTag->setRadius(RendererQml::Formatter() << textConfig.borderRadius);   
-    backgroundTag->setColor(mContext->GetHexColor(textConfig.backgroundColorNormal));
-    backgroundTag->setBorderColor(RendererQml::Formatter() << mTextinput->GetId() << ".activeFocus? " << mContext->GetHexColor(textConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(textConfig.borderColorNormal));
-    backgroundTag->setBorderWidth(RendererQml::Formatter() << textConfig.borderWidth);
-    return backgroundTag->getQmlString();
+    auto backgroundTag = std::make_shared<RendererQml::QmlTag>("Rectangle");
+    backgroundTag->Property("radius", RendererQml::Formatter() << textConfig.borderRadius);
+    backgroundTag->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_background");
+    backgroundTag->Property("color", mContext->GetHexColor(textConfig.backgroundColorNormal));
+    backgroundTag->Property("border.color", RendererQml::Formatter() << mTextinput->GetId() << ".activeFocus? " << mContext->GetHexColor(textConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(textConfig.borderColorNormal));
+    backgroundTag->Property("border.width", RendererQml::Formatter() << textConfig.borderWidth);
+    return backgroundTag;
 }
 
 void TextinputElement::addInlineActionMode()
@@ -269,7 +270,7 @@ void TextinputElement::addInlineActionMode()
             mContext->GetConfig()->GetActions().showCard.actionMode == AdaptiveCards::ActionMode::Inline)
         {
             mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "Inline ShowCard not supported for InlineAction"));
-            mTextinputColElement->AddChild(mTextinputElement->getQmlString());
+            mTextinputColElement->AddChild(mTextinputElement);
         }
         
         else
@@ -285,15 +286,14 @@ void TextinputElement::addInlineActionMode()
             {
                 buttonElement->Property("anchors.bottom", "parent.bottom");
             }
-
-            mTextinputElement->setWidth(RendererQml::Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << mContainer->GetId() << ".spacing");
-            mContainer->AddChild(mTextinputElement->getQmlString());
+            mTextinputElement->Property("width", RendererQml::Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << mContainer->GetId() << ".spacing");
+            mContainer->AddChild(mTextinputElement);
             mContainer->AddChild(buttonElement);
             mTextinputColElement->AddChild(mContainer);
         }
     }
     else {
-        mTextinputColElement->AddChild(mTextinputElement->getQmlString());
+        mTextinputColElement->AddChild(mTextinputElement);
     }
     
 }

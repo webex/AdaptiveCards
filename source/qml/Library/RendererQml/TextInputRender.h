@@ -3,11 +3,10 @@
 #include "AdaptiveCardQmlRenderer.h"
 #include "QmlTag.h"
 #include <memory>
-#include "QmlItem.h"
 
 class TextinputElement
 {
-	std::shared_ptr<IQmlBase> mTextinputElement;
+	std::shared_ptr<RendererQml::QmlTag> mTextinputElement;
 	std::shared_ptr<RendererQml::QmlTag> mTextinputColElement;
 	std::shared_ptr<RendererQml::QmlTag> mContainer;
 	const std::shared_ptr<AdaptiveCards::TextInput> &mTextinput;
