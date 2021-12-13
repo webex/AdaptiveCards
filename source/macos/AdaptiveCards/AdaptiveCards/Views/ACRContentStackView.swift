@@ -7,8 +7,8 @@ protocol ACRContentHoldingViewProtocol {
 }
 
 protocol ErrorMessageHandlerDelegate: AnyObject {
-    func showErrorMessage(for view: NSView)
-    func hideErrorMessage(for view: NSView)
+    func showErrorMessage(for view: InputHandlingViewProtocol)
+    func hideErrorMessage(for view: InputHandlingViewProtocol)
 }
 
 class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHandlingProtocol {
@@ -227,16 +227,17 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     func setErrorMessage(with title: String, for view: InputHandlingViewProtocol) {
-        errorMessageView = NSTextField()
-        errorMessageView?.stringValue = title
-        errorMessageView?.isHidden = true
-        errorMessageView?.isEditable = false
-        errorMessageView?.isBordered = false
-        errorMessageView?.isSelectable = true
-        errorMessageView?.backgroundColor = .clear
+        guard errorMessageView != nil else { return }
+        let textField = NSTextField()
+        textField.stringValue = title
+        textField.isHidden = true
+        textField.isEditable = false
+        textField.isBordered = false
+        textField.isSelectable = true
+        textField.backgroundColor = .clear
         view.errorMessageHandler = self
-        guard let errorMessageView = errorMessageView else { return }
-        addArrangedSubview(errorMessageView)
+        addArrangedSubview(textField)
+        errorMessageView = textField
     }
     
     override func mouseExited(with event: NSEvent) {
@@ -257,11 +258,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
 }
 
 extension ACRContentStackView: ErrorMessageHandlerDelegate {
-    func showErrorMessage(for view: NSView) {
+    func showErrorMessage(for view: InputHandlingViewProtocol) {
         errorMessageView?.isHidden = false
     }
     
-    func hideErrorMessage(for view: NSView) {
+    func hideErrorMessage(for view: InputHandlingViewProtocol) {
         errorMessageView?.isHidden = true
     }
 }
