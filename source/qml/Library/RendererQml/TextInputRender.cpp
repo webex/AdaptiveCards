@@ -68,18 +68,18 @@ void TextinputElement::initSingleLine()
 
     if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
-        if (!mTextinput->GetLabel().empty())
+    if (!mTextinput->GetLabel().empty())
+    {
+        auto label = createInputTextLabel(mTextinput->GetIsRequired());
+        mTextinputColElement->AddChild(label);
+    }
+    else
+    {
+        if (mTextinput->GetIsRequired())
         {
-            auto label = createInputTextLabel(mTextinput->GetIsRequired());
-            mTextinputColElement->AddChild(label);
+            mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
         }
-        else
-        {
-            if (mTextinput->GetIsRequired())
-            {
-                mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
-            }
-        }
+    }
     }
 
     mTextinputElement = std::make_shared<RendererQml::QmlTag>("Rectangle");
@@ -108,10 +108,10 @@ void TextinputElement::initSingleLine()
 
     if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
-        if (!mTextinput->GetErrorMessage().empty())
-        {
+    if (!mTextinput->GetErrorMessage().empty())
+    {
             auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
-            mTextinputColElement->AddChild(label);
+        mTextinputColElement->AddChild(label);
 
             mContext->addToRequiredInputElementsIdList(uiTextInput->GetId());
             uiTextInput->Property("property bool showErrorMessage", "false");
@@ -121,11 +121,11 @@ void TextinputElement::initSingleLine()
             if (!mTextinput->GetRegex().empty())
             {
                 validator << "const regex = new RegExp('" << mTextinput->GetRegex() << "');\n";
-            }
+    }
             validator << "var isValid = " << (mTextinput->GetRegex().empty() ? "text !== ''" : "regex.test(text)") << "\n" << "if (showErrorMessage) {\n"
                 << "if (isValid) {\n" << "showErrorMessage = false\n" << "}\n}" << "return !isValid}\n";
             uiTextInput->AddFunctions(validator.str());
-        }
+}
     }
 }
 
@@ -139,18 +139,18 @@ void TextinputElement::initMultiLine()
 
     if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
-        if (!mTextinput->GetLabel().empty())
+    if (!mTextinput->GetLabel().empty())
+    {
+        auto label = createInputTextLabel(mTextinput->GetIsRequired());
+        mTextinputColElement->AddChild(label);
+    }
+    else
+    {
+        if (mTextinput->GetIsRequired())
         {
-            auto label = createInputTextLabel(mTextinput->GetIsRequired());
-            mTextinputColElement->AddChild(label);
+            mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
         }
-        else
-        {
-            if (mTextinput->GetIsRequired())
-            {
-                mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
-            }
-        }
+    }
     }
 
     mTextinputElement = std::make_shared<RendererQml::QmlTag>("ScrollView");
