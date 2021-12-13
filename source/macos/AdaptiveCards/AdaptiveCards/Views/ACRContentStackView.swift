@@ -227,7 +227,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     func setErrorMessage(with title: String, for view: InputHandlingViewProtocol) {
-        guard errorMessageView != nil else { return }
+        guard errorMessageView == nil else { return }
         let textField = NSTextField()
         textField.stringValue = title
         textField.isHidden = true

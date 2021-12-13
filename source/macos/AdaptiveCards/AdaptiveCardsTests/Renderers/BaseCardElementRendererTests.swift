@@ -184,11 +184,11 @@ class BaseCardElementRendererrTests: XCTestCase {
 
 private class FakeErrorMessageHandlerDelegate: ErrorMessageHandlerDelegate{
     var isErrorMessageHidden: Bool = false
-    func showErrorMessage(for view: NSView) {
+    func showErrorMessage(for view: InputHandlingViewProtocol) {
         isErrorMessageHidden = false
     }
     
-    func hideErrorMessage(for view: NSView) {
+    func hideErrorMessage(for view: InputHandlingViewProtocol) {
         isErrorMessageHidden = true
     }
 }
