@@ -258,4 +258,13 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
         get { return textField.inputValidator.isRequired }
         set { textField.inputValidator.isRequired = newValue }
     }
+    
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
+        get {
+            return textField.errorMessageHandler
+        }
+        set {
+            textField.errorMessageHandler = newValue
+        }
+    }
 }

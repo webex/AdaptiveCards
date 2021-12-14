@@ -119,6 +119,15 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         return textField.isValid
     }
     
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
+        get {
+            return textField.errorMessageHandler
+        }
+        set {
+            textField.errorMessageHandler = newValue
+        }
+    }
+    
     init(isTimeMode: Bool, config: RenderConfig) {
         self.isTimeMode = isTimeMode
         self.isDarkMode = config.isDarkMode
