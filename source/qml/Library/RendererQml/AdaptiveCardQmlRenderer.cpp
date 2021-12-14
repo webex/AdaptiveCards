@@ -3425,7 +3425,7 @@ namespace RendererQml
                     }
                     else
                     {
-                        isNotSubmittable += Formatter() << element << ".showErrorMessage && ";
+                        isNotSubmittable += Formatter() << element << ".showErrorMessage || ";
                     }
                 }
                 function << "var isNotSubmittable = " << (isNotSubmittable.empty() ? "false" : isNotSubmittable) << ";\n";

@@ -68,18 +68,18 @@ void TextinputElement::initSingleLine()
 
     if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
-    if (!mTextinput->GetLabel().empty())
-    {
-        auto label = createInputTextLabel(mTextinput->GetIsRequired());
-        mTextinputColElement->AddChild(label);
-    }
-    else
-    {
-        if (mTextinput->GetIsRequired())
+        if (!mTextinput->GetLabel().empty())
         {
-            mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
+            auto label = createInputTextLabel(mTextinput->GetIsRequired());
+            mTextinputColElement->AddChild(label);
         }
-    }
+        else
+        {
+            if (mTextinput->GetIsRequired())
+            {
+                mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
+            }
+        }
     }
 
     mTextinputElement = std::make_shared<RendererQml::QmlTag>("Rectangle");
@@ -108,10 +108,10 @@ void TextinputElement::initSingleLine()
 
     if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
-    if (!mTextinput->GetErrorMessage().empty())
-    {
+        if (!mTextinput->GetErrorMessage().empty())
+        {
             auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
-        mTextinputColElement->AddChild(label);
+            mTextinputColElement->AddChild(label);
 
             mContext->addToRequiredInputElementsIdList(uiTextInput->GetId());
             uiTextInput->Property("property bool showErrorMessage", "false");
@@ -121,11 +121,11 @@ void TextinputElement::initSingleLine()
             if (!mTextinput->GetRegex().empty())
             {
                 validator << "const regex = new RegExp('" << mTextinput->GetRegex() << "');\n";
-    }
+            }
             validator << "var isValid = " << (mTextinput->GetRegex().empty() ? "text !== ''" : "regex.test(text)") << "\n" << "if (showErrorMessage) {\n"
                 << "if (isValid) {\n" << "showErrorMessage = false\n" << "}\n}" << "return !isValid}\n";
             uiTextInput->AddFunctions(validator.str());
-}
+        }
     }
 }
 
@@ -139,18 +139,18 @@ void TextinputElement::initMultiLine()
 
     if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
-    if (!mTextinput->GetLabel().empty())
-    {
-        auto label = createInputTextLabel(mTextinput->GetIsRequired());
-        mTextinputColElement->AddChild(label);
-    }
-    else
-    {
-        if (mTextinput->GetIsRequired())
+        if (!mTextinput->GetLabel().empty())
         {
-            mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
+            auto label = createInputTextLabel(mTextinput->GetIsRequired());
+            mTextinputColElement->AddChild(label);
         }
-    }
+        else
+        {
+            if (mTextinput->GetIsRequired())
+            {
+                mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
+            }
+        }
     }
 
     mTextinputElement = std::make_shared<RendererQml::QmlTag>("ScrollView");
@@ -160,6 +160,11 @@ void TextinputElement::initMultiLine()
     mTextinputElement->Property("ScrollBar.horizontal.interactive", "false");
     mTextinputElement->Property("ScrollBar.horizontal.visible", "false");
     mTextinputElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
+
+    if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
+    {
+        mTextinputElement->Property("height", "parent.height");
+    }
 
     auto uiTextInput = createMultiLineTextAreaElement();
     mTextinputElement->AddChild(uiTextInput);
@@ -234,8 +239,6 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
         uiTextInput->Property("placeholderText", RendererQml::Formatter() << "activeFocus? \"\" : " << "\"" << mTextinput->GetPlaceholder() << "\"");
     }
 
-    //TODO: Add stretch property
-
     if (!mTextinput->GetIsVisible())
     {
         uiTextInput->Property("visible", "false");
@@ -286,8 +289,6 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
         uiTextInput->Property("placeholderText", RendererQml::Formatter() << "activeFocus? \"\" : " << "\"" << mTextinput->GetPlaceholder() << "\"");
     }
 
-    //TODO: Add stretch property
-
     if (!mTextinput->GetIsVisible())
     {
         uiTextInput->Property("visible", "false");
@@ -337,9 +338,15 @@ void TextinputElement::addInlineActionMode()
             mContainer->AddChild(mTextinputElement);
             mContainer->AddChild(buttonElement);
             mTextinputColElement->AddChild(mContainer);
+
+            if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
+            {
+                mContainer->Property("height", "parent.height");
+            }
         }
     }
-    else {
+    else
+    {
         mTextinputColElement->AddChild(mTextinputElement);
     }
     
