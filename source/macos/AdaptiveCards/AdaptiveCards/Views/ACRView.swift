@@ -107,7 +107,7 @@ class ACRView: ACRColumnView {
         repeat {
             if let handlers = parentView?.inputHandlers {
                 for handler in handlers {
-                    guard handler.isValid else {
+                    if !handler.isValid && renderConfig.supportsSchemeV1_3 {
                         handler.showError()
                         canSubmit = false
                         continue
@@ -115,20 +115,22 @@ class ACRView: ACRColumnView {
                     dict[handler.key] = handler.value
                 }
             }
+
             if let curr = parentView, curr.parent == nil {
                 rootView = curr
             }
             parentView = parentView?.parent
         } while parentView != nil
-        if canSubmit {
-            if let data = dataJSON?.data(using: String.Encoding.utf8), let dataJsonDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                dict.merge(dataJsonDict) { current, _ in current }
-            // data != "null\n" check is required as the objective String does not return nil if nno data present
-            } else if let data = dataJSON, data != "null\n", dict["data"] == nil {
-                dict["data"] = data
-            }
-            delegate?.adaptiveCard(rootView, didSubmitUserResponses: dict, actionView: actionView)
+        
+        guard canSubmit else { return }
+        
+        if let data = dataJSON?.data(using: String.Encoding.utf8), let dataJsonDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+            dict.merge(dataJsonDict) { current, _ in current }
+        // data != "null\n" check is required as the objective String does not return nil if nno data present
+        } else if let data = dataJSON, data != "null\n", dict["data"] == nil {
+            dict["data"] = data
         }
+        delegate?.adaptiveCard(rootView, didSubmitUserResponses: dict, actionView: actionView)
     }
     
     private func toggleVisibity(of targets: [ACSToggleVisibilityTarget]) {

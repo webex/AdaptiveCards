@@ -16,7 +16,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         didSet {
             // handling case when regex is not supplied and is set to "". Replacing it with ".*"
             guard let currValue = regex else { return }
-            regex = currValue.isEmpty ? ".*" : currValue
+            regex = currValue.isEmpty ? nil : currValue
         }
     }
     var isRequired = false
