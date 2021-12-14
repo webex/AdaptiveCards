@@ -9,6 +9,9 @@ class FakeInputToggle: ACSToggleInput {
     public var id: String? = ""
     public var label: String? = ""
     public var visibility: Bool = true
+    public var isRequired: Bool = false
+    public var errorMessage: String?
+    public var separator: Bool = false
     
     open override func getTitle() -> String? {
         return title
@@ -69,15 +72,38 @@ class FakeInputToggle: ACSToggleInput {
     override func getLabel() -> String? {
         return label
     }
+    
+    override func setLabel(_ label: String) {
+        self.label = label
+    }
+    
+    override func getIsRequired() -> Bool {
+        return isRequired
+    }
+    
+    override func setIsRequired(_ isRequired: Bool) {
+        self.isRequired = isRequired
+    }
+    
+    override func getErrorMessage() -> String? {
+        return errorMessage
+    }
+    
+    override func setErrorMessage(_ errorMessage: String) {
+        self.errorMessage = errorMessage
+    }
 }
 extension FakeInputToggle {
-    static func make(title: String? = "", value: String = "false", valueOn: String = "true", valueOff: String = "false", wrap: Bool = false) ->FakeInputToggle {
+    static func make(title: String? = "", value: String = "false", valueOn: String = "true", valueOff: String = "false", wrap: Bool = false, isRequired: Bool = false, errorMessage: String? = "", label: String? = "") ->FakeInputToggle {
         let fakeInputToggle = FakeInputToggle()
         fakeInputToggle.title = title
         fakeInputToggle.value = value
         fakeInputToggle.valueOn = valueOn
         fakeInputToggle.valueOff = valueOff
         fakeInputToggle.wrap = wrap
+        fakeInputToggle.isRequired = isRequired
+        fakeInputToggle.errorMessage = errorMessage
+        fakeInputToggle.label = label
         return fakeInputToggle
     }
 }

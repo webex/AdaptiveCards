@@ -14,7 +14,7 @@ class ACRView: ACRColumnView {
     private (set) var renderedShowCards: [NSView] = []
     private (set) var initialLayoutDone = false
     private var currentFocusedActionElement: NSCell?
-    private var isLayoutDoneOnShowCard: Bool = false
+    private var isLayoutDoneOnShowCard = false
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         self.renderConfig = renderConfig

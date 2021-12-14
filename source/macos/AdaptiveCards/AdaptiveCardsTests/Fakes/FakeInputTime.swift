@@ -7,6 +7,10 @@ class FakeInputTime: ACSTimeInput {
     public var min: String?
     public var id: String? = ""
     public var visibility: Bool = true
+    public var isRequired: Bool = false
+    public var errorMessage: String?
+    public var label: String?
+    public var separator: Bool = false
 
     open override func getValue() -> String? {
         return value
@@ -47,15 +51,51 @@ class FakeInputTime: ACSTimeInput {
     override func getIsVisible() -> Bool {
         return visibility
     }
+    
+    override func getIsRequired() -> Bool {
+        return isRequired
+    }
+    
+    override func setIsRequired(_ isRequired: Bool) {
+        self.isRequired = isRequired
+    }
+    
+    override func getErrorMessage() -> String? {
+        return errorMessage
+    }
+    
+    override func setErrorMessage(_ errorMessage: String) {
+        self.errorMessage = errorMessage
+    }
+    
+    override func getLabel() -> String? {
+        return label
+    }
+    
+    override func setLabel(_ label: String) {
+        self.label = label
+    }
+    
+    override func getSeparator() -> Bool {
+        return separator
+    }
+    
+    override func setSeparator(_ value: Bool) {
+        separator = value
+    }
 }
 
 extension FakeInputTime {
-    static func make(value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "") -> FakeInputTime {
+    static func make(value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false) -> FakeInputTime {
         let fakeInputTime = FakeInputTime()
         fakeInputTime.value = value
         fakeInputTime.placeholder = placeholder
         fakeInputTime.max = max
         fakeInputTime.min = min
+        fakeInputTime.isRequired = isRequired
+        fakeInputTime.errorMessage = errorMessage
+        fakeInputTime.label = label
+        fakeInputTime.separator = separator
         return fakeInputTime
     }
 }

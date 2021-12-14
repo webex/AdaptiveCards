@@ -17,6 +17,7 @@ class ACRTextField: NSTextField {
     private let inputConfig: InputFieldConfig
     private let isDarkMode: Bool
     private let textFieldMode: Mode
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
     
     init(dateTimeFieldWith config: RenderConfig) {
         self.config = config
