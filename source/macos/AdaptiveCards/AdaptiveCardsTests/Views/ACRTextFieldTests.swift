@@ -70,6 +70,78 @@ class ACRTextFieldTests: XCTestCase {
         XCTAssertTrue(delegate.isTextFieldCalled)
         XCTAssertEqual(delegate.textFieldStringValue, "")
     }
+    
+    func testTextFieldIsRequiredValidation() {
+        textField.isRequired = true
+        textField.stringValue = ""
+        XCTAssertFalse(textField.isValid)
+        textField.stringValue = "s"
+        XCTAssertTrue(textField.isValid)
+    }
+    
+    func testTextFieldRegexValidation() {
+        textField.isRequired = false
+        // regex for input of a single digit
+        textField.regex = "^[0-9]{1}$"
+        
+        textField.stringValue = ""
+        XCTAssertTrue(textField.isValid)
+        textField.stringValue = "a"
+        XCTAssertFalse(textField.isValid)
+        textField.stringValue = "12"
+        XCTAssertFalse(textField.isValid)
+        textField.stringValue = "5"
+        XCTAssertTrue(textField.isValid)
+    }
+    
+    func testTextFieldRegexAndIsRequiredValidation() {
+        textField.isRequired = true
+        // regex for input of a single digit
+        textField.regex = "^[0-9]{1}$"
+        
+        textField.stringValue = ""
+        XCTAssertFalse(textField.isValid)
+        textField.stringValue = "a"
+        XCTAssertFalse(textField.isValid)
+        textField.stringValue = "12"
+        XCTAssertFalse(textField.isValid)
+        textField.stringValue = "5"
+        XCTAssertTrue(textField.isValid)
+    }
+    
+    func testHasMouseInFieldFlagUpdate() {
+        textField.mouseEntered(with: NSEvent())
+        XCTAssertTrue(textField.hasMouseInField)
+        textField.mouseExited(with: NSEvent())
+        XCTAssertFalse(textField.hasMouseInField)
+    }
+    
+    func testSetErrorColors() {
+        textField.setupErrorColors()
+        XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.errorMessageConfig.errorBorderColor?.cgColor)
+        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.errorMessageConfig.errorBackgroundColor?.cgColor)
+    }
+    
+    func testBorderAndbgColorSet() {
+        textField.setupColors(hasFocus: false)
+        XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.borderColor.cgColor)
+        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.backgroundColor.cgColor)
+        
+        // simulate hover
+        textField.mouseEntered(with: NSEvent())
+        XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.borderColor.cgColor)
+        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.highlightedColor.cgColor)
+        
+        // textField Selected
+        textField.performClick(nil)
+        XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.activeBorderColor.cgColor)
+        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.highlightedColor.cgColor)
+        
+        // simulate mouse exit from hover
+        textField.mouseExited(with: NSEvent())
+        XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.activeBorderColor.cgColor)
+        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.backgroundColor.cgColor)
+    }
 }
 
 private class FakeACRTextFieldDelegate: ACRTextFieldDelegate {

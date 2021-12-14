@@ -116,7 +116,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return !textField.hasError
+        return textField.isValid
     }
     
     init(isTimeMode: Bool, config: RenderConfig) {

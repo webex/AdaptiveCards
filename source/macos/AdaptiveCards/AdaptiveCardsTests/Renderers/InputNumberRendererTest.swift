@@ -72,11 +72,11 @@ class InputNumberRendererTest: XCTestCase {
     }
     
     func testRendererIfTruncatesExtraZeros() {
-        let val: NSNumber = 20.00
+        let val: NSNumber = 20.10
         inputNumber = .make(value: val)
         
         let inputNumberField = renderNumberInput()
-        XCTAssertEqual(inputNumberField.inputString, "20.0")
+        XCTAssertEqual(inputNumberField.inputString, "20.1")
     }
     
     func testclearButtonHiddenByDefault() {
@@ -137,7 +137,7 @@ class InputNumberRendererTest: XCTestCase {
         inputNumber = .make(value: val)
         
         let inputNumberField = renderNumberInput()
-        XCTAssertEqual(inputNumberField.inputString, "20.0")
+        XCTAssertEqual(inputNumberField.inputString, "20")
         XCTAssertEqual(inputNumberField.accessibilityChildren()?.count, 2)
         XCTAssertEqual(inputNumberField.textField.accessibilityTitle(), "Input Number")
         XCTAssertEqual(inputNumberField.textField.accessibilityValue(), "20")
@@ -151,13 +151,13 @@ class InputNumberRendererTest: XCTestCase {
         inputNumber = .make(value: val)
         
         let inputNumberField = renderNumberInput()
-        XCTAssertEqual(inputNumberField.value, "20")
+        XCTAssertEqual(inputNumberField.inputString, "20")
         
         keyPressed(for: UInt16(kVK_UpArrow), on: inputNumberField)
-        XCTAssertEqual(inputNumberField.value, "21")
+        XCTAssertEqual(inputNumberField.inputString, "21")
         
         keyPressed(for: UInt16(kVK_DownArrow), on: inputNumberField)
-        XCTAssertEqual(inputNumberField.value, "20")
+        XCTAssertEqual(inputNumberField.inputString, "20")
     }
        
     private func renderNumberInput() -> ACRNumericTextField {

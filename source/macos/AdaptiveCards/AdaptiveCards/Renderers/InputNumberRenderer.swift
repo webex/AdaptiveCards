@@ -217,11 +217,9 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     override open func keyDown(with event: NSEvent) {
         switch Int(event.keyCode) {
         case kVK_UpArrow:
-            stepper.doubleValue += 1
-            inputValue = stepper.doubleValue
+            inputValue += 1
         case kVK_DownArrow:
-            stepper.doubleValue -= 1
-            inputValue = stepper.doubleValue
+            inputValue -= 1
         default:
             super.keyDown(with: event)
         }
@@ -244,7 +242,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return (minValue <= inputValue) && (inputValue <= maxValue) && !textField.hasError
+        return (minValue <= inputValue) && (inputValue <= maxValue) && textField.isValid
     }
     
     weak var errorMessageHandler: ErrorMessageHandlerDelegate? {

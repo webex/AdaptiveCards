@@ -24,10 +24,6 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         return layer?.borderColor == inputConfig.errorMessageConfig.errorBorderColor?.cgColor || textView.backgroundColor == inputConfig.errorMessageConfig.errorBackgroundColor
     }
     var hasMouseInField = false
-    var hasError: Bool {
-        // if string value is empty, then check if it is required. In case string has value, check if its valid regex
-        return textView.string.isEmpty ? isRequired : textView.string.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) == nil
-    }
     
     init(config: RenderConfig) {
         self.config = config
@@ -111,7 +107,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     }
     
     func textDidChange(_ notification: Notification) {
-        if !hasError && textFieldShowsError {
+        if isValid && textFieldShowsError {
             errorMessageHandler?.hideErrorMessage(for: self)
             setupColors(hasFocus: true)
 //            textFieldShowsError = false
@@ -175,7 +171,8 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return !hasError
+        // if string value is empty, then check if it is required. In case string has value, check if its valid regex
+        return textView.string.isEmpty ? !isRequired : textView.string.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) != nil
     }
 }
 

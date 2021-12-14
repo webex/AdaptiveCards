@@ -158,17 +158,13 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
         return id
     }
     
-    var isValid: Bool {
-        return !hasError
-    }
-    
     var maxLen: Int = 0
     var idString: String?
     
     override func textDidChange(_ notification: Notification) {
         super.textDidChange(notification)
         
-        if !hasError && textFieldShowsError {
+        if isValid && textFieldShowsError {
             errorMessageHandler?.hideErrorMessage(for: self)
             setupColors(hasFocus: true)
         }

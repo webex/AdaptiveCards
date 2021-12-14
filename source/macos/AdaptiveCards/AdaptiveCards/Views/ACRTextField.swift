@@ -30,10 +30,10 @@ class ACRTextField: NSTextField {
         return layer?.borderColor == inputConfig.errorMessageConfig.errorBorderColor?.cgColor || layer?.backgroundColor == inputConfig.errorMessageConfig.errorBackgroundColor?.cgColor
     }
     var hasMouseInField: Bool = false
-    var hasError: Bool {
+    var isValid: Bool {
         get {
             // if string value is empty, then check if it is required. In case string has value, check if it matches regex
-            return isEmpty ? isRequired : stringValue.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) == nil
+            return isEmpty ? !isRequired : stringValue.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) != nil
         }
     }
     

@@ -309,6 +309,7 @@ private class FakeInputHandlingView: NSView, InputHandlingViewProtocol {
     var value: String = NSUUID().uuidString
     var key: String = NSUUID().uuidString
     var isValid: Bool = true
+    var isRequired: Bool = false
     var errorMessageHandler: ErrorMessageHandlerDelegate?
     func showError() {}
 }
