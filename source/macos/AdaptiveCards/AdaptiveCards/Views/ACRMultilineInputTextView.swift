@@ -12,14 +12,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     private let inputConfig: InputFieldConfig
     var maxLen = 0
     var id: String?
-    var regex: String? {
-        didSet {
-            // handling case when regex is not supplied and is set to "". Replacing it with ".*"
-            guard let currValue = regex else { return }
-            regex = currValue.isEmpty ? nil : currValue
-        }
-    }
-    var isRequired = false
+    var inputValidator = ACRInputTextValidator()
     var textFieldShowsError: Bool {
         return layer?.borderColor == inputConfig.errorMessageConfig.errorBorderColor?.cgColor || textView.backgroundColor == inputConfig.errorMessageConfig.errorBackgroundColor
     }
@@ -171,8 +164,12 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        // if string value is empty, then check if it is required. In case string has value, check if its valid regex
-        return textView.string.isEmpty ? !isRequired : textView.string.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) != nil
+        return inputValidator.getIsValid(for: textView.string)
+    }
+    
+    var isRequired: Bool {
+        get { return inputValidator.isRequired }
+        set { inputValidator.isRequired = newValue }
     }
 }
 

@@ -18,23 +18,13 @@ class ACRTextField: NSTextField {
     private let inputConfig: InputFieldConfig
     private let isDarkMode: Bool
     private let textFieldMode: Mode
-    var regex: String? {
-        didSet {
-            // handling case when regex is not supplied and is set to "". Replacing it with nil
-            guard let currValue = regex else { return }
-            regex = currValue.isEmpty ? nil : currValue
-        }
-    }
-    var isRequired: Bool = false
+    var inputValidator = ACRInputTextValidator()
     var textFieldShowsError: Bool {
         return layer?.borderColor == inputConfig.errorMessageConfig.errorBorderColor?.cgColor || layer?.backgroundColor == inputConfig.errorMessageConfig.errorBackgroundColor?.cgColor
     }
     var hasMouseInField: Bool = false
     var isValid: Bool {
-        get {
-            // if string value is empty, then check if it is required. In case string has value, check if it matches regex
-            return isEmpty ? !isRequired : stringValue.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) != nil
-        }
+        return inputValidator.getIsValid(for: stringValue)
     }
     
     init(dateTimeFieldWith config: RenderConfig) {

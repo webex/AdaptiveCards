@@ -242,8 +242,8 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     var isRequired: Bool {
-        get { return textField.isRequired }
-        set { textField.isRequired = newValue }
+        get { return textField.inputValidator.isRequired }
+        set { textField.inputValidator.isRequired = newValue }
     }
 }
 

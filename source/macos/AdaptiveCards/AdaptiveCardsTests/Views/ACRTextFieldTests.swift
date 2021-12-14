@@ -72,7 +72,7 @@ class ACRTextFieldTests: XCTestCase {
     }
     
     func testTextFieldIsRequiredValidation() {
-        textField.isRequired = true
+        textField.inputValidator.isRequired = true
         textField.stringValue = ""
         XCTAssertFalse(textField.isValid)
         textField.stringValue = "s"
@@ -80,9 +80,9 @@ class ACRTextFieldTests: XCTestCase {
     }
     
     func testTextFieldRegexValidation() {
-        textField.isRequired = false
+        textField.inputValidator.isRequired = false
         // regex for input of a single digit
-        textField.regex = "^[0-9]{1}$"
+        textField.inputValidator.regex = "^[0-9]{1}$"
         
         textField.stringValue = ""
         XCTAssertTrue(textField.isValid)
@@ -95,9 +95,9 @@ class ACRTextFieldTests: XCTestCase {
     }
     
     func testTextFieldRegexAndIsRequiredValidation() {
-        textField.isRequired = true
+        textField.inputValidator.isRequired = true
         // regex for input of a single digit
-        textField.regex = "^[0-9]{1}$"
+        textField.inputValidator.regex = "^[0-9]{1}$"
         
         textField.stringValue = ""
         XCTAssertFalse(textField.isValid)

@@ -74,7 +74,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     }()
 
     @objc private func handleStepperAction(_ sender: NSStepper) {
-        textField.stringValue = "\(sender.integerValue)"
+        inputValue = Double(sender.integerValue)
         setStepperAccessibilityValue(value: String(stepper.integerValue))
     }
     
@@ -164,6 +164,10 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
             textField.doubleValue = newValue
             stepper.doubleValue = newValue
             setStepperAccessibilityValue(value: textField.stringValue)
+            if isValid && textField.textFieldShowsError {
+                errorMessageHandler?.hideErrorMessage(for: self)
+                textField.setupColors(hasFocus: true)
+            }
         }
     }
     
@@ -251,7 +255,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     var isRequired: Bool {
-        get { return textField.isRequired }
-        set { textField.isRequired = newValue }
+        get { return textField.inputValidator.isRequired }
+        set { textField.inputValidator.isRequired = newValue }
     }
 }

@@ -17,7 +17,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }()
         let textView = ACRTextInputView(config: config)
         textView.idString = inputBlock.getId()
-        textView.regex = inputBlock.getRegex()
+        textView.inputValidator.regex = inputBlock.getRegex()
         textView.isRequired = inputBlock.getIsRequired()
         var attributedInitialValue: NSMutableAttributedString
         
@@ -54,7 +54,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
                 multilineView.setValue(value: valueString, maximumLen: inputBlock.getMaxLength())
             }
             multilineView.maxLen = inputBlock.getMaxLength() as? Int ?? 0
-            multilineView.regex = inputBlock.getRegex()
+            multilineView.inputValidator.regex = inputBlock.getRegex()
             multilineView.isRequired = inputBlock.getIsRequired()
             // Add Input Handler
             
@@ -156,6 +156,11 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
             return ""
         }
         return id
+    }
+    
+    var isRequired: Bool {
+        get { return inputValidator.isRequired }
+        set { inputValidator.isRequired = newValue }
     }
     
     var maxLen: Int = 0
