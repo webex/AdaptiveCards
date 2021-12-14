@@ -52,6 +52,12 @@ class BaseCardElementRenderer {
         if view is ACRContentStackView {
             view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
         }
+        
+        if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let view = view as? InputHandlingViewProtocol, let errorMessage = inputElement.getErrorMessage(), !errorMessage.isEmpty {
+            updatedView.setCustomSpacing(spacing: 10, after: view)
+            updatedView.setErrorMessage(with: errorMessage, for: view)
+        }
+        
         return updatedView
     }
     
