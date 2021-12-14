@@ -115,7 +115,6 @@ class ACRView: ACRColumnView {
                     dict[handler.key] = handler.value
                 }
             }
-
             if let curr = parentView, curr.parent == nil {
                 rootView = curr
             }
