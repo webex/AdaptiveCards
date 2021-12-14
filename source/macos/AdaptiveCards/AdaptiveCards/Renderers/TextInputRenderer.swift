@@ -171,7 +171,6 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
         if !hasError && textFieldShowsError {
             errorMessageHandler?.hideErrorMessage(for: self)
             setupColors(hasFocus: true)
-            textFieldShowsError = false
         }
         
         guard maxLen > 0  else { return } // maxLen returns 0 if propery not set

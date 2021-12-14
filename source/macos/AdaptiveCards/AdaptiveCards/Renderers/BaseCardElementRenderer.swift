@@ -56,7 +56,7 @@ class BaseCardElementRenderer {
         if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let errorMessage = inputElement.getErrorMessage(), !errorMessage.isEmpty {
             updatedView.setCustomSpacing(spacing: 3, after: view)
             let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
-            attributedErrorMessageString.addAttributes([.font: config.inputFieldConfig.errorMessageFont, .foregroundColor: config.inputFieldConfig.errorMessageTextAndBorderColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
+            attributedErrorMessageString.addAttributes([.font: config.inputFieldConfig.errorMessageConfig.errorMessageFont, .foregroundColor: config.inputFieldConfig.errorMessageConfig.errorMessageTextColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
             updatedView.setErrorMessage(with: attributedErrorMessageString)
             if let view = view as? InputHandlingViewProtocol {
                 view.errorMessageHandler = updatedView

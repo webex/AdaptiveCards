@@ -129,9 +129,7 @@
 {
  
     auto getRegexCpp = mCppObj->GetRegex();
-    auto regexString = [NSString stringWithUTF8String:getRegexCpp.c_str()];
-    
-    return regexString;
+    return [NSString stringWithUTF8String:getRegexCpp.c_str()];
 
 }
 

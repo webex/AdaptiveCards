@@ -121,7 +121,6 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         if isValid && textField.textFieldShowsError {
             errorMessageHandler?.hideErrorMessage(for: self)
             textField.setupColors(hasFocus: true)
-            textField.textFieldShowsError = false
         }
     }
     

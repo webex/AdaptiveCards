@@ -10,6 +10,10 @@ class FakeInputText: ACSTextInput {
     public var regexString: String?
     public var id: String? = ""
     public var visibility: Bool = true
+    public var isRequired: Bool = false
+    public var errorMessage: String?
+    public var label: String?
+    public var separator: Bool = false
     
     override func getPlaceholder() -> String? {
         return placeholderString
@@ -74,10 +78,42 @@ class FakeInputText: ACSTextInput {
     override func getIsVisible() -> Bool {
         return visibility
     }
+    
+    override func getIsRequired() -> Bool {
+        return isRequired
+    }
+    
+    override func setIsRequired(_ isRequired: Bool) {
+        self.isRequired = isRequired
+    }
+    
+    override func getErrorMessage() -> String? {
+        return errorMessage
+    }
+    
+    override func setErrorMessage(_ errorMessage: String) {
+        self.errorMessage = errorMessage
+    }
+    
+    override func getLabel() -> String? {
+        return label
+    }
+    
+    override func setLabel(_ label: String) {
+        self.label = label
+    }
+    
+    override func getSeparator() -> Bool {
+        return separator
+    }
+    
+    override func setSeparator(_ value: Bool) {
+        separator = value
+    }
 }
 
 extension FakeInputText {
-    static func make(placeholderString: String? = "", value: String? = "", isMultiline: Bool = false, maxLength: NSNumber? = 0, style: ACSTextInputStyle = .text, inlineAction: ACSBaseActionElement? = .none, regexString: String? = "") -> FakeInputText {
+    static func make(placeholderString: String? = "", value: String? = "", isMultiline: Bool = false, maxLength: NSNumber? = 0, style: ACSTextInputStyle = .text, inlineAction: ACSBaseActionElement? = .none, regexString: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false) -> FakeInputText {
         let fakeInputText = FakeInputText()
         fakeInputText.placeholderString = placeholderString
         fakeInputText.value = value
@@ -86,7 +122,10 @@ extension FakeInputText {
         fakeInputText.style = style
         fakeInputText.inlineAction = inlineAction
         fakeInputText.regexString = regexString
+        fakeInputText.isRequired = isRequired
+        fakeInputText.errorMessage = errorMessage
+        fakeInputText.label = label
+        fakeInputText.separator = separator
         return fakeInputText
     }
 }
-

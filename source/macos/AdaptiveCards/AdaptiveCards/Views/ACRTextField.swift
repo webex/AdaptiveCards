@@ -20,17 +20,19 @@ class ACRTextField: NSTextField {
     private let textFieldMode: Mode
     var regex: String? {
         didSet {
-            // handling case when regex is not supplied and is set to "". Replacing it with ".*"
+            // handling case when regex is not supplied and is set to "". Replacing it with nil
             guard let currValue = regex else { return }
-            regex = currValue.isEmpty ? ".*" : currValue
+            regex = currValue.isEmpty ? nil : currValue
         }
     }
     var isRequired: Bool = false
-    var textFieldShowsError: Bool = false
+    var textFieldShowsError: Bool {
+        return layer?.borderColor == inputConfig.errorMessageConfig.errorBorderColor?.cgColor || layer?.backgroundColor == inputConfig.errorMessageConfig.errorBackgroundColor?.cgColor
+    }
     var hasMouseInField: Bool = false
     var hasError: Bool {
         get {
-            // if string value is empty, then check if it is required. In case string has value, check if its valid regex
+            // if string value is empty, then check if it is required. In case string has value, check if it matches regex
             return isEmpty ? isRequired : stringValue.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) == nil
         }
     }
@@ -192,14 +194,6 @@ class ACRTextField: NSTextField {
         hasMouseInField = false
     }
     
-    override func mouseDown(with event: NSEvent) {
-        super.mouseDown(with: event)
-    }
-    
-    override func textDidBeginEditing(_ notification: Notification) {
-        return super.textDidBeginEditing(notification)
-    }
-    
     override func textDidEndEditing(_ notification: Notification) {
         if !textFieldShowsError {
             setupColors(hasFocus: false)
@@ -243,9 +237,9 @@ class ACRTextField: NSTextField {
     }
     
     func setupErrorColors() {
-        layer?.borderColor = NSColor.systemRed.cgColor
-        layer?.backgroundColor = inputConfig.errorBackgroundColor.cgColor
-        textFieldShowsError = true
+        guard let errorBorderColor = inputConfig.errorMessageConfig.errorBorderColor, let errorBackgroundColor = inputConfig.errorMessageConfig.errorBackgroundColor else { return }
+        layer?.borderColor = errorBorderColor.cgColor
+        layer?.backgroundColor = errorBackgroundColor.cgColor
     }
 }
 

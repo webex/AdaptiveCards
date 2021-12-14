@@ -10,10 +10,6 @@ protocol ACRChoiceButtonDelegate: NSObjectProtocol {
 }
 
 class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
-    func showError() {
-        // do nothing
-    }
-    
     weak var delegate: ACRChoiceButtonDelegate?
     public var buttonValue: String?
     public var idString: String?
@@ -153,6 +149,10 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         return true
     }
     
+    var isRequired: Bool {
+        return false
+    }
+    
     override func accessibilityValue() -> Any? {
         return state
     }
@@ -163,6 +163,10 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         message += ", " + (accessibilityLabel() ?? "")
         message += ", " + (accessibilityRole()?.description(with: .none) ?? "")
         return message
+    }
+    
+    func showError() {
+        // do nothing
     }
 }
 // MARK: EXTENSION

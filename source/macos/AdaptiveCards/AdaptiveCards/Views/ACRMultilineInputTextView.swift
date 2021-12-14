@@ -20,13 +20,13 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         }
     }
     var isRequired = false
-    var textFieldShowsError = false
+    var textFieldShowsError: Bool {
+        return layer?.borderColor == inputConfig.errorMessageConfig.errorBorderColor?.cgColor || textView.backgroundColor == inputConfig.errorMessageConfig.errorBackgroundColor
+    }
     var hasMouseInField = false
     var hasError: Bool {
-        get {
-            // if string value is empty, then check if it is required. In case string has value, check if its valid regex
-            return textView.string.isEmpty ? isRequired : textView.string.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) == nil
-        }
+        // if string value is empty, then check if it is required. In case string has value, check if its valid regex
+        return textView.string.isEmpty ? isRequired : textView.string.range(of: regex ?? ".*", options: .regularExpression, range: nil, locale: nil) == nil
     }
     
     init(config: RenderConfig) {
@@ -114,7 +114,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         if !hasError && textFieldShowsError {
             errorMessageHandler?.hideErrorMessage(for: self)
             setupColors(hasFocus: true)
-            textFieldShowsError = false
+//            textFieldShowsError = false
         }
         
         guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
@@ -149,9 +149,10 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     }
     
     func setupErrorColors() {
-        layer?.borderColor = config.inputFieldConfig.errorMessageTextAndBorderColor.cgColor
-        textView.backgroundColor = config.inputFieldConfig.errorBackgroundColor
-        textFieldShowsError = true
+        guard let errorBorderColor = config.inputFieldConfig.errorMessageConfig.errorBorderColor, let errorBackgroundColor = config.inputFieldConfig.errorMessageConfig.errorBackgroundColor else { return }
+        layer?.borderColor = errorBorderColor.cgColor
+        textView.backgroundColor = errorBackgroundColor
+//        textFieldShowsError = true
     }
 }
 

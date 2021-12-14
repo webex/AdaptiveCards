@@ -147,8 +147,8 @@ public struct ChoiceSetButtonConfig {
     }
 }
 public struct InputFieldConfig {
-    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .darkGray, activeBorderColor: .darkGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorMessageFont: .systemFont(ofSize: 10), errorMessageTextAndBorderColor: .systemRed, errorBackgroundColor: (NSColor.systemRed).withAlphaComponent(0.1))
-    public static let darkDefault = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .darkGray, backgroundColor: NSColor(white: 0.11, alpha: 1), borderColor: .lightGray, activeBorderColor: .lightGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorMessageFont: .systemFont(ofSize: 10), errorMessageTextAndBorderColor: .systemRed, errorBackgroundColor: (NSColor.systemRed).withAlphaComponent(0.1))
+    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .darkGray, activeBorderColor: .darkGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorMessageConfig: ErrorMessageConfig.default)
+    public static let darkDefault = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .darkGray, backgroundColor: NSColor(white: 0.11, alpha: 1), borderColor: .lightGray, activeBorderColor: .lightGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorMessageConfig: ErrorMessageConfig.default)
     
     public let height: CGFloat
     public let leftPadding: CGFloat
@@ -167,11 +167,9 @@ public struct InputFieldConfig {
     public let activeBorderColor: NSColor
     public let placeholderTextColor: NSColor
     public let multilineFieldInsets: NSEdgeInsets
-    public let errorMessageFont: NSFont
-    public let errorMessageTextAndBorderColor: NSColor
-    public let errorBackgroundColor: NSColor
+    public let errorMessageConfig: ErrorMessageConfig
     
-    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, clearButtonImage: NSImage?, calendarImage: NSImage?, clockImage: NSImage?, font: NSFont, highlightedColor: NSColor, backgroundColor: NSColor, borderColor: NSColor, activeBorderColor: NSColor, placeholderTextColor: NSColor, multilineFieldInsets: NSEdgeInsets, errorMessageFont: NSFont, errorMessageTextAndBorderColor: NSColor, errorBackgroundColor: NSColor) {
+    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, clearButtonImage: NSImage?, calendarImage: NSImage?, clockImage: NSImage?, font: NSFont, highlightedColor: NSColor, backgroundColor: NSColor, borderColor: NSColor, activeBorderColor: NSColor, placeholderTextColor: NSColor, multilineFieldInsets: NSEdgeInsets, errorMessageConfig: ErrorMessageConfig) {
         self.height = height
         self.leftPadding = leftPadding
         self.rightPadding = rightPadding
@@ -189,9 +187,7 @@ public struct InputFieldConfig {
         self.activeBorderColor = activeBorderColor
         self.placeholderTextColor = placeholderTextColor
         self.multilineFieldInsets = multilineFieldInsets
-        self.errorMessageFont = errorMessageFont
-        self.errorMessageTextAndBorderColor = errorMessageTextAndBorderColor
-        self.errorBackgroundColor = errorBackgroundColor
+        self.errorMessageConfig = errorMessageConfig
     }
 }
 
@@ -222,5 +218,21 @@ public struct LocalisedStringConfig {
         self.datePickerButtonAccessibilityTitle = datePickerButtonAccessibilityTitle
         self.timePickerButtonAccessibilityTitle = timePickerButtonAccessibilityTitle
         self.clearButtonAccessibilityTitle = clearButtonAccessibilityTitle
+    }
+}
+
+public struct ErrorMessageConfig {
+    public static let `default` = ErrorMessageConfig(errorMessageFont: nil, errorMessageTextColor: nil, errorBorderColor: nil, errorBackgroundColor: nil)
+    
+    public let errorMessageFont: NSFont?
+    public let errorMessageTextColor: NSColor?
+    public let errorBorderColor: NSColor?
+    public let errorBackgroundColor: NSColor?
+    
+    public init(errorMessageFont: NSFont?, errorMessageTextColor: NSColor?, errorBorderColor: NSColor?, errorBackgroundColor: NSColor?) {
+        self.errorMessageFont = errorMessageFont
+        self.errorMessageTextColor = errorMessageTextColor
+        self.errorBorderColor = errorBorderColor
+        self.errorBackgroundColor = errorBackgroundColor
     }
 }

@@ -3,10 +3,6 @@ import AppKit
 
 // MARK: ACRChoiceSetView
 class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
-    func showError() {
-        // do nothing
-    }
-    
     private lazy var stackview: NSStackView = {
         let view = NSStackView()
         view.orientation = .vertical
@@ -87,6 +83,14 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     var isValid: Bool {
         return true
     }
+    
+    var isRequired: Bool {
+        return false
+    }
+    
+    func showError() {
+        // do nothing
+    }
 }
 // MARK: Extension
 extension ACRChoiceSetView: ACRChoiceButtonDelegate {
@@ -97,10 +101,6 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
 
 // MARK: ACRChoiceSetFieldCompactView
 class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
-    func showError() {
-        // do nothing
-    }
-    
     public let type: ACSChoiceSetStyle = .compact
     private var trackingAreaDefined = false
     public var idString: String?
@@ -141,5 +141,13 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     
     var isValid: Bool {
         return true
+    }
+    
+    var isRequired: Bool {
+        return false
+    }
+    
+    func showError() {
+        // do nothing
     }
 }
