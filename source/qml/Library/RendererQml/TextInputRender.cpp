@@ -10,7 +10,6 @@ TextinputElement::TextinputElement(std::shared_ptr<AdaptiveCards::TextInput> inp
 {  
 }
 
-
 std::shared_ptr<RendererQml::QmlTag> TextinputElement::getQmlString()
 {
     return mTextinputColElement;
@@ -19,6 +18,12 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::getQmlString()
 void TextinputElement::initialize()
 {
     mTextinput->SetId(mContext->ConvertToValidId(mTextinput->GetId()));
+    const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
+    mTextinputColElement = std::make_shared<RendererQml::QmlTag>("Column");
+    mTextinputColElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_column");
+    mTextinputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
+    mTextinputColElement->Property("width", "parent.width");
+
     if (mTextinput->GetIsMultiline()) {
         initMultiLine();
     }
@@ -43,11 +48,10 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createInputTextLabel(bool
         label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()) << " <font color='" << textConfig.errorMessageColor << "'>*</font>", true);
     else
         label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()), true);
-
     return label;
 }
 
-std::shared_ptr<RendererQml::QmlTag> TextinputElement::createErrorMessageText(std::string errorMessage, std::shared_ptr<RendererQml::QmlTag> uiTextInput)
+std::shared_ptr<RendererQml::QmlTag> TextinputElement::createErrorMessageText(std::string errorMessage, const std::shared_ptr<RendererQml::QmlTag> uiTextInput)
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
@@ -60,18 +64,12 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createErrorMessageText(st
     uiErrorMessage->Property("color", color);
     uiErrorMessage->Property("text", errorMessage, true);
     uiErrorMessage->Property("visible", RendererQml::Formatter() << uiTextInput->GetId() << ".showErrorMessage");
-
     return uiErrorMessage;
 }
 
 void TextinputElement::initSingleLine()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
-    mTextinputColElement = std::make_shared<RendererQml::QmlTag>("Column");
-    mTextinputColElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_column");
-    mTextinputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
-    mTextinputColElement->Property("width", "parent.width");
-
     if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
         if (!mTextinput->GetLabel().empty())
@@ -119,18 +117,7 @@ void TextinputElement::initSingleLine()
             auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
             mTextinputColElement->AddChild(label);
 
-            mContext->addToRequiredInputElementsIdList(uiTextInput->GetId());
-            uiTextInput->Property("property bool showErrorMessage", "false");
-            uiTextInput->Property("onTextChanged", "validate()");
-            std::ostringstream validator;
-            validator << "function validate(){\n";
-            if (!mTextinput->GetRegex().empty())
-            {
-                validator << "const regex = new RegExp('" << mTextinput->GetRegex() << "');\n";
-            }
-            validator << "var isValid = " << (mTextinput->GetRegex().empty() ? "text !== ''" : "regex.test(text)") << "\n" << "if (showErrorMessage) {\n"
-                << "if (isValid) {\n" << "showErrorMessage = false\n" << "}\n}" << "return !isValid}\n";
-            uiTextInput->AddFunctions(validator.str());
+            addValidationToInputText(uiTextInput);
         }
     }
 }
@@ -138,11 +125,6 @@ void TextinputElement::initSingleLine()
 void TextinputElement::initMultiLine()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
-    mTextinputColElement = std::make_shared<RendererQml::QmlTag>("Column");
-    mTextinputColElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_column");
-    mTextinputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
-    mTextinputColElement->Property("width", "parent.width");
-
     if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
         if (!mTextinput->GetLabel().empty())
@@ -183,23 +165,27 @@ void TextinputElement::initMultiLine()
         {
             auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
             mTextinputColElement->AddChild(label);
+            addValidationToInputText(uiTextInput);
 
-            mContext->addToRequiredInputElementsIdList(uiTextInput->GetId());
-            uiTextInput->Property("property bool showErrorMessage", "false");
-            uiTextInput->Property("onTextChanged", "validate()");
-            std::ostringstream validator;
-            validator << "function validate(){\n";
-            if (!mTextinput->GetRegex().empty())
-            {
-                validator << "const regex = new RegExp('" << mTextinput->GetRegex() << "');\n";
-            }
-            validator << "var isValid = " << (mTextinput->GetRegex().empty() ? "text !== ''" : "regex.test(text)") << "\n" << "if (showErrorMessage) {\n"
-                << "if (isValid) {\n" << "showErrorMessage = false\n" << "}\n}" << "return !isValid}\n";
-            uiTextInput->AddFunctions(validator.str());
         }
     }
 }
 
+void TextinputElement::addValidationToInputText(std::shared_ptr<RendererQml::QmlTag> &uiTextInput)
+{
+    mContext->addToRequiredInputElementsIdList(uiTextInput->GetId());
+    uiTextInput->Property("property bool showErrorMessage", "false");
+    uiTextInput->Property("onTextChanged", "validate()");
+    std::ostringstream validator;
+    validator << "function validate(){\n";
+    if (!mTextinput->GetRegex().empty())
+    {
+        validator << "const regex = new RegExp('" << mTextinput->GetRegex() << "');\n";
+    }
+    validator << "var isValid = " << (mTextinput->GetRegex().empty() ? "text !== ''" : "regex.test(text)") << "\n" << "if (showErrorMessage) {\n"
+        << "if (isValid) {\n" << "showErrorMessage = false\n" << "}\n}" << "return !isValid}\n";
+    uiTextInput->AddFunctions(validator.str());
+}
 
 std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextFieldElement()
 {
