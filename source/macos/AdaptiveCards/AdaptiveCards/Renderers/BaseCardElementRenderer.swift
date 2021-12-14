@@ -57,7 +57,7 @@ class BaseCardElementRenderer {
             updatedView.setCustomSpacing(spacing: 3, after: view)
             let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
             attributedErrorMessageString.addAttributes([.font: config.inputFieldConfig.errorMessageConfig.errorMessageFont, .foregroundColor: config.inputFieldConfig.errorMessageConfig.errorMessageTextColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
-            updatedView.setErrorMessage(with: attributedErrorMessageString)
+            updatedView.setErrorMessage(with: attributedErrorMessageString, for: view)
 		}
         
         return updatedView

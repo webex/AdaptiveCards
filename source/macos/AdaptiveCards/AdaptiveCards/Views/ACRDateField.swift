@@ -119,13 +119,19 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         return textField.isValid
     }
     
+    func showError() {
+        textField.setupErrorColors()
+        errorMessageHandler?.showErrorMessage(for: self)
+    }
+    
     weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
-        get {
-            return textField.errorMessageHandler
-        }
-        set {
-            textField.errorMessageHandler = newValue
-        }
+        get { return textField.errorMessageHandler }
+        set { textField.errorMessageHandler = newValue }
+    }
+    
+    var isRequired: Bool {
+        get { return textField.inputValidator.isRequired }
+        set { textField.inputValidator.isRequired = newValue }
     }
     
     init(isTimeMode: Bool, config: RenderConfig) {
@@ -238,21 +244,6 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
             return placeholder
         }
         return nil
-    }
-    
-    func showError() {
-        textField.setupErrorColors()
-        errorMessageHandler?.showErrorMessage(for: self)
-    }
-    
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
-        get { return textField.errorMessageHandler }
-        set { textField.errorMessageHandler = newValue }
-    }
-    
-    var isRequired: Bool {
-        get { return textField.inputValidator.isRequired }
-        set { textField.inputValidator.isRequired = newValue }
     }
 }
 

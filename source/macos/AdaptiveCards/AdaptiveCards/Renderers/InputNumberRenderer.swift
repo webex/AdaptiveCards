@@ -166,7 +166,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
             setStepperAccessibilityValue(value: textField.stringValue)
             if isValid && textField.textFieldShowsError {
                 errorMessageHandler?.hideErrorMessage(for: self)
-                textField.setupColors(hasFocus: true)
+                textField.setupColors(hasFocus: false)
             }
         }
     }
@@ -257,14 +257,5 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     var isRequired: Bool {
         get { return textField.inputValidator.isRequired }
         set { textField.inputValidator.isRequired = newValue }
-    }
-    
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
-        get {
-            return textField.errorMessageHandler
-        }
-        set {
-            textField.errorMessageHandler = newValue
-        }
     }
 }
