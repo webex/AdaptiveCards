@@ -22,10 +22,12 @@ namespace RendererQml
         std::string borderColorOnError{ "#FFFC8B98" };
         std::string placeHolderColor{ "#B3FFFFFF" };
         std::string textColor{ "#F2FFFFFF" };
+        std::string errorMessageColor{ "#FFFC8B98" };
         std::string clearIconColorNormal{ "#B3FFFFFF" };
         std::string clearIconColorOnFocus{ "#FF64B4FA" };
         int height{ 32 };
         int pixelSize{ 16 };
+        int labelSize{ 14 };
         int borderRadius{ 8 };
         int borderWidth{ 1 };
         int clearIconSize{ 16 };

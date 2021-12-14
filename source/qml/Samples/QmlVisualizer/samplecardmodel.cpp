@@ -431,6 +431,7 @@ InputConfig SampleCardModel::getInputFieldConfig(InputConfig inputConfig, const 
         inputConfig.borderColorOnError = "#FFAB0A15";
         inputConfig.placeHolderColor = "#99000000";
         inputConfig.textColor = "#F2000000";
+        inputConfig.errorMessageColor = "#FFAB0A15";
         inputConfig.clearIconColorNormal = "#99000000";
         inputConfig.clearIconColorOnFocus = "#FF1170CF";
     }

@@ -29,12 +29,18 @@ void TextinputElement::initialize()
 
 std::shared_ptr<RendererQml::QmlTag> TextinputElement::createInputTextLabel(bool isRequired)
 {
+    const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto label = std::make_shared<RendererQml::QmlTag>("Label");
     label->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_label");
     label->Property("wrapMode", "Text.Wrap");
     label->Property("width", "parent.width");
+
+    std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
+    label->Property("color", color);
+    label->Property("font.pixelSize", RendererQml::Formatter() << textConfig.labelSize);
+
     if (isRequired)
-        label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()) << " *", true);
+        label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()) << " <font color='" << textConfig.errorMessageColor << "'>*</font>", true);
     else
         label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()), true);
 
@@ -43,19 +49,19 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createInputTextLabel(bool
 
 std::shared_ptr<RendererQml::QmlTag> TextinputElement::createErrorMessageText(std::string errorMessage, std::shared_ptr<RendererQml::QmlTag> uiTextInput)
 {
+    const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
+    auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
+    uiErrorMessage->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_errorMessage");
+    uiErrorMessage->Property("wrapMode", "Text.Wrap");
+    uiErrorMessage->Property("width", "parent.width");
+    uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << textConfig.labelSize);
 
-    auto uiErrorMessage = std::make_shared<AdaptiveCards::TextBlock>();
+    std::string color = mContext->GetHexColor(textConfig.errorMessageColor);
+    uiErrorMessage->Property("color", color);
+    uiErrorMessage->Property("text", errorMessage, true);
+    uiErrorMessage->Property("visible", RendererQml::Formatter() << uiTextInput->GetId() << ".showErrorMessage");
 
-    uiErrorMessage->SetText(errorMessage);
-    uiErrorMessage->SetTextSize(mContext->GetConfig()->GetFactSet().value.size);
-    uiErrorMessage->SetTextColor(mContext->GetConfig()->GetFactSet().value.color);
-    uiErrorMessage->SetTextWeight(mContext->GetConfig()->GetFactSet().value.weight);
-    uiErrorMessage->SetIsSubtle(mContext->GetConfig()->GetFactSet().value.isSubtle);
-    uiErrorMessage->SetWrap(mContext->GetConfig()->GetFactSet().value.wrap);
-    // MaxWidth is not supported on the Value of FactSet. Do not set it.
-    auto uiValue = mContext->Render(uiErrorMessage);
-    uiValue->Property("visible", RendererQml::Formatter() << uiTextInput->GetId() << ".showErrorMessage");
-    return uiValue;
+    return uiErrorMessage;
 }
 
 void TextinputElement::initSingleLine()
@@ -134,7 +140,7 @@ void TextinputElement::initMultiLine()
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     mTextinputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     mTextinputColElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_column");
-    mTextinputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), mTextinput->GetSpacing()));
+    mTextinputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mTextinputColElement->Property("width", "parent.width");
 
     if (mContext->GetRenderConfig()->isVersion1_3Enabled())
@@ -213,7 +219,10 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
     uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
-    uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
+    if (mContext->GetRenderConfig()->isVersion1_3Enabled() && mTextinput->GetIsRequired())
+    {
+        uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
+    }
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("topPadding", RendererQml::Formatter() << textConfig.textVerticalPadding);
@@ -273,6 +282,10 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
     uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
+    if (mContext->GetRenderConfig()->isVersion1_3Enabled() && mTextinput->GetIsRequired())
+    {
+        uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
+    }
     uiTextInput->Property("Keys.onTabPressed", "{nextItemInFocusChain().forceActiveFocus(); event.accepted = true;}");
     uiTextInput->Property("Keys.onBacktabPressed", "{nextItemInFocusChain(false).forceActiveFocus(); event.accepted = true;}");
     uiTextInput->Property("font.pixelSize", RendererQml::Formatter() << textConfig.pixelSize);
