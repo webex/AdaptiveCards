@@ -425,8 +425,10 @@ InputConfig SampleCardModel::getInputFieldConfig(InputConfig inputConfig, const 
         inputConfig.backgroundColorNormal = "#FFFFFFFF";
         inputConfig.backgroundColorOnHovered = "#0A000000";
         inputConfig.backgroundColorOnPressed = "#4D000000";
+        inputConfig.backgroundColorOnError = "#FFFFE8EA";
         inputConfig.borderColorNormal = "#80000000";
         inputConfig.borderColorOnFocus = "#FF1170CF";
+        inputConfig.borderColorOnError = "#FFAB0A15";
         inputConfig.placeHolderColor = "#99000000";
         inputConfig.textColor = "#F2000000";
         inputConfig.clearIconColorNormal = "#99000000";

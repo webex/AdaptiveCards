@@ -16,8 +16,10 @@ namespace RendererQml
         std::string backgroundColorNormal{ "#FF0F0F0F" };
         std::string backgroundColorOnHovered{ "#0DFFFFFF" };
         std::string backgroundColorOnPressed{ "#4DFFFFFF" };
+        std::string backgroundColorOnError{ "#FF4F0E10" };
         std::string borderColorNormal{ "#80FFFFFF" };
         std::string borderColorOnFocus{ "#FF64B4FA" };
+        std::string borderColorOnError{ "#FFFC8B98" };
         std::string placeHolderColor{ "#B3FFFFFF" };
         std::string textColor{ "#F2FFFFFF" };
         std::string clearIconColorNormal{ "#B3FFFFFF" };

@@ -84,7 +84,7 @@ void TextinputElement::initSingleLine()
 
     mTextinputElement = std::make_shared<RendererQml::QmlTag>("Rectangle");
     mTextinputElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_wrapper");
-    mTextinputElement->Property("border.color", RendererQml::Formatter() << mTextinput->GetId() << ".activeFocus? " << mContext->GetHexColor(textConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(textConfig.borderColorNormal));
+    mTextinputElement->Property("border.color", RendererQml::Formatter() << mTextinput->GetId() << ".showErrorMessage? " << mContext->GetHexColor(textConfig.borderColorOnError) << ":" << mTextinput->GetId() << ".activeFocus? " << mContext->GetHexColor(textConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(textConfig.borderColorNormal));
     mTextinputElement->Property("border.width", RendererQml::Formatter() << textConfig.borderWidth);
     mTextinputElement->Property("radius", RendererQml::Formatter() << textConfig.borderRadius);
     mTextinputElement->Property("height", RendererQml::Formatter() << textConfig.height);
@@ -213,6 +213,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
     uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
+    uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("topPadding", RendererQml::Formatter() << textConfig.textVerticalPadding);
@@ -303,7 +304,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineBackground
     backgroundTag->Property("radius", RendererQml::Formatter() << textConfig.borderRadius);
     backgroundTag->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_background");
     backgroundTag->Property("color", mContext->GetHexColor(textConfig.backgroundColorNormal));
-    backgroundTag->Property("border.color", RendererQml::Formatter() << mTextinput->GetId() << ".activeFocus? " << mContext->GetHexColor(textConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(textConfig.borderColorNormal));
+    backgroundTag->Property("border.color", RendererQml::Formatter() << mTextinput->GetId() << ".showErrorMessage? " << mContext->GetHexColor(textConfig.borderColorOnError) << ":" << mTextinput->GetId() << ".activeFocus? " << mContext->GetHexColor(textConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(textConfig.borderColorNormal));
     backgroundTag->Property("border.width", RendererQml::Formatter() << textConfig.borderWidth);
     return backgroundTag;
 }
@@ -356,11 +357,11 @@ const std::string TextinputElement::getColorFunction()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     std::string colorFunction = RendererQml::Formatter() << "function colorChange(colorItem,focusItem,isPressed) {\n"
-        "if (isPressed) {\n"
+        "if (isPressed && !focusItem.showErrorMessage) {\n"
         "colorItem.color = " << mContext->GetHexColor(textConfig.backgroundColorOnPressed) << "\n"
         "}\n"
         "else {\n"
-        "colorItem.color = focusItem.activeFocus ? " << mContext->GetHexColor(textConfig.backgroundColorOnPressed) << " : focusItem.hovered ? " << mContext->GetHexColor(textConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(textConfig.backgroundColorNormal) << "\n"
+        "colorItem.color = focusItem.showErrorMessage ? " << mContext->GetHexColor(textConfig.backgroundColorOnError) << " : focusItem.activeFocus ? " << mContext->GetHexColor(textConfig.backgroundColorOnPressed) << " : focusItem.hovered ? " << mContext->GetHexColor(textConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(textConfig.backgroundColorNormal) << "\n"
         "}\n"
         "}\n";
     return colorFunction;
