@@ -10,6 +10,8 @@ class FakeInputNumber: ACSNumberInput {
     public var separator: Bool = false
     public var spacing: ACSSpacing = .default
     public var label: String? = ""
+    public var isRequired: Bool = false
+    public var errorMessage: String?
 
     open override func getValue() -> NSNumber? {
         return value
@@ -70,10 +72,30 @@ class FakeInputNumber: ACSNumberInput {
     override func getLabel() -> String? {
         return label
     }
+    
+    override func setLabel(_ label: String) {
+        self.label = label
+    }
+    
+    override func getIsRequired() -> Bool {
+        return isRequired
+    }
+    
+    override func setIsRequired(_ isRequired: Bool) {
+        self.isRequired = isRequired
+    }
+    
+    override func getErrorMessage() -> String? {
+        return errorMessage
+    }
+    
+    override func setErrorMessage(_ errorMessage: String) {
+        self.errorMessage = errorMessage
+    }
 }
 
 extension FakeInputNumber {
-    static func make(value: NSNumber? = 0, placeholder: String? = "", max: NSNumber? = .init(value: Double.greatestFiniteMagnitude), min: NSNumber? = .init(value: -Double.greatestFiniteMagnitude), visible: Bool? = true, separator: Bool = false, spacing: ACSSpacing = .default, label: String? = nil) -> FakeInputNumber {
+    static func make(value: NSNumber? = 0, placeholder: String? = "", max: NSNumber? = 0, min: NSNumber = 0, visible: Bool? = true, separator: Bool = false, spacing: ACSSpacing = .default, label: String? = nil, isRequired: Bool = false, errorMessage: String? = "") -> FakeInputNumber {
         let fakeInputNumber = FakeInputNumber()
         fakeInputNumber.value = value
         fakeInputNumber.placeholder = placeholder
@@ -83,6 +105,8 @@ extension FakeInputNumber {
         fakeInputNumber.separator = separator
         fakeInputNumber.spacing = spacing
         fakeInputNumber.label = label
+        fakeInputNumber.isRequired = isRequired
+        fakeInputNumber.errorMessage = errorMessage
         return fakeInputNumber
     }
 }

@@ -8,6 +8,11 @@ class FakeChoiceSetInput: ACSChoiceSetInput {
     public var value: String?
     public var wrap: Bool = false
     public var id: String? = ""
+    public var visibility: Bool = true
+    public var isRequired: Bool = false
+    public var errorMessage: String?
+    public var label: String?
+    public var separator: Bool = false
     
     open override func getIsMultiSelect() -> Bool {
         return isMultiSelect
@@ -56,9 +61,49 @@ class FakeChoiceSetInput: ACSChoiceSetInput {
     override func getId() -> String? {
         return id
     }
+    
+    override func getIsVisible() -> Bool {
+        return visibility
+    }
+    
+    override func setIsVisible(_ value: Bool) {
+        visibility = value
+    }
+    
+    override func getIsRequired() -> Bool {
+        return isRequired
+    }
+    
+    override func setIsRequired(_ isRequired: Bool) {
+        self.isRequired = isRequired
+    }
+    
+    override func getErrorMessage() -> String? {
+        return errorMessage
+    }
+    
+    override func setErrorMessage(_ errorMessage: String) {
+        self.errorMessage = errorMessage
+    }
+    
+    override func getLabel() -> String? {
+        return label
+    }
+    
+    override func setLabel(_ label: String) {
+        self.label = label
+    }
+    
+    override func getSeparator() -> Bool {
+        return separator
+    }
+    
+    override func setSeparator(_ value: Bool) {
+        separator = value
+    }
 }
 extension FakeChoiceSetInput {
-    static func make(isMultiSelect: Bool = false, value: String = "1", choices: [ACSChoiceInput] = [], wrap: Bool = false, choiceSetStyle: ACSChoiceSetStyle = .expanded, placeholder: String? = "") -> FakeChoiceSetInput {
+    static func make(isMultiSelect: Bool = false, value: String = "1", choices: [ACSChoiceInput] = [], wrap: Bool = false, choiceSetStyle: ACSChoiceSetStyle = .expanded, placeholder: String? = "", visibility: Bool = false, isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false) -> FakeChoiceSetInput {
         let fakeChoiceSetInput = FakeChoiceSetInput()
         fakeChoiceSetInput.placeholder = placeholder
         fakeChoiceSetInput.value = value
@@ -66,6 +111,11 @@ extension FakeChoiceSetInput {
         fakeChoiceSetInput.choices = choices
         fakeChoiceSetInput.isMultiSelect = isMultiSelect
         fakeChoiceSetInput.wrap = wrap
+        fakeChoiceSetInput.visibility = visibility
+        fakeChoiceSetInput.isRequired = isRequired
+        fakeChoiceSetInput.errorMessage = errorMessage
+        fakeChoiceSetInput.label = label
+        fakeChoiceSetInput.separator = separator
         return fakeChoiceSetInput
     }
 }
