@@ -43,6 +43,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createInputTextLabel(bool
     std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
     label->Property("color", color);
     label->Property("font.pixelSize", RendererQml::Formatter() << textConfig.labelSize);
+    label->Property("Accessible.ignored", "true");
 
     if (isRequired)
         label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()) << " <font color='" << textConfig.errorMessageColor << "'>*</font>", true);
@@ -59,6 +60,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createErrorMessageText(st
     uiErrorMessage->Property("wrapMode", "Text.Wrap");
     uiErrorMessage->Property("width", "parent.width");
     uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << textConfig.labelSize);
+    uiErrorMessage->Property("Accessible.ignored", "true");
 
     std::string color = mContext->GetHexColor(textConfig.errorMessageColor);
     uiErrorMessage->Property("color", color);
@@ -196,6 +198,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
     uiTextInput->Property("selectedTextColor", "'white'");
     uiTextInput->Property("color", mContext->GetHexColor(textConfig.textColor));
     uiTextInput->Property("placeholderTextColor", mContext->GetHexColor(textConfig.placeHolderColor));
+    uiTextInput->Property("Accessible.role", "Accessible.EditableText");
 
     auto backgroundTag = std::make_shared<RendererQml::QmlTag>("Rectangle");
     backgroundTag->Property("color", "'transparent'");
@@ -205,10 +208,29 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
     uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
-    if (mContext->GetRenderConfig()->isVersion1_3Enabled() && mTextinput->GetIsRequired())
+
+    if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
-        uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
+        if (mTextinput->GetIsRequired())
+        {
+            uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
+                << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)\n"
+                << "if(showErrorMessage){\n" << "Accessible.ignored = false;\n"
+                << "Accessible.name = " << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "'Text Field' + " : "'" + mTextinput->GetPlaceholder() + "' + ") : "'" + mTextinput->GetLabel() + "' + ") << "(" << uiTextInput->GetId() << ".showErrorMessage ? '" << mTextinput->GetErrorMessage() << "' : '');"
+                << "}else{Accessible.ignored = true}}");
+
+            uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "{\n"
+                << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)\n" << "if(activeFocus){\n"
+                << "Accessible.name = " << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "'Text Field' + " : "'" + mTextinput->GetPlaceholder() + "' + ") : "'" + mTextinput->GetLabel() + "' + ") << "(" << uiTextInput->GetId() << ".showErrorMessage ? '" << mTextinput->GetErrorMessage() << "' : '');"
+                << "Accessible.ignored = false;}}");
+        }
+        uiTextInput->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder()) : mTextinput->GetLabel()), true);
     }
+    else
+    {
+        uiTextInput->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder()), true);
+    }
+
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("topPadding", RendererQml::Formatter() << textConfig.textVerticalPadding);
@@ -221,9 +243,6 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
     }
 
     uiTextInput->Property("font.pixelSize", RendererQml::Formatter() << textConfig.pixelSize);
-    uiTextInput->Property("Accessible.name", mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder(), true);
-    uiTextInput->Property("Accessible.role", "Accessible.EditableText");
-
 
     if (!mTextinput->GetValue().empty())
     {
@@ -255,6 +274,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
     uiTextInput->Property("placeholderTextColor", mContext->GetHexColor(textConfig.placeHolderColor));
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
+    uiTextInput->Property("Accessible.role", "Accessible.EditableText");
 
     if (mTextinput->GetMaxLength() > 0)
     {
@@ -268,16 +288,32 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
     uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
-    if (mContext->GetRenderConfig()->isVersion1_3Enabled() && mTextinput->GetIsRequired())
+
+    if (mContext->GetRenderConfig()->isVersion1_3Enabled())
     {
-        uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
+        if (mTextinput->GetIsRequired())
+        {
+            uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
+                << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)\n"
+                << "if(showErrorMessage){\n" << "Accessible.ignored = false;\n"
+                << "Accessible.name = " << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "'Text Field' + " : "'" + mTextinput->GetPlaceholder() + "' + ") : "'" + mTextinput->GetLabel() + "' + ") << "(" << uiTextInput->GetId() << ".showErrorMessage ? '" << mTextinput->GetErrorMessage() << "' : '');"
+                << "}else{Accessible.ignored = true}}");
+
+            uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "{\n"
+                << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)\n" << "if(activeFocus){\n"
+                << "Accessible.name = " << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "'Text Field' + " : "'" + mTextinput->GetPlaceholder() + "' + ") : "'" + mTextinput->GetLabel() + "' + ") << "(" << uiTextInput->GetId() << ".showErrorMessage ? '" << mTextinput->GetErrorMessage() << "' : '');"
+                << "Accessible.ignored = false;}}");
+        }
+        uiTextInput->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder()) : mTextinput->GetLabel()), true);
     }
+    else
+    {
+        uiTextInput->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder()), true);
+    }
+
     uiTextInput->Property("Keys.onTabPressed", "{nextItemInFocusChain().forceActiveFocus(); event.accepted = true;}");
     uiTextInput->Property("Keys.onBacktabPressed", "{nextItemInFocusChain(false).forceActiveFocus(); event.accepted = true;}");
     uiTextInput->Property("font.pixelSize", RendererQml::Formatter() << textConfig.pixelSize);
-    uiTextInput->Property("Accessible.name", mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder(), true);
-    uiTextInput->Property("Accessible.role", "Accessible.EditableText");
-
 
     if (!mTextinput->GetValue().empty())
     {
