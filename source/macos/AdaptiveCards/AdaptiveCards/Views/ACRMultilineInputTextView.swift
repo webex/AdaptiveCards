@@ -132,12 +132,12 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         hasMouseInField = false
     }
     
-    func setupColors(hasFocus: Bool) {
+    private func setupColors(hasFocus: Bool) {
         layer?.borderColor = hasFocus ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
         textView.backgroundColor = hasMouseInField ? inputConfig.highlightedColor : inputConfig.backgroundColor
     }
     
-    func setupErrorColors() {
+    private func setupErrorColors() {
         guard let errorBorderColor = config.inputFieldConfig.errorMessageConfig.errorBorderColor, let errorBackgroundColor = config.inputFieldConfig.errorMessageConfig.errorBackgroundColor else { return }
         layer?.borderColor = errorBorderColor.cgColor
         textView.backgroundColor = errorBackgroundColor
