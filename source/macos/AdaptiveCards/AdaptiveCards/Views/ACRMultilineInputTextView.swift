@@ -103,7 +103,6 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         if isValid && textFieldShowsError {
             errorMessageHandler?.hideErrorMessage(for: self)
             setupColors(hasFocus: true)
-//            textFieldShowsError = false
         }
         
         guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
@@ -141,7 +140,6 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         guard let errorBorderColor = config.inputFieldConfig.errorMessageConfig.errorBorderColor, let errorBackgroundColor = config.inputFieldConfig.errorMessageConfig.errorBackgroundColor else { return }
         layer?.borderColor = errorBorderColor.cgColor
         textView.backgroundColor = errorBackgroundColor
-//        textFieldShowsError = true
     }
 }
 

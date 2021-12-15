@@ -233,7 +233,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         textField.isHidden = true
         textField.isEditable = false
         textField.isBordered = false
-        textField.isSelectable = true
+        textField.isSelectable = false
         textField.backgroundColor = .clear
         view.errorMessageHandler = self
         addArrangedSubview(textField)

@@ -134,13 +134,6 @@ class ACRView: ACRColumnView {
         } while parentView != nil
         
         guard canSubmit else { return }
-        
-        if let data = dataJSON?.data(using: String.Encoding.utf8), let dataJsonDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-            dict.merge(dataJsonDict) { current, _ in current }
-        // data != "null\n" check is required as the objective String does not return nil if nno data present
-        } else if let data = dataJSON, data != "null\n", dict["data"] == nil {
-            dict["data"] = data
-        }
         delegate?.adaptiveCard(rootView, didSubmitUserResponses: dict, actionView: actionView)
     }
     
