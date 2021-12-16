@@ -236,6 +236,11 @@ namespace RendererQml
         return ++m_SelectActionCounter;
     }
 
+    const int AdaptiveRenderContext::getFactSetCounter()
+    {
+        return ++m_FactSetCounter;
+    }
+
     const int RendererQml::AdaptiveRenderContext::getContentIndex()
     {
         return m_ContentIndex;

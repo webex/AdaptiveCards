@@ -44,6 +44,7 @@ namespace RendererQml
 		const int getColumnCounter();
         const int getButtonCounter();
         const int getSelectActionCounter();
+        const int getFactSetCounter();
 
         const int getContentIndex();
         void setContentIndex(int contentCounter);
@@ -130,6 +131,7 @@ namespace RendererQml
         int m_SelectActionCounter{ 0 };
         int m_DefaultIdCounter{ 0 };
         int m_ActionSetCounter{ 0 };
+        int m_FactSetCounter{ 0 };
         int m_ContentIndex{ 0 };
 
     };
