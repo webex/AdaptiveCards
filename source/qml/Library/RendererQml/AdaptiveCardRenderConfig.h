@@ -1,6 +1,7 @@
 #pragma once
 #include<memory>
 #include<string>
+#include <map>
 
 namespace RendererQml
 {
@@ -16,14 +17,18 @@ namespace RendererQml
         std::string backgroundColorNormal{ "#FF0F0F0F" };
         std::string backgroundColorOnHovered{ "#0DFFFFFF" };
         std::string backgroundColorOnPressed{ "#4DFFFFFF" };
+        std::string backgroundColorOnError{ "#FF4F0E10" };
         std::string borderColorNormal{ "#80FFFFFF" };
         std::string borderColorOnFocus{ "#FF64B4FA" };
+        std::string borderColorOnError{ "#FFFC8B98" };
         std::string placeHolderColor{ "#B3FFFFFF" };
         std::string textColor{ "#F2FFFFFF" };
+        std::string errorMessageColor{ "#FFFC8B98" };
         std::string clearIconColorNormal{ "#B3FFFFFF" };
         std::string clearIconColorOnFocus{ "#FF64B4FA" };
         int height{ 32 };
         int pixelSize{ 16 };
+        int labelSize{ 14 };
         int borderRadius{ 8 };
         int borderWidth{ 1 };
         int clearIconSize{ 16 };
@@ -219,8 +224,9 @@ namespace RendererQml
     class AdaptiveCardRenderConfig
     {
     public:
-        AdaptiveCardRenderConfig(bool isDarkMode = true);
+        AdaptiveCardRenderConfig(bool isDarkMode = true, std::map<std::string, bool> featureToggleMap = {});
         bool isDarkMode() const;
+        bool isAdaptiveCards1_3SchemaEnabled() const;
         CardConfig getCardConfig() const;
         void setCardConfig(CardConfig config);
         InputTextConfig getInputTextConfig() const;
@@ -240,6 +246,7 @@ namespace RendererQml
 
     private:
         bool m_isDark;
+        std::map<std::string, bool> mFeatureToggleMap;
         CardConfig m_cardConfig;
         InputTextConfig m_textInputConfig;
         InputNumberConfig m_numberInputConfig;
