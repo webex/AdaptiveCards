@@ -31,6 +31,6 @@ private:
 	std::shared_ptr<RendererQml::QmlTag> createSingleLineTextFieldElement();
 	std::shared_ptr<RendererQml::QmlTag> createMultiLineTextAreaElement();
 	std::shared_ptr<RendererQml::QmlTag> createMultiLineBackgroundElement();
-	void addValidationToInputText(std::shared_ptr<RendererQml::QmlTag> &uiTextInput);
+	void addValidationToInputText(std::shared_ptr<RendererQml::QmlTag>& uiTextInput);
 };
 
