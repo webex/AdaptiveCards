@@ -70,6 +70,7 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick 2.15");
         uiCard->AddImports("import QtQuick.Layouts 1.3");
         uiCard->AddImports("import QtQuick.Controls 2.15");
+        uiCard->AddImports("import QtGraphicalEffects 1.15");
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);
@@ -95,6 +96,8 @@ namespace RendererQml
 			uiFrame->Property("anchors.fill", "parent");
 			uiFrame->Property("background", AdaptiveCardQmlRenderer::GetBackgroundImage(card->GetBackgroundImage(), context, "parent.imgSource")->ToString());
 			uiCard->Property("clip", "true");
+            uiCard->Property("layer.enabled", "true");
+            uiCard->Property("layer.effect", GetOpacityMask(uiCard->GetId())->ToString());
 			uiCard->AddChild(uiFrame);
 		}
 
@@ -151,6 +154,10 @@ namespace RendererQml
 
         if ((!rectangle->HasProperty("Layout.topMargin") || !rectangle->HasProperty("Layout.bottomMargin")) && !isChildCard)
         {
+            uiCard->Property("clip", "true");
+            uiCard->Property("layer.enabled", "true");
+            uiCard->Property("layer.effect", GetOpacityMask(uiCard->GetId())->ToString());
+
             if (!rectangle->HasProperty("Layout.topMargin"))
             {
                 rectangle->Property("Layout.topMargin", "1");
@@ -2148,9 +2155,14 @@ namespace RendererQml
 			factSet->SetId(context->ConvertToValidId(factSet->GetId()));
 			uiFactSet->Property("id", factSet->GetId());
 		}
+        else
+        {
+            uiFactSet->Property("id", Formatter() << "fact_set_auto" << context->getFactSetCounter());
+        }
 
 		uiFactSet->Property("columns", "2");
 		uiFactSet->Property("rows", std::to_string(factSet->GetFacts().size()));
+		uiFactSet->Property("height", "implicitHeight");
 		uiFactSet->Property("property int titleWidth", "0");
 		uiFactSet->Property("property int minWidth", Formatter() << context->getCardRootId() << ".getMinWidthFactSet(children, columnSpacing)");
 		uiFactSet->AddFunctions("function setTitleWidth(item){	if (item.width > titleWidth){ titleWidth = item.width }}");
@@ -2199,10 +2211,11 @@ namespace RendererQml
 			uiFactSet->AddChild(uiValue);
 		}
 
-        if (factSet->GetHeight() == AdaptiveCards::HeightType::Stretch)
-        {
-            return GetStretchRectangle(uiFactSet);
-        }
+        auto parentRectangle = std::make_shared<QmlTag>("Rectangle");
+        parentRectangle->Property("implicitHeight", Formatter() << uiFactSet->GetId() << ".height");
+        parentRectangle->Property("width", "parent.width");
+        parentRectangle->Property("color", "transparent", true);
+        parentRectangle->Property("clip", "true");
 
 		return uiFactSet;
     }
@@ -2278,23 +2291,25 @@ namespace RendererQml
 		}
 		else
 		{
+            int imageWidth;
 			switch (image->GetImageSize())
 			{
 			case AdaptiveCards::ImageSize::None:
 			case AdaptiveCards::ImageSize::Auto:
-				uiRectangle->Property("width", "parent.width");
-				break;
+            case AdaptiveCards::ImageSize::Stretch:
+                uiRectangle->Property("width", "parent.width");
+                break;
 			case AdaptiveCards::ImageSize::Small:
-				uiRectangle->Property("width", Formatter() << context->GetConfig()->GetImageSizes().smallSize);
+                imageWidth = context->GetConfig()->GetImageSizes().smallSize;
+				uiRectangle->Property("width", Formatter() << "(parent.width < " << imageWidth << ") ? parent.width : " << imageWidth);
 				break;
 			case AdaptiveCards::ImageSize::Medium:
-				uiRectangle->Property("width", Formatter() << context->GetConfig()->GetImageSizes().mediumSize);
+                imageWidth = context->GetConfig()->GetImageSizes().mediumSize;
+                uiRectangle->Property("width", Formatter() << "(parent.width < " << imageWidth << ") ? parent.width : " << imageWidth);
 				break;
 			case AdaptiveCards::ImageSize::Large:
-				uiRectangle->Property("width", Formatter() << context->GetConfig()->GetImageSizes().largeSize);
-				break;
-			case AdaptiveCards::ImageSize::Stretch:
-				uiRectangle->Property("width", "parent.width");
+                imageWidth = context->GetConfig()->GetImageSizes().largeSize;
+                uiRectangle->Property("width", Formatter() << "(parent.width < " << imageWidth << ") ? parent.width : " << imageWidth);
 				break;
 			}
 
@@ -2335,6 +2350,8 @@ namespace RendererQml
 			break;
 		case AdaptiveCards::ImageStyle::Person:
 			uiRectangle->Property("radius", "width/2");
+            uiRectangle->Property("layer.enabled", "true");
+            uiRectangle->Property("layer.effect", GetOpacityMask(uiRectangle->GetId())->ToString());
 			break;
 		}
 
@@ -3051,7 +3068,6 @@ namespace RendererQml
         uiContainer->Property("id", id);
         uiColumnLayout->Property("id", "clayout_" + id);
         uiColumn->Property("id", "column_" + id);
-        uiColumn->Property("clip", "true");
 
         uiColumnLayout->Property("anchors.fill", "parent");
 
@@ -4173,7 +4189,7 @@ namespace RendererQml
             var cardHeight = 0
             for(var i=0;i<childrens.length;i++)
             {
-                if(childrens[i].visible === true)
+                if(childrens[i].visible === true && childrens[i].isOpacityMask === undefined)
                 {
                     cardHeight += childrens[i].height;
                 }
@@ -4412,5 +4428,21 @@ namespace RendererQml
         stretchRectangle->AddChild(element);
 
         return stretchRectangle;
+    }
+
+    std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetOpacityMask(std::string parentId)
+    {
+        auto opacityMask = std::make_shared<QmlTag>("OpacityMask");
+
+        auto rectangle = std::make_shared<QmlTag>("Rectangle");
+        rectangle->Property("x", Formatter() << parentId << ".x");
+        rectangle->Property("y", Formatter() << parentId << ".y");
+        rectangle->Property("width", Formatter() << parentId << ".width");
+        rectangle->Property("height", Formatter() << parentId << ".height");
+        rectangle->Property("radius", Formatter() << parentId << ".radius");
+
+        opacityMask->Property("maskSource", rectangle->ToString());
+        opacityMask->Property("readonly property bool isOpacityMask", "true");
+        return opacityMask;
     }
 }
