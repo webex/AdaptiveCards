@@ -391,9 +391,17 @@ std::map<int, std::string> SampleCardModel::GetImageUrls(std::shared_ptr<Adaptiv
     return urls;
 }
 
+
+std::map<std::string, bool> SampleCardModel::getFeatureToggleMap()
+{
+    std::map<std::string, bool> featureMap;
+    featureMap.emplace(std::make_pair(std::string("FEATURE_1_3"), true));
+    return featureMap;
+}
+
 std::shared_ptr<AdaptiveCardRenderConfig> SampleCardModel::getRenderConfig(const bool isDark)
 {
-    auto renderConfig = std::make_shared<AdaptiveCardRenderConfig>(isDark);
+    auto renderConfig = std::make_shared<AdaptiveCardRenderConfig>(isDark, getFeatureToggleMap());
     renderConfig->setCardConfig(getCardConfig(isDark));
     renderConfig->setInputTextConfig(getInputTextConfig(isDark));
     renderConfig->setInputNumberConfig(getInputNumberConfig(isDark));
@@ -425,10 +433,13 @@ InputConfig SampleCardModel::getInputFieldConfig(InputConfig inputConfig, const 
         inputConfig.backgroundColorNormal = "#FFFFFFFF";
         inputConfig.backgroundColorOnHovered = "#0A000000";
         inputConfig.backgroundColorOnPressed = "#4D000000";
+        inputConfig.backgroundColorOnError = "#FFFFE8EA";
         inputConfig.borderColorNormal = "#80000000";
         inputConfig.borderColorOnFocus = "#FF1170CF";
+        inputConfig.borderColorOnError = "#FFAB0A15";
         inputConfig.placeHolderColor = "#99000000";
         inputConfig.textColor = "#F2000000";
+        inputConfig.errorMessageColor = "#FFAB0A15";
         inputConfig.clearIconColorNormal = "#99000000";
         inputConfig.clearIconColorOnFocus = "#FF1170CF";
     }

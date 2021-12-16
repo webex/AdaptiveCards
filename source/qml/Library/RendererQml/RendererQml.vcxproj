@@ -175,6 +175,7 @@
     <ClCompile Include="QmlTag.cpp" />
     <ClCompile Include="RenderedQmlAdaptiveCardBase.cpp" />
     <ClCompile Include="RenderedQmlAdaptiveCard.cpp" />
+    <ClCompile Include="TextInputRender.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +195,7 @@
     <ClInclude Include="RenderedQmlAdaptiveCardBase.h" />
     <ClInclude Include="RenderedQmlAdaptiveCard.h" />
     <ClInclude Include="RenderEnums.h" />
+    <ClInclude Include="TextInputRender.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>

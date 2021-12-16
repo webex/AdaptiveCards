@@ -3,14 +3,20 @@
 namespace RendererQml
 {
    
-    AdaptiveCardRenderConfig::AdaptiveCardRenderConfig(bool isDarkMode)
-        : m_isDark(isDarkMode)
+    AdaptiveCardRenderConfig::AdaptiveCardRenderConfig(bool isDarkMode, std::map<std::string, bool> featureToggleMap)
+        : m_isDark(isDarkMode), mFeatureToggleMap(featureToggleMap)
     {
     }
 
     bool AdaptiveCardRenderConfig::isDarkMode() const
     {
         return m_isDark;
+    }
+
+    bool  AdaptiveCardRenderConfig::isAdaptiveCards1_3SchemaEnabled() const
+    {
+        const auto feature = mFeatureToggleMap.find("FEATURE_1_3");
+        return ( feature != mFeatureToggleMap.end() && feature->second);
     }
 
     CardConfig AdaptiveCardRenderConfig::getCardConfig() const

@@ -42,7 +42,8 @@ namespace RendererQml
         AdaptiveCardQmlRenderer(std::shared_ptr<AdaptiveCards::HostConfig> hostConfig, std::shared_ptr<AdaptiveCardRenderConfig> renderConfig);
 
         std::pair<std::shared_ptr<RenderedQmlAdaptiveCard>, int> RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, int contentIndex);
-
+        static std::shared_ptr<QmlTag> GetClearIconButton(std::shared_ptr<AdaptiveRenderContext> context);
+        static std::shared_ptr<QmlTag> AdaptiveActionRender(std::shared_ptr<AdaptiveCards::BaseActionElement> adaptiveAction, std::shared_ptr<AdaptiveRenderContext> context);
     protected:
         static void addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context, const std::string parentName, const bool hasBackgroundImage = false);
         static void addTextRunSelectActions(const std::shared_ptr<AdaptiveRenderContext>& context);
@@ -72,8 +73,8 @@ namespace RendererQml
         static std::shared_ptr<QmlTag> DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context);
         static std::shared_ptr<QmlTag> TimeInputRender(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<AdaptiveRenderContext> context);
         static std::shared_ptr<QmlTag> ToggleInputRender(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<AdaptiveRenderContext> context);
-        static std::shared_ptr<QmlTag> AdaptiveActionRender(std::shared_ptr<AdaptiveCards::BaseActionElement> adaptiveAction, std::shared_ptr<AdaptiveRenderContext> context);
-
+        
+        
     private:
         void SetObjectTypes();
 		static std::shared_ptr<QmlTag> GetComboBox(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context);
@@ -125,7 +126,7 @@ namespace RendererQml
 
         static const std::string RemoveBottomMarginValue(std::vector<std::string> showCardsList);
         static std::shared_ptr<QmlTag> GetCalendar(std::shared_ptr<AdaptiveRenderContext> context, const std::string textFieldId, const std::string calendarBoxId, const std::string stringDateFormat, const std::string minimumDate, const std::string maximumDate);
-        static std::shared_ptr<QmlTag> GetClearIconButton(std::shared_ptr<AdaptiveRenderContext> context);
+        
 
         static const std::string GetImagePath(std::shared_ptr<AdaptiveRenderContext> context, const std::string url);
 

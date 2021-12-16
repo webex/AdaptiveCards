@@ -423,4 +423,14 @@ namespace RendererQml
     {
         return m_LastShowCardComponentIdList;
     }
+
+    void RendererQml::AdaptiveRenderContext::addToRequiredInputElementsIdList(const std::string& elementId)
+    {
+        m_RequiredInputElementsIdList.push_back(elementId);
+    }
+
+    const std::vector<std::string>& RendererQml::AdaptiveRenderContext::getRequiredInputElementsIdList()
+    {
+        return m_RequiredInputElementsIdList;
+    }
 }
