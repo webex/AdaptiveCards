@@ -391,9 +391,17 @@ std::map<int, std::string> SampleCardModel::GetImageUrls(std::shared_ptr<Adaptiv
     return urls;
 }
 
+
+std::map<std::string, bool> SampleCardModel::getFeatureToggleMap()
+{
+    std::map<std::string, bool> featureMap;
+    featureMap.emplace(std::make_pair(std::string("FEATURE_1_3"), true));
+    return featureMap;
+}
+
 std::shared_ptr<AdaptiveCardRenderConfig> SampleCardModel::getRenderConfig(const bool isDark)
 {
-    auto renderConfig = std::make_shared<AdaptiveCardRenderConfig>(isDark);
+    auto renderConfig = std::make_shared<AdaptiveCardRenderConfig>(isDark, getFeatureToggleMap());
     renderConfig->setCardConfig(getCardConfig(isDark));
     renderConfig->setInputTextConfig(getInputTextConfig(isDark));
     renderConfig->setInputNumberConfig(getInputNumberConfig(isDark));

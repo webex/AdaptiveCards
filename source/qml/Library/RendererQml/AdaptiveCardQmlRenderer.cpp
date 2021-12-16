@@ -780,7 +780,7 @@ namespace RendererQml
         uiSplitterRactangle->Property("Accessible.name", Formatter() << "accessiblityPrefix + " << contentItemTag->GetId() << ".displayText");
         uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
 
-        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
         {
             if (input->GetIsRequired())
             {
@@ -880,7 +880,7 @@ namespace RendererQml
 			uiTextRun.append(Formatter() << "font-style:" << std::string("italic") << ";");
 		}
 
-        if (textRun->GetUnderline() && context->GetRenderConfig()->isVersion1_3Enabled())
+        if (textRun->GetUnderline() && context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
         {
             uiTextRun.append(Formatter() << "text-decoration:" << std::string("underline") << ";");
         }
@@ -964,7 +964,7 @@ namespace RendererQml
 
         context->addToInputElementList(origionalElementId, (checkbox->GetId() + ".value"));
 
-        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
         {
             if (input->GetIsRequired())
             {
@@ -1023,7 +1023,7 @@ namespace RendererQml
             context->addToInputElementList(origionalElementId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
 		}
 
-        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
         {
             if (input->GetIsRequired())
             {
@@ -1701,7 +1701,7 @@ namespace RendererQml
 
         uiDateInputCombobox->Property("Accessible.ignored", "true");
 
-        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
         {
             if (input->GetIsRequired())
             {
@@ -2475,7 +2475,7 @@ namespace RendererQml
 
         context->addToInputElementList(origionalElementId, (uiTimeInput->GetId() + ".selectedTime"));
 
-        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
         {
             if (input->GetIsRequired())
             {
@@ -3411,7 +3411,7 @@ namespace RendererQml
         }
 
 
-        if (context->GetRenderConfig()->isVersion1_3Enabled())
+        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
         {
             if (action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
             {

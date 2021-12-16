@@ -107,5 +107,8 @@
     <ClInclude Include="AdaptiveCardRenderConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextInputRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

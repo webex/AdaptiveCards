@@ -70,6 +70,7 @@ private:
     ToggleButtonConfig getToggleButtonConfig(const bool isDark);
     InputDateConfig getInputDateConfig(const bool isDark);
     ActionButtonsConfig getActionButtonsConfig(const bool isDark);
+    std::map<std::string, bool> getFeatureToggleMap();
 };
 
 #endif // SAMPLECARDMODEL_H

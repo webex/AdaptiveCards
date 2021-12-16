@@ -24,10 +24,12 @@ void TextinputElement::initialize()
     mTextinputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mTextinputColElement->Property("width", "parent.width");
 
-    if (mTextinput->GetIsMultiline()) {
+    if (mTextinput->GetIsMultiline())
+    {
         initMultiLine();
     }
-    else{
+    else
+    {
         initSingleLine();
     }
 }
@@ -46,9 +48,13 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createInputTextLabel(bool
     label->Property("Accessible.ignored", "true");
 
     if (isRequired)
+    { 
         label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()) << " <font color='" << textConfig.errorMessageColor << "'>*</font>", true);
+    }
     else
+    { 
         label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()), true);
+    }
     return label;
 }
 
@@ -72,7 +78,8 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createErrorMessageText(st
 void TextinputElement::initSingleLine()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
-    if (mContext->GetRenderConfig()->isVersion1_3Enabled())
+    
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (!mTextinput->GetLabel().empty())
         {
@@ -112,7 +119,7 @@ void TextinputElement::initSingleLine()
     mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
     this->addInlineActionMode();
 
-    if (mContext->GetRenderConfig()->isVersion1_3Enabled())
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (!mTextinput->GetErrorMessage().empty())
         {
@@ -127,7 +134,7 @@ void TextinputElement::initSingleLine()
 void TextinputElement::initMultiLine()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
-    if (mContext->GetRenderConfig()->isVersion1_3Enabled())
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (!mTextinput->GetLabel().empty())
         {
@@ -161,7 +168,7 @@ void TextinputElement::initMultiLine()
     mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
     this->addInlineActionMode();
 
-    if (mContext->GetRenderConfig()->isVersion1_3Enabled())
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (!mTextinput->GetErrorMessage().empty())
         {
@@ -209,7 +216,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
 
-    if (mContext->GetRenderConfig()->isVersion1_3Enabled())
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (mTextinput->GetIsRequired())
         {
@@ -289,7 +296,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
 
-    if (mContext->GetRenderConfig()->isVersion1_3Enabled())
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (mTextinput->GetIsRequired())
         {

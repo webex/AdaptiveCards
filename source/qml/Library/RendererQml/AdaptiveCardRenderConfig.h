@@ -1,6 +1,7 @@
 #pragma once
 #include<memory>
 #include<string>
+#include <map>
 
 namespace RendererQml
 {
@@ -223,9 +224,9 @@ namespace RendererQml
     class AdaptiveCardRenderConfig
     {
     public:
-        AdaptiveCardRenderConfig(bool isDarkMode = true, bool isVersion1_3Enabled = true);
+        AdaptiveCardRenderConfig(bool isDarkMode = true, std::map<std::string, bool> featureToggleMap = {});
         bool isDarkMode() const;
-        bool isVersion1_3Enabled() const;
+        bool isAdaptiveCards1_3SchemaEnabled() const;
         CardConfig getCardConfig() const;
         void setCardConfig(CardConfig config);
         InputTextConfig getInputTextConfig() const;
@@ -245,7 +246,7 @@ namespace RendererQml
 
     private:
         bool m_isDark;
-        bool m_isVersion1_3Enabled;
+        std::map<std::string, bool> mFeatureToggleMap;
         CardConfig m_cardConfig;
         InputTextConfig m_textInputConfig;
         InputNumberConfig m_numberInputConfig;

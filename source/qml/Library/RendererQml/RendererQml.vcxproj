@@ -195,6 +195,7 @@
     <ClInclude Include="RenderedQmlAdaptiveCardBase.h" />
     <ClInclude Include="RenderedQmlAdaptiveCard.h" />
     <ClInclude Include="RenderEnums.h" />
+    <ClInclude Include="TextInputRender.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
