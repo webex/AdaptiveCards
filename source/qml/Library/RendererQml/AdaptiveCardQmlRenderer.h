@@ -133,5 +133,6 @@ namespace RendererQml
         static std::shared_ptr<QmlTag> AddAccessibilityToTextBlock(std::shared_ptr<QmlTag> uiTextBlock, std::shared_ptr<AdaptiveRenderContext> context);
 
         static std::shared_ptr<QmlTag> GetStretchRectangle(std::shared_ptr<QmlTag> element);
+        static std::shared_ptr<QmlTag> GetOpacityMask(std::string parentId);
     };
 }
