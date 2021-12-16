@@ -170,6 +170,7 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
         super.textDidChange(notification)
         
         if isValid && textFieldShowsError {
+            ACRView.focusedElementOnHideError = self
             errorMessageHandler?.hideErrorMessage(for: self)
             setupColors(hasFocus: true)
         }

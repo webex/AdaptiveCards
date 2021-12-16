@@ -68,6 +68,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
                 datePickerTextfield.dateValue = selectedDate
             }
             if isValid && textField.textFieldShowsError {
+                ACRView.focusedElementOnHideError = iconButton
                 textField.setupColors(hasFocus: true)
                 errorMessageHandler?.hideErrorMessage(for: self)
             }

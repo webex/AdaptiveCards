@@ -15,6 +15,7 @@ class ACRView: ACRColumnView {
     private (set) var initialLayoutDone = false
     private var currentFocusedActionElement: NSCell?
     private var isLayoutDoneOnShowCard = false
+    static var focusedElementOnHideError: NSView? = nil
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         self.renderConfig = renderConfig
@@ -43,6 +44,7 @@ class ACRView: ACRColumnView {
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         isLayoutDoneOnShowCard = false
+        ACRView.focusedElementOnHideError = nil
     }
     
     func addTarget(_ target: TargetHandler) {
@@ -75,8 +77,14 @@ class ACRView: ACRColumnView {
     }
     
     func resetKeyboardFocus() {
-        guard isLayoutDoneOnShowCard, let lastFocusedElement = currentFocusedActionElement else { return }
-        lastFocusedElement.controlView?.setAccessibilityFocused(true)
+        if isLayoutDoneOnShowCard, let lastFocusedElement = currentFocusedActionElement {
+            lastFocusedElement.controlView?.setAccessibilityFocused(true)
+        } else if ACRView.focusedElementOnHideError != nil {
+            ACRView.focusedElementOnHideError?.setAccessibilityFocused(true)
+            // If it is a textfield, the entered text gets selected when focus is set, so taking the cursor to the last position it was present
+            guard let focusedTextField = ACRView.focusedElementOnHideError as? ACRTextField else { return }
+            focusedTextField.currentEditor()?.selectedRange = NSRange(location: focusedTextField.lastKnownCursorPosition ?? focusedTextField.stringValue.count, length: 0)
+        }
     }
     
     private func findSubview(with identifier: String) -> NSView? {

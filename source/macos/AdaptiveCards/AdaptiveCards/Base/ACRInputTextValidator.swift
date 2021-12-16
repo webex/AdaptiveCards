@@ -5,7 +5,7 @@ class ACRInputTextValidator {
     var isRequired = false
     var regex: String? {
         didSet {
-            // handling case when regex is not supplied and is set to "". Replacing it with ".*"
+            // handling case when regex is not supplied and is set to "". Replacing it with nil
             guard let currValue = regex else { return }
             regex = currValue.isEmpty ? nil : currValue
         }

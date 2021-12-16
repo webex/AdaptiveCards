@@ -119,6 +119,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         textfield.stringValue = stringValue
         previousValue = textField.stringValue
         if isValid && textField.textFieldShowsError {
+            ACRView.focusedElementOnHideError = textField
             errorMessageHandler?.hideErrorMessage(for: self)
             textField.setupColors(hasFocus: true)
         }
@@ -165,6 +166,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
             stepper.doubleValue = newValue
             setStepperAccessibilityValue(value: textField.stringValue)
             if isValid && textField.textFieldShowsError {
+                ACRView.focusedElementOnHideError = stepper
                 errorMessageHandler?.hideErrorMessage(for: self)
                 textField.setupColors(hasFocus: false)
             }

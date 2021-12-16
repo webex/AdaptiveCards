@@ -18,6 +18,7 @@ class ACRTextField: NSTextField {
     private let inputConfig: InputFieldConfig
     private let isDarkMode: Bool
     private let textFieldMode: Mode
+    var lastKnownCursorPosition: Int?
     var inputValidator = ACRInputTextValidator()
     var textFieldShowsError: Bool {
         return layer?.borderColor == inputConfig.errorMessageConfig.errorBorderColor?.cgColor || layer?.backgroundColor == inputConfig.errorMessageConfig.errorBackgroundColor?.cgColor
@@ -142,6 +143,7 @@ class ACRTextField: NSTextField {
 
     override func textDidChange(_ notification: Notification) {
         super.textDidChange(notification)
+        updateLastKnownCursorPosition()
         updateClearButton()
     }
     
@@ -219,6 +221,14 @@ class ACRTextField: NSTextField {
             return temp
         }
         return super.accessibilityChildren()
+    }
+    
+    private func updateLastKnownCursorPosition() {
+        guard let selectedRange = currentEditor()?.selectedRange else {
+            lastKnownCursorPosition = nil
+            return
+        }
+        lastKnownCursorPosition = selectedRange.upperBound
     }
     
     func setupColors(hasFocus: Bool) {
