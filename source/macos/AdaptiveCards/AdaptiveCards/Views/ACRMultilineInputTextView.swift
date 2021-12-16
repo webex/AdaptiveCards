@@ -101,6 +101,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     
     func textDidChange(_ notification: Notification) {
         if isValid && textFieldShowsError {
+            ACRView.focusedElementOnHideError = textView
             errorMessageHandler?.hideErrorMessage(for: self)
             setupColors(hasFocus: true)
         }
