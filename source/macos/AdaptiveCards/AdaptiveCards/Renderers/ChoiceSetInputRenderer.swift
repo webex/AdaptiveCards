@@ -61,7 +61,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
             if let menuItem = choiceSetFieldCompactView.item(at: 0) {
                 menuItem.isEnabled = false
             }
-            choiceSetFieldCompactView.arrayValues.append("")
+            choiceSetFieldCompactView.arrayValues.append(nil)
             index += 1
         }
         choiceSetFieldCompactView.idString = choiceSetInput.getId()
@@ -72,7 +72,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
             let item = choiceSetFieldCompactView.item(at: index)
             item?.title = title
             // item?.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
-            choiceSetFieldCompactView.arrayValues.append(choice.getValue() ?? "")
+            choiceSetFieldCompactView.arrayValues.append(choice.getValue())
             if choiceSetInput.getValue() == choice.getValue() {
                 choiceSetFieldCompactView.select(item)
                 choiceSetFieldCompactView.valueSelected = choice.getValue()

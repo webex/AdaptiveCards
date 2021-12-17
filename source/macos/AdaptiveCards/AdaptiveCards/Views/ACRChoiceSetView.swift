@@ -119,7 +119,7 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     public let type: ACSChoiceSetStyle = .compact
     public var idString: String?
     public var valueSelected: String?
-    public var arrayValues: [String] = []
+    public var arrayValues: [String?] = []
     var isRequired = false
     private var trackingAreaDefined = false
     
@@ -155,7 +155,7 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     }
     
     var value: String {
-        return arrayValues[indexOfSelectedItem]
+        return arrayValues[indexOfSelectedItem] ?? ""
     }
     
     var key: String {
@@ -167,7 +167,7 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return isRequired ? (arrayValues[indexOfSelectedItem] == "" ? false : true) : true
+        return isRequired ? (arrayValues[indexOfSelectedItem] == nil ? false : true) : true
     }
     
     var isRequired: Bool {
