@@ -30,6 +30,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         view.isRadioGroup = !isMultiSelect
         view.wrap = choiceSetInput.getWrap()
         view.idString = choiceSetInput.getId()
+        view.isRequired = choiceSetInput.getIsRequired()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
             let attributedString = getAttributedString(title: title, with: hostConfig, style: style)
@@ -64,6 +65,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
             index += 1
         }
         choiceSetFieldCompactView.idString = choiceSetInput.getId()
+        choiceSetFieldCompactView.isRequired = choiceSetInput.getIsRequired()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
             choiceSetFieldCompactView.addItem(withTitle: "")

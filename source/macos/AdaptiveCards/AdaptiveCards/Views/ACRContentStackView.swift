@@ -226,10 +226,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
     }
     
-    func setErrorMessage(with title: String, for view: InputHandlingViewProtocol) {
-        guard errorMessageView == nil else { return }
+    func setErrorMessage(with title: NSAttributedString, for view: InputHandlingViewProtocol) {
+        guard errorMessageView?.stringValue != title.string else { return }
         let textField = NSTextField()
-        textField.stringValue = title
+        textField.allowsEditingTextAttributes = true
+        textField.attributedStringValue = title
         textField.isHidden = true
         textField.isEditable = false
         textField.isBordered = false

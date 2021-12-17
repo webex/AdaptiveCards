@@ -78,6 +78,23 @@ class InputToggleRendererTests: XCTestCase {
         XCTAssertEqual(inputToggleView.accessibilityLabel(), "Test")
     }
     
+    func testRequiredPropertySet() {
+        let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        inputToggle = .make(title: "Test", value: "true", valueOn: "false", valueOff: "true", isRequired: true)
+        let view = inputToggleRenderer.render(element: inputToggle, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
+        XCTAssertTrue(view is ACRChoiceButton)
+        guard let toggleView = view as? ACRChoiceButton else { fatalError() }
+        XCTAssertTrue(toggleView.isRequired)
+    }
+    
+    func testisInValidSet(){
+        let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        inputToggle = .make(title: "Test", value: "true", valueOn: "false", valueOff: "true", isRequired: true)
+        let view = inputToggleRenderer.render(element: inputToggle, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
+        XCTAssertTrue(view is ACRChoiceButton)
+        guard let toggleView = view as? ACRChoiceButton else { fatalError() }
+        XCTAssertFalse(toggleView.isValid)
+    }
     private func renderInputToggleView() -> ACRChoiceButton {
         let view = inputToggleRenderer.render(element: inputToggle, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         

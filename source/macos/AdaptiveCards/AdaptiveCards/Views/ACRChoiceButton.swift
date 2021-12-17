@@ -11,15 +11,17 @@ protocol ACRChoiceButtonDelegate: NSObjectProtocol {
 
 class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     weak var delegate: ACRChoiceButtonDelegate?
+    
+    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
     public var buttonValue: String?
     public var idString: String?
     public var valueOn: String?
     public var valueOff: String?
-    weak var errorDelegate: InputHandlingViewErrorDelegate?
     
     private let buttonConfig: ChoiceSetButtonConfig?
     private let buttonType: ChoiceSetButtonType
     private let localisedStringConfig: LocalisedStringConfig
+    var isRequired = false
     
     init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType) {
         self.buttonType = buttonType
@@ -125,12 +127,17 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         }
     }
     
+    func showError() {
+        errorMessageHandler?.showErrorMessage(for: self)
+    }
+    
     @objc private func handleButtonAction() {
         delegate?.acrChoiceButtonDidSelect(self)
         updateButtonImage()
         if buttonType == .radio {
             NSAccessibility.announce(valueChangedMessage())
         }
+        errorMessageHandler?.hideErrorMessage(for: self)
     }
     
     var value: String {
@@ -146,7 +153,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
+        return isRequired ? (state == .on ? true : false) : true
     }
     
     var isRequired: Bool {

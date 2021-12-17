@@ -139,6 +139,14 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
 }
 
 extension ACRMultilineInputTextView: InputHandlingViewProtocol {
+    var isRequired: Bool {
+        false
+    }
+    
+    func showError() {
+        // hi
+    }
+    
     var value: String {
         textView.string
     }

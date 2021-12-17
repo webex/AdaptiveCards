@@ -176,6 +176,13 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
 
 // MARK: - EXTENSION
 extension ACRNumericTextField: InputHandlingViewProtocol {
+    var isRequired: Bool {
+        false
+    }
+    
+    func showError() {
+        //
+    }
     static let MAXVAL = Double.greatestFiniteMagnitude
     static let MINVAL = -MAXVAL
     

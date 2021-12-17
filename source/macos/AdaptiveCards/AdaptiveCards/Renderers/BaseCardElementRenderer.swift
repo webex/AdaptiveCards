@@ -39,8 +39,12 @@ class BaseCardElementRenderer {
         // Input label handling
         if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let label = inputElement.getLabel(), !label.isEmpty {
             let attributedString = NSMutableAttributedString(string: label)
+            let isRequiredSuffix = (hostConfig.getInputs()?.label.requiredInputs.suffix ?? "").isEmpty ? "*" : hostConfig.getInputs()?.label.requiredInputs.suffix ?? "*"
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
                 attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
+            }
+            if inputElement.getIsRequired() {
+                attributedString.append(NSAttributedString(string: isRequiredSuffix, attributes: [.foregroundColor: NSColor.red]))
             }
             let labelView = NSTextField(labelWithAttributedString: attributedString)
             labelView.isEditable = false
@@ -54,8 +58,10 @@ class BaseCardElementRenderer {
         }
         
         if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let view = view as? InputHandlingViewProtocol, let errorMessage = inputElement.getErrorMessage(), !errorMessage.isEmpty {
+            let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
+            attributedErrorMessageString.addAttributes([.font: NSFont.systemFont(ofSize: 12), .foregroundColor: NSColor.red], range: NSRange(location: 0, length: attributedErrorMessageString.length))
             updatedView.setCustomSpacing(spacing: 10, after: view)
-            updatedView.setErrorMessage(with: errorMessage, for: view)
+            updatedView.setErrorMessage(with: attributedErrorMessageString, for: view)
         }
         
         return updatedView

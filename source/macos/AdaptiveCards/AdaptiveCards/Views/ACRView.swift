@@ -132,7 +132,7 @@ class ACRView: ACRColumnView {
         repeat {
             if let handlers = parentView?.inputHandlers {
                 for handler in handlers {
-                    if renderConfig.supportsSchemeV1_3 && !handler.isValid {
+                    guard !renderConfig.supportsSchemeV1_3 || handler.isValid else {
                         handler.showError()
                         canSubmit = false
                         continue
