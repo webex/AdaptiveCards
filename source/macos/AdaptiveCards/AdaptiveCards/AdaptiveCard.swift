@@ -222,8 +222,8 @@ public struct LocalisedStringConfig {
 }
 
 public struct ErrorMessageConfig {
-    public static let `default` = ErrorMessageConfig(errorMessageFont: nil, errorMessageTextColor: nil, errorBorderColor: nil, errorBackgroundColor: nil)
-    
+    public static let `default` = ErrorMessageConfig(errorMessageFont: .systemFont(ofSize: 10), errorMessageTextColor: .systemRed, errorBorderColor: .systemRed, errorBackgroundColor: NSColor.systemRed.withAlphaComponent(0.1))
+
     public let errorMessageFont: NSFont?
     public let errorMessageTextColor: NSColor?
     public let errorBorderColor: NSColor?

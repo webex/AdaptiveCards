@@ -104,7 +104,7 @@ class ACRViewTests: XCTestCase {
         inputView.isValid = false
         view.addInputHandler(inputView)
         
-        view.handleSubmitAction(actionView: NSView(), dataJson: nil)
+        view.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
         XCTAssertEqual(actionDelegate.submitActionCount, 1)
         XCTAssertEqual(actionDelegate.dictValues, 1)
         XCTAssertFalse(inputView.errorShown)
@@ -118,7 +118,7 @@ class ACRViewTests: XCTestCase {
         let inputView = FakeInputHandlingView()
         view.addInputHandler(inputView)
         
-        view.handleSubmitAction(actionView: NSView(), dataJson: nil)
+        view.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
         XCTAssertEqual(actionDelegate.submitActionCount, 1)
         XCTAssertEqual(actionDelegate.dictValues, 1)
         XCTAssertFalse(inputView.errorShown)
@@ -133,7 +133,7 @@ class ACRViewTests: XCTestCase {
         inputView.isValid = false
         view.addInputHandler(inputView)
         
-        view.handleSubmitAction(actionView: NSView(), dataJson: nil)
+        view.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
         XCTAssertEqual(actionDelegate.submitActionCount, 0)
         XCTAssertEqual(actionDelegate.dictValues, 0)
         XCTAssertTrue(inputView.errorShown)
