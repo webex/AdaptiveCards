@@ -44,7 +44,7 @@ class BaseCardElementRenderer {
                 attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
             }
             if inputElement.getIsRequired() {
-                attributedString.append(NSAttributedString(string: isRequiredSuffix, attributes: [.foregroundColor: NSColor.red]))
+                attributedString.append(NSAttributedString(string: " " + isRequiredSuffix, attributes: [.foregroundColor: NSColor.red]))
             }
             let labelView = NSTextField(labelWithAttributedString: attributedString)
             labelView.isEditable = false
