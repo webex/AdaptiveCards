@@ -72,11 +72,13 @@ class InputNumberRendererTest: XCTestCase {
     }
     
     func testRendererIfTruncatesExtraZeros() {
-        let val: NSNumber = 20.10
+        let val: NSNumber = 20.00
         inputNumber = .make(value: val)
         
         let inputNumberField = renderNumberInput()
-        XCTAssertEqual(inputNumberField.inputString, "20.1")
+        XCTAssertEqual(inputNumberField.inputString, "20")
+        XCTAssertEqual(inputNumberField.inputValue, 20)
+        XCTAssertEqual(inputNumberField.value, "20")
     }
     
     func testclearButtonHiddenByDefault() {
@@ -97,11 +99,17 @@ class InputNumberRendererTest: XCTestCase {
         let inputNumberField = renderNumberInput()
         XCTAssertFalse(inputNumberField.textField.clearButton.isHidden)
         XCTAssertEqual(inputNumberField.textField.stringValue, "0")
+        XCTAssertEqual(inputNumberField.inputString, "0")
+        XCTAssertEqual(inputNumberField.inputValue, 0.0)
+        XCTAssertEqual(inputNumberField.value, "0")
         
         inputNumberField.textField.clearButton.performClick()
         
         XCTAssertTrue(inputNumberField.textField.clearButton.isHidden)
         XCTAssertEqual(inputNumberField.textField.stringValue, "")
+        XCTAssertEqual(inputNumberField.inputString, "")
+        XCTAssertEqual(inputNumberField.inputValue, 0.0)
+        XCTAssertEqual(inputNumberField.value, "0")
     }
     
     func testOnlyDecimalPointReturnsZero() {
@@ -109,6 +117,8 @@ class InputNumberRendererTest: XCTestCase {
         inputNumberField.inputString = "."
         
         XCTAssertEqual(inputNumberField.value, "0")
+        XCTAssertEqual(inputNumberField.inputString, "0")
+        XCTAssertEqual(inputNumberField.inputValue, 0.0)
     }
     
     func testDecimalPointtAtEndReturnsTheInteger() {
@@ -116,6 +126,8 @@ class InputNumberRendererTest: XCTestCase {
         inputNumberField.inputString = "2."
         
         XCTAssertEqual(inputNumberField.value, "2")
+        XCTAssertEqual(inputNumberField.inputString, "2")
+        XCTAssertEqual(inputNumberField.inputValue, 2.0)
     }
     
     func testDecimalValuesReturnedWhenStored() {
@@ -123,6 +135,8 @@ class InputNumberRendererTest: XCTestCase {
         
         let inputNumberField = renderNumberInput()
         XCTAssertEqual(inputNumberField.value, "12.3")
+        XCTAssertEqual(inputNumberField.inputString, "12.3")
+        XCTAssertEqual(inputNumberField.inputValue, 12.3)
     }
     
     func testNegativeValuesReturnedWhenStored() {
@@ -130,6 +144,8 @@ class InputNumberRendererTest: XCTestCase {
         
         let inputNumberField = renderNumberInput()
         XCTAssertEqual(inputNumberField.value, "-12.3")
+        XCTAssertEqual(inputNumberField.inputString, "-12.3")
+        XCTAssertEqual(inputNumberField.inputValue, -12.3)
     }
     
     func testAccessibilityValueSet() {
@@ -152,12 +168,18 @@ class InputNumberRendererTest: XCTestCase {
         
         let inputNumberField = renderNumberInput()
         XCTAssertEqual(inputNumberField.inputString, "20")
+        XCTAssertEqual(inputNumberField.inputValue, 20)
+        XCTAssertEqual(inputNumberField.value, "20")
         
         keyPressed(for: UInt16(kVK_UpArrow), on: inputNumberField)
         XCTAssertEqual(inputNumberField.inputString, "21")
+        XCTAssertEqual(inputNumberField.inputValue, 21.0)
+        XCTAssertEqual(inputNumberField.value, "21")
         
         keyPressed(for: UInt16(kVK_DownArrow), on: inputNumberField)
         XCTAssertEqual(inputNumberField.inputString, "20")
+        XCTAssertEqual(inputNumberField.inputValue, 20)
+        XCTAssertEqual(inputNumberField.value, "20")
     }
        
     private func renderNumberInput() -> ACRNumericTextField {

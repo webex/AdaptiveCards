@@ -53,7 +53,7 @@ class BaseCardElementRenderer {
             view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
         }
         
-        if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let view = view as? InputHandlingViewProtocol, let errorMessage = inputElement.getErrorMessage(), let messageFont = config.inputFieldConfig.errorMessageConfig.errorMessageFont, let messageTextColor = config.inputFieldConfig.errorMessageConfig.errorMessageTextColor, !errorMessage.isEmpty {
+        if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let view = view as? InputHandlingViewProtocol, let errorMessage = inputElement.getErrorMessage(), let messageFont = config.inputFieldConfig.errorMessageConfig.font, let messageTextColor = config.inputFieldConfig.errorMessageConfig.textColor, !errorMessage.isEmpty {
             updatedView.setCustomSpacing(spacing: 3, after: view)
             updatedView.setErrorMessage(with: errorMessage, font: messageFont, textColor: messageTextColor, for: view)
         }

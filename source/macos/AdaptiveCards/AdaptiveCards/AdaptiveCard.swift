@@ -189,6 +189,22 @@ public struct InputFieldConfig {
         self.multilineFieldInsets = multilineFieldInsets
         self.errorMessageConfig = errorMessageConfig
     }
+    
+    public struct ErrorMessageConfig {
+        public static let `default` = ErrorMessageConfig(font: .systemFont(ofSize: 10), textColor: .systemRed, borderColor: .systemRed, backgroundColor: NSColor.systemRed.withAlphaComponent(0.1))
+
+        public let font: NSFont?
+        public let textColor: NSColor?
+        public let borderColor: NSColor?
+        public let backgroundColor: NSColor?
+        
+        public init(font: NSFont?, textColor: NSColor?, borderColor: NSColor?, backgroundColor: NSColor?) {
+            self.font = font
+            self.textColor = textColor
+            self.borderColor = borderColor
+            self.backgroundColor = backgroundColor
+        }
+    }
 }
 
 public struct LocalisedStringConfig {
@@ -218,21 +234,5 @@ public struct LocalisedStringConfig {
         self.datePickerButtonAccessibilityTitle = datePickerButtonAccessibilityTitle
         self.timePickerButtonAccessibilityTitle = timePickerButtonAccessibilityTitle
         self.clearButtonAccessibilityTitle = clearButtonAccessibilityTitle
-    }
-}
-
-public struct ErrorMessageConfig {
-    public static let `default` = ErrorMessageConfig(errorMessageFont: .systemFont(ofSize: 10), errorMessageTextColor: .systemRed, errorBorderColor: .systemRed, errorBackgroundColor: NSColor.systemRed.withAlphaComponent(0.1))
-
-    public let errorMessageFont: NSFont?
-    public let errorMessageTextColor: NSColor?
-    public let errorBorderColor: NSColor?
-    public let errorBackgroundColor: NSColor?
-    
-    public init(errorMessageFont: NSFont?, errorMessageTextColor: NSColor?, errorBorderColor: NSColor?, errorBackgroundColor: NSColor?) {
-        self.errorMessageFont = errorMessageFont
-        self.errorMessageTextColor = errorMessageTextColor
-        self.errorBorderColor = errorBorderColor
-        self.errorBackgroundColor = errorBackgroundColor
     }
 }

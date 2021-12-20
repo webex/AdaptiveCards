@@ -21,7 +21,7 @@ class ACRTextField: NSTextField {
     var lastKnownCursorPosition: Int?
     var inputValidator = ACRInputTextValidator()
     var textFieldShowsError: Bool {
-        return layer?.borderColor == inputConfig.errorMessageConfig.errorBorderColor?.cgColor || layer?.backgroundColor == inputConfig.errorMessageConfig.errorBackgroundColor?.cgColor
+        return layer?.borderColor == inputConfig.errorMessageConfig.borderColor?.cgColor || layer?.backgroundColor == inputConfig.errorMessageConfig.backgroundColor?.cgColor
     }
     var hasMouseInField: Bool = false
     var isValid: Bool {
@@ -237,9 +237,9 @@ class ACRTextField: NSTextField {
     }
     
     func setupErrorColors() {
-        guard let errorBorderColor = inputConfig.errorMessageConfig.errorBorderColor, let errorBackgroundColor = inputConfig.errorMessageConfig.errorBackgroundColor else { return }
-        layer?.borderColor = errorBorderColor.cgColor
-        layer?.backgroundColor = errorBackgroundColor.cgColor
+        guard let borderColor = inputConfig.errorMessageConfig.borderColor, let backgroundColor = inputConfig.errorMessageConfig.backgroundColor else { return }
+        layer?.borderColor = borderColor.cgColor
+        layer?.backgroundColor = backgroundColor.cgColor
     }
 }
 

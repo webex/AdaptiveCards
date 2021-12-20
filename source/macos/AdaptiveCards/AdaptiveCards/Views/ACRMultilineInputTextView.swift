@@ -14,7 +14,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     var id: String?
     var inputValidator = ACRInputTextValidator()
     var textFieldShowsError: Bool {
-        return layer?.borderColor == inputConfig.errorMessageConfig.errorBorderColor?.cgColor || textView.backgroundColor == inputConfig.errorMessageConfig.errorBackgroundColor
+        return layer?.borderColor == inputConfig.errorMessageConfig.borderColor?.cgColor || textView.backgroundColor == inputConfig.errorMessageConfig.backgroundColor
     }
     var hasMouseInField = false
     
@@ -138,9 +138,9 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     }
     
     private func setupErrorColors() {
-        guard let errorBorderColor = config.inputFieldConfig.errorMessageConfig.errorBorderColor, let errorBackgroundColor = config.inputFieldConfig.errorMessageConfig.errorBackgroundColor else { return }
-        layer?.borderColor = errorBorderColor.cgColor
-        textView.backgroundColor = errorBackgroundColor
+        guard let borderColor = config.inputFieldConfig.errorMessageConfig.borderColor, let backgroundColor = config.inputFieldConfig.errorMessageConfig.backgroundColor else { return }
+        layer?.borderColor = borderColor.cgColor
+        textView.backgroundColor = backgroundColor
     }
 }
 

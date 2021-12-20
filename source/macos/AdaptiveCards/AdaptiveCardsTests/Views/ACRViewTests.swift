@@ -206,6 +206,18 @@ class ACRViewTests: XCTestCase {
         XCTAssertEqual("Value", actionDelegate.dict["Key"] as? String)
     }
     
+    func testInputHandlerWhenisValidFalse() {
+        let testinputHandler = FakeInputHandlingView()
+        testinputHandler.value = "Value"
+        testinputHandler.key = "Key"
+        testinputHandler.isValid = false
+        
+        view.addInputHandler(testinputHandler)
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
+        // Submitting the field since v1.2 schema is being used and no validation is done
+        XCTAssertEqual(1, actionDelegate.dict.count)
+    }
+    
     func testInputHandlerWithMultipleValues() {
         let testinputHandler1 = FakeInputHandlingView()
         testinputHandler1.value = "Value1"
