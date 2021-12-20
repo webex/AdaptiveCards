@@ -5,7 +5,7 @@ class BaseCardElementRenderer {
     static let shared = BaseCardElementRenderer()
     
     func updateView(view: NSView, element: ACSBaseCardElement, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) -> NSView {
-        let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig)
+        let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig, renderConfig: config)
         
         // For Spacing
         if !isfirstElement {
@@ -58,6 +58,7 @@ class BaseCardElementRenderer {
         }
         
         if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let view = view as? InputHandlingViewProtocol, let errorMessage = inputElement.getErrorMessage(), !errorMessage.isEmpty {
+            // TODO: Replace with errorConfig in ACRContentStackView (Blocked by #243)
             let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
             attributedErrorMessageString.addAttributes([.font: NSFont.systemFont(ofSize: 12), .foregroundColor: NSColor.red], range: NSRange(location: 0, length: attributedErrorMessageString.length))
             updatedView.setCustomSpacing(spacing: 10, after: view)

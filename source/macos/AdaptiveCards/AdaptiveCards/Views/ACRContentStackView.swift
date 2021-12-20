@@ -18,6 +18,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     let style: ACSContainerStyle
     let hostConfig: ACSHostConfig
+    let renderConfig: RenderConfig
     var target: TargetHandler?
     public var bleed = false
     
@@ -52,16 +53,18 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         return view
     }()
     
-    init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
+    init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         self.hostConfig = hostConfig
         self.style = style
+        self.renderConfig = renderConfig
         super.init(frame: .zero)
         initialize()
     }
     
-    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?, needsPadding: Bool) {
+    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, renderConfig: RenderConfig, superview: NSView?, needsPadding: Bool) {
         self.hostConfig = hostConfig
         self.style = style
+        self.renderConfig = renderConfig
         super.init(frame: .zero)
         initialize()
         if needsPadding {
@@ -88,6 +91,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     required init?(coder: NSCoder) {
         self.hostConfig = ACSHostConfig() // TODO: This won't work
         self.style = .none
+        self.renderConfig = .default
         super.init(coder: coder)
         initialize()
     }

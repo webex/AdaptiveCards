@@ -87,15 +87,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        if !isRequired { return true }
-        let arrayViews = stackview.arrangedSubviews
-        var isValid = false
-        for view in arrayViews {
-            if let view = view as? ACRChoiceButton, view.state == .on {
-                isValid = true
-            }
-        }
-        return isValid
+        return isRequired ? stackview.arrangedSubviews.contains(where: { let elem = $0 as? ACRChoiceButton; return elem?.state == .on }) : true
     }
     
     var isRequired: Bool {
@@ -121,19 +113,22 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     public var valueSelected: String?
     public var arrayValues: [String?] = []
     var isRequired = false
-    private var trackingAreaDefined = false
     
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
-        // Could not create in init, had to add tracking area here
-        if !trackingAreaDefined {
-            trackingAreaDefined = true
-            let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
-            addTrackingArea(trackingArea)
-        }
+    }
+    
+    init() {
+        super.init(frame: .zero, pullsDown: false)
         target = self
         action = #selector(popUpButtonUsed(_:))
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func mouseEntered(with event: NSEvent) {
@@ -167,7 +162,7 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return isRequired ? (arrayValues[indexOfSelectedItem] == nil ? false : true) : true
+        return isRequired ? (arrayValues[indexOfSelectedItem] != nil) : true
     }
     
     var isRequired: Bool {

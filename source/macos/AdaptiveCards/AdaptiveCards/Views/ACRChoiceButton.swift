@@ -11,8 +11,8 @@ protocol ACRChoiceButtonDelegate: NSObjectProtocol {
 
 class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     weak var delegate: ACRChoiceButtonDelegate?
-    
     weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    
     public var buttonValue: String?
     public var idString: String?
     public var valueOn: String?
@@ -153,7 +153,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return isRequired ? (state == .on ? true : false) : true
+        return isRequired ? (state == .on) : true
     }
     
     var isRequired: Bool {

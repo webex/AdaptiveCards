@@ -9,7 +9,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             logError("Element is not of type ACSColumnSet")
             return NSView()
         }
-        let columnSetView = ACRContentStackView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, superview: parentView, needsPadding: columnSet.getPadding())
+        let columnSetView = ACRContentStackView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: columnSet.getPadding())
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
         columnSetView.orientation = .horizontal
         let gravityArea: NSStackView.Gravity = columnSet.getHorizontalAlignment() == .center ? .center: (columnSet.getHorizontalAlignment() == .right ? .trailing: .leading)
@@ -37,7 +37,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                 BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column, parentElement: columnSet)
                 continue
             }
-            let wrappingView = ACRContentStackView(style: column.getStyle(), hostConfig: hostConfig)
+            let wrappingView = ACRContentStackView(style: column.getStyle(), hostConfig: hostConfig, renderConfig: config)
             wrappingView.translatesAutoresizingMaskIntoConstraints = false
             wrappingView.orientation = .horizontal
             wrappingView.addSpacing(column.getSpacing())

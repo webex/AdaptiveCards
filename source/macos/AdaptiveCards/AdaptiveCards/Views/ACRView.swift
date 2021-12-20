@@ -5,8 +5,6 @@ class ACRView: ACRColumnView {
     weak var delegate: AdaptiveCardActionDelegate?
     weak var resolverDelegate: AdaptiveCardResourceResolver?
     weak var parent: ACRView?
-    
-    let renderConfig: RenderConfig
 
     private (set) var targets: [TargetHandler] = []
     private (set) var inputHandlers: [InputHandlingViewProtocol] = []
@@ -17,13 +15,11 @@ class ACRView: ACRColumnView {
     private var isLayoutDoneOnShowCard = false
     private var focusedElementOnHideError: NSView?
     
-    init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
-        self.renderConfig = renderConfig
-        super.init(style: style, parentStyle: nil, hostConfig: hostConfig, superview: nil, needsPadding: true)
+    override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
+        super.init(style: style, parentStyle: nil, hostConfig: hostConfig, renderConfig: renderConfig, superview: nil, needsPadding: true)
     }
     
     required init?(coder: NSCoder) {
-        renderConfig = .default
         super.init(coder: coder)
     }
     
