@@ -27,6 +27,7 @@ void ToggleInputElement::initialize()
     addInputLabel();
 
     auto uiCheckBox = getCheckBox();
+    uiCheckBox->AddFunctions(getAccessibleName(uiCheckBox));
     mToggleInputColElement->AddChild(uiCheckBox);
 
     addErrorMessage(uiCheckBox);
@@ -131,8 +132,9 @@ void ToggleInputElement::addColorFunction(const std::shared_ptr<RendererQml::Qml
     uiCheckBox->Property("onPressed", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", true)");
     uiCheckBox->Property("onReleased", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false)");
     uiCheckBox->Property("onHoveredChanged", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false)");
-    uiCheckBox->Property("onActiveFocusChanged", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false)");
     uiCheckBox->Property("onCheckedChanged", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false)");
+    uiCheckBox->Property("onActiveFocusChanged", RendererQml::Formatter() << "{" << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false);"
+        << "if(activeFocus){Accessible.name = getAccessibleName() + text}}");
     uiCheckBox->Property("visible", mToggleInput->GetIsVisible() ? "true" : "false");
 
     uiCheckBox->Property("Component.onCompleted", RendererQml::Formatter() << "{\n"
@@ -156,4 +158,30 @@ void ToggleInputElement::addValidation(const std::shared_ptr<RendererQml::QmlTag
         << "return !checked;}";
 
     uiCheckBox->AddFunctions(validator.str());
+}
+
+std::string ToggleInputElement::getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiCheckBox)
+{
+    std::ostringstream accessibleName;
+    std::ostringstream labelString;
+    std::ostringstream errorString;
+
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    {
+        if (!mToggleInput->GetLabel().empty())
+        {
+            labelString << "accessibleName += '" << mToggleInput->GetLabel() << ". ';";
+        }
+
+        if (!mToggleInput->GetErrorMessage().empty())
+        {
+            errorString << "if(" << uiCheckBox->GetId() << ".showErrorMessage === true){"
+                << "accessibleName += 'Error. " << mToggleInput->GetErrorMessage() << ". ';}";
+        }
+    }
+
+    accessibleName << "function getAccessibleName(){"
+        << "let accessibleName = '';" << errorString.str() << labelString.str() << "return accessibleName;}";
+
+    return accessibleName.str();
 }
