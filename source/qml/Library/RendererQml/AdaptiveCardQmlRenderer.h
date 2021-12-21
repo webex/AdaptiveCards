@@ -42,8 +42,11 @@ namespace RendererQml
         AdaptiveCardQmlRenderer(std::shared_ptr<AdaptiveCards::HostConfig> hostConfig, std::shared_ptr<AdaptiveCardRenderConfig> renderConfig);
 
         std::pair<std::shared_ptr<RenderedQmlAdaptiveCard>, int> RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, int contentIndex);
+
+        static std::shared_ptr<QmlTag> GetIconTag(std::shared_ptr<AdaptiveRenderContext> context);
         static std::shared_ptr<QmlTag> GetClearIconButton(std::shared_ptr<AdaptiveRenderContext> context);
         static std::shared_ptr<QmlTag> AdaptiveActionRender(std::shared_ptr<AdaptiveCards::BaseActionElement> adaptiveAction, std::shared_ptr<AdaptiveRenderContext> context);
+
     protected:
         static void addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context, const std::string parentName, const bool hasBackgroundImage = false);
         static void addTextRunSelectActions(const std::shared_ptr<AdaptiveRenderContext>& context);
@@ -115,8 +118,6 @@ namespace RendererQml
 		static const std::shared_ptr<QmlTag> applyHorizontalBleed(CardElement cardElement, std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveRenderContext> context);
 		static const std::shared_ptr<QmlTag> applyVerticalBleed(std::shared_ptr<QmlTag> elementsParent, std::shared_ptr<QmlTag> source);
 		static const std::shared_ptr<QmlTag> addColumnSetElements(std::shared_ptr<AdaptiveCards::ColumnSet> columnSet, std::shared_ptr<QmlTag> uiFrame, std::shared_ptr<AdaptiveRenderContext> context);
-
-        static std::shared_ptr<QmlTag> GetIconTag(std::shared_ptr<AdaptiveRenderContext> context);
 
         static std::shared_ptr<QmlTag> GetTextBlockMouseArea();
         static std::shared_ptr<QmlTag> getDummyElementforNumberInput(bool isTop);
