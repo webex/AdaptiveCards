@@ -572,12 +572,47 @@ namespace RendererQml
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::NumberInputRender(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
         auto numberConfig = context->GetRenderConfig()->getInputNumberConfig();
+        auto numberInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
+        numberInputColElement->Property("id", RendererQml::Formatter() << input->GetId() << "_column");
+        numberInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(context->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
+        numberInputColElement->Property("width", "parent.width");
+
+        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+        {
+            if (!input->GetLabel().empty())
+            {
+                auto label = std::make_shared<RendererQml::QmlTag>("Label");
+                label->Property("id", RendererQml::Formatter() << input->GetId() << "_label");
+                label->Property("wrapMode", "Text.Wrap");
+                label->Property("width", "parent.width");
+
+                std::string color = context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
+                label->Property("color", color);
+                label->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.labelSize);
+
+                if (input->GetIsRequired())
+                    label->Property("text", RendererQml::Formatter() << (input->GetLabel().empty() ? "Text" : input->GetLabel()) << " <font color='" << numberConfig.errorMessageColor << "'>*</font>", true);
+                else
+                    label->Property("text", RendererQml::Formatter() << (input->GetLabel().empty() ? "Text" : input->GetLabel()), true);
+
+                numberInputColElement->AddChild(label);
+            }
+            else
+            {
+                if (input->GetIsRequired())
+                {
+                    context->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
+                }
+            }
+        }
+
 
         const std::string origionalElementId = input->GetId();
         input->SetId(context->ConvertToValidId(input->GetId()));
         const auto inputId = input->GetId();
 
         auto numberInputRow = std::make_shared<QmlTag>("Row");
+        numberInputColElement->AddChild(numberInputRow);
         numberInputRow->Property("id", Formatter() << inputId << "_input_row");
         numberInputRow->Property("width", "parent.width");
         numberInputRow->Property("height", Formatter() << numberConfig.height);
@@ -634,7 +669,7 @@ namespace RendererQml
         textBackgroundTag->Property("color", "'transparent'");
 
         contentItemTag->Property("background", textBackgroundTag->ToString());
-        contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
+        //contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
         contentItemTag->Property("color", context->GetHexColor(numberConfig.textColor));
         contentItemTag->Property("placeholderTextColor", context->GetHexColor(numberConfig.placeHolderColor));
 
@@ -739,6 +774,39 @@ namespace RendererQml
             "{" << uiNumberInput->GetId() << ".changeValue(event.key);accessiblityPrefix = '';event.accepted = true;}}\n"
         );
 
+
+        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+        {
+            if (!input->GetErrorMessage().empty())
+            {
+                // auto label = createErrorMessageText(input->GetErrorMessage(), uiNumberInput);
+                auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
+                uiErrorMessage->Property("id", RendererQml::Formatter() << input->GetId() << "_errorMessage");
+                uiErrorMessage->Property("wrapMode", "Text.Wrap");
+                uiErrorMessage->Property("width", "parent.width");
+                uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.labelSize);
+                uiErrorMessage->Property("Accessible.ignored", "true");
+
+                std::string color = context->GetHexColor(numberConfig.errorMessageColor);
+                uiErrorMessage->Property("color", color);
+                uiErrorMessage->Property("text", input->GetErrorMessage(), true);
+                uiErrorMessage->Property("visible", RendererQml::Formatter() << contentItemTag->GetId() << ".showErrorMessage");
+                numberInputColElement->AddChild(uiErrorMessage);
+
+                context->addToRequiredInputElementsIdList(contentItemTag->GetId());
+                contentItemTag->Property("property bool showErrorMessage", "false");
+                contentItemTag->Property("onTextChanged", "validate()");
+                std::ostringstream validator;
+                validator << "function validate(){\n";
+                validator << "if (" << contentItemTag->GetId() << ".text.length != 0 && (parseInt(" << contentItemTag->GetId() << ".text) >=" << uiNumberInput->GetId() <<
+                    ".from) && (parseInt(" << contentItemTag->GetId() << ".text) <= " << uiNumberInput->GetId() << ".to))";
+                validator << "{ showErrorMessage = false; return false; }";
+                validator << "else { return true; } ";
+                validator << "}";
+                contentItemTag->AddFunctions(validator.str());
+            }
+        }
+
         uiNumberInput->Property("contentItem", contentItemTag->ToString());
         uiNumberInput->Property("background", backgroundTag->ToString());
         uiNumberInput->Property("up.indicator", upDummyTag->ToString());
@@ -787,21 +855,13 @@ namespace RendererQml
         uiSplitterRactangle->Property("Accessible.name", Formatter() << "accessiblityPrefix + " << contentItemTag->GetId() << ".displayText");
         uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
 
-        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
-        {
-            if (input->GetIsRequired())
-            {
-                context->addToRequiredInputElementsIdList(inputId);
-                uiNumberInput->Property("property bool showErrorMessage", "false");
-            }
-        }
-
+     
         if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
         {
-            return GetStretchRectangle(numberInputRow);
+            return GetStretchRectangle(numberInputColElement);
         }
 
-        return numberInputRow;
+        return numberInputColElement;
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::RichTextBlockRender(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
