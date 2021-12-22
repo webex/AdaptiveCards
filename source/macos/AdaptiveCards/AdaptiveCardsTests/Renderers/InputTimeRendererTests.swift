@@ -50,6 +50,13 @@ class InputTimeRendererTest: XCTestCase {
         XCTAssertEqual(inputTimeField.maxDateValue, "16:00")
     }
     
+    func testRendererForIsRequired() {
+        inputTime = .make(isRequired: true)
+        
+        let inputTimeField = renderTimeInput()
+        XCTAssertTrue(inputTimeField.isRequired)
+    }
+    
     func testClearsText() {
         let val: String = "16:23:30"
         inputTime = .make(value: val)
