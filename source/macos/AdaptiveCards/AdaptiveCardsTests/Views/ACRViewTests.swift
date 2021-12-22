@@ -91,12 +91,52 @@ class ACRViewTests: XCTestCase {
     }
     
     // Test Submit Action is clicked
-    func testSubmitActionCount() {
+    func testSubmitActionCountValidInputV1_2() {
         view.addInputHandler(FakeInputHandlingView())
         // Empty stringg or dataJson is a valid input
         view.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
         XCTAssertEqual(actionDelegate.submitActionCount, 1)
         XCTAssertEqual(actionDelegate.dictValues, 1)
+    }
+    
+    func testSubmitActionCountInvalidInputV1_2() {
+        let inputView = FakeInputHandlingView()
+        inputView.isValid = false
+        view.addInputHandler(inputView)
+        
+        view.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
+        XCTAssertEqual(actionDelegate.submitActionCount, 1)
+        XCTAssertEqual(actionDelegate.dictValues, 1)
+        XCTAssertFalse(inputView.errorShown)
+    }
+    
+    func testSubmitActionCountValidInputV1_3() {
+        let renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: renderConfig)
+        view.delegate = actionDelegate
+        
+        let inputView = FakeInputHandlingView()
+        view.addInputHandler(inputView)
+        
+        view.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
+        XCTAssertEqual(actionDelegate.submitActionCount, 1)
+        XCTAssertEqual(actionDelegate.dictValues, 1)
+        XCTAssertFalse(inputView.errorShown)
+    }
+    
+    func testSubmitActionCountInvalidInputV1_3() {
+        let renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: renderConfig)
+        view.delegate = actionDelegate
+        
+        let inputView = FakeInputHandlingView()
+        inputView.isValid = false
+        view.addInputHandler(inputView)
+        
+        view.handleSubmitAction(actionView: NSView(), dataJson: nil, associatedInputs: true)
+        XCTAssertEqual(actionDelegate.submitActionCount, 0)
+        XCTAssertEqual(actionDelegate.dictValues, 0)
+        XCTAssertTrue(inputView.errorShown)
     }
     
     // Test when ShowCard's Submit Action is Clicked
@@ -174,8 +214,8 @@ class ACRViewTests: XCTestCase {
         
         view.addInputHandler(testinputHandler)
         view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
-        
-        XCTAssertEqual(0, actionDelegate.dict.count)
+        // Submitting the field since v1.2 schema is being used and no validation is done
+        XCTAssertEqual(1, actionDelegate.dict.count)
     }
     
     func testInputHandlerWithMultipleValues() {
@@ -355,8 +395,13 @@ class ACRViewTests: XCTestCase {
 private class FakeInputHandlingView: NSView, InputHandlingViewProtocol {
     var value: String = NSUUID().uuidString
     var key: String = NSUUID().uuidString
+    var errorShown: Bool = false
     var isValid: Bool = true
-    var errorMessageHandler: ErrorMessageHandlerDelegate?
+    var isRequired: Bool = false
+    var errorDelegate: InputHandlingViewErrorDelegate?
+    func showError() {
+        errorShown = true
+    }
 }
 
 private class FakeImageHoldingView: NSView, ImageHoldingView {

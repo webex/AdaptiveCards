@@ -14,6 +14,7 @@ open class InputDateRenderer: NSObject, BaseCardElementRendererProtocol {
         let inputField: ACRDateField = {
             let view = ACRDateField(isTimeMode: false, config: config)
             view.translatesAutoresizingMaskIntoConstraints = false
+            view.isRequired = dateElement.getIsRequired()
             view.maxDateValue = dateElement.getMax() ?? ""
             view.minDateValue = dateElement.getMin() ?? ""
             view.initialDateValue = dateElement.getValue() ?? ""

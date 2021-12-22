@@ -48,12 +48,13 @@ class RichTextBlockRendererTests: XCTestCase {
     }
     
     func testRendererDefaultTextColorAlpha() {
+        hostConfig.foregroundColor = "#FF00FF00"
         let textRun = FakeTextRun.make(text: sampleText, textColor: ACSForegroundColor.default)
 
         richTextBlock = .make(textRun: textRun)
 
         let textView = renderTextView()
-        XCTAssertEqual(textView.textColor, NSColor.init(red: 0, green: 0, blue: 0, alpha: 1))
+        XCTAssertEqual(textView.textColor, NSColor.init(red: 0, green: 1, blue: 0, alpha: 1))
     }
     
     func testRendererSetsUnderline() {

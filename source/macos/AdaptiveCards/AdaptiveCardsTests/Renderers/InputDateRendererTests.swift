@@ -50,6 +50,13 @@ class InputDateRendererTest: XCTestCase {
         XCTAssertEqual(inputDateField.maxDateValue, maxValue)
     }
     
+    func testRendererForIsRequired() {
+        inputDate = .make(isRequired: true)
+        
+        let inputDateField = renderDateInput()
+        XCTAssertTrue(inputDateField.isRequired)
+    }
+    
     func testClearsText() {
         let val: String = "2000-11-23"
         inputDate = .make(value: val)
