@@ -92,11 +92,4 @@ class ACRNumericTestFieldTests: XCTestCase {
         numericView.textField.stringValue = "10"
         XCTAssertTrue(numericView.isValid)
     }
-    
-    func testNegativeNumberInputTest() {
-        numericView.textField.stringValue = "-20"
-        let object = Notification(name: NSNotification.Name.init("NSControlTextDidChangeNotification"), object: numericView.textField)
-        numericView.controlTextDidChange(object)
-        XCTAssertEqual(numericView.inputString, "-20.0")
-    }
 }

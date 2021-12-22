@@ -232,8 +232,8 @@ class ACRTextField: NSTextField {
     private func updateAppearance(hasFocus: Bool = false) {
         let isActive = hasFocus && isSelectable
         if shouldShowError {
-            layer?.borderColor = inputConfig.errorMessageConfig.borderColor.cgColor
-            layer?.backgroundColor = inputConfig.errorMessageConfig.backgroundColor.cgColor
+            layer?.borderColor = inputConfig.errorStateConfig.borderColor.cgColor
+            layer?.backgroundColor = inputConfig.errorStateConfig.backgroundColor.cgColor
         } else {
             layer?.borderColor = isActive ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
             layer?.backgroundColor = isMouseInView ? inputConfig.highlightedColor.cgColor : inputConfig.backgroundColor.cgColor

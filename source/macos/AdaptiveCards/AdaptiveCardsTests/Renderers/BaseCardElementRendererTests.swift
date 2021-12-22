@@ -66,7 +66,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         inputTextView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
-        inputTextView.errorMessageHandler?.hideErrorMessage(for: inputTextView)
+        inputTextView.errorDelegate?.inputHandlingViewShouldHideError(inputTextView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
     }
     
@@ -86,7 +86,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         inputNumberView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
-        inputNumberView.errorMessageHandler?.hideErrorMessage(for: inputNumberView)
+        inputNumberView.errorDelegate?.inputHandlingViewShouldHideError(inputNumberView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
     }
     
@@ -106,7 +106,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         inputDateView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
-        inputDateView.errorMessageHandler?.hideErrorMessage(for: inputDateView)
+        inputDateView.errorDelegate?.inputHandlingViewShouldHideError(inputDateView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
     }
     
@@ -126,7 +126,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         inputTimeView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
-        inputTimeView.errorMessageHandler?.hideErrorMessage(for: inputTimeView)
+        inputTimeView.errorDelegate?.inputHandlingViewShouldHideError(inputTimeView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
     }
     
@@ -146,7 +146,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         inputChoiceSetView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
-        inputChoiceSetView.errorMessageHandler?.hideErrorMessage(for: inputChoiceSetView)
+        inputChoiceSetView.errorDelegate?.inputHandlingViewShouldHideError(inputChoiceSetView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
     }
     
@@ -166,7 +166,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         inputToggleView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
-        inputToggleView.errorMessageHandler?.hideErrorMessage(for: inputToggleView)
+        inputToggleView.errorDelegate?.inputHandlingViewShouldHideError(inputToggleView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
     }
     
@@ -182,13 +182,13 @@ class BaseCardElementRendererrTests: XCTestCase {
     }
 }
 
-private class FakeErrorMessageHandlerDelegate: InputHandlingViewErrorDelegate{
+private class FakeErrorMessageHandlerDelegate: InputHandlingViewErrorDelegate {
     var isErrorMessageHidden: Bool = false
     func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
         isErrorMessageHidden = false
     }
     
-    func hideErrorMessage(for view: InputHandlingViewProtocol) {
+    func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
         isErrorMessageHidden = true
     }
 }
