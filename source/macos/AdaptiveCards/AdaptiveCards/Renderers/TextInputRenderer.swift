@@ -147,7 +147,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
 }
 
 class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     
     var value: String {
         return stringValue
@@ -175,8 +175,7 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     override func textDidChange(_ notification: Notification) {
         super.textDidChange(notification)
         if isValid {
-            ACRView.focusedElementOnHideError = self
-            errorMessageHandler?.hideErrorMessage(for: self)
+            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: self)
             hideError()
         }
         
@@ -192,6 +191,6 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     
     override func showError() {
         super.showError()
-        errorMessageHandler?.showErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
 }

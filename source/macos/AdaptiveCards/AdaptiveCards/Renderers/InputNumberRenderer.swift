@@ -33,7 +33,7 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
 
 // MARK: - ACRNumericTextField Class
 open class ACRNumericTextField: NSView, NSTextFieldDelegate {
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     var isRequired = false
     var id: String?
     
@@ -82,8 +82,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         
 		// TODO: Remove this while refactor
         if isValid {
-            ACRView.focusedElementOnHideError = textField
-            errorMessageHandler?.hideErrorMessage(for: self)
+            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: textField)
             textField.hideError()
         }
     }
@@ -130,8 +129,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         previousValue = textField.stringValue
         
         if isValid {
-            ACRView.focusedElementOnHideError = textField
-            errorMessageHandler?.hideErrorMessage(for: self)
+            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: textField)
             textfield.hideError()
         }
     }
@@ -230,7 +228,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     
     func showError() {
         textField.showError()
-        errorMessageHandler?.showErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     var value: String {

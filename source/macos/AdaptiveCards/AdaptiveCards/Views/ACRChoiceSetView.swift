@@ -15,7 +15,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     public var previousButton: ACRChoiceButton?
     public var wrap = false
     public var idString: String?
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     
     private let renderConfig: RenderConfig
     
@@ -106,7 +106,7 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     public var idString: String?
     public var valueSelected: String?
     public var arrayValues: [String] = []
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true

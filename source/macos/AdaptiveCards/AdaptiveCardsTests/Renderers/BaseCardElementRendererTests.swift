@@ -63,7 +63,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
-        inputTextView.errorMessageHandler = fakeErrorMessageHandlerDelegate
+        inputTextView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputTextView.errorMessageHandler?.hideErrorMessage(for: inputTextView)
@@ -83,7 +83,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
-        inputNumberView.errorMessageHandler = fakeErrorMessageHandlerDelegate
+        inputNumberView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputNumberView.errorMessageHandler?.hideErrorMessage(for: inputNumberView)
@@ -103,7 +103,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
-        inputDateView.errorMessageHandler = fakeErrorMessageHandlerDelegate
+        inputDateView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputDateView.errorMessageHandler?.hideErrorMessage(for: inputDateView)
@@ -123,7 +123,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
-        inputTimeView.errorMessageHandler = fakeErrorMessageHandlerDelegate
+        inputTimeView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputTimeView.errorMessageHandler?.hideErrorMessage(for: inputTimeView)
@@ -143,7 +143,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
-        inputChoiceSetView.errorMessageHandler = fakeErrorMessageHandlerDelegate
+        inputChoiceSetView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputChoiceSetView.errorMessageHandler?.hideErrorMessage(for: inputChoiceSetView)
@@ -163,7 +163,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
-        inputToggleView.errorMessageHandler = fakeErrorMessageHandlerDelegate
+        inputToggleView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputToggleView.errorMessageHandler?.hideErrorMessage(for: inputToggleView)
@@ -182,9 +182,9 @@ class BaseCardElementRendererrTests: XCTestCase {
     }
 }
 
-private class FakeErrorMessageHandlerDelegate: ErrorMessageHandlerDelegate{
+private class FakeErrorMessageHandlerDelegate: InputHandlingViewErrorDelegate{
     var isErrorMessageHidden: Bool = false
-    func showErrorMessage(for view: InputHandlingViewProtocol) {
+    func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
         isErrorMessageHidden = false
     }
     

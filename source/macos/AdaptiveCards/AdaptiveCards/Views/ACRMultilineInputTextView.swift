@@ -6,7 +6,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     @IBOutlet var scrollView: ACRScrollView!
     @IBOutlet var textView: ACRTextView!
     
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     private var placeholderAttrString: NSAttributedString?
     private var shouldShowError = false
     private let config: RenderConfig
@@ -99,11 +99,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     }
     
     func textDidChange(_ notification: Notification) {
-        if isValid {
-            ACRView.focusedElementOnHideError = textView
-            hideError()
-        }
-        
+        hideErrorIfNeeded()
         guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
         // This stops the user from exceeding the maxLength property of Inut.Text if prroperty was set
         guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
@@ -124,9 +120,10 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         updateAppearance()
     }
     
-    private func hideError() {
+    private func hideErrorIfNeeded() {
+        guard isValid else { return }
         shouldShowError = false
-        errorMessageHandler?.hideErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: self)
         updateAppearance()
     }
     
@@ -162,7 +159,7 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     
     func showError() {
         shouldShowError = true
-        errorMessageHandler?.showErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldShowError(self)
         updateAppearance()
     }
 }

@@ -68,8 +68,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
                 datePickerTextfield.dateValue = selectedDate
             }
             if isValid {
-                ACRView.focusedElementOnHideError = iconButton
-                errorMessageHandler?.hideErrorMessage(for: self)
+                errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: iconButton)
                 textField.hideError()
             }
         }
@@ -123,10 +122,10 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     
     func showError() {
         textField.showError()
-        errorMessageHandler?.showErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     var isRequired = false
     
     init(isTimeMode: Bool, config: RenderConfig) {
