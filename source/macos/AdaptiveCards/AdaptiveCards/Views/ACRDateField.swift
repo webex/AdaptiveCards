@@ -67,6 +67,10 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
                 datePickerCalendar.dateValue = selectedDate
                 datePickerTextfield.dateValue = selectedDate
             }
+            if isValid {
+                errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: iconButton)
+                textField.hideError()
+            }
         }
     }
     var initialDateValue: String? {
@@ -112,17 +116,17 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
+        // TODO: Add min and max date checks too
+        return isBasicValidationsSatisfied
     }
     
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
-        get {
-            return textField.errorMessageHandler
-        }
-        set {
-            textField.errorMessageHandler = newValue
-        }
+    func showError() {
+        textField.showError()
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
+    
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
+    var isRequired = false
     
     init(isTimeMode: Bool, config: RenderConfig) {
         self.isTimeMode = isTimeMode
@@ -189,6 +193,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
             datePickerCalendar.maxDate = date
             datePickerTextfield.maxDate = date
         }
+        
         datePickerCalendar.datePickerStyle = .clockAndCalendar
         datePickerCalendar.datePickerElements = isTimeMode ? .hourMinute : .yearMonthDay
         datePickerCalendar.target = self

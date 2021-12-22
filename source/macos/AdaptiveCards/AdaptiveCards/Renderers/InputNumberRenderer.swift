@@ -18,6 +18,7 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
             view.maxValue = inputElement.getMax()?.doubleValue ?? ACRNumericTextField.MAXVAL
             view.minValue = inputElement.getMin()?.doubleValue ?? ACRNumericTextField.MINVAL
             view.inputString = inputElement.getValue()?.stringValue ?? ""
+            view.isRequired = inputElement.getIsRequired()
             return view
         }()
         
@@ -32,7 +33,10 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
 
 // MARK: - ACRNumericTextField Class
 open class ACRNumericTextField: NSView, NSTextFieldDelegate {
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
+    var isRequired = false
     var id: String?
+    
     private var previousValue = ""
     private let config: RenderConfig
     
@@ -73,8 +77,14 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     }()
 
     @objc private func handleStepperAction(_ sender: NSStepper) {
-        textField.stringValue = "\(sender.integerValue)"
+        inputValue = Double(sender.integerValue)
         setStepperAccessibilityValue(value: String(stepper.integerValue))
+        
+		// TODO: Remove this while refactor
+        if isValid {
+            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: textField)
+            textField.hideError()
+        }
     }
     
     public func controlTextDidChange(_ obj: Notification) {
@@ -117,20 +127,34 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         // replace string
         textfield.stringValue = stringValue
         previousValue = textField.stringValue
+        
+        if isValid {
+            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: textField)
+            textfield.hideError()
+        }
+    }
+    
+    override open func keyDown(with event: NSEvent) {
+        switch Int(event.keyCode) {
+        case kVK_UpArrow:
+            inputValue += 1
+        case kVK_DownArrow:
+            inputValue -= 1
+        default:
+            super.keyDown(with: event)
+        }
     }
     
     public func controlTextDidEndEditing(_ obj: Notification) {
-        // Handling cases when the text entered is beyond the minimum and maximum allowed values in the field.
-        textField.stringValue = value
-        setStepperAccessibilityValue(value: value)
+        setStepperAccessibilityValue(value: inputString)
     }
     
-    func setupViews() {
+    private func setupViews() {
         addSubview(textField)
         addSubview(stepper)
     }
     
-    func setupConstraints() {
+    private func setupConstraints() {
         textField.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
         textField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -140,12 +164,12 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         stepper.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
     }
     
-    func setUpControls() {
+    private func setUpControls() {
         stepper.target = self
         stepper.action = #selector(handleStepperAction(_:))
     }
     
-    func setStepperAccessibilityValue(value: String) {
+    private func setStepperAccessibilityValue(value: String) {
         stepper.setAccessibilityValue(value)
     }
 }
@@ -165,7 +189,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     var inputString: String {
-        get { return String(inputValue) }
+        get { return textField.stringValue }
         set {
             if !newValue.isEmpty, let doubleVal = Double(newValue) {
                 inputValue = doubleVal
@@ -202,22 +226,13 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
         stepper.valueWraps = shouldWrap
     }
     
-    func setId(idString: String?) {
-        self.id = idString
-    }
-    
-    override open func keyDown(with event: NSEvent) {
-        switch Int(event.keyCode) {
-        case kVK_UpArrow:
-            inputValue += 1
-        case kVK_DownArrow:
-            inputValue -= 1
-        default:
-            super.keyDown(with: event)
-        }
+    func showError() {
+        textField.showError()
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     var value: String {
+        guard !inputString.isEmpty else { return "" }
         if Float(inputValue).truncatingRemainder(dividingBy: 1) == 0 {
             return String(Int(inputValue))
         } else {
@@ -234,15 +249,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
-    }
-    
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate? {
-        get {
-            return textField.errorMessageHandler
-        }
-        set {
-            textField.errorMessageHandler = newValue
-        }
+        guard isBasicValidationsSatisfied else { return false }
+        return inputValue <= maxValue && inputValue >= minValue
     }
 }

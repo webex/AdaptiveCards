@@ -1,0 +1,80 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Input.Text",
+            "id": "tf1",
+            "label": "IsRequired Check",
+            "isRequired": true,
+            "errorMessage": "This is a required field",
+            "placeholder": "Enter Text"
+        },
+        {
+            "type": "Input.Text",
+            "label": "Regex Check (Input Ph. No)",
+            "id": "tf2",
+            "regex": "^[0-9]{3}-[0-9]{3}-[0-9]{4}$",
+            "placeholder": "xxx-xxx-xxxx",
+            "errorMessage": "Enter a phone number"
+        },
+        {
+            "type": "Input.Date",
+            "id": "dt1",
+            "min": "2017-01-01",
+            "max": "2019-01-01",
+            "isRequired": true,
+            "errorMessage": "Please Enter a value between 2017 and 2019",
+            "label": "IsRequired & Valid Input Check"
+        },
+        {
+            "type": "Input.Time",
+            "isRequired": true,
+            "errorMessage": "Enter Time between 12 and 4 pm",
+            "label": "IsRequired & Valid Input Check",
+            "min": "12:00",
+            "max": "16:00",
+            "id": "dt2"
+        },
+        {
+            "type": "Input.Number",
+            "min": -10,
+            "max": 10,
+            "label": "IsRequired & Valid Input Check",
+            "isRequired": true,
+            "errorMessage": "Enter a number between -10 and 10",
+            "placeholder": "Input Number",
+            "id": "nf1"
+        },
+        {
+            "type": "Input.Text",
+            "id": "mltf1",
+            "label": "IsRequired Check",
+            "isRequired": true,
+            "errorMessage": "This is a required field",
+            "placeholder": "Enter Text",
+            "isMultiline": true
+        },
+        {
+            "type": "Input.Text",
+            "label": "Regex Check (Input Ph. No)",
+            "id": "mltf2",
+            "regex": "^[0-9]{3}-[0-9]{3}-[0-9]{4}$",
+            "placeholder": "xxx-xxx-xxxx",
+            "errorMessage": "Enter a phone number",
+            "isMultiline": true
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Action.Submit",
+                    "associatedInputs": "auto",
+                    "id": "Sub1"
+                }
+            ]
+        }
+    ]
+}
