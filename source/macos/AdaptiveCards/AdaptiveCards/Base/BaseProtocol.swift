@@ -31,11 +31,25 @@ protocol InputHandlingViewProtocol: NSView {
     var value: String { get }
     var key: String { get }
     var isValid: Bool { get }
-    var errorMessageHandler: ErrorMessageHandlerDelegate? { get set }
+    var isRequired: Bool { get }
+    var errorDelegate: InputHandlingViewErrorDelegate? { get set }
+    func showError()
+}
+
+protocol InputHandlingViewErrorDelegate: AnyObject {
+    func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol)
+    func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?)
 }
 
 protocol ShowCardHandlingView: NSView {
     typealias ShowCardItems = (id: NSNumber, button: NSButton, showCard: NSView)
     var showCardsMap: [NSNumber: NSView] { get }
     var currentShowCardItems: ShowCardItems? { get }
+}
+
+extension InputHandlingViewProtocol {
+    var isBasicValidationsSatisfied: Bool {
+        guard isRequired else { return true }
+        return !value.isEmpty
+    }
 }

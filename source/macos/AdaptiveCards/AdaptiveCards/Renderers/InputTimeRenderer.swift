@@ -17,6 +17,7 @@ open class InputTimeRenderer: NSObject, BaseCardElementRendererProtocol {
             let timeMin = valueByHoursAndMinutes(timeElement.getMin() ?? "")
             let timeMax = valueByHoursAndMinutes(timeElement.getMax() ?? "")
             view.translatesAutoresizingMaskIntoConstraints = false
+            view.isRequired = timeElement.getIsRequired()
             view.maxDateValue = timeMax
             view.minDateValue = timeMin
             view.initialDateValue = timeValue

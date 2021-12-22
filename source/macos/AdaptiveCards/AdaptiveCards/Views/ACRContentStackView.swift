@@ -6,11 +6,6 @@ protocol ACRContentHoldingViewProtocol {
     func applyPadding(_ padding: CGFloat)
 }
 
-protocol ErrorMessageHandlerDelegate: AnyObject {
-    func showErrorMessage(for view: InputHandlingViewProtocol)
-    func hideErrorMessage(for view: InputHandlingViewProtocol)
-}
-
 class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHandlingProtocol {
     private var stackViewLeadingConstraint: NSLayoutConstraint?
     private var stackViewTrailingConstraint: NSLayoutConstraint?
@@ -197,6 +192,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         stackViewBottomConstraint?.isActive = true
     }
     
+    /// This methid can be overridden. super implementation must be called
+    func hideErrorMessage(with currentFocussedView: NSView?) {
+        errorMessageView?.isHidden = true
+    }
+    
     func setVerticalHuggingPriority(_ rawValue: Float) {
         stackView.setHuggingPriority(NSLayoutConstraint.Priority(rawValue), for: .vertical)
     }
@@ -235,7 +235,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         textField.isBordered = false
         textField.isSelectable = true
         textField.backgroundColor = .clear
-        view.errorMessageHandler = self
+        view.errorDelegate = self
         addArrangedSubview(textField)
         errorMessageView = textField
     }
@@ -257,13 +257,13 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
 }
 
-extension ACRContentStackView: ErrorMessageHandlerDelegate {
-    func showErrorMessage(for view: InputHandlingViewProtocol) {
+extension ACRContentStackView: InputHandlingViewErrorDelegate {
+    func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
         errorMessageView?.isHidden = false
     }
     
-    func hideErrorMessage(for view: InputHandlingViewProtocol) {
-        errorMessageView?.isHidden = true
+    func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
+        hideErrorMessage(with: currentFocussedView)
     }
 }
 

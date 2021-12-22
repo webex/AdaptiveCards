@@ -9,7 +9,7 @@ class ACRTextFieldTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        let inputFieldConfig = InputFieldConfig(height: 26, leftPadding: 8, rightPadding: 8, yPadding: 0, focusRingCornerRadius: 8, borderWidth: 0.3, wantsClearButton: true, clearButtonImage: NSImage(), calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 14), highlightedColor: NSColor(red: 0, green: 0, blue: 0, alpha: 0.11), backgroundColor: NSColor(red: 1, green: 1, blue: 1, alpha: 1), borderColor: .black, activeBorderColor: .black, placeholderTextColor: NSColor.placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 5, left: 10, bottom: 0, right: 0))
+        let inputFieldConfig = InputFieldConfig(height: 26, leftPadding: 8, rightPadding: 8, yPadding: 0, focusRingCornerRadius: 8, borderWidth: 0.3, wantsClearButton: true, clearButtonImage: NSImage(), calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 14), highlightedColor: NSColor(red: 0, green: 0, blue: 0, alpha: 0.11), backgroundColor: NSColor(red: 1, green: 1, blue: 1, alpha: 1), borderColor: .black, activeBorderColor: .black, placeholderTextColor: NSColor.placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 5, left: 10, bottom: 0, right: 0), errorStateConfig: InputFieldConfig.ErrorStateConfig.default)
         config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: inputFieldConfig, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
         textField = ACRTextField(config: config)
         delegate = FakeACRTextFieldDelegate()
@@ -39,7 +39,7 @@ class ACRTextFieldTests: XCTestCase {
     
     func testChangingRenderConfigChangesProperties() {
         let image = NSImage()
-        let inputFieldConfig = InputFieldConfig(height: 40, leftPadding: 20, rightPadding: 20, yPadding: 0, focusRingCornerRadius: 10, borderWidth: 1, wantsClearButton: true, clearButtonImage: image, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 10), highlightedColor: .blue, backgroundColor: .yellow, borderColor: .green, activeBorderColor: .black, placeholderTextColor: NSColor.placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 5, left: 10, bottom: 0, right: 0))
+        let inputFieldConfig = InputFieldConfig(height: 40, leftPadding: 20, rightPadding: 20, yPadding: 0, focusRingCornerRadius: 10, borderWidth: 1, wantsClearButton: true, clearButtonImage: image, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 10), highlightedColor: .blue, backgroundColor: .yellow, borderColor: .green, activeBorderColor: .black, placeholderTextColor: NSColor.placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 5, left: 10, bottom: 0, right: 0), errorStateConfig: InputFieldConfig.ErrorStateConfig.default)
         config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: inputFieldConfig, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
         textField = ACRTextField(config: config)
         XCTAssertEqual(textField.fittingSize.height, 40)
@@ -69,6 +69,32 @@ class ACRTextFieldTests: XCTestCase {
         textField.clearButton.performClick()
         XCTAssertTrue(delegate.isTextFieldCalled)
         XCTAssertEqual(delegate.textFieldStringValue, "")
+    }
+    
+    func testSetErrorColors() {
+        textField.showError()
+        XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.errorStateConfig.borderColor.cgColor)
+        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.errorStateConfig.backgroundColor.cgColor)
+    }
+    
+    func testBorderAndbgColorSet() {
+        textField.drawFocusRingMask()
+        XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.activeBorderColor.cgColor)
+        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.backgroundColor.cgColor)
+        
+        textField.layer?.backgroundColor = NSColor.black.cgColor
+        textField.layer?.borderColor = NSColor.black.cgColor
+        // check appearance is updated
+        textField.mouseEntered(with: NSEvent())
+        XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.borderColor.cgColor)
+        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.backgroundColor.cgColor)
+        
+        textField.layer?.backgroundColor = NSColor.black.cgColor
+        textField.layer?.borderColor = NSColor.black.cgColor
+        // check appearance is updated
+        textField.mouseExited(with: NSEvent())
+        XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.activeBorderColor.cgColor)
+        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.backgroundColor.cgColor)
     }
 }
 

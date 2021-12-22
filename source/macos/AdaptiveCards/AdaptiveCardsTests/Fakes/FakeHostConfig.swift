@@ -18,6 +18,7 @@ open class FakeHostConfig: ACSHostConfig {
     public var containerStyles: ACSContainerStylesDefinition?
     public var media: ACSMediaConfig?
     public var inputs: ACSInputsConfig?
+    public var foregroundColor: String?
 
     open override func getFontType(_ fontType: ACSFontType) -> ACSFontTypeDefinition? {
         return nil
@@ -40,7 +41,7 @@ open class FakeHostConfig: ACSHostConfig {
     }
 
     open override func getForegroundColor(_ style: ACSContainerStyle, color: ACSForegroundColor, isSubtle: Bool) -> String? {
-        return nil
+        return foregroundColor
     }
 
     open override func getHighlightColor(_ style: ACSContainerStyle, color: ACSForegroundColor, isSubtle: Bool) -> String? {
