@@ -149,6 +149,10 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         return true
     }
     
+    var isRequired: Bool {
+        return false
+    }
+    
     override func accessibilityValue() -> Any? {
         return state
     }
@@ -159,6 +163,10 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         message += ", " + (accessibilityLabel() ?? "")
         message += ", " + (accessibilityRole()?.description(with: .none) ?? "")
         return message
+    }
+    
+    func showError() {
+        // do nothing
     }
 }
 // MARK: EXTENSION

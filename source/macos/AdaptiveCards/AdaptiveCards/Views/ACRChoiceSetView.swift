@@ -83,6 +83,14 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     var isValid: Bool {
         return true
     }
+    
+    var isRequired: Bool {
+        return false
+    }
+    
+    func showError() {
+        // do nothing
+    }
 }
 // MARK: Extension
 extension ACRChoiceSetView: ACRChoiceButtonDelegate {
@@ -133,5 +141,13 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     
     var isValid: Bool {
         return true
+    }
+    
+    var isRequired: Bool {
+        return false
+    }
+    
+    func showError() {
+        // do nothing
     }
 }

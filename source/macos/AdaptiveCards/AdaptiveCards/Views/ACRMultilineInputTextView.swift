@@ -6,12 +6,16 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     @IBOutlet var scrollView: ACRScrollView!
     @IBOutlet var textView: ACRTextView!
     
-    private var placeholderAttrString: NSAttributedString?
     weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    private var placeholderAttrString: NSAttributedString?
+    private var shouldShowError = false
     private let config: RenderConfig
     private let inputConfig: InputFieldConfig
-    var maxLen: Int = 0
+    
+    var maxLen = 0
     var id: String?
+    var regex: String?
+    var isRequired = false
     
     init(config: RenderConfig) {
         self.config = config
@@ -58,15 +62,14 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         textView.textContainer?.lineFragmentPadding = 0
         textView.textContainerInset = NSSize(width: inputConfig.multilineFieldInsets.left, height: inputConfig.multilineFieldInsets.top)
         wantsLayer = true
-        layer?.borderColor = inputConfig.borderColor.cgColor
         layer?.borderWidth = inputConfig.borderWidth
         layer?.cornerRadius = inputConfig.focusRingCornerRadius
-        textView.backgroundColor = inputConfig.backgroundColor
         textView.setAccessibilityTitle(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
         
         // For hover need tracking area
         let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
         addTrackingArea(trackingArea)
+        updateAppearance()
     }
     
     func setPlaceholder(_ placeholder: String) {
@@ -96,6 +99,11 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     }
     
     func textDidChange(_ notification: Notification) {
+        if isValid {
+            ACRView.focusedElementOnHideError = textView
+            hideError()
+        }
+        
         guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
         // This stops the user from exceeding the maxLength property of Inut.Text if prroperty was set
         guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
@@ -107,11 +115,29 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     }
     
     override func mouseEntered(with event: NSEvent) {
-        textView.backgroundColor = inputConfig.highlightedColor
+        super.mouseEntered(with: event)
+        updateAppearance()
     }
     
     override func mouseExited(with event: NSEvent) {
-        textView.backgroundColor = inputConfig.backgroundColor
+        super.mouseExited(with: event)
+        updateAppearance()
+    }
+    
+    private func hideError() {
+        shouldShowError = false
+        errorMessageHandler?.hideErrorMessage(for: self)
+        updateAppearance()
+    }
+    
+    private func updateAppearance(hasFocus: Bool = false) {
+        if shouldShowError {
+            layer?.borderColor = inputConfig.errorMessageConfig.borderColor.cgColor
+            textView.backgroundColor = inputConfig.errorMessageConfig.backgroundColor
+        } else {
+            layer?.borderColor = hasFocus ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
+            textView.backgroundColor = isMouseInView ? inputConfig.highlightedColor : inputConfig.backgroundColor
+        }
     }
 }
 
@@ -129,18 +155,26 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
+        guard isBasicValidationsSatisfied else { return false }
+        guard !value.isEmpty, let regexVal = regex, !regexVal.isEmpty else { return true }
+        return value.range(of: regexVal, options: .regularExpression, range: nil, locale: nil) != nil
+    }
+    
+    func showError() {
+        shouldShowError = true
+        errorMessageHandler?.showErrorMessage(for: self)
+        updateAppearance()
     }
 }
 
 extension ACRMultilineInputTextView: ACRTextViewResponderDelegate {
     func textViewDidBecomeFirstResponder() {
         scrollView.disableScroll = false
-        layer?.borderColor = inputConfig.activeBorderColor.cgColor
+        updateAppearance(hasFocus: true)
     }
     
     func textViewDidResignFirstResponder() {
         scrollView.disableScroll = true
-        layer?.borderColor = inputConfig.borderColor.cgColor
+        updateAppearance()
     }
 }

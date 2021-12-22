@@ -147,8 +147,8 @@ public struct ChoiceSetButtonConfig {
     }
 }
 public struct InputFieldConfig {
-    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .darkGray, activeBorderColor: .darkGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0))
-    public static let darkDefault = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .darkGray, backgroundColor: NSColor(white: 0.11, alpha: 1), borderColor: .lightGray, activeBorderColor: .lightGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0))
+    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .darkGray, activeBorderColor: .darkGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorMessageConfig: .default)
+    public static let darkDefault = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .darkGray, backgroundColor: NSColor(white: 0.11, alpha: 1), borderColor: .lightGray, activeBorderColor: .lightGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorMessageConfig: .default)
     
     public let height: CGFloat
     public let leftPadding: CGFloat
@@ -167,8 +167,9 @@ public struct InputFieldConfig {
     public let activeBorderColor: NSColor
     public let placeholderTextColor: NSColor
     public let multilineFieldInsets: NSEdgeInsets
+    public let errorMessageConfig: ErrorMessageConfig
     
-    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, clearButtonImage: NSImage?, calendarImage: NSImage?, clockImage: NSImage?, font: NSFont, highlightedColor: NSColor, backgroundColor: NSColor, borderColor: NSColor, activeBorderColor: NSColor, placeholderTextColor: NSColor, multilineFieldInsets: NSEdgeInsets) {
+    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, clearButtonImage: NSImage?, calendarImage: NSImage?, clockImage: NSImage?, font: NSFont, highlightedColor: NSColor, backgroundColor: NSColor, borderColor: NSColor, activeBorderColor: NSColor, placeholderTextColor: NSColor, multilineFieldInsets: NSEdgeInsets, errorMessageConfig: ErrorMessageConfig) {
         self.height = height
         self.leftPadding = leftPadding
         self.rightPadding = rightPadding
@@ -186,6 +187,23 @@ public struct InputFieldConfig {
         self.activeBorderColor = activeBorderColor
         self.placeholderTextColor = placeholderTextColor
         self.multilineFieldInsets = multilineFieldInsets
+        self.errorMessageConfig = errorMessageConfig
+    }
+    
+    public struct ErrorMessageConfig {
+        public static let `default` = ErrorMessageConfig(font: .systemFont(ofSize: 10), textColor: .systemRed, borderColor: .systemRed, backgroundColor: NSColor.systemRed.withAlphaComponent(0.1))
+
+        public let font: NSFont
+        public let textColor: NSColor
+        public let borderColor: NSColor
+        public let backgroundColor: NSColor
+        
+        public init(font: NSFont, textColor: NSColor, borderColor: NSColor, backgroundColor: NSColor) {
+            self.font = font
+            self.textColor = textColor
+            self.borderColor = borderColor
+            self.backgroundColor = backgroundColor
+        }
     }
 }
 
