@@ -298,6 +298,25 @@ class ACRViewTests: XCTestCase {
         XCTAssertEqual(0, actionDelegate.dict.count)
     }
     
+    func testInputHandlerWithErrorMessage() {
+        config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: config)
+        fakeResourceResolver = FakeResourceResolver()
+        actionDelegate = FakeAdaptiveCardActionDelegate()
+        view.resolverDelegate = fakeResourceResolver
+        view.delegate = actionDelegate
+        
+        let testinputHandler = FakeInputHandlingView()
+        testinputHandler.value = "Value"
+        testinputHandler.key = "Key"
+        testinputHandler.isValid = false
+        view.addInputHandler(testinputHandler)
+        
+        XCTAssertFalse(testinputHandler.errorShown)
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
+        XCTAssertTrue(testinputHandler.errorShown)
+    }
+    
     func testInputHandlers_WithHiddenViews() {
         let inputView1 = ACRTextInputView(config: config)
         let inputView2 = ACRTextInputView(config: config)

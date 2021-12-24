@@ -64,7 +64,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
         inputTextView.errorDelegate = fakeErrorMessageHandlerDelegate
-        XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
+        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputTextView.errorDelegate?.inputHandlingViewShouldHideError(inputTextView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
@@ -84,7 +84,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
         inputNumberView.errorDelegate = fakeErrorMessageHandlerDelegate
-        XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
+        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputNumberView.errorDelegate?.inputHandlingViewShouldHideError(inputNumberView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
@@ -104,7 +104,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
         inputDateView.errorDelegate = fakeErrorMessageHandlerDelegate
-        XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
+        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputDateView.errorDelegate?.inputHandlingViewShouldHideError(inputDateView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
@@ -124,7 +124,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
         inputTimeView.errorDelegate = fakeErrorMessageHandlerDelegate
-        XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
+        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputTimeView.errorDelegate?.inputHandlingViewShouldHideError(inputTimeView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
@@ -144,7 +144,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
         inputChoiceSetView.errorDelegate = fakeErrorMessageHandlerDelegate
-        XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
+        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputChoiceSetView.errorDelegate?.inputHandlingViewShouldHideError(inputChoiceSetView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
@@ -164,7 +164,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
         inputToggleView.errorDelegate = fakeErrorMessageHandlerDelegate
-        XCTAssertEqual(updatedView.errorMessageView?.stringValue, "Error")
+        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
         inputToggleView.errorDelegate?.inputHandlingViewShouldHideError(inputToggleView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
