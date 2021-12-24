@@ -5,7 +5,7 @@ class BaseCardElementRenderer {
     static let shared = BaseCardElementRenderer()
     
     func updateView(view: NSView, element: ACSBaseCardElement, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) -> NSView {
-        let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig)
+        let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig, renderConfig: config)
         
         // For Spacing
         if !isfirstElement {
@@ -36,26 +36,14 @@ class BaseCardElementRenderer {
         updatedView.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
         updatedView.isHidden = !element.getIsVisible()
         
-        // Input label handling
-        if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let label = inputElement.getLabel(), !label.isEmpty {
-            let attributedString = NSMutableAttributedString(string: label)
-            if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
-                attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
+        if let inputElement = element as? ACSBaseInputElement {
+            updatedView.configureInputElements(element: inputElement, view: view)
+        } else {
+            // When the element is ACSBaseInputElement, this step occurs inside configureInputElements directly
+            updatedView.addArrangedSubview(view)
+            if view is ACRContentStackView {
+                view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
             }
-            let labelView = NSTextField(labelWithAttributedString: attributedString)
-            labelView.isEditable = false
-            updatedView.addArrangedSubview(labelView)
-            updatedView.setCustomSpacing(spacing: 3, after: labelView)
-        }
-        
-        updatedView.addArrangedSubview(view)
-        if view is ACRContentStackView {
-            view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
-        }
-        
-        if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let view = view as? InputHandlingViewProtocol, let errorMessage = inputElement.getErrorMessage(), !errorMessage.isEmpty {
-            updatedView.setCustomSpacing(spacing: 10, after: view)
-            updatedView.setErrorMessage(with: errorMessage, for: view)
         }
         
         return updatedView
