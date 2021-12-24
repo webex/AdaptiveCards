@@ -36,33 +36,13 @@ class BaseCardElementRenderer {
         updatedView.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
         updatedView.isHidden = !element.getIsVisible()
         
-        // Input label handling
-        if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let label = inputElement.getLabel(), !label.isEmpty {
-            let attributedString = NSMutableAttributedString(string: label)
-            let isRequiredSuffix = (hostConfig.getInputs()?.label.requiredInputs.suffix ?? "").isEmpty ? "*" : hostConfig.getInputs()?.label.requiredInputs.suffix ?? "*"
-            if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
-                attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
+        if let inputElement = element as? ACSBaseInputElement {
+            updatedView.configureInputElements(element: inputElement, view: view)
+        } else {
+            updatedView.addArrangedSubview(view)
+            if view is ACRContentStackView {
+                view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
             }
-            if inputElement.getIsRequired() {
-                attributedString.append(NSAttributedString(string: " " + isRequiredSuffix, attributes: [.foregroundColor: NSColor.red]))
-            }
-            let labelView = NSTextField(labelWithAttributedString: attributedString)
-            labelView.isEditable = false
-            updatedView.addArrangedSubview(labelView)
-            updatedView.setCustomSpacing(spacing: 3, after: labelView)
-        }
-        
-        updatedView.addArrangedSubview(view)
-        if view is ACRContentStackView {
-            view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
-        }
-        
-        if config.supportsSchemeV1_3, let inputElement = element as? ACSBaseInputElement, let view = view as? InputHandlingViewProtocol, let errorMessage = inputElement.getErrorMessage(), !errorMessage.isEmpty {
-            // TODO: Replace with errorConfig in ACRContentStackView (Blocked by #243)
-            let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
-            attributedErrorMessageString.addAttributes([.font: NSFont.systemFont(ofSize: 12), .foregroundColor: NSColor.red], range: NSRange(location: 0, length: attributedErrorMessageString.length))
-            updatedView.setCustomSpacing(spacing: 10, after: view)
-            updatedView.setErrorMessage(with: attributedErrorMessageString, for: view)
         }
         
         return updatedView

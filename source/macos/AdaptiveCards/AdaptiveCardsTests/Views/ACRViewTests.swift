@@ -312,9 +312,9 @@ class ACRViewTests: XCTestCase {
         testinputHandler.isValid = false
         view.addInputHandler(testinputHandler)
         
-        XCTAssertFalse(testinputHandler.didShowError)
+        XCTAssertFalse(testinputHandler.errorShown)
         view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
-        XCTAssertTrue(testinputHandler.didShowError)
+        XCTAssertTrue(testinputHandler.errorShown)
     }
     
     func testInputHandlers_WithHiddenViews() {

@@ -11,7 +11,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         return view
     }()
     
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     public var isRadioGroup = false
     public var previousButton: ACRChoiceButton?
     public var wrap = false
@@ -39,7 +39,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     private func handleClickAction(_ clickedButton: ACRChoiceButton) {
-        errorMessageHandler?.hideErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: clickedButton.button)
         guard isRadioGroup else { return }
         if previousButton != clickedButton {
             previousButton?.state = .off
@@ -64,7 +64,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     func showError() {
-        errorMessageHandler?.showErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     var value: String {
@@ -89,14 +89,6 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     var isValid: Bool {
         return isRequired ? stackview.arrangedSubviews.contains(where: { let elem = $0 as? ACRChoiceButton; return elem?.state == .on }) : true
     }
-    
-    var isRequired: Bool {
-        return false
-    }
-    
-    func showError() {
-        // do nothing
-    }
 }
 // MARK: Extension
 extension ACRChoiceSetView: ACRChoiceButtonDelegate {
@@ -107,7 +99,7 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
 
 // MARK: ACRChoiceSetFieldCompactView
 class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     public let type: ACSChoiceSetStyle = .compact
     public var idString: String?
     public var valueSelected: String?
@@ -142,11 +134,11 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     }
     
     @objc private func popUpButtonUsed(_ sender: NSPopUpButton) {
-        errorMessageHandler?.hideErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: self)
     }
     
     func showError() {
-        errorMessageHandler?.showErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     var value: String {
@@ -163,13 +155,5 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     
     var isValid: Bool {
         return isRequired ? (arrayValues[indexOfSelectedItem] != nil) : true
-    }
-    
-    var isRequired: Bool {
-        return false
-    }
-    
-    func showError() {
-        // do nothing
     }
 }

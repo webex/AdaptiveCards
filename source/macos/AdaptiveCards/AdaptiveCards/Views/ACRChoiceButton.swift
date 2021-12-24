@@ -11,7 +11,7 @@ protocol ACRChoiceButtonDelegate: NSObjectProtocol {
 
 class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     weak var delegate: ACRChoiceButtonDelegate?
-    weak var errorMessageHandler: ErrorMessageHandlerDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     
     public var buttonValue: String?
     public var idString: String?
@@ -128,7 +128,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     func showError() {
-        errorMessageHandler?.showErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     @objc private func handleButtonAction() {
@@ -137,7 +137,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         if buttonType == .radio {
             NSAccessibility.announce(valueChangedMessage())
         }
-        errorMessageHandler?.hideErrorMessage(for: self)
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: button)
     }
     
     var value: String {
@@ -156,10 +156,6 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         return isRequired ? (state == .on) : true
     }
     
-    var isRequired: Bool {
-        return false
-    }
-    
     override func accessibilityValue() -> Any? {
         return state
     }
@@ -170,10 +166,6 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         message += ", " + (accessibilityLabel() ?? "")
         message += ", " + (accessibilityRole()?.description(with: .none) ?? "")
         return message
-    }
-    
-    func showError() {
-        // do nothing
     }
 }
 // MARK: EXTENSION
