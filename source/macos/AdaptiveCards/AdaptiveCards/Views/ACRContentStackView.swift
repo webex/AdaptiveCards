@@ -251,28 +251,25 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     private func setupLabel(for element: ACSBaseInputElement) {
-        guard renderConfig.supportsSchemeV1_3, inputLabelField?.stringValue != element.getLabel() else { return }
-        if let label = element.getLabel(), !label.isEmpty {
-            let attributedString = NSMutableAttributedString(string: label)
-            let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
-            let isRequiredSuffix = (hostConfig.getInputs()?.label.requiredInputs.suffix ?? "").isEmpty ? "*" : hostConfig.getInputs()?.label.requiredInputs.suffix ?? "*"
-            if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
-                attributedString.addAttributes([.foregroundColor: textColor, .font: NSFont.systemFont(ofSize: 16)], range: NSRange(location: 0, length: attributedString.length))
-            }
-            if element.getIsRequired() {
-                attributedString.append(NSAttributedString(string: " " + isRequiredSuffix, attributes: [.foregroundColor: errorStateConfig.textColor, .font: NSFont.systemFont(ofSize: 16)]))
-            }
-            let labelView = staticTextField()
-            labelView.attributedStringValue = attributedString
-            addArrangedSubview(labelView)
-            setCustomSpacing(spacing: 3, after: labelView)
-            inputLabelField = labelView
+        guard renderConfig.supportsSchemeV1_3, let label = element.getLabel(), !label.isEmpty, inputLabelField?.stringValue != label else { return }
+        let attributedString = NSMutableAttributedString(string: label)
+        let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
+        let isRequiredSuffix = (hostConfig.getInputs()?.label.requiredInputs.suffix ?? "").isEmpty ? "*" : hostConfig.getInputs()?.label.requiredInputs.suffix ?? "*"
+        if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
+            attributedString.addAttributes([.foregroundColor: textColor, .font: NSFont.systemFont(ofSize: 16)], range: NSRange(location: 0, length: attributedString.length))
         }
+        if element.getIsRequired() {
+            attributedString.append(NSAttributedString(string: " " + isRequiredSuffix, attributes: [.foregroundColor: errorStateConfig.textColor, .font: NSFont.systemFont(ofSize: 16)]))
+        }
+        let labelView = staticTextField()
+        labelView.attributedStringValue = attributedString
+        addArrangedSubview(labelView)
+        setCustomSpacing(spacing: 3, after: labelView)
+        inputLabelField = labelView
     }
     
-    func setupErrorMessage(element: ACSBaseInputElement, view: NSView) {
-        guard renderConfig.supportsSchemeV1_3, errorMessageField?.stringValue != element.getErrorMessage() else { return }
-        guard let view = view as? InputHandlingViewProtocol, let errorMessage = element.getErrorMessage(), !errorMessage.isEmpty else { return }
+    private func setupErrorMessage(element: ACSBaseInputElement, view: NSView) {
+        guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol, let errorMessage = element.getErrorMessage(), !errorMessage.isEmpty, errorMessageField?.stringValue != errorMessage else { return }
         let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
         let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
         attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))

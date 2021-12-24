@@ -39,6 +39,7 @@ class BaseCardElementRenderer {
         if let inputElement = element as? ACSBaseInputElement {
             updatedView.configureInputElements(element: inputElement, view: view)
         } else {
+            // When the element is ACSBaseInputElement, this step occurs inside configureInputElements directly
             updatedView.addArrangedSubview(view)
             if view is ACRContentStackView {
                 view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
