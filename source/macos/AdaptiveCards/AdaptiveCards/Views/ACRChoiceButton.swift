@@ -11,15 +11,17 @@ protocol ACRChoiceButtonDelegate: NSObjectProtocol {
 
 class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     weak var delegate: ACRChoiceButtonDelegate?
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
+    
     public var buttonValue: String?
     public var idString: String?
     public var valueOn: String?
     public var valueOff: String?
-    weak var errorDelegate: InputHandlingViewErrorDelegate?
     
     private let buttonConfig: ChoiceSetButtonConfig?
     private let buttonType: ChoiceSetButtonType
     private let localisedStringConfig: LocalisedStringConfig
+    var isRequired = false
     
     init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType) {
         self.buttonType = buttonType
@@ -125,12 +127,17 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         }
     }
     
+    func showError() {
+        errorDelegate?.inputHandlingViewShouldShowError(self)
+    }
+    
     @objc private func handleButtonAction() {
         delegate?.acrChoiceButtonDidSelect(self)
         updateButtonImage()
         if buttonType == .radio {
             NSAccessibility.announce(valueChangedMessage())
         }
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: button)
     }
     
     var value: String {
@@ -146,11 +153,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
-    }
-    
-    var isRequired: Bool {
-        return false
+        return isRequired ? (state == .on) : true
     }
     
     override func accessibilityValue() -> Any? {
@@ -163,10 +166,6 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         message += ", " + (accessibilityLabel() ?? "")
         message += ", " + (accessibilityRole()?.description(with: .none) ?? "")
         return message
-    }
-    
-    func showError() {
-        // do nothing
     }
 }
 // MARK: EXTENSION

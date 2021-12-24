@@ -11,13 +11,14 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         return view
     }()
     
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     public var isRadioGroup = false
     public var previousButton: ACRChoiceButton?
     public var wrap = false
     public var idString: String?
-    weak var errorDelegate: InputHandlingViewErrorDelegate?
     
     private let renderConfig: RenderConfig
+    var isRequired = false
     
     init(renderConfig: RenderConfig) {
         self.renderConfig = renderConfig
@@ -38,6 +39,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     private func handleClickAction(_ clickedButton: ACRChoiceButton) {
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: clickedButton.button)
         guard isRadioGroup else { return }
         if previousButton != clickedButton {
             previousButton?.state = .off
@@ -61,6 +63,10 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         return newButton
     }
     
+    func showError() {
+        errorDelegate?.inputHandlingViewShouldShowError(self)
+    }
+    
     var value: String {
         var stringOfSelectedValues: [String] = []
         let arrayViews = stackview.arrangedSubviews
@@ -81,15 +87,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
-    }
-    
-    var isRequired: Bool {
-        return false
-    }
-    
-    func showError() {
-        // do nothing
+        return isRequired ? stackview.arrangedSubviews.contains(where: { let elem = $0 as? ACRChoiceButton; return elem?.state == .on }) : true
     }
 }
 // MARK: Extension
@@ -101,34 +99,50 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
 
 // MARK: ACRChoiceSetFieldCompactView
 class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
     public let type: ACSChoiceSetStyle = .compact
-    private var trackingAreaDefined = false
     public var idString: String?
     public var valueSelected: String?
-    public var arrayValues: [String] = []
-    weak var errorDelegate: InputHandlingViewErrorDelegate?
+    public var arrayValues: [String?] = []
+    var isRequired = false
+    
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
-        // Could not create in init, had to add tracking area here
-        if !trackingAreaDefined {
-            trackingAreaDefined = true
-            let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
-            addTrackingArea(trackingArea)
-        }
+    }
+    
+    init() {
+        super.init(frame: .zero, pullsDown: false)
+        target = self
+        action = #selector(popUpButtonUsed(_:))
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func mouseEntered(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
         contentView.isHighlighted = true
     }
+    
     override func mouseExited(with event: NSEvent) {
         guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
         contentView.isHighlighted = false
     }
     
+    @objc private func popUpButtonUsed(_ sender: NSPopUpButton) {
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: self)
+    }
+    
+    func showError() {
+        errorDelegate?.inputHandlingViewShouldShowError(self)
+    }
+    
     var value: String {
-        return arrayValues[indexOfSelectedItem]
+        return arrayValues[indexOfSelectedItem] ?? ""
     }
     
     var key: String {
@@ -140,14 +154,6 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        return true
-    }
-    
-    var isRequired: Bool {
-        return false
-    }
-    
-    func showError() {
-        // do nothing
+        return isRequired ? (arrayValues[indexOfSelectedItem] != nil) : true
     }
 }

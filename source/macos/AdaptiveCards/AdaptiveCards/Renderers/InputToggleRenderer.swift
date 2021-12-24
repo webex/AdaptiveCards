@@ -15,6 +15,7 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         let title = inputToggle.getTitle() ?? ""
         let inputToggleView = ACRChoiceButton(renderConfig: config, buttonType: .switch)
         inputToggleView.idString = inputToggle.getId()
+        inputToggleView.isRequired = inputToggle.getIsRequired()
         inputToggleView.isHidden = !inputToggle.getIsVisible()
         // adding attributes to the string
         attributedString = NSMutableAttributedString(string: title)
