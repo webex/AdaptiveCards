@@ -160,7 +160,7 @@ void TextinputElement::initMultiLine()
 
     if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
     {
-        mTextinputElement->Property("height", "parent.height");
+        mTextinputElement->Property("height", RendererQml::Formatter() << "parent.height > 0 ? parent.height : " << textConfig.multiLineTextHeight);
     }
 
     auto uiTextInput = createMultiLineTextAreaElement();
@@ -206,6 +206,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
     uiTextInput->Property("color", mContext->GetHexColor(textConfig.textColor));
     uiTextInput->Property("placeholderTextColor", mContext->GetHexColor(textConfig.placeHolderColor));
     uiTextInput->Property("Accessible.role", "Accessible.EditableText");
+    uiTextInput->AddFunctions(getAccessibleName(uiTextInput));
 
     auto backgroundTag = std::make_shared<RendererQml::QmlTag>("Rectangle");
     backgroundTag->Property("color", "'transparent'");
@@ -214,30 +215,20 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
     uiTextInput->Property("onPressed", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",true)");
     uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
-    uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
+    uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "{\n"
+        << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)\n" << "if(activeFocus){\n"
+        << "Accessible.name = getAccessibleName()}}");
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (mTextinput->GetIsRequired())
         {
             uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
-                << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)\n"
-                << "if(showErrorMessage){\n" << "Accessible.ignored = false;\n"
-                << "Accessible.name = " << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "'Text Field' + " : "'" + mTextinput->GetPlaceholder() + "' + ") : "'" + mTextinput->GetLabel() + "' + ") << "(" << uiTextInput->GetId() << ".showErrorMessage ? '" << mTextinput->GetErrorMessage() << "' : '');"
-                << "}else{Accessible.ignored = true}}");
-
-            uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "{\n"
-                << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)\n" << "if(activeFocus){\n"
-                << "Accessible.name = " << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "'Text Field' + " : "'" + mTextinput->GetPlaceholder() + "' + ") : "'" + mTextinput->GetLabel() + "' + ") << "(" << uiTextInput->GetId() << ".showErrorMessage ? '" << mTextinput->GetErrorMessage() << "' : '');"
-                << "Accessible.ignored = false;}}");
+                << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)\n}");
         }
-        uiTextInput->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder()) : mTextinput->GetLabel()), true);
-    }
-    else
-    {
-        uiTextInput->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder()), true);
     }
 
+    uiTextInput->Property("Accessible.name", "", true);
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("topPadding", RendererQml::Formatter() << textConfig.textVerticalPadding);
@@ -282,6 +273,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("Accessible.role", "Accessible.EditableText");
+    uiTextInput->AddFunctions(getAccessibleName(uiTextInput));
 
     if (mTextinput->GetMaxLength() > 0)
     {
@@ -294,30 +286,20 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
     uiTextInput->Property("onPressed", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",true)");
     uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
-    uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
+    uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "{\n"
+        << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)\n" << "if(activeFocus){\n"
+        << "Accessible.name = getAccessibleName()}}");
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (mTextinput->GetIsRequired())
         {
             uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
-                << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)\n"
-                << "if(showErrorMessage){\n" << "Accessible.ignored = false;\n"
-                << "Accessible.name = " << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "'Text Field' + " : "'" + mTextinput->GetPlaceholder() + "' + ") : "'" + mTextinput->GetLabel() + "' + ") << "(" << uiTextInput->GetId() << ".showErrorMessage ? '" << mTextinput->GetErrorMessage() << "' : '');"
-                << "}else{Accessible.ignored = true}}");
-
-            uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "{\n"
-                << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)\n" << "if(activeFocus){\n"
-                << "Accessible.name = " << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "'Text Field' + " : "'" + mTextinput->GetPlaceholder() + "' + ") : "'" + mTextinput->GetLabel() + "' + ") << "(" << uiTextInput->GetId() << ".showErrorMessage ? '" << mTextinput->GetErrorMessage() << "' : '');"
-                << "Accessible.ignored = false;}}");
+                << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)\n}");
         }
-        uiTextInput->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? (mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder()) : mTextinput->GetLabel()), true);
-    }
-    else
-    {
-        uiTextInput->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetPlaceholder().empty() ? "Text Field" : mTextinput->GetPlaceholder()), true);
     }
 
+    uiTextInput->Property("Accessible.name", "",true);
     uiTextInput->Property("Keys.onTabPressed", "{nextItemInFocusChain().forceActiveFocus(); event.accepted = true;}");
     uiTextInput->Property("Keys.onBacktabPressed", "{nextItemInFocusChain(false).forceActiveFocus(); event.accepted = true;}");
     uiTextInput->Property("font.pixelSize", RendererQml::Formatter() << textConfig.pixelSize);
@@ -354,6 +336,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineBackground
 void TextinputElement::addInlineActionMode()
 {
     auto temp = mTextinput->GetLabel();
+    const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     if (mContext->GetConfig()->GetSupportsInteractivity() && mTextinput->GetInlineAction() != nullptr)
     {
         // ShowCard Inline Action Mode is not supported
@@ -384,7 +367,7 @@ void TextinputElement::addInlineActionMode()
 
             if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
             {
-                mContainer->Property("height", "parent.height");
+                mContainer->Property("height", RendererQml::Formatter() << "parent.height > 0 ? parent.height : " << textConfig.multiLineTextHeight);
             }
         }
     }
@@ -407,4 +390,36 @@ const std::string TextinputElement::getColorFunction()
         "}\n"
         "}\n";
     return colorFunction;
+}
+
+std::string TextinputElement::getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiTextInput)
+{
+    std::ostringstream accessibleName;
+    std::ostringstream labelString;
+    std::ostringstream errorString;
+    std::ostringstream placeHolderString;
+
+    if(mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    {
+        if (!mTextinput->GetLabel().empty())
+        {
+            labelString << "accessibleName += '" << mTextinput->GetLabel() << ". ';";
+        }
+
+        if(!mTextinput->GetErrorMessage().empty())
+        {
+            errorString << "if(" << uiTextInput->GetId() << ".showErrorMessage === true){"
+                << "accessibleName += 'Error. " << mTextinput->GetErrorMessage() << ". ';}";
+        }
+    }
+
+    placeHolderString << "if(" << uiTextInput->GetId() << ".text !== ''){"
+        << "accessibleName += (" << uiTextInput->GetId() << ".text + '. ');"
+        << "}else{"
+        << "accessibleName += '" << (mTextinput->GetPlaceholder().empty() ? "Text Block" : mTextinput->GetPlaceholder()) << "';}";
+
+    accessibleName << "function getAccessibleName(){"
+        << "let accessibleName = '';" << errorString.str() << labelString.str() << placeHolderString.str() << "return accessibleName;}";
+
+    return accessibleName.str();
 }

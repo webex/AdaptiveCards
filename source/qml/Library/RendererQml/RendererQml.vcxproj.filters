@@ -54,6 +54,18 @@
     <ClCompile Include="TextInputRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ChoiceSetRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToggleInputRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckBoxRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComboBoxRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdaptiveCardQmlRenderer.h">
@@ -108,6 +120,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextInputRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChoiceSetRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToggleInputRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckBoxRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComboBoxRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

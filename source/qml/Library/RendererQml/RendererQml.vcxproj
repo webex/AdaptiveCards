@@ -164,12 +164,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ToggleInputRender.cpp" />
     <ClCompile Include="AdaptiveCardQmlRenderer.cpp" />
     <ClCompile Include="AdaptiveCardRenderConfig.cpp" />
     <ClCompile Include="AdaptiveFallbackException.cpp" />
     <ClCompile Include="AdaptiveRenderArgs.cpp" />
     <ClCompile Include="AdaptiveRenderContext.cpp" />
     <ClCompile Include="AdaptiveWarning.cpp" />
+    <ClCompile Include="CheckBoxRender.cpp" />
+    <ClCompile Include="ChoiceSetRender.cpp" />
+    <ClCompile Include="ComboBoxRender.cpp" />
     <ClCompile Include="Formatter.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="QmlTag.cpp" />
@@ -179,6 +183,7 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ToggleInputRender.h" />
     <ClInclude Include="AdaptiveCardDependency.h" />
     <ClInclude Include="AdaptiveCardQmlRenderer.h" />
     <ClInclude Include="AdaptiveCardRenderConfig.h" />
@@ -188,6 +193,9 @@
     <ClInclude Include="AdaptiveRenderArgs.h" />
     <ClInclude Include="AdaptiveRenderContext.h" />
     <ClInclude Include="AdaptiveWarning.h" />
+    <ClInclude Include="CheckBoxRender.h" />
+    <ClInclude Include="ChoiceSetRender.h" />
+    <ClInclude Include="ComboBoxRender.h" />
     <ClInclude Include="Formatter.h" />
     <ClInclude Include="ImageDataURI.h" />
     <ClInclude Include="pch.h" />
