@@ -66,6 +66,12 @@
     <ClCompile Include="ComboBoxRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DateInputRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeInputRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdaptiveCardQmlRenderer.h">
@@ -132,6 +138,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ComboBoxRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DateInputRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeInputRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
