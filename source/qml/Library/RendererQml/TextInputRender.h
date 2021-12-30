@@ -11,7 +11,7 @@ public:
 	TextinputElement() = delete;
 	TextinputElement(const TextinputElement&) = delete;
 	TextinputElement& operator= (const TextinputElement&) = delete;
-	std::shared_ptr<RendererQml::QmlTag> getQmlString();
+	std::shared_ptr<RendererQml::QmlTag> getQmlTag();
 	void initialize();
 
 private:

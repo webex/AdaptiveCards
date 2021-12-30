@@ -1,6 +1,5 @@
 #include "TextInputRender.h"
 #include "Formatter.h"
-#include <iostream>
 #include "utils.h"
 
 TextinputElement::TextinputElement(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
@@ -10,7 +9,7 @@ TextinputElement::TextinputElement(std::shared_ptr<AdaptiveCards::TextInput> inp
 {  
 }
 
-std::shared_ptr<RendererQml::QmlTag> TextinputElement::getQmlString()
+std::shared_ptr<RendererQml::QmlTag> TextinputElement::getQmlTag()
 {
     return mTextinputColElement;
 }
