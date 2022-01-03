@@ -51,7 +51,7 @@ void NumberinputElement::initialize()
     const std::string origionalElementId = mInput->GetId();
     mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
     const auto inputId = mInput->GetId();
-
+    createInputLabel();
     auto numberInputRow = std::make_shared<RendererQml::QmlTag>("Row");
     numberInputColElement->AddChild(numberInputRow);
     numberInputRow->Property("id", RendererQml::Formatter() << inputId << "_input_row");
