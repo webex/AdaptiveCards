@@ -80,58 +80,17 @@ void NumberinputElement::initialize()
     auto backgroundTag = std::make_shared<RendererQml::QmlTag>("Rectangle");
     backgroundTag->Property("color", "'transparent'");
 
-    auto contentItemTag = std::make_shared<RendererQml::QmlTag>("TextField");
-    contentItemTag->Property("id", inputId + "_contentItem");
-    contentItemTag->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.pixelSize);
-    contentItemTag->Property("anchors.left", "parent.left");
-    contentItemTag->Property("anchors.right", "parent.right");
-    contentItemTag->Property("selectByMouse", "true");
-    contentItemTag->Property("selectedTextColor", "'white'");
-    contentItemTag->Property("readOnly", RendererQml::Formatter() << "!" << inputId << ".editable");
-    contentItemTag->Property("validator", RendererQml::Formatter() << inputId << ".validator");
-    contentItemTag->Property("inputMethodHints", "Qt.ImhFormattedNumbersOnly");
-    contentItemTag->Property("text", RendererQml::Formatter() << inputId << ".value");
-    contentItemTag->Property("onPressed", RendererQml::Formatter() << numberInputRectangle->GetId() << ".colorChange(true)");
-    contentItemTag->Property("onReleased", RendererQml::Formatter() << numberInputRectangle->GetId() << ".colorChange(false)");
-    contentItemTag->Property("onHoveredChanged", RendererQml::Formatter() << numberInputRectangle->GetId() << ".colorChange(false)");
-    contentItemTag->Property("onActiveFocusChanged", RendererQml::Formatter() << numberInputRectangle->GetId() << ".colorChange(false)");
-    contentItemTag->Property("leftPadding", RendererQml::Formatter() << numberConfig.textHorizontalPadding);
-    contentItemTag->Property("rightPadding", RendererQml::Formatter() << numberConfig.textHorizontalPadding);
-    contentItemTag->Property("topPadding", RendererQml::Formatter() << numberConfig.textVerticalPadding);
-    contentItemTag->Property("bottomPadding", RendererQml::Formatter() << numberConfig.textVerticalPadding);
-    contentItemTag->Property("padding", "0");
-    {
-        contentItemTag->Property("placeholderText", mInput->GetPlaceholder(), true);
-    }
-    contentItemTag->Property("Accessible.name", mInput->GetPlaceholder().empty() ? "Number Input Field" : mInput->GetPlaceholder(), true);
-    contentItemTag->Property("Accessible.role", "Accessible.EditableText");
 
     auto textBackgroundTag = std::make_shared<RendererQml::QmlTag>("Rectangle");
     textBackgroundTag->Property("color", "'transparent'");
-
-    contentItemTag->Property("background", textBackgroundTag->ToString());
-    //contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
-    contentItemTag->Property("color", mContext->GetHexColor(numberConfig.textColor));
-    contentItemTag->Property("placeholderTextColor", mContext->GetHexColor(numberConfig.placeHolderColor));
+    auto contentItemTag = getContentItemTag(textBackgroundTag);
 
     //Dummy indicator element to remove the default indicators of SpinBox
     auto upDummyTag = getDummyElementforNumberInput(true);
 
     //Dummy indicator element to remove the default indicators of SpinBox
     auto downDummyTag = getDummyElementforNumberInput(false);
-
-    auto upDownIcon = RendererQml::AdaptiveCardQmlRenderer::GetIconTag(mContext);
-    upDownIcon->RemoveProperty("anchors.top");
-    upDownIcon->RemoveProperty("anchors.bottom");
-    upDownIcon->RemoveProperty("anchors.margins");
-    upDownIcon->Property("id", RendererQml::Formatter() << inputId << "_up_down_icon");
-    upDownIcon->Property("width", "parent.width");
-    upDownIcon->Property("height", "parent.height");
-    upDownIcon->Property("icon.width", RendererQml::Formatter() << numberConfig.upDownIconSize);
-    upDownIcon->Property("icon.height", RendererQml::Formatter() << numberConfig.upDownIconSize);
-    upDownIcon->Property("icon.color", mContext->GetHexColor(numberConfig.upDownIconColor));
-    upDownIcon->Property("icon.source", RendererQml::vector_up_down, true);
-    upDownIcon->Property("background", textBackgroundTag->ToString());
+    auto upDownIcon = getIconTag(textBackgroundTag);
 
     auto upIndicatorTag = std::make_shared<RendererQml::QmlTag>("MouseArea");
     upIndicatorTag->Property("id", RendererQml::Formatter() << inputId << "_up_indicator_area");
@@ -215,36 +174,15 @@ void NumberinputElement::initialize()
         "{" << uiNumberInput->GetId() << ".changeValue(event.key);accessiblityPrefix = '';event.accepted = true;}}\n"
     );
 
-
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (!mInput->GetErrorMessage().empty())
         {
-            // auto label = createErrorMessageText(input->GetErrorMessage(), uiNumberInput);
-            auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
-            uiErrorMessage->Property("id", RendererQml::Formatter() << mInput->GetId() << "_errorMessage");
-            uiErrorMessage->Property("wrapMode", "Text.Wrap");
-            uiErrorMessage->Property("width", "parent.width");
-            uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.labelSize);
-            uiErrorMessage->Property("Accessible.ignored", "true");
-
-            std::string color = mContext->GetHexColor(numberConfig.errorMessageColor);
-            uiErrorMessage->Property("color", color);
-            uiErrorMessage->Property("text", mInput->GetErrorMessage(), true);
-            uiErrorMessage->Property("visible", RendererQml::Formatter() << contentItemTag->GetId() << ".showErrorMessage");
-            numberInputColElement->AddChild(uiErrorMessage);
-
+            createErrorMessage();
             mContext->addToRequiredInputElementsIdList(contentItemTag->GetId());
             contentItemTag->Property("property bool showErrorMessage", "false");
             contentItemTag->Property("onTextChanged", "validate()");
-            std::ostringstream validator;
-            validator << "function validate(){\n";
-            validator << "if (" << contentItemTag->GetId() << ".text.length != 0 && (parseInt(" << contentItemTag->GetId() << ".text) >=" << uiNumberInput->GetId() <<
-                ".from) && (parseInt(" << contentItemTag->GetId() << ".text) <= " << uiNumberInput->GetId() << ".to))";
-            validator << "{ showErrorMessage = false; return false; }";
-            validator << "else { return true; } ";
-            validator << "}";
-            contentItemTag->AddFunctions(validator.str());
+            contentItemTag->AddFunctions(getValidatorFunction().str());
         }
     }
 
@@ -327,4 +265,86 @@ void NumberinputElement::createInputLabel()
             }
         }
     }
+}
+
+std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
+{
+    const auto inputId = mInput->GetId();
+    auto contentItemTag = std::make_shared<RendererQml::QmlTag>("TextField");
+    contentItemTag->Property("id", inputId + "_contentItem");
+    contentItemTag->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.pixelSize);
+    contentItemTag->Property("anchors.left", "parent.left");
+    contentItemTag->Property("anchors.right", "parent.right");
+    contentItemTag->Property("selectByMouse", "true");
+    contentItemTag->Property("selectedTextColor", "'white'");
+    contentItemTag->Property("readOnly", RendererQml::Formatter() << "!" << inputId << ".editable");
+    contentItemTag->Property("validator", RendererQml::Formatter() << inputId << ".validator");
+    contentItemTag->Property("inputMethodHints", "Qt.ImhFormattedNumbersOnly");
+    contentItemTag->Property("text", RendererQml::Formatter() << inputId << ".value");
+    contentItemTag->Property("onPressed", RendererQml::Formatter() << inputId << "_input" << ".colorChange(true)");
+    contentItemTag->Property("onReleased", RendererQml::Formatter() << inputId << "_input" << ".colorChange(false)");
+    contentItemTag->Property("onHoveredChanged", RendererQml::Formatter() << inputId << "_input" << ".colorChange(false)");
+    contentItemTag->Property("onActiveFocusChanged", RendererQml::Formatter() << inputId << "_input" << ".colorChange(false)");
+    contentItemTag->Property("leftPadding", RendererQml::Formatter() << numberConfig.textHorizontalPadding);
+    contentItemTag->Property("rightPadding", RendererQml::Formatter() << numberConfig.textHorizontalPadding);
+    contentItemTag->Property("topPadding", RendererQml::Formatter() << numberConfig.textVerticalPadding);
+    contentItemTag->Property("bottomPadding", RendererQml::Formatter() << numberConfig.textVerticalPadding);
+    contentItemTag->Property("padding", "0");
+    {
+        contentItemTag->Property("placeholderText", mInput->GetPlaceholder(), true);
+    }
+    contentItemTag->Property("Accessible.name", mInput->GetPlaceholder().empty() ? "Number Input Field" : mInput->GetPlaceholder(), true);
+    contentItemTag->Property("Accessible.role", "Accessible.EditableText");
+    contentItemTag->Property("background", textBackgroundTag->ToString());
+    //contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
+    contentItemTag->Property("color", mContext->GetHexColor(numberConfig.textColor));
+    contentItemTag->Property("placeholderTextColor", mContext->GetHexColor(numberConfig.placeHolderColor));
+    return contentItemTag;
+}
+
+void NumberinputElement::createErrorMessage()
+{
+    const auto inputId = mInput->GetId();
+    auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
+    uiErrorMessage->Property("id", RendererQml::Formatter() << mInput->GetId() << "_errorMessage");
+    uiErrorMessage->Property("wrapMode", "Text.Wrap");
+    uiErrorMessage->Property("width", "parent.width");
+    uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.labelSize);
+    uiErrorMessage->Property("Accessible.ignored", "true");
+
+    std::string color = mContext->GetHexColor(numberConfig.errorMessageColor);
+    uiErrorMessage->Property("color", color);
+    uiErrorMessage->Property("text", mInput->GetErrorMessage(), true);
+    uiErrorMessage->Property("visible", RendererQml::Formatter() << inputId + "_contentItem" << ".showErrorMessage");
+    numberInputColElement->AddChild(uiErrorMessage);
+}
+
+std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getIconTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
+{
+    const auto inputId = mInput->GetId();
+    auto upDownIcon = RendererQml::AdaptiveCardQmlRenderer::GetIconTag(mContext);
+    upDownIcon->RemoveProperty("anchors.top");
+    upDownIcon->RemoveProperty("anchors.bottom");
+    upDownIcon->RemoveProperty("anchors.margins");
+    upDownIcon->Property("id", RendererQml::Formatter() << inputId << "_up_down_icon");
+    upDownIcon->Property("width", "parent.width");
+    upDownIcon->Property("height", "parent.height");
+    upDownIcon->Property("icon.width", RendererQml::Formatter() << numberConfig.upDownIconSize);
+    upDownIcon->Property("icon.height", RendererQml::Formatter() << numberConfig.upDownIconSize);
+    upDownIcon->Property("icon.color", mContext->GetHexColor(numberConfig.upDownIconColor));
+    upDownIcon->Property("icon.source", RendererQml::vector_up_down, true);
+    upDownIcon->Property("background", textBackgroundTag->ToString());
+    return upDownIcon;
+}
+std::ostringstream NumberinputElement::getValidatorFunction()
+{
+    const auto inputId = mInput->GetId();
+    std::ostringstream validator;
+    validator << "function validate(){\n";
+    validator << "if (" << inputId + "_contentItem" << ".text.length != 0 && (parseInt(" << inputId + "_contentItem" << ".text) >=" << inputId <<
+        ".from) && (parseInt(" << inputId + "_contentItem" << ".text) <= " << inputId << ".to))";
+    validator << "{ showErrorMessage = false; return false; }";
+    validator << "else { return true; } ";
+    validator << "}";
+    return validator;
 }

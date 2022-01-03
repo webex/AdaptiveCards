@@ -15,6 +15,10 @@ public:
     void initialize();
     static std::shared_ptr<RendererQml::QmlTag> getDummyElementforNumberInput(bool isTop);
     void createInputLabel();
+    void createErrorMessage();
+    std::shared_ptr<RendererQml::QmlTag> getIconTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag);
+    std::shared_ptr<RendererQml::QmlTag> getContentItemTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag);
+    std::ostringstream getValidatorFunction();
 
 private:
     std::shared_ptr<RendererQml::QmlTag> numberInputColElement;
