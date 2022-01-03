@@ -4,8 +4,9 @@
 #include "ImageDataURI.h"
 
 NumberinputElement::NumberinputElement(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
-	:mInput(input),
-	mContext(context)
+    :mInput(input),
+    mContext(context),
+    numberConfig(mContext->GetRenderConfig()->getInputNumberConfig())
 {
 }
 
@@ -42,41 +43,10 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getQmlTag()
 
 void NumberinputElement::initialize()
 {
-    auto numberConfig = mContext->GetRenderConfig()->getInputNumberConfig();
     numberInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     numberInputColElement->Property("id", RendererQml::Formatter() << mInput->GetId() << "_column");
     numberInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     numberInputColElement->Property("width", "parent.width");
-
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
-    {
-        if (!mInput->GetLabel().empty())
-        {
-            auto label = std::make_shared<RendererQml::QmlTag>("Label");
-            label->Property("id", RendererQml::Formatter() << mInput->GetId() << "_label");
-            label->Property("wrapMode", "Text.Wrap");
-            label->Property("width", "parent.width");
-
-            std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
-            label->Property("color", color);
-            label->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.labelSize);
-
-            if (mInput->GetIsRequired())
-                label->Property("text", RendererQml::Formatter() << (mInput->GetLabel().empty() ? "Text" : mInput->GetLabel()) << " <font color='" << numberConfig.errorMessageColor << "'>*</font>", true);
-            else
-                label->Property("text", RendererQml::Formatter() << (mInput->GetLabel().empty() ? "Text" : mInput->GetLabel()), true);
-
-            numberInputColElement->AddChild(label);
-        }
-        else
-        {
-            if (mInput->GetIsRequired())
-            {
-                mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
-            }
-        }
-    }
-
 
     const std::string origionalElementId = mInput->GetId();
     mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
@@ -325,4 +295,36 @@ void NumberinputElement::initialize()
         << "accessiblityPrefix = '" << (mInput->GetPlaceholder().empty() ? "Number Input " : mInput->GetPlaceholder()) << "stepper. Current number is '}");
     uiSplitterRactangle->Property("Accessible.name", RendererQml::Formatter() << "accessiblityPrefix + " << contentItemTag->GetId() << ".displayText");
     uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
+}
+
+void NumberinputElement::createInputLabel()
+{
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    {
+        if (!mInput->GetLabel().empty())
+        {
+            auto label = std::make_shared<RendererQml::QmlTag>("Label");
+            label->Property("id", RendererQml::Formatter() << mInput->GetId() << "_label");
+            label->Property("wrapMode", "Text.Wrap");
+            label->Property("width", "parent.width");
+
+            std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
+            label->Property("color", color);
+            label->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.labelSize);
+
+            if (mInput->GetIsRequired())
+                label->Property("text", RendererQml::Formatter() << (mInput->GetLabel().empty() ? "Text" : mInput->GetLabel()) << " <font color='" << numberConfig.errorMessageColor << "'>*</font>", true);
+            else
+                label->Property("text", RendererQml::Formatter() << (mInput->GetLabel().empty() ? "Text" : mInput->GetLabel()), true);
+
+            numberInputColElement->AddChild(label);
+        }
+        else
+        {
+            if (mInput->GetIsRequired())
+            {
+                mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
+            }
+        }
+    }
 }
