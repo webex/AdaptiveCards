@@ -211,7 +211,7 @@ void DateInputElement::initDateInputWrapper()
     mDateInputWrapper->Property("color", mContext->GetHexColor(mDateConfig.backgroundColorNormal));
     mDateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateInput->GetId() << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
     mDateInputWrapper->Property("border.width", RendererQml::Formatter() << mDateConfig.borderWidth);
-    mDateInputWrapper->AddFunctions(getColorFunction(mDateInputWrapper->GetId()));
+    mDateInputWrapper->AddFunctions(getColorFunction());
 }
 
 void DateInputElement::initDateInputComboBox()
@@ -664,7 +664,7 @@ void DateInputElement::addValidation()
     }
 }
 
-const std::string DateInputElement::getColorFunction(const std::string wrapperId)
+const std::string DateInputElement::getColorFunction()
 {
     std::ostringstream colorFunction;
 

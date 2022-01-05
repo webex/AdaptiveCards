@@ -61,7 +61,7 @@ private:
     std::shared_ptr<RendererQml::QmlTag> getCalendarListViewDelegate(const std::string listViewId);
     std::shared_ptr<RendererQml::QmlTag> getArrowIconButton(const std::string arrowType, const std::string listViewId);
 
-    const std::string getColorFunction(const std::string wrapperId);
+    const std::string getColorFunction();
     const std::string getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiDateInput);
 };
 
