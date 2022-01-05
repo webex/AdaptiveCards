@@ -17,8 +17,20 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getQmlTag()
 
 void DateInputElement::initialize()
 {
+    mOrigionalElementId = mDateInput->GetId();
+    mDateInput->SetId(mContext->ConvertToValidId(mDateInput->GetId()));
+
+    mDateFieldId = mDateInput->GetId();
+    mCalendarBoxId = RendererQml::Formatter() << mDateFieldId << "_calendarBox";
+    mDateInputColElementId = RendererQml::Formatter() << mDateFieldId << "_column";
+    mDateInputWrapperId = RendererQml::Formatter() << mDateFieldId << "_wrapper";
+    mDateInputComboboxId = RendererQml::Formatter() << mDateFieldId << "_combobox";
+    mDateInputRowId = RendererQml::Formatter() << mDateFieldId << "_row";
+    mDateIconId = RendererQml::Formatter() << mDateFieldId << "_icon";
+    mClearIconId = RendererQml::Formatter() << mDateFieldId << "_clear_icon";
+
     mDateInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
-    mDateInputColElement->Property("id", RendererQml::Formatter() << mDateInput->GetId() << "_column");
+    mDateInputColElement->Property("id", mDateInputColElementId);
     mDateInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mDateInputColElement->Property("width", "parent.width");
 
@@ -29,64 +41,59 @@ void DateInputElement::initialize()
 
 void DateInputElement::renderDateElement()
 {
-    const std::string origionalElementId = mDateInput->GetId();
-    mDateInput->SetId(mContext->ConvertToValidId(mDateInput->GetId()));
+    initDateInputField();
+    initDateInputWrapper();
+    initDateInputComboBox();
 
-    const std::string calendarBoxId = RendererQml::Formatter() << mDateInput->GetId() << "_calendarBox";
+    mDateInputRow = std::make_shared<RendererQml::QmlTag>("RowLayout");
 
-    auto uiDateInputField = getDateInputField();
-    auto uiDateInputWrapper = getDateInputWrapper();
-    auto uiDateInputCombobox = getDateInputComboBox(uiDateInputField, uiDateInputWrapper, calendarBoxId);
+    mDateInputRow->Property("id", mDateInputRowId);
+    mDateInputRow->Property("width", "parent.width");
+    mDateInputRow->Property("height", "parent.height");
+    mDateInputRow->Property("spacing", "0");
 
-    auto uiDateInputRow = std::make_shared<RendererQml::QmlTag>("RowLayout");
+    initDateIconButton();
+    initClearIconButton();
 
-    uiDateInputRow->Property("width", "parent.width");
-    uiDateInputRow->Property("height", "parent.height");
-    uiDateInputRow->Property("spacing", "0");
+    mContext->addToInputElementList(mOrigionalElementId, (mDateFieldId + ".selectedDate"));
 
-    auto dateIcon = getDateIconButton(uiDateInputField->GetId(), calendarBoxId);
-    auto clearIcon = getClearIconButton(uiDateInputField->GetId());
+    mDateInputRow->AddChild(mDateIcon);
+    mDateInputRow->AddChild(mDateInputCombobox);
+    mDateInputRow->AddChild(mClearIcon);
 
-    mContext->addToInputElementList(origionalElementId, (uiDateInputField->GetId() + ".selectedDate"));
+    mDateInputWrapper->AddChild(mDateInputRow);
+    mDateInputCombobox->Property("Accessible.ignored", "true");
 
-    uiDateInputRow->AddChild(dateIcon);
-    uiDateInputRow->AddChild(uiDateInputCombobox);
-    uiDateInputRow->AddChild(clearIcon);
-
-    uiDateInputWrapper->AddChild(uiDateInputRow);
-    uiDateInputCombobox->Property("Accessible.ignored", "true");
-
-    mDateInputColElement->AddChild(uiDateInputWrapper);
+    mDateInputColElement->AddChild(mDateInputWrapper);
 }
 
-std::shared_ptr<RendererQml::QmlTag> DateInputElement::getDateInputField()
+void DateInputElement::initDateInputField()
 {
-    auto uiTextFieldId = mDateInput->GetId();
-    auto uiTextField = std::make_shared<RendererQml::QmlTag>("TextField");
+    mDateInputTextField = std::make_shared<RendererQml::QmlTag>("TextField");
 
-    uiTextField->Property("id", uiTextFieldId);
-    uiTextField->Property("width", "parent.width");
-    uiTextField->Property("height", "parent.height");
-    uiTextField->Property("font.family", mContext->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
-    uiTextField->Property("font.pixelSize", RendererQml::Formatter() << mDateConfig.pixelSize);
-    uiTextField->Property("selectByMouse", "true");
-    uiTextField->Property("selectedTextColor", "'white'");
-    uiTextField->Property("color", mContext->GetHexColor(mDateConfig.textColor));
-    uiTextField->Property("property string selectedDate", mDateInput->GetValue(), true);
-    uiTextField->AddFunctions(RendererQml::Formatter() << "signal " << "textChanged" << uiTextField->GetId() << "(var dateText)");
+    mDateInputTextField->Property("id", mDateFieldId);
+    mDateInputTextField->Property("width", "parent.width");
+    mDateInputTextField->Property("height", "parent.height");
+    mDateInputTextField->Property("font.family", mContext->GetConfig()->GetFontFamily(AdaptiveCards::FontType::Default), true);
+    mDateInputTextField->Property("font.pixelSize", RendererQml::Formatter() << mDateConfig.pixelSize);
+    mDateInputTextField->Property("selectByMouse", "true");
+    mDateInputTextField->Property("selectedTextColor", "'white'");
+    mDateInputTextField->Property("color", mContext->GetHexColor(mDateConfig.textColor));
+    mDateInputTextField->Property("property string selectedDate", mDateInput->GetValue(), true);
+    mDateInputTextField->AddFunctions(RendererQml::Formatter() << "signal " << "textChanged" << mDateInputTextField->GetId() << "(var dateText)");
 
-    uiTextField->Property("leftPadding", RendererQml::Formatter() << mDateConfig.textHorizontalPadding);
-    uiTextField->Property("rightPadding", RendererQml::Formatter() << mDateConfig.textHorizontalPadding);
-    uiTextField->Property("topPadding", RendererQml::Formatter() << mDateConfig.textVerticalPadding);
-    uiTextField->Property("bottomPadding", RendererQml::Formatter() << mDateConfig.textVerticalPadding);
+    mDateInputTextField->Property("leftPadding", RendererQml::Formatter() << mDateConfig.textHorizontalPadding);
+    mDateInputTextField->Property("rightPadding", RendererQml::Formatter() << mDateConfig.textHorizontalPadding);
+    mDateInputTextField->Property("topPadding", RendererQml::Formatter() << mDateConfig.textVerticalPadding);
+    mDateInputTextField->Property("bottomPadding", RendererQml::Formatter() << mDateConfig.textVerticalPadding);
 
-    uiTextField->Property("Accessible.name", "", true);
-    uiTextField->Property("Accessible.role", "Accessible.EditableText");
-    uiTextField->Property("Keys.onReleased", "{if (event.key === Qt.Key_Escape){event.accepted = true}}");
+    mDateInputTextField->Property("Accessible.name", "", true);
+    mDateInputTextField->Property("Accessible.role", "Accessible.EditableText");
+    mDateInputTextField->Property("Keys.onReleased", "{if (event.key === Qt.Key_Escape){event.accepted = true}}");
 
     auto backgroundTag = std::make_shared<RendererQml::QmlTag>("Rectangle");
     backgroundTag->Property("color", "'transparent'");
-    uiTextField->Property("background", backgroundTag->ToString());
+    mDateInputTextField->Property("background", backgroundTag->ToString());
 
     if (!mDateInput->GetMin().empty() && RendererQml::Utils::isValidDate(mDateInput->GetMin()))
     {
@@ -155,7 +162,7 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getDateInputField()
     }
     }
 
-    uiTextField->AddFunctions(RendererQml::Formatter() << "function setValidDate(dateString)"
+    mDateInputTextField->AddFunctions(RendererQml::Formatter() << "function setValidDate(dateString)"
         << "{"
         << "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};"
         << "var d=new Date(" << year_Text << "," << "Months[" << month_Text << "]," << day_Text << ");"
@@ -165,97 +172,91 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getDateInputField()
         << "Accessible.name = getAccessibleName();"
         << "}");
 
-    uiTextField->AddFunctions(getAccessibleName(uiTextField));
+    mDateInputTextField->AddFunctions(getAccessibleName(mDateInputTextField));
 
-    uiTextField->Property("onTextChanged", RendererQml::Formatter() << "{textChanged" << uiTextField->GetId() << "(text); setValidDate(text);}");
-    uiTextField->Property("onActiveFocusChanged", "{if(activeFocus){Accessible.name = getAccessibleName()}}");
+    mDateInputTextField->Property("onTextChanged", RendererQml::Formatter() << "{textChanged" << mDateInputTextField->GetId() << "(text); setValidDate(text);}");
+    mDateInputTextField->Property("onActiveFocusChanged", "{if(activeFocus){Accessible.name = getAccessibleName();cursorPosition=0;}}");
 
     if (!mDateInput->GetValue().empty() && RendererQml::Utils::isValidDate(mDateInput->GetValue()))
     {
-        uiTextField->Property("text", RendererQml::Formatter() << RendererQml::Utils::GetDate(mDateInput->GetValue()) << ".toLocaleString(Qt.locale(\"en_US\"),"
+        mDateInputTextField->Property("text", RendererQml::Formatter() << RendererQml::Utils::GetDate(mDateInput->GetValue()) << ".toLocaleString(Qt.locale(\"en_US\"),"
             << "\"" << mDateFormat << "\""
             << ")");
     }
 
-    uiTextField->Property("validator", RendererQml::Formatter() << "RegExpValidator { regExp: " << DateRegex << "}");
-    uiTextField->Property("onFocusChanged", RendererQml::Formatter() << "{"
+    mDateInputTextField->Property("validator", RendererQml::Formatter() << "RegExpValidator { regExp: " << DateRegex << "}");
+    mDateInputTextField->Property("onFocusChanged", RendererQml::Formatter() << "{"
         << "if(focus===true) {inputMask=\"" << inputMask << "\";}"
         << "if(focus === false){ "
         << "if(text === \"" << std::string(dateSeparator) + std::string(dateSeparator) << "\"){ inputMask = \"\" ; } "
         << "}} ");
 
     auto dateFormat = mDateFormat;
-    uiTextField->Property("placeholderText", RendererQml::Formatter() << (!mDateInput->GetPlaceholder().empty() ? mDateInput->GetPlaceholder() : "Select date") << " in " << RendererQml::Utils::ToLower(dateFormat), true);
-    uiTextField->Property("placeholderTextColor", mContext->GetHexColor(mDateConfig.placeHolderColor));
-
-    return uiTextField;
+    mDateInputTextField->Property("placeholderText", RendererQml::Formatter() << (!mDateInput->GetPlaceholder().empty() ? mDateInput->GetPlaceholder() : "Select date") << " in " << RendererQml::Utils::ToLower(dateFormat), true);
+    mDateInputTextField->Property("placeholderTextColor", mContext->GetHexColor(mDateConfig.placeHolderColor));
 }
 
-std::shared_ptr<RendererQml::QmlTag> DateInputElement::getDateInputWrapper()
+void DateInputElement::initDateInputWrapper()
 {
-    auto uiDateInputWrapper = std::make_shared<RendererQml::QmlTag>("Rectangle");
+    mDateInputWrapper = std::make_shared<RendererQml::QmlTag>("Rectangle");
 
-    uiDateInputWrapper->Property("id", RendererQml::Formatter() << mDateInput->GetId() << "_wrapper");
-    uiDateInputWrapper->Property("width", "parent.width");
-    uiDateInputWrapper->Property("height", RendererQml::Formatter() << mDateConfig.height);
-    uiDateInputWrapper->Property("radius", RendererQml::Formatter() << mDateConfig.borderRadius);
-    uiDateInputWrapper->Property("color", mContext->GetHexColor(mDateConfig.backgroundColorNormal));
-    uiDateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateInput->GetId() << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
-    uiDateInputWrapper->Property("border.width", RendererQml::Formatter() << mDateConfig.borderWidth);
-    uiDateInputWrapper->Property("visible", mDateInput->GetIsVisible() ? "true" : "false");
-    uiDateInputWrapper->AddFunctions(getColorFunction(uiDateInputWrapper->GetId()));
-
-    return uiDateInputWrapper;
+    mDateInputWrapper->Property("id", mDateInputWrapperId);
+    mDateInputWrapper->Property("width", "parent.width");
+    mDateInputWrapper->Property("height", RendererQml::Formatter() << mDateConfig.height);
+    mDateInputWrapper->Property("radius", RendererQml::Formatter() << mDateConfig.borderRadius);
+    mDateInputWrapper->Property("color", mContext->GetHexColor(mDateConfig.backgroundColorNormal));
+    mDateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateInput->GetId() << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
+    mDateInputWrapper->Property("border.width", RendererQml::Formatter() << mDateConfig.borderWidth);
+    mDateInputWrapper->Property("visible", mDateInput->GetIsVisible() ? "true" : "false");
+    mDateInputWrapper->AddFunctions(getColorFunction(mDateInputWrapper->GetId()));
 }
 
-std::shared_ptr<RendererQml::QmlTag> DateInputElement::getDateInputComboBox(std::shared_ptr<RendererQml::QmlTag> dateInputField, std::shared_ptr<RendererQml::QmlTag> dateInputWrapper, const std::string calendarBoxId)
+void DateInputElement::initDateInputComboBox()
 {
-    auto uiDateInputCombobox = std::make_shared<RendererQml::QmlTag>("ComboBox");
+    mDateInputCombobox = std::make_shared<RendererQml::QmlTag>("ComboBox");
 
-    auto popUp = getCalendar(dateInputField->GetId(), calendarBoxId);
-    popUp->Property("onClosed", RendererQml::Formatter() << dateInputField->GetId() << ".forceActiveFocus()");
+    initCalendar();
+    mDateInputCalendar->Property("onClosed", RendererQml::Formatter() << mDateFieldId << ".forceActiveFocus()");
 
-    uiDateInputCombobox->Property("id", RendererQml::Formatter() << mDateInput->GetId() << "_combobox");
-    uiDateInputCombobox->Property("Layout.fillWidth", "true");
-    uiDateInputCombobox->Property("popup", popUp->ToString());
-    uiDateInputCombobox->Property("indicator", "Rectangle{}");
-    uiDateInputCombobox->Property("focusPolicy", "Qt.NoFocus");
-    uiDateInputCombobox->Property("Keys.onReturnPressed", "this.popup.open()");
+    mDateInputCombobox->Property("id", mDateInputComboboxId);
+    mDateInputCombobox->Property("Layout.fillWidth", "true");
+    mDateInputCombobox->Property("popup", mDateInputCalendar->ToString());
+    mDateInputCombobox->Property("indicator", "Rectangle{}");
+    mDateInputCombobox->Property("focusPolicy", "Qt.NoFocus");
+    mDateInputCombobox->Property("Keys.onReturnPressed", "this.popup.open()");
 
-    dateInputField->Property("onPressed", RendererQml::Formatter() << dateInputWrapper->GetId() << ".colorChange(true)");
-    dateInputField->Property("onReleased", RendererQml::Formatter() << dateInputWrapper->GetId() << ".colorChange(false)");
-    dateInputField->Property("onHoveredChanged", RendererQml::Formatter() << dateInputWrapper->GetId() << ".colorChange(false)");
-    uiDateInputCombobox->Property("onActiveFocusChanged", RendererQml::Formatter() << dateInputWrapper->GetId() << ".colorChange(false)");
+    mDateInputTextField->Property("onPressed", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(true)");
+    mDateInputTextField->Property("onReleased", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(false)");
+    mDateInputTextField->Property("onHoveredChanged", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(false)");
+    mDateInputCombobox->Property("onActiveFocusChanged", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(false)");
 
-    addValidation(dateInputField, dateInputWrapper);
-    uiDateInputCombobox->Property("background", dateInputField->ToString());
-
-    return uiDateInputCombobox;
+    addValidation();
+    mDateInputCombobox->Property("background", mDateInputTextField->ToString());
 }
 
-std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendar(const std::string dateFieldId, const std::string calendarBoxId)
+void DateInputElement::initCalendar()
 {
     auto backgroundRectangle = std::make_shared<RendererQml::QmlTag>("Rectangle");
     backgroundRectangle->Property("radius", RendererQml::Formatter() << mDateConfig.calendarBorderRadius);
     backgroundRectangle->Property("border.color", mContext->GetHexColor(mDateConfig.calendarBorderColor));
     backgroundRectangle->Property("color", mContext->GetHexColor(mDateConfig.calendarBackgroundColor));
 
-    auto listviewCalendar = getCalendarListView(dateFieldId);
+    auto listviewCalendar = getCalendarListView();
 
-    auto popupTag = std::make_shared<RendererQml::QmlTag>("Popup");
-    popupTag->Property("id", calendarBoxId);
-    popupTag->Property("y", RendererQml::Formatter() << dateFieldId << ".height + 2");
-    popupTag->Property("x", RendererQml::Formatter() << "-" << mDateConfig.clearIconSize << "-" << mDateConfig.dateIconHorizontalPadding);
-    popupTag->Property("width", RendererQml::Formatter() << mDateConfig.calendarWidth);
-    popupTag->Property("height", RendererQml::Formatter() << mDateConfig.calendarHeight);
-    popupTag->Property("bottomInset", "0");
-    popupTag->Property("topInset", "0");
-    popupTag->Property("rightInset", "0");
-    popupTag->Property("leftInset", "0");
-    popupTag->Property("background", backgroundRectangle->ToString());
-    popupTag->Property("onOpened", RendererQml::Formatter() << listviewCalendar->GetId() << ".forceActiveFocus()");
+    mDateInputCalendar = std::make_shared<RendererQml::QmlTag>("Popup");
+    mDateInputCalendar->Property("id", mCalendarBoxId);
+    mDateInputCalendar->Property("y", RendererQml::Formatter() << mDateFieldId << ".height + 2");
+    mDateInputCalendar->Property("x", RendererQml::Formatter() << "-" << mDateConfig.clearIconSize << "-" << mDateConfig.dateIconHorizontalPadding);
+    mDateInputCalendar->Property("width", RendererQml::Formatter() << mDateConfig.calendarWidth);
+    mDateInputCalendar->Property("height", RendererQml::Formatter() << mDateConfig.calendarHeight);
+    mDateInputCalendar->Property("bottomInset", "0");
+    mDateInputCalendar->Property("topInset", "0");
+    mDateInputCalendar->Property("rightInset", "0");
+    mDateInputCalendar->Property("leftInset", "0");
+    mDateInputCalendar->Property("background", backgroundRectangle->ToString());
+    mDateInputCalendar->Property("onOpened", RendererQml::Formatter() << listviewCalendar->GetId() << ".forceActiveFocus()");
 
-    auto listViewDelegate = getCalendarListViewDelegate(listviewCalendar->GetId(), dateFieldId, popupTag->GetId());
+    auto listViewDelegate = getCalendarListViewDelegate(listviewCalendar->GetId());
     listviewCalendar->Property("delegate", listViewDelegate->ToString());
 
     auto contentItemRectangle = std::make_shared<RendererQml::QmlTag>("Rectangle");
@@ -263,8 +264,8 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendar(const std::st
     contentItemRectangle->Property("color", mContext->GetHexColor(mDateConfig.calendarBackgroundColor));
     contentItemRectangle->AddChild(listviewCalendar);
 
-    auto leftArrowButton = getArrowIconButton("leftArrow", dateFieldId, listviewCalendar->GetId());
-    auto rightArrowButton = getArrowIconButton("rightArrow", dateFieldId, listviewCalendar->GetId());
+    auto leftArrowButton = getArrowIconButton("leftArrow", listviewCalendar->GetId());
+    auto rightArrowButton = getArrowIconButton("rightArrow", listviewCalendar->GetId());
 
     leftArrowButton->Property("KeyNavigation.tab", rightArrowButton->GetId());
     leftArrowButton->Property("KeyNavigation.backtab", listviewCalendar->GetId());
@@ -284,8 +285,8 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendar(const std::st
         << "date.setDate(date.getDate() + 7);"
         << "else if (event.key === Qt.Key_Return)"
         << "{"
-        << dateFieldId << ".text = selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"" << mDateFormat << "\");"
-        << popupTag->GetId() << ".close();"
+        << mDateFieldId << ".text = selectedDate.toLocaleString(Qt.locale(\"en_US\"), \"" << mDateFormat << "\");"
+        << mCalendarBoxId << ".close();"
         << "}"
         << "else if (event.key === Qt.Key_Tab) {"
         << leftArrowButton->GetId() << ".forceActiveFocus()}"
@@ -299,13 +300,12 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendar(const std::st
         << listviewCalendar->GetId() << ".accessibilityPrefix = '';getDateForSC(selectedDate);"
         << "event.accepted = true}");
 
-    popupTag->AddChild(rightArrowButton);
-    popupTag->AddChild(leftArrowButton);
-    popupTag->Property("contentItem", contentItemRectangle->ToString());
-    return popupTag;
+    mDateInputCalendar->AddChild(rightArrowButton);
+    mDateInputCalendar->AddChild(leftArrowButton);
+    mDateInputCalendar->Property("contentItem", contentItemRectangle->ToString());
 }
 
-std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListView(const std::string dateFieldId)
+std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListView()
 {
     const std::vector<int>upperDateLimit{ 3000,0,1 };
     const std::vector<int>lowerDateLimit{ 0,0,1 };
@@ -329,7 +329,7 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListView(const
     listviewCalendar->Property("property string accessibilityPrefix", "Date Picker. The current date is", true);
     listviewCalendar->Property("property string dateForSc", "''");
 
-    listviewCalendar->Property("id", RendererQml::Formatter() << dateFieldId << "_calendarRoot");
+    listviewCalendar->Property("id", RendererQml::Formatter() << mDateFieldId << "_calendarRoot");
 
     listviewCalendar->Property("anchors.fill", "parent");
     listviewCalendar->AddFunctions("signal clicked(date clickedDate)");
@@ -363,8 +363,8 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListView(const
         << "}");
 
     listviewCalendar->Property("Component.onCompleted", RendererQml::Formatter() << "{"
-        << dateFieldId << "." << "textChanged" << dateFieldId << ".connect(setCalendarDateFromString);"
-        << dateFieldId << "." << "textChanged" << dateFieldId << "( " << dateFieldId << ".text);"
+        << mDateFieldId << "." << "textChanged" << mDateFieldId << ".connect(setCalendarDateFromString);"
+        << mDateFieldId << "." << "textChanged" << mDateFieldId << "( " << mDateFieldId << ".text);"
         << "if (selectedDate < minimumDate) { selectedDate = minimumDate;}"
         << "else if (selectedDate > maximumDate) { selectedDate = maximumDate;}"
         << "}");
@@ -378,10 +378,10 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListView(const
     return listviewCalendar;
 }
 
-std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListViewDelegate(const std::string listViewId, const std::string dateFieldId, const std::string popupId)
+std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListViewDelegate(const std::string listViewId)
 {
     auto listViewDelegate = std::make_shared<RendererQml::QmlTag>("Item");
-    listViewDelegate->Property("id", RendererQml::Formatter() << dateFieldId << "listViewDelegate");
+    listViewDelegate->Property("id", RendererQml::Formatter() << mDateFieldId << "listViewDelegate");
     listViewDelegate->Property("property int year", "Math.floor(index/12)");
     listViewDelegate->Property("property int month", "index%12");
     listViewDelegate->Property("property int firstDay", "(new Date(year, month, 1).getDay()-1 < 0 ? 6 : new Date(year, month, 1).getDay() - 1)");
@@ -389,7 +389,7 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListViewDelega
     listViewDelegate->Property("height", RendererQml::Formatter() << listViewId << ".height");
 
     auto headerText = std::make_shared<RendererQml::QmlTag>("Text");
-    headerText->Property("id", RendererQml::Formatter() << dateFieldId << "headerText");
+    headerText->Property("id", RendererQml::Formatter() << mDateFieldId << "headerText");
     headerText->Property("anchors.left", "parent.left");
     headerText->Property("color", mContext->GetHexColor(mDateConfig.textColor));
     headerText->Property("text", RendererQml::Formatter() << "['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'][" << listViewDelegate->GetId() << ".month] + ' ' + " << listViewDelegate->GetId() << ".year");
@@ -397,7 +397,7 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListViewDelega
     listViewDelegate->AddChild(headerText);
 
     auto monthGrid = std::make_shared<RendererQml::QmlTag>("Grid");
-    const std::string monthGridId = RendererQml::Formatter() << dateFieldId << "gridId";
+    const std::string monthGridId = RendererQml::Formatter() << mDateFieldId << "gridId";
     monthGrid->Property("id", monthGridId);
     monthGrid->Property("anchors.top", RendererQml::Formatter() << headerText->GetId() << ".bottom");
     monthGrid->Property("anchors.right", "parent.right");
@@ -413,17 +413,17 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListViewDelega
     repeaterTag->Property("model", RendererQml::Formatter() << monthGridId << ".columns * " << monthGridId << ".rows");
 
     auto delegateRectangle = std::make_shared<RendererQml::QmlTag>("Rectangle");
-    delegateRectangle->Property("id", RendererQml::Formatter() << dateFieldId << "delegateRectangle");
+    delegateRectangle->Property("id", RendererQml::Formatter() << mDateFieldId << "delegateRectangle");
     delegateRectangle->Property("property bool datePickerFocusCheck", RendererQml::Formatter() << listViewId << ".activeFocus && " << listViewId << ".activeFocus && new Date(year,month,date).toDateString() == " << listViewId << ".selectedDate.toDateString()");
     delegateRectangle->Property("onDatePickerFocusCheckChanged", "{if (datePickerFocusCheck)forceActiveFocus()}");
     delegateRectangle->Property("Accessible.name", RendererQml::Formatter() << listViewId << ".accessibilityPrefix + " << listViewId << ".dateForSc");
     delegateRectangle->Property("Accessible.role", "Accessible.NoRole");
 
     auto delegateMouseArea = std::make_shared<RendererQml::QmlTag>("MouseArea");
-    delegateMouseArea->Property("id", RendererQml::Formatter() << dateFieldId << "delegateMouseArea");
+    delegateMouseArea->Property("id", RendererQml::Formatter() << mDateFieldId << "delegateMouseArea");
 
     auto delegateText = std::make_shared<RendererQml::QmlTag>("Text");
-    delegateText->Property("id", RendererQml::Formatter() << dateFieldId << "delegateText");
+    delegateText->Property("id", RendererQml::Formatter() << mDateFieldId << "delegateText");
     delegateText->Property("anchors.centerIn", "parent");
     delegateText->Property("font.pixelSize", RendererQml::Formatter() << "day < 0 ? " << mDateConfig.calendarDayTextSize << " : " << mDateConfig.calendarDateTextSize);
 
@@ -451,8 +451,8 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListViewDelega
 
     delegateMouseArea->Property("onReleased", RendererQml::Formatter() << "{"
         << listViewId << ".selectedDate = " << delegateRectangle->GetId() << ".cellDate;"
-        << dateFieldId << ".text = " << listViewId << ".selectedDate.toLocaleString(Qt.locale(\"en_US\"),\"" << mDateFormat << "\");"
-        << popupId << ".close();"
+        << mDateFieldId << ".text = " << listViewId << ".selectedDate.toLocaleString(Qt.locale(\"en_US\"),\"" << mDateFormat << "\");"
+        << mCalendarBoxId << ".close();"
         << "}");
 
     delegateRectangle->Property("property int day", "index - 7");
@@ -481,7 +481,7 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListViewDelega
     return listViewDelegate;
 }
 
-std::shared_ptr<RendererQml::QmlTag> DateInputElement::getArrowIconButton(const std::string arrowType, const std::string dateFieldId, const std::string listViewId)
+std::shared_ptr<RendererQml::QmlTag> DateInputElement::getArrowIconButton(const std::string arrowType, const std::string listViewId)
 {
     auto iconBackground = std::make_shared<RendererQml::QmlTag>("Rectangle");
     iconBackground->Property("color", mContext->GetHexColor(mDateConfig.calendarBackgroundColor));
@@ -489,7 +489,7 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getArrowIconButton(const 
     iconBackground->Property("border.color", mContext->GetHexColor(mDateConfig.calendarBorderColor));
 
     auto arrowButton = RendererQml::AdaptiveCardQmlRenderer::GetIconTag(mContext);
-    arrowButton->Property("id", RendererQml::Formatter() << dateFieldId << "_" << arrowType);
+    arrowButton->Property("id", RendererQml::Formatter() << mDateFieldId << "_" << arrowType);
     arrowButton->RemoveProperty("anchors.bottom");
     arrowButton->Property("width", "icon.width");
     arrowButton->Property("height", "icon.height");
@@ -512,7 +512,7 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getArrowIconButton(const 
 
     if (arrowType == "leftArrow")
     {
-        arrowButton->Property("anchors.right", RendererQml::Formatter() << dateFieldId << "_rightArrow" << ".left");
+        arrowButton->Property("anchors.right", RendererQml::Formatter() << mDateFieldId << "_rightArrow" << ".left");
         arrowButton->Property("icon.source", RendererQml::left_arrow_28, true);
         arrowButton->Property("Accessible.name", "Previous Month", true);
         onReleased = RendererQml::Formatter() << "{"
@@ -537,46 +537,42 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getArrowIconButton(const 
     return arrowButton;
 }
 
-std::shared_ptr<RendererQml::QmlTag> DateInputElement::getDateIconButton(const std::string dateFieldId, const std::string calendarBoxId)
+void DateInputElement::initDateIconButton()
 {
-    auto dateIcon = RendererQml::AdaptiveCardQmlRenderer::GetClearIconButton(mContext);
+    mDateIcon = RendererQml::AdaptiveCardQmlRenderer::GetClearIconButton(mContext);
 
-    dateIcon->RemoveProperty("anchors.right");
-    dateIcon->RemoveProperty("anchors.margins");
-    dateIcon->RemoveProperty("anchors.verticalCenter");
-    dateIcon->Property("id", RendererQml::Formatter() << mDateInput->GetId() << "_icon");
-    dateIcon->Property("Layout.leftMargin", RendererQml::Formatter() << mDateConfig.dateIconHorizontalPadding);
-    dateIcon->Property("Layout.alignment", "Qt.AlignVCenter");
-    dateIcon->Property("focusPolicy", "Qt.NoFocus");
-    dateIcon->Property("width", "18");
-    dateIcon->Property("height", "18");
-    dateIcon->Property("icon.color", RendererQml::Formatter() << mDateInput->GetId() << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.dateIconColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.dateIconColorNormal));
-    dateIcon->Property("icon.source", RendererQml::calendar_icon, true);
-    std::string onClicked_value = "{ " + dateFieldId + ".forceActiveFocus(); " + calendarBoxId + ".open();}";
-    dateIcon->Property("onClicked", onClicked_value);
-
-    return dateIcon;
+    mDateIcon->RemoveProperty("anchors.right");
+    mDateIcon->RemoveProperty("anchors.margins");
+    mDateIcon->RemoveProperty("anchors.verticalCenter");
+    mDateIcon->Property("id", mDateIconId);
+    mDateIcon->Property("Layout.leftMargin", RendererQml::Formatter() << mDateConfig.dateIconHorizontalPadding);
+    mDateIcon->Property("Layout.alignment", "Qt.AlignVCenter");
+    mDateIcon->Property("focusPolicy", "Qt.NoFocus");
+    mDateIcon->Property("width", "18");
+    mDateIcon->Property("height", "18");
+    mDateIcon->Property("icon.color", RendererQml::Formatter() << mDateInput->GetId() << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.dateIconColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.dateIconColorNormal));
+    mDateIcon->Property("icon.source", RendererQml::calendar_icon, true);
+    std::string onClicked_value = "{ " + mDateFieldId + ".forceActiveFocus(); " + mCalendarBoxId + ".open();}";
+    mDateIcon->Property("onClicked", onClicked_value);
 }
 
-std::shared_ptr<RendererQml::QmlTag> DateInputElement::getClearIconButton(const std::string dateFieldId)
+void DateInputElement::initClearIconButton()
 {
-    auto clearIcon = RendererQml::AdaptiveCardQmlRenderer::GetClearIconButton(mContext);
+    mClearIcon = RendererQml::AdaptiveCardQmlRenderer::GetClearIconButton(mContext);
 
-    clearIcon->RemoveProperty("anchors.right");
-    clearIcon->RemoveProperty("anchors.margins");
-    clearIcon->RemoveProperty("anchors.verticalCenter");
-    clearIcon->Property("id", RendererQml::Formatter() << mDateInput->GetId() << "_clear_icon");
-    clearIcon->Property("Layout.rightMargin", RendererQml::Formatter() << mDateConfig.clearIconHorizontalPadding);
-    std::string clearIcon_visible_value = RendererQml::Formatter() << "(!" << dateFieldId << ".focus && " << dateFieldId << ".text !==\"\") || (" << dateFieldId << ".focus && " << dateFieldId << ".text !== " << "\"\\/\\/\")";
-    clearIcon->Property("visible", clearIcon_visible_value);
+    mClearIcon->RemoveProperty("anchors.right");
+    mClearIcon->RemoveProperty("anchors.margins");
+    mClearIcon->RemoveProperty("anchors.verticalCenter");
+    mClearIcon->Property("id", mClearIconId);
+    mClearIcon->Property("Layout.rightMargin", RendererQml::Formatter() << mDateConfig.clearIconHorizontalPadding);
+    std::string clearIcon_visible_value = RendererQml::Formatter() << "(!" << mDateFieldId << ".focus && " << mDateFieldId << ".text !==\"\") || (" << mDateFieldId << ".focus && " << mDateFieldId << ".text !== " << "\"\\/\\/\")";
+    mClearIcon->Property("visible", clearIcon_visible_value);
     std::string clearIcon_OnClicked_value = RendererQml::Formatter() << " {"
         << "nextItemInFocusChain().forceActiveFocus();\n"
-        << dateFieldId << ".clear();\n" << "}";
-    clearIcon->Property("onClicked", clearIcon_OnClicked_value);
-    clearIcon->Property("Accessible.name", "Date Picker clear", true);
-    clearIcon->Property("Accessible.role", "Accessible.Button");
-
-    return clearIcon;
+        << mDateFieldId << ".clear();\n" << "}";
+    mClearIcon->Property("onClicked", clearIcon_OnClicked_value);
+    mClearIcon->Property("Accessible.name", "Date Picker clear", true);
+    mClearIcon->Property("Accessible.role", "Accessible.Button");
 }
 
 void DateInputElement::addInputLabel(bool isRequired)
@@ -637,28 +633,28 @@ void DateInputElement::addErrorMessage()
     }
 }
 
-void DateInputElement::addValidation(std::shared_ptr<RendererQml::QmlTag> uiDateInput, std::shared_ptr<RendererQml::QmlTag> dateInputWrapper)
+void DateInputElement::addValidation()
 {
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mDateInput->GetIsRequired())
     {
-        mContext->addToRequiredInputElementsIdList(uiDateInput->GetId());
-        uiDateInput->Property("property bool showErrorMessage", "false");
+        mContext->addToRequiredInputElementsIdList(mDateFieldId);
+        mDateInputTextField->Property("property bool showErrorMessage", "false");
 
         std::ostringstream validator;
         std::string condition;
 
         validator << "function validate(){"
-            << "var isValid = (" << uiDateInput->GetId() << ".selectedDate !== '' && (" << uiDateInput->GetId() << "_calendarRoot.selectedDate >= " << uiDateInput->GetId() << "_calendarRoot.minimumDate) && (" << uiDateInput->GetId() << "_calendarRoot.selectedDate <= " << uiDateInput->GetId() << "_calendarRoot.maximumDate));"
+            << "var isValid = (" << mDateFieldId << ".selectedDate !== '' && (" << mDateFieldId << "_calendarRoot.selectedDate >= " << mDateFieldId << "_calendarRoot.minimumDate) && (" << mDateFieldId << "_calendarRoot.selectedDate <= " << mDateFieldId << "_calendarRoot.maximumDate));"
             << "if(showErrorMessage){"
             << "if(isValid){"
             << "showErrorMessage = false;"
             << "}}"
             << "return !isValid;}";
 
-        uiDateInput->AddFunctions(validator.str());
-        uiDateInput->Property("onSelectedDateChanged", "validate()");
-        uiDateInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << dateInputWrapper->GetId() << ".colorChange(false)");
-        dateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateInput->GetId() << ".showErrorMessage ? " << mContext->GetHexColor(mDateConfig.borderColorOnError) << " : " << mDateInput->GetId() << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
+        mDateInputTextField->AddFunctions(validator.str());
+        mDateInputTextField->Property("onSelectedDateChanged", "validate()");
+        mDateInputTextField->Property("onShowErrorMessageChanged", RendererQml::Formatter() << mDateInputWrapperId<< ".colorChange(false)");
+        mDateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateInput->GetId() << ".showErrorMessage ? " << mContext->GetHexColor(mDateConfig.borderColorOnError) << " : " << mDateInput->GetId() << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
     }
 }
 

@@ -1,6 +1,6 @@
 #include "ChoiceSetRender.h"
 #include "Formatter.h"
-#include "utils.h"
+#include "Utils.h"
 
 ChoiceSetElement::ChoiceSetElement(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
     :mChoiceSetInput(input),

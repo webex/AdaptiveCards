@@ -20,7 +20,25 @@ private:
     std::string mDateFormat;
     std::string mMinimumDate;
     std::string mMaximumDate;
+    std::string mDateFieldId;
+    std::string mOrigionalElementId;
+    std::string mCalendarBoxId;
+    std::string mDateInputColElementId;
+    std::string mDateInputWrapperId;
+    std::string mDateInputComboboxId;
+    std::string mDateInputRowId;
+    std::string mDateIconId;
+    std::string mClearIconId;
+
     std::shared_ptr<RendererQml::QmlTag> mDateInputColElement;
+    std::shared_ptr<RendererQml::QmlTag> mDateInputTextField;
+    std::shared_ptr<RendererQml::QmlTag> mDateInputWrapper;
+    std::shared_ptr<RendererQml::QmlTag> mDateInputCombobox;
+    std::shared_ptr<RendererQml::QmlTag> mDateInputCalendar;
+    std::shared_ptr<RendererQml::QmlTag> mDateInputRow;
+    std::shared_ptr<RendererQml::QmlTag> mDateIcon;
+    std::shared_ptr<RendererQml::QmlTag> mClearIcon;
+
     const std::shared_ptr<AdaptiveCards::DateInput>& mDateInput;
     const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
     const RendererQml::InputDateConfig mDateConfig;
@@ -28,19 +46,19 @@ private:
 private:
     void addInputLabel(bool isRequired = false);
     void addErrorMessage();
-    void addValidation(std::shared_ptr<RendererQml::QmlTag> uiDateInput, std::shared_ptr<RendererQml::QmlTag> dateInputWrapper);
+    void addValidation();
     std::string getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiDateInput);
 
     void renderDateElement();
-    std::shared_ptr<RendererQml::QmlTag> getDateInputField();
-    std::shared_ptr<RendererQml::QmlTag> getDateInputWrapper();
-    std::shared_ptr<RendererQml::QmlTag> getDateInputComboBox(std::shared_ptr<RendererQml::QmlTag> dateInputField, std::shared_ptr<RendererQml::QmlTag> dateInputWrapper, const std::string calendarBoxId);
-    std::shared_ptr<RendererQml::QmlTag> getCalendar(const std::string textFieldId, const std::string calendarBoxId);
-    std::shared_ptr<RendererQml::QmlTag> getCalendarListView(const std::string dateFieldId);
-    std::shared_ptr<RendererQml::QmlTag> getCalendarListViewDelegate(const std::string listViewId, const std::string dateFieldId, const std::string popupId);
-    std::shared_ptr<RendererQml::QmlTag> getArrowIconButton(const std::string arrowType, const std::string dateFieldId, const std::string listViewId);
-    std::shared_ptr<RendererQml::QmlTag> getDateIconButton(const std::string dateFieldId, const std::string calendarBoxId);
-    std::shared_ptr<RendererQml::QmlTag> getClearIconButton(const std::string dateFieldId);
+    void initDateInputField();
+    void initDateInputWrapper();
+    void initDateInputComboBox();
+    void initCalendar();
+    std::shared_ptr<RendererQml::QmlTag> getCalendarListView();
+    std::shared_ptr<RendererQml::QmlTag> getCalendarListViewDelegate(const std::string listViewId);
+    std::shared_ptr<RendererQml::QmlTag> getArrowIconButton(const std::string arrowType, const std::string listViewId);
+    void initDateIconButton();
+    void initClearIconButton();
     const std::string getColorFunction(const std::string wrapperId);
 };
 

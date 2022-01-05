@@ -1,6 +1,6 @@
 #include "ToggleInputRender.h"
 #include "Formatter.h"
-#include "utils.h"
+#include "Utils.h"
 
 ToggleInputElement::ToggleInputElement(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> mContext)
     :mToggleInput(input),
