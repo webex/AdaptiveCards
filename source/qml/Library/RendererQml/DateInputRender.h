@@ -17,18 +17,18 @@ public:
     std::shared_ptr<RendererQml::QmlTag> getQmlTag();
 
 private:
-    std::string mDateFormat;
-    std::string mMinimumDate;
-    std::string mMaximumDate;
-    std::string mDateFieldId;
-    std::string mOrigionalElementId;
-    std::string mCalendarBoxId;
-    std::string mDateInputColElementId;
-    std::string mDateInputWrapperId;
-    std::string mDateInputComboboxId;
-    std::string mDateInputRowId;
-    std::string mDateIconId;
-    std::string mClearIconId;
+    std::string mDateFormat{ "" };
+    std::string mMinimumDate{ "" };
+    std::string mMaximumDate{ "" };
+    std::string mDateFieldId{ "" };
+    std::string mOrigionalElementId{ "" };
+    std::string mCalendarBoxId{ "" };
+    std::string mDateInputColElementId{ "" };
+    std::string mDateInputWrapperId{ "" };
+    std::string mDateInputComboboxId{ "" };
+    std::string mDateInputRowId{ "" };
+    std::string mDateIconId{ "" };
+    std::string mClearIconId{ "" };
 
     std::shared_ptr<RendererQml::QmlTag> mDateInputColElement;
     std::shared_ptr<RendererQml::QmlTag> mDateInputTextField;
@@ -44,21 +44,24 @@ private:
     const RendererQml::InputDateConfig mDateConfig;
 
 private:
-    void addInputLabel(bool isRequired = false);
-    void addErrorMessage();
-    void addValidation();
-    std::string getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiDateInput);
-
     void renderDateElement();
+
     void initDateInputField();
     void initDateInputWrapper();
     void initDateInputComboBox();
     void initCalendar();
+    void initDateIconButton();
+    void initClearIconButton();
+
+    void addInputLabel(bool isRequired = false);
+    void addErrorMessage();
+    void addValidation();
+
     std::shared_ptr<RendererQml::QmlTag> getCalendarListView();
     std::shared_ptr<RendererQml::QmlTag> getCalendarListViewDelegate(const std::string listViewId);
     std::shared_ptr<RendererQml::QmlTag> getArrowIconButton(const std::string arrowType, const std::string listViewId);
-    void initDateIconButton();
-    void initClearIconButton();
+
     const std::string getColorFunction(const std::string wrapperId);
+    const std::string getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiDateInput);
 };
 

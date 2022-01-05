@@ -2007,21 +2007,36 @@ namespace RendererQml
         {
             if (action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
             {
-                std::string isNotSubmittable;
+                std::string requiredElements = "var requiredElements = [";
+                std::string lastElement = context->getRequiredInputElementsIdList().size() > 0 ? *(context->getRequiredInputElementsIdList().rbegin()) : "";
+
                 for (const auto& element : context->getRequiredInputElementsIdList())
                 {
-                    function << element << ".showErrorMessage = " << element << ".validate()\n";
-                    if (element == *(context->getRequiredInputElementsIdList().rbegin()))
+                    requiredElements += element;
+                    if (element != lastElement)
                     {
-                        isNotSubmittable += Formatter() << element << ".showErrorMessage";
-                    }
-                    else
-                    {
-                        isNotSubmittable += Formatter() << element << ".showErrorMessage || ";
+                        requiredElements += ",";
                     }
                 }
-                function << "var isNotSubmittable = " << (isNotSubmittable.empty() ? "false" : isNotSubmittable) << ";\n";
-                function << "if(isNotSubmittable){return};\n";
+
+                requiredElements += "];";
+
+                function << requiredElements << "var firstElement = undefined; var isNotSubmittable = false;";
+                function << "for(var i=0;i<requiredElements.length;i++){"
+                    "requiredElements[i].showErrorMessage = requiredElements[i].validate();"
+                    "isNotSubmittable |= requiredElements[i].showErrorMessage;"
+                    "if (firstElement === undefined && requiredElements[i].showErrorMessage){"
+                    "firstElement = requiredElements[i];"
+                    "}}";
+
+                function << "if(isNotSubmittable){"
+                    "if(firstElement.isButtonGroup !== undefined){"
+                        "firstElement.focusFirstButton();"
+                    "}else {"
+                        "firstElement.forceActiveFocus();"
+                    "}"
+                    "}else{";
+
                 for (const auto& element : context->getInputElementList())
                 {
                     function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
@@ -2039,6 +2054,7 @@ namespace RendererQml
         function << "var paramslist = JSON.stringify(paramJson);\n";
         function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\nconsole.log(paramslist);\n";
         function << (elementType == "Button" ? "isButtonDisabled = true;}" : "");
+        function << "}";
 
         return function.str();
     }

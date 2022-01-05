@@ -33,6 +33,7 @@ void DateInputElement::initialize()
     mDateInputColElement->Property("id", mDateInputColElementId);
     mDateInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mDateInputColElement->Property("width", "parent.width");
+    mDateInputColElement->Property("visible", mDateInput->GetIsVisible() ? "true" : "false");
 
     addInputLabel(mDateInput->GetIsRequired());
     renderDateElement();
@@ -55,7 +56,10 @@ void DateInputElement::renderDateElement()
     initDateIconButton();
     initClearIconButton();
 
-    mContext->addToInputElementList(mOrigionalElementId, (mDateFieldId + ".selectedDate"));
+    if (mDateInput->GetIsVisible())
+    {
+        mContext->addToInputElementList(mOrigionalElementId, (mDateFieldId + ".selectedDate"));
+    }
 
     mDateInputRow->AddChild(mDateIcon);
     mDateInputRow->AddChild(mDateInputCombobox);
@@ -207,7 +211,6 @@ void DateInputElement::initDateInputWrapper()
     mDateInputWrapper->Property("color", mContext->GetHexColor(mDateConfig.backgroundColorNormal));
     mDateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateInput->GetId() << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
     mDateInputWrapper->Property("border.width", RendererQml::Formatter() << mDateConfig.borderWidth);
-    mDateInputWrapper->Property("visible", mDateInput->GetIsVisible() ? "true" : "false");
     mDateInputWrapper->AddFunctions(getColorFunction(mDateInputWrapper->GetId()));
 }
 
@@ -637,7 +640,10 @@ void DateInputElement::addValidation()
 {
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mDateInput->GetIsRequired())
     {
-        mContext->addToRequiredInputElementsIdList(mDateFieldId);
+        if (mDateInput->GetIsVisible())
+        {
+            mContext->addToRequiredInputElementsIdList(mDateFieldId);
+        }
         mDateInputTextField->Property("property bool showErrorMessage", "false");
 
         std::ostringstream validator;
@@ -678,7 +684,7 @@ const std::string DateInputElement::getColorFunction(const std::string wrapperId
     return colorFunction.str();
 }
 
-std::string DateInputElement::getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiDateInput)
+const std::string DateInputElement::getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiDateInput)
 {
     std::ostringstream accessibleName;
     std::ostringstream labelString;

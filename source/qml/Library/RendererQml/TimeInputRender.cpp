@@ -32,6 +32,7 @@ void TimeInputElement::initialize()
     mTimeInputColElement->Property("id", RendererQml::Formatter() << id << "_column");
     mTimeInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mTimeInputColElement->Property("width", "parent.width");
+    mTimeInputColElement->Property("visible", mTimeInput->GetIsVisible() ? "true" : "false");
 
     addInputLabel(mTimeInput->GetIsRequired());
     renderTimeElement();
@@ -50,7 +51,10 @@ void TimeInputElement::renderTimeElement()
 
     mTimeInputWrapper->AddChild(mTimeInputRow);
 
-    mContext->addToInputElementList(origionalElementId, (mTimeInputTextField->GetId() + ".selectedTime"));
+    if (mTimeInput->GetIsVisible())
+    {
+        mContext->addToInputElementList(origionalElementId, (mTimeInputTextField->GetId() + ".selectedTime"));
+    }
 
     mTimeInputColElement->AddChild(mTimeInputWrapper);
 }
@@ -65,7 +69,6 @@ void TimeInputElement::initTimeInputWrapper()
     mTimeInputWrapper->Property("color", mContext->GetHexColor(mTimeInputConfig.backgroundColorNormal));
     mTimeInputWrapper->Property("border.color", RendererQml::Formatter() << id << ".activeFocus? " << mContext->GetHexColor(mTimeInputConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mTimeInputConfig.borderColorNormal));
     mTimeInputWrapper->Property("border.width", RendererQml::Formatter() << mTimeInputConfig.borderWidth);
-    mTimeInputWrapper->Property("visible", mTimeInput->GetIsVisible() ? "true" : "false");
     mTimeInputWrapper->AddFunctions(getColorFunction());
 }
 
@@ -473,7 +476,10 @@ void TimeInputElement::addValidation()
 {
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mTimeInput->GetIsRequired())
     {
-        mContext->addToRequiredInputElementsIdList(mTimeInputTextField->GetId());
+        if (mTimeInput->GetIsVisible())
+        {
+            mContext->addToRequiredInputElementsIdList(mTimeInputTextField->GetId());
+        }
         mTimeInputTextField->Property("property bool showErrorMessage", "false");
 
         std::ostringstream validator;
@@ -513,7 +519,7 @@ void TimeInputElement::addValidation()
     }
 }
 
-std::string TimeInputElement::getColorFunction()
+const std::string TimeInputElement::getColorFunction()
 {
     std::ostringstream colorFunction;
 
@@ -533,7 +539,7 @@ std::string TimeInputElement::getColorFunction()
     return colorFunction.str();
 }
 
-std::string TimeInputElement::getAccessibleName()
+const std::string TimeInputElement::getAccessibleName()
 {
     std::ostringstream accessibleName;
     std::ostringstream labelString;
