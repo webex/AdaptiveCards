@@ -176,7 +176,7 @@ void DateInputElement::initDateInputField()
         << "Accessible.name = getAccessibleName();"
         << "}");
 
-    mDateInputTextField->AddFunctions(getAccessibleName(mDateInputTextField));
+    mDateInputTextField->AddFunctions(getAccessibleName());
 
     mDateInputTextField->Property("onTextChanged", RendererQml::Formatter() << "{textChanged" << mDateInputTextField->GetId() << "(text); setValidDate(text);}");
     mDateInputTextField->Property("onActiveFocusChanged", "{if(activeFocus){Accessible.name = getAccessibleName();cursorPosition=0;}}");
@@ -684,7 +684,7 @@ const std::string DateInputElement::getColorFunction()
     return colorFunction.str();
 }
 
-const std::string DateInputElement::getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiDateInput)
+const std::string DateInputElement::getAccessibleName()
 {
     std::ostringstream accessibleName;
     std::ostringstream labelString;
@@ -700,13 +700,13 @@ const std::string DateInputElement::getAccessibleName(std::shared_ptr<RendererQm
 
         if (!mDateInput->GetErrorMessage().empty())
         {
-            errorString << "if(" << uiDateInput->GetId() << ".showErrorMessage === true){"
+            errorString << "if(" << mDateFieldId << ".showErrorMessage === true){"
                 << "accessibleName += 'Error. " << mDateInput->GetErrorMessage() << ". ';}";
         }
     }
 
-    placeHolderString << "if(" << uiDateInput->GetId() << ".selectedDate !== ''){"
-        << "accessibleName += (" << uiDateInput->GetId() << "_calendarRoot.selectedDate.toLocaleDateString() + '. ');"
+    placeHolderString << "if(" << mDateFieldId << ".selectedDate !== ''){"
+        << "accessibleName += (" << mDateFieldId << "_calendarRoot.selectedDate.toLocaleDateString() + '. ');"
         << "}else{"
         << "accessibleName += placeholderText;}";
 
