@@ -138,6 +138,7 @@ namespace RendererQml
         std::string borderColorOnUncheckedAndHovered{ "#33FFFFFF" };
         std::string borderColorOnUnchecked{ "#1CFFFFFF" };
         std::string textColor{ "#F2FFFFFF" };
+        std::string errorMessageColor{ "#FFFC8B98" };
         std::string radioButtonInnerCircleColorOnChecked{ "#F2000000" };
         std::string checkBoxIconColorOnChecked{ "#F2000000" };
         std::string focusRectangleColor{ "#80FFFFFF" };
@@ -146,6 +147,7 @@ namespace RendererQml
         int checkBoxSize{ 16 };
         int checkBoxBorderRadius{ 2 };
         int pixelSize{ 16 };
+        int labelSize{ 14 };
         int borderWidth{ 1 };
     };
 

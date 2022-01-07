@@ -313,6 +313,8 @@
 		0872608825E6AD420036061C /* ACRColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0872608725E6AD420036061C /* ACRColumnView.swift */; };
 		0872609025E6AF530036061C /* ColumnSetRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0872608F25E6AF530036061C /* ColumnSetRenderer.swift */; };
 		0872609525E6AF5F0036061C /* ColumnRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0872609425E6AF5F0036061C /* ColumnRenderer.swift */; };
+		0876273D27733C6B00F3347F /* ACRInputTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0876273C27733C6B00F3347F /* ACRInputTextViewTests.swift */; };
+		0876273F27734F9800F3347F /* ViewUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0876273E27734F9800F3347F /* ViewUtils.swift */; };
 		088C673C2615C2B00070186C /* ACRContentStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088C673B2615C2B00070186C /* ACRContentStackView.swift */; };
 		088F716226A9560600C52C06 /* ActionToggleVisibilityRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088F716126A9560600C52C06 /* ActionToggleVisibilityRenderer.swift */; };
 		088F716526A9925400C52C06 /* SpacingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088F716426A9925400C52C06 /* SpacingView.swift */; };
@@ -1005,6 +1007,8 @@
 		0872608725E6AD420036061C /* ACRColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRColumnView.swift; sourceTree = "<group>"; };
 		0872608F25E6AF530036061C /* ColumnSetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnSetRenderer.swift; sourceTree = "<group>"; };
 		0872609425E6AF5F0036061C /* ColumnRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnRenderer.swift; sourceTree = "<group>"; };
+		0876273C27733C6B00F3347F /* ACRInputTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputTextViewTests.swift; sourceTree = "<group>"; };
+		0876273E27734F9800F3347F /* ViewUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewUtils.swift; sourceTree = "<group>"; };
 		088C673B2615C2B00070186C /* ACRContentStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRContentStackView.swift; sourceTree = "<group>"; };
 		088F716126A9560600C52C06 /* ActionToggleVisibilityRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionToggleVisibilityRenderer.swift; sourceTree = "<group>"; };
 		088F716426A9925400C52C06 /* SpacingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpacingView.swift; sourceTree = "<group>"; };
@@ -1157,12 +1161,13 @@
 		082864FB25C99E1D0080D767 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				082864FC25C99E300080D767 /* HostConfigUtils.swift */,
-				08D7767025CBF27B0095C1B3 /* LogUtils.swift */,
-				A032272425E93C7400E7172E /* ImageUtils.swift */,
+				08A12EE226987B5C00490977 /* ACSExtensions.swift */,
 				29C3AD37260C7C6A00467069 /* BleedUtils.swift */,
 				81A3000A260C7961003848DD /* BundleUtils.swift */,
-				08A12EE226987B5C00490977 /* ACSExtensions.swift */,
+				082864FC25C99E300080D767 /* HostConfigUtils.swift */,
+				A032272425E93C7400E7172E /* ImageUtils.swift */,
+				08D7767025CBF27B0095C1B3 /* LogUtils.swift */,
+				0876273E27734F9800F3347F /* ViewUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1875,17 +1880,18 @@
 		81C0371F260499B900B33324 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				08352EA12695C09100B544C3 /* ACRActionSetViewTests.swift */,
+				81AED8ED27262B360045B1E8 /* ACRButtonTests.swift */,
+				816F6F0626D6E2CB00D34030 /* ACRChoiceSetButtonTests.swift */,
+				81980D8B26E66938002CD350 /* ACRChoiceSetViewTests.swift */,
+				0876273C27733C6B00F3347F /* ACRInputTextViewTests.swift */,
+				81AFEA7526281B9400DD47E0 /* ACRNumericTextFieldTests.swift */,
+				2890094226D62B270045293A /* ACRTextFieldTests.swift */,
+				08C86F47260E0843005252B0 /* ACRViewTests.swift */,
 				81C037232604AB9D00B33324 /* BackgroundImageViewTests.swift */,
 				281950422703141500B0D790 /* HostConfigUtilsTests.swift */,
-				08C86F47260E0843005252B0 /* ACRViewTests.swift */,
-				2890094226D62B270045293A /* ACRTextFieldTests.swift */,
-				81AFEA7526281B9400DD47E0 /* ACRNumericTextFieldTests.swift */,
-				08352EA12695C09100B544C3 /* ACRActionSetViewTests.swift */,
 				08E9A59C268DA48F009D7151 /* ImageSetImageViewTests.swift */,
-				816F6F0626D6E2CB00D34030 /* ACRChoiceSetButtonTests.swift */,
 				8107117B26E208E5001A7BC2 /* MultiLineInputTextViewTests.swift */,
-				81980D8B26E66938002CD350 /* ACRChoiceSetViewTests.swift */,
-				81AED8ED27262B360045B1E8 /* ACRButtonTests.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2335,6 +2341,7 @@
 				81A3000B260C7961003848DD /* BundleUtils.swift in Sources */,
 				0872609025E6AF530036061C /* ColumnSetRenderer.swift in Sources */,
 				082864FD25C99E300080D767 /* HostConfigUtils.swift in Sources */,
+				0876273F27734F9800F3347F /* ViewUtils.swift in Sources */,
 				A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */,
 				28D7A52425EFAD8000AEA09C /* ImageSetRenderer.swift in Sources */,
 				08B5F91925C9272500A7D37A /* AdaptiveCardRenderer.swift in Sources */,
@@ -2384,6 +2391,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2871B13725DD41C60040AB27 /* FakeInputNumber.swift in Sources */,
+				0876273D27733C6B00F3347F /* ACRInputTextViewTests.swift in Sources */,
 				2871B16625DF722A0040AB27 /* MultilineInputTextRendererTest.swift in Sources */,
 				29E8DF8A25E8223D000EC12F /* FakeChoiceInput.swift in Sources */,
 				13B13E4C25E750CB005D9380 /* FakeInputDate.swift in Sources */,

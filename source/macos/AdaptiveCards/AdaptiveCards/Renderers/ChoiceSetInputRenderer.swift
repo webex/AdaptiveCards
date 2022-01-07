@@ -30,6 +30,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         view.isRadioGroup = !isMultiSelect
         view.wrap = choiceSetInput.getWrap()
         view.idString = choiceSetInput.getId()
+        view.isRequired = choiceSetInput.getIsRequired()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
             let attributedString = getAttributedString(title: title, with: hostConfig, style: style)
@@ -60,17 +61,18 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
             if let menuItem = choiceSetFieldCompactView.item(at: 0) {
                 menuItem.isEnabled = false
             }
-            choiceSetFieldCompactView.arrayValues.append("")
+            choiceSetFieldCompactView.arrayValues.append(nil)
             index += 1
         }
         choiceSetFieldCompactView.idString = choiceSetInput.getId()
+        choiceSetFieldCompactView.isRequired = choiceSetInput.getIsRequired()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
             choiceSetFieldCompactView.addItem(withTitle: "")
             let item = choiceSetFieldCompactView.item(at: index)
             item?.title = title
             // item?.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
-            choiceSetFieldCompactView.arrayValues.append(choice.getValue() ?? "")
+            choiceSetFieldCompactView.arrayValues.append(choice.getValue())
             if choiceSetInput.getValue() == choice.getValue() {
                 choiceSetFieldCompactView.select(item)
                 choiceSetFieldCompactView.valueSelected = choice.getValue()

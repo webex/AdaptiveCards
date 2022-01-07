@@ -5,8 +5,6 @@ class ACRView: ACRColumnView {
     weak var delegate: AdaptiveCardActionDelegate?
     weak var resolverDelegate: AdaptiveCardResourceResolver?
     weak var parent: ACRView?
-    
-    let renderConfig: RenderConfig
 
     private (set) var targets: [TargetHandler] = []
     private (set) var inputHandlers: [InputHandlingViewProtocol] = []
@@ -15,14 +13,13 @@ class ACRView: ACRColumnView {
     private (set) var initialLayoutDone = false
     private var currentFocusedActionElement: NSCell?
     private var isLayoutDoneOnShowCard = false
+    private var focusedElementOnHideError: NSView?
     
-    init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
-        self.renderConfig = renderConfig
-        super.init(style: style, parentStyle: nil, hostConfig: hostConfig, superview: nil, needsPadding: true)
+    override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
+        super.init(style: style, parentStyle: nil, hostConfig: hostConfig, renderConfig: renderConfig, superview: nil, needsPadding: true)
     }
     
     required init?(coder: NSCoder) {
-        renderConfig = .default
         super.init(coder: coder)
     }
     
@@ -43,6 +40,7 @@ class ACRView: ACRColumnView {
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         isLayoutDoneOnShowCard = false
+        focusedElementOnHideError = nil
     }
     
     func addTarget(_ target: TargetHandler) {
@@ -75,8 +73,19 @@ class ACRView: ACRColumnView {
     }
     
     func resetKeyboardFocus() {
-        guard isLayoutDoneOnShowCard, let lastFocusedElement = currentFocusedActionElement else { return }
-        lastFocusedElement.controlView?.setAccessibilityFocused(true)
+        if isLayoutDoneOnShowCard, let lastFocusedElement = currentFocusedActionElement {
+            lastFocusedElement.controlView?.setAccessibilityFocused(true)
+        } else if focusedElementOnHideError != nil {
+            focusedElementOnHideError?.setAccessibilityFocused(true)
+            // If it is a textfield, the entered text gets selected when focus is set, so taking the cursor to the last position it was present
+            guard let focusedTextField = focusedElementOnHideError as? ACRTextField else { return }
+            focusedTextField.resetCursorPositionIfNeeded()
+        }
+    }
+    
+    override func hideErrorMessage(with currentFocussedView: NSView?) {
+        super.hideErrorMessage(with: currentFocussedView)
+        focusedElementOnHideError = currentFocussedView
     }
     
     private func findSubview(with identifier: String) -> NSView? {
@@ -110,7 +119,8 @@ class ACRView: ACRColumnView {
         // recursively fetch input handlers dictionary from the parent
         var rootView = self
         var parentView: ACRView? = self
-        let shouldSubmitUserInput = (!renderConfig.supportsSchemeV1_3) || (renderConfig.supportsSchemeV1_3 && associatedInputs)
+        var canSubmit = true
+        let shouldSubmitUserInput = !renderConfig.supportsSchemeV1_3 || (renderConfig.supportsSchemeV1_3 && associatedInputs)
         guard shouldSubmitUserInput else {
             delegate?.adaptiveCard(rootView, didSubmitUserResponses: dict, actionView: actionView)
             return
@@ -118,7 +128,11 @@ class ACRView: ACRColumnView {
         repeat {
             if let handlers = parentView?.inputHandlers {
                 for handler in handlers {
-                    guard handler.isValid else { continue }
+                    guard !renderConfig.supportsSchemeV1_3 || handler.isValid else {
+                        handler.showError()
+                        canSubmit = false
+                        continue
+                    }
                     dict[handler.key] = handler.value
                 }
             }
@@ -127,7 +141,8 @@ class ACRView: ACRColumnView {
             }
             parentView = parentView?.parent
         } while parentView != nil
-      
+        
+        guard canSubmit else { return }
         delegate?.adaptiveCard(rootView, didSubmitUserResponses: dict, actionView: actionView)
     }
     

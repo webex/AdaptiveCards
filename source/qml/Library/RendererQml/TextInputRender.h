@@ -27,6 +27,7 @@ private:
 	std::shared_ptr<RendererQml::QmlTag> createInputTextLabel(bool isRequired = false);
 	std::shared_ptr<RendererQml::QmlTag> createErrorMessageText(std::string errorMessage, const std::shared_ptr<RendererQml::QmlTag> uiTextInput);
 	const std::string getColorFunction();
+	std::string getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiTextInput);
 	void addInlineActionMode();
 	std::shared_ptr<RendererQml::QmlTag> createSingleLineTextFieldElement();
 	std::shared_ptr<RendererQml::QmlTag> createMultiLineTextAreaElement();

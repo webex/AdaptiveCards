@@ -6,11 +6,6 @@ protocol ACRContentHoldingViewProtocol {
     func applyPadding(_ padding: CGFloat)
 }
 
-protocol ErrorMessageHandlerDelegate: AnyObject {
-    func showErrorMessage(for view: InputHandlingViewProtocol)
-    func hideErrorMessage(for view: InputHandlingViewProtocol)
-}
-
 class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHandlingProtocol {
     private var stackViewLeadingConstraint: NSLayoutConstraint?
     private var stackViewTrailingConstraint: NSLayoutConstraint?
@@ -19,10 +14,12 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     private var currentSpacingView: SpacingView?
     private var currentSeparatorView: SpacingView?
-    private (set) var errorMessageView: NSTextField?
+    private (set) var errorMessageField: NSTextField?
+    private (set) var inputLabelField: NSTextField?
     
     let style: ACSContainerStyle
     let hostConfig: ACSHostConfig
+    let renderConfig: RenderConfig
     var target: TargetHandler?
     public var bleed = false
     
@@ -57,16 +54,18 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         return view
     }()
     
-    init(style: ACSContainerStyle, hostConfig: ACSHostConfig) {
+    init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         self.hostConfig = hostConfig
         self.style = style
+        self.renderConfig = renderConfig
         super.init(frame: .zero)
         initialize()
     }
     
-    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, superview: NSView?, needsPadding: Bool) {
+    init(style: ACSContainerStyle, parentStyle: ACSContainerStyle?, hostConfig: ACSHostConfig, renderConfig: RenderConfig, superview: NSView?, needsPadding: Bool) {
         self.hostConfig = hostConfig
         self.style = style
+        self.renderConfig = renderConfig
         super.init(frame: .zero)
         initialize()
         if needsPadding {
@@ -93,6 +92,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     required init?(coder: NSCoder) {
         self.hostConfig = ACSHostConfig() // TODO: This won't work
         self.style = .none
+        self.renderConfig = .default
         super.init(coder: coder)
         initialize()
     }
@@ -197,6 +197,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         stackViewBottomConstraint?.isActive = true
     }
     
+    /// This methid can be overridden. super implementation must be called
+    func hideErrorMessage(with currentFocussedView: NSView?) {
+        errorMessageField?.isHidden = true
+    }
+    
     func setVerticalHuggingPriority(_ rawValue: Float) {
         stackView.setHuggingPriority(NSLayoutConstraint.Priority(rawValue), for: .vertical)
     }
@@ -226,18 +231,55 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
     }
     
-    func setErrorMessage(with title: String, for view: InputHandlingViewProtocol) {
-        guard errorMessageView == nil else { return }
+    private func staticTextField() -> NSTextField {
         let textField = NSTextField()
-        textField.stringValue = title
-        textField.isHidden = true
+        textField.allowsEditingTextAttributes = true
         textField.isEditable = false
         textField.isBordered = false
         textField.isSelectable = true
         textField.backgroundColor = .clear
-        view.errorMessageHandler = self
-        addArrangedSubview(textField)
-        errorMessageView = textField
+        return textField
+    }
+    
+    func configureInputElements(element: ACSBaseInputElement, view: NSView) {
+        setupLabel(for: element)
+        addArrangedSubview(view)
+        if view is ACRContentStackView {
+            view.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
+        }
+        setupErrorMessage(element: element, view: view)
+    }
+    
+    private func setupLabel(for element: ACSBaseInputElement) {
+        guard renderConfig.supportsSchemeV1_3, let label = element.getLabel(), !label.isEmpty, inputLabelField?.stringValue != label else { return }
+        let attributedString = NSMutableAttributedString(string: label)
+        let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
+        let isRequiredSuffix = (hostConfig.getInputs()?.label.requiredInputs.suffix ?? "").isEmpty ? "*" : hostConfig.getInputs()?.label.requiredInputs.suffix ?? "*"
+        if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
+            attributedString.addAttributes([.foregroundColor: textColor, .font: NSFont.systemFont(ofSize: 16)], range: NSRange(location: 0, length: attributedString.length))
+        }
+        if element.getIsRequired() {
+            attributedString.append(NSAttributedString(string: " " + isRequiredSuffix, attributes: [.foregroundColor: errorStateConfig.textColor, .font: NSFont.systemFont(ofSize: 16)]))
+        }
+        let labelView = staticTextField()
+        labelView.attributedStringValue = attributedString
+        addArrangedSubview(labelView)
+        setCustomSpacing(spacing: 3, after: labelView)
+        inputLabelField = labelView
+    }
+    
+    private func setupErrorMessage(element: ACSBaseInputElement, view: NSView) {
+        guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol, let errorMessage = element.getErrorMessage(), !errorMessage.isEmpty, errorMessageField?.stringValue != errorMessage else { return }
+        let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
+        let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
+        attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
+        setCustomSpacing(spacing: 5, after: view)
+        let errorField = staticTextField()
+        errorField.isHidden = true
+        errorField.attributedStringValue = attributedErrorMessageString
+        view.errorDelegate = self
+        addArrangedSubview(errorField)
+        errorMessageField = errorField
     }
     
     override func mouseExited(with event: NSEvent) {
@@ -257,13 +299,13 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
 }
 
-extension ACRContentStackView: ErrorMessageHandlerDelegate {
-    func showErrorMessage(for view: InputHandlingViewProtocol) {
-        errorMessageView?.isHidden = false
+extension ACRContentStackView: InputHandlingViewErrorDelegate {
+    func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
+        errorMessageField?.isHidden = false
     }
     
-    func hideErrorMessage(for view: InputHandlingViewProtocol) {
-        errorMessageView?.isHidden = true
+    func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
+        hideErrorMessage(with: currentFocussedView)
     }
 }
 
