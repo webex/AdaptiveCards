@@ -188,6 +188,7 @@ void NumberinputElement::initialize()
             contentItemTag->Property("property bool showErrorMessage", "false");
             contentItemTag->Property("onTextChanged", "validate()");
             contentItemTag->AddFunctions(getValidatorFunction().str());
+            numberInputRectangle->Property("border.color", RendererQml::Formatter() << mContentTagId << ".showErrorMessage ? " << mContext->GetHexColor(numberConfig.borderColorOnError) << " : " << mContentTagId << ".activeFocus? " << mContext->GetHexColor(numberConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(numberConfig.borderColorNormal));
         }
     }
 
@@ -197,6 +198,7 @@ void NumberinputElement::initialize()
     uiNumberInput->Property("down.indicator", downDummyTag->ToString());
     uiNumberInput->Property("validator", doubleValidatorTag->ToString());
     uiNumberInput->Property("valueFromText", "function(text, locale){\nreturn Number(text)\n}");
+    
     uiNumberInput->AddFunctions(RendererQml::Formatter() << "function changeValue(keyPressed) {"
         "if ((keyPressed === Qt.Key_Up || keyPressed === Qt.Key_Down) && " << contentItemTag->GetId() << ".text.length === 0)\n"
         "{value = (from < 0) ? 0 : from;" << contentItemTag->GetId() << ".text = value;}\n"
@@ -303,6 +305,7 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const
     //contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << mOrigionalElementId << ".from || text > " << mOrigionalElementId << ".to){\nremove(0,length)\nif(" << mOrigionalElementId << ".hasDefaultValue)\ninsert(0, " << mOrigionalElementId << ".defaultValue)\nelse\ninsert(0, " << mOrigionalElementId << ".from)\n}\n}");
     contentItemTag->Property("color", mContext->GetHexColor(numberConfig.textColor));
     contentItemTag->Property("placeholderTextColor", mContext->GetHexColor(numberConfig.placeHolderColor));
+    
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (mInput->GetIsRequired())
