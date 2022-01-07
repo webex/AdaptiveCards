@@ -50,26 +50,27 @@ void NumberinputElement::initialize()
 
     const std::string origionalElementId = mInput->GetId();
     mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
-    const auto inputId = mInput->GetId();
+    const auto mOrigionalElementId = mInput->GetId();
     createInputLabel();
     auto numberInputRow = std::make_shared<RendererQml::QmlTag>("Row");
     numberInputColElement->AddChild(numberInputRow);
-    numberInputRow->Property("id", RendererQml::Formatter() << inputId << "_input_row");
+    numberInputRow->Property("id", RendererQml::Formatter() << mOrigionalElementId << "_input_row");
     numberInputRow->Property("width", "parent.width");
     numberInputRow->Property("height", RendererQml::Formatter() << numberConfig.height);
     numberInputRow->Property("visible", mInput->GetIsVisible() ? "true" : "false");
 
     auto numberInputRectangle = std::make_shared<RendererQml::QmlTag>("Rectangle");
-    numberInputRectangle->Property("id", RendererQml::Formatter() << inputId << "_input");
+    numberInputRectangle->Property("id", RendererQml::Formatter() << mOrigionalElementId << "_input");
+    mNumberInputRectId = (RendererQml::Formatter() << mOrigionalElementId << "_input");
 
     numberInputRectangle->Property("border.width", RendererQml::Formatter() << numberConfig.borderWidth);
-    numberInputRectangle->Property("border.color", RendererQml::Formatter() << inputId << ".activeFocus ? " << mContext->GetHexColor(numberConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(numberConfig.borderColorNormal));
+    numberInputRectangle->Property("border.color", RendererQml::Formatter() << mOrigionalElementId << ".activeFocus ? " << mContext->GetHexColor(numberConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(numberConfig.borderColorNormal));
     numberInputRectangle->Property("radius", RendererQml::Formatter() << numberConfig.borderRadius);
     numberInputRectangle->Property("height", "parent.height");
-    numberInputRectangle->Property("color", RendererQml::Formatter() << inputId << ".pressed ? " << mContext->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << inputId << ".hovered ? " << mContext->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(numberConfig.backgroundColorNormal));
+    numberInputRectangle->Property("color", RendererQml::Formatter() << mOrigionalElementId << ".pressed ? " << mContext->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << mOrigionalElementId << ".hovered ? " << mContext->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(numberConfig.backgroundColorNormal));
 
     auto uiNumberInput = std::make_shared<RendererQml::QmlTag>("SpinBox");
-    uiNumberInput->Property("id", inputId);
+    uiNumberInput->Property("id", mOrigionalElementId);
     uiNumberInput->Property("width", RendererQml::Formatter() << "parent.width - " << numberConfig.clearIconSize << " - " << numberConfig.clearIconHorizontalPadding);
     uiNumberInput->Property("padding", "0");
     uiNumberInput->Property("stepSize", "1");
@@ -97,21 +98,21 @@ void NumberinputElement::initialize()
     auto upDownIcon = getIconTag(textBackgroundTagUpDownIcon);
 
     auto upIndicatorTag = std::make_shared<RendererQml::QmlTag>("MouseArea");
-    upIndicatorTag->Property("id", RendererQml::Formatter() << inputId << "_up_indicator_area");
+    upIndicatorTag->Property("id", RendererQml::Formatter() << mOrigionalElementId << "_up_indicator_area");
     upIndicatorTag->Property("width", "parent.width");
     upIndicatorTag->Property("height", "parent.height/2");
     upIndicatorTag->Property("anchors.top", "parent.top");
 
     auto downIndicatorTag = std::make_shared<RendererQml::QmlTag>("MouseArea");
-    downIndicatorTag->Property("id", RendererQml::Formatter() << inputId << "_down_indicator_area");
+    downIndicatorTag->Property("id", RendererQml::Formatter() << mOrigionalElementId << "_down_indicator_area");
     downIndicatorTag->Property("width", "parent.width");
     downIndicatorTag->Property("height", "parent.height/2");
     downIndicatorTag->Property("anchors.top", RendererQml::Formatter() << upIndicatorTag->GetId() << ".bottom");
 
     auto clearIcon = RendererQml::AdaptiveCardQmlRenderer::GetClearIconButton(mContext);
-    clearIcon->Property("id", RendererQml::Formatter() << inputId << "_clear_icon");
+    clearIcon->Property("id", RendererQml::Formatter() << mOrigionalElementId << "_clear_icon");
     clearIcon->Property("visible", RendererQml::Formatter() << contentItemTag->GetId() << ".length !== 0");
-    clearIcon->Property("onClicked", RendererQml::Formatter() << "{nextItemInFocusChain().forceActiveFocus();" << inputId << ".value = " << inputId << ".from;" << contentItemTag->GetId() << ".clear();}");
+    clearIcon->Property("onClicked", RendererQml::Formatter() << "{nextItemInFocusChain().forceActiveFocus();" << mOrigionalElementId << ".value = " << mOrigionalElementId << ".from;" << contentItemTag->GetId() << ".clear();}");
 
     if (mInput->GetValue() != std::nullopt)
     {
@@ -200,12 +201,12 @@ void NumberinputElement::initialize()
         "if ((keyPressed === Qt.Key_Up || keyPressed === Qt.Key_Down) && " << contentItemTag->GetId() << ".text.length === 0)\n"
         "{value = (from < 0) ? 0 : from;" << contentItemTag->GetId() << ".text = value;}\n"
         "else if (keyPressed === Qt.Key_Up)\n"
-        "{" << inputId << ".increase();" << contentItemTag->GetId() << ".text = value;}\n"
+        "{" << mOrigionalElementId << ".increase();" << contentItemTag->GetId() << ".text = value;}\n"
         "else if (keyPressed === Qt.Key_Down)\n"
-        "{" << inputId << ".decrease();" << contentItemTag->GetId() << ".text = value;}}\n");
+        "{" << mOrigionalElementId << ".decrease();" << contentItemTag->GetId() << ".text = value;}}\n");
     uiNumberInput->Property("Keys.onPressed", RendererQml::Formatter() << "{\n"
         "if (event.key === Qt.Key_Up || event.key === Qt.Key_Down)\n"
-        "{ " << inputId << ".changeValue(event.key);event.accepted = true}\n"
+        "{ " << mOrigionalElementId << ".changeValue(event.key);event.accepted = true}\n"
         "}\n");
 
     numberInputRectangle->Property("width", RendererQml::Formatter() << "parent.width - " << uiSplitterRactangle->GetId() << ".width");
@@ -216,13 +217,13 @@ void NumberinputElement::initialize()
     numberInputRow->AddChild(numberInputRectangle);
     numberInputRow->AddChild(uiSplitterRactangle);
 
-    upIndicatorTag->Property("onReleased", RendererQml::Formatter() << "{ " << inputId << ".changeValue(Qt.Key_Up); " << uiSplitterRactangle->GetId() << ".forceActiveFocus(); }");
-    downIndicatorTag->Property("onReleased", RendererQml::Formatter() << "{ " << inputId << ".changeValue(Qt.Key_Down); " << uiSplitterRactangle->GetId() << ".forceActiveFocus(); }");
+    upIndicatorTag->Property("onReleased", RendererQml::Formatter() << "{ " << mOrigionalElementId << ".changeValue(Qt.Key_Up); " << uiSplitterRactangle->GetId() << ".forceActiveFocus(); }");
+    downIndicatorTag->Property("onReleased", RendererQml::Formatter() << "{ " << mOrigionalElementId << ".changeValue(Qt.Key_Down); " << uiSplitterRactangle->GetId() << ".forceActiveFocus(); }");
     uiSplitterRactangle->AddChild(upDownIcon);
     uiSplitterRactangle->AddChild(upIndicatorTag);
     uiSplitterRactangle->AddChild(downIndicatorTag);
 
-    mContext->addToInputElementList(origionalElementId, (inputId + ".value"));
+    mContext->addToInputElementList(origionalElementId, (mOrigionalElementId + ".value"));
 
     uiNumberInput->Property("Accessible.ignored", "true");
     clearIcon->Property("Accessible.name", RendererQml::Formatter() << (mInput->GetPlaceholder().empty() ? "Number Input" : mInput->GetPlaceholder()) << " clear", true);
@@ -270,22 +271,22 @@ void NumberinputElement::createInputLabel()
 
 std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
 {
-    const auto inputId = mInput->GetId();
     auto contentItemTag = std::make_shared<RendererQml::QmlTag>("TextField");
-    contentItemTag->Property("id", inputId + "_contentItem");
+    contentItemTag->Property("id", mOrigionalElementId + "_contentItem");
+    mContentTagId = mOrigionalElementId + "_contentItem";
     contentItemTag->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.pixelSize);
     contentItemTag->Property("anchors.left", "parent.left");
     contentItemTag->Property("anchors.right", "parent.right");
     contentItemTag->Property("selectByMouse", "true");
     contentItemTag->Property("selectedTextColor", "'white'");
-    contentItemTag->Property("readOnly", RendererQml::Formatter() << "!" << inputId << ".editable");
-    contentItemTag->Property("validator", RendererQml::Formatter() << inputId << ".validator");
+    contentItemTag->Property("readOnly", RendererQml::Formatter() << "!" << mOrigionalElementId << ".editable");
+    contentItemTag->Property("validator", RendererQml::Formatter() << mOrigionalElementId << ".validator");
     contentItemTag->Property("inputMethodHints", "Qt.ImhFormattedNumbersOnly");
-    contentItemTag->Property("text", RendererQml::Formatter() << inputId << ".defaultValue");
-    contentItemTag->Property("onPressed", RendererQml::Formatter() << inputId << "_input" << ".colorChange(true)");
-    contentItemTag->Property("onReleased", RendererQml::Formatter() << inputId << "_input" << ".colorChange(false)");
-    contentItemTag->Property("onHoveredChanged", RendererQml::Formatter() << inputId << "_input" << ".colorChange(false)");
-    contentItemTag->Property("onActiveFocusChanged", RendererQml::Formatter() << "{" << inputId << "_input" << ".colorChange(false);" << "Accessible.name = " << "getAccessibleName();}\n");
+    contentItemTag->Property("text", RendererQml::Formatter() << mOrigionalElementId << ".defaultValue");
+    contentItemTag->Property("onPressed", RendererQml::Formatter() << mNumberInputRectId << ".colorChange(true)");
+    contentItemTag->Property("onReleased", RendererQml::Formatter() << mNumberInputRectId << ".colorChange(false)");
+    contentItemTag->Property("onHoveredChanged", RendererQml::Formatter() << mNumberInputRectId << ".colorChange(false)");
+    contentItemTag->Property("onActiveFocusChanged", RendererQml::Formatter() << "{" << mNumberInputRectId << ".colorChange(false);" << "Accessible.name = " << "getAccessibleName();}\n");
     contentItemTag->Property("leftPadding", RendererQml::Formatter() << numberConfig.textHorizontalPadding);
     contentItemTag->Property("rightPadding", RendererQml::Formatter() << numberConfig.textHorizontalPadding);
     contentItemTag->Property("topPadding", RendererQml::Formatter() << numberConfig.textVerticalPadding);
@@ -298,7 +299,7 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const
     contentItemTag->Property("Accessible.role", "Accessible.EditableText");
     contentItemTag->Property("background", textBackgroundTag->ToString());
     contentItemTag->AddFunctions(getAccessibleName());
-    //contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
+    //contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << mOrigionalElementId << ".from || text > " << mOrigionalElementId << ".to){\nremove(0,length)\nif(" << mOrigionalElementId << ".hasDefaultValue)\ninsert(0, " << mOrigionalElementId << ".defaultValue)\nelse\ninsert(0, " << mOrigionalElementId << ".from)\n}\n}");
     contentItemTag->Property("color", mContext->GetHexColor(numberConfig.textColor));
     contentItemTag->Property("placeholderTextColor", mContext->GetHexColor(numberConfig.placeHolderColor));
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -306,7 +307,7 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const
         if (mInput->GetIsRequired())
         {
             contentItemTag->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
-                << inputId << "_input" << ".colorChange( false)}\n");
+                << mNumberInputRectId << ".colorChange( false)}\n");
         }
         contentItemTag->Property("Accessible.name", RendererQml::Formatter() << (mInput->GetLabel().empty() ? (mInput->GetPlaceholder().empty() ? "Text Field" : mInput->GetPlaceholder()) : mInput->GetLabel()), true);
     }
@@ -319,7 +320,6 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const
 
 void NumberinputElement::createErrorMessage()
 {
-    const auto inputId = mInput->GetId();
     auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
     uiErrorMessage->Property("id", RendererQml::Formatter() << mInput->GetId() << "_errorMessage");
     uiErrorMessage->Property("wrapMode", "Text.Wrap");
@@ -330,18 +330,17 @@ void NumberinputElement::createErrorMessage()
     std::string color = mContext->GetHexColor(numberConfig.errorMessageColor);
     uiErrorMessage->Property("color", color);
     uiErrorMessage->Property("text", mInput->GetErrorMessage(), true);
-    uiErrorMessage->Property("visible", RendererQml::Formatter() << inputId + "_contentItem" << ".showErrorMessage");
+    uiErrorMessage->Property("visible", RendererQml::Formatter() << mContentTagId << ".showErrorMessage");
     numberInputColElement->AddChild(uiErrorMessage);
 }
 
 std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getIconTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
 {
-    const auto inputId = mInput->GetId();
     auto upDownIcon = RendererQml::AdaptiveCardQmlRenderer::GetIconTag(mContext);
     upDownIcon->RemoveProperty("anchors.top");
     upDownIcon->RemoveProperty("anchors.bottom");
     upDownIcon->RemoveProperty("anchors.margins");
-    upDownIcon->Property("id", RendererQml::Formatter() << inputId << "_up_down_icon");
+    upDownIcon->Property("id", RendererQml::Formatter() << mOrigionalElementId << "_up_down_icon");
     upDownIcon->Property("width", "parent.width");
     upDownIcon->Property("height", "parent.height");
     upDownIcon->Property("icon.width", RendererQml::Formatter() << numberConfig.upDownIconSize);
@@ -353,19 +352,18 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getIconTag(const std::s
 }
 std::ostringstream NumberinputElement::getValidatorFunction()
 {
-    const auto inputId = mInput->GetId();
     std::ostringstream validator;
     validator << "function validate(){\n";
     if (mInput->GetIsRequired()) {
-        validator << "if (" << inputId + "_contentItem" << ".text.length != 0 && (parseInt(" << inputId + "_contentItem" << ".text) >=" << inputId <<
-            ".from) && (parseInt(" << inputId + "_contentItem" << ".text) <= " << inputId << ".to))";
+        validator << "if (" << mContentTagId << ".text.length != 0 && (parseInt(" << mContentTagId << ".text) >=" << mOrigionalElementId <<
+            ".from) && (parseInt(" << mContentTagId << ".text) <= " << mOrigionalElementId << ".to))";
         validator << "{ showErrorMessage = false; return false; }";
         validator << "else { return true; } ";
         validator << "}";
     }
     else {
-        validator << "if (" << inputId + "_contentItem" << ".text.length == 0 || (parseInt(" << inputId + "_contentItem" << ".text) >=" << inputId <<
-            ".from) && (parseInt(" << inputId + "_contentItem" << ".text) <= " << inputId << ".to))";
+        validator << "if (" << mContentTagId << ".text.length == 0 || (parseInt(" << mContentTagId << ".text) >=" << mOrigionalElementId <<
+            ".from) && (parseInt(" << mContentTagId << ".text) <= " << mOrigionalElementId << ".to))";
         validator << "{ showErrorMessage = false; return false; }";
         validator << "else { return true; } ";
         validator << "}";
@@ -376,18 +374,17 @@ std::ostringstream NumberinputElement::getValidatorFunction()
 const std::string NumberinputElement::getColorFunction()
 {
     std::ostringstream colorFunction;
-    const auto inputId = mInput->GetId();
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         colorFunction << "function colorChange(isPressed){"
-            "if (isPressed && !" << inputId + "_contentItem" << ".showErrorMessage)  color = " << mContext->GetHexColor(numberConfig.backgroundColorOnPressed) << ";"
-            "else color = " << inputId + "_contentItem" << ".showErrorMessage ? " << mContext->GetHexColor(numberConfig.backgroundColorOnError) << " : " << inputId + "_contentItem" << ".activeFocus ? " << mContext->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << inputId + "_contentItem" << ".hovered ? " << mContext->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(numberConfig.backgroundColorNormal) << "}";
+            "if (isPressed && !" << mContentTagId << ".showErrorMessage)  color = " << mContext->GetHexColor(numberConfig.backgroundColorOnPressed) << ";"
+            "else color = " << mContentTagId << ".showErrorMessage ? " << mContext->GetHexColor(numberConfig.backgroundColorOnError) << " : " << mContentTagId << ".activeFocus ? " << mContext->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << mContentTagId << ".hovered ? " << mContext->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(numberConfig.backgroundColorNormal) << "}";
     }
     else
     {
         colorFunction << "function colorChange(isPressed){"
             "if (isPressed)  color = " << mContext->GetHexColor(numberConfig.backgroundColorOnPressed) << ";"
-            "else color = " << inputId + "_contentItem" << ".activeFocus ? " << mContext->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << inputId + "_contentItem" << ".hovered ? " << mContext->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(numberConfig.backgroundColorNormal) << "}";
+            "else color = " << mContentTagId << ".activeFocus ? " << mContext->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << mContentTagId << ".hovered ? " << mContext->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(numberConfig.backgroundColorNormal) << "}";
     }
 
     return colorFunction.str();
@@ -399,7 +396,6 @@ const std::string NumberinputElement::getAccessibleName()
     std::ostringstream labelString;
     std::ostringstream errorString;
     std::ostringstream placeHolderString;
-    const auto inputId = mInput->GetId();
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
@@ -410,13 +406,13 @@ const std::string NumberinputElement::getAccessibleName()
 
         if (!mInput->GetErrorMessage().empty())
         {
-            errorString << "if(" << inputId << "_contentItem" << ".showErrorMessage === true){"
+            errorString << "if(" << mContentTagId << ".showErrorMessage === true){"
                 << "accessibleName += 'Error. " << mInput->GetErrorMessage() << ". ';}";
         }
     }
 
-    placeHolderString << "if(" << inputId << "_contentItem" << ".text !== ''){"
-        << "accessibleName += (" << inputId << "_contentItem" <<".text);"
+    placeHolderString << "if(" << mContentTagId << ".text !== ''){"
+        << "accessibleName += (" << mContentTagId <<".text);"
         << "}else{"
         << "accessibleName += placeholderText;}";
 
