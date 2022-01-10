@@ -177,7 +177,7 @@ void NumberinputElement::initialize()
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
-        if (!mInput->GetErrorMessage().empty())
+        if (!mInput->GetErrorMessage().empty() && mInput->GetIsRequired())
         {
             createErrorMessage();
             mContext->addToRequiredInputElementsIdList(contentItemTag->GetId());
@@ -355,13 +355,11 @@ std::ostringstream NumberinputElement::getValidatorFunction()
     const auto mOrigionalElementId = mInput->GetId();
     std::ostringstream validator;
     validator << "function validate(){\n";
-    if (mInput->GetIsRequired()) {
         validator << "if (" << mContentTagId << ".text.length != 0 && (parseInt(" << mContentTagId << ".text) >=" << mOrigionalElementId <<
             ".from) && (parseInt(" << mContentTagId << ".text) <= " << mOrigionalElementId << ".to))";
         validator << "{ showErrorMessage = false; return false; }";
         validator << "else { return true; } ";
         validator << "}";
-    }
     return validator;
 }
 
