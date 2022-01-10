@@ -362,13 +362,6 @@ std::ostringstream NumberinputElement::getValidatorFunction()
         validator << "else { return true; } ";
         validator << "}";
     }
-    else {
-        validator << "if (" << mContentTagId << ".text.length == 0 || (parseInt(" << mContentTagId << ".text) >=" << mOrigionalElementId <<
-            ".from) && (parseInt(" << mContentTagId << ".text) <= " << mOrigionalElementId << ".to))";
-        validator << "{ showErrorMessage = false; return false; }";
-        validator << "else { return true; } ";
-        validator << "}";
-    }
     return validator;
 }
 
