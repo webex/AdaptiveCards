@@ -15,6 +15,10 @@ public:
     void initialize();
 
 private:
+    std::shared_ptr<RendererQml::QmlTag> numberInputColElement;
+    const std::shared_ptr<AdaptiveCards::NumberInput>& mInput;
+    const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
+    RendererQml::InputNumberConfig numberConfig;
     std::string mOrigionalElementId{ "" };
     std::string mContentTagId{ "" };
     std::string mNumberInputRectId{ "" };
@@ -25,10 +29,6 @@ private:
     void createErrorMessage();
     std::shared_ptr<RendererQml::QmlTag> getIconTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag);
     std::shared_ptr<RendererQml::QmlTag> getContentItemTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag);
-    std::shared_ptr<RendererQml::QmlTag> numberInputColElement;
-    const std::shared_ptr<AdaptiveCards::NumberInput>& mInput;
-    const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
-    RendererQml::InputNumberConfig numberConfig;
     const std::string getAccessibleName();
     const std::string getColorFunction();
     std::ostringstream getValidatorFunction();

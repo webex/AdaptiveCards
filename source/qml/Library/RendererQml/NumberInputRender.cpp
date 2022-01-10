@@ -34,10 +34,6 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getDummyElementforNumbe
 
 std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getQmlTag()
 {
-    if (mInput->GetHeight() == AdaptiveCards::HeightType::Stretch)
-    {
-        return RendererQml::AdaptiveCardQmlRenderer::GetStretchRectangle(numberInputColElement);
-    }
     return numberInputColElement;
 }
 
@@ -197,8 +193,7 @@ void NumberinputElement::initialize()
     uiNumberInput->Property("up.indicator", upDummyTag->ToString());
     uiNumberInput->Property("down.indicator", downDummyTag->ToString());
     uiNumberInput->Property("validator", doubleValidatorTag->ToString());
-    uiNumberInput->Property("valueFromText", "function(text, locale){\nreturn Number(text)\n}");
-    
+    uiNumberInput->Property("valueFromText", "function(text, locale){\nreturn Number(text)\n}");  
     uiNumberInput->AddFunctions(RendererQml::Formatter() << "function changeValue(keyPressed) {"
         "if ((keyPressed === Qt.Key_Up || keyPressed === Qt.Key_Down) && " << contentItemTag->GetId() << ".text.length === 0)\n"
         "{value = (from < 0) ? 0 : from;" << contentItemTag->GetId() << ".text = value;}\n"
