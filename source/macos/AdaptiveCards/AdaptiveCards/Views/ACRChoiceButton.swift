@@ -1,3 +1,4 @@
+import AdaptiveCards_bridge
 import AppKit
 
 enum ChoiceSetButtonType {
@@ -7,6 +8,7 @@ enum ChoiceSetButtonType {
 
 protocol ACRChoiceButtonDelegate: NSObjectProtocol {
     func acrChoiceButtonDidSelect(_ button: ACRChoiceButton)
+    func acrChoiceButtonShouldReadError(_ button: ACRChoiceButton) -> Bool
 }
 
 class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
@@ -14,20 +16,62 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     weak var errorDelegate: InputHandlingViewErrorDelegate?
     
     public var buttonValue: String?
-    public var idString: String?
-    public var valueOn: String?
-    public var valueOff: String?
+    private let idString: String?
+    private let valueOn: String?
+    private let valueOff: String?
+    private let wrap: Bool
     
+    private let renderConfig: RenderConfig
     private let buttonConfig: ChoiceSetButtonConfig?
     private let buttonType: ChoiceSetButtonType
     private let localisedStringConfig: LocalisedStringConfig
+    private let buttonLabel: String?
+    private let buttonTitle: String?
+    private let errorMessage: String?
     var isRequired = false
     
-    init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType) {
+    init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType, element: ACSToggleInput) {
+        // initialize configs
+        self.renderConfig = renderConfig
         self.buttonType = buttonType
         self.buttonConfig = buttonType == .switch ? renderConfig.checkBoxButtonConfig : renderConfig.radioButtonConfig
         self.localisedStringConfig = renderConfig.localisedStringConfig
+        
+        // initialize variables
+        idString = element.getId()
+        isRequired = element.getIsRequired()
+        // This function returns true/fase even if data not set in json
+        valueOn = element.getValueOn()
+        valueOff = element.getValueOff()
+        wrap = element.getWrap()
+        buttonLabel = element.getLabel()
+        errorMessage = element.getErrorMessage()
+        buttonTitle = element.getTitle()
+        
         super.init(frame: .zero)
+        initialise()
+    }
+    
+    init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType, element: ACSChoiceSetInput, title: String?) {
+        // initialize configs
+        self.renderConfig = renderConfig
+        self.buttonType = buttonType
+        self.buttonConfig = buttonType == .switch ? renderConfig.checkBoxButtonConfig : renderConfig.radioButtonConfig
+        self.localisedStringConfig = renderConfig.localisedStringConfig
+        // initialise variables
+        self.idString = nil
+        self.valueOn = nil
+        self.valueOff = nil
+        wrap = element.getWrap()
+
+        self.buttonLabel = element.getLabel()
+        self.errorMessage = element.getErrorMessage()
+        self.buttonTitle = title
+        super.init(frame: .zero)
+        initialise()
+    }
+    
+    private func initialise() {
         button.setButtonType(buttonType == .switch ? .switch : .radio)
         setupViews()
         setupConstraints()
@@ -42,7 +86,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     // Label
-    private (set) lazy var label: NSTextField = {
+    private (set) lazy var buttonLabelField: NSTextField = {
         let view = NSTextField()
         view.isEditable = false
         view.delegate = self
@@ -50,6 +94,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         view.isHighlighted = false
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
+        view.cell?.wraps = wrap
         return view
     }()
     
@@ -72,7 +117,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     
     private func setupViews() {
         addSubview(button)
-        addSubview(label)
+        addSubview(buttonLabelField)
     }
     
     private func setupActions() {
@@ -85,10 +130,10 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         button.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         button.topAnchor.constraint(equalTo: topAnchor).isActive = true
         button.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        label.leadingAnchor.constraint(equalTo: button.trailingAnchor, constant: buttonConfig?.elementSpacing ?? 8).isActive = true
-        label.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        label.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        label.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        buttonLabelField.leadingAnchor.constraint(equalTo: button.trailingAnchor, constant: buttonConfig?.elementSpacing ?? 8).isActive = true
+        buttonLabelField.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        buttonLabelField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        buttonLabelField.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
     }
     
     private func setupTrackingArea() {
@@ -131,6 +176,34 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
+    private var isErrorVisible: Bool {
+        if let delegate = delegate {
+            return delegate.acrChoiceButtonShouldReadError(self)
+        }
+        if let errorDelegate = errorDelegate {
+            return errorDelegate.isErrorVisible
+        }
+        return false
+    }
+    
+    override func accessibilityLabel() -> String? {
+        guard renderConfig.supportsSchemeV1_3 else {
+            return buttonTitle
+        }
+        var accessibilityLabel = ""
+        if isErrorVisible {
+            accessibilityLabel += "Error "
+            if let errorMessage = errorMessage, !errorMessage.isEmpty {
+                accessibilityLabel += errorMessage + ", "
+            }
+        }
+        if let label = buttonLabel, !label.isEmpty {
+            accessibilityLabel += label + ", "
+        }
+        accessibilityLabel += buttonTitle ?? ""
+        return accessibilityLabel
+    }
+    
     @objc private func handleButtonAction() {
         delegate?.acrChoiceButtonDidSelect(self)
         updateButtonImage()
@@ -171,16 +244,16 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
 // MARK: EXTENSION
 extension ACRChoiceButton {
     var backgroundColor: NSColor {
-        get { label.backgroundColor ?? .clear }
+        get { buttonLabelField.backgroundColor ?? .clear }
         set {
-            label.backgroundColor = newValue
+            buttonLabelField.backgroundColor = newValue
         }
     }
     
     var labelAttributedString: NSAttributedString {
-        get { label.attributedStringValue }
+        get { buttonLabelField.attributedStringValue }
         set {
-            label.attributedStringValue = newValue
+            buttonLabelField.attributedStringValue = newValue
         }
     }
     
@@ -189,20 +262,6 @@ extension ACRChoiceButton {
         set {
             button.state = newValue
             updateButtonImage()
-        }
-    }
-    
-    var wrap: Bool? {
-        get { ((label.cell?.wraps) ) }
-        set {
-            label.cell?.wraps = newValue ?? false
-        }
-    }
-    
-    var title: String {
-        get { label.stringValue }
-        set {
-            label.stringValue = newValue
         }
     }
 }
