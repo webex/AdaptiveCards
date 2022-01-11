@@ -617,7 +617,7 @@ void DateInputElement::addInputLabel(bool isRequired)
 
 void DateInputElement::addErrorMessage()
 {
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mDateInput->GetIsRequired())
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (!mDateInput->GetErrorMessage().empty())
         {
@@ -638,7 +638,7 @@ void DateInputElement::addErrorMessage()
 
 void DateInputElement::addValidation()
 {
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mDateInput->GetIsRequired())
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (mDateInput->GetIsVisible())
         {
@@ -649,8 +649,17 @@ void DateInputElement::addValidation()
         std::ostringstream validator;
         std::string condition;
 
+        if (mDateInput->GetIsRequired())
+        {
+            condition  = RendererQml::Formatter() << "var isValid = (" << mDateFieldId << ".selectedDate !== '' && (" << mDateFieldId << "_calendarRoot.selectedDate >= " << mDateFieldId << "_calendarRoot.minimumDate) && (" << mDateFieldId << "_calendarRoot.selectedDate <= " << mDateFieldId << "_calendarRoot.maximumDate));";
+        }
+        else
+        {
+            condition = RendererQml::Formatter() << "var isValid = true; if(selectedDate !== ''){isValid = ((" << mDateFieldId << "_calendarRoot.selectedDate >= " << mDateFieldId << "_calendarRoot.minimumDate) && (" << mDateFieldId << "_calendarRoot.selectedDate <= " << mDateFieldId << "_calendarRoot.maximumDate)); }";
+        }
+
         validator << "function validate(){"
-            << "var isValid = (" << mDateFieldId << ".selectedDate !== '' && (" << mDateFieldId << "_calendarRoot.selectedDate >= " << mDateFieldId << "_calendarRoot.minimumDate) && (" << mDateFieldId << "_calendarRoot.selectedDate <= " << mDateFieldId << "_calendarRoot.maximumDate));"
+            << condition
             << "if(showErrorMessage){"
             << "if(isValid){"
             << "showErrorMessage = false;"

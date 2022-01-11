@@ -53,7 +53,7 @@ void TimeInputElement::renderTimeElement()
 
     if (mTimeInput->GetIsVisible())
     {
-        mContext->addToInputElementList(origionalElementId, (mTimeInputTextField->GetId() + ".selectedTime"));
+        mContext->addToInputElementList(origionalElementId, (id + ".selectedTime"));
     }
 
     mTimeInputColElement->AddChild(mTimeInputWrapper);
@@ -453,7 +453,7 @@ void TimeInputElement::addInputLabel(bool isRequired)
 
 void TimeInputElement::addErrorMessage()
 {
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mTimeInput->GetIsRequired())
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (!mTimeInput->GetErrorMessage().empty())
         {
@@ -466,7 +466,7 @@ void TimeInputElement::addErrorMessage()
 
             uiErrorMessage->Property("color", mContext->GetHexColor(mTimeInputConfig.errorMessageColor));
             uiErrorMessage->Property("text", mTimeInput->GetErrorMessage(), true);
-            uiErrorMessage->Property("visible", RendererQml::Formatter() << mTimeInputTextField->GetId() << ".showErrorMessage");
+            uiErrorMessage->Property("visible", RendererQml::Formatter() << id << ".showErrorMessage");
             mTimeInputColElement->AddChild(uiErrorMessage);
         }
     }
@@ -474,11 +474,11 @@ void TimeInputElement::addErrorMessage()
 
 void TimeInputElement::addValidation()
 {
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mTimeInput->GetIsRequired())
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         if (mTimeInput->GetIsVisible())
         {
-            mContext->addToRequiredInputElementsIdList(mTimeInputTextField->GetId());
+            mContext->addToRequiredInputElementsIdList(id);
         }
         mTimeInputTextField->Property("property bool showErrorMessage", "false");
 
@@ -489,8 +489,17 @@ void TimeInputElement::addValidation()
 
         minTimeValidate = RendererQml::Formatter() << "";
 
+        if (mTimeInput->GetIsRequired())
+        {
+            condition = RendererQml::Formatter() << "var isValid = " << id << ".text.length === " << (mIs12hour ? 8 : 5) << ";";
+        }
+        else
+        {
+            condition = RendererQml::Formatter() << "var isValid = true;";
+        }
+
         validator << "function validate(){"
-            << "var isValid = " << mTimeInputTextField->GetId() << ".text.length === " << (mIs12hour ? 8 : 5) << ";"
+            << condition
             << "if(isValid){"
             << "var minTimeHour = parseInt(minTime.slice(0, 2)); var minTimeMinute = parseInt(minTime.slice(3, 5));var maxTimeHour = parseInt(maxTime.slice(0, 2)); var maxTimeMinute = parseInt(maxTime.slice(3, 5));var selTimeHour = parseInt(selectedTime.slice(0, 2)); var selTimeMinute = parseInt(selectedTime.slice(3, 5));"
             << "if(selTimeHour < minTimeHour || (selTimeHour === minTimeHour && selTimeMinute < minTimeMinute)){isValid = false}"
@@ -515,7 +524,7 @@ void TimeInputElement::addValidation()
         {
             mTimeInputTextField->Property("onTextChanged", RendererQml::Formatter() << "{" << listViewHoursId << ".currentIndex=parseInt(getText(0,2));" << listViewMinId << ".currentIndex=parseInt(getText(3,5));" << "if(getText(0,2) === '--' || getText(3,5) === '--'){" << id << ".selectedTime ='';} else{" << id << ".selectedTime =" << id << ".text;};validate()}");
         }
-        mTimeInputWrapper->Property("border.color", RendererQml::Formatter() << mTimeInputTextField->GetId() << ".showErrorMessage ? " << mContext->GetHexColor(mTimeInputConfig.borderColorOnError) << " : " << mTimeInputTextField->GetId() << ".activeFocus? " << mContext->GetHexColor(mTimeInputConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mTimeInputConfig.borderColorNormal));
+        mTimeInputWrapper->Property("border.color", RendererQml::Formatter() << id << ".showErrorMessage ? " << mContext->GetHexColor(mTimeInputConfig.borderColorOnError) << " : " << id << ".activeFocus? " << mContext->GetHexColor(mTimeInputConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mTimeInputConfig.borderColorNormal));
     }
 }
 
@@ -555,12 +564,12 @@ const std::string TimeInputElement::getAccessibleName()
 
         if (!mTimeInput->GetErrorMessage().empty())
         {
-            errorString << "if(" << mTimeInputTextField->GetId() << ".showErrorMessage === true){"
+            errorString << "if(" << id << ".showErrorMessage === true){"
                 << "accessibleName += 'Error. " << mTimeInput->GetErrorMessage() << ". ';}";
         }
     }
 
-    placeHolderString << "if(" << mTimeInputTextField->GetId() << ".text.length === " << (mIs12hour ? 8 : 5) << "){"
+    placeHolderString << "if(" << id << ".text.length === " << (mIs12hour ? 8 : 5) << "){"
         << "accessibleName += text"
         << "}else{"
         << "accessibleName += placeholderText;}";

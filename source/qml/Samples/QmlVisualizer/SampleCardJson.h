@@ -4520,9 +4520,9 @@ namespace Samples
             "type": "Input.Time",
             "id": "time",
             "isRequired": true,
-            "errorMessage": "Please Enter Time between 12:30 to 14:30",
-            "min": "12:30",
-            "max": "14:30",
+            "errorMessage": "Please Enter Time between 03:00 to 15:00",
+            "min": "03:00",
+            "max": "15:00",
             "label": "Input Time"
         },
         {
@@ -4530,9 +4530,9 @@ namespace Samples
             "id": "date",
             "label": "Input Date",
             "isRequired": true,
-            "min": "2021-11-01",
-            "max": "2021-12-31",
-            "errorMessage": "Please Enter Date between November 2021 to December 2021"
+            "min": "2021-01-01",
+            "max": "2022-12-31",
+            "errorMessage": "Please Enter Date between 2021 to 2022"
         },
         {
             "type": "Input.ChoiceSet",
