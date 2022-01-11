@@ -177,15 +177,12 @@ void NumberinputElement::initialize()
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
-        if (!mInput->GetErrorMessage().empty() && mInput->GetIsRequired())
-        {
-            createErrorMessage();
-            mContext->addToRequiredInputElementsIdList(contentItemTag->GetId());
-            contentItemTag->Property("property bool showErrorMessage", "false");
-            contentItemTag->Property("onTextChanged", "validate()");
-            contentItemTag->AddFunctions(getValidatorFunction().str());
-            numberInputRectangle->Property("border.color", RendererQml::Formatter() << mContentTagId << ".showErrorMessage ? " << mContext->GetHexColor(numberConfig.borderColorOnError) << " : " << mContentTagId << ".activeFocus? " << mContext->GetHexColor(numberConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(numberConfig.borderColorNormal));
-        }
+        createErrorMessage();
+        mContext->addToRequiredInputElementsIdList(contentItemTag->GetId());
+        contentItemTag->Property("property bool showErrorMessage", "false");
+        contentItemTag->Property("onTextChanged", "validate()");
+        contentItemTag->AddFunctions(getValidatorFunction().str());
+        numberInputRectangle->Property("border.color", RendererQml::Formatter() << mContentTagId << ".showErrorMessage ? " << mContext->GetHexColor(numberConfig.borderColorOnError) << " : " << mContentTagId << ".activeFocus? " << mContext->GetHexColor(numberConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(numberConfig.borderColorNormal));
     }
 
     uiNumberInput->Property("contentItem", contentItemTag->ToString());
@@ -303,11 +300,9 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const
     
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
-        if (mInput->GetIsRequired())
-        {
-            contentItemTag->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
-                << mNumberInputRectId << ".colorChange( false)}\n");
-        }
+        contentItemTag->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
+            << mNumberInputRectId << ".colorChange( false)}\n");
+        
         contentItemTag->Property("Accessible.name", RendererQml::Formatter() << (mInput->GetLabel().empty() ? (mInput->GetPlaceholder().empty() ? "Text Field" : mInput->GetPlaceholder()) : mInput->GetLabel()), true);
     }
     else
@@ -355,11 +350,21 @@ std::ostringstream NumberinputElement::getValidatorFunction()
     const auto mOrigionalElementId = mInput->GetId();
     std::ostringstream validator;
     validator << "function validate(){\n";
+    if (mInput->GetIsRequired())
+    {
         validator << "if (" << mContentTagId << ".text.length != 0 && (parseInt(" << mContentTagId << ".text) >=" << mOrigionalElementId <<
             ".from) && (parseInt(" << mContentTagId << ".text) <= " << mOrigionalElementId << ".to))";
-        validator << "{ showErrorMessage = false; return false; }";
-        validator << "else { return true; } ";
-        validator << "}";
+    }
+    else
+    {
+        validator << "if (" << mContentTagId << ".text.length == 0 || (parseInt(" << mContentTagId << ".text) >=" << mOrigionalElementId <<
+            ".from) && (parseInt(" << mContentTagId << ".text) <= " << mOrigionalElementId << ".to))";
+    }
+
+    validator << "{ showErrorMessage = false; return false; }";
+    validator << "else { return true; } ";
+    validator << "}";
+
     return validator;
 }
 
