@@ -164,6 +164,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DateInputRender.cpp" />
+    <ClCompile Include="TimeInputRender.cpp" />
     <ClCompile Include="ToggleInputRender.cpp" />
     <ClCompile Include="AdaptiveCardQmlRenderer.cpp" />
     <ClCompile Include="AdaptiveCardRenderConfig.cpp" />
@@ -184,6 +186,8 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DateInputRender.h" />
+    <ClInclude Include="TimeInputRender.h" />
     <ClInclude Include="ToggleInputRender.h" />
     <ClInclude Include="AdaptiveCardDependency.h" />
     <ClInclude Include="AdaptiveCardQmlRenderer.h" />

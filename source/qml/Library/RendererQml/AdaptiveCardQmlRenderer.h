@@ -80,12 +80,6 @@ namespace RendererQml
         
     private:
         void SetObjectTypes();
-		static std::shared_ptr<QmlTag> GetComboBox(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context);
-		static std::shared_ptr<QmlTag> GetButtonGroup(ChoiceSet choiceset, std::shared_ptr<AdaptiveRenderContext> context);
-		static std::shared_ptr<QmlTag> GetCheckBox(Checkbox checkbox, std::shared_ptr<AdaptiveRenderContext> context);
-		static std::string GenerateChoiceSetButtonId(const std::string& parentId, enum CheckBoxType ButtonType, const int& ButtonNumber);
-        static const std::string getChoiceSetSelectedValuesFunc(const std::shared_ptr<QmlTag>& btnGroup, const bool isMultiselect);
-		static std::string GetModel(std::vector<Checkbox>& Choices);
 		static std::shared_ptr<QmlTag> GetComponent(const std::string& componentId, const std::shared_ptr<QmlTag>& uiCard);
 
 		template <typename CardElement>
@@ -94,7 +88,6 @@ namespace RendererQml
 		template <typename CardElement>
 		static std::shared_ptr<QmlTag> GetNewContainer(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context);
 
-        static std::shared_ptr<QmlTag> ListViewTagforTimeInput(const std::string& parent_id, const std::string& listView_id, std::map<std::string, std::map<std::string, std::string>>& properties, bool isThirdTag, std::shared_ptr<AdaptiveRenderContext> context);
 		static std::shared_ptr<QmlTag> GetBackgroundImage(std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage, std::shared_ptr<AdaptiveRenderContext> context, const std::string& imgSource);
 
         static void addSubmitActionButtonClickFunc(const std::shared_ptr<AdaptiveRenderContext>& context);
@@ -126,8 +119,6 @@ namespace RendererQml
         static void ValidateShowCardInActions(const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context);
 
         static const std::string RemoveBottomMarginValue(std::vector<std::string> showCardsList);
-        static std::shared_ptr<QmlTag> GetCalendar(std::shared_ptr<AdaptiveRenderContext> context, const std::string textFieldId, const std::string calendarBoxId, const std::string stringDateFormat, const std::string minimumDate, const std::string maximumDate);
-        
 
         static const std::string GetImagePath(std::shared_ptr<AdaptiveRenderContext> context, const std::string url);
 

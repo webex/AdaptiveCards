@@ -4502,6 +4502,120 @@ namespace Samples
         ],
         "id": "togleButton"
     })";
+
+    const std::string inputValidation = R"({
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Input.Text",
+            "placeholder": "Placeholder text",
+            "id": "text",
+            "label": "Input Text",
+            "isRequired": true,
+            "errorMessage": "Please Enter Some text"
+        },
+        {
+            "type": "Input.Number",
+            "placeholder": "Placeholder text",
+            "id": "number",
+            "label": "Input Number",
+            "min": 0,
+            "max": 15,
+            "isRequired": true,
+            "errorMessage": "Please enter a message between 0 to 15"
+        },
+        {
+            "type": "Input.Time",
+            "id": "time",
+            "isRequired": true,
+            "errorMessage": "Please Enter Time between 03:00 to 15:00",
+            "min": "03:00",
+            "max": "15:00",
+            "label": "Input Time"
+        },
+        {
+            "type": "Input.Date",
+            "id": "date",
+            "label": "Input Date",
+            "isRequired": true,
+            "min": "2021-01-01",
+            "max": "2022-12-31",
+            "errorMessage": "Please Enter Date between 2021 to 2022"
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "choices": [
+                {
+                    "title": "Choice 1",
+                    "value": "Choice 1"
+                },
+                {
+                    "title": "Choice 2",
+                    "value": "Choice 2"
+                }
+            ],
+            "placeholder": "Placeholder text",
+            "id": "choiceSet1",
+            "label": "Choice Set with Combobox",
+            "isRequired": true,
+            "errorMessage": "Please Select a valid option"
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "choices": [
+                {
+                    "title": "Choice 1",
+                    "value": "Choice 1"
+                },
+                {
+                    "title": "Choice 2",
+                    "value": "Choice 2"
+                }
+            ],
+            "placeholder": "Placeholder text",
+            "id": "choiceSet2",
+            "label": "Choice Set with Radio buttons",
+            "style": "expanded",
+            "isRequired": true,
+            "errorMessage": "Please Select a valid option"
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "choices": [
+                {
+                    "title": "Choice 1",
+                    "value": "Choice 1"
+                },
+                {
+                    "title": "Choice 2",
+                    "value": "Choice 2"
+                }
+            ],
+            "placeholder": "Placeholder text",
+            "id": "choiceSet3",
+            "label": "Choice Set with Check Box",
+            "isMultiSelect": true,
+            "isRequired": true,
+            "errorMessage": "Please Select a valid option"
+        },
+        {
+            "type": "Input.Toggle",
+            "title": "New Input.Toggle",
+            "id": "toggleInput",
+            "label": "Input Toggle",
+            "isRequired": true,
+            "errorMessage": "Please select the checkbox"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "Action.Submit"
+        }
+    ]
+    })";
 }
 
     

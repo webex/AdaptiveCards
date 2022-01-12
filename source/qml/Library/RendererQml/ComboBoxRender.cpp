@@ -1,8 +1,6 @@
 #include "AdaptiveCardQmlRenderer.h"
 #include "ComboBoxRender.h"
-#include "Formatter.h"
 #include "ImageDataURI.h"
-#include "utils.h"
 
 ComboBoxElement::ComboBoxElement(RendererQml::ChoiceSet choiceSet, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
     :mChoiceSet(choiceSet),

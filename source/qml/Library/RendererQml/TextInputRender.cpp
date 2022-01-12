@@ -22,6 +22,7 @@ void TextinputElement::initialize()
     mTextinputColElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_column");
     mTextinputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mTextinputColElement->Property("width", "parent.width");
+    mTextinputColElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
 
     if (mTextinput->GetIsMultiline())
     {
@@ -102,7 +103,6 @@ void TextinputElement::initSingleLine()
     mTextinputElement->Property("height", RendererQml::Formatter() << textConfig.height);
     mTextinputElement->Property("width", "parent.width");
     mTextinputElement->Property("color", mContext->GetHexColor(textConfig.backgroundColorNormal));
-    mTextinputElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
 
     auto uiTextInput = createSingleLineTextFieldElement();
 
@@ -115,7 +115,10 @@ void TextinputElement::initSingleLine()
     uiTextInput->Property("width", RendererQml::Formatter() << "parent.width - " << clearIcon->GetId() << ".width - " << textConfig.clearIconHorizontalPadding);
     mTextinputElement->AddChild(uiTextInput);
     mTextinputElement->AddChild(clearIcon);
-    mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
+    if (mTextinput->GetIsVisible())
+    {
+        mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
+    }
     this->addInlineActionMode();
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -155,7 +158,6 @@ void TextinputElement::initMultiLine()
     mTextinputElement->Property("ScrollBar.vertical.interactive", "true");
     mTextinputElement->Property("ScrollBar.horizontal.interactive", "false");
     mTextinputElement->Property("ScrollBar.horizontal.visible", "false");
-    mTextinputElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
 
     if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
     {
@@ -164,7 +166,10 @@ void TextinputElement::initMultiLine()
 
     auto uiTextInput = createMultiLineTextAreaElement();
     mTextinputElement->AddChild(uiTextInput);
-    mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
+    if (mTextinput->GetIsVisible())
+    {
+        mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
+    }
     this->addInlineActionMode();
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -181,7 +186,10 @@ void TextinputElement::initMultiLine()
 
 void TextinputElement::addValidationToInputText(std::shared_ptr<RendererQml::QmlTag> &uiTextInput)
 {
-    mContext->addToRequiredInputElementsIdList(uiTextInput->GetId());
+    if (mTextinput->GetIsVisible())
+    {
+        mContext->addToRequiredInputElementsIdList(uiTextInput->GetId());
+    }
     uiTextInput->Property("property bool showErrorMessage", "false");
     uiTextInput->Property("onTextChanged", "validate()");
     std::ostringstream validator;
@@ -261,10 +269,6 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
         uiTextInput->Property("placeholderText", RendererQml::Formatter() << "activeFocus? \"\" : " << "\"" << mTextinput->GetPlaceholder() << "\"");
     }
 
-    if (!mTextinput->GetIsVisible())
-    {
-        uiTextInput->Property("visible", "false");
-    }
     return uiTextInput;
 }
 std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaElement()
@@ -323,10 +327,6 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
         uiTextInput->Property("placeholderText", RendererQml::Formatter() << "activeFocus? \"\" : " << "\"" << mTextinput->GetPlaceholder() << "\"");
     }
 
-    if (!mTextinput->GetIsVisible())
-    {
-        uiTextInput->Property("visible", "false");
-    }
     return uiTextInput;
 }
 
