@@ -265,7 +265,6 @@ void NumberinputElement::createInputLabel()
 
 std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
 {
-    const auto mOrigionalElementId = mInput->GetId();
     auto contentItemTag = std::make_shared<RendererQml::QmlTag>("TextField");
     contentItemTag->Property("id", mOrigionalElementId + "_contentItem");
     mContentTagId = mOrigionalElementId + "_contentItem";
@@ -345,7 +344,6 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getIconTag(const std::s
 }
 std::ostringstream NumberinputElement::getValidatorFunction()
 {
-    const auto mOrigionalElementId = mInput->GetId();
     std::ostringstream validator;
     validator << "function validate(){\n";
     if (mInput->GetIsRequired())
