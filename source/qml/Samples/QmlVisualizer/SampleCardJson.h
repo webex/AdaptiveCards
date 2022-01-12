@@ -4517,6 +4517,16 @@ namespace Samples
             "errorMessage": "Please Enter Some text"
         },
         {
+            "type": "Input.Number",
+            "placeholder": "Placeholder text",
+            "id": "number",
+            "label": "Input Number",
+            "min": 0,
+            "max": 15,
+            "isRequired": true,
+            "errorMessage": "Please enter a message between 0 to 15"
+        },
+        {
             "type": "Input.Time",
             "id": "time",
             "isRequired": true,

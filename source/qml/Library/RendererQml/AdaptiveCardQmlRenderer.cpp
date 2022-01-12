@@ -7,7 +7,6 @@
 #include "ChoiceSetRender.h"
 #include "ToggleInputRender.h"
 #include "NumberInputRender.h"
-#include <iostream>
 
 namespace RendererQml
 {
