@@ -1,6 +1,5 @@
 #include "TextInputRender.h"
 #include "Formatter.h"
-#include <iostream>
 #include "utils.h"
 
 TextinputElement::TextinputElement(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
@@ -10,7 +9,7 @@ TextinputElement::TextinputElement(std::shared_ptr<AdaptiveCards::TextInput> inp
 {  
 }
 
-std::shared_ptr<RendererQml::QmlTag> TextinputElement::getQmlString()
+std::shared_ptr<RendererQml::QmlTag> TextinputElement::getQmlTag()
 {
     return mTextinputColElement;
 }
@@ -124,12 +123,12 @@ void TextinputElement::initSingleLine()
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
-        if (!mTextinput->GetErrorMessage().empty())
+        if (mTextinput->GetIsRequired() || !mTextinput->GetRegex().empty())
         {
             auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
             mTextinputColElement->AddChild(label);
-
             addValidationToInputText(uiTextInput);
+
         }
     }
 }
@@ -175,7 +174,7 @@ void TextinputElement::initMultiLine()
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
-        if (!mTextinput->GetErrorMessage().empty())
+        if (mTextinput->GetIsRequired() || !mTextinput->GetRegex().empty())
         {
             auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
             mTextinputColElement->AddChild(label);
@@ -199,7 +198,17 @@ void TextinputElement::addValidationToInputText(std::shared_ptr<RendererQml::Qml
     {
         validator << "const regex = new RegExp('" << mTextinput->GetRegex() << "');\n";
     }
-    validator << "var isValid = " << (mTextinput->GetRegex().empty() ? "text !== ''" : "regex.test(text)") << "\n" << "if (showErrorMessage) {\n"
+    validator << "var isValid = ";
+    if (mTextinput->GetIsRequired() && !mTextinput->GetRegex().empty()) {
+        validator << "(text !== '' && regex.test(text))";
+    }
+    else if (mTextinput->GetIsRequired() && mTextinput->GetRegex().empty()) {
+        validator << "text !== ''";
+    }
+    else {
+        validator << "text == '' || regex.test(text)";
+    }
+    validator << "\n" << "if (showErrorMessage) {\n"
         << "if (isValid) {\n" << "showErrorMessage = false\n" << "}\n}" << "return !isValid}\n";
     uiTextInput->AddFunctions(validator.str());
 }
@@ -229,7 +238,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
-        if (mTextinput->GetIsRequired())
+        if (mTextinput->GetIsRequired() || !mTextinput->GetRegex().empty())
         {
             uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
                 << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)\n}");
@@ -296,7 +305,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
-        if (mTextinput->GetIsRequired())
+        if (mTextinput->GetIsRequired() || !mTextinput->GetErrorMessage().empty())
         {
             uiTextInput->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
                 << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)\n}");

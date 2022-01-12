@@ -6,6 +6,8 @@
 #include "TimeInputRender.h"
 #include "ChoiceSetRender.h"
 #include "ToggleInputRender.h"
+#include "NumberInputRender.h"
+#include <iostream>
 
 namespace RendererQml
 {
@@ -569,242 +571,15 @@ namespace RendererQml
 	{
         TextinputElement textInputElement(input, context);
         textInputElement.initialize();
-        return textInputElement.getQmlString();
+        return textInputElement.getQmlTag();
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::NumberInputRender(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        auto numberConfig = context->GetRenderConfig()->getInputNumberConfig();
-
-        const std::string origionalElementId = input->GetId();
-        input->SetId(context->ConvertToValidId(input->GetId()));
-        const auto inputId = input->GetId();
-
-        auto numberInputRow = std::make_shared<QmlTag>("Row");
-        numberInputRow->Property("id", Formatter() << inputId << "_input_row");
-        numberInputRow->Property("width", "parent.width");
-        numberInputRow->Property("height", Formatter() << numberConfig.height);
-        numberInputRow->Property("visible", input->GetIsVisible() ? "true" : "false");
-
-        auto numberInputRectangle = std::make_shared<QmlTag>("Rectangle");
-        numberInputRectangle->Property("id", Formatter() << inputId << "_input");
-
-        numberInputRectangle->Property("border.width", Formatter() << numberConfig.borderWidth);
-        numberInputRectangle->Property("border.color", Formatter() << inputId << ".activeFocus ? " << context->GetHexColor(numberConfig.borderColorOnFocus) << " : " << context->GetHexColor(numberConfig.borderColorNormal));
-        numberInputRectangle->Property("radius", Formatter() << numberConfig.borderRadius);
-        numberInputRectangle->Property("height", "parent.height");
-        numberInputRectangle->Property("color", Formatter() << inputId << ".pressed ? " << context->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << inputId << ".hovered ? " << context->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << context->GetHexColor(numberConfig.backgroundColorNormal));
-
-        auto uiNumberInput = std::make_shared<QmlTag>("SpinBox");
-        uiNumberInput->Property("id", inputId);
-        uiNumberInput->Property("width", Formatter() << "parent.width - " << numberConfig.clearIconSize << " - " << numberConfig.clearIconHorizontalPadding);
-        uiNumberInput->Property("padding", "0");
-        uiNumberInput->Property("stepSize", "1");
-        uiNumberInput->Property("editable", "true");
-
-        auto doubleValidatorTag = std::make_shared<QmlTag>("DoubleValidator");
-
-        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-        backgroundTag->Property("color", "'transparent'");
-
-        auto contentItemTag = std::make_shared<QmlTag>("TextField");
-        contentItemTag->Property("id", inputId + "_contentItem");
-        contentItemTag->Property("font.pixelSize", Formatter() << numberConfig.pixelSize);
-        contentItemTag->Property("anchors.left", "parent.left");
-        contentItemTag->Property("anchors.right", "parent.right");
-        contentItemTag->Property("selectByMouse", "true");
-        contentItemTag->Property("selectedTextColor", "'white'");
-        contentItemTag->Property("readOnly", Formatter() << "!" << inputId << ".editable");
-        contentItemTag->Property("validator", Formatter() << inputId << ".validator");
-        contentItemTag->Property("inputMethodHints", "Qt.ImhFormattedNumbersOnly");
-        contentItemTag->Property("text", Formatter() << inputId << ".value");
-        contentItemTag->Property("onPressed", Formatter() << numberInputRectangle->GetId() << ".colorChange(true)");
-        contentItemTag->Property("onReleased", Formatter() << numberInputRectangle->GetId() << ".colorChange(false)");
-        contentItemTag->Property("onHoveredChanged", Formatter() << numberInputRectangle->GetId() << ".colorChange(false)");
-        contentItemTag->Property("onActiveFocusChanged", Formatter() << numberInputRectangle->GetId() << ".colorChange(false)");
-        contentItemTag->Property("leftPadding", Formatter() << numberConfig.textHorizontalPadding);
-        contentItemTag->Property("rightPadding", Formatter() << numberConfig.textHorizontalPadding);
-        contentItemTag->Property("topPadding", Formatter() << numberConfig.textVerticalPadding);
-        contentItemTag->Property("bottomPadding", Formatter() << numberConfig.textVerticalPadding);
-        contentItemTag->Property("padding", "0");
-        {
-            contentItemTag->Property("placeholderText", input->GetPlaceholder(), true);
-        }
-        contentItemTag->Property("Accessible.name", input->GetPlaceholder().empty() ? "Number Input Field" : input->GetPlaceholder(), true);
-        contentItemTag->Property("Accessible.role", "Accessible.EditableText");
-
-        auto textBackgroundTag = std::make_shared<QmlTag>("Rectangle");
-        textBackgroundTag->Property("color", "'transparent'");
-
-        contentItemTag->Property("background", textBackgroundTag->ToString());
-        contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << inputId << ".from || text > " << inputId << ".to){\nremove(0,length)\nif(" << inputId << ".hasDefaultValue)\ninsert(0, " << inputId << ".defaultValue)\nelse\ninsert(0, " << inputId << ".from)\n}\n}");
-        contentItemTag->Property("color", context->GetHexColor(numberConfig.textColor));
-        contentItemTag->Property("placeholderTextColor", context->GetHexColor(numberConfig.placeHolderColor));
-
-        //Dummy indicator element to remove the default indicators of SpinBox
-        auto upDummyTag = getDummyElementforNumberInput(true);
-
-        //Dummy indicator element to remove the default indicators of SpinBox
-        auto downDummyTag = getDummyElementforNumberInput(false);
-
-        auto upDownIcon = GetIconTag(context);
-        upDownIcon->RemoveProperty("anchors.top");
-        upDownIcon->RemoveProperty("anchors.bottom");
-        upDownIcon->RemoveProperty("anchors.margins");
-        upDownIcon->Property("id", Formatter() << inputId << "_up_down_icon");
-        upDownIcon->Property("width", "parent.width");
-        upDownIcon->Property("height", "parent.height");
-        upDownIcon->Property("icon.width", Formatter() << numberConfig.upDownIconSize);
-        upDownIcon->Property("icon.height", Formatter() << numberConfig.upDownIconSize);
-        upDownIcon->Property("icon.color", context->GetHexColor(numberConfig.upDownIconColor));
-        upDownIcon->Property("icon.source", RendererQml::vector_up_down, true);
-        upDownIcon->Property("background", textBackgroundTag->ToString());
-
-        auto upIndicatorTag = std::make_shared<QmlTag>("MouseArea");
-        upIndicatorTag->Property("id", Formatter() << inputId << "_up_indicator_area");
-        upIndicatorTag->Property("width", "parent.width");
-        upIndicatorTag->Property("height", "parent.height/2");
-        upIndicatorTag->Property("anchors.top", "parent.top");
-
-        auto downIndicatorTag = std::make_shared<QmlTag>("MouseArea");
-        downIndicatorTag->Property("id", Formatter() << inputId << "_down_indicator_area");
-        downIndicatorTag->Property("width", "parent.width");
-        downIndicatorTag->Property("height", "parent.height/2");
-        downIndicatorTag->Property("anchors.top", Formatter() << upIndicatorTag->GetId() << ".bottom");
-
-        auto clearIcon = GetClearIconButton(context);
-        clearIcon->Property("id", Formatter() << inputId << "_clear_icon");
-        clearIcon->Property("visible", Formatter() << contentItemTag->GetId() << ".length !== 0");
-        clearIcon->Property("onClicked", Formatter() << "{nextItemInFocusChain().forceActiveFocus();" << inputId << ".value = " << inputId << ".from;" << contentItemTag->GetId() << ".clear();}");
-
-        if (input->GetValue() != std::nullopt)
-        {
-            uiNumberInput->Property("readonly property bool hasDefaultValue", "true");
-            uiNumberInput->Property("readonly property int defaultValue", Formatter() << input->GetValue());
-        }
-        else if (input->GetMin() == std::nullopt)
-        {
-            input->SetValue(0);
-            uiNumberInput->Property("readonly property bool hasDefaultValue", "true");
-            uiNumberInput->Property("readonly property int defaultValue", std::to_string(0));
-        }
-        else
-        {
-            uiNumberInput->Property("readonly property bool hasDefaultValue", "false");
-        }
-
-        if (input->GetMin() == std::nullopt)
-        {
-            input->SetMin(INT_MIN);
-        }
-        if (input->GetMax() == std::nullopt)
-        {
-            input->SetMax(INT_MAX);
-        }
-
-        if ((input->GetMin() == input->GetMax() && input->GetMin() == 0) || input->GetMin() > input->GetMax())
-        {
-            input->SetMin(INT_MIN);
-            input->SetMax(INT_MAX);
-        }
-        if (input->GetValue() < input->GetMin())
-        {
-            input->SetValue(input->GetMin());
-            uiNumberInput->Property("readonly property int defaultValue", Formatter() << input->GetMin());
-        }
-        if (input->GetValue() > input->GetMax())
-        {
-            input->SetValue(input->GetMax());
-            uiNumberInput->Property("readonly property int defaultValue", Formatter() << input->GetMax());
-        }
-
-        uiNumberInput->Property("from", Formatter() << input->GetMin());
-        uiNumberInput->Property("to", Formatter() << input->GetMax());
-        uiNumberInput->Property("value", Formatter() << input->GetValue());
-
-        //TODO: Add stretch property
-
-        if (!input->GetIsVisible())
-        {
-            uiNumberInput->Property("visible", "false");
-        }
-
-        auto uiSplitterRactangle = std::make_shared<QmlTag>("Rectangle");
-        uiSplitterRactangle->Property("id", Formatter() << uiNumberInput->GetId() << "_icon_set");
-        uiSplitterRactangle->Property("width", Formatter() << numberConfig.upDownButtonWidth);
-        uiSplitterRactangle->Property("radius", Formatter() << numberConfig.borderRadius);
-        uiSplitterRactangle->Property("height", "parent.height");
-        uiSplitterRactangle->Property("border.color", Formatter() << "activeFocus ? " << context->GetHexColor(numberConfig.borderColorOnFocus) << " : " << context->GetHexColor(numberConfig.borderColorNormal));
-        uiSplitterRactangle->Property("activeFocusOnTab", "true");
-        uiSplitterRactangle->Property("color", Formatter() << "(" << upDownIcon->GetId() << ".pressed || activeFocus) ? " << context->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << upDownIcon->GetId() << ".hovered ? " << context->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << context->GetHexColor(numberConfig.backgroundColorNormal));
-        uiSplitterRactangle->Property("Keys.onPressed", Formatter() << "{\n"
-            "if (event.key === Qt.Key_Up || event.key === Qt.Key_Down)\n"
-            "{" << uiNumberInput->GetId() << ".changeValue(event.key);accessiblityPrefix = '';event.accepted = true;}}\n"
-        );
-
-        uiNumberInput->Property("contentItem", contentItemTag->ToString());
-        uiNumberInput->Property("background", backgroundTag->ToString());
-        uiNumberInput->Property("up.indicator", upDummyTag->ToString());
-        uiNumberInput->Property("down.indicator", downDummyTag->ToString());
-        uiNumberInput->Property("validator", doubleValidatorTag->ToString());
-        uiNumberInput->Property("valueFromText", "function(text, locale){\nreturn Number(text)\n}");
-        uiNumberInput->AddFunctions(Formatter() << "function changeValue(keyPressed) {"
-            "if ((keyPressed === Qt.Key_Up || keyPressed === Qt.Key_Down) && " << contentItemTag->GetId() << ".text.length === 0)\n"
-            "{value = (from < 0) ? 0 : from;" << contentItemTag->GetId() << ".text = value;}\n"
-            "else if (keyPressed === Qt.Key_Up)\n"
-            "{" << inputId << ".increase();" << contentItemTag->GetId() << ".text = value;}\n"
-            "else if (keyPressed === Qt.Key_Down)\n"
-            "{" << inputId << ".decrease();" << contentItemTag->GetId() << ".text = value;}}\n");
-        uiNumberInput->Property("Keys.onPressed", Formatter() << "{\n"
-            "if (event.key === Qt.Key_Up || event.key === Qt.Key_Down)\n"
-            "{ " << inputId << ".changeValue(event.key);event.accepted = true}\n"
-            "}\n");
-
-        numberInputRectangle->Property("width", Formatter() << "parent.width - " << uiSplitterRactangle->GetId() << ".width");
-        numberInputRectangle->AddFunctions(Formatter() << "function colorChange(isPressed){\n"
-            "if (isPressed) color = " << context->GetHexColor(numberConfig.backgroundColorOnPressed) << ";\n"
-            "else color = " << contentItemTag->GetId() << ".activeFocus ? " << context->GetHexColor(numberConfig.backgroundColorOnPressed) << " : " << contentItemTag->GetId() << ".hovered ? " << context->GetHexColor(numberConfig.backgroundColorOnHovered) << " : " << context->GetHexColor(numberConfig.backgroundColorNormal) << "}"
-        );
-
-        numberInputRectangle->AddChild(uiNumberInput);
-        numberInputRectangle->AddChild(clearIcon);
-        numberInputRow->AddChild(numberInputRectangle);
-        numberInputRow->AddChild(uiSplitterRactangle);
-
-        upIndicatorTag->Property("onReleased", Formatter() << "{ " << inputId << ".changeValue(Qt.Key_Up); " << uiSplitterRactangle->GetId() << ".forceActiveFocus(); }");
-        downIndicatorTag->Property("onReleased", Formatter() << "{ " << inputId << ".changeValue(Qt.Key_Down); " << uiSplitterRactangle->GetId() << ".forceActiveFocus(); }");
-        uiSplitterRactangle->AddChild(upDownIcon);
-        uiSplitterRactangle->AddChild(upIndicatorTag);
-        uiSplitterRactangle->AddChild(downIndicatorTag);
-
-        context->addToInputElementList(origionalElementId, (inputId + ".value"));
-
-        uiNumberInput->Property("Accessible.ignored", "true");
-        clearIcon->Property("Accessible.name", Formatter() << (input->GetPlaceholder().empty() ? "Number Input" : input->GetPlaceholder()) << " clear", true);
-        clearIcon->Property("Accessible.role", "Accessible.Button");
-
-        uiSplitterRactangle->Property("property string accessiblityPrefix", "''");
-        uiSplitterRactangle->Property("onActiveFocusChanged", Formatter() << "{"
-            << "if (activeFocus)"
-            << "accessiblityPrefix = '" << (input->GetPlaceholder().empty() ? "Number Input " : input->GetPlaceholder()) << "stepper. Current number is '}");
-        uiSplitterRactangle->Property("Accessible.name", Formatter() << "accessiblityPrefix + " << contentItemTag->GetId() << ".displayText");
-        uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
-
-        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
-        {
-            if (input->GetIsRequired())
-            {
-                context->addToRequiredInputElementsIdList(inputId);
-                uiNumberInput->Property("property bool showErrorMessage", "false");
-            }
-        }
-
-        if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
-        {
-            return GetStretchRectangle(numberInputRow);
-        }
-
-        return numberInputRow;
+        NumberinputElement numberInputElement(input, context);
+        numberInputElement.initialize();
+        return numberInputElement.getQmlTag();
+        
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::RichTextBlockRender(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
@@ -2722,27 +2497,7 @@ namespace RendererQml
 		return MouseAreaTag;
 	}
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::getDummyElementforNumberInput(bool isTop)
-	{
-		auto DummyTag = std::make_shared<QmlTag>("Rectangle");
-		DummyTag->Property("width", "2");
-		DummyTag->Property("height", "2");
-		DummyTag->Property("anchors.right", "parent.right");
 
-		if (isTop)
-		{
-			DummyTag->Property("anchors.top", "parent.top");
-		}
-		else
-		{
-			DummyTag->Property("anchors.bottom", "parent.bottom");
-		}
-		DummyTag->Property("anchors.margins", "5");
-		DummyTag->Property("color", "'transparent'");
-		DummyTag->Property("z", "-1");
-
-		return DummyTag;
-	}
 
 	void AdaptiveCardQmlRenderer::ValidateLastBodyElementIsShowCard(const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& bodyElements, std::shared_ptr<AdaptiveRenderContext> context)
 	{

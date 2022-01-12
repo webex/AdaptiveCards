@@ -177,6 +177,7 @@
     <ClCompile Include="ChoiceSetRender.cpp" />
     <ClCompile Include="ComboBoxRender.cpp" />
     <ClCompile Include="Formatter.cpp" />
+    <ClCompile Include="NumberInputRender.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="QmlTag.cpp" />
     <ClCompile Include="RenderedQmlAdaptiveCardBase.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="ComboBoxRender.h" />
     <ClInclude Include="Formatter.h" />
     <ClInclude Include="ImageDataURI.h" />
+    <ClInclude Include="NumberInputRender.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QmlTag.h" />
     <ClInclude Include="RenderedQmlAdaptiveCardBase.h" />
