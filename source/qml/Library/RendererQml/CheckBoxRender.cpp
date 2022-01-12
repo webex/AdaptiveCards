@@ -1,8 +1,6 @@
 #include "AdaptiveCardQmlRenderer.h"
 #include "CheckBoxRender.h"
-#include "Formatter.h"
 #include "ImageDataURI.h"
-#include "utils.h"
 
 CheckBoxElement::CheckBoxElement(RendererQml::Checkbox checkBox, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
     :mCheckBox(checkBox),

@@ -1,6 +1,6 @@
 #include "ToggleInputRender.h"
 #include "Formatter.h"
-#include "utils.h"
+#include "Utils.h"
 
 ToggleInputElement::ToggleInputElement(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> mContext)
     :mToggleInput(input),
@@ -23,6 +23,7 @@ void ToggleInputElement::initialize()
     mToggleInputColElement->Property("id", RendererQml::Formatter() << mToggleInput->GetId() << "_column");
     mToggleInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mToggleInputColElement->Property("width", "parent.width");
+    mToggleInputColElement->Property("visible", mToggleInput->GetIsVisible() ? "true" : "false");
 
     addInputLabel();
 
@@ -31,7 +32,10 @@ void ToggleInputElement::initialize()
     mToggleInputColElement->AddChild(uiCheckBox);
 
     addErrorMessage(uiCheckBox);
-    mContext->addToInputElementList(origionalElementId, (uiCheckBox->GetId() + ".value"));
+    if (mToggleInput->GetIsVisible())
+    {
+        mContext->addToInputElementList(origionalElementId, (uiCheckBox->GetId() + ".value"));
+    }
 }
 
 std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getCheckBox()
@@ -135,7 +139,6 @@ void ToggleInputElement::addColorFunction(const std::shared_ptr<RendererQml::Qml
     uiCheckBox->Property("onCheckedChanged", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false)");
     uiCheckBox->Property("onActiveFocusChanged", RendererQml::Formatter() << "{" << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false);"
         << "if(activeFocus){Accessible.name = getAccessibleName() + text}}");
-    uiCheckBox->Property("visible", mToggleInput->GetIsVisible() ? "true" : "false");
 
     uiCheckBox->Property("Component.onCompleted", RendererQml::Formatter() << "{\n"
         << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false);}\n"
@@ -144,7 +147,10 @@ void ToggleInputElement::addColorFunction(const std::shared_ptr<RendererQml::Qml
 
 void ToggleInputElement::addValidation(const std::shared_ptr<RendererQml::QmlTag>& uiCheckBox)
 {
-    mContext->addToRequiredInputElementsIdList(uiCheckBox->GetId());
+    if (mToggleInput->GetIsVisible())
+    {
+        mContext->addToRequiredInputElementsIdList(uiCheckBox->GetId());
+    }
     uiCheckBox->Property("property bool showErrorMessage", "false");
     uiCheckBox->Property("onCheckStateChanged", "validate()");
 

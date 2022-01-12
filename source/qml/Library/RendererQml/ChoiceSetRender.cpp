@@ -1,6 +1,6 @@
 #include "ChoiceSetRender.h"
 #include "Formatter.h"
-#include "utils.h"
+#include "Utils.h"
 
 ChoiceSetElement::ChoiceSetElement(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
     :mChoiceSetInput(input),
@@ -66,6 +66,7 @@ void ChoiceSetElement::initialize()
     mChoiceSetColElement->Property("id", RendererQml::Formatter() << mChoiceSetInput->GetId() << "_column");
     mChoiceSetColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mChoiceSetColElement->Property("width", "parent.width");
+    mChoiceSetColElement->Property("visible", mChoiceSetInput->GetIsVisible() ? "true" : "false");
 
     renderChoiceSet(choiceSet, type, choiceSetId);
 }
@@ -82,7 +83,6 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         comboBoxElement.initialize();
         uiChoiceSet = comboBoxElement.getQmlTag();
 
-        uiChoiceSet->Property("visible", mChoiceSetInput->GetIsVisible() ? "true" : "false");
         uiChoiceSet->Property("onCurrentValueChanged", "{Accessible.name = displayText}");
         mContext->addToInputElementList(choiceSetId, (uiChoiceSet->GetId() + ".currentValue"));
         mChoiceSetColElement->AddChild(uiChoiceSet);
@@ -91,7 +91,10 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
     {
         uiChoiceSet = getButtonGroup(choiceSet, checkBoxType);
         addColorFunction();
-        mContext->addToInputElementList(choiceSetId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
+        if (mChoiceSetInput->GetIsVisible())
+        {
+            mContext->addToInputElementList(choiceSetId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
+        }
     }
 
     addErrorMessage(uiChoiceSet, checkBoxType);
@@ -165,6 +168,8 @@ std::shared_ptr<RendererQml::QmlTag> ChoiceSetElement::getButtonGroup(RendererQm
 {
     auto uiButtonGroup = std::make_shared<RendererQml::QmlTag>("ButtonGroup");
     uiButtonGroup->Property("id", choiceset.id + "_btngrp");
+    uiButtonGroup->Property("property bool isButtonGroup", "true");
+    uiButtonGroup->AddFunctions(RendererQml::Formatter() << "function focusFirstButton(){" << choiceset.choices[0].id << ".forceActiveFocus();}");
 
     if (choiceset.isMultiSelect)
     {
@@ -229,7 +234,10 @@ std::shared_ptr<RendererQml::QmlTag> ChoiceSetElement::getButtonGroup(RendererQm
 
 void ChoiceSetElement::addValidation(std::shared_ptr<RendererQml::QmlTag> uiChoiceSet, RendererQml::CheckBoxType checkBoxType)
 {
-    mContext->addToRequiredInputElementsIdList(uiChoiceSet->GetId());
+    if (mChoiceSetInput->GetIsVisible())
+    {
+        mContext->addToRequiredInputElementsIdList(uiChoiceSet->GetId());
+    }
     uiChoiceSet->Property("property bool showErrorMessage", "false");
 
     std::ostringstream validator;
