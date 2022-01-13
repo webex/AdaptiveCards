@@ -29,3 +29,14 @@ extension NSView {
         return nil
     }
 }
+
+class FakeErrorMessageHandlerDelegate: InputHandlingViewErrorDelegate {
+    var isErrorVisible: Bool = false
+    func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
+        isErrorVisible = false
+    }
+    
+    func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
+        isErrorVisible = true
+    }
+}

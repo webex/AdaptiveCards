@@ -54,12 +54,10 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         stackview.addArrangedSubview(choiceButton)
     }
     
-    public func setupButton(attributedString: NSMutableAttributedString, value: String?) -> ACRChoiceButton {
-        let newButton = ACRChoiceButton(renderConfig: renderConfig, buttonType: isRadioGroup ? .radio : .switch)
+    public func setupButton(attributedString: NSMutableAttributedString, value: String?, for element: ACSChoiceSetInput) -> ACRChoiceButton {
+        let newButton = ACRChoiceButton(renderConfig: renderConfig, buttonType: isRadioGroup ? .radio : .switch, element: element, title: attributedString.string)
         newButton.labelAttributedString = attributedString
-        newButton.wrap = self.wrap
         newButton.buttonValue = value
-        newButton.setAccessibilityLabel(attributedString.string)
         return newButton
     }
     
@@ -95,23 +93,37 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
     func acrChoiceButtonDidSelect(_ button: ACRChoiceButton) {
         handleClickAction(button)
     }
+    
+    func acrChoiceButtonShouldReadError(_ button: ACRChoiceButton) -> Bool {
+        guard let delegate = errorDelegate else { return false }
+        return delegate.isErrorVisible
+    }
 }
 
 // MARK: ACRChoiceSetFieldCompactView
 class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     weak var errorDelegate: InputHandlingViewErrorDelegate?
-    public let type: ACSChoiceSetStyle = .compact
+    
     public var idString: String?
     public var valueSelected: String?
     public var arrayValues: [String?] = []
     var isRequired = false
+    
+    public let type: ACSChoiceSetStyle = .compact
+    
+    private let renderConfig: RenderConfig
+    private let label: String?
+    private let errorMessage: String?
     
     override func viewDidMoveToSuperview() {
         guard let superview = superview else { return }
         widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
     }
     
-    init() {
+    init(element: ACSChoiceSetInput, renderConfig: RenderConfig) {
+        self.renderConfig = renderConfig
+        self.label = element.getLabel()
+        self.errorMessage = element.getErrorMessage()
         super.init(frame: .zero, pullsDown: false)
         target = self
         action = #selector(popUpButtonUsed(_:))
@@ -151,6 +163,24 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
             return ""
         }
         return id
+    }
+    
+    override func accessibilityValue() -> Any? {
+        guard renderConfig.supportsSchemeV1_3 else {
+            return itemArray[indexOfSelectedItem].title
+        }
+        var accessibilityLabel = ""
+        if let errorDelegate = errorDelegate, errorDelegate.isErrorVisible {
+            accessibilityLabel += "Error "
+            if let errorMessage = errorMessage, !errorMessage.isEmpty {
+                accessibilityLabel += errorMessage + ", "
+            }
+        }
+        if let label = label, !label.isEmpty {
+            accessibilityLabel += label + ", "
+        }
+        accessibilityLabel += itemArray[indexOfSelectedItem].title
+        return accessibilityLabel
     }
     
     var isValid: Bool {

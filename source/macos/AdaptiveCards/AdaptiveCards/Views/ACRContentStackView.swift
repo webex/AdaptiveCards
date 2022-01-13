@@ -237,6 +237,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         textField.isEditable = false
         textField.isBordered = false
         textField.isSelectable = true
+        textField.setAccessibilityRole(.none)
         textField.backgroundColor = .clear
         return textField
     }
@@ -306,6 +307,10 @@ extension ACRContentStackView: InputHandlingViewErrorDelegate {
     
     func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
         hideErrorMessage(with: currentFocussedView)
+    }
+    
+    var isErrorVisible: Bool {
+        return !(errorMessageField?.isHidden ?? true)
     }
 }
 

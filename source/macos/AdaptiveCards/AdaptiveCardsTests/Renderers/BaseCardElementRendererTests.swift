@@ -65,9 +65,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         inputTextView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
-        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorVisible)
         inputTextView.errorDelegate?.inputHandlingViewShouldHideError(inputTextView, currentFocussedView: nil)
-        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorVisible)
     }
     
     func testInputNumberErrorMessageHandler() {
@@ -85,9 +85,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         inputNumberView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
-        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorVisible)
         inputNumberView.errorDelegate?.inputHandlingViewShouldHideError(inputNumberView, currentFocussedView: nil)
-        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorVisible)
     }
     
     func testInputDateErrorMessageHandler() {
@@ -105,9 +105,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         inputDateView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
-        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorVisible)
         inputDateView.errorDelegate?.inputHandlingViewShouldHideError(inputDateView, currentFocussedView: nil)
-        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorVisible)
     }
     
     func testInputTimeErrorMessageHandler() {
@@ -125,36 +125,38 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         inputTimeView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
-        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorVisible)
         inputTimeView.errorDelegate?.inputHandlingViewShouldHideError(inputTimeView, currentFocussedView: nil)
-        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorVisible)
     }
     
     func testInputChoiceSetErrorMessageHandler() {
         let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
         let fakeErrorMessageHandlerDelegate = FakeErrorMessageHandlerDelegate()
-        
-        let inputChoiceSet = FakeChoiceSetInput.make(isRequired: true, errorMessage: "Error")
+        let fakeChoice = FakeChoiceInput.make(title: "Title", value: "Value")
+        let inputChoiceSet = FakeChoiceSetInput.make(choices: [fakeChoice], choiceSetStyle: .compact, isRequired: true, errorMessage: "Error Message", label: "Label Message")
         let view = ChoiceSetInputRenderer().render(element: inputChoiceSet, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
-        XCTAssertTrue(view is ACRChoiceSetView)
-        guard let inputChoiceSetView = view as? ACRChoiceSetView else { fatalError() }
+        XCTAssertTrue(view is ACRChoiceSetCompactView)
+        guard let inputChoiceSetView = view as? ACRChoiceSetCompactView else { fatalError() }
         
         let viewWithInheritedProperties = baseCardRenderer.updateView(view: view, element: inputChoiceSet, rootView: FakeRootView(), style: .default, hostConfig: hostConfig, config: config, isfirstElement: true)
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
         inputChoiceSetView.errorDelegate = fakeErrorMessageHandlerDelegate
-        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
-        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error Message")
+        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorVisible)
+        XCTAssertEqual(inputChoiceSetView.accessibilityValue() as? String, "Label Message, Title")
         inputChoiceSetView.errorDelegate?.inputHandlingViewShouldHideError(inputChoiceSetView, currentFocussedView: nil)
-        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorVisible)
+        XCTAssertEqual(inputChoiceSetView.accessibilityValue() as? String, "Error Error Message, Label Message, Title")
     }
     
     func testInputToggleErrorMessageHandler() {
         let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
         let fakeErrorMessageHandlerDelegate = FakeErrorMessageHandlerDelegate()
         
-        let inputToggle = FakeInputToggle.make(isRequired: true, errorMessage: "Error")
+        let inputToggle = FakeInputToggle.make(title: "Title", isRequired: true, errorMessage: "Error Message", label: "Label")
         let view = InputToggleRenderer().render(element: inputToggle, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
         XCTAssertTrue(view is ACRChoiceButton)
         guard let inputToggleView = view as? ACRChoiceButton else { fatalError() }
@@ -164,10 +166,12 @@ class BaseCardElementRendererrTests: XCTestCase {
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         
         inputToggleView.errorDelegate = fakeErrorMessageHandlerDelegate
-        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error")
-        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error Message")
+        XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorVisible)
+        XCTAssertEqual(inputToggleView.accessibilityLabel(), "Label, Title")
         inputToggleView.errorDelegate?.inputHandlingViewShouldHideError(inputToggleView, currentFocussedView: nil)
-        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorMessageHidden)
+        XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorVisible)
+        XCTAssertEqual(inputToggleView.accessibilityLabel(), "Error Error Message, Label, Title")
     }
     
     private func renderBaseCardElementView() -> ACRContentStackView {
@@ -179,16 +183,5 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
         return updatedView
-    }
-}
-
-private class FakeErrorMessageHandlerDelegate: InputHandlingViewErrorDelegate {
-    var isErrorMessageHidden: Bool = false
-    func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
-        isErrorMessageHidden = false
-    }
-    
-    func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
-        isErrorMessageHidden = true
     }
 }
