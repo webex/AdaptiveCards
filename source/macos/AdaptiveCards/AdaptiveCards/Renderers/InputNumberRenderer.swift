@@ -17,7 +17,7 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
             view.placeholder = inputElement.getPlaceholder() ?? ""
             view.maxValue = inputElement.getMax()?.doubleValue ?? ACRNumericTextField.MAXVAL
             view.minValue = inputElement.getMin()?.doubleValue ?? ACRNumericTextField.MINVAL
-            view.inputString = inputElement.getValue()?.stringValue ?? ""
+            view.value = inputElement.getValue()?.stringValue ?? ""
             view.isRequired = inputElement.getIsRequired()
             return view
         }()
@@ -47,7 +47,6 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         setupConstraints()
         setUpControls()
         setAccessibilityLabel("")
-        setStepperAccessibilityValue(value: "")
     }
     
     public required init?(coder: NSCoder) {
@@ -73,25 +72,18 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     private lazy var stepper: NSStepper = {
         let view = NSStepper()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.setAccessibilityValue("")
         return view
     }()
 
     @objc private func handleStepperAction(_ sender: NSStepper) {
-        inputValue = Double(sender.integerValue)
-        setStepperAccessibilityValue(value: String(stepper.integerValue))
-        
-		// TODO: Remove this while refactor
-        if isValid {
-            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: textField)
-            textField.hideError()
-        }
+        value = String(sender.integerValue)
     }
     
     public func controlTextDidChange(_ obj: Notification) {
         guard let textfield = obj.object as? ACRTextField else { return }
         var stringValue = textfield.stringValue
         
-        stepper.doubleValue = Double(textField.stringValue) ?? stepper.doubleValue
         let charSet = NSCharacterSet(charactersIn: "1234567890.-").inverted
         let chars = stringValue.components(separatedBy: charSet)
         stringValue = chars.joined()
@@ -125,28 +117,21 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         }
 
         // replace string
-        textfield.stringValue = stringValue
-        previousValue = textField.stringValue
-        
-        if isValid {
-            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: textField)
-            textfield.hideError()
-        }
+        value = stringValue
+        previousValue = value
     }
     
     override open func keyDown(with event: NSEvent) {
         switch Int(event.keyCode) {
         case kVK_UpArrow:
-            inputValue += 1
+            stepper.integerValue += 1
+            value = stepper.stringValue
         case kVK_DownArrow:
-            inputValue -= 1
+            stepper.integerValue -= 1
+            value = stepper.stringValue
         default:
             super.keyDown(with: event)
         }
-    }
-    
-    public func controlTextDidEndEditing(_ obj: Notification) {
-        setStepperAccessibilityValue(value: inputString)
     }
     
     private func setupViews() {
@@ -169,8 +154,12 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         stepper.action = #selector(handleStepperAction(_:))
     }
     
-    private func setStepperAccessibilityValue(value: String) {
-        stepper.setAccessibilityValue(value)
+    private func hideErrorIfNeeded() {
+        let currentFocusedView = stepper.isViewInFocus ? stepper : textField
+        if isValid {
+            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: currentFocusedView)
+            textField.hideError()
+        }
     }
 }
 
@@ -178,25 +167,6 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
 extension ACRNumericTextField: InputHandlingViewProtocol {
     static let MAXVAL = Double.greatestFiniteMagnitude
     static let MINVAL = -MAXVAL
-    
-    var inputValue: Double {
-        get { return textField.doubleValue }
-        set {
-            textField.doubleValue = newValue
-            stepper.doubleValue = newValue
-            setStepperAccessibilityValue(value: textField.stringValue)
-        }
-    }
-    
-    var inputString: String {
-        get { return textField.stringValue }
-        set {
-            if !newValue.isEmpty, let doubleVal = Double(newValue) {
-                inputValue = doubleVal
-                previousValue = inputString
-            }
-        }
-    }
     
     var minValue: Double {
         get { return stepper.minValue }
@@ -232,11 +202,19 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     }
     
     var value: String {
-        guard !inputString.isEmpty else { return "" }
-        if Float(inputValue).truncatingRemainder(dividingBy: 1) == 0 {
-            return String(Int(inputValue))
-        } else {
-            return String(Float(inputValue))
+        get {
+            if textField.stringValue.isEmpty {
+                return ""
+            } else if textField.doubleValue.truncatingRemainder(dividingBy: 1) == 0 {
+                return String(textField.integerValue)
+            }
+            return String(textField.doubleValue)
+        }
+        set {
+            textField.stringValue = newValue
+            stepper.stringValue = newValue
+            stepper.setAccessibilityValue(newValue)
+            hideErrorIfNeeded()
         }
     }
     
@@ -250,6 +228,13 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     
     var isValid: Bool {
         guard isBasicValidationsSatisfied else { return false }
-        return inputValue <= maxValue && inputValue >= minValue
+        let currValue = Double(value) ?? 0
+        return currValue <= maxValue && currValue >= minValue
+    }
+}
+
+extension ACRNumericTextField: ACRTextFieldDelegate {
+    func acrTextFieldDidSelectClear(_ textField: ACRTextField) {
+        value = ""
     }
 }
