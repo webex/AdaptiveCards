@@ -125,8 +125,11 @@ void TextinputElement::initSingleLine()
     {
         if (mTextinput->GetIsRequired() || !mTextinput->GetRegex().empty())
         {
-            auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
-            mTextinputColElement->AddChild(label);
+            if(!mTextinput->GetErrorMessage().empty())
+            { 
+                auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
+                mTextinputColElement->AddChild(label);
+            }
             addValidationToInputText(uiTextInput);
 
         }
@@ -176,8 +179,11 @@ void TextinputElement::initMultiLine()
     {
         if (mTextinput->GetIsRequired() || !mTextinput->GetRegex().empty())
         {
-            auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
-            mTextinputColElement->AddChild(label);
+            if(!mTextinput->GetErrorMessage().empty())
+            {
+                auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
+                mTextinputColElement->AddChild(label);
+            }
             addValidationToInputText(uiTextInput);
 
         }
