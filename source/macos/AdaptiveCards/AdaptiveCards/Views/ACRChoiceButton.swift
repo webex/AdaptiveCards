@@ -30,7 +30,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     private let errorMessage: String?
     var isRequired = false
     
-    init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType, element: ACSToggleInput) {
+    init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType, element: ACSBaseInputElement, valueOn: String?, valueOff: String?, wrap: Bool, buttonTitle: String?) {
         // initialize configs
         self.renderConfig = renderConfig
         self.buttonType = buttonType
@@ -40,38 +40,16 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         // initialize variables
         idString = element.getId()
         isRequired = element.getIsRequired()
-        // This function returns true/fase even if data not set in json
-        valueOn = element.getValueOn()
-        valueOff = element.getValueOff()
-        wrap = element.getWrap()
+        
+        self.valueOn = valueOn
+        self.valueOff = valueOff
+        self.wrap = wrap
+        
         buttonLabel = element.getLabel()
         errorMessage = element.getErrorMessage()
-        buttonTitle = element.getTitle()
+        self.buttonTitle = buttonTitle
         
         super.init(frame: .zero)
-        initialise()
-    }
-    
-    init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType, element: ACSChoiceSetInput, title: String?) {
-        // initialize configs
-        self.renderConfig = renderConfig
-        self.buttonType = buttonType
-        self.buttonConfig = buttonType == .switch ? renderConfig.checkBoxButtonConfig : renderConfig.radioButtonConfig
-        self.localisedStringConfig = renderConfig.localisedStringConfig
-        // initialise variables
-        self.idString = nil
-        self.valueOn = nil
-        self.valueOff = nil
-        wrap = element.getWrap()
-
-        self.buttonLabel = element.getLabel()
-        self.errorMessage = element.getErrorMessage()
-        self.buttonTitle = title
-        super.init(frame: .zero)
-        initialise()
-    }
-    
-    private func initialise() {
         button.setButtonType(buttonType == .switch ? .switch : .radio)
         setupViews()
         setupConstraints()
@@ -79,6 +57,14 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         updateButtonImage()
         setupTrackingArea()
         setupAccessibility()
+    }
+    
+    convenience init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType, element: ACSToggleInput) {
+        self.init(renderConfig: renderConfig, buttonType: buttonType, element: element, valueOn: element.getValueOn(), valueOff: element.getValueOff(), wrap: element.getWrap(), buttonTitle: element.getTitle())
+    }
+    
+    convenience init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType, element: ACSChoiceSetInput, title: String?) {
+        self.init(renderConfig: renderConfig, buttonType: buttonType, element: element, valueOn: nil, valueOff: nil, wrap: element.getWrap(), buttonTitle: title)
     }
     
     public required init?(coder: NSCoder) {
