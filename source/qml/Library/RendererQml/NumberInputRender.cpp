@@ -39,21 +39,21 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getQmlTag()
 
 void NumberinputElement::initialize()
 {
+    const std::string origionalElementId = mInput->GetId();
+    mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
+    mOrigionalElementId = mInput->GetId();
+
     numberInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     numberInputColElement->Property("id", RendererQml::Formatter() << mInput->GetId() << "_column");
     numberInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     numberInputColElement->Property("width", "parent.width");
-
-    const std::string origionalElementId = mInput->GetId();
-    mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
-    const auto mOrigionalElementId = mInput->GetId();
+    numberInputColElement->Property("visible", mInput->GetIsVisible() ? "true" : "false");
     createInputLabel();
     auto numberInputRow = std::make_shared<RendererQml::QmlTag>("Row");
     numberInputColElement->AddChild(numberInputRow);
     numberInputRow->Property("id", RendererQml::Formatter() << mOrigionalElementId << "_input_row");
     numberInputRow->Property("width", "parent.width");
     numberInputRow->Property("height", RendererQml::Formatter() << numberConfig.height);
-    numberInputRow->Property("visible", mInput->GetIsVisible() ? "true" : "false");
 
     auto numberInputRectangle = std::make_shared<RendererQml::QmlTag>("Rectangle");
     numberInputRectangle->Property("id", RendererQml::Formatter() << mOrigionalElementId << "_input");
@@ -84,10 +84,8 @@ void NumberinputElement::initialize()
     textBackgroundTag->Property("id", RendererQml::Formatter() << mInput->GetId() << "_textbackground");
     auto contentItemTag = getContentItemTag(textBackgroundTag);
 
-    //Dummy indicator element to remove the default indicators of SpinBox
     auto upDummyTag = getDummyElementforNumberInput(true);
 
-    //Dummy indicator element to remove the default indicators of SpinBox
     auto downDummyTag = getDummyElementforNumberInput(false);
     auto textBackgroundTagUpDownIcon = std::make_shared<RendererQml::QmlTag>("Rectangle");
     textBackgroundTagUpDownIcon->Property("color", "'transparent'");
@@ -155,8 +153,6 @@ void NumberinputElement::initialize()
     uiNumberInput->Property("to", RendererQml::Formatter() << mInput->GetMax());
     uiNumberInput->Property("value", RendererQml::Formatter() << mInput->GetValue());
 
-    //TODO: Add stretch property
-
     if (!mInput->GetIsVisible())
     {
         uiNumberInput->Property("visible", "false");
@@ -177,7 +173,10 @@ void NumberinputElement::initialize()
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
-        createErrorMessage();
+        if (!mInput->GetErrorMessage().empty())
+        {
+            createErrorMessage();
+        }
         mContext->addToRequiredInputElementsIdList(contentItemTag->GetId());
         contentItemTag->Property("property bool showErrorMessage", "false");
         contentItemTag->Property("onTextChanged", "validate()");
@@ -216,9 +215,10 @@ void NumberinputElement::initialize()
     uiSplitterRactangle->AddChild(upDownIcon);
     uiSplitterRactangle->AddChild(upIndicatorTag);
     uiSplitterRactangle->AddChild(downIndicatorTag);
-
-    mContext->addToInputElementList(origionalElementId, (mOrigionalElementId + ".value"));
-
+    if (mInput->GetIsVisible())
+    {
+        mContext->addToInputElementList(origionalElementId, (mOrigionalElementId + ".value"));
+    }
     uiNumberInput->Property("Accessible.ignored", "true");
     clearIcon->Property("Accessible.name", RendererQml::Formatter() << (mInput->GetPlaceholder().empty() ? "Number Input" : mInput->GetPlaceholder()) << " clear", true);
     clearIcon->Property("Accessible.role", "Accessible.Button");
@@ -265,7 +265,6 @@ void NumberinputElement::createInputLabel()
 
 std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
 {
-    const auto mOrigionalElementId = mInput->GetId();
     auto contentItemTag = std::make_shared<RendererQml::QmlTag>("TextField");
     contentItemTag->Property("id", mOrigionalElementId + "_contentItem");
     mContentTagId = mOrigionalElementId + "_contentItem";
@@ -293,8 +292,7 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const
     contentItemTag->Property("Accessible.name", mInput->GetPlaceholder().empty() ? "Number Input Field" : mInput->GetPlaceholder(), true);
     contentItemTag->Property("Accessible.role", "Accessible.EditableText");
     contentItemTag->Property("background", textBackgroundTag->ToString());
-    contentItemTag->AddFunctions(getAccessibleName());
-    //contentItemTag->Property("onEditingFinished", Formatter() << "{ if(text < " << mOrigionalElementId << ".from || text > " << mOrigionalElementId << ".to){\nremove(0,length)\nif(" << mOrigionalElementId << ".hasDefaultValue)\ninsert(0, " << mOrigionalElementId << ".defaultValue)\nelse\ninsert(0, " << mOrigionalElementId << ".from)\n}\n}");
+    contentItemTag->AddFunctions(getAccessibleName());    
     contentItemTag->Property("color", mContext->GetHexColor(numberConfig.textColor));
     contentItemTag->Property("placeholderTextColor", mContext->GetHexColor(numberConfig.placeHolderColor));
     
@@ -314,7 +312,6 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const
 
 void NumberinputElement::createErrorMessage()
 {
-    //const auto mOrigionalElementId = mInput->GetId();
     auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
     uiErrorMessage->Property("id", RendererQml::Formatter() << mInput->GetId() << "_errorMessage");
     uiErrorMessage->Property("wrapMode", "Text.Wrap");
@@ -347,7 +344,6 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getIconTag(const std::s
 }
 std::ostringstream NumberinputElement::getValidatorFunction()
 {
-    const auto mOrigionalElementId = mInput->GetId();
     std::ostringstream validator;
     validator << "function validate(){\n";
     if (mInput->GetIsRequired())
