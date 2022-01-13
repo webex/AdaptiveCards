@@ -34,7 +34,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
             let attributedString = getAttributedString(title: title, with: hostConfig, style: style)
-            let choiceButton = view.setupButton(attributedString: attributedString, value: choice.getValue())
+            let choiceButton = view.setupButton(attributedString: attributedString, value: choice.getValue(), for: choiceSetInput)
             if defaultParsedValues.contains(choice.getValue() ?? "") {
                 choiceButton.state = .on
                 choiceButton.buttonValue = choice.getValue()
@@ -53,7 +53,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
     
     private func choiceSetCompactRenderInternal (choiceSetInput: ACSChoiceSetInput, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, renderConfig: RenderConfig) -> NSView {
         // compact button renderer
-        let choiceSetFieldCompactView = ACRChoiceSetCompactView()
+        let choiceSetFieldCompactView = ACRChoiceSetCompactView(element: choiceSetInput, renderConfig: renderConfig)
         choiceSetFieldCompactView.autoenablesItems = false
         var index = 0
         if let placeholder = choiceSetInput.getPlaceholder(), !placeholder.isEmpty {

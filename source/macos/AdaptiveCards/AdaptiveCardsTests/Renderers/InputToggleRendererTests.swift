@@ -19,7 +19,7 @@ class InputToggleRendererTests: XCTestCase {
         inputToggle = .make(title: title)
         
         let inputToggleView = renderInputToggleView()
-        XCTAssertEqual(inputToggleView.title, title)
+        XCTAssertEqual(inputToggleView.labelAttributedString.string, title)
     }
     
     func testRendererSetsValue() {
@@ -60,11 +60,11 @@ class InputToggleRendererTests: XCTestCase {
         inputToggle = .make(title: "Hello World", wrap: false)
         
         var inputToggleView = renderInputToggleView()
-        XCTAssertEqual(inputToggleView.wrap, false)
+        XCTAssertEqual(inputToggleView.buttonLabelField.cell?.wraps, false)
         
         inputToggle = .make(title: "Hello World", wrap: true)
         inputToggleView = renderInputToggleView()
-        XCTAssertEqual(inputToggleView.wrap, true)
+        XCTAssertEqual(inputToggleView.buttonLabelField.cell?.wraps, true)
     }
     
     func testRendereSetsAccessiblityLabel() {
