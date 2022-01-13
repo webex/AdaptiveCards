@@ -6,12 +6,15 @@ class ACRChoiceSetButtontests: XCTestCase {
     private var choiceCheckBoxButtonView: ACRChoiceButton!
     private var choiceRadioButtonView: ACRChoiceButton!
     private var renderConfig: RenderConfig!
+    private var choiceSetInput: FakeChoiceSetInput!
     
     override func setUp() {
         super.setUp()
         renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: .default,checkBoxButtonConfig: setupCheckBoxButton(), radioButtonConfig: setupRadioButton(), localisedStringConfig: nil)
-        choiceCheckBoxButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch)
-        choiceRadioButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .radio)
+        choiceSetInput = FakeChoiceSetInput()
+        choiceCheckBoxButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch, element: choiceSetInput, title: "Test")
+//        choiceCheckBoxButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch)
+        choiceRadioButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .radio, element: choiceSetInput, title: "Test")
     }
     
     func testCheckBoxButtonClick() {
@@ -70,7 +73,7 @@ class ACRChoiceSetButtontests: XCTestCase {
     
     func testRadioButtonWithoutImages() {
         renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
-        choiceRadioButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .radio)
+        choiceRadioButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .radio, element: choiceSetInput, title: "Test")
         let defaultRadioButton = NSButton(radioButtonWithTitle: "", target: nil, action: nil)
         
         XCTAssertEqual(choiceRadioButtonView.button.image, defaultRadioButton.image)
@@ -79,7 +82,7 @@ class ACRChoiceSetButtontests: XCTestCase {
     
     func testCheckBoxButtonWithoutImages() {
         renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
-        choiceCheckBoxButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch)
+        choiceCheckBoxButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch, element: choiceSetInput, title: "Test")
         let defaultCheckBoxButton = NSButton(checkboxWithTitle: "", target: nil, action: nil)
         
         XCTAssertEqual(choiceCheckBoxButtonView.button.image, defaultCheckBoxButton.image)
@@ -87,8 +90,22 @@ class ACRChoiceSetButtontests: XCTestCase {
     }
     
     func testElementSpacing() {
-        let elementSpacing = choiceRadioButtonView.fittingSize.width - (choiceRadioButtonView.label.fittingSize.width + choiceRadioButtonView.button.fittingSize.width)
+        let elementSpacing = choiceRadioButtonView.fittingSize.width - (choiceRadioButtonView.buttonLabelField.fittingSize.width + choiceRadioButtonView.button.fittingSize.width)
         XCTAssertEqual(renderConfig.checkBoxButtonConfig?.elementSpacing, elementSpacing)
+    }
+    
+    func testChoiceButtonInChoiceSetAccessibility() {
+        renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        choiceSetInput = .make(isRequired: true, label: "Test Label")
+        choiceCheckBoxButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch, element: choiceSetInput, title: "Button Title")
+        XCTAssertEqual(choiceCheckBoxButtonView.accessibilityLabel(), "Test Label, Button Title")
+    }
+    
+    func testChoiceButtonInInputToggleAccessibility() {
+        renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        let toggleInput = FakeInputToggle.make(title: "Button Title", isRequired: true, label: "Test Label")
+        let inputToggleView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch, element: toggleInput)
+        XCTAssertEqual(inputToggleView.accessibilityLabel(), "Test Label, Button Title")
     }
     
     private func setupRadioButton() -> ChoiceSetButtonConfig {

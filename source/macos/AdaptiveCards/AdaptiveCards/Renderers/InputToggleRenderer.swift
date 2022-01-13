@@ -13,10 +13,7 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         let attributedString: NSMutableAttributedString
         // NSButton for checkbox
         let title = inputToggle.getTitle() ?? ""
-        let inputToggleView = ACRChoiceButton(renderConfig: config, buttonType: .switch)
-        inputToggleView.idString = inputToggle.getId()
-        inputToggleView.isRequired = inputToggle.getIsRequired()
-        inputToggleView.isHidden = !inputToggle.getIsVisible()
+         let inputToggleView = ACRChoiceButton(renderConfig: config, buttonType: .switch, element: inputToggle)
         // adding attributes to the string
         attributedString = NSMutableAttributedString(string: title)
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
@@ -29,11 +26,6 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         inputToggleView.state = defaultInputToggleStateValue
         inputToggleView.labelAttributedString = attributedString
-        inputToggleView.wrap = inputToggle.getWrap()
-        // This function returnns true/fase even if data not set in json
-        inputToggleView.valueOn = inputToggle.getValueOn()
-        inputToggleView.valueOff = inputToggle.getValueOff()
-        inputToggleView.setAccessibilityLabel(title)
         rootView.addInputHandler(inputToggleView)
         return inputToggleView
      }
