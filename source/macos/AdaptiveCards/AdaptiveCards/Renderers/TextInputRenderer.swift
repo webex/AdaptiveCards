@@ -193,4 +193,9 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
         super.showError()
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
+    
+    func setFocus() {
+        setAccessibilityFocused(true)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage()
+    }
 }

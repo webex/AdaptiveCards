@@ -162,6 +162,11 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
+    func setFocus() {
+        button.setAccessibilityFocused(true)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage()
+    }
+    
     private var isErrorVisible: Bool {
         if let delegate = delegate {
             return delegate.acrChoiceButtonShouldReadError(self)

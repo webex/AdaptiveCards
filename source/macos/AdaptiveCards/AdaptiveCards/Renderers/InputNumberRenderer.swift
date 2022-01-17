@@ -231,6 +231,11 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
+    func setFocus() {
+        textField.setAccessibilityFocused(true)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage()
+    }
+    
     var value: String {
         guard !inputString.isEmpty else { return "" }
         if Float(inputValue).truncatingRemainder(dividingBy: 1) == 0 {
