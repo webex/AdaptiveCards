@@ -1690,6 +1690,12 @@ namespace RendererQml
                 subContext->addToInputElementList(inputElement.first, inputElement.second);
             }
 
+            // Add parent required input input elements to the child card
+            for (const auto& inputElement : context->getRequiredInputElementsIdList())
+            {
+                subContext->addToRequiredInputElementsIdList(inputElement);
+            }
+
             auto uiCard = subContext->Render(componentElement.second->GetCard(), &AdaptiveCardRender, true);
             if (uiCard != nullptr)
             {
