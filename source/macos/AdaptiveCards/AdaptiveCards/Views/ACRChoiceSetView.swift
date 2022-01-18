@@ -68,6 +68,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     func setFocus() {
         guard let firstButtonInStack = stackview.arrangedSubviews.first as? ACRChoiceButton else { return }
         firstButtonInStack.setFocus()
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage()
     }
     
     var value: String {

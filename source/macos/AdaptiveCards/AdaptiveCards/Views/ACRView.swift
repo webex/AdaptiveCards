@@ -131,13 +131,14 @@ class ACRView: ACRColumnView {
         }
         repeat {
             if let handlers = parentView?.inputHandlers {
+                var isFirstErrorFieldInView = true
                 for handler in handlers {
                     guard !renderConfig.supportsSchemeV1_3 || handler.isValid else {
                         handler.showError()
-                        // if canSubmit is true we know that's the first errored field
-                        if canSubmit {
+                        if isFirstErrorFieldInView {
                             firstFieldWithError = handler
                             resetKeyboardFocus()
+                            isFirstErrorFieldInView = false
                         }
                         canSubmit = false
                         continue

@@ -310,7 +310,7 @@ extension ACRContentStackView: InputHandlingViewErrorDelegate {
     }
     
     func inputHandlingViewShouldAnnounceErrorMessage() {
-        NSAccessibility.announce("Error: " + (errorMessageField?.stringValue ?? ""))
+        NSAccessibility.announce("Error! " + (errorMessageField?.stringValue ?? "") + ". " + (inputLabelField?.stringValue ?? ""))
     }
     
     var isErrorVisible: Bool {
