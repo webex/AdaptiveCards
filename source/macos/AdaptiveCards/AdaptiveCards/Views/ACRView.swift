@@ -83,7 +83,7 @@ class ACRView: ACRColumnView {
             guard let focusedTextField = focusedElementOnHideError as? ACRTextField else { return }
             focusedTextField.resetCursorPositionIfNeeded()
         } else if firstFieldWithError != nil {
-            firstFieldWithError?.setFocus()
+            firstFieldWithError?.setAccessibilityFocus()
         }
     }
     
