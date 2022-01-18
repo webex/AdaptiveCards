@@ -55,6 +55,7 @@ namespace RendererQml
     {
         std::string timeIconColorNormal{ "#F2FFFFFF" };
         std::string timeIconColorOnFocus{ "#FF64B4FA" };
+        std::string timeIconColorOnError{ "#FFFC8B98" };
         std::string timePickerBorderColor{ "#80FFFFFF" };
         std::string timePickerBackgroundColor{ "#FF0F0F0F" };
         std::string timePickerElementColorNormal{ "#FF0F0F0F" };
@@ -80,6 +81,7 @@ namespace RendererQml
     {
         std::string dateIconColorNormal{ "#F2FFFFFF" };
         std::string dateIconColorOnFocus{ "#FF64B4FA" };
+        std::string dateIconColorOnError{ "#FFFC8B98" };
         std::string calendarBorderColor{ "#80FFFFFF" };
         std::string calendarBackgroundColor{ "#FF0F0F0F" };
         std::string dateElementColorNormal{ "#FF0F0F0F" };
