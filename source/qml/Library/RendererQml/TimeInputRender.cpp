@@ -388,7 +388,7 @@ void TimeInputElement::initTimeIcon()
     mTimeIcon->Property("focusPolicy", "Qt.NoFocus");
     mTimeIcon->Property("width", "18");
     mTimeIcon->Property("height", "18");
-    mTimeIcon->Property("icon.color", RendererQml::Formatter() << timeComboboxId << ".activeFocus ? " << mContext->GetHexColor(mTimeInputConfig.timeIconColorOnFocus) << " : " << mContext->GetHexColor(mTimeInputConfig.timeIconColorNormal));
+    mTimeIcon->Property("icon.color", RendererQml::Formatter() << id << ".showErrorMessage ? " << mContext->GetHexColor(mTimeInputConfig.timeIconColorOnError) << " : " << timeComboboxId << ".activeFocus ? " << mContext->GetHexColor(mTimeInputConfig.timeIconColorOnFocus) << " : " << mContext->GetHexColor(mTimeInputConfig.timeIconColorNormal));
     mTimeIcon->Property("icon.source", RendererQml::clock_icon, true);
     mTimeIcon->Property("onClicked", RendererQml::Formatter() << "{" << id << ".forceActiveFocus();\n" << timePopupId << ".open();\n" << listViewHoursId + ".currentIndex=parseInt(" << id << ".getText(0,2));\n" << listViewMinId + ".currentIndex=parseInt(" << id << ".getText(3,5));\n" << "}");
 }

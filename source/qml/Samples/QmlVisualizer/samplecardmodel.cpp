@@ -476,6 +476,7 @@ InputTimeConfig SampleCardModel::getInputTimeConfig(const bool isDark)
     {
         timeInputConfig.timeIconColorNormal = "#F2000000";
         timeInputConfig.timeIconColorOnFocus = "#FF1170CF";
+        timeInputConfig.timeIconColorOnError = "#FFAB0A15";
         timeInputConfig.timePickerBorderColor = "#80000000";
         timeInputConfig.timePickerBackgroundColor = "#FFFFFFFF";
         timeInputConfig.timePickerElementColorNormal = "#FFFFFFFF";
@@ -496,6 +497,7 @@ InputDateConfig SampleCardModel::getInputDateConfig(const bool isDark)
     {
         dateInputConfig.dateIconColorNormal = "#F2000000";
         dateInputConfig.dateIconColorOnFocus = "#FF1170CF";
+        dateInputConfig.dateIconColorOnError = "#FFAB0A15";
         dateInputConfig.calendarBorderColor = "#80000000";
         dateInputConfig.calendarBackgroundColor = "#FFFFFFFF";
         dateInputConfig.dateElementColorNormal = "#FFFFFFFF";

@@ -553,7 +553,7 @@ void DateInputElement::initDateIconButton()
     mDateIcon->Property("focusPolicy", "Qt.NoFocus");
     mDateIcon->Property("width", "18");
     mDateIcon->Property("height", "18");
-    mDateIcon->Property("icon.color", RendererQml::Formatter() << mDateInput->GetId() << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.dateIconColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.dateIconColorNormal));
+    mDateIcon->Property("icon.color", RendererQml::Formatter() << mDateFieldId << ".showErrorMessage ? " << mContext->GetHexColor(mDateConfig.dateIconColorOnError) << " : " << mDateInput->GetId() << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.dateIconColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.dateIconColorNormal));
     mDateIcon->Property("icon.source", RendererQml::calendar_icon, true);
     std::string onClicked_value = "{ " + mDateFieldId + ".forceActiveFocus(); " + mCalendarBoxId + ".open();}";
     mDateIcon->Property("onClicked", onClicked_value);
