@@ -40,7 +40,7 @@ protocol InputHandlingViewProtocol: NSView {
 protocol InputHandlingViewErrorDelegate: AnyObject {
     func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol)
     func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?)
-    func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol)
+    func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol, message: String?)
     var isErrorVisible: Bool { get }
 }
 

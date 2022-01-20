@@ -309,11 +309,12 @@ extension ACRContentStackView: InputHandlingViewErrorDelegate {
         hideErrorMessage(with: currentFocussedView)
     }
     
-    func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol) {
-        let errorMessageString = (errorMessageField?.stringValue ?? "") + ". "
-        let labelString = (inputLabelField?.stringValue ?? "")
+    func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol, message: String?) {
         let errorMessagePrefixString = renderConfig.localisedStringConfig.errorMessagePrefixString + "! "
-        NSAccessibility.announce(errorMessagePrefixString + errorMessageString + labelString)
+        let errorMessageString = (errorMessageField?.stringValue ?? "") + ". "
+        let labelString = (inputLabelField?.stringValue ?? "") + ". "
+        let announcementString = message ?? (errorMessagePrefixString + errorMessageString + labelString)
+        NSAccessibility.announce(announcementString)
     }
     
     var isErrorVisible: Bool {

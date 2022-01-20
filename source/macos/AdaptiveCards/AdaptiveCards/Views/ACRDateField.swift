@@ -127,7 +127,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     
     func setAccessibilityFocus() {
         iconButton.setAccessibilityFocused(true)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
     }
     
     weak var errorDelegate: InputHandlingViewErrorDelegate?

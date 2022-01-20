@@ -233,7 +233,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     
     func setAccessibilityFocus() {
         textField.setAccessibilityFocused(true)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
     }
     
     var value: String {

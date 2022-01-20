@@ -166,7 +166,7 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     func setAccessibilityFocus() {
         textView.setAccessibilityFocused(true)
         textView.selectAll(nil)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
     }
 }
 

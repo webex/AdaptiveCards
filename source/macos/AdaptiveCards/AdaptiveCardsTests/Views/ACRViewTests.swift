@@ -409,17 +409,39 @@ class ACRViewTests: XCTestCase {
         XCTAssertFalse(tView2.isHidden)
         XCTAssertTrue(tView3.isHidden)
     }
+    
+    func testInputHandlerRefocusTextFieldOnError() {
+        let renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: .default)
+        let view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: renderConfig)
+        let handler1 = FakeInputHandlingView()
+        let handler2 = FakeInputHandlingView()
+        
+        handler1.isValid = true
+        handler2.isValid = false
+        
+        view.addInputHandler(handler1)
+        view.addInputHandler(handler2)
+        
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
+        
+        XCTAssertFalse(handler1.isFocused)
+        XCTAssertTrue(handler2.isFocused)
+    }
 }
 
 private class FakeInputHandlingView: NSView, InputHandlingViewProtocol {
     var value: String = NSUUID().uuidString
     var key: String = NSUUID().uuidString
     var errorShown: Bool = false
+    var isFocused: Bool = false
     var isValid: Bool = true
     var isRequired: Bool = false
     var errorDelegate: InputHandlingViewErrorDelegate?
     func showError() {
         errorShown = true
+    }
+    func setAccessibilityFocus() {
+        isFocused = true
     }
 }
 
