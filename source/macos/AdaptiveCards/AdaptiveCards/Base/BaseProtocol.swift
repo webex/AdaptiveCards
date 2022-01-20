@@ -34,11 +34,13 @@ protocol InputHandlingViewProtocol: NSView {
     var isRequired: Bool { get }
     var errorDelegate: InputHandlingViewErrorDelegate? { get set }
     func showError()
+    func setAccessibilityFocus()
 }
 
 protocol InputHandlingViewErrorDelegate: AnyObject {
     func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol)
     func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?)
+    func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol, message: String?)
     var isErrorVisible: Bool { get }
 }
 
