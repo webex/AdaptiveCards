@@ -32,11 +32,16 @@ extension NSView {
 
 class FakeErrorMessageHandlerDelegate: InputHandlingViewErrorDelegate {
     var isErrorVisible: Bool = false
+    var isErrorMessageAnnounced: Bool = false
     func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
         isErrorVisible = false
     }
     
     func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
         isErrorVisible = true
+    }
+    
+    func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol, message: String?) {
+        isErrorMessageAnnounced = true
     }
 }

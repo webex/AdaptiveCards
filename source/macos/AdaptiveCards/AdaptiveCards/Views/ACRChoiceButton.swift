@@ -88,6 +88,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     private (set) lazy var button: NSButton = {
         let view = NSButton()
         view.title = ""
+        view.setAccessibilityLabel(accessibilityLabel())
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -160,6 +161,11 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     
     func showError() {
         errorDelegate?.inputHandlingViewShouldShowError(self)
+    }
+    
+    func setAccessibilityFocus() {
+        button.setAccessibilityFocused(true)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityLabel())
     }
     
     private var isErrorVisible: Bool {
