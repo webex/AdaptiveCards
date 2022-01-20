@@ -14,6 +14,7 @@ class ACRView: ACRColumnView {
     private var currentFocusedActionElement: NSCell?
     private var isLayoutDoneOnShowCard = false
     private var focusedElementOnHideError: NSView?
+    private var firstFieldWithError: InputHandlingViewProtocol?
     
     override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         super.init(style: style, parentStyle: nil, hostConfig: hostConfig, renderConfig: renderConfig, superview: nil, needsPadding: true)
@@ -41,6 +42,7 @@ class ACRView: ACRColumnView {
         super.draw(dirtyRect)
         isLayoutDoneOnShowCard = false
         focusedElementOnHideError = nil
+        firstFieldWithError = nil
     }
     
     func addTarget(_ target: TargetHandler) {
@@ -80,6 +82,8 @@ class ACRView: ACRColumnView {
             // If it is a textfield, the entered text gets selected when focus is set, so taking the cursor to the last position it was present
             guard let focusedTextField = focusedElementOnHideError as? ACRTextField else { return }
             focusedTextField.resetCursorPositionIfNeeded()
+        } else if firstFieldWithError != nil {
+            firstFieldWithError?.setAccessibilityFocus()
         }
     }
     
@@ -127,9 +131,15 @@ class ACRView: ACRColumnView {
         }
         repeat {
             if let handlers = parentView?.inputHandlers {
+                var isFirstErrorFieldInView = true
                 for handler in handlers {
                     guard !renderConfig.supportsSchemeV1_3 || handler.isValid else {
                         handler.showError()
+                        if isFirstErrorFieldInView {
+                            firstFieldWithError = handler
+                            resetKeyboardFocus()
+                            isFirstErrorFieldInView = false
+                        }
                         canSubmit = false
                         continue
                     }

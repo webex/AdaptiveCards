@@ -201,6 +201,11 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
+    func setAccessibilityFocus() {
+        textField.setAccessibilityFocused(true)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
+    }
+    
     var value: String {
         get {
             if textField.stringValue.isEmpty {

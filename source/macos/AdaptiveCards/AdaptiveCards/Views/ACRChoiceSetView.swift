@@ -65,6 +65,12 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
+    func setAccessibilityFocus() {
+        guard let firstButtonInStack = stackview.arrangedSubviews.first as? ACRChoiceButton else { return }
+        firstButtonInStack.button.setAccessibilityFocused(true)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: firstButtonInStack.accessibilityLabel())
+    }
+    
     var value: String {
         var stringOfSelectedValues: [String] = []
         let arrayViews = stackview.arrangedSubviews
@@ -151,6 +157,11 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     
     func showError() {
         errorDelegate?.inputHandlingViewShouldShowError(self)
+    }
+    
+    func setAccessibilityFocus() {
+        setAccessibilityFocused(true)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
     }
     
     var value: String {
