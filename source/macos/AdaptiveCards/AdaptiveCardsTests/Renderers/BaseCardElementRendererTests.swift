@@ -171,7 +171,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertEqual(inputToggleView.accessibilityLabel(), "Label, Title")
         inputToggleView.errorDelegate?.inputHandlingViewShouldHideError(inputToggleView, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorVisible)
-        XCTAssertEqual(inputToggleView.accessibilityLabel(), "Error Error Message, Label, Title")
+        XCTAssertEqual(inputToggleView.accessibilityLabel(), "Error, Error Message, Label, Title")
     }
     
     private func renderBaseCardElementView() -> ACRContentStackView {

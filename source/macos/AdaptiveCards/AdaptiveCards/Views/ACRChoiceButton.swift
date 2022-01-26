@@ -184,7 +184,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         }
         var accessibilityLabel = ""
         if isErrorVisible {
-            accessibilityLabel += "Error "
+            accessibilityLabel += localisedStringConfig.errorMessagePrefixString + ", "
             if let errorMessage = errorMessage, !errorMessage.isEmpty {
                 accessibilityLabel += errorMessage + ", "
             }
