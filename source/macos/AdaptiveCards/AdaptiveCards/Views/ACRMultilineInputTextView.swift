@@ -9,6 +9,8 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     weak var errorDelegate: InputHandlingViewErrorDelegate?
     private var placeholderAttrString: NSAttributedString?
     private var shouldShowError = false
+    private var errorMessage: String?
+    private var labelString: String?
     private let config: RenderConfig
     private let inputConfig: InputFieldConfig
     
@@ -25,6 +27,11 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         textView.allowsUndo = true
         setupViews()
         setupConstraints()
+    }
+    
+    convenience init(config: RenderConfig, inputElement: ACSBaseInputElement?) {
+        self.init(config: config)
+        setupInputElementProperties(inputElement: inputElement)
     }
     
     required init?(coder: NSCoder) {
@@ -70,6 +77,32 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
         addTrackingArea(trackingArea)
         updateAppearance()
+    }
+    
+    override func accessibilityLabel() -> String? {
+        guard config.supportsSchemeV1_3 else { return super.accessibilityTitle() }
+        
+        var accessibilityLabel = ""
+        if shouldShowError {
+            accessibilityLabel += config.localisedStringConfig.errorMessagePrefixString
+            if let errorMessage = errorMessage, !errorMessage.isEmpty {
+                accessibilityLabel += accessibilityLabel.isEmpty ? "" : ", "
+                accessibilityLabel += errorMessage
+            }
+        }
+        if let label = labelString, !label.isEmpty {
+            accessibilityLabel += accessibilityLabel.isEmpty ? "" : ", "
+            accessibilityLabel += label
+        }
+        if !textView.string.isEmpty {
+            accessibilityLabel += accessibilityLabel.isEmpty ? "" : ", "
+            accessibilityLabel += textView.string
+        } else if let placeholder = placeholderAttrString?.string, !placeholder.isEmpty {
+            accessibilityLabel += accessibilityLabel.isEmpty ? "" : ", "
+            accessibilityLabel += placeholder
+        }
+        
+        return accessibilityLabel
     }
     
     func setPlaceholder(_ placeholder: String) {
@@ -136,6 +169,13 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
             textView.backgroundColor = isMouseInView ? inputConfig.highlightedColor : inputConfig.backgroundColor
         }
     }
+    
+    private func setupInputElementProperties(inputElement: ACSBaseInputElement?) {
+        guard config.supportsSchemeV1_3 else { return }
+        labelString = inputElement?.getLabel()
+        errorMessage = inputElement?.getErrorMessage()
+        setAccessibilityPlaceholderValue(nil)
+    }
 }
 
 extension ACRMultilineInputTextView: InputHandlingViewProtocol {
@@ -166,7 +206,7 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     func setAccessibilityFocus() {
         textView.setAccessibilityFocused(true)
         textView.selectAll(nil)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityTitle())
     }
 }
 

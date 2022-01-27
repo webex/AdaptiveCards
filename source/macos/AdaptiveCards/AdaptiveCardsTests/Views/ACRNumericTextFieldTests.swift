@@ -7,7 +7,7 @@ class ACRNumericTestFieldTests: XCTestCase {
     private var config: RenderConfig!
     override func setUp() {
         super.setUp()
-        numericView = ACRNumericTextField(config: .default)
+        numericView = ACRNumericTextField(config: .default, inputElement: nil)
         numericView.value = "20"
         numericView.maxValue = Double.greatestFiniteMagnitude
         numericView.minValue = -Double.greatestFiniteMagnitude
@@ -91,5 +91,30 @@ class ACRNumericTestFieldTests: XCTestCase {
         XCTAssertFalse(numericView.isValid)
         numericView.textField.stringValue = "10"
         XCTAssertTrue(numericView.isValid)
+    }
+    
+    func testAccessibilityTitle1_2() {
+        numericView.attributedPlaceholder = NSAttributedString(string: "Placeholder")
+        XCTAssertNil(numericView.accessibilityTitle())
+        numericView.value = "ABC"
+        XCTAssertNil(numericView.accessibilityTitle())
+    }
+    
+    func testAccessibilityTitle1_3() {
+        config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        numericView = ACRNumericTextField(config: config, inputElement: nil)
+        numericView.attributedPlaceholder = NSAttributedString(string: "Placeholder")
+        
+        numericView.value = ""
+        XCTAssertEqual(numericView.accessibilityTitle(), "Placeholder")
+        
+        numericView.value = "ABC"
+        XCTAssertEqual(numericView.accessibilityTitle(), "ABC")
+        
+        numericView.showError()
+        XCTAssertEqual(numericView.accessibilityTitle(), "Error, ABC")
+        
+        numericView.textField.hideError()
+        XCTAssertEqual(numericView.accessibilityTitle(), "ABC")
     }
 }

@@ -19,7 +19,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }()
     
     private (set) lazy var textField: ACRTextField = {
-        let view = ACRTextField(dateTimeFieldWith: config)
+        let view = ACRTextField(dateTimeFieldWith: config, inputElement: inputElement)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isEditable = true
         view.isSelectable = false
@@ -40,7 +40,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.clear.cgColor
         view.isBordered = false
-        view.setAccessibilityTitle(isTimeMode ? config.localisedStringConfig.timePickerButtonAccessibilityTitle: config.localisedStringConfig.datePickerButtonAccessibilityTitle)
+        view.setAccessibilityRoleDescription(isTimeMode ? config.localisedStringConfig.timePickerButtonAccessibilityTitle: config.localisedStringConfig.datePickerButtonAccessibilityTitle)
         return view
     }()
     
@@ -53,7 +53,8 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }()
     
     private var popover: NSPopover?
-       
+    private let inputElement: ACSBaseInputElement?
+    
     let datePickerCalendar = NSDatePicker()
     let datePickerTextfield = NSDatePicker()
     let isTimeMode: Bool
@@ -127,16 +128,17 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     
     func setAccessibilityFocus() {
         iconButton.setAccessibilityFocused(true)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityLabel())
     }
     
     weak var errorDelegate: InputHandlingViewErrorDelegate?
     var isRequired = false
     
-    init(isTimeMode: Bool, config: RenderConfig) {
+    init(isTimeMode: Bool, config: RenderConfig, inputElement: ACSBaseInputElement?) {
         self.isTimeMode = isTimeMode
         self.isDarkMode = config.isDarkMode
         self.config = config
+        self.inputElement = inputElement
         super.init(frame: .zero)
         setupViews()
         setupConstraints()
@@ -170,6 +172,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     
     private func setupAccessibility() {
         setAccessibilityElement(true)
+        setAccessibilityValue(nil)
         setAccessibilityRoleDescription(isTimeMode  ? config.localisedStringConfig.timePickerFieldAccessibilityRoleDescription : config.localisedStringConfig.datePickerFieldAccessibilityRoleDescription)
     }
 
@@ -237,12 +240,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     override func accessibilityLabel() -> String? {
-        if !textField.stringValue.isEmpty {
-            return textField.stringValue
-        } else if let placeholder = placeholder {
-            return placeholder
-        }
-        return nil
+        return textField.accessibilityTitle()
     }
 }
 

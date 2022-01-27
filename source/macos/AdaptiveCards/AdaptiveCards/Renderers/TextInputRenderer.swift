@@ -15,7 +15,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             view.translatesAutoresizingMaskIntoConstraints = false
             return view
         }()
-        let textView = ACRTextInputView(config: config)
+        let textView = ACRTextInputView(textInputFieldWith: config, inputElement: inputBlock)
         textView.idString = inputBlock.getId()
         textView.regex = inputBlock.getRegex()
         textView.isRequired = inputBlock.getIsRequired()
@@ -196,6 +196,6 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     
     func setAccessibilityFocus() {
         setAccessibilityFocused(true)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityTitle())
     }
 }
