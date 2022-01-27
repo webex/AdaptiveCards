@@ -172,7 +172,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     
     private func setupAccessibility() {
         setAccessibilityElement(true)
-        setAccessibilityValue(nil)
+        setAccessibilityValue(config.supportsSchemeV1_3 ? nil : value)
         setAccessibilityRoleDescription(isTimeMode  ? config.localisedStringConfig.timePickerFieldAccessibilityRoleDescription : config.localisedStringConfig.datePickerFieldAccessibilityRoleDescription)
     }
 
