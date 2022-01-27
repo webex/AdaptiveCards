@@ -13,7 +13,7 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
         
         // setting up basic properties for Input.Number TextField
         let inputField: ACRNumericTextField = {
-            let view = ACRNumericTextField(config: config)
+            let view = ACRNumericTextField(config: config, inputElement: inputElement)
             view.placeholder = inputElement.getPlaceholder() ?? ""
             view.maxValue = inputElement.getMax()?.doubleValue ?? ACRNumericTextField.MAXVAL
             view.minValue = inputElement.getMin()?.doubleValue ?? ACRNumericTextField.MINVAL
@@ -34,19 +34,20 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
 // MARK: - ACRNumericTextField Class
 open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     weak var errorDelegate: InputHandlingViewErrorDelegate?
+    private let inputElement: ACSBaseInputElement?
     var isRequired = false
     var id: String?
     
     private var previousValue = ""
     private let config: RenderConfig
     
-    init(config: RenderConfig) {
+    init(config: RenderConfig, inputElement: ACSBaseInputElement?) {
+        self.inputElement = inputElement
         self.config = config
         super.init(frame: .zero)
         setupViews()
         setupConstraints()
         setUpControls()
-        setAccessibilityLabel("")
     }
     
     public required init?(coder: NSCoder) {
@@ -54,7 +55,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     }
     
     private (set) lazy var textField: ACRTextField = {
-        let view = ACRTextField(numericFieldWith: config)
+        let view = ACRTextField(numericFieldWith: config, inputElement: inputElement)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.delegate = self
         view.isEditable = true
@@ -62,7 +63,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         view.cell?.usesSingleLineMode = true
         view.maximumNumberOfLines = 1
         view.cell?.lineBreakMode = .byTruncatingTail
-        view.setAccessibilityTitle(config.localisedStringConfig.inputNumberAccessibilityTitle)
+        view.setAccessibilityRoleDescription(config.localisedStringConfig.inputNumberAccessibilityTitle)
         if #available(OSX 10.13, *) {
             view.layer?.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
         }
@@ -73,6 +74,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         let view = NSStepper()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.setAccessibilityValue("")
+        view.setAccessibilityTitle(accessibilityTitle())
         return view
     }()
 
@@ -132,6 +134,10 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         default:
             super.keyDown(with: event)
         }
+    }
+    
+    override open func accessibilityTitle() -> String? {
+        return textField.accessibilityTitle()
     }
     
     private func setupViews() {
@@ -203,7 +209,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     
     func setAccessibilityFocus() {
         textField.setAccessibilityFocused(true)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityTitle())
     }
     
     var value: String {

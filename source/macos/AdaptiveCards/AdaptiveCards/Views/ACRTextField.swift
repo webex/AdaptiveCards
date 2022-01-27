@@ -18,39 +18,41 @@ class ACRTextField: NSTextField {
     private let isDarkMode: Bool
     private let textFieldMode: Mode
     private var shouldShowError = false
+    private var errorMessage: String?
+    private var labelString: String?
     
-    init(dateTimeFieldWith config: RenderConfig) {
+    private init(with config: RenderConfig, mode: Mode, inputElement: ACSBaseInputElement?) {
         self.config = config
         self.inputConfig = config.inputFieldConfig
-        textFieldMode = .dateTime
+        textFieldMode = mode
         isDarkMode = config.isDarkMode
         super.init(frame: .zero)
         initialise()
         setupConstraints()
+        setupInputElementProperties(inputElement: inputElement)
     }
     
-    init(config: RenderConfig) {
-        self.config = config
-        self.inputConfig = config.inputFieldConfig
-        textFieldMode = .text
-        self.isDarkMode = config.isDarkMode
-        super.init(frame: .zero)
-        initialise()
-        setupConstraints()
+    convenience init(numericFieldWith config: RenderConfig, inputElement: ACSBaseInputElement?) {
+        self.init(with: config, mode: .number, inputElement: inputElement)
     }
     
-    init(numericFieldWith config: RenderConfig) {
-        self.config = config
-        self.inputConfig = config.inputFieldConfig
-        textFieldMode = .number
-        isDarkMode = config.isDarkMode
-        super.init(frame: .zero)
-        initialise()
-        setupConstraints()
+    convenience init(dateTimeFieldWith config: RenderConfig, inputElement: ACSBaseInputElement?) {
+        self.init(with: config, mode: .dateTime, inputElement: inputElement)
+    }
+    
+    convenience init(textInputFieldWith config: RenderConfig, inputElement: ACSBaseInputElement?) {
+        self.init(with: config, mode: .text, inputElement: inputElement)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupInputElementProperties(inputElement: ACSBaseInputElement?) {
+        guard config.supportsSchemeV1_3 else { return }
+        labelString = inputElement?.getLabel()
+        errorMessage = inputElement?.getErrorMessage()
+        setAccessibilityPlaceholderValue(nil)
     }
 
     private func initialise() {
@@ -203,6 +205,32 @@ class ACRTextField: NSTextField {
             return temp
         }
         return super.accessibilityChildren()
+    }
+    
+    override func accessibilityTitle() -> String? {
+        guard config.supportsSchemeV1_3 else { return super.accessibilityTitle() }
+        
+        var accessibilityTitle = ""
+        if shouldShowError {
+            accessibilityTitle += config.localisedStringConfig.errorMessagePrefixString
+            if let errorMessage = errorMessage, !errorMessage.isEmpty {
+                accessibilityTitle += accessibilityTitle.isEmpty ? "" : ", "
+                accessibilityTitle += errorMessage
+            }
+        }
+        if let label = labelString, !label.isEmpty {
+            accessibilityTitle += accessibilityTitle.isEmpty ? "" : ", "
+            accessibilityTitle += label
+        }
+        if !stringValue.isEmpty {
+            accessibilityTitle += accessibilityTitle.isEmpty ? "" : ", "
+            accessibilityTitle += stringValue
+        } else if let placeholder = placeholderString, !placeholder.isEmpty {
+            accessibilityTitle += accessibilityTitle.isEmpty ? "" : ", "
+            accessibilityTitle += placeholder
+        }
+        
+        return accessibilityTitle
     }
     
     private var lastCursorPosition: Int?
