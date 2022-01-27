@@ -16,6 +16,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::getQmlTag()
 
 void TextinputElement::initialize()
 {
+    mOriginalElementId = mTextinput->GetId();
     mTextinput->SetId(mContext->ConvertToValidId(mTextinput->GetId()));
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     mTextinputColElement = std::make_shared<RendererQml::QmlTag>("Column");
@@ -117,7 +118,7 @@ void TextinputElement::initSingleLine()
     mTextinputElement->AddChild(clearIcon);
     if (mTextinput->GetIsVisible())
     {
-        mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
+        mContext->addToInputElementList(mOriginalElementId, (uiTextInput->GetId() + ".text"));
     }
     this->addInlineActionMode();
 
@@ -171,7 +172,7 @@ void TextinputElement::initMultiLine()
     mTextinputElement->AddChild(uiTextInput);
     if (mTextinput->GetIsVisible())
     {
-        mContext->addToInputElementList(mTextinput->GetId(), (uiTextInput->GetId() + ".text"));
+        mContext->addToInputElementList(mOriginalElementId, (uiTextInput->GetId() + ".text"));
     }
     this->addInlineActionMode();
 

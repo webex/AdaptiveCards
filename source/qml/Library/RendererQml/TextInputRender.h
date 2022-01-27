@@ -15,6 +15,7 @@ public:
 	void initialize();
 
 private:
+	std::string mOriginalElementId;
 	std::shared_ptr<RendererQml::QmlTag> mTextinputElement;
 	std::shared_ptr<RendererQml::QmlTag> mTextinputColElement;
 	std::shared_ptr<RendererQml::QmlTag> mContainer;
