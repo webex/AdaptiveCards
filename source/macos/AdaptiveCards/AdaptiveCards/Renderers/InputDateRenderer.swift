@@ -12,7 +12,7 @@ open class InputDateRenderer: NSObject, BaseCardElementRendererProtocol {
 
         // setting up basic properties for Input.Date Field
         let inputField: ACRDateField = {
-            let view = ACRDateField(isTimeMode: false, config: config)
+            let view = ACRDateField(isTimeMode: false, config: config, inputElement: dateElement)
             view.translatesAutoresizingMaskIntoConstraints = false
             view.isRequired = dateElement.getIsRequired()
             view.maxDateValue = dateElement.getMax() ?? ""

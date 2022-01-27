@@ -117,20 +117,26 @@ class InputDateRendererTest: XCTestCase {
         
         let inputDateField = renderDateInput()
         XCTAssertEqual(inputDateField.accessibilityRoleDescription(), "Date Picker")
-        XCTAssertEqual(inputDateField.iconButton.accessibilityTitle(), "Date Picker Button")
+        XCTAssertEqual(inputDateField.iconButton.accessibilityRoleDescription(), "Date Picker Button")
         XCTAssertEqual(inputDateField.textField.accessibilityValue(), "10-Feb-2000")
     }
     
-    func testAccessibilityLabel() {
+    func testAccessibilityLabelV1_3() {
         inputDate = .make()
         
-        let inputDateField = renderDateInput()
+        let inputDateField = renderDateInputV1_3()
         XCTAssertEqual(inputDateField.accessibilityLabel(), "")
         
         inputDateField.placeholder = "Enter Date"
         XCTAssertEqual(inputDateField.accessibilityLabel(), "Enter Date")
         
         inputDateField.textField.stringValue = "10-Feb-2000"
+        XCTAssertEqual(inputDateField.accessibilityLabel(), "10-Feb-2000")
+        
+        inputDateField.textField.showError()
+        XCTAssertEqual(inputDateField.accessibilityLabel(), "Error, 10-Feb-2000")
+        
+        inputDateField.textField.hideError()
         XCTAssertEqual(inputDateField.accessibilityLabel(), "10-Feb-2000")
     }
     
@@ -143,6 +149,15 @@ class InputDateRendererTest: XCTestCase {
 
     private func renderDateInput() -> ACRDateField {
         let view = inputDateRenderer.render(element: inputDate, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
+
+        XCTAssertTrue(view is ACRDateField)
+        guard let inputDate = view as? ACRDateField else { fatalError() }
+        return inputDate
+    }
+    
+    private func renderDateInputV1_3() -> ACRDateField {
+        let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: .default)
+        let view = inputDateRenderer.render(element: inputDate, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
 
         XCTAssertTrue(view is ACRDateField)
         guard let inputDate = view as? ACRDateField else { fatalError() }

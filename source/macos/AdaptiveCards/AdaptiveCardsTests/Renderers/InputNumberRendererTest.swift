@@ -141,7 +141,7 @@ class InputNumberRendererTest: XCTestCase {
         let inputNumberField = renderNumberInput()
         XCTAssertEqual(inputNumberField.value, "20")
         XCTAssertEqual(inputNumberField.accessibilityChildren()?.count, 2)
-        XCTAssertEqual(inputNumberField.textField.accessibilityTitle(), "Input Number")
+        XCTAssertEqual(inputNumberField.textField.accessibilityRoleDescription(), "Input Number")
         XCTAssertEqual(inputNumberField.textField.accessibilityValue(), "20")
         // Checking Stepper Accessibility Value here
         guard let stepper = getAssociatedStepper(of: inputNumberField), let stepperAccessibilityValue = stepper.accessibilityValue() as? String else { return XCTFail() }
