@@ -1821,11 +1821,6 @@ namespace RendererQml
                 {
                     function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
                 }
-
-                function << "var paramslist = JSON.stringify(paramJson);\n";
-                function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\nconsole.log(paramslist);\n";
-                function << (elementType == "Button" ? "isButtonDisabled = true;}" : "");
-                function << "}";
             }
         }
         else
@@ -1834,10 +1829,15 @@ namespace RendererQml
             {
                 function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
             }
+        }
 
-            function << "var paramslist = JSON.stringify(paramJson);\n";
-            function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\nconsole.log(paramslist);\n";
-            function << (elementType == "Button" ? "isButtonDisabled = true;}" : "");
+        function << "var paramslist = JSON.stringify(paramJson);\n";
+        function << context->getCardRootId() << ".buttonClicked(\"" << action->GetTitle() << "\", \"" << action->GetElementTypeString() << "\", paramslist);\nconsole.log(paramslist);\n";
+        function << (elementType == "Button" ? "isButtonDisabled = true;}" : "");
+
+        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
+        {
+            function << "}";
         }
 
         return function.str();
