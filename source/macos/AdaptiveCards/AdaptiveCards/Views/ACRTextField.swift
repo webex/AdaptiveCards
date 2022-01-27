@@ -49,11 +49,10 @@ class ACRTextField: NSTextField {
     }
     
     private func setupInputElementProperties(inputElement: ACSBaseInputElement?) {
-        if config.supportsSchemeV1_3 {
-            self.labelString = inputElement?.getLabel()
-            self.errorMessage = inputElement?.getErrorMessage()
-            setAccessibilityPlaceholderValue(nil)
-        }
+        guard config.supportsSchemeV1_3 else { return }
+        labelString = inputElement?.getLabel()
+        errorMessage = inputElement?.getErrorMessage()
+        setAccessibilityPlaceholderValue(nil)
     }
 
     private func initialise() {
