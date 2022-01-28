@@ -55,7 +55,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     }
     
     private (set) lazy var textField: ACRTextField = {
-        let view = ACRTextField(numericFieldWith: config, inputElement: inputElement)
+        let view = ACRTextField(textFieldWith: config, mode: .number, inputElement: inputElement)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.delegate = self
         view.isEditable = true

@@ -9,7 +9,7 @@ class MultiLineInputTextViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
         renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: setupInputField(), checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
-        multiLineInputTextView = ACRMultilineInputTextView(config: renderConfig)
+        multiLineInputTextView = ACRMultilineInputTextView(config: renderConfig, inputElement: nil)
     }
     
     func testLeftPadding() {

@@ -6,7 +6,7 @@ protocol ACRTextFieldDelegate: AnyObject {
 }
 
 class ACRTextField: NSTextField {
-    private enum Mode {
+    public enum Mode {
         case text
         case dateTime
         case number
@@ -15,40 +15,28 @@ class ACRTextField: NSTextField {
     weak var textFieldDelegate: ACRTextFieldDelegate?
     private let config: RenderConfig
     private let inputConfig: InputFieldConfig
+    private let inputElement: ACSBaseInputElement?
     private let isDarkMode: Bool
     private let textFieldMode: Mode
     private var shouldShowError = false
     private var errorMessage: String?
     private var labelString: String?
     
-    private init(with config: RenderConfig, mode: Mode, inputElement: ACSBaseInputElement?) {
+    init(textFieldWith config: RenderConfig, mode: Mode, inputElement: ACSBaseInputElement?) {
         self.config = config
         self.inputConfig = config.inputFieldConfig
+        self.inputElement = inputElement
+        self.isDarkMode = config.isDarkMode
         textFieldMode = mode
-        isDarkMode = config.isDarkMode
         super.init(frame: .zero)
         initialise()
-        setupConstraints()
-        setupInputElementProperties(inputElement: inputElement)
-    }
-    
-    convenience init(numericFieldWith config: RenderConfig, inputElement: ACSBaseInputElement?) {
-        self.init(with: config, mode: .number, inputElement: inputElement)
-    }
-    
-    convenience init(dateTimeFieldWith config: RenderConfig, inputElement: ACSBaseInputElement?) {
-        self.init(with: config, mode: .dateTime, inputElement: inputElement)
-    }
-    
-    convenience init(textInputFieldWith config: RenderConfig, inputElement: ACSBaseInputElement?) {
-        self.init(with: config, mode: .text, inputElement: inputElement)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupInputElementProperties(inputElement: ACSBaseInputElement?) {
+    private func setupInputElementProperties() {
         guard config.supportsSchemeV1_3 else { return }
         labelString = inputElement?.getLabel()
         errorMessage = inputElement?.getErrorMessage()
@@ -83,6 +71,8 @@ class ACRTextField: NSTextField {
         layer?.backgroundColor = inputConfig.backgroundColor.cgColor
         layer?.borderWidth = inputConfig.borderWidth
         
+        setupConstraints()
+        setupInputElementProperties()
         updateAppearance()
         setupTrackingArea()
     }
@@ -229,7 +219,7 @@ class ACRTextField: NSTextField {
             accessibilityTitle += accessibilityTitle.isEmpty ? "" : ", "
             accessibilityTitle += placeholder
         }
-        
+    
         return accessibilityTitle
     }
     
@@ -243,7 +233,7 @@ class ACRTextField: NSTextField {
     }
     
     func resetCursorPositionIfNeeded() {
-        guard let cursorPosition = lastCursorPosition, cursorPosition < stringValue.count else { return }
+        guard let cursorPosition = lastCursorPosition else { return }
         currentEditor()?.selectedRange = NSRange(location: cursorPosition, length: 0)
     }
     

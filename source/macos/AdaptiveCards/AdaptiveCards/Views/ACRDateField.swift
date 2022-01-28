@@ -19,7 +19,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }()
     
     private (set) lazy var textField: ACRTextField = {
-        let view = ACRTextField(dateTimeFieldWith: config, inputElement: inputElement)
+        let view = ACRTextField(textFieldWith: config, mode: .dateTime, inputElement: inputElement)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isEditable = true
         view.isSelectable = false
@@ -174,6 +174,10 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         setAccessibilityElement(true)
         setAccessibilityValue(config.supportsSchemeV1_3 ? nil : value)
         setAccessibilityRoleDescription(isTimeMode  ? config.localisedStringConfig.timePickerFieldAccessibilityRoleDescription : config.localisedStringConfig.datePickerFieldAccessibilityRoleDescription)
+    }
+    
+    override open func setAccessibilityFocused(_ accessibilityFocused: Bool) {
+        iconButton.setAccessibilityFocused(accessibilityFocused)
     }
 
     override func accessibilityChildren() -> [Any]? {

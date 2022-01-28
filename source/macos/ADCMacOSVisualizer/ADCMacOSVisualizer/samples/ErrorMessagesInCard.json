@@ -39,6 +39,15 @@
             "errorMessage": "Input.Number Error message"
         },
         {
+            "type": "Input.Text",
+            "id": "mltf1",
+            "label": "IsRequired Check",
+            "isRequired": true,
+            "errorMessage": "This is a required field",
+            "placeholder": "Enter Text",
+            "isMultiline": true
+        },
+        {
             "type": "Input.ChoiceSet",
             "choices": [
                 {

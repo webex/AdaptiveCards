@@ -19,12 +19,11 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     var regex: String?
     var isRequired = false
     
-    init(config: RenderConfig) {
+    private init(config: RenderConfig) {
         self.config = config
         self.inputConfig = config.inputFieldConfig
         super.init(frame: .zero)
         BundleUtils.loadNibNamed("ACRMultilineInputTextView", owner: self)
-        textView.allowsUndo = true
         setupViews()
         setupConstraints()
     }
@@ -61,6 +60,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         scrollView.disableScroll = true
         textView.delegate = self
         textView.responderDelegate = self
+        textView.allowsUndo = true
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticTextReplacementEnabled = false
@@ -71,7 +71,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         wantsLayer = true
         layer?.borderWidth = inputConfig.borderWidth
         layer?.cornerRadius = inputConfig.focusRingCornerRadius
-        textView.setAccessibilityTitle(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
+        textView.setAccessibilityRoleDescription(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
         
         // For hover need tracking area
         let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
@@ -168,6 +168,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
             layer?.borderColor = hasFocus ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
             textView.backgroundColor = isMouseInView ? inputConfig.highlightedColor : inputConfig.backgroundColor
         }
+        updateAccessibilityLabel()
     }
     
     private func setupInputElementProperties(inputElement: ACSBaseInputElement?) {
@@ -175,6 +176,10 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         labelString = inputElement?.getLabel()
         errorMessage = inputElement?.getErrorMessage()
         setAccessibilityPlaceholderValue(nil)
+    }
+    
+    private func updateAccessibilityLabel() {
+        textView.setAccessibilityTitle(accessibilityLabel())
     }
 }
 

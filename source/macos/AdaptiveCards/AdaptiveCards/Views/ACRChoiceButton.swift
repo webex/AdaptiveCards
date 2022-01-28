@@ -224,6 +224,10 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     override func accessibilityValue() -> Any? {
         return state
     }
+    
+    override open func setAccessibilityFocused(_ accessibilityFocused: Bool) {
+        button.setAccessibilityFocused(accessibilityFocused)
+    }
 
     private func valueChangedMessage() -> String {
         var message: String
