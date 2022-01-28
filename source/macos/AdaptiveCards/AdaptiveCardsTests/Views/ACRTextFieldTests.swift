@@ -11,7 +11,7 @@ class ACRTextFieldTests: XCTestCase {
         super.setUp()
         let inputFieldConfig = InputFieldConfig(height: 26, leftPadding: 8, rightPadding: 8, yPadding: 0, focusRingCornerRadius: 8, borderWidth: 0.3, wantsClearButton: true, clearButtonImage: NSImage(), calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 14), highlightedColor: NSColor(red: 0, green: 0, blue: 0, alpha: 0.11), backgroundColor: NSColor(red: 1, green: 1, blue: 1, alpha: 1), borderColor: .black, activeBorderColor: .black, placeholderTextColor: NSColor.placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 5, left: 10, bottom: 0, right: 0), errorStateConfig: InputFieldConfig.ErrorStateConfig.default)
         config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: inputFieldConfig, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
-        textField = ACRTextField(textInputFieldWith: config, inputElement: nil)
+        textField = ACRTextField(textFieldWith: config, mode: .text, inputElement: nil)
         delegate = FakeACRTextFieldDelegate()
     }
     
@@ -25,7 +25,7 @@ class ACRTextFieldTests: XCTestCase {
     }
     
     func testNoClearButtonDefaultRenderConfig() {
-        textField = ACRTextField(textInputFieldWith: .default, inputElement: nil)
+        textField = ACRTextField(textFieldWith: .default, mode: .text, inputElement: nil)
         XCTAssertTrue(textField.subviews.isEmpty)
     }
     
@@ -41,7 +41,7 @@ class ACRTextFieldTests: XCTestCase {
         let image = NSImage()
         let inputFieldConfig = InputFieldConfig(height: 40, leftPadding: 20, rightPadding: 20, yPadding: 0, focusRingCornerRadius: 10, borderWidth: 1, wantsClearButton: true, clearButtonImage: image, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 10), highlightedColor: .blue, backgroundColor: .yellow, borderColor: .green, activeBorderColor: .black, placeholderTextColor: NSColor.placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 5, left: 10, bottom: 0, right: 0), errorStateConfig: InputFieldConfig.ErrorStateConfig.default)
         config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: inputFieldConfig, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
-        textField = ACRTextField(textInputFieldWith: config, inputElement: nil)
+        textField = ACRTextField(textFieldWith: config, mode: .text, inputElement: nil)
         XCTAssertEqual(textField.fittingSize.height, 40)
         XCTAssertEqual(textField.cell?.titleRect(forBounds: textField.bounds).origin.x, 20)
         XCTAssertEqual(textField.font, .systemFont(ofSize: 10))
@@ -49,7 +49,7 @@ class ACRTextFieldTests: XCTestCase {
     }
     
     func testDateFieldContainsClearButtonAlways() {
-        let textField = ACRTextField(dateTimeFieldWith: .default, inputElement: nil)
+        let textField = ACRTextField(textFieldWith: .default, mode: .dateTime, inputElement: nil)
         textField.stringValue = "test"
         XCTAssertEqual(textField.subviews.count, 1)
         XCTAssertEqual(textField.subviews[0].className, NSButtonWithImageSpacing().className)
@@ -57,7 +57,7 @@ class ACRTextFieldTests: XCTestCase {
     }
     
     func testDateFieldLeftPadding() {
-        let textField = ACRTextField(dateTimeFieldWith: .default, inputElement: nil)
+        let textField = ACRTextField(textFieldWith: .default, mode: .dateTime, inputElement: nil)
         // Left padding 20 for the image
         XCTAssertEqual(textField.cell?.titleRect(forBounds: textField.bounds).origin.x, 20)
     }
@@ -71,7 +71,7 @@ class ACRTextFieldTests: XCTestCase {
     
     func testAccessibilityTitle1_3() {
         config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
-        textField = ACRTextField(textInputFieldWith: config, inputElement: nil)
+        textField = ACRTextField(textFieldWith: config, mode: .text, inputElement: nil)
         textField.placeholderAttributedString = NSAttributedString(string: "Placeholder")
         
         textField.stringValue = ""

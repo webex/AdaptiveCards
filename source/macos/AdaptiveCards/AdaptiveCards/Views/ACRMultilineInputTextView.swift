@@ -111,6 +111,8 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         textView.placeholderLeftPadding = inputConfig.multilineFieldInsets.left
         textView.placeholderTopPadding = inputConfig.multilineFieldInsets.top
         textView.placeholderAttrString = placeholderValue
+        guard !config.supportsSchemeV1_3 else { return }
+        textView.setAccessibilityPlaceholderValue(placeholder)
     }
     
     func setValue(value: String, maximumLen: NSNumber?) {
@@ -176,6 +178,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         labelString = inputElement?.getLabel()
         errorMessage = inputElement?.getErrorMessage()
         setAccessibilityPlaceholderValue(nil)
+        updateAccessibilityLabel()
     }
     
     private func updateAccessibilityLabel() {

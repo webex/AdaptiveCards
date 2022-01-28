@@ -40,11 +40,11 @@
         },
         {
             "type": "Input.Text",
-            "id": "mltf1",
-            "label": "IsRequired Check",
+            "id": "multilineText",
+            "label": "Multiline Input.Text",
             "isRequired": true,
-            "errorMessage": "This is a required field",
-            "placeholder": "Enter Text",
+            "errorMessage": "Multiline Input Error message",
+            "placeholder": "Placeholder Text",
             "isMultiline": true
         },
         {
