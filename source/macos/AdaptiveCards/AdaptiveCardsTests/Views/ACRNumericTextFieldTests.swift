@@ -5,9 +5,11 @@ import XCTest
 class ACRNumericTestFieldTests: XCTestCase {
     private var numericView: ACRNumericTextField!
     private var config: RenderConfig!
+    private var inputElement: FakeInputNumber!
     override func setUp() {
         super.setUp()
-        numericView = ACRNumericTextField(config: .default, inputElement: nil)
+        inputElement = FakeInputNumber.make()
+        numericView = ACRNumericTextField(config: .default, inputElement: inputElement)
         numericView.value = "20"
         numericView.maxValue = Double.greatestFiniteMagnitude
         numericView.minValue = -Double.greatestFiniteMagnitude
@@ -102,7 +104,7 @@ class ACRNumericTestFieldTests: XCTestCase {
     
     func testAccessibilityTitle1_3() {
         config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
-        numericView = ACRNumericTextField(config: config, inputElement: nil)
+        numericView = ACRNumericTextField(config: config, inputElement: inputElement)
         numericView.attributedPlaceholder = NSAttributedString(string: "Placeholder")
         
         numericView.value = ""
