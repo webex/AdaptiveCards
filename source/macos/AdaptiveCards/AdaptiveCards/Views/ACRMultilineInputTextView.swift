@@ -170,7 +170,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
             layer?.borderColor = hasFocus ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
             textView.backgroundColor = isMouseInView ? inputConfig.highlightedColor : inputConfig.backgroundColor
         }
-        updateAccessibilityLabel()
+        updateAccessibilityVoiceOverMessage()
     }
     
     private func setupInputElementProperties(inputElement: ACSBaseInputElement?) {
@@ -178,10 +178,10 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         labelString = inputElement?.getLabel()
         errorMessage = inputElement?.getErrorMessage()
         setAccessibilityPlaceholderValue(nil)
-        updateAccessibilityLabel()
+        updateAccessibilityVoiceOverMessage()
     }
     
-    private func updateAccessibilityLabel() {
+    private func updateAccessibilityVoiceOverMessage() {
         textView.setAccessibilityTitle(accessibilityLabel())
     }
 }

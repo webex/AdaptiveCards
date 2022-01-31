@@ -53,7 +53,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }()
     
     private var popover: NSPopover?
-    private let inputElement: ACSBaseInputElement?
+    private let inputElement: ACSBaseInputElement
     
     let datePickerCalendar = NSDatePicker()
     let datePickerTextfield = NSDatePicker()
@@ -134,7 +134,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     weak var errorDelegate: InputHandlingViewErrorDelegate?
     var isRequired = false
     
-    init(isTimeMode: Bool, config: RenderConfig, inputElement: ACSBaseInputElement?) {
+    init(isTimeMode: Bool, config: RenderConfig, inputElement: ACSBaseInputElement) {
         self.isTimeMode = isTimeMode
         self.isDarkMode = config.isDarkMode
         self.config = config
@@ -174,10 +174,6 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         setAccessibilityElement(true)
         setAccessibilityValue(config.supportsSchemeV1_3 ? nil : value)
         setAccessibilityRoleDescription(isTimeMode  ? config.localisedStringConfig.timePickerFieldAccessibilityRoleDescription : config.localisedStringConfig.datePickerFieldAccessibilityRoleDescription)
-    }
-    
-    override open func setAccessibilityFocused(_ accessibilityFocused: Bool) {
-        iconButton.setAccessibilityFocused(accessibilityFocused)
     }
 
     override func accessibilityChildren() -> [Any]? {

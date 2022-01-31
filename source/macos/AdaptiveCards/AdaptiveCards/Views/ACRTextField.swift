@@ -15,14 +15,14 @@ class ACRTextField: NSTextField {
     weak var textFieldDelegate: ACRTextFieldDelegate?
     private let config: RenderConfig
     private let inputConfig: InputFieldConfig
-    private let inputElement: ACSBaseInputElement?
+    private let inputElement: ACSBaseInputElement
     private let isDarkMode: Bool
     private let textFieldMode: Mode
     private var shouldShowError = false
     private var errorMessage: String?
     private var labelString: String?
     
-    init(textFieldWith config: RenderConfig, mode: Mode, inputElement: ACSBaseInputElement?) {
+    init(textFieldWith config: RenderConfig, mode: Mode, inputElement: ACSBaseInputElement) {
         self.config = config
         self.inputConfig = config.inputFieldConfig
         self.inputElement = inputElement
@@ -38,8 +38,8 @@ class ACRTextField: NSTextField {
     
     private func setupInputElementProperties() {
         guard config.supportsSchemeV1_3 else { return }
-        labelString = inputElement?.getLabel()
-        errorMessage = inputElement?.getErrorMessage()
+        labelString = inputElement.getLabel()
+        errorMessage = inputElement.getErrorMessage()
         setAccessibilityPlaceholderValue(nil)
     }
 

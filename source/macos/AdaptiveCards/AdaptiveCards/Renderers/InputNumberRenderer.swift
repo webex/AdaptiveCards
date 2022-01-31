@@ -34,14 +34,14 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
 // MARK: - ACRNumericTextField Class
 open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     weak var errorDelegate: InputHandlingViewErrorDelegate?
-    private let inputElement: ACSBaseInputElement?
+    private let inputElement: ACSBaseInputElement
     var isRequired = false
     var id: String?
     
     private var previousValue = ""
     private let config: RenderConfig
     
-    init(config: RenderConfig, inputElement: ACSBaseInputElement?) {
+    init(config: RenderConfig, inputElement: ACSBaseInputElement) {
         self.inputElement = inputElement
         self.config = config
         super.init(frame: .zero)
