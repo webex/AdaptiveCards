@@ -28,7 +28,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         setupConstraints()
     }
     
-    convenience init(config: RenderConfig, inputElement: ACSBaseInputElement?) {
+    convenience init(config: RenderConfig, inputElement: ACSBaseInputElement) {
         self.init(config: config)
         setupInputElementProperties(inputElement: inputElement)
     }
@@ -173,10 +173,10 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         updateAccessibilityVoiceOverMessage()
     }
     
-    private func setupInputElementProperties(inputElement: ACSBaseInputElement?) {
+    private func setupInputElementProperties(inputElement: ACSBaseInputElement) {
         guard config.supportsSchemeV1_3 else { return }
-        labelString = inputElement?.getLabel()
-        errorMessage = inputElement?.getErrorMessage()
+        labelString = inputElement.getLabel()
+        errorMessage = inputElement.getErrorMessage()
         setAccessibilityPlaceholderValue(nil)
         updateAccessibilityVoiceOverMessage()
     }
