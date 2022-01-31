@@ -19,17 +19,16 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     var regex: String?
     var isRequired = false
     
-    init(config: RenderConfig) {
+    private init(config: RenderConfig) {
         self.config = config
         self.inputConfig = config.inputFieldConfig
         super.init(frame: .zero)
         BundleUtils.loadNibNamed("ACRMultilineInputTextView", owner: self)
-        textView.allowsUndo = true
         setupViews()
         setupConstraints()
     }
     
-    convenience init(config: RenderConfig, inputElement: ACSBaseInputElement?) {
+    convenience init(config: RenderConfig, inputElement: ACSBaseInputElement) {
         self.init(config: config)
         setupInputElementProperties(inputElement: inputElement)
     }
@@ -61,6 +60,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         scrollView.disableScroll = true
         textView.delegate = self
         textView.responderDelegate = self
+        textView.allowsUndo = true
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticTextReplacementEnabled = false
@@ -71,7 +71,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         wantsLayer = true
         layer?.borderWidth = inputConfig.borderWidth
         layer?.cornerRadius = inputConfig.focusRingCornerRadius
-        textView.setAccessibilityTitle(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
+        textView.setAccessibilityRoleDescription(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
         
         // For hover need tracking area
         let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
@@ -111,6 +111,8 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         textView.placeholderLeftPadding = inputConfig.multilineFieldInsets.left
         textView.placeholderTopPadding = inputConfig.multilineFieldInsets.top
         textView.placeholderAttrString = placeholderValue
+        guard !config.supportsSchemeV1_3 else { return }
+        textView.setAccessibilityPlaceholderValue(placeholder)
     }
     
     func setValue(value: String, maximumLen: NSNumber?) {
@@ -168,13 +170,19 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
             layer?.borderColor = hasFocus ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
             textView.backgroundColor = isMouseInView ? inputConfig.highlightedColor : inputConfig.backgroundColor
         }
+        updateAccessibilityVoiceOverMessage()
     }
     
-    private func setupInputElementProperties(inputElement: ACSBaseInputElement?) {
+    private func setupInputElementProperties(inputElement: ACSBaseInputElement) {
         guard config.supportsSchemeV1_3 else { return }
-        labelString = inputElement?.getLabel()
-        errorMessage = inputElement?.getErrorMessage()
+        labelString = inputElement.getLabel()
+        errorMessage = inputElement.getErrorMessage()
         setAccessibilityPlaceholderValue(nil)
+        updateAccessibilityVoiceOverMessage()
+    }
+    
+    private func updateAccessibilityVoiceOverMessage() {
+        textView.setAccessibilityTitle(accessibilityLabel())
     }
 }
 
@@ -206,7 +214,7 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     func setAccessibilityFocus() {
         textView.setAccessibilityFocused(true)
         textView.selectAll(nil)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityTitle())
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityLabel())
     }
 }
 

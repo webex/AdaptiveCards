@@ -15,7 +15,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             view.translatesAutoresizingMaskIntoConstraints = false
             return view
         }()
-        let textView = ACRTextInputView(textInputFieldWith: config, inputElement: inputBlock)
+        let textView = ACRTextInputView(textFieldWith: config, mode: .text, inputElement: inputBlock)
         textView.idString = inputBlock.getId()
         textView.regex = inputBlock.getRegex()
         textView.isRequired = inputBlock.getIsRequired()
@@ -41,14 +41,11 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         if inputBlock.getIsMultiline() {
-            let multilineView = ACRMultilineInputTextView(config: config)
+            let multilineView = ACRMultilineInputTextView(config: config, inputElement: inputBlock)
             multilineView.setId(inputBlock.getId())
             multilineView.setVisibilty(to: inputBlock.getIsVisible())
             if let placeholderString = inputBlock.getPlaceholder() {
                 multilineView.setPlaceholder(placeholderString)
-                // In NSTextView we are drawing placeholder, so to make screen reader read placeholder, add as part of title
-                let prevAccessibilityTitle = multilineView.textView.accessibilityTitle()
-                multilineView.textView.setAccessibilityTitle((prevAccessibilityTitle ?? "") + ", " + placeholderString)
             }
             if let valueString = inputBlock.getValue(), !valueString.isEmpty {
                 multilineView.setValue(value: valueString, maximumLen: inputBlock.getMaxLength())
@@ -74,7 +71,7 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             textView.cell?.truncatesLastVisibleLine = true
             textView.cell?.lineBreakMode = .byTruncatingTail
             textView.isHidden = !inputBlock.getIsVisible()
-            textView.setAccessibilityTitle(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
+            textView.setAccessibilityRoleDescription(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
         }
         // Create placeholder and initial value string if they exist
         if let placeholderString = inputBlock.getPlaceholder() {
