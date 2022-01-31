@@ -318,8 +318,10 @@ class ACRViewTests: XCTestCase {
     }
     
     func testInputHandlers_WithHiddenViews() {
-        let inputView1 = ACRTextInputView(textInputFieldWith: config, inputElement: nil)
-        let inputView2 = ACRTextInputView(textInputFieldWith: config, inputElement: nil)
+        let inputElement1 = FakeInputText.make()
+        let inputElement2 = FakeInputText.make()
+        let inputView1 = ACRTextInputView(textFieldWith: config, mode: .text, inputElement: inputElement1)
+        let inputView2 = ACRTextInputView(textFieldWith: config, mode: .text, inputElement: inputElement2)
         
         inputView1.idString = "id-1"
         inputView1.stringValue = "hello"

@@ -45,7 +45,7 @@ class MultilineInputTextRendererTest: XCTestCase {
         
         let inputTextField = renderTextInput()
         // Placeholder is added as part of title as it is drawn in Multiline View
-        XCTAssertEqual(inputTextField.textView.accessibilityTitle(), "Text Field, Sample Placeholder")
+        XCTAssertEqual(inputTextField.textView.accessibilityPlaceholderValue(), "Sample Placeholder")
         XCTAssertEqual(inputTextField.textView.accessibilityValue(), "somevalue")
         
     }
