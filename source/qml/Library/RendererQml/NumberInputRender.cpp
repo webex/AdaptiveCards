@@ -3,14 +3,15 @@
 #include "utils.h"
 #include "ImageDataURI.h"
 
-NumberinputElement::NumberinputElement(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
+NumberInputElement::NumberInputElement(std::shared_ptr<AdaptiveCards::NumberInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
     :mInput(input),
     mContext(context),
-    numberConfig(mContext->GetRenderConfig()->getInputNumberConfig())
+    numberConfig(context->GetRenderConfig()->getInputNumberConfig())
 {
+    initialize();
 }
 
-std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getDummyElementforNumberInput(bool isTop)
+std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getDummyElementforNumberInput(bool isTop)
 {
     auto DummyTag = std::make_shared<RendererQml::QmlTag>("Rectangle");
     DummyTag->Property("width", "2");
@@ -32,12 +33,12 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getDummyElementforNumbe
     return DummyTag;
 }
 
-std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getQmlTag()
+std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getQmlTag()
 {
     return numberInputColElement;
 }
 
-void NumberinputElement::initialize()
+void NumberInputElement::initialize()
 {
     const std::string origionalElementId = mInput->GetId();
     mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
@@ -189,7 +190,7 @@ void NumberinputElement::initialize()
     uiNumberInput->Property("up.indicator", upDummyTag->ToString());
     uiNumberInput->Property("down.indicator", downDummyTag->ToString());
     uiNumberInput->Property("validator", doubleValidatorTag->ToString());
-    uiNumberInput->Property("valueFromText", "function(text, locale){\nreturn Number(text)\n}");  
+    uiNumberInput->Property("valueFromText", "function(text, locale){\nreturn Number(text)\n}");
     uiNumberInput->AddFunctions(RendererQml::Formatter() << "function changeValue(keyPressed) {"
         "if ((keyPressed === Qt.Key_Up || keyPressed === Qt.Key_Down) && " << contentItemTag->GetId() << ".text.length === 0)\n"
         "{value = (from < 0) ? 0 : from;" << contentItemTag->GetId() << ".text = value;}\n"
@@ -231,7 +232,7 @@ void NumberinputElement::initialize()
     uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
 }
 
-void NumberinputElement::createInputLabel()
+void NumberInputElement::createInputLabel()
 {
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
@@ -263,7 +264,7 @@ void NumberinputElement::createInputLabel()
     }
 }
 
-std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
+std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getContentItemTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
 {
     auto contentItemTag = std::make_shared<RendererQml::QmlTag>("TextField");
     contentItemTag->Property("id", mOrigionalElementId + "_contentItem");
@@ -292,15 +293,15 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const
     contentItemTag->Property("Accessible.name", mInput->GetPlaceholder().empty() ? "Number Input Field" : mInput->GetPlaceholder(), true);
     contentItemTag->Property("Accessible.role", "Accessible.EditableText");
     contentItemTag->Property("background", textBackgroundTag->ToString());
-    contentItemTag->AddFunctions(getAccessibleName());    
+    contentItemTag->AddFunctions(getAccessibleName());
     contentItemTag->Property("color", mContext->GetHexColor(numberConfig.textColor));
     contentItemTag->Property("placeholderTextColor", mContext->GetHexColor(numberConfig.placeHolderColor));
-    
+
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         contentItemTag->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
             << mNumberInputRectId << ".colorChange( false)}\n");
-        
+
         contentItemTag->Property("Accessible.name", RendererQml::Formatter() << (mInput->GetLabel().empty() ? (mInput->GetPlaceholder().empty() ? "Text Field" : mInput->GetPlaceholder()) : mInput->GetLabel()), true);
     }
     else
@@ -310,7 +311,7 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getContentItemTag(const
     return contentItemTag;
 }
 
-void NumberinputElement::createErrorMessage()
+void NumberInputElement::createErrorMessage()
 {
     auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
     uiErrorMessage->Property("id", RendererQml::Formatter() << mInput->GetId() << "_errorMessage");
@@ -326,7 +327,7 @@ void NumberinputElement::createErrorMessage()
     numberInputColElement->AddChild(uiErrorMessage);
 }
 
-std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getIconTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
+std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getIconTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag)
 {
     auto upDownIcon = RendererQml::AdaptiveCardQmlRenderer::GetIconTag(mContext);
     upDownIcon->RemoveProperty("anchors.top");
@@ -342,7 +343,7 @@ std::shared_ptr<RendererQml::QmlTag> NumberinputElement::getIconTag(const std::s
     upDownIcon->Property("background", textBackgroundTag->ToString());
     return upDownIcon;
 }
-std::ostringstream NumberinputElement::getValidatorFunction()
+std::ostringstream NumberInputElement::getValidatorFunction()
 {
     std::ostringstream validator;
     validator << "function validate(){\n";
@@ -364,7 +365,7 @@ std::ostringstream NumberinputElement::getValidatorFunction()
     return validator;
 }
 
-const std::string NumberinputElement::getColorFunction()
+const std::string NumberInputElement::getColorFunction()
 {
     std::ostringstream colorFunction;
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -383,7 +384,7 @@ const std::string NumberinputElement::getColorFunction()
     return colorFunction.str();
 }
 
-const std::string NumberinputElement::getAccessibleName()
+const std::string NumberInputElement::getAccessibleName()
 {
     std::ostringstream accessibleName;
     std::ostringstream labelString;

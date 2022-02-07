@@ -8,12 +8,11 @@
 class DateInputElement
 {
 public:
-    DateInputElement(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context);
+    DateInputElement(std::shared_ptr<AdaptiveCards::DateInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context);
     DateInputElement() = delete;
     DateInputElement(const DateInputElement&) = delete;
     DateInputElement& operator= (const DateInputElement&) = delete;
 
-    void initialize();
     std::shared_ptr<RendererQml::QmlTag> getQmlTag();
 
 private:
@@ -46,6 +45,7 @@ private:
 private:
     void renderDateElement();
 
+    void initialize();
     void initDateInputField();
     void initDateInputWrapper();
     void initDateInputComboBox();

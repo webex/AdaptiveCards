@@ -9,12 +9,11 @@
 class ToggleInputElement
 {
 public:
-    ToggleInputElement(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context);
+    ToggleInputElement(std::shared_ptr<AdaptiveCards::ToggleInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context);
     ToggleInputElement() = delete;
     ToggleInputElement(const ToggleInputElement&) = delete;
     ToggleInputElement& operator= (const ToggleInputElement&) = delete;
     std::shared_ptr<RendererQml::QmlTag> getQmlTag();
-    void initialize();
 
 private:
     std::shared_ptr<RendererQml::QmlTag> mToggleInputColElement;
@@ -23,6 +22,7 @@ private:
     const std::shared_ptr<RendererQml::AdaptiveRenderContext> mContext;
 
 private:
+    void initialize();
     void addInputLabel();
     void addErrorMessage(const std::shared_ptr<RendererQml::QmlTag>& uiCheckBox);
     void addColorFunction(const std::shared_ptr<RendererQml::QmlTag>& uiCheckBox);
