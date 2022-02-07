@@ -3,12 +3,13 @@
 #include "ImageDataURI.h"
 #include "Utils.h"
 
-TimeInputElement::TimeInputElement(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
+TimeInputElement::TimeInputElement(std::shared_ptr<AdaptiveCards::TimeInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
     :mTimeInput(input),
     mContext(context),
     mTimeInputConfig(context->GetRenderConfig()->getInputTimeConfig()),
     mIs12hour(RendererQml::Utils::isSystemTime12Hour())
-{  
+{
+    initialize();
 }
 
 std::shared_ptr<RendererQml::QmlTag> TimeInputElement::getQmlTag()

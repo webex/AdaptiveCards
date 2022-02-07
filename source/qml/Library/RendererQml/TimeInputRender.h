@@ -8,12 +8,11 @@
 class TimeInputElement
 {
 public:
-    TimeInputElement(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context);
+    TimeInputElement(std::shared_ptr<AdaptiveCards::TimeInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context);
     TimeInputElement() = delete;
     TimeInputElement(const TimeInputElement&) = delete;
     TimeInputElement& operator= (const TimeInputElement&) = delete;
 
-    void initialize();
     std::shared_ptr<RendererQml::QmlTag> getQmlTag();
 
 private:
@@ -42,6 +41,7 @@ private:
 private:
     void renderTimeElement();
 
+    void initialize();
     void initTimeInputWrapper();
     void initTimeInputTextField();
     void initTimeInputComboBox();
