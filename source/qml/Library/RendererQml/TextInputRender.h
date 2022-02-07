@@ -4,15 +4,14 @@
 #include "QmlTag.h"
 #include <memory>
 
-class TextinputElement
+class TextInputElement
 {
 public:
-	TextinputElement(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context);
-	TextinputElement() = delete;
-	TextinputElement(const TextinputElement&) = delete;
-	TextinputElement& operator= (const TextinputElement&) = delete;
+    TextInputElement(std::shared_ptr<AdaptiveCards::TextInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context);
+    TextInputElement() = delete;
+    TextInputElement(const TextInputElement&) = delete;
+    TextInputElement& operator= (const TextInputElement&) = delete;
 	std::shared_ptr<RendererQml::QmlTag> getQmlTag();
-	void initialize();
 
 private:
 	std::string mOriginalElementId;
@@ -23,16 +22,19 @@ private:
 	const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
 
 private:
+    void initialize();
 	void initMultiLine();
 	void initSingleLine();
+    void addInlineActionMode();
+    void addValidationToInputText(std::shared_ptr<RendererQml::QmlTag>& uiTextInput);
+
+    std::shared_ptr<RendererQml::QmlTag> createSingleLineTextFieldElement();
+    std::shared_ptr<RendererQml::QmlTag> createMultiLineTextAreaElement();
+    std::shared_ptr<RendererQml::QmlTag> createMultiLineBackgroundElement();
 	std::shared_ptr<RendererQml::QmlTag> createInputTextLabel(bool isRequired = false);
 	std::shared_ptr<RendererQml::QmlTag> createErrorMessageText(std::string errorMessage, const std::shared_ptr<RendererQml::QmlTag> uiTextInput);
+
 	const std::string getColorFunction();
 	std::string getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiTextInput);
-	void addInlineActionMode();
-	std::shared_ptr<RendererQml::QmlTag> createSingleLineTextFieldElement();
-	std::shared_ptr<RendererQml::QmlTag> createMultiLineTextAreaElement();
-	std::shared_ptr<RendererQml::QmlTag> createMultiLineBackgroundElement();
-	void addValidationToInputText(std::shared_ptr<RendererQml::QmlTag>& uiTextInput);
 };
 

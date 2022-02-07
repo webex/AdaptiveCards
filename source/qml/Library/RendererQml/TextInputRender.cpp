@@ -2,19 +2,20 @@
 #include "Formatter.h"
 #include "utils.h"
 
-TextinputElement::TextinputElement(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
+TextInputElement::TextInputElement(std::shared_ptr<AdaptiveCards::TextInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
 	:mTextinput(input),
 	mContext(context),
     mContainer(nullptr)
-{  
+{
+    initialize();
 }
 
-std::shared_ptr<RendererQml::QmlTag> TextinputElement::getQmlTag()
+std::shared_ptr<RendererQml::QmlTag> TextInputElement::getQmlTag()
 {
     return mTextinputColElement;
 }
 
-void TextinputElement::initialize()
+void TextInputElement::initialize()
 {
     mOriginalElementId = mTextinput->GetId();
     mTextinput->SetId(mContext->ConvertToValidId(mTextinput->GetId()));
@@ -35,7 +36,7 @@ void TextinputElement::initialize()
     }
 }
 
-std::shared_ptr<RendererQml::QmlTag> TextinputElement::createInputTextLabel(bool isRequired)
+std::shared_ptr<RendererQml::QmlTag> TextInputElement::createInputTextLabel(bool isRequired)
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto label = std::make_shared<RendererQml::QmlTag>("Label");
@@ -59,7 +60,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createInputTextLabel(bool
     return label;
 }
 
-std::shared_ptr<RendererQml::QmlTag> TextinputElement::createErrorMessageText(std::string errorMessage, const std::shared_ptr<RendererQml::QmlTag> uiTextInput)
+std::shared_ptr<RendererQml::QmlTag> TextInputElement::createErrorMessageText(std::string errorMessage, const std::shared_ptr<RendererQml::QmlTag> uiTextInput)
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
@@ -76,7 +77,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createErrorMessageText(st
     return uiErrorMessage;
 }
 
-void TextinputElement::initSingleLine()
+void TextInputElement::initSingleLine()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     
@@ -137,7 +138,7 @@ void TextinputElement::initSingleLine()
     }
 }
 
-void TextinputElement::initMultiLine()
+void TextInputElement::initMultiLine()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -191,7 +192,7 @@ void TextinputElement::initMultiLine()
     }
 }
 
-void TextinputElement::addValidationToInputText(std::shared_ptr<RendererQml::QmlTag> &uiTextInput)
+void TextInputElement::addValidationToInputText(std::shared_ptr<RendererQml::QmlTag> &uiTextInput)
 {
     if (mTextinput->GetIsVisible())
     {
@@ -220,7 +221,7 @@ void TextinputElement::addValidationToInputText(std::shared_ptr<RendererQml::Qml
     uiTextInput->AddFunctions(validator.str());
 }
 
-std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextFieldElement()
+std::shared_ptr<RendererQml::QmlTag> TextInputElement::createSingleLineTextFieldElement()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto uiTextInput = std::make_shared<RendererQml::QmlTag>("TextField");
@@ -278,7 +279,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createSingleLineTextField
 
     return uiTextInput;
 }
-std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaElement()
+std::shared_ptr<RendererQml::QmlTag> TextInputElement::createMultiLineTextAreaElement()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto uiTextInput = std::make_shared<RendererQml::QmlTag>("TextArea");
@@ -319,7 +320,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
         }
     }
 
-    uiTextInput->Property("Accessible.name", "",true);
+    uiTextInput->Property("Accessible.name", "", true);
     uiTextInput->Property("Keys.onTabPressed", "{nextItemInFocusChain().forceActiveFocus(); event.accepted = true;}");
     uiTextInput->Property("Keys.onBacktabPressed", "{nextItemInFocusChain(false).forceActiveFocus(); event.accepted = true;}");
     uiTextInput->Property("font.pixelSize", RendererQml::Formatter() << textConfig.pixelSize);
@@ -337,7 +338,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineTextAreaEl
     return uiTextInput;
 }
 
-std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineBackgroundElement()
+std::shared_ptr<RendererQml::QmlTag> TextInputElement::createMultiLineBackgroundElement()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto backgroundTag = std::make_shared<RendererQml::QmlTag>("Rectangle");
@@ -349,7 +350,7 @@ std::shared_ptr<RendererQml::QmlTag> TextinputElement::createMultiLineBackground
     return backgroundTag;
 }
 
-void TextinputElement::addInlineActionMode()
+void TextInputElement::addInlineActionMode()
 {
     auto temp = mTextinput->GetLabel();
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
@@ -362,7 +363,7 @@ void TextinputElement::addInlineActionMode()
             mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "Inline ShowCard not supported for InlineAction"));
             mTextinputColElement->AddChild(mTextinputElement);
         }
-        
+
         else
         {
             mContainer = std::make_shared<RendererQml::QmlTag>("Row");
@@ -391,10 +392,10 @@ void TextinputElement::addInlineActionMode()
     {
         mTextinputColElement->AddChild(mTextinputElement);
     }
-    
+
 }
 
-const std::string TextinputElement::getColorFunction()
+const std::string TextInputElement::getColorFunction()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     std::string colorFunction = RendererQml::Formatter() << "function colorChange(colorItem,focusItem,isPressed) {\n"
@@ -408,7 +409,7 @@ const std::string TextinputElement::getColorFunction()
     return colorFunction;
 }
 
-std::string TextinputElement::getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiTextInput)
+std::string TextInputElement::getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiTextInput)
 {
     std::ostringstream accessibleName;
     std::ostringstream labelString;

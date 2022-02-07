@@ -2,11 +2,12 @@
 #include "ComboBoxRender.h"
 #include "ImageDataURI.h"
 
-ComboBoxElement::ComboBoxElement(RendererQml::ChoiceSet choiceSet, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
+ComboBoxElement::ComboBoxElement(RendererQml::ChoiceSet choiceSet, const std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
     :mChoiceSet(choiceSet),
     mContext(context),
     mChoiceSetConfig(context->GetRenderConfig()->getInputChoiceSetDropDownConfig())
 {
+    initialize();
 }
 
 std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getQmlTag()

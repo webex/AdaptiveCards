@@ -10,12 +10,11 @@
 class ChoiceSetElement
 {
 public:
-    ChoiceSetElement(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context);
+    ChoiceSetElement(std::shared_ptr<AdaptiveCards::ChoiceSetInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context);
     ChoiceSetElement() = delete;
     ChoiceSetElement(const ChoiceSetElement&) = delete;
     ChoiceSetElement& operator= (const ChoiceSetElement&) = delete;
 
-    void initialize();
     std::shared_ptr<RendererQml::QmlTag> getQmlTag();
 
 private:
@@ -26,6 +25,7 @@ private:
 private:
     void renderChoiceSet(RendererQml::ChoiceSet choiceSet, RendererQml::CheckBoxType checkBoxType, const std::string choiceSetId);
 
+    void initialize();
     void addColorFunction();
     void addInputLabel(bool isRequired = false);
     void addErrorMessage(const std::shared_ptr<RendererQml::QmlTag> uiChoiceSet, RendererQml::CheckBoxType checkBoxType);

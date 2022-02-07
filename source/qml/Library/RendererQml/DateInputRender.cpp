@@ -3,11 +3,12 @@
 #include "ImageDataURI.h"
 #include "Utils.h"
 
-DateInputElement::DateInputElement(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
+DateInputElement::DateInputElement(std::shared_ptr<AdaptiveCards::DateInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
     :mDateInput(input),
     mContext(context),
     mDateConfig(context->GetRenderConfig()->getInputDateConfig())
-{  
+{
+    initialize();
 }
 
 std::shared_ptr<RendererQml::QmlTag> DateInputElement::getQmlTag()

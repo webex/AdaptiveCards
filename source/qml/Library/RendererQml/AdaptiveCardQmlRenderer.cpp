@@ -568,17 +568,14 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TextInputRender(std::shared_ptr<AdaptiveCards::TextInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        TextinputElement textInputElement(input, context);
-        textInputElement.initialize();
-        return textInputElement.getQmlTag();
+        auto textInputElement = std::make_shared<TextInputElement>(input, context);
+        return textInputElement->getQmlTag();
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::NumberInputRender(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        NumberinputElement numberInputElement(input, context);
-        numberInputElement.initialize();
-        return numberInputElement.getQmlTag();
-        
+        auto numberInputElement = std::make_shared<NumberInputElement>(input, context);
+        return numberInputElement->getQmlTag();
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::RichTextBlockRender(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
@@ -702,23 +699,20 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ToggleInputRender(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        ToggleInputElement toggleInputElement(input, context);
-        toggleInputElement.initialize();
-        return toggleInputElement.getQmlTag();
+        auto toggleInputElement = std::make_shared<ToggleInputElement>(input, context);
+        return toggleInputElement->getQmlTag();
 	}
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ChoiceSetRender(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<AdaptiveRenderContext> context)
 	{
-        ChoiceSetElement choiceSetElement(input, context);
-        choiceSetElement.initialize();
-        return choiceSetElement.getQmlTag();
+        auto choiceSetElement = std::make_shared<ChoiceSetElement>(input, context);
+        return choiceSetElement->getQmlTag();
 	}
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::DateInputRender(std::shared_ptr<AdaptiveCards::DateInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
-        DateInputElement dateInputElement(input, context);
-        dateInputElement.initialize();
-        return dateInputElement.getQmlTag();
+        auto dateInputElement = std::make_shared<DateInputElement>(input, context);
+        return dateInputElement->getQmlTag();
     }
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::FactSetRender(std::shared_ptr<AdaptiveCards::FactSet> factSet, std::shared_ptr<AdaptiveRenderContext> context)
@@ -939,9 +933,8 @@ namespace RendererQml
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::TimeInputRender(std::shared_ptr<AdaptiveCards::TimeInput> input, std::shared_ptr<AdaptiveRenderContext> context)
     {
-        TimeInputElement timeInputElement(input, context);
-        timeInputElement.initialize();
-        return timeInputElement.getQmlTag();
+        auto timeInputElement = std::make_shared<TimeInputElement>(input, context);
+        return timeInputElement->getQmlTag();
     }
 
 	std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::ImageSetRender(std::shared_ptr<AdaptiveCards::ImageSet> imageSet, std::shared_ptr<AdaptiveRenderContext> context)
