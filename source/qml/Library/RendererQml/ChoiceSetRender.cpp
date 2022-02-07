@@ -2,10 +2,11 @@
 #include "Formatter.h"
 #include "Utils.h"
 
-ChoiceSetElement::ChoiceSetElement(std::shared_ptr<AdaptiveCards::ChoiceSetInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
+ChoiceSetElement::ChoiceSetElement(std::shared_ptr<AdaptiveCards::ChoiceSetInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
     :mChoiceSetInput(input),
     mContext(context)
-{  
+{
+    initialize();
 }
 
 std::shared_ptr<RendererQml::QmlTag> ChoiceSetElement::getQmlTag()
@@ -79,9 +80,8 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
 
     if (checkBoxType == RendererQml::CheckBoxType::ComboBox)
     {
-        ComboBoxElement comboBoxElement(choiceSet, mContext);
-        comboBoxElement.initialize();
-        uiChoiceSet = comboBoxElement.getQmlTag();
+        auto comboBoxElement = std::make_shared<ComboBoxElement>(choiceSet, mContext);
+        uiChoiceSet = comboBoxElement->getQmlTag();
 
         uiChoiceSet->Property("onCurrentValueChanged", "{Accessible.name = displayText}");
         mContext->addToInputElementList(choiceSetId, (uiChoiceSet->GetId() + ".currentValue"));
@@ -207,9 +207,8 @@ std::shared_ptr<RendererQml::QmlTag> ChoiceSetElement::getButtonGroup(RendererQm
     // render as a series of buttons
     for (const auto& choice : choiceset.choices)
     {
-        CheckBoxElement checkBoxElement(choice, mContext);
-        checkBoxElement.initialize();
-        auto button = checkBoxElement.getQmlTag();
+        auto checkBoxElement = std::make_shared<CheckBoxElement>(choice, mContext);
+        auto button = checkBoxElement->getQmlTag();
 
         button->Property("onPressed", RendererQml::Formatter() << mChoiceSetColElement->GetId() << ".colorChange(" << button->GetId() << ", true)");
         button->Property("onReleased", RendererQml::Formatter() << mChoiceSetColElement->GetId() << ".colorChange(" << button->GetId() << ", false)");

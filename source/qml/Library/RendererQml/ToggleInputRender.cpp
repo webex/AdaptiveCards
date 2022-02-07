@@ -2,11 +2,12 @@
 #include "Formatter.h"
 #include "Utils.h"
 
-ToggleInputElement::ToggleInputElement(std::shared_ptr<AdaptiveCards::ToggleInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> mContext)
+ToggleInputElement::ToggleInputElement(std::shared_ptr<AdaptiveCards::ToggleInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
     :mToggleInput(input),
-    mContext(mContext),
-    mToggleInputConfig(mContext->GetRenderConfig()->getToggleButtonConfig())
+    mContext(context),
+    mToggleInputConfig(context->GetRenderConfig()->getToggleButtonConfig())
 {
+    initialize();
 }
 
 std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getQmlTag()
@@ -44,7 +45,7 @@ std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getCheckBox()
     const auto valueOff = !mToggleInput->GetValueOff().empty() ? mToggleInput->GetValueOff() : "false";
     const bool isChecked = mToggleInput->GetValue().compare(valueOn) == 0 ? true : false;
 
-    CheckBoxElement checkBoxElement(RendererQml::Checkbox(mToggleInput->GetId(),
+    auto checkBoxElement = std::make_shared<CheckBoxElement>(RendererQml::Checkbox(mToggleInput->GetId(),
         RendererQml::CheckBoxType::Toggle,
         mToggleInput->GetTitle(),
         mToggleInput->GetValue(),
@@ -53,8 +54,7 @@ std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getCheckBox()
         mToggleInput->GetWrap(),
         mToggleInput->GetIsVisible(),
         isChecked), mContext);
-    checkBoxElement.initialize();
-    auto uiCheckBox = checkBoxElement.getQmlTag();
+    auto uiCheckBox = checkBoxElement->getQmlTag();
 
     addColorFunction(uiCheckBox);
 

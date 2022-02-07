@@ -4,15 +4,14 @@
 #include "QmlTag.h"
 #include <memory>
 
-class NumberinputElement
+class NumberInputElement
 {
 public:
-    NumberinputElement(std::shared_ptr<AdaptiveCards::NumberInput> input, std::shared_ptr<RendererQml::AdaptiveRenderContext> context);
-    NumberinputElement() = delete;
-    NumberinputElement(const NumberinputElement&) = delete;
-    NumberinputElement& operator= (const NumberinputElement&) = delete;
+    NumberInputElement(std::shared_ptr<AdaptiveCards::NumberInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context);
+    NumberInputElement() = delete;
+    NumberInputElement(const NumberInputElement&) = delete;
+    NumberInputElement& operator= (const NumberInputElement&) = delete;
     std::shared_ptr<RendererQml::QmlTag> getQmlTag();
-    void initialize();
 
 private:
     std::shared_ptr<RendererQml::QmlTag> numberInputColElement;
@@ -24,11 +23,14 @@ private:
     std::string mNumberInputRectId{ "" };
 
 private: 
-    static std::shared_ptr<RendererQml::QmlTag> getDummyElementforNumberInput(bool isTop);
+    void initialize();
     void createInputLabel();
     void createErrorMessage();
+
+    static std::shared_ptr<RendererQml::QmlTag> getDummyElementforNumberInput(bool isTop);
     std::shared_ptr<RendererQml::QmlTag> getIconTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag);
     std::shared_ptr<RendererQml::QmlTag> getContentItemTag(const std::shared_ptr<RendererQml::QmlTag> textBackgroundTag);
+
     const std::string getAccessibleName();
     const std::string getColorFunction();
     std::ostringstream getValidatorFunction();

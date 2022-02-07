@@ -2,11 +2,12 @@
 #include "CheckBoxRender.h"
 #include "ImageDataURI.h"
 
-CheckBoxElement::CheckBoxElement(RendererQml::Checkbox checkBox, std::shared_ptr<RendererQml::AdaptiveRenderContext> context)
+CheckBoxElement::CheckBoxElement(RendererQml::Checkbox checkBox, const std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
     :mCheckBox(checkBox),
     mContext(context),
     mCheckBoxConfig(context->GetRenderConfig()->getToggleButtonConfig())
 {
+    initialize();
 }
 
 std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getQmlTag()
