@@ -41,6 +41,7 @@ std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getQmlTag()
 void NumberInputElement::initialize()
 {
     const std::string origionalElementId = mInput->GetId();
+    mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mInput->GetPlaceholder());
     mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
     mOrigionalElementId = mInput->GetId();
 
@@ -221,13 +222,13 @@ void NumberInputElement::initialize()
         mContext->addToInputElementList(origionalElementId, (mOrigionalElementId + ".value"));
     }
     uiNumberInput->Property("Accessible.ignored", "true");
-    clearIcon->Property("Accessible.name", RendererQml::Formatter() << (mInput->GetPlaceholder().empty() ? "Number Input" : mInput->GetPlaceholder()) << " clear", true);
+    clearIcon->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetPlaceholder().empty() ? "Number Input" : mEscapedPlaceHolderString) << " clear`");
     clearIcon->Property("Accessible.role", "Accessible.Button");
 
     uiSplitterRactangle->Property("property string accessiblityPrefix", "''");
     uiSplitterRactangle->Property("onActiveFocusChanged", RendererQml::Formatter() << "{"
         << "if (activeFocus)"
-        << "accessiblityPrefix = '" << (mInput->GetPlaceholder().empty() ? "Number Input " : mInput->GetPlaceholder()) << "stepper. Current number is '}");
+        << "accessiblityPrefix = String.raw`" << (mInput->GetPlaceholder().empty() ? "Number Input " : mEscapedPlaceHolderString) << "stepper. Current number is `}");
     uiSplitterRactangle->Property("Accessible.name", RendererQml::Formatter() << "accessiblityPrefix + " << contentItemTag->GetId() << ".displayText");
     uiSplitterRactangle->Property("Accessible.role", "Accessible.NoRole");
 }
@@ -288,9 +289,9 @@ std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getContentItemTag(const
     contentItemTag->Property("bottomPadding", RendererQml::Formatter() << numberConfig.textVerticalPadding);
     contentItemTag->Property("padding", "0");
     {
-        contentItemTag->Property("placeholderText", mInput->GetPlaceholder(), true);
+        contentItemTag->Property("placeholderText", RendererQml::Formatter() << "String.raw`" << mEscapedPlaceHolderString << "`");
     }
-    contentItemTag->Property("Accessible.name", mInput->GetPlaceholder().empty() ? "Number Input Field" : mInput->GetPlaceholder(), true);
+    contentItemTag->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetPlaceholder().empty() ? "Number Input Field" : mEscapedPlaceHolderString) << "`");
     contentItemTag->Property("Accessible.role", "Accessible.EditableText");
     contentItemTag->Property("background", textBackgroundTag->ToString());
     contentItemTag->AddFunctions(getAccessibleName());
@@ -302,11 +303,11 @@ std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getContentItemTag(const
         contentItemTag->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
             << mNumberInputRectId << ".colorChange( false)}\n");
 
-        contentItemTag->Property("Accessible.name", RendererQml::Formatter() << (mInput->GetLabel().empty() ? (mInput->GetPlaceholder().empty() ? "Text Field" : mInput->GetPlaceholder()) : mInput->GetLabel()), true);
+        contentItemTag->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetLabel().empty() ? (mInput->GetPlaceholder().empty() ? "Text Field" : mInput->GetPlaceholder()) : mInput->GetLabel()) << "`");
     }
     else
     {
-        contentItemTag->Property("Accessible.name", RendererQml::Formatter() << (mInput->GetPlaceholder().empty() ? "Text Field" : mInput->GetPlaceholder()), true);
+        contentItemTag->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetPlaceholder().empty() ? "Text Field" : mInput->GetPlaceholder()) << "`");
     }
     return contentItemTag;
 }

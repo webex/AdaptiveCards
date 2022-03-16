@@ -23,6 +23,8 @@ void TimeInputElement::initialize()
     mTimeInput->SetId(mContext->ConvertToValidId(mTimeInput->GetId()));
     id = mTimeInput->GetId();
 
+    mEscapedPlaceholderString = RendererQml::Utils::getBackQuoteEscapedString(mTimeInput->GetPlaceholder());
+
     timePopupId = id + "_timeBox";
     listViewHoursId = id + "_hours";
     listViewMinId = id + "_min";
@@ -87,7 +89,7 @@ void TimeInputElement::initTimeInputTextField()
     mTimeInputTextField->Property("width", "parent.width");
 
     mTimeInputTextField->Property("placeholderTextColor", mContext->GetHexColor(mTimeInputConfig.placeHolderColor));
-    mTimeInputTextField->Property("placeholderText", !mTimeInput->GetPlaceholder().empty() ? mTimeInput->GetPlaceholder() : "Select time", true);
+    mTimeInputTextField->Property("placeholderText", RendererQml::Formatter() << "String.raw`" << (!mTimeInput->GetPlaceholder().empty() ? mTimeInput->GetPlaceholder() : "Select time") << "`");
     mTimeInputTextField->Property("color", mContext->GetHexColor(mTimeInputConfig.textColor));
 
     mTimeInputTextField->Property("onPressed", RendererQml::Formatter() << mTimeInputWrapper->GetId() << ".colorChange(true)");
@@ -411,7 +413,7 @@ void TimeInputElement::initClearIcon()
         << timePopupId << ".close();\n"
         << "}";
     mClearIcon->Property("onClicked", mClearIcon_OnClicked_value);
-    mClearIcon->Property("Accessible.name", RendererQml::Formatter() << (mTimeInput->GetPlaceholder().empty() ? "Time Input" : mTimeInput->GetPlaceholder()) << " clear", true);
+    mClearIcon->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mTimeInput->GetPlaceholder().empty() ? "Time Input" : mTimeInput->GetPlaceholder()) << " clear`");
     mClearIcon->Property("Accessible.role", "Accessible.Button");
 }
 

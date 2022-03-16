@@ -23,6 +23,7 @@ private:
     std::string listViewHoursId{ "" };
     std::string listViewMinId{ "" };
     std::string listViewttId{ "" };
+    std::string mEscapedPlaceholderString{ "" };
 
     std::shared_ptr<RendererQml::QmlTag> mTimeInputColElement;
     std::shared_ptr<RendererQml::QmlTag> mTimeInputWrapper;

@@ -18,6 +18,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getQmlTag()
 void ComboBoxElement::initialize()
 {
     mComboBox = std::make_shared<RendererQml::QmlTag>("ComboBox");
+    mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mChoiceSet.placeholder);
 
     mComboBox->Property("id", mChoiceSet.id);
     mComboBox->Property("textRole", "'text'");
@@ -48,7 +49,7 @@ std::string ComboBoxElement::getModel(std::vector<RendererQml::Checkbox> Choices
     {
         choice_Text = choice.text;
         choice_Value = choice.value;
-        model << "{ value: '" << RendererQml::Utils::HandleEscapeSequences(choice_Value) << "', text: '" << RendererQml::Utils::HandleEscapeSequences(choice_Text) << "'},\n";
+        model << "{ value: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value) << "`, text: `" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
     }
     model << "]";
     return model.str();
@@ -189,7 +190,7 @@ void ComboBoxElement::addBackground()
     if (!mChoiceSet.placeholder.empty())
     {
         mComboBox->Property("currentIndex", "-1");
-        mComboBox->Property("displayText", "currentIndex === -1 ? '" + mChoiceSet.placeholder + "' : currentText");
+        mComboBox->Property("displayText", "currentIndex === -1 ? String.raw`" + mEscapedPlaceHolderString + "` : currentText");
     }
     else if (mChoiceSet.values.size() == 1)
     {
