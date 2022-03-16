@@ -49,7 +49,7 @@ std::string ComboBoxElement::getModel(std::vector<RendererQml::Checkbox> Choices
     {
         choice_Text = choice.text;
         choice_Value = choice.value;
-        model << "{ value: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value) << "`, text: `" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
+        model << "{ value: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value) << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
     }
     model << "]";
     return model.str();
