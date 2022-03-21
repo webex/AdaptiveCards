@@ -303,11 +303,11 @@ std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getContentItemTag(const
         contentItemTag->Property("onShowErrorMessageChanged", RendererQml::Formatter() << "{\n"
             << mNumberInputRectId << ".colorChange( false)}\n");
 
-        contentItemTag->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetLabel().empty() ? (mInput->GetPlaceholder().empty() ? "Text Field" : mInput->GetPlaceholder()) : mInput->GetLabel()) << "`");
+        contentItemTag->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetLabel().empty() ? (mInput->GetPlaceholder().empty() ? "Text Field" : mEscapedPlaceHolderString) : mInput->GetLabel()) << "`");
     }
     else
     {
-        contentItemTag->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetPlaceholder().empty() ? "Text Field" : mInput->GetPlaceholder()) << "`");
+        contentItemTag->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetPlaceholder().empty() ? "Text Field" : mEscapedPlaceHolderString) << "`");
     }
     return contentItemTag;
 }

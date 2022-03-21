@@ -607,9 +607,12 @@ namespace RendererQml
         {
             if (str[i] == '`')
             {
-                rawString += '\\';
+                rawString += "${'`'}";
             }
-            rawString += str[i];
+            else
+            {
+                rawString += str[i];
+            }
         }
         return rawString;
     }
