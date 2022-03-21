@@ -13,13 +13,13 @@ public:
     ComboBoxElement(const ComboBoxElement&) = delete;
     ComboBoxElement& operator= (const ComboBoxElement&) = delete;
     std::shared_ptr<RendererQml::QmlTag> getQmlTag();
-    std::string mEscapedPlaceHolderString{ "" };
 
 private:
     std::shared_ptr<RendererQml::QmlTag> mComboBox;
     const RendererQml::ChoiceSet mChoiceSet;
     const RendererQml::InputChoiceSetDropDownConfig mChoiceSetConfig;
     const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
+    std::string mEscapedPlaceHolderString{ "" };
 
 private:
     void initialize();
