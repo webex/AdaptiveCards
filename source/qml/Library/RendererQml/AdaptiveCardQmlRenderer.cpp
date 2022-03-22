@@ -491,6 +491,11 @@ namespace RendererQml
 	{
 		//LIMITATION: Elide and maximumLineCount property do not work for textFormat:Text.RichText
 
+        if (textBlock->GetText().empty())
+        {
+            return NULL;
+        }
+
 		std::string fontFamily = context->GetConfig()->GetFontFamily(textBlock->GetFontType());
 		int fontSize = context->GetConfig()->GetFontSize(textBlock->GetFontType(), textBlock->GetTextSize());
 
@@ -580,6 +585,11 @@ namespace RendererQml
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::RichTextBlockRender(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        if (richTextBlock->GetInlines().empty())
+        {
+            return NULL;
+        }
+
 		auto uiTextBlock = std::make_shared<QmlTag>("TextEdit");
 		std::string textType = richTextBlock->GetElementTypeString();
 		std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(richTextBlock->GetHorizontalAlignment());

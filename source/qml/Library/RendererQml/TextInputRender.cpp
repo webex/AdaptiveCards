@@ -18,6 +18,7 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::getQmlTag()
 void TextInputElement::initialize()
 {
     mOriginalElementId = mTextinput->GetId();
+    mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetPlaceholder());
     mTextinput->SetId(mContext->ConvertToValidId(mTextinput->GetId()));
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     mTextinputColElement = std::make_shared<RendererQml::QmlTag>("Column");
@@ -112,7 +113,7 @@ void TextInputElement::initSingleLine()
     clearIcon->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_clear_icon");
     clearIcon->Property("visible", RendererQml::Formatter() << mTextinput->GetId() << ".text.length != 0");
     clearIcon->Property("onClicked", RendererQml::Formatter() << "{nextItemInFocusChain().forceActiveFocus();" << mTextinput->GetId() << ".clear()}");
-    clearIcon->Property("Accessible.name", RendererQml::Formatter() << (mTextinput->GetPlaceholder().empty() ? "Text" : mTextinput->GetPlaceholder()) << " clear", true);
+    clearIcon->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mEscapedPlaceHolderString.empty() ? "Text" : mEscapedPlaceHolderString) << " clear`");
     clearIcon->Property("Accessible.role", "Accessible.Button");
     uiTextInput->Property("width", RendererQml::Formatter() << "parent.width - " << clearIcon->GetId() << ".width - " << textConfig.clearIconHorizontalPadding);
     mTextinputElement->AddChild(uiTextInput);
@@ -274,7 +275,7 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createSingleLineTextField
 
     if (!mTextinput->GetPlaceholder().empty())
     {
-        uiTextInput->Property("placeholderText", RendererQml::Formatter() << "activeFocus? \"\" : " << "\"" << mTextinput->GetPlaceholder() << "\"");
+        uiTextInput->Property("placeholderText", RendererQml::Formatter() << "activeFocus? '' : String.raw`" << mEscapedPlaceHolderString << "`");
     }
 
     return uiTextInput;
@@ -332,7 +333,7 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createMultiLineTextAreaEl
 
     if (!mTextinput->GetPlaceholder().empty())
     {
-        uiTextInput->Property("placeholderText", RendererQml::Formatter() << "activeFocus? \"\" : " << "\"" << mTextinput->GetPlaceholder() << "\"");
+        uiTextInput->Property("placeholderText", RendererQml::Formatter() << "activeFocus? '' : String.raw`" << mEscapedPlaceHolderString << "`");
     }
 
     return uiTextInput;
@@ -433,7 +434,7 @@ std::string TextInputElement::getAccessibleName(std::shared_ptr<RendererQml::Qml
     placeHolderString << "if(" << uiTextInput->GetId() << ".text !== ''){"
         << "accessibleName += (" << uiTextInput->GetId() << ".text + '. ');"
         << "}else{"
-        << "accessibleName += '" << (mTextinput->GetPlaceholder().empty() ? "Text Block" : mTextinput->GetPlaceholder()) << "';}";
+        << "accessibleName += String.raw`" << (mTextinput->GetPlaceholder().empty() ? "Text Block" : mEscapedPlaceHolderString) << "`;}";
 
     accessibleName << "function getAccessibleName(){"
         << "let accessibleName = '';" << errorString.str() << labelString.str() << placeHolderString.str() << "return accessibleName;}";

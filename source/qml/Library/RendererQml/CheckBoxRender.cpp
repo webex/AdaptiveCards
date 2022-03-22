@@ -30,18 +30,20 @@ void CheckBoxElement::initialize()
 
     if (mCheckBox.type == RendererQml::CheckBoxType::Toggle)
     {
-        mCheckBoxElement->Property("readonly property string valueOn", mCheckBox.valueOn, true);
-        mCheckBoxElement->Property("readonly property string valueOff", mCheckBox.valueOff, true);
+        auto escapedValueOn = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOn);
+        auto escapedValueOff = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOff);
+        mCheckBoxElement->Property("readonly property string valueOn", RendererQml::Formatter() << "String.raw`" << escapedValueOn << "`");
+        mCheckBoxElement->Property("readonly property string valueOff", RendererQml::Formatter() << "String.raw`" << escapedValueOff << "`");
         mCheckBoxElement->Property("property string value", "checked ? valueOn : valueOff");
         mCheckBoxElement->Property("width", "parent.width");
     }
     else
     {
-        mCheckBoxElement->Property("property string value", RendererQml::Formatter() << "checked ? \"" << mCheckBox.value << "\" : \"\"");
+        mCheckBoxElement->Property("property string value", RendererQml::Formatter() << "checked ? String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.value) << "` : \"\"");
         mCheckBoxElement->Property("Layout.maximumWidth", "parent.parent.parent.width");
     }
 
-    mCheckBoxElement->Property("text", mCheckBox.text, true);
+    mCheckBoxElement->Property("text", RendererQml::Formatter() << "String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.text) << "`");
     mCheckBoxElement->Property("font.pixelSize", RendererQml::Formatter() << mCheckBoxConfig.pixelSize);
 
     if (!mCheckBox.isVisible)

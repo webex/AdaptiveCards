@@ -120,6 +120,8 @@ namespace RendererQml
 
 		static const std::string FormatHtmlUrl(std::string& text, const std::string& linkColor, const std::string& textDecoration);
 
+        static std::string getBackQuoteEscapedString(std::string str);
+
     private:
         Utils() {}
 		static std::string FetchSystemDateTime(const std::string& fetchFormat);
