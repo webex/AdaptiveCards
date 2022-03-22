@@ -19,6 +19,7 @@ private:
     const RendererQml::ChoiceSet mChoiceSet;
     const RendererQml::InputChoiceSetDropDownConfig mChoiceSetConfig;
     const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
+    std::string mEscapedPlaceHolderString{ "" };
 
 private:
     void initialize();

@@ -14,7 +14,8 @@ public:
 	std::shared_ptr<RendererQml::QmlTag> getQmlTag();
 
 private:
-	std::string mOriginalElementId;
+	std::string mOriginalElementId{ "" };
+    std::string mEscapedPlaceHolderString{ "" };
 	std::shared_ptr<RendererQml::QmlTag> mTextinputElement;
 	std::shared_ptr<RendererQml::QmlTag> mTextinputColElement;
 	std::shared_ptr<RendererQml::QmlTag> mContainer;

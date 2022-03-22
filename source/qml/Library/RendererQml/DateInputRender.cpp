@@ -21,6 +21,8 @@ void DateInputElement::initialize()
     mOrigionalElementId = mDateInput->GetId();
     mDateInput->SetId(mContext->ConvertToValidId(mDateInput->GetId()));
 
+    mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mDateInput->GetPlaceholder());
+
     mDateFieldId = mDateInput->GetId();
     mCalendarBoxId = RendererQml::Formatter() << mDateFieldId << "_calendarBox";
     mDateInputColElementId = RendererQml::Formatter() << mDateFieldId << "_column";
@@ -197,7 +199,7 @@ void DateInputElement::initDateInputField()
         << "}} ");
 
     auto dateFormat = mDateFormat;
-    mDateInputTextField->Property("placeholderText", RendererQml::Formatter() << (!mDateInput->GetPlaceholder().empty() ? mDateInput->GetPlaceholder() : "Select date") << " in " << RendererQml::Utils::ToLower(dateFormat), true);
+    mDateInputTextField->Property("placeholderText", RendererQml::Formatter() << "String.raw`" << (!mDateInput->GetPlaceholder().empty() ? mEscapedPlaceHolderString : "Select date") << " in ` + '" << RendererQml::Utils::ToLower(dateFormat) << "'");
     mDateInputTextField->Property("placeholderTextColor", mContext->GetHexColor(mDateConfig.placeHolderColor));
 }
 
