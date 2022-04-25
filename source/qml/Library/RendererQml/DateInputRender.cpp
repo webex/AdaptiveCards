@@ -59,10 +59,7 @@ void DateInputElement::renderDateElement()
     initDateIconButton();
     initClearIconButton();
 
-    if (mDateInput->GetIsVisible())
-    {
-        mContext->addToInputElementList(mOrigionalElementId, (mDateFieldId + ".selectedDate"));
-    }
+    mContext->addToInputElementList(mOrigionalElementId, (mDateFieldId + ".selectedDate"));
 
     mDateInputRow->AddChild(mDateIcon);
     mDateInputRow->AddChild(mDateInputCombobox);
@@ -231,8 +228,8 @@ void DateInputElement::initDateInputComboBox()
     mDateInputCombobox->Property("focusPolicy", "Qt.NoFocus");
     mDateInputCombobox->Property("Keys.onReturnPressed", "this.popup.open()");
 
-    mDateInputTextField->Property("onPressed", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(true)");
-    mDateInputTextField->Property("onReleased", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(false)");
+    mDateInputTextField->Property("onPressed", RendererQml::Formatter() << "{" << mDateInputWrapperId << ".colorChange(true);event.accepted = true;}");
+    mDateInputTextField->Property("onReleased", RendererQml::Formatter() << "{" << mDateInputWrapperId << ".colorChange(false);forceActiveFocus();event.accepted = true;}");
     mDateInputTextField->Property("onHoveredChanged", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(false)");
     mDateInputCombobox->Property("onActiveFocusChanged", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(false)");
 

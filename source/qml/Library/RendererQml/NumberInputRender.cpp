@@ -69,7 +69,7 @@ void NumberInputElement::initialize()
 
     auto uiNumberInput = std::make_shared<RendererQml::QmlTag>("SpinBox");
     uiNumberInput->Property("id", mOrigionalElementId);
-    uiNumberInput->Property("width", RendererQml::Formatter() << "parent.width - " << numberConfig.clearIconSize << " - " << numberConfig.clearIconHorizontalPadding);
+    uiNumberInput->Property("width", RendererQml::Formatter() << "parent.width");
     uiNumberInput->Property("padding", "0");
     uiNumberInput->Property("stepSize", "1");
     uiNumberInput->Property("editable", "true");
@@ -217,10 +217,7 @@ void NumberInputElement::initialize()
     uiSplitterRactangle->AddChild(upDownIcon);
     uiSplitterRactangle->AddChild(upIndicatorTag);
     uiSplitterRactangle->AddChild(downIndicatorTag);
-    if (mInput->GetIsVisible())
-    {
-        mContext->addToInputElementList(origionalElementId, (mOrigionalElementId + ".value"));
-    }
+    mContext->addToInputElementList(origionalElementId, (mOrigionalElementId + ".value"));
     uiNumberInput->Property("Accessible.ignored", "true");
     clearIcon->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetPlaceholder().empty() ? "Number Input" : mEscapedPlaceHolderString) << " clear`");
     clearIcon->Property("Accessible.role", "Accessible.Button");
@@ -279,8 +276,8 @@ std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getContentItemTag(const
     contentItemTag->Property("validator", RendererQml::Formatter() << mOrigionalElementId << ".validator");
     contentItemTag->Property("inputMethodHints", "Qt.ImhFormattedNumbersOnly");
     contentItemTag->Property("text", RendererQml::Formatter() << mOrigionalElementId << ".defaultValue");
-    contentItemTag->Property("onPressed", RendererQml::Formatter() << mNumberInputRectId << ".colorChange(true)");
-    contentItemTag->Property("onReleased", RendererQml::Formatter() << mNumberInputRectId << ".colorChange(false)");
+    contentItemTag->Property("onPressed", RendererQml::Formatter() << "{" << mNumberInputRectId << ".colorChange(true);event.accepted = true;}");
+    contentItemTag->Property("onReleased", RendererQml::Formatter() << "{" << mNumberInputRectId << ".colorChange(false);forceActiveFocus();event.accepted = true;}");
     contentItemTag->Property("onHoveredChanged", RendererQml::Formatter() << mNumberInputRectId << ".colorChange(false)");
     contentItemTag->Property("onActiveFocusChanged", RendererQml::Formatter() << "{" << mNumberInputRectId << ".colorChange(false);" << "Accessible.name = " << "getAccessibleName();}\n");
     contentItemTag->Property("leftPadding", RendererQml::Formatter() << numberConfig.textHorizontalPadding);
