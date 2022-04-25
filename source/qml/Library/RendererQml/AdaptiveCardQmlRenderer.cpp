@@ -89,7 +89,7 @@ namespace RendererQml
 		uiCard->Property("readonly property string bgColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
 		uiCard->Property("color", "bgColor");
 		uiCard->Property("border.color", isChildCard? " bgColor" : context->GetHexColor(cardConfig.cardBorderColor));
-        uiCard->AddFunctions("MouseArea{anchors.fill: parent;onClicked: adaptiveCard.nextItemInFocusChain().forceActiveFocus();}");
+        uiCard->AddFunctions("MouseArea{anchors.fill: parent;onPressed: {adaptiveCard.nextItemInFocusChain().forceActiveFocus(); mouse.accepted = true;}}");
         uiCard->Property("radius", Formatter() << (isChildCard ? 0 : cardConfig.cardRadius));
 
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
@@ -491,11 +491,6 @@ namespace RendererQml
 	{
 		//LIMITATION: Elide and maximumLineCount property do not work for textFormat:Text.RichText
 
-        if (textBlock->GetText().empty())
-        {
-            return NULL;
-        }
-
 		std::string fontFamily = context->GetConfig()->GetFontFamily(textBlock->GetFontType());
 		int fontSize = context->GetConfig()->GetFontSize(textBlock->GetFontType(), textBlock->GetTextSize());
 
@@ -526,7 +521,7 @@ namespace RendererQml
 			uiTextBlock->Property("id", textBlock->GetId());
 		}
 
-		if (!textBlock->GetIsVisible())
+		if (!textBlock->GetIsVisible() || textBlock->GetText().empty())
 		{
 			uiTextBlock->Property("visible", "false");
 		}
@@ -769,6 +764,11 @@ namespace RendererQml
 			uiTitle->Property("Layout.maximumWidth", std::to_string(context->GetConfig()->GetFactSet().title.maxWidth));
 			uiTitle->Property("Component.onCompleted", "parent.setTitleWidth(this)");
 			uiTitle->Property("Layout.fillHeight", "true");
+            uiTitle->Property("visible", "true");
+            if (fact->GetTitle().empty())
+            {
+                uiTitle->Property("activeFocusOnTab", "false");
+            }
 
 			//uiTitle->Property("spacing", std::to_string(context->GetConfig()->GetFactSet().spacing));
 
@@ -785,6 +785,11 @@ namespace RendererQml
 			auto uiValue = context->Render(factValue);
 			uiValue->Property("Layout.preferredWidth", "parent.parent.width - parent.titleWidth");
 			uiValue->Property("Layout.fillHeight", "true");
+            uiValue->Property("visible", "true");
+            if (fact->GetValue().empty())
+            {
+                uiValue->Property("activeFocusOnTab", "false");
+            }
 
 			uiFactSet->AddChild(uiTitle);
 			uiFactSet->AddChild(uiValue);

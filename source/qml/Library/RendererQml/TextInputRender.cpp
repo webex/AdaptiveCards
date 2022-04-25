@@ -115,13 +115,10 @@ void TextInputElement::initSingleLine()
     clearIcon->Property("onClicked", RendererQml::Formatter() << "{nextItemInFocusChain().forceActiveFocus();" << mTextinput->GetId() << ".clear()}");
     clearIcon->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mEscapedPlaceHolderString.empty() ? "Text" : mEscapedPlaceHolderString) << " clear`");
     clearIcon->Property("Accessible.role", "Accessible.Button");
-    uiTextInput->Property("width", RendererQml::Formatter() << "parent.width - " << clearIcon->GetId() << ".width - " << textConfig.clearIconHorizontalPadding);
+    uiTextInput->Property("width", RendererQml::Formatter() << "parent.width");
     mTextinputElement->AddChild(uiTextInput);
     mTextinputElement->AddChild(clearIcon);
-    if (mTextinput->GetIsVisible())
-    {
-        mContext->addToInputElementList(mOriginalElementId, (uiTextInput->GetId() + ".text"));
-    }
+    mContext->addToInputElementList(mOriginalElementId, (uiTextInput->GetId() + ".text"));
     this->addInlineActionMode();
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -172,10 +169,7 @@ void TextInputElement::initMultiLine()
 
     auto uiTextInput = createMultiLineTextAreaElement();
     mTextinputElement->AddChild(uiTextInput);
-    if (mTextinput->GetIsVisible())
-    {
-        mContext->addToInputElementList(mOriginalElementId, (uiTextInput->GetId() + ".text"));
-    }
+    mContext->addToInputElementList(mOriginalElementId, (uiTextInput->GetId() + ".text"));
     this->addInlineActionMode();
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -238,8 +232,8 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createSingleLineTextField
     backgroundTag->Property("color", "'transparent'");
     uiTextInput->Property("background", backgroundTag->ToString());
     uiTextInput->AddFunctions(getColorFunction());
-    uiTextInput->Property("onPressed", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",true)");
-    uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
+    uiTextInput->Property("onPressed", RendererQml::Formatter() << "{colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",true);event.accepted = true;}");
+    uiTextInput->Property("onReleased", RendererQml::Formatter() << "{colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false);forceActiveFocus();event.accepted = true;}");
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "{\n"
         << "colorChange(" << mTextinputElement->GetId() << "," << mTextinput->GetId() << ",false)\n" << "if(activeFocus){\n"
@@ -305,8 +299,8 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createMultiLineTextAreaEl
     auto backgroundTag = createMultiLineBackgroundElement();
     uiTextInput->Property("background", backgroundTag->ToString());
     uiTextInput->AddFunctions(getColorFunction());
-    uiTextInput->Property("onPressed", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",true)");
-    uiTextInput->Property("onReleased", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
+    uiTextInput->Property("onPressed", RendererQml::Formatter() << "{colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",true);event.accepted = true;}");
+    uiTextInput->Property("onReleased", RendererQml::Formatter() << "{colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false);forceActiveFocus();event.accepted = true;}");
     uiTextInput->Property("onHoveredChanged", RendererQml::Formatter() << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)");
     uiTextInput->Property("onActiveFocusChanged", RendererQml::Formatter() << "{\n"
         << "colorChange(" << backgroundTag->GetId() << "," << mTextinput->GetId() << ",false)\n" << "if(activeFocus){\n"
