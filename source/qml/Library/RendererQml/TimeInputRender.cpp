@@ -54,10 +54,7 @@ void TimeInputElement::renderTimeElement()
 
     mTimeInputWrapper->AddChild(mTimeInputRow);
 
-    if (mTimeInput->GetIsVisible())
-    {
-        mContext->addToInputElementList(origionalElementId, (id + ".selectedTime"));
-    }
+    mContext->addToInputElementList(origionalElementId, (id + ".selectedTime"));
 
     mTimeInputColElement->AddChild(mTimeInputWrapper);
 }
@@ -92,8 +89,8 @@ void TimeInputElement::initTimeInputTextField()
     mTimeInputTextField->Property("placeholderText", RendererQml::Formatter() << "String.raw`" << (!mTimeInput->GetPlaceholder().empty() ? mEscapedPlaceholderString : "Select time") << "`");
     mTimeInputTextField->Property("color", mContext->GetHexColor(mTimeInputConfig.textColor));
 
-    mTimeInputTextField->Property("onPressed", RendererQml::Formatter() << mTimeInputWrapper->GetId() << ".colorChange(true)");
-    mTimeInputTextField->Property("onReleased", RendererQml::Formatter() << mTimeInputWrapper->GetId() << ".colorChange(false)");
+    mTimeInputTextField->Property("onPressed", RendererQml::Formatter() << "{" << mTimeInputWrapper->GetId() << ".colorChange(true);event.accepted = true;}");
+    mTimeInputTextField->Property("onReleased", RendererQml::Formatter() << "{" << mTimeInputWrapper->GetId() << ".colorChange(false);forceActiveFocus();event.accepted = true;}");
     mTimeInputTextField->Property("onHoveredChanged", RendererQml::Formatter() << mTimeInputWrapper->GetId() << ".colorChange(false)");
 
     mTimeInputTextField->Property("leftPadding", RendererQml::Formatter() << mTimeInputConfig.textHorizontalPadding);

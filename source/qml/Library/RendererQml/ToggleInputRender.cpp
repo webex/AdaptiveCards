@@ -33,10 +33,7 @@ void ToggleInputElement::initialize()
     mToggleInputColElement->AddChild(uiCheckBox);
 
     addErrorMessage(uiCheckBox);
-    if (mToggleInput->GetIsVisible())
-    {
-        mContext->addToInputElementList(origionalElementId, (uiCheckBox->GetId() + ".value"));
-    }
+    mContext->addToInputElementList(origionalElementId, (uiCheckBox->GetId() + ".value"));
 }
 
 std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getCheckBox()

@@ -91,10 +91,7 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
     {
         uiChoiceSet = getButtonGroup(choiceSet, checkBoxType);
         addColorFunction();
-        if (mChoiceSetInput->GetIsVisible())
-        {
-            mContext->addToInputElementList(choiceSetId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
-        }
+        mContext->addToInputElementList(choiceSetId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
     }
 
     addErrorMessage(uiChoiceSet, checkBoxType);
