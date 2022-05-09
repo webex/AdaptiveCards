@@ -155,7 +155,7 @@ void TimeInputElement::initTimeInputComboBox()
     mTimeInputComboBox->Property("id", RendererQml::Formatter() << id << "_combobox");
 
     mTimeInputComboBox->Property("Layout.fillWidth", "true");
-    mTimeInputComboBox->Property("Keys.onReturnPressed", RendererQml::Formatter() << timePopupId << ".open()");
+    mTimeInputComboBox->Property("Keys.onReturnPressed", RendererQml::Formatter() << "{setFocusBackOnClose(" << mTimeInputComboBox->GetId() << ");" << timePopupId << ".open();}");
     mTimeInputComboBox->Property("focusPolicy", "Qt.NoFocus");
     mTimeInputComboBox->Property("onActiveFocusChanged", RendererQml::Formatter() << mTimeInputWrapper->GetId() << ".colorChange(false)");
     mTimeInputComboBox->Property("Accessible.ignored", "true");

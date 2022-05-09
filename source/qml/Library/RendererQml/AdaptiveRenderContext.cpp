@@ -241,6 +241,11 @@ namespace RendererQml
         return ++m_FactSetCounter;
     }
 
+    const int AdaptiveRenderContext::getTextBlockCounter()
+    {
+        return ++m_TextBlockCounter;
+    }
+
     const int RendererQml::AdaptiveRenderContext::getContentIndex()
     {
         return m_ContentIndex;

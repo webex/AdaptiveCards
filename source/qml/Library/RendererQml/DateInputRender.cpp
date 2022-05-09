@@ -227,7 +227,7 @@ void DateInputElement::initDateInputComboBox()
     mDateInputCombobox->Property("popup", mDateInputCalendar->ToString());
     mDateInputCombobox->Property("indicator", "Rectangle{}");
     mDateInputCombobox->Property("focusPolicy", "Qt.NoFocus");
-    mDateInputCombobox->Property("Keys.onReturnPressed", "this.popup.open()");
+    mDateInputCombobox->Property("Keys.onReturnPressed", RendererQml::Formatter() << "{setFocusBackOnClose(" << mDateInputComboboxId << ");this.popup.open();}");
 
     mDateInputTextField->Property("onPressed", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(true)");
     mDateInputTextField->Property("onReleased", RendererQml::Formatter() << mDateInputWrapperId << ".colorChange(false)");

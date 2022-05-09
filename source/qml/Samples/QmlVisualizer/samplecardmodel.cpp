@@ -420,6 +420,7 @@ CardConfig SampleCardModel::getCardConfig(const bool isDark)
     {
         cardConfig.cardBorderColor = "#33000000";
         cardConfig.focusRectangleColor = "#80000000";
+        cardConfig.textHighlightBackground = "#FFC7F6FF";
     }
     return cardConfig;
 }
