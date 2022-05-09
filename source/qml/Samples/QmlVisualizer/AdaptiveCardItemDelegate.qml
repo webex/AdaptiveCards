@@ -9,6 +9,7 @@ Item {
 
     signal reloadCard(var card)
     signal adaptiveCardButtonClicked(var title, var type, var data)
+    signal openContextMenu(var pos, var text, var link)
 
     height: mainLayout.height
     width: listView.width
@@ -42,6 +43,7 @@ Item {
                     onLoaded: {
                         reloadCard.connect(item.reload)
                         item.adaptiveCardButtonClicked.connect(adaptiveCardButtonClicked)
+                        item.openContextMenu.connect(openContextMenu)
                     }
                 }
             }

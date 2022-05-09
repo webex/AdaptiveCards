@@ -3,7 +3,7 @@
 #include "samplecardlist.h"
 #include "SampleCardJson.h"
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQuickView>
 #include <QQmlContext>
 #include <QQmlEngine>
@@ -11,7 +11,7 @@
 
 int main(int argc, char* argv[])
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     qmlRegisterType<SampleCardModel>("SampleCard", 1, 0, "SampleCardModel");
     qmlRegisterUncreatableType<SampleCardList>("SampleCard", 1, 0, "SampleCardList",
