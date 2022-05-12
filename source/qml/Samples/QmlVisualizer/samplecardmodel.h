@@ -7,6 +7,9 @@
 #include "Utils.h"
 
 #include <QAbstractListModel>
+#include <QApplication>
+#include <QClipboard>
+#include <QMenu>
 
 using namespace RendererQml;
 
@@ -40,6 +43,7 @@ public:
     Q_INVOKABLE QString generateQml(const QString& cardQml);
     Q_INVOKABLE void setTheme(const QString& theme);
     Q_INVOKABLE void onAdaptiveCardButtonClicked(const QString& title, const QString& type, const QString& data);
+    Q_INVOKABLE void onOpenContextMenu(const QPoint& pos, const QString& selectedText, const QString& link);
 
 signals:
     void reloadCardOnThemeChange();
@@ -59,6 +63,7 @@ private:
     static std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>>> GetCardImageUrls(std::shared_ptr<AdaptiveCards::BaseCardElement> cardElement, std::map<int, std::string> urls, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>> showCards);
     static std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>>> GetActionImageUrls(std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>> cardElement, std::map<int, std::string> urls, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>> showCards);
 
+    QMenu* mContextMenu{ nullptr };
     std::shared_ptr<AdaptiveCardRenderConfig> getRenderConfig(const bool isDark);
     CardConfig getCardConfig(const bool isDark);
     template<typename InputConfig>

@@ -21,6 +21,7 @@ SampleCardModel::SampleCardModel(QObject *parent)
     std::shared_ptr<AdaptiveSharedNamespace::HostConfig> hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(LightConfig::lightConfig));
     auto renderConfig = getRenderConfig(false);
     renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig, renderConfig));
+    mContextMenu = new QMenu();
 }
 
 int SampleCardModel::rowCount(const QModelIndex &parent) const
@@ -225,6 +226,23 @@ void SampleCardModel::onAdaptiveCardButtonClicked(const QString& title, const QS
     }
 }
 
+void SampleCardModel::onOpenContextMenu(const QPoint& pos, const QString& selectedText, const QString& link)
+{
+    mContextMenu->clear();
+
+    if (!link.isEmpty())
+    {
+        mContextMenu->addAction(QString::fromStdString("Copy link"), [link, this]() { QApplication::clipboard()->setText(link); });
+    }
+
+    if (!selectedText.isEmpty())
+    {
+        mContextMenu->addAction(QString::fromStdString("Copy text"), [selectedText, this]() { QApplication::clipboard()->setText(selectedText); });
+    }
+
+    mContextMenu->popup(pos);
+}
+
 void SampleCardModel::actionOpenUrlButtonClicked(const QString& title, const QString& type, const QString& data)
 {
     QString output;
@@ -420,6 +438,7 @@ CardConfig SampleCardModel::getCardConfig(const bool isDark)
     {
         cardConfig.cardBorderColor = "#33000000";
         cardConfig.focusRectangleColor = "#80000000";
+        cardConfig.textHighlightBackground = "#FFC7F6FF";
     }
     return cardConfig;
 }

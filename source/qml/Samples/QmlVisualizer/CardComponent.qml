@@ -6,6 +6,7 @@ ColumnLayout{
 
     property var card
     signal adaptiveCardButtonClicked(var title, var type, var data)
+    signal openContextMenu(var pos, var text, var link)
 
     Component.onCompleted: reload(CardString);
 
@@ -17,5 +18,6 @@ ColumnLayout{
 
         card = Qt.createQmlObject(mCard, cardComponent, "card")
         card.buttonClicked.connect(adaptiveCardButtonClicked)
+        card.openContextMenu.connect(openContextMenu)
     }
 }

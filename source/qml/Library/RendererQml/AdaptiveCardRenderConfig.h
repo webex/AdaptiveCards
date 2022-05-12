@@ -9,6 +9,7 @@ namespace RendererQml
     {
         std::string cardBorderColor{ "#33FFFFFF" };
         std::string focusRectangleColor{ "#80FFFFFF" };
+        std::string textHighlightBackground{ "#FF092D3B" };
         int cardRadius{ 8 };
     };
 
