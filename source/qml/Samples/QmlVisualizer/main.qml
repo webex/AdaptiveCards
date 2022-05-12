@@ -58,6 +58,7 @@ Row{
                         cardEditorLoader.item.reloadCard.connect(loader.item.reloadCard)
                         cardListViewLoader.item.reloadCard.connect(loader.item.reloadCard)
                         loader.item.adaptiveCardButtonClicked.connect(root.onAdaptiveCardButtonClicked)
+                        loader.item.openContextMenu.connect(root.onOpenContextMenu);
                     }
                 }
             }
@@ -93,5 +94,9 @@ Row{
     function onAdaptiveCardButtonClicked(title, type, data){
         _aModel.onAdaptiveCardButtonClicked(title, type, data)
         cardOutputLoader.item.open()
+    }
+
+    function onOpenContextMenu(pos, text, link){
+        _aModel.onOpenContextMenu(pos, text, link)
     }
 }
