@@ -25,8 +25,6 @@ void ComboBoxElement::initialize()
     mComboBox->Property("valueRole", "'value'");
     mComboBox->Property("width", "parent.width");
     mComboBox->Property("height", RendererQml::Formatter() << mChoiceSetConfig.height);
-    mComboBox->Property("Keys.onReturnPressed", RendererQml::Formatter() << mChoiceSet.id << ".popup.open()");
-    mComboBox->Property("onAccepted", RendererQml::Formatter() << mChoiceSet.id << ".popup.close()");
 
     mComboBox->Property("model", getModel(mChoiceSet.choices));
     mComboBox->Property("indicator", getArrowIcon()->ToString());
@@ -168,9 +166,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getPopup()
     popupTag->Property("y", RendererQml::Formatter() << mChoiceSet.id << ".height + 5");
     popupTag->Property("width", RendererQml::Formatter() << mChoiceSet.id << ".width");
     popupTag->Property("padding", RendererQml::Formatter() << mChoiceSetConfig.dropDownPadding);
-    popupTag->Property("height", RendererQml::Formatter() << contentListViewId << ".contentHeight + (2 * " << mChoiceSetConfig.dropDownPadding << ")" << " > " << mChoiceSetConfig.dropDownHeight << " ? " << mChoiceSetConfig.dropDownHeight << " :" << contentListViewId << ".contentHeight + ( 2 * " << mChoiceSetConfig.dropDownPadding << ")"); // Get from config
-    popupTag->Property("onOpened", RendererQml::Formatter() << contentListViewId << ".forceActiveFocus()");
-    popupTag->Property("onClosed", RendererQml::Formatter() << mChoiceSet.id << ".forceActiveFocus()");
+    popupTag->Property("height", RendererQml::Formatter() << contentListViewId << ".contentHeight + (2 * " << mChoiceSetConfig.dropDownPadding << ")" << " > " << mChoiceSetConfig.dropDownHeight << " ? " << mChoiceSetConfig.dropDownHeight << " :" << contentListViewId << ".contentHeight + ( 2 * " << mChoiceSetConfig.dropDownPadding << ")");
 
     popupTag->Property("background", popupBackgroundTag->ToString());
     popupTag->Property("contentItem", contentListViewTag->ToString());

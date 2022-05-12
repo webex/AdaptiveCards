@@ -112,7 +112,7 @@ namespace RendererQml
 		static const std::shared_ptr<QmlTag> applyVerticalBleed(std::shared_ptr<QmlTag> elementsParent, std::shared_ptr<QmlTag> source);
 		static const std::shared_ptr<QmlTag> addColumnSetElements(std::shared_ptr<AdaptiveCards::ColumnSet> columnSet, std::shared_ptr<QmlTag> uiFrame, std::shared_ptr<AdaptiveRenderContext> context);
 
-        static std::shared_ptr<QmlTag> GetTextBlockMouseArea();
+        static std::shared_ptr<QmlTag> GetTextBlockMouseArea(std::string textBlockId);
         static std::shared_ptr<QmlTag> getDummyElementforNumberInput(bool isTop);
 
         static void ValidateLastBodyElementIsShowCard(const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& bodyElements, std::shared_ptr<AdaptiveRenderContext> context);

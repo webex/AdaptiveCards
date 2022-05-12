@@ -83,6 +83,9 @@ namespace RendererQml
 		uiCard->Property("readonly property int margins", std::to_string(margin));
         uiCard->AddFunctions("signal buttonClicked(var title, var type, var data)");
         uiCard->AddFunctions("signal sendCardHeight(var cardHeight)");
+        uiCard->AddFunctions("signal openContextMenu(var globalPos, string selectedText, string link)");
+        uiCard->AddFunctions("signal textEditFocussed(var textEdit)");
+        uiCard->AddFunctions("signal setFocusBackOnClose(var element)");
 		//1px extra height to accomodate the border of a showCard if present at the bottom
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
 		uiCard->Property("Layout.fillWidth", "true");
@@ -480,7 +483,10 @@ namespace RendererQml
         uiColumn->AddFunctions(Formatter() << "function reload(mCard)\n{\n");
         uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.destroy()\n }\n");
         uiColumn->AddFunctions(Formatter() << "card = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\n");
-        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked)\n }\n}");
+        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked);"
+            "card.openContextMenu.connect(adaptiveCard.openContextMenu);"
+            "card.textEditFocussed.connect(adaptiveCard.textEditFocussed);"
+            "card.setFocusBackOnClose.connect(adaptiveCard.setFocusBackOnClose)}}");
 
 		uiComponent->AddChild(uiColumn);
 
@@ -520,6 +526,13 @@ namespace RendererQml
             textBlock->SetId(context->ConvertToValidId(textBlock->GetId()));
 			uiTextBlock->Property("id", textBlock->GetId());
 		}
+        else
+        {
+        textBlock->SetId(Formatter() << "text_block" << context->getTextBlockCounter());
+        }
+
+        uiTextBlock->Property("id", textBlock->GetId());
+
 
 		if (!textBlock->GetIsVisible() || textBlock->GetText().empty())
 		{
@@ -551,7 +564,7 @@ namespace RendererQml
 		uiTextBlock->Property("text", text, true);
 
 		//MouseArea to Change Cursor on Hovering Links
-		auto MouseAreaTag = GetTextBlockMouseArea();
+        auto MouseAreaTag = GetTextBlockMouseArea(uiTextBlock->GetId());
 		uiTextBlock->AddChild(MouseAreaTag);
 
 		std::string onLinkActivatedFunction = Formatter() << "{"
@@ -594,6 +607,12 @@ namespace RendererQml
 			richTextBlock->SetId(context->ConvertToValidId(richTextBlock->GetId()));
 			uiTextBlock->Property("id", richTextBlock->GetId());
 		}
+        else
+        {
+            richTextBlock->SetId(Formatter() << "rich_text_block" << context->getTextBlockCounter());
+        }
+
+        uiTextBlock->Property("id", richTextBlock->GetId());
 
 		uiTextBlock->Property("textFormat", "Text.RichText");
 		uiTextBlock->Property("wrapMode", "Text.Wrap");
@@ -628,7 +647,7 @@ namespace RendererQml
 		uiTextBlock->Property("text", textrun_all, true);
 
 		//MouseArea to Change Cursor on Hovering Links
-		auto MouseAreaTag = GetTextBlockMouseArea();
+		auto MouseAreaTag = GetTextBlockMouseArea(uiTextBlock->GetId());
 		uiTextBlock->AddChild(MouseAreaTag);
 
         context->addToTextRunSelectActionList(uiTextBlock, selectActionList);
@@ -2504,12 +2523,35 @@ namespace RendererQml
         return iconTag;
     }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetTextBlockMouseArea()
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetTextBlockMouseArea(std::string textBlockId)
 	{
 		auto MouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 		MouseAreaTag->Property("anchors.fill", "parent");
-		MouseAreaTag->Property("cursorShape", "parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor");
-		MouseAreaTag->Property("acceptedButtons", "Qt.NoButton");
+        MouseAreaTag->Property("hoverEnabled", "true");
+        MouseAreaTag->Property("preventStealing", "true");
+        MouseAreaTag->Property("id", Formatter() << textBlockId << "_mouseArea");
+        MouseAreaTag->Property("cursorShape", "parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor;");
+        MouseAreaTag->Property("acceptedButtons", "Qt.RightButton | Qt.LeftButton");
+
+        std::string onPressed = Formatter() << "onPressed : {"
+            << "mouse.accepted = false;"
+            << "const mouseGlobal = mapToGlobal(mouseX, mouseY);"
+            << "const posAtMessage = mapToItem(adaptiveCard, mouse.x, mouse.y);"
+            << "if (mouse.button === Qt.RightButton){"
+            << "openContextMenu(mouseGlobal, " << textBlockId << ".selectedText, parent.linkAt(mouse.x, mouse.y));mouse.accepted = true;}"
+            << "else if (mouse.button === Qt.LeftButton){"
+            << "parent.cursorPosition = parent.positionAt(posAtMessage.x, posAtMessage.y);"
+            << "parent.forceActiveFocus();}}";
+
+        std::string onPositionChanged = Formatter() << "onPositionChanged : {"
+            << "if (mouse.buttons & Qt.LeftButton)parent.moveCursorSelection(parent.positionAt(mouse.x, mouse.y));"
+            << "var link = parent.linkAt(mouse.x, mouse.y);"
+            << "if (link){cursorShape = Qt.PointingHandCursor;}"
+            << "else{cursorShape = Qt.IBeamCursor;}"
+            << "mouse.accepted = true;}";
+
+        MouseAreaTag->AddFunctions(onPressed);
+        MouseAreaTag->AddFunctions(onPositionChanged);
 
 		return MouseAreaTag;
 	}
@@ -2654,8 +2696,10 @@ namespace RendererQml
         uiTextBlock->Property("activeFocusOnTab", "true");
         uiTextBlock->Property("Accessible.name", "accessibleText");
         uiTextBlock->Property("readOnly", "true");
-        uiTextBlock->Property("selectByMouse", "false");
-        uiTextBlock->Property("selectByKeyboard", "false");
+        uiTextBlock->Property("selectByMouse", "true");
+        uiTextBlock->Property("selectByKeyboard", "true");
+        uiTextBlock->Property("selectionColor ", Formatter() << context->GetHexColor(cardConfig.textHighlightBackground));
+        uiTextBlock->Property("selectedTextColor ", "color");
         uiTextBlock->Property("Keys.onPressed", Formatter() << "{"
             << "if (event.key === Qt.Key_Tab) {event.accepted = selectLink(this, true);}"
             << "else if (event.key === Qt.Key_Backtab) {event.accepted = selectLink(this, false);}"
@@ -2666,7 +2710,15 @@ namespace RendererQml
             << "else {accessibleText = ''}}");
 
         uiTextBlock->Property("onActiveFocusChanged", Formatter() << "{"
-            << "if (activeFocus) { accessibleText = getText(0,length);}}");
+            << "if (activeFocus) { textEditFocussed(" << uiTextBlock->GetId() << "); accessibleText = getText(0,length);}}");
+
+        uiTextBlock->AddFunctions("function getSelectedRichText() {return activeFocus ? selectedText : \"\";}");
+
+        uiTextBlock->AddFunctions(Formatter() << "function getExternalLinkUnderCursor() {if(!activeFocus) return \"\";"
+            << "const possibleLinkPosition = selectionEnd > cursorPosition ? cursorPosition + 1 : cursorPosition;"
+            << "let rectangle = positionToRectangle(possibleLinkPosition);"
+            << "let correctedX = (rectangle.x > 0 ? rectangle.x - 1 : 0);"
+            << "return linkAt(correctedX, rectangle.y);}");
 
         auto uiFocusRectangle = std::make_shared<QmlTag>("Rectangle");
         uiFocusRectangle->Property("anchors.fill", "parent");
