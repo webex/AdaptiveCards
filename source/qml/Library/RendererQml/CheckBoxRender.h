@@ -25,4 +25,5 @@ private:
 
     std::shared_ptr<RendererQml::QmlTag> getTextElement();
     std::shared_ptr<RendererQml::QmlTag> getIndicator();
+    std::shared_ptr<RendererQml::QmlTag> getContentItem();
 };
