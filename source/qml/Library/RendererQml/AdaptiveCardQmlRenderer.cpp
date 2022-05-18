@@ -2523,25 +2523,32 @@ namespace RendererQml
         return iconTag;
     }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetTextBlockMouseArea(std::string textBlockId)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetTextBlockMouseArea(std::string id, bool isButton)
 	{
 		auto MouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 		MouseAreaTag->Property("anchors.fill", "parent");
         MouseAreaTag->Property("hoverEnabled", "true");
         MouseAreaTag->Property("preventStealing", "true");
-        MouseAreaTag->Property("id", Formatter() << textBlockId << "_mouseArea");
+        MouseAreaTag->Property("id", Formatter() << id << "_mouseArea");
         MouseAreaTag->Property("cursorShape", "parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor;");
         MouseAreaTag->Property("acceptedButtons", "Qt.RightButton | Qt.LeftButton");
+
+        std::string buttonClickFunction = "";
+        if (isButton)
+        {
+            buttonClickFunction = Formatter() << "if (!parent.linkAt(mouse.x, mouse.y)) { " << id << ".onButtonClicked();}";
+        }
 
         std::string onPressed = Formatter() << "onPressed : {"
             << "mouse.accepted = false;"
             << "const mouseGlobal = mapToGlobal(mouseX, mouseY);"
             << "const posAtMessage = mapToItem(adaptiveCard, mouse.x, mouse.y);"
             << "if (mouse.button === Qt.RightButton){"
-            << "openContextMenu(mouseGlobal, " << textBlockId << ".selectedText, parent.linkAt(mouse.x, mouse.y));mouse.accepted = true;}"
+            << "openContextMenu(mouseGlobal, " << id << ".selectedText, parent.linkAt(mouse.x, mouse.y));mouse.accepted = true;}"
             << "else if (mouse.button === Qt.LeftButton){"
             << "parent.cursorPosition = parent.positionAt(posAtMessage.x, posAtMessage.y);"
-            << "parent.forceActiveFocus();}}";
+            << "parent.forceActiveFocus();"
+            << (isButton ? buttonClickFunction : "") << "}}";
 
         std::string onPositionChanged = Formatter() << "onPositionChanged : {"
             << "if (mouse.buttons & Qt.LeftButton)parent.moveCursorSelection(parent.positionAt(mouse.x, mouse.y));"
