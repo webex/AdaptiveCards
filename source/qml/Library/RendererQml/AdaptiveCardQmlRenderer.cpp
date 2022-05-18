@@ -2523,7 +2523,7 @@ namespace RendererQml
         return iconTag;
     }
 
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetTextBlockMouseArea(std::string textBlockId)
+	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetTextBlockMouseArea(std::string textBlockId, std::string buttonId)
 	{
 		auto MouseAreaTag = std::make_shared<QmlTag>("MouseArea");
 		MouseAreaTag->Property("anchors.fill", "parent");
@@ -2533,6 +2533,12 @@ namespace RendererQml
         MouseAreaTag->Property("cursorShape", "parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor;");
         MouseAreaTag->Property("acceptedButtons", "Qt.RightButton | Qt.LeftButton");
 
+        std::string buttonClickFunction = "";
+        if (!buttonId.empty())
+        {
+            buttonClickFunction = Formatter() << buttonId << ".onButtonClicked();";
+        }
+
         std::string onPressed = Formatter() << "onPressed : {"
             << "mouse.accepted = false;"
             << "const mouseGlobal = mapToGlobal(mouseX, mouseY);"
@@ -2541,7 +2547,8 @@ namespace RendererQml
             << "openContextMenu(mouseGlobal, " << textBlockId << ".selectedText, parent.linkAt(mouse.x, mouse.y));mouse.accepted = true;}"
             << "else if (mouse.button === Qt.LeftButton){"
             << "parent.cursorPosition = parent.positionAt(posAtMessage.x, posAtMessage.y);"
-            << "parent.forceActiveFocus();}}";
+            << "parent.forceActiveFocus();"
+            << "if(!parent.linkAt(mouse.x, mouse.y)){" << buttonClickFunction << "}}}";
 
         std::string onPositionChanged = Formatter() << "onPositionChanged : {"
             << "if (mouse.buttons & Qt.LeftButton)parent.moveCursorSelection(parent.positionAt(mouse.x, mouse.y));"
