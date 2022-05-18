@@ -63,9 +63,10 @@ void CheckBoxElement::initialize()
 
 std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getContentItem()
 {
-    auto contentItem = std::make_shared<RendererQml::QmlTag>("Row");
+    auto contentItem = std::make_shared<RendererQml::QmlTag>("RowLayout");
 
     contentItem->Property("height", RendererQml::Formatter() << mCheckBoxConfig.rowHeight);
+    contentItem->Property("width", RendererQml::Formatter() << mCheckBoxElement->GetId() << ".width");
     contentItem->Property("spacing", RendererQml::Formatter() << mCheckBoxConfig.rowSpacing);
 
     auto indicator = getIndicator();
@@ -87,7 +88,7 @@ std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getTextElement()
     uiTextBlock->Property("verticalAlignment", "Text.AlignVCenter");
     uiTextBlock->Property("font.pixelSize", RendererQml::Formatter() << mCheckBoxConfig.pixelSize);
     uiTextBlock->Property("color", mContext->GetHexColor(mCheckBoxConfig.textColor));
-    uiTextBlock->Property("width", "implicitWidth");
+    uiTextBlock->Property("Layout.fillWidth", "true");
     uiTextBlock->Property("id", RendererQml::Formatter() << mCheckBoxElement->GetId() << "_title");
 
     if (mCheckBox.isWrap)
