@@ -113,8 +113,9 @@ std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getTextElement()
         << "console.log(link);"
         << "}";
     uiTextBlock->Property("onLinkActivated", onLinkActivatedFunction);
+    uiTextBlock->AddFunctions(RendererQml::Formatter() << "function onButtonClicked(){" << mCheckBoxElement->GetId() << ".onButtonClicked()}");
 
-    auto MouseAreaTag = RendererQml::AdaptiveCardQmlRenderer::GetTextBlockMouseArea(uiTextBlock->GetId(), mCheckBoxElement->GetId());
+    auto MouseAreaTag = RendererQml::AdaptiveCardQmlRenderer::GetTextBlockMouseArea(uiTextBlock->GetId(), true);
     uiTextBlock->AddChild(MouseAreaTag);
 
     uiTextBlock = RendererQml::AdaptiveCardQmlRenderer::AddAccessibilityToTextBlock(uiTextBlock, mContext);
