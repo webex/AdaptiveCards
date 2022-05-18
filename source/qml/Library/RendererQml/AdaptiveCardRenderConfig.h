@@ -152,6 +152,9 @@ namespace RendererQml
         int pixelSize{ 16 };
         int labelSize{ 14 };
         int borderWidth{ 1 };
+        int rowSpacing{ 8 };
+        int rowHeight{ 24 };
+        int indicatorTopPadding{ 4 };
     };
 
     struct ActionButtonConfig

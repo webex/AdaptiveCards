@@ -215,7 +215,7 @@ std::shared_ptr<RendererQml::QmlTag> ChoiceSetElement::getButtonGroup(RendererQm
             << mChoiceSetColElement->GetId() << ".colorChange(" << button->GetId() << ", false);}\n"
         );
         button->Property("onActiveFocusChanged", RendererQml::Formatter() << "{" << mChoiceSetColElement->GetId() << ".colorChange(" << button->GetId() << ", false);"
-            << "if(activeFocus){Accessible.name = " << uiButtonGroup->GetId() << ".getAccessibleName() + text + ' ';}}"
+            << "if(activeFocus){Accessible.name = " << uiButtonGroup->GetId() << ".getAccessibleName() + " << button->GetId() << ".getContentText() + ' ';}}"
         );
         uiInnerColumn->AddChild(button);
     }
@@ -265,10 +265,10 @@ void ChoiceSetElement::addColorFunction()
     auto toggleButtonConfig = mContext->GetRenderConfig()->getToggleButtonConfig();
 
     mChoiceSetColElement->AddFunctions(RendererQml::Formatter() << "function colorChange(item,isPressed){\n"
-        "if (isPressed) item.indicator.color = item.checked ? " << mContext->GetHexColor(toggleButtonConfig.colorOnCheckedAndPressed) << " : " << mContext->GetHexColor(toggleButtonConfig.colorOnUncheckedAndPressed) << ";\n"
-        "else  item.indicator.color = item.hovered ? (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.colorOnCheckedAndHovered) << " : " << mContext->GetHexColor(toggleButtonConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.colorOnChecked) << " : " << mContext->GetHexColor(toggleButtonConfig.colorOnUnchecked) << ")\n"
-        "if (isPressed) item.indicator.border.color = item.checked ? " << mContext->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndPressed) << " : " << mContext->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndPressed) << ";\n"
-        "else  item.indicator.border.color = item.hovered ? (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndHovered) << " : " << mContext->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.borderColorOnChecked) << " : " << mContext->GetHexColor(toggleButtonConfig.borderColorOnUnchecked) << ")\n"
+        "if (isPressed) item.indicatorItem.color = item.checked ? " << mContext->GetHexColor(toggleButtonConfig.colorOnCheckedAndPressed) << " : " << mContext->GetHexColor(toggleButtonConfig.colorOnUncheckedAndPressed) << ";\n"
+        "else  item.indicatorItem.color = item.hovered ? (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.colorOnCheckedAndHovered) << " : " << mContext->GetHexColor(toggleButtonConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.colorOnChecked) << " : " << mContext->GetHexColor(toggleButtonConfig.colorOnUnchecked) << ")\n"
+        "if (isPressed) item.indicatorItem.border.color = item.checked ? " << mContext->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndPressed) << " : " << mContext->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndPressed) << ";\n"
+        "else  item.indicatorItem.border.color = item.hovered ? (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndHovered) << " : " << mContext->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.borderColorOnChecked) << " : " << mContext->GetHexColor(toggleButtonConfig.borderColorOnUnchecked) << ")\n"
         "}\n"
     );
 }

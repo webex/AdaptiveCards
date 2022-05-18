@@ -56,39 +56,82 @@ void CheckBoxElement::initialize()
         mCheckBoxElement->Property("checked", "true");
     }
 
-    mCheckBoxElement->Property("indicator", getIndicator()->ToString());
-    mCheckBoxElement->Property("contentItem", getTextElement()->ToString());
+    mCheckBoxElement->Property("indicator", "Rectangle{}");
+    mCheckBoxElement->Property("contentItem", getContentItem()->ToString());
     mCheckBoxElement->Property("visible", mCheckBox.isVisible ? "true" : "false");
+}
+
+std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getContentItem()
+{
+    auto contentItem = std::make_shared<RendererQml::QmlTag>("RowLayout");
+
+    contentItem->Property("height", RendererQml::Formatter() << mCheckBoxConfig.rowHeight);
+    contentItem->Property("width", RendererQml::Formatter() << mCheckBoxElement->GetId() << ".width");
+    contentItem->Property("spacing", RendererQml::Formatter() << mCheckBoxConfig.rowSpacing);
+
+    auto indicator = getIndicator();
+    auto textElement = getTextElement();
+
+    mCheckBoxElement->Property("property var indicatorItem", indicator->GetId());
+    contentItem->AddChild(indicator);
+    contentItem->AddChild(textElement);
+
+    return contentItem;
 }
 
 std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getTextElement()
 {
-    auto uiText = std::make_shared<RendererQml::QmlTag>("Text");
-    uiText->Property("text", "parent.text");
-    uiText->Property("font", "parent.font");
-    uiText->Property("horizontalAlignment", "Text.AlignLeft");
-    uiText->Property("verticalAlignment", "Text.AlignVCenter");
-    uiText->Property("leftPadding", "parent.indicator.width + parent.spacing");
-    uiText->Property("color", mContext->GetHexColor(mCheckBoxConfig.textColor));
+    auto uiTextBlock = std::make_shared<RendererQml::QmlTag>("TextEdit");
+    uiTextBlock->Property("clip", "true");
+    uiTextBlock->Property("textFormat", "Text.RichText");
+    uiTextBlock->Property("horizontalAlignment", "Text.AlignLeft");
+    uiTextBlock->Property("verticalAlignment", "Text.AlignVCenter");
+    uiTextBlock->Property("font.pixelSize", RendererQml::Formatter() << mCheckBoxConfig.pixelSize);
+    uiTextBlock->Property("color", mContext->GetHexColor(mCheckBoxConfig.textColor));
+    uiTextBlock->Property("Layout.fillWidth", "true");
+    uiTextBlock->Property("id", RendererQml::Formatter() << mCheckBoxElement->GetId() << "_title");
 
     if (mCheckBox.isWrap)
     {
-        uiText->Property("wrapMode", "Text.Wrap");
-    }
-    else
-    {
-        uiText->Property("elide", "Text.ElideRight");
+        uiTextBlock->Property("wrapMode", "Text.Wrap");
     }
 
-    return uiText;
+    std::string text = RendererQml::TextUtils::ApplyTextFunctions(mCheckBox.text, mContext->GetLang());
+
+    auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(text);
+    text = markdownParser->TransformToHtml();
+    text = RendererQml::Utils::HandleEscapeSequences(text);
+
+    const std::string linkColor = mContext->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
+    const std::string textDecoration = "none";
+    text = RendererQml::Utils::FormatHtmlUrl(text, linkColor, textDecoration);
+
+    uiTextBlock->Property("text", text, true);
+
+    std::string onLinkActivatedFunction = RendererQml::Formatter() << "{"
+        << "adaptiveCard.buttonClicked(\"\", \"Action.OpenUrl\", link);"
+        << "console.log(link);"
+        << "}";
+    uiTextBlock->Property("onLinkActivated", onLinkActivatedFunction);
+    uiTextBlock->AddFunctions(RendererQml::Formatter() << "function onButtonClicked(){" << mCheckBoxElement->GetId() << ".onButtonClicked()}");
+
+    auto MouseAreaTag = RendererQml::AdaptiveCardQmlRenderer::GetTextBlockMouseArea(uiTextBlock->GetId(), true);
+    uiTextBlock->AddChild(MouseAreaTag);
+
+    uiTextBlock = RendererQml::AdaptiveCardQmlRenderer::AddAccessibilityToTextBlock(uiTextBlock, mContext);
+
+    mCheckBoxElement->AddFunctions(RendererQml::Formatter() << "function getContentText(){ return " << uiTextBlock->GetId() << ".getText(0, " << uiTextBlock->GetId() << ".length);}");
+
+    return uiTextBlock;
 }
 
 std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getIndicator()
 {
     auto uiOuterRectangle = std::make_shared<RendererQml::QmlTag>("Rectangle");
+    uiOuterRectangle->Property("id", RendererQml::Formatter() << mCheckBoxElement->GetId() << "_button");
     uiOuterRectangle->Property("width", RendererQml::Formatter() << mCheckBoxConfig.radioButtonOuterCircleSize);
     uiOuterRectangle->Property("height", RendererQml::Formatter() << mCheckBoxConfig.radioButtonOuterCircleSize);
-    uiOuterRectangle->Property("y", "parent.topPadding + (parent.availableHeight - height) / 2");
+    uiOuterRectangle->Property("y", RendererQml::Formatter() << mCheckBoxConfig.indicatorTopPadding);
     if (mCheckBox.type == RendererQml::CheckBoxType::RadioButton)
     {
         uiOuterRectangle->Property("radius", "height/2");
@@ -110,7 +153,8 @@ std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getIndicator()
         uiInnerSegment->Property("radius", "height/2");
         uiInnerSegment->Property("color", RendererQml::Formatter() << mCheckBox.id << ".checked ? " << mContext->GetHexColor(mCheckBoxConfig.radioButtonInnerCircleColorOnChecked) << " : 'transparent'");
         uiInnerSegment->Property("visible", mCheckBox.id + ".checked");
-        mCheckBoxElement->Property("Keys.onReturnPressed", "{if(!checked){checked = !checked;}}");
+        mCheckBoxElement->Property("Keys.onReturnPressed", "onButtonClicked()");
+        mCheckBoxElement->AddFunctions("function onButtonClicked(){if(!checked){checked = !checked;}}");
     }
     else
     {
@@ -127,7 +171,8 @@ std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getIndicator()
         uiInnerSegment->Property("icon.color", mContext->GetHexColor(mCheckBoxConfig.checkBoxIconColorOnChecked));
         uiInnerSegment->Property("icon.source", RendererQml::check_icon_12, true);
         uiInnerSegment->Property("visible", mCheckBox.id + ".checked");
-        mCheckBoxElement->Property("Keys.onReturnPressed", "{checked = !checked;}");
+        mCheckBoxElement->Property("Keys.onReturnPressed", "onButtonClicked()");
+        mCheckBoxElement->AddFunctions("function onButtonClicked(){checked = !checked;}");
     }
 
     uiOuterRectangle->AddChild(uiInnerSegment);
