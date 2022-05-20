@@ -15,6 +15,12 @@ class ACRNumericTestFieldTests: XCTestCase {
         numericView.minValue = -Double.greatestFiniteMagnitude
     }
     
+    func testACRNumericTextFieldInitsWithoutError() {
+        //Test default initialsier
+        let numberInputView = ACRNumericTextField(config: .default, inputElement: inputElement)
+        XCTAssertNotNil(numberInputView)
+    }
+    
     func testInvalidCharacterInputEnd() {
         numericView.textField.stringValue = "20a"
         let object = Notification(name: NSNotification.Name.init("NSControlTextDidChangeNotification"), object: numericView.textField)

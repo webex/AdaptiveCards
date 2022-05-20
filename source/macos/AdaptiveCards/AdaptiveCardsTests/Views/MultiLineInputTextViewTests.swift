@@ -14,6 +14,12 @@ class MultiLineInputTextViewTests: XCTestCase {
         multiLineInputTextView = ACRMultilineInputTextView(config: renderConfig, inputElement: inputElement)
     }
     
+    func testACRMultilineInputTextViewInitsWithoutError() {
+        //Test default initialsier
+        let textInputView = ACRMultilineInputTextView(config: .default, inputElement: inputElement)
+        XCTAssertNotNil(textInputView)
+    }
+    
     func testLeftPadding() {
         XCTAssertEqual(multiLineInputTextView.textView.textContainerInset.width, renderConfig.inputFieldConfig.multilineFieldInsets.left)
     }

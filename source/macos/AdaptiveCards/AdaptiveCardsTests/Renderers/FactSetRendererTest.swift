@@ -15,6 +15,12 @@ class FactSetRendererTest: XCTestCase {
         resourceResolver = FakeResourceResolver()
     }
     
+    func testACRFactSetViewInitsWithoutError() {
+        //Test default initialsier
+        let factSetView = ACRFactSetView()
+        XCTAssertNotNil(factSetView)
+    }
+    
     func testSingleFact() {
         var factArray: [FakeFacts] = []
         let fakeFact = FakeFacts()
