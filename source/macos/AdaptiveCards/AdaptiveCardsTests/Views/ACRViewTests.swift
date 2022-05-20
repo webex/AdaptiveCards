@@ -19,6 +19,12 @@ class ACRViewTests: XCTestCase {
         view.delegate = actionDelegate
     }
     
+    func testACRViewInitsWithoutError() {
+        //Test default initialsier
+        let acrView = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default    )
+        XCTAssertNotNil(acrView)
+    }
+    
     func testRegisterImageHandlingView() {
         let imageView1 = FakeImageHoldingView()
         let imageView2 = FakeImageHoldingView()

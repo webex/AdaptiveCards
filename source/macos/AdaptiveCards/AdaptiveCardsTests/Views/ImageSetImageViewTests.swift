@@ -10,6 +10,12 @@ class ImageSetImageViewTests: XCTestCase {
         hostConfig = FakeHostConfig()
     }
     
+    func testImageSetViewInitsWithoutError() {
+        //Test default initialsier
+        let imageSetView = ImageSetImageView(imageSize: .auto, hostConfig: hostConfig)
+        XCTAssertNotNil(imageSetView)
+    }
+    
     func testImageSize_explicitCases() {
         var imageView = ImageSetImageView(imageSize: .large, hostConfig: hostConfig)
         XCTAssertEqual(imageView.imageSize, .large)

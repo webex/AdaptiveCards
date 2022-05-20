@@ -14,6 +14,12 @@ class ACRChoiceSetViewtests: XCTestCase {
         choiceSetInput = FakeChoiceSetInput()
     }
     
+    func testACRChoiceSetViewInitsWithoutError() {
+        //Test default initialsier
+        let choiceSetView = ACRChoiceSetView(renderConfig: renderConfig)
+        XCTAssertNotNil(choiceSetView)
+    }
+    
     func testRadioButtonClickAction() {
         choiceSetView.isRadioGroup = true
         let button1 = choiceSetView.setupButton(attributedString: NSMutableAttributedString(string: "1"), value: "Button1", for: choiceSetInput)

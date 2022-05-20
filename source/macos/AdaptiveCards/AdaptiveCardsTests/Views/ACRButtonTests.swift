@@ -13,6 +13,12 @@ class ACRButtonTests: XCTestCase {
         button = ACRButton(frame: .zero, wantsChevron: false, wantsIcon: false, iconPosition: .imageLeft, style: .default, buttonConfig: buttonConfig)
     }
     
+    func testACRButtonInitsWithoutError() {
+        //Test default initialsier
+        let acrButton = ACRButton()
+        XCTAssertNotNil(acrButton)
+    }
+    
     func testBackgroundColors() {
         XCTAssertEqual(button.buttonColor, buttonConfig.default.buttonColor)
         

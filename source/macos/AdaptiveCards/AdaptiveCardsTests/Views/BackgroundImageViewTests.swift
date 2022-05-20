@@ -10,6 +10,12 @@ class ACRBackgroundImageViewTests: XCTestCase {
         imageView = ACRBackgroundImageView(frame: NSRect(x: 0, y: 0, width: 200, height: 600))
     }
     
+    func testACRBackgroundImageViewInitsWithoutError() {
+        //Test default initialsier
+        let backgroundImageView = ACRBackgroundImageView(frame: .zero)
+        XCTAssertNotNil(backgroundImageView)
+    }
+    
     // Test Cases are named as testBGImage<fillmode><horizontalAlignment><verticalAlignment>
     // Test Image dimensions are 100x57, so all calculations are done accordingly
     

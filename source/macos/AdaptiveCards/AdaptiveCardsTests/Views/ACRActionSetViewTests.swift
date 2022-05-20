@@ -15,6 +15,12 @@ class ACRActionSetViewTests: XCTestCase {
         delegate = FakeActionSetViewDelegate()
     }
     
+    func testACRActionSetViewInitsWithoutError() {
+        //Test default initialsier
+        let actionSet = ACRActionSetView(orientation: .horizontal, alignment: .bottom, buttonSpacing: 0, exteriorPadding: 0)
+        XCTAssertNotNil(actionSet)
+    }
+    
     func testAlignmentSetup() {
         renderActionSetView(alignment: .leading)
         XCTAssertEqual(view.stackView.alignment, .leading)

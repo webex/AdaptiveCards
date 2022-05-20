@@ -15,6 +15,12 @@ class ACRInputTextViewTests: XCTestCase {
         textInputView = ACRTextInputView(textFieldWith: config, mode: .text, inputElement: inputElement)
     }
     
+    func testACRTextInputViewInitsWithoutError() {
+        //Test default initialsier
+        let textInputView = ACRTextInputView(textFieldWith: config, mode: .text, inputElement: inputElement)
+        XCTAssertNotNil(textInputView)
+    }
+    
     func testClearButtonAbsentDefault() {
         XCTAssertTrue(textInputView.clearButton.isHidden)
     }
