@@ -17,6 +17,12 @@ class ACRTextFieldTests: XCTestCase {
         delegate = FakeACRTextFieldDelegate()
     }
     
+    func testACRTextFieldInitsWithoutError() {
+        //Test default initialsier
+        let textFieldElement = ACRTextField(textFieldWith: config, mode: .text, inputElement: inputElement)
+        XCTAssertNotNil(textFieldElement)
+    }
+    
     func testClearButtonAbsentDefault() {
         XCTAssertTrue(textField.clearButton.isHidden)
     }

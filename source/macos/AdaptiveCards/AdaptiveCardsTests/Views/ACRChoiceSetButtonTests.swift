@@ -17,6 +17,12 @@ class ACRChoiceSetButtontests: XCTestCase {
         choiceRadioButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .radio, element: choiceSetInput, title: "Test")
     }
     
+    func testACRChoiceButtonInitsWithoutError() {
+        //Test default initialsier
+        let choiceButton = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch, element: choiceSetInput, title: "Test")
+        XCTAssertNotNil(choiceButton)
+    }
+    
     func testCheckBoxButtonClick() {
         XCTAssertEqual(choiceCheckBoxButtonView.state, .off)
         choiceCheckBoxButtonView.button.performClick(nil)
