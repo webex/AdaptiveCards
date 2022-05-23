@@ -8,6 +8,18 @@
 
 @implementation BridgeTextUtils
 
++ (ACSMarkdownParserResult * _Nonnull)processOnRawTextString:(NSString * _Nonnull)textValue hostConfig:(ACSHostConfig * _Nonnull)config
+{
+    auto text = [BridgeConverter getStringCpp:textValue];
+    auto language = [BridgeConverter getStringCpp:@""];
+    std::shared_ptr<MarkDownParser> markDownParser = std::make_shared<MarkDownParser>([BridgeTextUtils getLocalizedDate:text language:language]);
+
+    // MarkDownParser transforms text with MarkDown to a html string
+    NSString *parsedString = [NSString stringWithCString:markDownParser->TransformToHtml().c_str() encoding:NSUTF8StringEncoding];
+    NSData *htmlData = [parsedString dataUsingEncoding:NSUTF16StringEncoding];
+    
+    return [[ACSMarkdownParserResult alloc] initWithParsedString:parsedString htmlData:htmlData];
+}
 + (ACSMarkdownParserResult * _Nonnull)processTextFromTextBlock:(ACSTextBlock * _Nonnull)textBlock hostConfig:(ACSHostConfig * _Nonnull)config
 {
     auto text = [BridgeConverter getStringCpp:[textBlock getText]];

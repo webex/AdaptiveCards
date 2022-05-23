@@ -33,7 +33,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         view.isRequired = choiceSetInput.getIsRequired()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
-            let attributedString = getAttributedString(title: title, with: hostConfig, style: style)
+            let attributedString = getAttributedString(title: title, with: hostConfig, renderConfig: renderConfig, rootView: rootView, style: style)
             let choiceButton = view.setupButton(attributedString: attributedString, value: choice.getValue(), for: choiceSetInput)
             if defaultParsedValues.contains(choice.getValue() ?? "") {
                 choiceButton.state = .on
@@ -85,11 +85,13 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         return choiceSetFieldCompactView
     }
     
-    private func getAttributedString(title: String, with hostConfig: ACSHostConfig, style: ACSContainerStyle) -> NSMutableAttributedString {
-        let attributedString: NSMutableAttributedString
+    private func getAttributedString(title: String, with hostConfig: ACSHostConfig, renderConfig: RenderConfig, rootView: ACRView, style: ACSContainerStyle) -> NSMutableAttributedString {
+        var attributedString: NSMutableAttributedString
         attributedString = NSMutableAttributedString(string: title)
+        let markdownResult = BridgeTextUtils.process(onRawTextString: title, hostConfig: hostConfig)
+        attributedString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
-            attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
+            attributedString.addAttributes([.foregroundColor: textColor, .cursor: NSCursor.arrow], range: NSRange(location: 0, length: attributedString.length))
         }
         return attributedString
     }

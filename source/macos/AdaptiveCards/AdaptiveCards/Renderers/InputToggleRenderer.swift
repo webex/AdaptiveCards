@@ -3,19 +3,19 @@ import AppKit
 
 class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
     static let shared = InputToggleRenderer()
-     
-     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
-         guard let inputToggle = element as? ACSToggleInput else {
-             logError("Element is not of type ACSToggleInput")
-             return NSView()
-         }
+    
+    func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
+        guard let inputToggle = element as? ACSToggleInput else {
+            logError("Element is not of type ACSToggleInput")
+            return NSView()
+        }
         // NSMutableAttributedString for the checkbox title
         let attributedString: NSMutableAttributedString
         // NSButton for checkbox
         let title = inputToggle.getTitle() ?? ""
-         let inputToggleView = ACRChoiceButton(renderConfig: config, buttonType: .switch, element: inputToggle)
+        let inputToggleView = ACRChoiceButton(renderConfig: config, buttonType: .switch, element: inputToggle)
         // adding attributes to the string
-        attributedString = NSMutableAttributedString(string: title)
+        attributedString = getAttributedString(title: title, with: hostConfig, renderConfig: config, rootView: rootView, style: style)
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
         }
@@ -28,5 +28,25 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         inputToggleView.labelAttributedString = attributedString
         rootView.addInputHandler(inputToggleView)
         return inputToggleView
-     }
+    }
+    
+    private func getAttributedString(title: String, with hostConfig: ACSHostConfig, renderConfig: RenderConfig, rootView: ACRView, style: ACSContainerStyle) -> NSMutableAttributedString {
+        var attributedString: NSMutableAttributedString
+        attributedString = NSMutableAttributedString(string: title)
+        
+        let markdownResult = BridgeTextUtils.process(onRawTextString: title, hostConfig: hostConfig)
+        attributedString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
+        
+        if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
+            attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
+        }
+        if attributedString.attributes(at: 0, effectiveRange: nil)[.link] != nil {
+            attributedString.addAttributes([
+                .foregroundColor: renderConfig.hyperlinkColorConfig.foregroundColor,
+                .underlineColor: renderConfig.hyperlinkColorConfig.underlineColor,
+                .underlineStyle: renderConfig.hyperlinkColorConfig.underlineStyle.rawValue
+            ], range: NSRange(location: 0, length: attributedString.length))
+        }
+        return attributedString
+    }
 }
