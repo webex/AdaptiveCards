@@ -39,6 +39,7 @@ SampleCardList::SampleCardList(QObject *parent) : QObject(parent)
 	mCards.append({ QStringLiteral("Bleed Properties"), QString::fromStdString(Samples::card_Bleed) });
 	mCards.append({ QStringLiteral("Input Elements"), QString::fromStdString(Samples::inputElements) });
     mCards.append({ QStringLiteral("Input Validation"), QString::fromStdString(Samples::inputValidation)});
+    mCards.append({ QStringLiteral("Action Set Alignment"), QString::fromStdString(Samples::actionSetHorizontalAlign)});
 
 }
 
