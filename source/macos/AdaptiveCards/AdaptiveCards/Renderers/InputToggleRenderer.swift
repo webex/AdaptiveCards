@@ -38,14 +38,7 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         attributedString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
         
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
-            attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
-        }
-        if attributedString.attributes(at: 0, effectiveRange: nil)[.link] != nil {
-            attributedString.addAttributes([
-                .foregroundColor: renderConfig.hyperlinkColorConfig.foregroundColor,
-                .underlineColor: renderConfig.hyperlinkColorConfig.underlineColor,
-                .underlineStyle: renderConfig.hyperlinkColorConfig.underlineStyle.rawValue
-            ], range: NSRange(location: 0, length: attributedString.length))
+            attributedString.addAttributes([.foregroundColor: textColor, .cursor: NSCursor.arrow], range: NSRange(location: 0, length: attributedString.length))
         }
         return attributedString
     }
