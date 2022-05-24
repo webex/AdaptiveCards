@@ -290,7 +290,7 @@ namespace RendererQml
                 case AdaptiveCards::ActionAlignment::Right:
                     uiButtonStrip->Property("layoutDirection", "Qt.RightToLeft");
                     break;
-                case AdaptiveCards::ActionAlignment::Center: //TODO: implement for centre alignment
+                case AdaptiveCards::ActionAlignment::Center:
                 default:
                     uiButtonStrip->Property("layoutDirection", "Qt.LeftToRight");
                     break;
@@ -341,7 +341,7 @@ namespace RendererQml
                     uiRectangle->Property("id", Formatter() << uiAction->GetId() << "_rectangle");
                     uiRectangle->Property("height", Formatter() << uiAction->GetId() << ".height");
                     uiRectangle->Property("width", Formatter() << uiAction->GetId() << ".width");
-                    //uiRectangle->Property("Component.onCompleted", "horizontalAlign()");
+                    uiRectangle->Property("color", "'transparent'");
 
                     uiAction->Property("width", "(parent.parent.width > implicitWidth) ? implicitWidth : parent.parent.width");
 
