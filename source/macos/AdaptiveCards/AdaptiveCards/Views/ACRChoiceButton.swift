@@ -294,6 +294,7 @@ extension DispatchQueue {
 }
 class ACRHyperLinkTextView: NSTextView {
     private var clickOnLink = false
+    
     override var intrinsicContentSize: NSSize {
         guard let layoutManager = layoutManager, let textContainer = textContainer else {
             return super.intrinsicContentSize
@@ -303,13 +304,12 @@ class ACRHyperLinkTextView: NSTextView {
         let width = size.width + 2
         return NSSize(width: width, height: size.height)
     }
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-    }
+    
     override func clicked(onLink link: Any, at charIndex: Int) {
         super.clicked(onLink: link, at: charIndex)
         clickOnLink = true
     }
+    
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
         if !clickOnLink {

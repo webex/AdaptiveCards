@@ -20,6 +20,7 @@
     
     return [[ACSMarkdownParserResult alloc] initWithParsedString:parsedString htmlData:htmlData];
 }
+
 + (ACSMarkdownParserResult * _Nonnull)processTextFromTextBlock:(ACSTextBlock * _Nonnull)textBlock hostConfig:(ACSHostConfig * _Nonnull)config
 {
     auto text = [BridgeConverter getStringCpp:[textBlock getText]];

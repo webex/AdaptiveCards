@@ -86,8 +86,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
     }
     
     private func getAttributedString(title: String, with hostConfig: ACSHostConfig, renderConfig: RenderConfig, rootView: ACRView, style: ACSContainerStyle) -> NSMutableAttributedString {
-        var attributedString: NSMutableAttributedString
-        attributedString = NSMutableAttributedString(string: title)
+        var attributedString = NSMutableAttributedString(string: title)
         let markdownResult = BridgeTextUtils.process(onRawTextString: title, hostConfig: hostConfig)
         attributedString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
