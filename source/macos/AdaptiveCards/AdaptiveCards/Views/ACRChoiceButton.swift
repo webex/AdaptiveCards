@@ -131,7 +131,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         button.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(16)).isActive = true
         button.widthAnchor.constraint(equalToConstant: CGFloat(16)).isActive = true
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
-        buttonLabelField.leadingAnchor.constraint(equalTo: button.trailingAnchor, constant: buttonConfig?.elementSpacing ?? 4).isActive = true
+        buttonLabelField.leadingAnchor.constraint(equalTo: button.trailingAnchor, constant: buttonConfig?.elementSpacing ?? 6).isActive = true
         buttonLabelField.topAnchor.constraint(equalTo: topAnchor).isActive = true
         buttonLabelField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         buttonLabelField.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
