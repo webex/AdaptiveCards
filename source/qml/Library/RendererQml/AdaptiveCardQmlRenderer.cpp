@@ -290,7 +290,7 @@ namespace RendererQml
                 case AdaptiveCards::ActionAlignment::Right:
                     uiButtonStrip->Property("layoutDirection", "Qt.RightToLeft");
                     break;
-                case AdaptiveCards::ActionAlignment::Center: //TODO: implement for centre alignment
+                case AdaptiveCards::ActionAlignment::Center:
                 default:
                     uiButtonStrip->Property("layoutDirection", "Qt.LeftToRight");
                     break;
@@ -327,10 +327,29 @@ namespace RendererQml
             AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
             uiContainer->AddChild(uiButtonStrip);
 
+            std::ostringstream rectangleElements;
+            std::ostringstream actionElements;
+            std::shared_ptr<QmlTag> uiRectangle;
+
             for (unsigned int i = 0; i < maxActions; i++)
             {
                 // add actions buttons
                 auto uiAction = context->Render(actions[i]);
+                if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
+                {
+                    uiRectangle = std::make_shared<RendererQml::QmlTag>("Rectangle");
+                    uiRectangle->Property("id", Formatter() << uiAction->GetId() << "_rectangle");
+                    uiRectangle->Property("height", Formatter() << uiAction->GetId() << ".height");
+                    uiRectangle->Property("width", Formatter() << uiAction->GetId() << ".width");
+                    uiRectangle->Property("color", "'transparent'");
+
+                    uiAction->Property("width", "(parent.parent.width > implicitWidth) ? implicitWidth : parent.parent.width");
+
+                    rectangleElements << (i == 0 ? "[" : "") << uiRectangle->GetId() << (i == maxActions - 1 ? "]" : ",");
+                    actionElements << (i == 0 ? "[" : "") << uiAction->GetId() << (i == maxActions - 1 ? "]" : ",");
+                    uiRectangle->AddChild(uiAction);
+                }
+
                 if (uiAction != nullptr)
                 {
                     if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
@@ -363,8 +382,18 @@ namespace RendererQml
                         uiContainer->AddChild(uiLoader);
                     }
 
-                    uiButtonStrip->AddChild(uiAction);
+                    uiButtonStrip->AddChild(actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center ? uiRectangle : uiAction);
                 }
+            }
+
+            if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
+            {
+                uiButtonStrip->Property("property var rectangleElements", rectangleElements.str());
+                uiButtonStrip->Property("property var actionElements", actionElements.str());
+                uiButtonStrip->Property("onWidthChanged", "horizontalAlign()");
+                uiButtonStrip->Property("onImplicitWidthChanged", "horizontalAlign()");
+                uiButtonStrip->Property("Component.onCompleted", "horizontalAlign()");
+                uiButtonStrip->AddFunctions(getActinSetHorizontalAlignFunc());
             }
 
             // add show card click function
@@ -2498,6 +2527,63 @@ namespace RendererQml
         cardHeightFunction.erase(std::remove(cardHeightFunction.begin(), cardHeightFunction.end(), '\t'), cardHeightFunction.end());
 
         return cardHeightFunction;
+    }
+
+    const std::string RendererQml::AdaptiveCardQmlRenderer::getActinSetHorizontalAlignFunc()
+    {
+        std::string actionSetHorizontalAlignFunc = R"(function horizontalAlign(){
+            var noElementsInCol = [];
+            var colWidths = [];
+            var wid = 0
+            var noElements = 0;
+
+            for(var i=0;i<actionElements.length;i++){
+                let itemWidth = actionElements[i].width + (i == 0 ? 0 : spacing);
+                if(wid + itemWidth <= width){
+                    noElements++;
+                    wid += itemWidth;
+                }
+                else{
+                    noElementsInCol.push(noElements);
+                    colWidths.push(wid);
+                    noElements = 1;
+                    wid = itemWidth;
+                }
+                actionElements[i].anchors.left = undefined;
+                actionElements[i].anchors.right = undefined;
+                actionElements[i].anchors.horizontalCenter = undefined;
+                rectangleElements[i].width = actionElements[i].width;
+            }
+            noElementsInCol.push(noElements);
+            colWidths.push(wid);
+
+            var itemNo = 0;
+            for(i=0;i<noElementsInCol.length;i++){
+                var itemStart = itemNo;
+                var itemEnd = itemNo + noElementsInCol[i] - 1;
+                if(itemStart < 0 || itemEnd < 0){
+                    continue;
+                }
+                itemNo += noElementsInCol[i];
+                if(itemStart === itemEnd){
+                    rectangleElements[itemStart].width = width;
+                    actionElements[itemStart].anchors.horizontalCenter = rectangleElements[itemStart].horizontalCenter;
+                }
+                else{
+                    var extraWidth = (width - colWidths[i])/2;
+
+                    rectangleElements[itemStart].width = actionElements[itemStart].width + extraWidth;
+                    actionElements[itemStart].anchors.right = rectangleElements[itemStart].right;
+
+                    rectangleElements[itemEnd].width = actionElements[itemEnd].width + extraWidth;
+                    actionElements[itemEnd].anchors.left = rectangleElements[itemEnd].left;
+                }
+            }
+        })";
+
+        actionSetHorizontalAlignFunc.erase(std::remove(actionSetHorizontalAlignFunc.begin(), actionSetHorizontalAlignFunc.end(), '\t'), actionSetHorizontalAlignFunc.end());
+
+        return actionSetHorizontalAlignFunc;
     }
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetIconTag(std::shared_ptr<AdaptiveRenderContext> context)
