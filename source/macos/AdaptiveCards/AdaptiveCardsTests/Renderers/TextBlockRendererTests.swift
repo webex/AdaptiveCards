@@ -33,6 +33,39 @@ class TextBlockRendererTests: XCTestCase {
         XCTAssertTrue(resourceResolver.textResolverCalled)
     }
     
+    func testRendererSetsMultiTraitMarkdownText() {
+        var markdownText = "_Hello world!_"
+        textBlock = .make(text: markdownText, textWeight: .bolder)
+        var textView = renderTextView()
+        
+        XCTAssertEqual(textView.string, "Hello world!")
+        XCTAssertTrue(textView.font?.fontDescriptor.symbolicTraits.contains(.bold) ?? false)
+        XCTAssertTrue(textView.font?.fontDescriptor.symbolicTraits.contains(.italic) ?? false)
+        
+        markdownText = "**Hello world!**"
+        textBlock = .make(text: markdownText, textWeight: .lighter)
+        textView = renderTextView()
+        XCTAssertEqual(textView.string, "Hello world!")
+        XCTAssertTrue(textView.font?.fontDescriptor.symbolicTraits.contains(.bold) ?? false)
+        
+        // This Case currently Not supported
+        /**markdownText = "**_Hello world!_**"
+        textBlock = .make(text: markdownText, textWeight: .lighter)
+        textView = renderTextView()
+        XCTAssertEqual(textView.string, "Hello world!")
+        XCTAssertTrue(textView.font?.fontDescriptor.symbolicTraits.contains(.bold) ?? false)
+        XCTAssertTrue(textView.font?.fontDescriptor.symbolicTraits.contains(.italic) ?? false)*/
+        
+        markdownText = "*Hello world!**"
+        textBlock = .make(text: markdownText, textWeight: .lighter)
+        textView = renderTextView()
+        XCTAssertEqual(textView.string, "Hello world!*")
+        XCTAssertFalse(textView.font?.fontDescriptor.symbolicTraits.contains(.bold) ?? true)
+        XCTAssertTrue(textView.font?.fontDescriptor.symbolicTraits.contains(.italic) ?? false)
+        
+        XCTAssertTrue(resourceResolver.textResolverCalled)
+    }
+    
     func testRendererSetsWrap() {
         textBlock = .make(wrap: true)
         

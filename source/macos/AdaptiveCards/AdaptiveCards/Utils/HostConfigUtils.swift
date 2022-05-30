@@ -39,7 +39,7 @@ extension ACSHostConfig {
 class FontUtils {
     private static var notFoundFontFamilies: Set<String> = []
     
-    static func getFont(for hostConfig: ACSHostConfig, with textProperties: ACSRichTextElementProperties) -> NSFont {
+    static func getFont(for hostConfig: ACSHostConfig, with textProperties: ACSRichTextElementProperties, attrsFont: NSFont? = nil) -> NSFont {
         var fontWeight = hostConfig.getFontWeight(textProperties.getFontType(), weight: textProperties.getTextWeight())?.intValue ?? 400
 
         if fontWeight <= 0 || fontWeight > 900 {
@@ -55,6 +55,15 @@ class FontUtils {
         } else {
             resolvedFontFamily = textProperties.getFontType() == .monospace ? "Courier New" : nil
         }
+        // Check If Attributed string has traits
+        if let font = attrsFont {
+            if font.fontDescriptor.symbolicTraits.contains(.bold) {
+                textProperties.setTextWeight(ACSTextWeight.bolder)
+            }
+            if font.fontDescriptor.symbolicTraits.contains(.italic) {
+                textProperties.setItalic(true)
+            }
+        }
         
         guard let fontFamily = resolvedFontFamily, !fontFamily.isEmpty, !notFoundFontFamilies.contains(fontFamily) else {
             // Custom Font family not needed
@@ -63,7 +72,7 @@ class FontUtils {
         
         let fontWeights = ["UltraLight", "Thin", "Light", "Regular", "Medium", "Semibold", "Bold", "Heavy", "Black"]
         var descriptor = NSFontDescriptor(fontAttributes: [NSFontDescriptor.AttributeName.family: fontFamily, NSFontDescriptor.AttributeName.face: fontWeights[fontWeight]])
-        descriptor = getItalicFontDescriptor(descriptor, italic: textProperties.getItalic())
+        descriptor = getBoldItalicFontDescriptor(descriptor, italic: textProperties.getItalic(), bold: textProperties.getTextWeight() == ACSTextWeight.bolder)
         let size = hostConfig.getFontSize(textProperties.getFontType(), size: textProperties.getTextSize())?.intValue ?? 14
         guard let font = NSFont(descriptor: descriptor, size: CGFloat(size)) else {
             logError("Font with fontFamily '\(fontFamily)' not found. Returning system font.")
@@ -73,22 +82,32 @@ class FontUtils {
         return font
     }
     
-    private static func getItalicFontDescriptor(_ descriptor: NSFontDescriptor, italic: Bool) -> NSFontDescriptor {
-        return italic ? descriptor.withSymbolicTraits(.italic) : descriptor
+    private static func getBoldItalicFontDescriptor(_ descriptor: NSFontDescriptor, italic: Bool, bold: Bool) -> NSFontDescriptor {
+        var symbolicTraits = descriptor.symbolicTraits
+        if bold {
+            symbolicTraits.insert(.bold)
+        }
+        if italic {
+            symbolicTraits.insert(.italic)
+        }
+        return descriptor.withSymbolicTraits(symbolicTraits)
     }
     
     private static func getSystemFont(for hostConfig: ACSHostConfig, with textProperties: ACSRichTextElementProperties, fontWeight: Int) -> NSFont {
         let fontWeights: [NSFont.Weight] = [.ultraLight, .thin, .light, .regular, .medium, .semibold, .bold, .heavy, .black]
         let size = hostConfig.getFontSize(textProperties.getFontType(), size: textProperties.getTextSize())?.intValue ?? 14
-        let systemFont = NSFont.systemFont(ofSize: CGFloat(size), weight: fontWeights[fontWeight])
-        if textProperties.getItalic() {
-            guard let font = NSFont(descriptor: getItalicFontDescriptor(systemFont.fontDescriptor, italic: true), size: CGFloat(size)) else {
-                logError("Generating System Italic font failed")
-                return systemFont
-            }
-            return font
+        var systemFont = NSFont.systemFont(ofSize: CGFloat(size))
+        if textProperties.getTextWeight() == .bolder {
+            systemFont = NSFont.systemFont(ofSize: CGFloat(size), weight: .bold)
+        } else {
+            systemFont = NSFont.systemFont(ofSize: CGFloat(size), weight: fontWeights[fontWeight])
         }
-        return systemFont
+        let descriptor = getBoldItalicFontDescriptor(systemFont.fontDescriptor, italic: textProperties.getItalic(), bold: textProperties.getTextWeight() == ACSTextWeight.bolder)
+        guard let font = NSFont(descriptor: descriptor, size: CGFloat(size)) else {
+            logError("Generating System Italic font failed")
+            return systemFont
+        }
+        return font
     }
 }
 
@@ -179,21 +198,8 @@ class TextUtils {
         let content = NSMutableAttributedString(attributedString: attributedString)
         attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length), options: .longestEffectiveRangeNotRequired, using: { attributes, range, _ in
             guard let font = attributes[.font] as? NSFont else { return }
-            let fontWithProperties = FontUtils.getFont(for: hostConfig, with: textProperties)
-            var descriptor = font.fontDescriptor
-            
-            if descriptor.symbolicTraits.contains(.italic) && descriptor.symbolicTraits.contains(.bold) {
-                descriptor = descriptor.withFamily(fontWithProperties.familyName ?? "").withSymbolicTraits([.italic, .bold])
-            } else if descriptor.symbolicTraits.contains(.bold) {
-                descriptor = descriptor.withFamily(fontWithProperties.familyName ?? "").withSymbolicTraits(.bold)
-            } else if descriptor.symbolicTraits.contains(.italic) {
-                descriptor = descriptor.withFamily(fontWithProperties.familyName ?? "").withSymbolicTraits(.italic)
-            } else {
-                descriptor = descriptor.withFamily(fontWithProperties.familyName ?? "")
-                let weightAttributes = CTFontDescriptorCopyAttributes(fontWithProperties.fontDescriptor)
-                descriptor = CTFontDescriptorCreateCopyWithAttributes(descriptor, weightAttributes)
-            }
-            let newFont = NSFont(descriptor: descriptor, size: fontWithProperties.pointSize)
+            let fontWithProperties = FontUtils.getFont(for: hostConfig, with: textProperties, attrsFont: font)
+            let newFont = NSFont(descriptor: fontWithProperties.fontDescriptor, size: fontWithProperties.pointSize)
             content.addAttribute(.font, value: newFont as Any, range: range)
         })
         return content
