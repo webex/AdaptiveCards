@@ -14,5 +14,7 @@
 + (ACSRichTextElementProperties * _Nonnull)convertTextRunToRichTextElementProperties:(ACSTextRun * _Nonnull)textRun;
 + (ACSRichTextElementProperties * _Nonnull)convertFactToRichTextElementProperties:(ACSFact * _Nonnull)fact;
 + (ACSMarkdownParserResult * _Nonnull)processTextFromFact:(ACSFact * _Nullable)fact hostConfig:(ACSHostConfig * _Nonnull)config isTitle: (BOOL)isTitle;
++ (ACSRichTextElementProperties * _Nonnull)convertInputChoiceToRichTextElementProperties:(ACSChoiceInput * _Nonnull)choiceInput;
++ (ACSRichTextElementProperties * _Nonnull)convertInputToggleToRichTextElementProperties:(ACSToggleInput * _Nonnull)inputToggle;
 
 @end

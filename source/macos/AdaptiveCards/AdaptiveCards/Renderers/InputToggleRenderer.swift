@@ -15,7 +15,7 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         let title = inputToggle.getTitle() ?? ""
         let inputToggleView = ACRChoiceButton(renderConfig: config, buttonType: .switch, element: inputToggle)
         // adding attributes to the string
-        attributedString = getAttributedString(title: title, with: hostConfig, renderConfig: config, rootView: rootView, style: style)
+        attributedString = getAttributedString(title: title, with: hostConfig, renderConfig: config, element: inputToggle, rootView: rootView, style: style)
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
         }
@@ -30,11 +30,11 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         return inputToggleView
     }
     
-    private func getAttributedString(title: String, with hostConfig: ACSHostConfig, renderConfig: RenderConfig, rootView: ACRView, style: ACSContainerStyle) -> NSMutableAttributedString {
-        var attributedString = NSMutableAttributedString(string: title)
-        
+    private func getAttributedString(title: String, with hostConfig: ACSHostConfig, renderConfig: RenderConfig, element: ACSToggleInput, rootView: ACRView, style: ACSContainerStyle) -> NSMutableAttributedString {
         let markdownResult = BridgeTextUtils.process(onRawTextString: title, hostConfig: hostConfig)
-        attributedString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
+        let markdownString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
+        let textProperties = BridgeTextUtils.convertInputToggle(toRichTextElementProperties: element)
+        let attributedString = TextUtils.addFontProperties(attributedString: markdownString, textProperties: textProperties, hostConfig: hostConfig)
         
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor, .cursor: NSCursor.arrow], range: NSRange(location: 0, length: attributedString.length))
