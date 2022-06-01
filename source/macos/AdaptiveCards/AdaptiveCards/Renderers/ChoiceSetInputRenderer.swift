@@ -33,7 +33,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         view.isRequired = choiceSetInput.getIsRequired()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
-            let attributedString = getAttributedString(title: title, with: hostConfig, renderConfig: renderConfig, rootView: rootView, style: style)
+            let attributedString = TextUtils.getRenderAttributedString(text: title, with: hostConfig, renderConfig: renderConfig, rootView: rootView, style: style)
             let choiceButton = view.setupButton(attributedString: attributedString, value: choice.getValue(), for: choiceSetInput)
             if defaultParsedValues.contains(choice.getValue() ?? "") {
                 choiceButton.state = .on
@@ -83,17 +83,5 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         rootView.addInputHandler(choiceSetFieldCompactView)
         choiceSetFieldCompactView.setAccessibilityRoleDescription(renderConfig.localisedStringConfig.choiceSetCompactAccessibilityRoleDescriptor)
         return choiceSetFieldCompactView
-    }
-    
-    private func getAttributedString(title: String, with hostConfig: ACSHostConfig, renderConfig: RenderConfig, rootView: ACRView, style: ACSContainerStyle) -> NSMutableAttributedString {
-        let markdownResult = BridgeTextUtils.process(onRawTextString: title, hostConfig: hostConfig)
-        let markdownString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
-        let textProperties = BridgeTextUtils.getRichTextElementProperties(title)
-        let attributedString = TextUtils.addFontProperties(attributedString: markdownString, textProperties: textProperties, hostConfig: hostConfig)
-        
-        if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
-            attributedString.addAttributes([.foregroundColor: textColor, .cursor: NSCursor.arrow], range: NSRange(location: 0, length: attributedString.length))
-        }
-        return attributedString
     }
 }
