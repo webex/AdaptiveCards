@@ -33,7 +33,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         view.isRequired = choiceSetInput.getIsRequired()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
-            let attributedString = getAttributedString(title: title, with: hostConfig, style: style)
+            let attributedString = TextUtils.getRenderAttributedString(text: title, with: hostConfig, renderConfig: renderConfig, rootView: rootView, style: style)
             let choiceButton = view.setupButton(attributedString: attributedString, value: choice.getValue(), for: choiceSetInput)
             if defaultParsedValues.contains(choice.getValue() ?? "") {
                 choiceButton.state = .on
@@ -83,14 +83,5 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         rootView.addInputHandler(choiceSetFieldCompactView)
         choiceSetFieldCompactView.setAccessibilityRoleDescription(renderConfig.localisedStringConfig.choiceSetCompactAccessibilityRoleDescriptor)
         return choiceSetFieldCompactView
-    }
-    
-    private func getAttributedString(title: String, with hostConfig: ACSHostConfig, style: ACSContainerStyle) -> NSMutableAttributedString {
-        let attributedString: NSMutableAttributedString
-        attributedString = NSMutableAttributedString(string: title)
-        if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
-            attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
-        }
-        return attributedString
     }
 }

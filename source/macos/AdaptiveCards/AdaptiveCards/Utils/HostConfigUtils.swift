@@ -41,7 +41,7 @@ class FontUtils {
     
     static func getFont(for hostConfig: ACSHostConfig, with textProperties: ACSRichTextElementProperties) -> NSFont {
         var fontWeight = hostConfig.getFontWeight(textProperties.getFontType(), weight: textProperties.getTextWeight())?.intValue ?? 400
-
+        
         if fontWeight <= 0 || fontWeight > 900 {
             fontWeight = 400
         }
@@ -95,7 +95,7 @@ class FontUtils {
 class ColorUtils {
     static func color(from hexString: String) -> NSColor? {
         var hexString = hexString.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-
+        
         if hexString.hasPrefix("#") {
             hexString.remove(at: hexString.startIndex)
         }
@@ -104,7 +104,7 @@ class ColorUtils {
             logError("Not valid HexCode: \(hexString)")
             return nil
         }
-
+        
         var rgbValue: UInt64 = 0
         Scanner(string: hexString).scanHexInt64(&rgbValue)
         
@@ -140,6 +140,17 @@ class ColorUtils {
 }
 
 class TextUtils {
+    static func getRenderAttributedString(text: String, with hostConfig: ACSHostConfig, renderConfig: RenderConfig, rootView: ACRView, style: ACSContainerStyle) -> NSMutableAttributedString {
+        let markdownResult = BridgeTextUtils.process(onRawTextString: text, hostConfig: hostConfig)
+        let markdownString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
+        let textProperties = BridgeTextUtils.getRichTextElementProperties(text)
+        let attributedString = TextUtils.addFontProperties(attributedString: markdownString, textProperties: textProperties, hostConfig: hostConfig)
+        if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
+            attributedString.addAttributes([.foregroundColor: textColor, .cursor: NSCursor.arrow], range: NSRange(location: 0, length: attributedString.length))
+        }
+        return attributedString
+    }
+    
     static func getMarkdownString(for view: ACRView, with parserResult: ACSMarkdownParserResult) -> NSMutableAttributedString {
         guard parserResult.isHTML, let attributedString = view.resolveAttributedString(for: parserResult.parsedString) else {
             return getMarkdownString(parserResult: parserResult)
