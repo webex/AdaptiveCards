@@ -71,16 +71,27 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // Label
-    private (set) lazy var buttonLabelField: NSTextField = {
-        let view = NSTextField()
-        view.isEditable = false
-        view.delegate = self
-        view.isBordered = false
-        view.isHighlighted = false
+     // Label
+    private (set) lazy var buttonLabelField: ACRHyperLinkTextView = {
+        let view = ACRHyperLinkTextView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isEditable = false
         view.backgroundColor = .clear
-        view.cell?.wraps = wrap
+        view.backgroundColor = .clear
+        view.drawsBackground = false
+        view.isRichText = false
+        view.allowsUndo = false
+        view.isVerticallyResizable = true
+        view.isHorizontallyResizable = true
+        view.textContainer?.widthTracksTextView = true
+        view.textContainer?.heightTracksTextView = !wrap
+        view.textContainer?.lineBreakMode = .byTruncatingTail
+        view.linkTextAttributes = [
+            .foregroundColor: renderConfig.hyperlinkColorConfig.foregroundColor,
+            .underlineColor: renderConfig.hyperlinkColorConfig.underlineColor,
+            .underlineStyle: renderConfig.hyperlinkColorConfig.underlineStyle.rawValue,
+            .cursor: NSCursor.pointingHand
+        ]
         return view
     }()
     
@@ -117,6 +128,9 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         button.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         button.topAnchor.constraint(equalTo: topAnchor).isActive = true
         button.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        button.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(16)).isActive = true
+        button.widthAnchor.constraint(equalToConstant: CGFloat(16)).isActive = true
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
         buttonLabelField.leadingAnchor.constraint(equalTo: button.trailingAnchor, constant: buttonConfig?.elementSpacing ?? 8).isActive = true
         buttonLabelField.topAnchor.constraint(equalTo: topAnchor).isActive = true
         buttonLabelField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -240,19 +254,18 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
 // MARK: EXTENSION
 extension ACRChoiceButton {
     var backgroundColor: NSColor {
-        get { buttonLabelField.backgroundColor ?? .clear }
+        get { buttonLabelField.backgroundColor }
         set {
             buttonLabelField.backgroundColor = newValue
         }
     }
-    
+
     var labelAttributedString: NSAttributedString {
-        get { buttonLabelField.attributedStringValue }
+        get { buttonLabelField.attributedString() }
         set {
-            buttonLabelField.attributedStringValue = newValue
+            buttonLabelField.textStorage?.setAttributedString(newValue)
         }
     }
-    
     var state: NSControl.StateValue {
         get { button.state }
         set {
