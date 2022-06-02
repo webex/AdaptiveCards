@@ -82,6 +82,10 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         return stringOfSelectedValues.joined(separator: ",")
     }
     
+    var getStackViews: [NSView] {
+        return stackview.arrangedSubviews
+    }
+    
     var key: String {
         guard let id = idString else {
             logError("ID must be set on creation")

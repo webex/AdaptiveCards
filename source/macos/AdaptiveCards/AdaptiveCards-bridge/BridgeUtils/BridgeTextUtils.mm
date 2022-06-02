@@ -8,6 +8,20 @@
 
 @implementation BridgeTextUtils
 
++ (ACSMarkdownParserResult * _Nonnull)processOnRawTextString:(NSString * _Nonnull)textValue hostConfig:(ACSHostConfig * _Nonnull)config
+{
+    auto text = [BridgeConverter getStringCpp:textValue];
+    // Raw text has no language properties, it should be left empty. We mostly use this function for the "inputchoice", "inputToggle" elements, which does not have a language attribute. (There was no language option in the Microsoft schema.)
+    auto language = [BridgeConverter getStringCpp:@""];
+    std::shared_ptr<MarkDownParser> markDownParser = std::make_shared<MarkDownParser>([BridgeTextUtils getLocalizedDate:text language:language]);
+
+    // MarkDownParser transforms text with MarkDown to a html string
+    NSString *parsedString = [NSString stringWithCString:markDownParser->TransformToHtml().c_str() encoding:NSUTF8StringEncoding];
+    NSData *htmlData = [parsedString dataUsingEncoding:NSUTF16StringEncoding];
+    
+    return [[ACSMarkdownParserResult alloc] initWithParsedString:parsedString htmlData:htmlData];
+}
+
 + (ACSMarkdownParserResult * _Nonnull)processTextFromTextBlock:(ACSTextBlock * _Nonnull)textBlock hostConfig:(ACSHostConfig * _Nonnull)config
 {
     auto text = [BridgeConverter getStringCpp:[textBlock getText]];
@@ -121,6 +135,20 @@
     [textProp setTextColor:ACSForegroundColorDefault];
     [textProp setIsSubtle:false];
     [textProp setLanguage:[fact getLanguage]];
+    return textProp;
+}
+
++ (ACSRichTextElementProperties * _Nonnull)getRichTextElementProperties:(NSString * _Nonnull)elementText
+{
+    ACSRichTextElementProperties* textProp = [[ACSRichTextElementProperties alloc] initWithRichTextElementProperties:std::make_shared<RichTextElementProperties>()];
+    [textProp setText: elementText];
+    [textProp setTextSize:ACSTextSizeSmall];
+    [textProp setTextWeight:ACSTextWeightDefault];
+    [textProp setFontType:ACSFontTypeDefault];
+    [textProp setTextColor:ACSForegroundColorDefault];
+    [textProp setIsSubtle:false];
+    // it should be left empty. We use this function for the "inputchoice", "inputToggle" elements, which does not have a language attribute. (There was no language option in the Microsoft schema.)
+    [textProp setLanguage:@""];
     return textProp;
 }
 @end

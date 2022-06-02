@@ -94,6 +94,39 @@ class ChoiceSetInputRendererTests: XCTestCase {
         XCTAssertFalse(choiceSetView.isValid)
     }
     
+    // This TestCase design for HyperLink MarkDown in Input.Choice element title text.
+    
+    func testHyperLinkMarkdownInTitleForExpandedChoiceSet() {
+        let buttonHyperLinkTitle = "This is test [Webex](https://www.webex.com)"
+        let markDownTestAns = "This is test Webex"
+        let hyperlinkIndexAt = 13
+        
+        self.choiceSetInput = self.makeExpandedChoiceSetInput(title: buttonHyperLinkTitle, value: "Webex")
+        let choiceSetView = renderChoiceSetView()
+        guard let acrChoiceBtn = choiceSetView.getStackViews.first as? ACRChoiceButton else { fatalError() }
+        XCTAssertEqual(acrChoiceBtn.labelAttributedString.string, markDownTestAns)
+        XCTAssertNotNil(acrChoiceBtn.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+    }
+    
+    // This TestCase design for Multiple MarkDown title in Input.Choice element title text.
+    
+    func testMarkdownInTitleForExpandedChoiceSet() {
+        let markdownString = "_This is **test** [Webex](https://www.webex.com)_"
+        let markDownTestAns = "This is test Webex"
+        let italicAt = 0
+        let boldItalic = 8
+        let hyperlinkIndexAt = 13
+        
+        self.choiceSetInput = self.makeExpandedChoiceSetInput(title: markdownString, value: "Webex")
+        let choiceSetView = renderChoiceSetView()
+        guard let acrChoiceBtn = choiceSetView.getStackViews.first as? ACRChoiceButton else { fatalError() }
+        XCTAssertEqual(acrChoiceBtn.labelAttributedString.string, markDownTestAns)
+        let italicfont = acrChoiceBtn.labelAttributedString.fontAttributes(in: NSRange.init(location: italicAt, length: 3))[.font] as? NSFont
+        XCTAssertTrue(italicfont?.fontDescriptor.symbolicTraits.contains(.italic) ?? false)
+        let boldItalicfont = acrChoiceBtn.labelAttributedString.fontAttributes(in: NSRange.init(location: boldItalic, length: 3))[.font] as? NSFont
+        XCTAssertTrue(boldItalicfont?.fontDescriptor.symbolicTraits.contains([.italic, .bold]) ?? false)
+        XCTAssertNotNil(acrChoiceBtn.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+    }
     
     private func renderChoiceSetView() -> ACRChoiceSetView {
         let view = choiceSetInputRenderer.render(element: choiceSetInput, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
@@ -109,6 +142,11 @@ class ChoiceSetInputRendererTests: XCTestCase {
         XCTAssertTrue(view is ACRChoiceSetCompactView)
         guard let choiceSetCompactView = view as? ACRChoiceSetCompactView else { fatalError() }
         return choiceSetCompactView
+    }
+    
+    private func makeExpandedChoiceSetInput(title: String, value: String) -> FakeChoiceSetInput{
+        let choices: [ACSChoiceInput] = [FakeChoiceInput.make(title: title, value: value)]
+        return .make(choices: choices, choiceSetStyle: .expanded)
     }
 }
 
