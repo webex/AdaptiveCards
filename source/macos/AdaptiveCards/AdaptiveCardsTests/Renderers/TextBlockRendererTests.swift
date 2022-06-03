@@ -33,6 +33,43 @@ class TextBlockRendererTests: XCTestCase {
         XCTAssertTrue(resourceResolver.textResolverCalled)
     }
     
+    func testRendererSetsMultiTraitMarkdownText() {
+        var markdownText = "_Hello world!_"
+        textBlock = .make(text: markdownText, textWeight: .bolder)
+        var textView = renderTextView()
+        
+        XCTAssertEqual(textView.string, "Hello world!")
+        XCTAssertEqual("CTFontBoldItalicUsage", (textView.attributedString().attributes(at: 0, effectiveRange: nil)[.font] as! NSFont).fontDescriptor.fontAttributes[.init("NSCTFontUIUsageAttribute")] as! String)
+        
+        markdownText = "**Hello world!**"
+        textBlock = .make(text: markdownText, textWeight: .lighter)
+        textView = renderTextView()
+        XCTAssertEqual(textView.string, "Hello world!")
+        XCTAssertEqual("CTFontBoldUsage", (textView.attributedString().attributes(at: 0, effectiveRange: nil)[.font] as! NSFont).fontDescriptor.fontAttributes[.init("NSCTFontUIUsageAttribute")] as! String)
+        
+        markdownText = "*Hello world!**"
+        textBlock = .make(text: markdownText, textWeight: .lighter)
+        textView = renderTextView()
+        XCTAssertEqual(textView.string, "Hello world!*")
+        XCTAssertEqual("CTFontObliqueUsage", (textView.attributedString().attributes(at: 0, effectiveRange: nil)[.font] as! NSFont).fontDescriptor.fontAttributes[.init("NSCTFontUIUsageAttribute")] as! String)
+        
+        markdownText = "This is the _test_ for [Webex](https://www.webex.com)"
+        textBlock = .make(text: markdownText, textWeight: .bolder)
+        textView = renderTextView()
+        XCTAssertEqual(textView.string, "This is the test for Webex")
+        XCTAssertEqual("CTFontBoldUsage", (textView.attributedString().attributes(at: 0, effectiveRange: nil)[.font] as! NSFont).fontDescriptor.fontAttributes[.init("NSCTFontUIUsageAttribute")] as! String)
+        XCTAssertEqual("CTFontBoldItalicUsage", (textView.attributedString().attributes(at: 14, effectiveRange: nil)[.font] as! NSFont).fontDescriptor.fontAttributes[.init("NSCTFontUIUsageAttribute")] as! String)
+        
+        // This Case currently Not supported
+        /**markdownText = "**_Hello world!_**"
+        textBlock = .make(text: markdownText, textWeight: .lighter)
+        textView = renderTextView()
+        XCTAssertEqual(textView.string, "Hello world!")
+        XCTAssertEqual("CTFontBoldUsage", (textView.attributedString().attributes(at: 0, effectiveRange: nil)[.font] as! NSFont).fontDescriptor.fontAttributes[.init("NSCTFontUIUsageAttribute")] as! String)*/
+        
+        XCTAssertTrue(resourceResolver.textResolverCalled)
+    }
+    
     func testRendererSetsWrap() {
         textBlock = .make(wrap: true)
         
