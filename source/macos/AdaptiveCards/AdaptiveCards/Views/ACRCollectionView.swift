@@ -43,6 +43,9 @@ class ACRCollectionView: NSScrollView {
         self.imageViews = imageSet.getImages().map {
             let imageView = ImageSetImageView(imageSize: imageSet.getImageSize(), hostConfig: hostConfig)
             rootView.registerImageHandlingView(imageView, for: $0.getUrl() ?? "")
+            if $0.getStyle() == .person {
+                imageView.isPersonStyle = true
+            }
             return imageView
         }
         super.init(frame: .zero)
@@ -149,6 +152,7 @@ extension ACRCollectionView: NSCollectionViewDelegateFlowLayout {
 class ImageSetImageView: NSImageView, ImageHoldingView {
     let imageSize: ACSImageSize
     let hostConfig: ACSHostConfig
+    var isPersonStyle = false
     
     init(imageSize: ACSImageSize, hostConfig: ACSHostConfig) {
         self.imageSize = imageSize.collectionItemResolvedSize
@@ -158,6 +162,17 @@ class ImageSetImageView: NSImageView, ImageHoldingView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layout() {
+       super.layout()
+       if isPersonStyle, let subview = subviews.first {
+           let maskLayer = CAShapeLayer()
+           maskLayer.path = CGPath(ellipseIn: subview.bounds, transform: nil)
+           subview.wantsLayer = true
+           subview.layer?.mask = maskLayer
+           subview.layer?.masksToBounds = true
+       }
     }
     
     func setImage(_ image: NSImage) {
