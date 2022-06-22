@@ -37,4 +37,20 @@ class ImageSetImageViewTests: XCTestCase {
         imageView = ImageSetImageView(imageSize: .auto, hostConfig: hostConfig)
         XCTAssertEqual(imageView.imageSize, .medium)
     }
+    
+    func tesImageStyle() {
+        let imageView = ImageSetImageView(imageSize: .stretch, hostConfig: hostConfig)
+        XCTAssertEqual(imageView.imageSize, .medium)
+        
+        imageView.layout()
+        XCTAssertNil(imageView.layer?.mask)
+        XCTAssertFalse(imageView.wantsLayer)
+        
+        imageView.isPersonStyle = true
+        imageView.layout()
+        
+        XCTAssertNotNil(imageView.layer?.mask)
+        XCTAssertTrue(imageView.wantsLayer)
+        XCTAssertEqual(imageView.layer?.mask?.bounds, imageView.bounds)
+    }
 }
