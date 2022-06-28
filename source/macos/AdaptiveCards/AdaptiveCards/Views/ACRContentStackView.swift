@@ -212,30 +212,36 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     func refreshOnVisibilityChange(from isHiddenOld: Bool) {
-        // Ignore refresh if view is isHidden or state is not changed
-        // Ignore refresh if view is not inside a stackView
-        guard !isHidden, isHidden != isHiddenOld, let stackView = superview as? NSStackView else { return }
+        guard let stackView = superview as? NSStackView else { return }
         
-        // Spacer and Separator to be hidden only if this view is the first element of the parent stack
-        // Ignore all Spacing to chack firstElement, as they're added for `verticalContentAlignment`. Refer ContainerRenderer / ColumnRenderer.
-        guard let toggledView = (stackView.arrangedSubviews.first { !$0.isHidden && !($0 is SpacingView) }) else { return }
-        let isFirstElement = toggledView == self
-        currentSpacingView?.isHidden = isFirstElement
-        currentSeparatorView?.isHidden = isFirstElement
-        
-        // once we toggle any object to visibility , we need to see if the objects in series next to toggled one were already being shown or not . if shown we need to update the currentSpacingView of those items to false
-        
-        if stackView.arrangedSubviews.count > 1 {
-            // getting index of the toggled object
-            guard let toggledViewIndex = stackView.arrangedSubviews.firstIndex(of: toggledView) else { return }
+        if isHidden {
+            // if an object is hidden then we need to update the visibility of spacing view of the adjacent nonHidden object
+            guard let toggledView = (stackView.arrangedSubviews.first { !$0.isHidden && !($0 is SpacingView) }) as? ACRContentStackView  else { return }
+            toggledView.currentSpacingView?.isHidden = true
+            toggledView.currentSeparatorView?.isHidden = true
+        } else {
+            // Spacer and Separator to be hidden only if this view is the first element of the parent stack
+            // Ignore all Spacing to check firstElement, as they're added for `verticalContentAlignment`. Refer ContainerRenderer / ColumnRenderer.
             
-            // if toggled element is last one no need to continue
-            if toggledViewIndex < stackView.arrangedSubviews.count - 1 {
-                // if next view in sequence is not hidden set its currentSpacingView?.isHidden to false
-                for index in toggledViewIndex + 1..<stackView.arrangedSubviews.count {
-                    if let nextView = stackView.arrangedSubviews[index] as? ACRContentStackView, !nextView.isHidden {
-                        nextView.currentSpacingView?.isHidden = false
-                        nextView.currentSeparatorView?.isHidden = false
+            guard let toggledView = (stackView.arrangedSubviews.first { !$0.isHidden && !($0 is SpacingView) }) else { return }
+            let isFirstElement = toggledView == self
+            currentSpacingView?.isHidden = isFirstElement
+            currentSeparatorView?.isHidden = isFirstElement
+            
+            // once we toggle any object to visibility , we need to see if the objects in series next to toggled one were already being shown or not . if shown we need to update the currentSpacingView of those items to false
+            
+            if stackView.arrangedSubviews.count > 1 {
+                // getting index of the toggled object
+                guard let toggledViewIndex = stackView.arrangedSubviews.firstIndex(of: toggledView) else { return }
+                
+                // if toggled element is last one no need to continue
+                if toggledViewIndex < stackView.arrangedSubviews.count - 1 {
+                    // if next view in sequence is not hidden set its currentSpacingView?.isHidden to false
+                    for index in toggledViewIndex + 1..<stackView.arrangedSubviews.count {
+                        if let nextView = stackView.arrangedSubviews[index] as? ACRContentStackView, !nextView.isHidden {
+                            nextView.currentSpacingView?.isHidden = false
+                            nextView.currentSeparatorView?.isHidden = false
+                        }
                     }
                 }
             }
