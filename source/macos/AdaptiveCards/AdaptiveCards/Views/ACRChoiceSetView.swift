@@ -23,6 +23,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     init(renderConfig: RenderConfig) {
         self.renderConfig = renderConfig
         super.init(frame: .zero)
+        logInfo("ACRChoiceSetView -> ")
         addSubview(stackview)
         setupConstraints()
     }
@@ -88,7 +89,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     
     var key: String {
         guard let id = idString else {
-            logError("ID must be set on creation")
+            logError("ACRChoiceSetView -> ID must be set on creation")
             return ""
         }
         return id
@@ -174,7 +175,7 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     
     var key: String {
         guard let id = idString else {
-            logError("ID must be set on creation")
+            logError("ACRChoiceSetCompactView -> ID must be set on creation")
             return ""
         }
         return id

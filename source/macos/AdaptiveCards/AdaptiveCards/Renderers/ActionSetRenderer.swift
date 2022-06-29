@@ -6,7 +6,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let actionSet = element as? ACSActionSet else {
-            logError("Element is not of type ACSActionSet")
+            logError("ActionSetRenderer -> Element is not of type ACSActionSet")
             return NSView()
         }
         return renderView(actions: actionSet.getActions(), aligned: actionSet.getHorizontalAlignment(), with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
@@ -33,7 +33,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         let maxAllowedActions = Int(truncating: actionsConfig?.maxActions ?? 10)
         
         if actions.count > maxAllowedActions {
-            logError("WARNING: Some actions were not rendered due to exceeding the maximum number \(maxAllowedActions) actions are allowed")
+            logError("ActionSetRenderer -> WARNING: Some actions were not rendered due to exceeding the maximum number \(maxAllowedActions) actions are allowed")
         }
         
         let orientation: NSUserInterfaceLayoutOrientation
@@ -65,7 +65,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         guard !filteredActions.isEmpty else {
-            logError("Actions is empty")
+            logError("ActionSetRenderer -> Actions is empty")
             return NSView()
         }
         

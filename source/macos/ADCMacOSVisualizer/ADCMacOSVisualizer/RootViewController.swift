@@ -16,6 +16,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     private var checkButtonConfig: ChoiceSetButtonConfig?
     private var radioButtonConfig: ChoiceSetButtonConfig?
     private var inputFieldConfig: InputFieldConfig = .default
+    private let adaptiveCardStationCenter: AdaptiveCardStationProtocol = AdaptiveCardStationCenter.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +53,15 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         textView.isAutomaticTextReplacementEnabled = false
         textView.smartInsertDeleteEnabled = false
         cardScrollView.translatesAutoresizingMaskIntoConstraints = true
+        subscribeAdaptiveCardStation()
+    }
+    
+    deinit {
+        adaptiveCardStationCenter.unsubscribeReleasedObservers()
+    }
+    
+    private func subscribeAdaptiveCardStation() {
+        adaptiveCardStationCenter.subscribe(self, for: .debug)
     }
     
     // MARK: Private Methods
@@ -312,5 +322,14 @@ extension RootViewController: AdaptiveCardResourceResolver {
     
     func adaptiveCard(_ adaptiveCard: NSView, attributedStringFor htmlString: String) -> NSAttributedString? {
         return nil
+    }
+}
+extension RootViewController: AdaptiveCardSparkDebugObserver {
+    func debugPrint(log msg: Any?) {
+        if let userInfoLog = msg as? [String: Any] {
+            if let logMsg = userInfoLog["logMsg"] as? String {
+                print(logMsg)
+            }
+        }
     }
 }

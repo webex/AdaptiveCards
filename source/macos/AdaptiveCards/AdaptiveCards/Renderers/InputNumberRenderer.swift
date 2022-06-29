@@ -7,10 +7,10 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let inputElement = element as? ACSNumberInput else {
-            logError("Element is not of type ACSNumberInput")
+            logError("InputNumberRenderer -> element is not of type ACSNumberInput")
             return NSView()
         }
-        
+        logInfo("InputNumberRenderer -> init")
         // setting up basic properties for Input.Number TextField
         let inputField: ACRNumericTextField = {
             let view = ACRNumericTextField(config: config, inputElement: inputElement)
@@ -42,6 +42,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     private let config: RenderConfig
     
     init(config: RenderConfig, inputElement: ACSBaseInputElement) {
+        logInfo("ACRNumericTextField -> init with render config")
         self.inputElement = inputElement
         self.config = config
         super.init(frame: .zero)
@@ -231,7 +232,7 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     
     var key: String {
         guard let id = id else {
-            logError("ID must be set on creation")
+            logError("ACRNumericTextField -> ID must be set on creation")
             return ""
         }
         return id

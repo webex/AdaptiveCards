@@ -46,6 +46,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         self.buttonSpacing = buttonSpacing
         self.exteriorPadding = exteriorPadding
         super.init(frame: .zero)
+        logInfo("ACRActionSetView -> ")
         initialize()
     }
     
@@ -56,6 +57,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         self.buttonSpacing = 8
         self.exteriorPadding = 0
         super.init(coder: coder)
+        logInfo("ACRActionSetView -> ")
         initialize()
     }
     
@@ -65,6 +67,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         addSubview(stackView)
         addSubview(showCardStackView)
         setupConstraints()
+        logInfo("ACRActionSetView -> ")
     }
     
     override func resizeSubviews(withOldSize oldSize: NSSize) {
@@ -114,7 +117,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
     
     private func renderAndAddShowCard(_ card: ACSAdaptiveCard) -> NSView {
         guard let rDelegate = delegate else {
-            logError("Rendering show card failed. Delegate is nil")
+            logError("ACRActionSetView -> Rendering show card failed. Delegate is nil")
             return NSView()
         }
         let cardView = rDelegate.actionSetView(self, renderShowCardFor: card)
@@ -172,7 +175,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
 extension ACRActionSetView: ShowCardTargetHandlerDelegate {
     func handleShowCardAction(button: NSButton, showCard: ACSAdaptiveCard) {
         guard let cardId = showCard.getInternalId()?.hash() else {
-            logError("Card InternalID is nil")
+            logError("ACRActionSetView -> Card InternalID is nil")
             return
         }
         

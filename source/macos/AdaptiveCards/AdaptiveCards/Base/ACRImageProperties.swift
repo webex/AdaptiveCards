@@ -13,7 +13,7 @@ class ACRImageProperties: NSObject {
     init(element: ACSBaseCardElement, config: ACSHostConfig, parentView: NSView) {
         super.init()
         guard let imageElement = element as? ACSImage else {
-            logError("Element is not of type ACSImage")
+            logError("ACRImageProperties -> Element is not of type ACSImage")
             return
         }
         

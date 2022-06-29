@@ -6,9 +6,10 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let textBlock = element as? ACSTextBlock else {
-            logError("Element is not of type ACSTextBlock")
+            logError("TextblockRenderer -> element is not of type ACSTextBlock")
             return NSView()
         }
+        logInfo("TextblockRenderer -> init")
         let textView = ACRTextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -48,7 +49,6 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         if attributedString.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             // Hide accessibility Element
         }
-        
         return textView
     }
 }

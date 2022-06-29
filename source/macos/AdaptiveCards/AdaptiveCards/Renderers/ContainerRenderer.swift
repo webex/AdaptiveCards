@@ -6,10 +6,10 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let container = element as? ACSContainer else {
-            logError("Element is not of type ACSContainer")
+            logError("ContainerRenderer -> Element is not of type ACSContainer")
             return NSView()
         }
-        
+        logInfo("ContainerRenderer -> init")
         let containerView = ACRColumnView(style: container.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: rootView, needsPadding: container.getPadding())
         containerView.translatesAutoresizingMaskIntoConstraints = false
         

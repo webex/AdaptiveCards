@@ -6,7 +6,7 @@ class ActionOpenURLRenderer: BaseActionElementRendererProtocol {
     
     func render(action: ACSBaseActionElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, targetHandlerDelegate: TargetHandlerDelegate, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let openURLAction = action as? ACSOpenUrlAction else {
-            logError("Element is not of type ACSOpenUrlAction")
+            logError("ActionOpenURLRenderer -> Element is not of type ACSOpenUrlAction")
             return NSView()
         }
         

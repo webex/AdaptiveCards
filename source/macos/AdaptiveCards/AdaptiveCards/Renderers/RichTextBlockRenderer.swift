@@ -6,10 +6,10 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let richTextBlock = element as? ACSRichTextBlock else {
-            logError("Element is not of type ACSRichTextBlock")
+            logError("RichTextBlockRenderer -> element is not of type ACSRichTextBlock")
             return NSView()
         }
-        
+        logInfo("RichTextBlockRenderer -> init")
         let textView = ACRTextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.isEditable = false
@@ -32,7 +32,7 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         // parsing through the inlines
         for inline in richTextBlock.getInlines() {
             guard let textRun = inline as? ACSTextRun else {
-                logError("Not of type ACSTextRun")
+                logError("RichTextBlockRenderer -> Not of type ACSTextRun")
                 continue
             }
                 

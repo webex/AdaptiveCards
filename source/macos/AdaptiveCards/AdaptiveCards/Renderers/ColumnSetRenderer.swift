@@ -6,9 +6,10 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let columnSet = element as? ACSColumnSet else {
-            logError("Element is not of type ACSColumnSet")
+            logError("ColumnSetRenderer -> element is not of type ACSColumnSet")
             return NSView()
         }
+        logInfo("ColumnSetRenderer -> init")
         let columnSetView = ACRContentStackView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: columnSet.getPadding())
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
         columnSetView.orientation = .horizontal
@@ -67,7 +68,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             columnSetView.distribution = .gravityAreas
         } else {
             guard columnViews.count == totalColumns else {
-                logError("ArrangedSubViews count mismatch")
+                logError("ColumnSetRenderer -> ArrangedSubViews count mismatch")
                 return columnSetView
             }
             columnSetView.distribution = .fill

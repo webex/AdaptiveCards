@@ -8,7 +8,7 @@ class UnknownElementRenderer: BaseCardElementRendererProtocol, BaseActionElement
         switch  element.getFallbackType() {
         case .content:
             guard let fallbackElement = element.getFallbackContent() as? ACSBaseCardElement else {
-                logError("Fallback Content is not of type ACSBaseCardElement")
+                logError("UnknownElementRenderer -> Fallback Content is not of type ACSBaseCardElement")
                 return NSView()
             }
             return RendererManager.shared.renderer(for: fallbackElement.getType()).render(element: fallbackElement, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)

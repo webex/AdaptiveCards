@@ -23,6 +23,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
         self.config = config
         self.inputConfig = config.inputFieldConfig
         super.init(frame: .zero)
+        logInfo("ACRMultilineInputTextView -> ")
         BundleUtils.loadNibNamed("ACRMultilineInputTextView", owner: self)
         setupViews()
         setupConstraints()
@@ -30,6 +31,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     
     convenience init(config: RenderConfig, inputElement: ACSBaseInputElement) {
         self.init(config: config)
+        logInfo("ACRMultilineInputTextView -> ")
         setupInputElementProperties(inputElement: inputElement)
     }
     
@@ -53,6 +55,7 @@ class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        logInfo("ACRMultilineInputTextView -> ")
         scrollView.wantsLayer = true
         scrollView.focusRingCornerRadius = inputConfig.focusRingCornerRadius
         scrollView.focusRingType = .exterior
@@ -193,7 +196,7 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     
     var key: String {
         guard let id = id else {
-            logError("ID must be set on creation")
+            logError("ACRMultilineInputTextView -> ID must be set on creation")
             return ""
         }
         return id

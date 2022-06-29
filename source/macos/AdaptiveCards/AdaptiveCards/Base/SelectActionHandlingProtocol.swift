@@ -49,7 +49,7 @@ extension SelectActionHandlingProtocol {
         case .toggleVisibility:
             view.setAccessibilityLabel("You are on a Visibility Toggle")
         default:
-            logError("Unhandled Select Action Present in card")
+            logError("SelectActionHandlingProtocol -> Unhandled Select Action Present in card")
         }
     }
 }

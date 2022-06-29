@@ -13,7 +13,7 @@ extension ACSHostConfig {
     
     func getBackgroundColor(for containerStyle: ACSContainerStyle) -> NSColor? {
         guard let hexColorCode = getBackgroundColor(containerStyle) else {
-            logError("HexColorCode is nil")
+            logError("ACSHostConfig -> HexColorCode is nil")
             return nil
         }
         return ColorUtils.color(from: hexColorCode)
@@ -21,7 +21,7 @@ extension ACSHostConfig {
     
     func getBorderColor(for containerStyle: ACSContainerStyle) -> NSColor? {
         guard let hexColorCode = getBorderColor(containerStyle) else {
-            logError("HexColorCode is nil")
+            logError("ACSHostConfig -> HexColorCode is nil")
             return nil
         }
         return ColorUtils.color(from: hexColorCode)
@@ -29,7 +29,7 @@ extension ACSHostConfig {
     
     func getBorderThickness(for containerStyle: ACSContainerStyle) -> CGFloat? {
         guard let thickness = getBorderThickness(containerStyle) else {
-            logError("HexColorCode is nil")
+            logError("ACSHostConfig -> HexColorCode is nil")
             return nil
         }
         return CGFloat(exactly: thickness)
@@ -76,7 +76,7 @@ class FontUtils {
             return getSystemFont(for: hostConfig, with: textProperties, fontWeight: fontWeight, italic: isItalic, bold: isBolder)
         }
         guard let customFont = NSFont(name: fontFamily, size: CGFloat(size)) else {
-            logError("Font with fontFamily '\(fontFamily)' not found. Returning system font.")
+            logError("FontUtils -> Font with fontFamily '\(fontFamily)' not found. Returning system font.")
             notFoundFontFamilies.insert(fontFamily)
             return getSystemFont(for: hostConfig, with: textProperties, fontWeight: fontWeight, italic: isItalic, bold: isBolder)
         }
@@ -84,7 +84,7 @@ class FontUtils {
         descriptor.addingAttributes([.face: fontWeights[fontWeight]])
         descriptor = getBoldItalicFontDescriptor(descriptor, italic: isItalic, bold: isBolder)
         guard let finalFont = NSFont(descriptor: descriptor, size: CGFloat(size)) else {
-            logError("Font with fontFamily '\(fontFamily)' not found. Returning system font.")
+            logError("FontUtils -> Font with fontFamily '\(fontFamily)' not found. Returning system font.")
             notFoundFontFamilies.insert(fontFamily)
             return getSystemFont(for: hostConfig, with: textProperties, fontWeight: fontWeight, italic: isItalic, bold: isBolder)
         }
@@ -109,7 +109,7 @@ class FontUtils {
         var fontDescriptor = systemFont.fontDescriptor
         fontDescriptor = getBoldItalicFontDescriptor(fontDescriptor, italic: italic, bold: bold)
         guard let font = NSFont(descriptor: fontDescriptor, size: CGFloat(size)) else {
-            logError("Generating System Italic-bold font failed")
+            logError("FontUtils -> Generating System Italic-bold font failed")
             return systemFont
         }
         return font
@@ -125,7 +125,7 @@ class ColorUtils {
         }
         
         guard hexString.count == 6 || hexString.count == 8 else {
-            logError("Not valid HexCode: \(hexString)")
+            logError("ColorUtils -> Not valid HexCode: \(hexString)")
             return nil
         }
         
@@ -144,7 +144,7 @@ class ColorUtils {
                                blue: CGFloat(rgbValue & 0x000000FF) / 255.0,
                                alpha: CGFloat((rgbValue & 0xFF000000) >> 24) / 255.0)
         default:
-            logError("Not valid HexCode: \(hexString)")
+            logError("ColorUtils -> Not valid HexCode: \(hexString)")
             return nil
         }
     }
@@ -253,7 +253,7 @@ class HostConfigUtils {
         case .extraLarge: spaceAdded = spacingConfig?.extraLargeSpacing ?? 40
         case .padding: spaceAdded = spacingConfig?.paddingSpacing ?? 20
         @unknown default:
-            logError("Unknown padding!")
+            logError("HostConfigUtils -> Unknown padding!")
             spaceAdded = 0
         }
         return spaceAdded

@@ -6,9 +6,10 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let inputBlock = element as? ACSTextInput else {
-            logError("Element is not of type ACSTextInput")
+            logError("TextInputRenderer -> element is not of type ACSTextInput")
             return NSView()
         }
+        logInfo("TextInputRenderer -> init")
         let stackview: NSStackView = {
             let view = NSStackView()
             view.orientation = .horizontal
@@ -97,8 +98,9 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
     
     private func addInlineButton(parentview: NSStackView, view: NSView, element: ACSTextInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig, rootview: ACRView, config: RenderConfig) {
         guard let action = element.getInlineAction() else {
-            return logError("InlineAction is nil")
+            return logError("TextInputRenderer -> inline action is nil")
         }
+        logInfo("TextInputRenderer -> add inline button")
         let button = ACRButton(actionElement: action, iconPlacement: hostConfig.getActions()?.iconPlacement, buttonConfig: config.buttonConfig, style: .inline)
         if let iconUrl = action.getIconUrl(), !iconUrl.isEmpty {
             rootview.registerImageHandlingView(button, for: iconUrl)
@@ -123,17 +125,19 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         switch action.getType() {
         case .openUrl:
             guard let openURLAction = action as? ACSOpenUrlAction else {
-                logError("Element is not of type ACSOpenUrlAction")
+                logError("TextInputRenderer -> element is not of type ACSOpenUrlAction")
                 return
             }
+            logInfo("TextInputRenderer -> add open Url action")
             let target = ActionOpenURLTarget(element: openURLAction, delegate: rootview)
             target.configureAction(for: button)
             rootview.addTarget(target)
         case .submit:
             guard let submitAction = action as? ACSSubmitAction else {
-                logError("Element is not of type ACSSubmitAction")
+                logError("TextInputRenderer -> element is not of type ACSSubmitAction")
                 return
             }
+            logInfo("TextInputRenderer -> add submit action")
             let target = ActionSubmitTarget(element: submitAction, delegate: rootview)
             target.configureAction(for: button)
             rootview.addTarget(target)
@@ -152,7 +156,7 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
     
     var key: String {
         guard let id = idString else {
-            logError("ID must be set on creation")
+            logError("ACRTextInputView -> ID must be set on creation")
             return ""
         }
         return id

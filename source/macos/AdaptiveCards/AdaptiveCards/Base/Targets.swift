@@ -92,7 +92,7 @@ class ActionShowCardTarget: NSObject, TargetHandler {
     
     @objc private func handleButtonAction(_ sender: NSButton) {
         guard let showCardHandler = delegate as? ShowCardTargetHandlerDelegate else {
-            logError("delegate should be of type 'ShowCardHandlerDelegate'")
+            logError("ActionShowCardTarget -> delegate should be of type 'ShowCardHandlerDelegate'")
             return
         }
         showCardHandler.handleShowCardAction(button: sender, showCard: showCard)

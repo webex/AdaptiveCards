@@ -37,9 +37,9 @@ class AdaptiveCardRenderer {
         rootView.delegate = actionDelegate
         rootView.resolverDelegate = resourceResolver
         if card.getVersion() == "1.3", !config.supportsSchemeV1_3 {
-            logError("CardVersion 1.3 not supported, Card properties of this version and above won't be rendered")
+            logError("Renderer -> CardVersion 1.3 not supported, Card properties of this version and above won't be rendered")
         }
-           
+        logInfo("Renderer -> add ACRView body")
         for (index, element) in card.getBody().enumerated() {
             let isFirstElement = index == 0
             let renderer = RendererManager.shared.renderer(for: element.getType())
@@ -50,6 +50,7 @@ class AdaptiveCardRenderer {
         }
         
         if !card.getActions().isEmpty {
+            logInfo("Renderer -> add ACRView action")
             let view = ActionSetRenderer.shared.renderActionButtons(actions: card.getActions(), with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [], config: config)
             // getting spacing from hostConfig
             if let verticalSpacing = hostConfig.getActions()?.spacing {

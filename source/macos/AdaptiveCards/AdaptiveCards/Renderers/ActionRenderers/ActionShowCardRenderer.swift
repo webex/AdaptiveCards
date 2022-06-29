@@ -6,7 +6,7 @@ class ActionShowCardRenderer: BaseActionElementRendererProtocol {
     
     func render(action: ACSBaseActionElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, targetHandlerDelegate: TargetHandlerDelegate, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let showCardAction = action as? ACSShowCardAction else {
-            logError("Element is not of type ACSShowCardAction")
+            logError("ActionShowCardRenderer -> Element is not of type ACSShowCardAction")
             return NSView()
         }
         
@@ -16,7 +16,7 @@ class ActionShowCardRenderer: BaseActionElementRendererProtocol {
         }
 
         guard let showCard = showCardAction.getCard() else {
-            logError("ShowCard object is nil")
+            logError("ActionShowCardRenderer -> ShowCard object is nil")
             return button
         }
         

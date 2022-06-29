@@ -172,11 +172,13 @@ open class FlatButton: NSButton, CALayerDelegate {
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
+        logInfo("FlatButton -> ")
         initialize()
     }
     
     override init(frame: NSRect) {
         super.init(frame: frame)
+        logInfo("FlatButton -> ")
         initialize()
     }
     
@@ -222,6 +224,7 @@ open class FlatButton: NSButton, CALayerDelegate {
         setupImage()
         setupTrackingArea()
         drawsChevron(chevIcon: chevronDownIcon)
+        logInfo("FlatButton -> ")
     }
     
     internal func setupTitle() {

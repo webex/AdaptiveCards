@@ -6,9 +6,10 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let factSet = element as? ACSFactSet else {
-            logError("Element is not of type ACSFactSet")
+            logError("FactSetRenderer -> element is not of type ACSFactSet")
             return NSView()
         }
+        logInfo("FactSetRenderer -> init")
         let factArray = factSet.getFacts()
         let factsetConfig = hostConfig.getFactSet()
         
@@ -98,7 +99,7 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
         for (index, elem) in titleStack.arrangedSubviews.enumerated() {
             let valueArray = valueStack.arrangedSubviews
             guard let titleView = elem as? ACRTextView, let valueView = valueArray[index] as? ACRTextView else {
-                 logError("Element inside FactSetStack is not of type ACRFactTextField")
+                 logError("FactSetRenderer -> Element inside FactSetStack is not of type ACRFactTextField")
                  continue
             }
             titleView.heightAnchor.constraint(equalTo: valueView.heightAnchor).isActive = true

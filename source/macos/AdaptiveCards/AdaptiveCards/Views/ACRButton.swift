@@ -13,18 +13,21 @@ class ACRButton: FlatButton, ImageHoldingView {
         
     override init(frame: NSRect) {
         super.init(frame: frame)
+        logInfo("ACRButton -> ")
         initialize()
         setupButtonStyle(style: .default, buttonConfig: .default)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        logInfo("ACRButton -> ")
         initialize()
         setupButtonStyle(style: .default, buttonConfig: .default)
     }
     
     init(frame: NSRect = .zero, wantsChevron: Bool = false, wantsIcon: Bool = false, iconPosition: NSControl.ImagePosition = .imageLeft, style: ActionStyle = .default, buttonConfig: ButtonConfig = .default) {
         super.init(frame: frame)
+        logInfo("ACRButton -> init")
         font = buttonConfig.font
         contentInsets = buttonConfig.buttonContentInsets
         // In case the config images for chevron are present, make them config ones, or take the default image
@@ -42,6 +45,7 @@ class ACRButton: FlatButton, ImageHoldingView {
         onAnimationDuration = 0.0
         offAnimationDuration = 0.0
         momentary = !showsChevron
+        logInfo("ACRButton -> ")
     }
     
     override func awakeFromNib() {
@@ -75,6 +79,8 @@ class ACRButton: FlatButton, ImageHoldingView {
             colorConfig = buttonConfig.inline
         }
         
+        logInfo("ACRButton -> ")
+        
         borderColor = colorConfig.borderColor
         selectedBorderColor = colorConfig.selectedBorderColor
         
@@ -90,6 +96,7 @@ class ACRButton: FlatButton, ImageHoldingView {
 
 extension ACRButton {
     convenience init(actionElement: ACSBaseActionElement, iconPlacement: ACSIconPlacement?, buttonConfig: ButtonConfig, style: ActionStyle? = nil) {
+        logInfo("ACRButton -> ")
         let buttonStyle = style ?? ActionStyle(rawValue: actionElement.getStyle() ?? "") ?? .default
         let position = iconPlacement?.imagePosition ?? .imageLeft
         self.init(wantsChevron: actionElement is ACSShowCardAction, wantsIcon: actionElement.hasValidIcon, iconPosition: position, style: buttonStyle, buttonConfig: buttonConfig)

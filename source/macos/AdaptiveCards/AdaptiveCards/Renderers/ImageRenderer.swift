@@ -6,15 +6,15 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let imageElement = element as? ACSImage else {
-            logError("Element is not of type ACSImage")
+            logError("ImageRenderer -> Element is not of type ACSImage")
             return NSView()
         }
                         
         guard let url = imageElement.getUrl() else {
-            logError("URL is not available")
+            logError("ImageRenderer -> URL is not available")
             return NSView()
         }
-        
+        logInfo("ImageRenderer -> init")
         let imageView: ImageView
         if let dimensions = rootView.getImageDimensions(for: url) {
             let image = NSImage(size: dimensions)
@@ -98,12 +98,12 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func configUpdateForImage(image: NSImage?, imageView: NSImageView) {
         guard let superView = imageView.superview as? ACRImageWrappingView, let imageSize = image?.absoluteSize else {
-            logError("superView or image is nil")
+            logError("ImageRenderer -> superView or image is nil")
             return
         }
         
         guard let imageProperties = superView.imageProperties else {
-            logError("imageProperties is null")
+            logError("ImageRenderer -> imageProperties is null")
             return
         }
         imageProperties.updateContentSize(size: imageSize)

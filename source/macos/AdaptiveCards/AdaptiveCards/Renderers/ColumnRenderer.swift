@@ -6,10 +6,10 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let column = element as? ACSColumn else {
-            logError("Element is not of type ACSColumn")
+            logError("ColumnRenderer -> Element is not of type ACSColumn")
             return NSView()
         }
-        
+        logInfo("ColumnRenderer -> init")
         let columnView = ACRColumnView(style: column.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: column.getPadding())
         columnView.translatesAutoresizingMaskIntoConstraints = false
         columnView.setWidth(ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth()))

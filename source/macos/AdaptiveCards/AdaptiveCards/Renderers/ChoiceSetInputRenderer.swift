@@ -6,9 +6,10 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let choiceSetInput = element as? ACSChoiceSetInput else {
-            logError("Element is not of type ACSChoiceSetInput")
+            logError("ChoiceSetInputRenderer -> element is not of type ACSChoiceSetInput")
             return NSView()
         }
+        logInfo("ChoiceSetInputRenderer -> init")
         if !choiceSetInput.getIsMultiSelect() {
             // style is compact or expanded
             if choiceSetInput.getChoiceSetStyle() == .compact {
@@ -23,6 +24,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
     }
     
     private func choiceSetRenderInternal(choiceSetInput: ACSChoiceSetInput, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, renderConfig: RenderConfig) -> NSView {
+        logInfo("ChoiceSetInputRenderer -> internal render")
         // Parse input default values for multi-select
         let defaultParsedValues = parseChoiceSetInputDefaultValues(value: choiceSetInput.getValue() ?? "")
         let isMultiSelect = choiceSetInput.getIsMultiSelect()
@@ -52,6 +54,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
     }
     
     private func choiceSetCompactRenderInternal (choiceSetInput: ACSChoiceSetInput, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, renderConfig: RenderConfig) -> NSView {
+        logInfo("ChoiceSetInputRenderer -> internal compact render")
         // compact button renderer
         let choiceSetFieldCompactView = ACRChoiceSetCompactView(element: choiceSetInput, renderConfig: renderConfig)
         choiceSetFieldCompactView.autoenablesItems = false

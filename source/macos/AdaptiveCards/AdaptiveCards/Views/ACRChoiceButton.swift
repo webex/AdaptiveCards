@@ -50,6 +50,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         self.buttonTitle = buttonTitle
         
         super.init(frame: .zero)
+        logInfo("ACRChoiceButton -> ")
         button.setButtonType(buttonType == .switch ? .switch : .radio)
         setupViews()
         setupConstraints()
@@ -225,7 +226,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     
     var key: String {
         guard let id = idString else {
-            logError("ID must be set on creation")
+            logError("ACRChoiceButton -> ID must be set on creation")
             return ""
         }
         return id

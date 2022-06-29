@@ -6,9 +6,10 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let inputToggle = element as? ACSToggleInput else {
-            logError("Element is not of type ACSToggleInput")
+            logError("InputToggleRenderer -> element is not of type ACSToggleInput")
             return NSView()
         }
+        logInfo("InputToggleRenderer -> init")
         // NSMutableAttributedString for the checkbox title
         let attributedString: NSMutableAttributedString
         // NSButton for checkbox

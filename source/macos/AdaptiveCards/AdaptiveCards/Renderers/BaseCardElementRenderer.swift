@@ -5,6 +5,7 @@ class BaseCardElementRenderer {
     static let shared = BaseCardElementRenderer()
     
     func updateView(view: NSView, element: ACSBaseCardElement, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) -> NSView {
+        logInfo("BaseCardElementRenderer -> update view")
         let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig, renderConfig: config)
         
         // For Spacing
@@ -54,11 +55,12 @@ class BaseCardElementRenderer {
             return
         }
         guard let collectionView = collectionView as? ACRContentStackView else {
-            logError("Container is not type of ACRContentStackView")
+            logError("BaseCardElementRenderer -> Container is not type of ACRContentStackView")
             return
         }
         // bleed specification requires the object that's asked to be bled to have padding
         if collection.getPadding() {
+            logInfo("BaseCardElementRenderer -> bleed config init")
             let adaptiveBleedDirection = collection.getBleedDirection()
             let direction = ACRBleedDirection(rawValue: adaptiveBleedDirection.rawValue)
             
@@ -103,7 +105,7 @@ class BaseCardElementRenderer {
             
             if collection.getBackgroundImage() != nil {
                 guard let collectionView = collectionView as? ACRColumnView else {
-                    logError("Collection View is not type of ACRColumnView")
+                    logError("BaseCardElementRenderer -> Collection View is not type of ACRColumnView")
                     return
                 }
                 collectionView.bleedBackgroundImage(padding: padding, top: top, bottom: bottom, leading: leading, trailing: trailing, paddingBottom: paddingBottom, with: bottomAnchor)

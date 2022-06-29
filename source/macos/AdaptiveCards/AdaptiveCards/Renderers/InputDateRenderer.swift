@@ -6,10 +6,10 @@ open class InputDateRenderer: NSObject, BaseCardElementRendererProtocol {
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let dateElement = element as? ACSDateInput else {
-            logError("Element is not of type ACSDateInput")
+            logError("InputDateRenderer -> Element is not of type ACSDateInput")
             return NSView()
         }
-
+        logInfo("InputDateRenderer -> init")
         // setting up basic properties for Input.Date Field
         let inputField: ACRDateField = {
             let view = ACRDateField(isTimeMode: false, config: config, inputElement: dateElement)

@@ -160,7 +160,7 @@ class ACRView: ACRColumnView {
         var toggledContentStackViews: [(ACRContentStackView, Bool)] = []
         for target in targets {
             guard let id = target.getElementId(), let toggleView = findSubview(with: id) else {
-                logError("Target with ID '\(target.getElementId() ?? "nil")' not found for toggleVisibility.")
+                logError("ACRView -> Target with ID '\(target.getElementId() ?? "nil")' not found for toggleVisibility.")
                 continue
             }
             let oldHiddenValue = toggleView.isHidden
@@ -172,7 +172,7 @@ class ACRView: ACRColumnView {
             case .isVisibleFalse:
                 toggleView.isHidden = true
             @unknown default:
-                logError("Unknown ToggleIsVisible value \(target.getIsVisible())")
+                logError("ACRView -> Unknown ToggleIsVisible value \(target.getIsVisible())")
             }
             if let contentStackView = toggleView as? ACRContentStackView {
                 toggledContentStackViews.append((contentStackView, oldHiddenValue))
@@ -235,7 +235,7 @@ extension ACRView: TargetHandlerDelegate {
 extension ACRView: ImageResourceHandlerView {
     func setImage(_ image: NSImage, for url: String) {
         guard let imageViews = imageViewMap[url] else {
-            logError("No views registered for url '\(url)'")
+            logError("ACRView -> No views registered for url '\(url)'")
             return
         }
         DispatchQueue.main.async {

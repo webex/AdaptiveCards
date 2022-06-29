@@ -110,7 +110,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     
     var key: String {
         guard let id = idString else {
-            logError("ID must be set on creation")
+            logError("ACRDateField -> ID must be set on creation")
             return ""
         }
         return id
@@ -140,6 +140,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         self.config = config
         self.inputElement = inputElement
         super.init(frame: .zero)
+        logInfo("ACRDateField -> ")
         setupViews()
         setupConstraints()
         setupPopover()
