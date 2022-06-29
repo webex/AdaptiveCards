@@ -12,7 +12,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var stackViewTopConstraint: NSLayoutConstraint?
     private var stackViewBottomConstraint: NSLayoutConstraint?
     
-    private var currentSpacingView: SpacingView?
+    private (set) var currentSpacingView: SpacingView? // made as set for use in test
     private var currentSeparatorView: SpacingView?
     private (set) var errorMessageField: NSTextField?
     private (set) var inputLabelField: NSTextField?
