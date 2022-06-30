@@ -93,4 +93,11 @@ class ColumnSetRendererTests: XCTestCase {
         guard let columnSetView = view as? ACRContentStackView else { fatalError() }
         return columnSetView
     }
+    
+    public func renderColumnSetViewForActionset(hostConfig: FakeHostConfig, columnSet: FakeColumnSet) -> ACRContentStackView {
+        self.hostConfig = hostConfig
+        self.columnSet = columnSet
+        columnSetRenderer = ColumnSetRenderer()
+        return renderColumnSetView()
+    }
 }
