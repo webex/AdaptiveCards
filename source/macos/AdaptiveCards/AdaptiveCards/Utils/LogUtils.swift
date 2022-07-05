@@ -43,7 +43,7 @@ public enum AdaptiveCardObservedType {
 public protocol AdaptiveCardObserver: AnyObject {}
 
 public protocol AdaptiveCardSparkDebugObserver: AdaptiveCardObserver {
-    func debugPrint(log msg: Any?)
+    func adaptiveCardPrint(debugLog msg: Any?)
 }
 
 /// Wrapper class that will hold the weak value of subscribers else VCs are gonna be retained
@@ -105,7 +105,7 @@ extension AdaptiveCardStationCenter {
     public func publishDebug(log msg: Any?) {
         observers.filter({ $0.types.contains(.debug) }).forEach { observer in
             guard let cardObserver = observer.value as? AdaptiveCardSparkDebugObserver else { return }
-            cardObserver.debugPrint(log: msg)
+            cardObserver.adaptiveCardPrint(debugLog: msg)
         }
     }
 }

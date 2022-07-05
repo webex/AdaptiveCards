@@ -325,7 +325,7 @@ extension RootViewController: AdaptiveCardResourceResolver {
     }
 }
 extension RootViewController: AdaptiveCardSparkDebugObserver {
-    func debugPrint(log msg: Any?) {
+    func adaptiveCardPrint(debugLog msg: Any?) {
         if let userInfoLog = msg as? [String: Any] {
             if let logMsg = userInfoLog["logMsg"] as? String {
                 print(logMsg)
