@@ -118,15 +118,15 @@ class ACRView: ACRColumnView {
         if view.subviews.isEmpty {
             return nil
         }
-        for sView in view.subviews {
-            if sView == self {
+        for subView in view.subviews {
+            if subView == self {
                 return nil
             }
             
-            if sView.identifier?.rawValue == id {
-                return sView
+            if subView.identifier?.rawValue == id {
+                return subView
             }
-            if let inSubview = getSubView(with: id, in: sView) {
+            if let inSubview = getSubView(with: id, in: subView) {
                 return inSubview
             }
         }
