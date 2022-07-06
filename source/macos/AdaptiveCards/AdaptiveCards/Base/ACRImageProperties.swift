@@ -48,26 +48,32 @@ class ACRImageProperties: NSObject {
     }
     
     func updateContentSize(size: CGSize) {
-        let ratios: CGSize = ImageUtils.getAspectRatio(from: size)
+        let ratios: ACRAspectRatio = ACRImageProperties.convertToAspectRatio(size)
         
-        let heightToWidthRatio = ratios.height
-        let widthToHeightRatio = ratios.width
+        let heightToWidthRatio = ratios.heightToWidth
+        let widthToHeightRatio = ratios.widthToHeight
         var newSize = contentSize
+        
+        let newHeight: ((CGFloat) -> CGFloat) = { width in
+            return width * heightToWidthRatio
+        }
+
+        let newWidth: ((CGFloat) -> CGFloat) = { height in
+            return height * widthToHeightRatio
+        }
         
         if hasExplicitDimensions {
             if pixelWidth > 0 {
                 newSize.width = pixelWidth
                 if pixelHeight == 0 {
-                    newSize.height = pixelWidth * heightToWidthRatio
-                    pixelHeight = newSize.height
+                    newSize.height = newHeight(self.pixelWidth)
                 }
             }
             
             if pixelHeight > 0 {
                 newSize.height = pixelHeight
                 if pixelWidth == 0 {
-                    newSize.width = pixelHeight * widthToHeightRatio
-                    pixelWidth = newSize.width
+                    newSize.width = newWidth(self.pixelHeight)
                 }
             }
             contentSize = newSize
@@ -75,7 +81,7 @@ class ACRImageProperties: NSObject {
             contentSize = size
         } else if acsImageSize == ACSImageSize.small || acsImageSize == ACSImageSize.medium || acsImageSize == ACSImageSize.large {
             newSize = contentSize
-            newSize.height = contentSize.width * heightToWidthRatio
+            newSize.height = newHeight(self.contentSize.width)
             contentSize = newSize
         }
     }

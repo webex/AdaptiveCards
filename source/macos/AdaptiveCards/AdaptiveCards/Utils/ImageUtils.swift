@@ -10,21 +10,19 @@ class ImageUtils {
     
     static func getImageSizeAsCGSize(imageSize: ACSImageSize, width: CGFloat, height: CGFloat, with config: ACSHostConfig, explicitDimensions: Bool) -> CGSize {
         if explicitDimensions {
-            var isAspectRatioNeeded = false
+            let isAspectRatioNeeded = !(width > 0 && height > 0)
             var imageSizeAsCGSize = CGSize.zero
-            if !(width > 0 && height > 0) {
-                isAspectRatioNeeded = true
-            }
+            
             if width > 0 {
                 imageSizeAsCGSize.width = width
                 if isAspectRatioNeeded {
-                    imageSizeAsCGSize.height = imageSizeAsCGSize.width
+                    imageSizeAsCGSize.height = width
                 }
             }
             if height > 0 {
                 imageSizeAsCGSize.height = height
                 if isAspectRatioNeeded {
-                    imageSizeAsCGSize.width = imageSizeAsCGSize.height
+                    imageSizeAsCGSize.width = height
                 }
             }
             return imageSizeAsCGSize
