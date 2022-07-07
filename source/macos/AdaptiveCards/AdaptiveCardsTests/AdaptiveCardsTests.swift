@@ -69,6 +69,54 @@ class AdaptiveCardsTests: XCTestCase {
         XCTAssertNil(weakCard4)
     }
     
+    func testChildToParentToggleVisibility() {
+        let bundle = Bundle(for: type(of: self))
+        let filename = "ToggleVisibilityChildToParent.json"
+        
+        let dataAsset = NSDataAsset(name: filename, bundle: bundle)?.data
+        guard let data = dataAsset else { return }
+        let jsonString = String(data: data, encoding: .utf8)!
+        
+        let hostConfigData = NSDataAsset(name: "HostConfig.json", bundle: bundle)!.data
+        let hostConfigJSON = String(data: hostConfigData, encoding: .utf8)!
+        let hostConfig = try! AdaptiveCard.parseHostConfig(from: hostConfigJSON).get()
+        
+        let card = AdaptiveCard.from(jsonString: jsonString).getAdaptiveCard()!
+        
+        let cardView = AdaptiveCard.render(card: card, with: hostConfig, width: 432, actionDelegate: delegate, resourceResolver: resourceResolver)
+        
+        // get the show card button to show child card view
+        guard let showCardButton = cardView.buttonInHierachy(withTitle: "Showcard1") else {
+            XCTFail()
+            return
+        }
+        showCardButton.performClick()
+        
+        // get toggle button from parent
+        guard let columnParentButton = cardView.buttonInHierachy(withTitle: "Column Parent") else {
+            XCTFail()
+            return
+        }
+        
+        // get toggle button from child
+        guard let columnChildButton = cardView.buttonInHierachy(withTitle: "Column Child1") else {
+            XCTFail()
+            return
+        }
+        
+        // on initial render column1 is visible
+        guard let column1View = cardView.getView(with: "column1", in: cardView) else { return }
+        XCTAssertFalse(column1View.isHidden)
+                
+        // now on parent toggle button click , column1 becomes hidden
+        columnParentButton.performClick()
+        XCTAssertTrue(column1View.isHidden)
+        
+        // now on child toggle button click , column1 becomes visible again
+        columnChildButton.performClick()
+        XCTAssertFalse(column1View.isHidden)
+    }
+    
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         self.measure {
