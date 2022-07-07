@@ -28,6 +28,21 @@ extension NSView {
         }
         return nil
     }
+    
+    func getView(with id: String, in view: NSView) -> NSView? {
+        if view.subviews.isEmpty {
+            return nil
+        }
+        for subView in view.subviews {
+            if subView.identifier?.rawValue == id {
+                return subView
+            }
+            if let inSubview = getView(with: id, in: subView) {
+                return inSubview
+            }
+        }
+        return nil
+    }
 }
 
 class FakeErrorMessageHandlerDelegate: InputHandlingViewErrorDelegate {
