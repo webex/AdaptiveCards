@@ -92,22 +92,57 @@ class ACRView: ACRColumnView {
         focusedElementOnHideError = currentFocussedView
     }
     
-    private func findSubview(with identifier: String) -> NSView? {
-        func subview(with id: String, in view: NSView) -> NSView? {
-            if view.subviews.isEmpty {
-                return nil
-            }
-            for sView in view.subviews {
-                if sView.identifier?.rawValue == identifier {
-                    return sView
+    private func findToggledView(with identifier: String) -> NSView? {
+        // find view in self card
+        guard let toggledView = getSubView(with: identifier, in: self) else {
+            var toggledViewToReturn: NSView?
+            
+            // checking if parent card exists
+            guard var superView = getSuperView(for: self) else { return nil }
+            // finding view in parent card
+            toggledViewToReturn = getSubView(with: identifier, in: superView)
+            
+            // if parent card does not have view too , chekcing for view in further cards up the hierarchy
+            while superView.superview != nil && toggledViewToReturn == nil {
+                if let sView = getSuperView(for: superView) {
+                    toggledViewToReturn = getSubView(with: identifier, in: sView)
+                    superView = sView
+                } else {
+                    return toggledViewToReturn
                 }
-                if let inSubview = subview(with: id, in: sView) {
-                    return inSubview
-                }
             }
+            return toggledViewToReturn
+        }
+        return toggledView
+    }
+    
+    private func getSubView(with id: String, in view: NSView) -> NSView? {
+        if view.subviews.isEmpty {
             return nil
         }
-        return subview(with: identifier, in: self)
+        for subView in view.subviews {
+            if subView == self {
+                return nil
+            }
+            
+            if subView.identifier?.rawValue == id {
+                return subView
+            }
+            if let inSubview = getSubView(with: id, in: subView) {
+                return inSubview
+            }
+        }
+        return nil
+    }
+    
+    private func getSuperView(for view: NSView?) -> NSView? {
+        guard let superView = view?.superview else { return nil }
+        
+        if superView.isKind(of: ACRView.self) {
+            return superView
+        } else {
+            return getSuperView(for: superView)
+        }
     }
     
     private func submitCardInputs(actionView: NSView, dataJSON: String?, associatedInputs: Bool) {
@@ -159,7 +194,7 @@ class ACRView: ACRColumnView {
     private func toggleVisibity(of targets: [ACSToggleVisibilityTarget]) {
         var toggledContentStackViews: [(ACRContentStackView, Bool)] = []
         for target in targets {
-            guard let id = target.getElementId(), let toggleView = findSubview(with: id) else {
+            guard let id = target.getElementId(), let toggleView = findToggledView(with: id) else {
                 logError("Target with ID '\(target.getElementId() ?? "nil")' not found for toggleVisibility.")
                 continue
             }
