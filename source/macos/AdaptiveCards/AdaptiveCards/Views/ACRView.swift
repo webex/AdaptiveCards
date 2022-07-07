@@ -107,6 +107,8 @@ class ACRView: ACRColumnView {
                 if let sView = getSuperView(for: superView) {
                     toggledViewToReturn = getSubView(with: identifier, in: sView)
                     superView = sView
+                } else {
+                    return toggledViewToReturn
                 }
             }
             return toggledViewToReturn
