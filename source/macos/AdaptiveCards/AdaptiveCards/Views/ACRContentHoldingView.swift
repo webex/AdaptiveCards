@@ -7,7 +7,7 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
     var target: TargetHandler?
     var isImageSet = false
     var isPersonStyle = false
-
+    
     init(imageProperties: ACRImageProperties, imageView: NSImageView) {
         let frame = CGRect(x: 0, y: 0, width: imageProperties.contentSize.width, height: imageProperties.contentSize.height)
         super.init(frame: frame)
@@ -44,7 +44,7 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
         guard let hasExpilicitDimension = imageProperties?.hasExplicitDimensions, !hasExpilicitDimension else { return }
         setWidthConstraintWithSuperView()
     }
-
+    
     private func setWidthConstraintWithSuperView() {
         guard let superView = self.superview else { return }
         if isImageSet {
@@ -57,6 +57,12 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
         } else {
             widthAnchor.constraint(equalTo: superView.widthAnchor).isActive = true
         }
+    }
+    
+    func update(imageProperties: ACRImageProperties) {
+        isImageSet = true
+        self.imageProperties = imageProperties
+        self.invalidateIntrinsicContentSize()
     }
     
     override func mouseDown(with event: NSEvent) {
@@ -86,4 +92,4 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
         guard let columnView = event.trackingArea?.owner as? ACRImageWrappingView, target != nil else { return }
         columnView.layer?.backgroundColor = previousBackgroundColor ?? .clear
     }
- }
+}

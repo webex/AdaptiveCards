@@ -9,13 +9,14 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSImage")
             return NSView()
         }
-                        
+        
         guard let url = imageElement.getUrl() else {
             logError("URL is not available")
             return NSView()
         }
-        
+        // ImageView
         let imageView: ImageView
+        
         if let dimensions = rootView.getImageDimensions(for: url) {
             let image = NSImage(size: dimensions)
             imageView = ImageView(image: image)
@@ -24,14 +25,40 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         rootView.registerImageHandlingView(imageView, for: url)
-      
+        
         let imageProperties = ACRImageProperties(element: imageElement, config: hostConfig, parentView: parentView)
-        let cgsize = imageProperties.contentSize
-
+        
         // Setting up ImageView based on Image Properties
         imageView.wantsLayer = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer?.masksToBounds = true
+        
+        // Setting up content holder view
+        let wrappingView = ACRImageWrappingView(imageProperties: imageProperties, imageView: imageView)
+        wrappingView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Background color attribute
+        if let backgroundColor = imageElement.getBackgroundColor(), !backgroundColor.isEmpty {
+            imageView.wantsLayer = true
+            if let color = ColorUtils.color(from: backgroundColor) {
+                imageView.layer?.backgroundColor = color.cgColor
+            }
+        }
+        
+        switch imageProperties.acsHorizontalAlignment {
+        case .center:
+            imageView.centerXAnchor.constraint(equalTo: wrappingView.centerXAnchor).isActive = true
+        case .right:
+            imageView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
+        case .left:
+            imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
+        default:
+            imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
+        }
+        
+        wrappingView.heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
+        wrappingView.widthAnchor.constraint(greaterThanOrEqualTo: imageView.widthAnchor).isActive = true
+        imageView.topAnchor.constraint(equalTo: wrappingView.topAnchor).isActive = true
         
         if imageProperties.isAspectRatioNeeded {
             // when either width or height px is available
@@ -42,39 +69,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             imageView.imageScaling = .scaleAxesIndependently
         }
         
-        // Setting up content holder view
-        let wrappingView = ACRImageWrappingView(imageProperties: imageProperties, imageView: imageView)
-        wrappingView.translatesAutoresizingMaskIntoConstraints = false
-    
-        // Background color attribute
-        if let backgroundColor = imageElement.getBackgroundColor(), !backgroundColor.isEmpty {
-            imageView.wantsLayer = true
-            if let color = ColorUtils.color(from: backgroundColor) {
-                imageView.layer?.backgroundColor = color.cgColor
-            }
-        }
-        
-        switch imageProperties.acsHorizontalAlignment {
-        case .center: imageView.centerXAnchor.constraint(equalTo: wrappingView.centerXAnchor).isActive = true
-        case .right: imageView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
-        default: imageView.leadingAnchor.constraint(equalTo: wrappingView.leadingAnchor).isActive = true
-        }
-        
-        wrappingView.heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
-
-        if !imageProperties.hasExplicitDimensions {
-            if imageProperties.acsImageSize == ACSImageSize.stretch {
-                wrappingView.widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
-            } else {
-                wrappingView.widthAnchor.constraint(greaterThanOrEqualTo: imageView.widthAnchor).isActive = true
-            }
-        } else {
-            if cgsize.width > 0 {
-                wrappingView.widthAnchor.constraint(greaterThanOrEqualTo: imageView.widthAnchor).isActive = true
-            }
-        }
-    
-        let imagePriority = NSLayoutConstraint.Priority.defaultHigh
+        let imagePriority = self.getImageUILayoutPriority(wrappingView)
         if imageProperties.acsImageSize != ACSImageSize.stretch {
             imageView.setContentHuggingPriority(imagePriority, for: .horizontal)
             imageView.setContentHuggingPriority(.defaultHigh, for: .vertical)
@@ -85,7 +80,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         if imageView.image != nil {
             configUpdateForImage(image: imageView.image, imageView: imageView)
         }
-         
+        
         if imageElement.getStyle() == .person {
             wrappingView.isPersonStyle = true
         }
@@ -106,29 +101,41 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("imageProperties is null")
             return
         }
+        
         imageProperties.updateContentSize(size: imageSize)
+        
         let cgSize = imageProperties.contentSize
-        superView.isImageSet = true
-        
-        let priority = NSLayoutConstraint.Priority.defaultHigh
-        
+        let priority = self.getImageUILayoutPriority(imageView.superview)
         var constraints: [NSLayoutConstraint] = []
         
-        constraints.append(imageView.widthAnchor.constraint(equalToConstant: cgSize.width))
-        constraints.append(imageView.heightAnchor.constraint(equalToConstant: cgSize.height))
+        constraints.append(NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: cgSize.width))
+        constraints.append(NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: cgSize.height))
         constraints[0].priority = priority
         constraints[1].priority = priority
         
-        guard cgSize.width > 0, cgSize.height > 0 else { return }
+        let aspectRatio = ACRImageProperties.convertToAspectRatio(cgSize)
         
-        if !imageProperties.hasExplicitDimensions {
-            constraints.append(imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: cgSize.width / cgSize.height, constant: 0))
-            constraints.append(imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: cgSize.height / cgSize.width, constant: 0))
+        constraints.append(NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .width, multiplier: aspectRatio.heightToWidth, constant: 0))
+        constraints.append(NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: aspectRatio.widthToHeight, constant: 0))
+        // Give the aspect ratio constraint a two-digit priority boost for first fulfilment. Priorities are calculated when the window loads the view. Otherwise, a constraint conflict will occur.
+        constraints[2].priority = priority + 2
+        constraints[3].priority = priority + 2
+        
+        if imageProperties.acsImageSize == .auto {
+            constraints.append(imageView.widthAnchor.constraint(lessThanOrEqualToConstant: imageProperties.contentSize.width))
         }
         
         NSLayoutConstraint.activate(constraints)
-                    
-        superView.invalidateIntrinsicContentSize()
+        superView.update(imageProperties: imageProperties)
+    }
+    
+    // Prioritize layout based on content hugging.
+    func getImageUILayoutPriority(_ wrapView: NSView?) -> NSLayoutConstraint.Priority {
+        if let wrapView = wrapView {
+            let priority = wrapView.contentHuggingPriority(for: .horizontal)
+            return (priority > .init(249)) ? .defaultHigh : priority
+        }
+        return .defaultHigh
     }
 }
 
