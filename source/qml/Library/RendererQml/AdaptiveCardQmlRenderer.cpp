@@ -1829,8 +1829,7 @@ namespace RendererQml
         {
             if (submitDataJson.front() == '{' && submitDataJson.back() == '}')
             {
-                submitDataJson = Utils::Replace(submitDataJson, "\"", "\\\"");
-                function << "var parmStr = \"" << submitDataJson << "\";\n";
+                function << "var parmStr = String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`;";
                 function << "paramJson = JSON.parse(parmStr);\n";
             }
             else
