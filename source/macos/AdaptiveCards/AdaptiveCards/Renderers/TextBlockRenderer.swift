@@ -22,10 +22,7 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.layoutManager?.usesFontLeading = false
         textView.setContentHuggingPriority(.required, for: .vertical)
         
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = ACSHostConfig.getTextBlockAlignment(from: textBlock.getHorizontalAlignment())
-        
-        attributedString.addAttributes([.paragraphStyle: paragraphStyle, .baselineOffset: (textView.font?.pointSize ?? 0) / 3], range: NSRange(location: 0, length: attributedString.length))
+        attributedString.addAttributes([.baselineOffset: (textView.font?.pointSize ?? 0) / 3], range: NSRange(location: 0, length: attributedString.length))
         
         if let colorHex = hostConfig.getForegroundColor(style, color: textBlock.getTextColor(), isSubtle: textBlock.getIsSubtle()), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))

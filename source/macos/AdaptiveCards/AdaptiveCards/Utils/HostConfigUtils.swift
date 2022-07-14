@@ -194,10 +194,30 @@ class TextUtils {
         if parserResult.isHTML, let htmlData = parserResult.htmlData {
             do {
                 content = try NSMutableAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+               
+                // fix up tabbing, nested tabbing and wrapping
+                let attributeStrings = splitString(inputString: content, separatedBy: "\n")
+                let singleTabDepth: CGFloat = 28
+                let newAttrString = NSMutableAttributedString()
+                newAttrString.beginEditing()
+                var currentTabCount = 0
+                
+                for attributeString in attributeStrings {
+                    let lineAttrString = NSMutableAttributedString(attributedString: attributeString)
+                    let str = attributeString.string
+                    if str.starts(with: "\t") {
+                        currentTabCount = str.filter({ $0 == "\t" }).count
+                        addParagraphStyle(lineAttrString, leftIndent: (singleTabDepth * CGFloat(currentTabCount)))
+                    }
+                    lineAttrString.append(NSAttributedString(string: "\n"))
+                    newAttrString.append(lineAttrString)
+                }
+                newAttrString.endEditing()
                 // Delete trailing newline character
                 if !parserResult.parsedString.contains("\n") {
-                    content.deleteCharacters(in: NSRange(location: content.length - 1, length: 1))
+                     newAttrString.deleteCharacters(in: NSRange(location: newAttrString.length - 1, length: 1))
                 }
+                return newAttrString
             } catch {
                 content = NSMutableAttributedString(string: parserResult.parsedString)
             }
@@ -208,6 +228,30 @@ class TextUtils {
             content.deleteCharacters(in: NSRange(location: content.length - 4, length: 4))
         }
         return content
+    }
+    
+    static func splitString(inputString: NSAttributedString, separatedBy: String) -> [NSAttributedString] {
+        let input = inputString.string
+        let separatedInput = input.components(separatedBy: separatedBy)
+        var output = [NSAttributedString]()
+        var start = 0
+        for subString in separatedInput {
+            let range = NSRange(location: start, length: subString.utf16.count)
+            let attributeString = inputString.attributedSubstring(from: range)
+            if attributeString.length > 0 {
+                output.append(attributeString)
+            }
+            start += range.length + separatedBy.count
+        }
+        return output
+    }
+    
+    static func addParagraphStyle(_ attribString: NSMutableAttributedString, lineSpacing: CGFloat = 4, leftIndent: CGFloat = 0) {
+        let paraStyle = NSMutableParagraphStyle()
+        paraStyle.lineSpacing = lineSpacing
+        paraStyle.lineHeightMultiple = 1.1
+        paraStyle.headIndent = leftIndent
+        attribString.addAttributes([.paragraphStyle: paraStyle], range: attribString.fullRange)
     }
     
     static func addFontProperties(attributedString: NSMutableAttributedString, textProperties: ACSRichTextElementProperties, hostConfig: ACSHostConfig) -> NSMutableAttributedString {
@@ -257,5 +301,11 @@ class HostConfigUtils {
             spaceAdded = 0
         }
         return spaceAdded
+    }
+}
+
+extension NSAttributedString {
+    public var fullRange: NSRange {
+        return NSRange(location: 0, length: length)
     }
 }
