@@ -22,10 +22,17 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.layoutManager?.usesFontLeading = false
         textView.setContentHuggingPriority(.required, for: .vertical)
         
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = ACSHostConfig.getTextBlockAlignment(from: textBlock.getHorizontalAlignment())
+        attributedString.addAttributes([.baselineOffset: (textView.font?.pointSize ?? 0) / 3], range: NSRange(location: 0, length: attributedString.length))
         
-        attributedString.addAttributes([.paragraphStyle: paragraphStyle, .baselineOffset: (textView.font?.pointSize ?? 0) / 3], range: NSRange(location: 0, length: attributedString.length))
+        attributedString.enumerateAttributes(in: attributedString.fullRange, using: { attributes, range, _ in
+            // need to update attributedString paragraphstyle alignment if it is not set in markdownString
+            guard let style = attributes[.paragraphStyle] as? NSMutableParagraphStyle else { return }
+            // headIndent default value is 0.0 , so if it is not updated we can proceed to change alignment
+            if style.headIndent == 0 {
+                style.alignment = ACSHostConfig.getTextBlockAlignment(from: textBlock.getHorizontalAlignment())
+                attributedString.addAttribute(.paragraphStyle, value: style, range: range)
+            }
+        })
         
         if let colorHex = hostConfig.getForegroundColor(style, color: textBlock.getTextColor(), isSubtle: textBlock.getIsSubtle()), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
