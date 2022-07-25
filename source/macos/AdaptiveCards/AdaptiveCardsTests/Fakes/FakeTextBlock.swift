@@ -16,6 +16,7 @@ class FakeTextBlock: ACSTextBlock {
     public var separator: Bool = false
     public var isVisible: Bool = true
     public var spacing: ACSSpacing = .default
+    public var height: ACSHeightType = .auto
 
     open override func getText() -> String? {
         return text
@@ -37,6 +38,14 @@ class FakeTextBlock: ACSTextBlock {
         textSize = value
     }
 
+    override func getHeight() -> ACSHeightType {
+        return height
+    }
+    
+    override func setHeight(_ value: ACSHeightType) {
+        height = value
+    }
+    
     open override func getTextWeight() -> ACSTextWeight {
         return textWeight
     }
