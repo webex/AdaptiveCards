@@ -22,6 +22,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     let renderConfig: RenderConfig
     var target: TargetHandler?
     public var bleed = false
+    private let paddingHandler = ACSFillerSpaceManager()
+    private var verticalContentAlignment: ACSVerticalContentAlignment = .top
+    private var paddings = [NSView]()
     
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
@@ -53,6 +56,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         view.spacing = 0
         return view
     }()
+    
+    var hasStretchableView: Bool {
+        return paddingHandler.hasPadding()
+    }
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         self.hostConfig = hostConfig
@@ -111,6 +118,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         stackView.addArrangedSubview(subview)
     }
     
+    func insertArrangedSubview(_ view: NSView, at insertionIndex: Int) {
+        stackView.insertArrangedSubview(view, at: insertionIndex)
+    }
+    
     func addView(_ view: NSView, in gravity: NSStackView.Gravity) {
         stackView.addView(view, in: gravity)
     }
@@ -167,6 +178,73 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         currentSpacingView = spacingView
     }
     
+    // use this method if a subview to the content stack view needs a padding
+    // use configureHeightFor for all cases except when stretching the subview
+    // is not desirable.
+    
+    func addPadding(for view: NSView) -> NSView {
+        return paddingHandler.addPadding(forView: view)
+    }
+    
+    // it simply adds padding to the top and bottom of contents of the content stack view
+    // according to vertical alignment
+    
+    func addPadding() {
+        if self.verticalContentAlignment == .center || self.verticalContentAlignment == .bottom {
+            let padding = self.addPadding(for: self)
+            self.paddings.append(padding)
+            self.insertArrangedSubview(padding, at: 0)
+        }
+        if self.verticalContentAlignment == .center || self.verticalContentAlignment == .top {
+            let padding = self.addPadding(for: self)
+            self.paddings.append(padding)
+            self.addArrangedSubview(padding)
+        }
+    }
+    
+    /// this function will tell if the content stack view should have a padding
+    /// padding will be added if
+    /// none of its subviews is stretchable or has padding and there is at least
+    /// one visible view.
+    /// the content stack view has hasStrechableView property, but getting the property value
+    /// has cost, so added the hasStretcahbleView parameter to reduce the number of call to
+    /// the property value.
+    /// todo part : add visiblity checking for stretchable view.
+    
+    func shouldAddPadding(_ hasStretchableView: Bool) -> Bool {
+        return !hasStretchableView
+    }
+    
+    /// call this method after subview is rendered
+    /// it configures height, creates association between the subview and its separator if any
+    /// registers subview for its visibility
+    func updateLayoutOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
+        guard let renderedView = renderedView, let acoElem = acoElem else { return }
+        self.configureHeight(for: renderedView, acoElement: acoElem)
+    }
+    
+    func configureHeight(for view: NSView?, acoElement element: ACSBaseCardElement?) {
+        guard let view = view, let element = element else { return }
+        self.paddingHandler.configureHeight(view: view, correspondingElement: element)
+    }
+    
+    /// call this method once all subviews are rendered
+    /// this methods add padding to itself for alignment and stretch
+    /// apply visibility to subviews
+    /// configure min height
+    /// then activate all contraints associated with the configuration.
+    /// activation constraint all at once is more efficient than activating
+    /// constraints one by one.
+    
+    func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber, heightType: ACSHeightType, type: ACSCardElementType) {
+        self.verticalContentAlignment = verticalContentAlignment
+        if self.shouldAddPadding(self.hasStretchableView) {
+            self.addPadding()
+        }
+        self.setMinimumHeight(minHeight)
+        paddingHandler.activateConstraintsForPadding()
+    }
+    
     private func setupTrackingArea() {
         let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
         addTrackingArea(trackingArea)
@@ -208,7 +286,16 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func setMinimumHeight(_ height: NSNumber?) {
         guard let height = height, let heightPt = CGFloat(exactly: height), heightPt > 0 else { return }
-        heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
+        let constraint = NSLayoutConstraint(
+           item: self,
+           attribute: .height,
+           relatedBy: .greaterThanOrEqual,
+           toItem: nil,
+           attribute: .notAnAttribute,
+           multiplier: 1,
+           constant: heightPt)
+        constraint.priority = NSLayoutConstraint.Priority(rawValue: 999)
+        constraint.isActive = true
     }
     
     func refreshOnVisibilityChange(from isHiddenOld: Bool) {

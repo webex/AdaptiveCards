@@ -545,6 +545,8 @@
 		A0805F5825E40CB400B3F8EA /* RichTextBlockRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0805F5725E40CB400B3F8EA /* RichTextBlockRendererTest.swift */; };
 		A0805F5D25E40D0F00B3F8EA /* FakeRichTextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0805F5C25E40D0F00B3F8EA /* FakeRichTextBlock.swift */; };
 		A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */; };
+		AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */; };
+		AA7A97BD288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */; };
 		AAE0E9182844D8260034FE2A /* ACRHyperLinkTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */; };
 /* End PBXBuildFile section */
 
@@ -1123,6 +1125,8 @@
 		A0805F5725E40CB400B3F8EA /* RichTextBlockRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextBlockRendererTest.swift; sourceTree = "<group>"; };
 		A0805F5C25E40D0F00B3F8EA /* FakeRichTextBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeRichTextBlock.swift; sourceTree = "<group>"; };
 		A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRenderer.swift; sourceTree = "<group>"; };
+		AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManager.swift; sourceTree = "<group>"; };
+		AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManagerTests.swift; sourceTree = "<group>"; };
 		AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRHyperLinkTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1403,6 +1407,7 @@
 			isa = PBXGroup;
 			children = (
 				082D913325D67455000226C4 /* TextBlockRendererTests.swift */,
+				AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */,
 				2871B13E25DD41D80040AB27 /* InputNumberRendererTest.swift */,
 				28CE1A6F25E4B96300BFCFD9 /* FactSetRendererTest.swift */,
 				2871B16525DF72290040AB27 /* MultilineInputTextRendererTest.swift */,
@@ -1793,6 +1798,7 @@
 			isa = PBXGroup;
 			children = (
 				08D7767925CC339D0095C1B3 /* RendererManager.swift */,
+				AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -2343,6 +2349,7 @@
 				29C3AD38260C7C6A00467069 /* BleedUtils.swift in Sources */,
 				81A3000B260C7961003848DD /* BundleUtils.swift in Sources */,
 				0872609025E6AF530036061C /* ColumnSetRenderer.swift in Sources */,
+				AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */,
 				082864FD25C99E300080D767 /* HostConfigUtils.swift in Sources */,
 				0876273F27734F9800F3347F /* ViewUtils.swift in Sources */,
 				A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */,
@@ -2429,6 +2436,7 @@
 				082D914425D6DC7A000226C4 /* FakeTextBlock.swift in Sources */,
 				A0805F5D25E40D0F00B3F8EA /* FakeRichTextBlock.swift in Sources */,
 				082D913425D67455000226C4 /* TextBlockRendererTests.swift in Sources */,
+				AA7A97BD288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift in Sources */,
 				2871B11825DD20A30040AB27 /* FakeTextInput.swift in Sources */,
 				28CE1A7025E4B96300BFCFD9 /* FactSetRendererTest.swift in Sources */,
 				2982B3F72628933C00E7561C /* BaseCardElementRendererTests.swift in Sources */,
