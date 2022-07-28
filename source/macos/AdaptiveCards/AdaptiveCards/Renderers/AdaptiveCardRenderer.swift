@@ -1,6 +1,18 @@
 import AdaptiveCards_bridge
 import AppKit
 
+class HeightTypeSupport {
+    private let supportElemets: [ACSCardElementType] = [.textBlock, .container]
+    
+    static let shared = HeightTypeSupport()
+    
+    private init() { }
+    
+    func available(type: ACSCardElementType) -> Bool {
+        return supportElemets.contains(type)
+    }
+}
+
 class AdaptiveCardRenderer {
     static let shared = AdaptiveCardRenderer()
     
@@ -39,14 +51,24 @@ class AdaptiveCardRenderer {
         if card.getVersion() == "1.3", !config.supportsSchemeV1_3 {
             logError("CardVersion 1.3 not supported, Card properties of this version and above won't be rendered")
         }
-           
+        var heightSupport = false
         for (index, element) in card.getBody().enumerated() {
             let isFirstElement = index == 0
             let renderer = RendererManager.shared.renderer(for: element.getType())
             let view = renderer.render(element: element, with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [], config: config)
-            let viewWithInheritedProperties = BaseCardElementRenderer.shared.updateView(view: view, element: element, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
-            rootView.addArrangedSubview(viewWithInheritedProperties)
-            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: rootView, with: hostConfig, element: element, parentElement: nil)
+            if HeightTypeSupport.shared.available(type: element.getType()) {
+                heightSupport = true
+                BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: view, element: element, parentView: rootView, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
+                BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: rootView, with: hostConfig, element: element, parentElement: nil)
+            } else {
+                let viewWithInheritedProperties = BaseCardElementRenderer.shared.updateView(view: view, element: element, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
+                rootView.addArrangedSubview(viewWithInheritedProperties)
+                BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: rootView, with: hostConfig, element: element, parentElement: nil)
+            }
+        }
+        
+        if heightSupport {
+            rootView.configureLayout(card.getVerticalContentAlignment(), minHeight: card.getMinHeight() ?? 0, heightType: card.getHeight(), type: .adaptiveCard)
         }
         
         if !card.getActions().isEmpty {

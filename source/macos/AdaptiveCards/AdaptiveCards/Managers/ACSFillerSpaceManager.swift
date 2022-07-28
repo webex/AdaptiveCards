@@ -8,7 +8,9 @@ import AdaptiveCards_bridge
 import AppKit
 
 let kFillerViewLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 10
-let kStrechableViewLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow + 10
+
+class StretchableView: NSView {
+}
 
 class ACSFillerSpaceManager {
     private var paddingMap = NSMapTable<NSView, NSMutableArray>()
@@ -49,7 +51,7 @@ class ACSFillerSpaceManager {
     /// stretchable
     
     func addPadding(forView view: NSView) -> NSView {
-        let padding = NSView()
+        let padding = StretchableView()
         ACSFillerSpaceManager.configureHugging(view: padding)
         var values = paddingMap.object(forKey: view) as? [NSValue]
         if values == nil {

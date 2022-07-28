@@ -20,7 +20,6 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.textContainer?.lineFragmentPadding = 0
         textView.textContainerInset = .zero
         textView.layoutManager?.usesFontLeading = false
-        textView.setContentHuggingPriority(.required, for: .vertical)
         
         attributedString.addAttributes([.baselineOffset: (textView.font?.pointSize ?? 0) / 3], range: NSRange(location: 0, length: attributedString.length))
         
@@ -54,6 +53,17 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         
         if attributedString.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             // Hide accessibility Element
+        }
+        
+        // Set compression priority higher value means that we don’t want the view to shrink smaller than the intrinsic content size.
+        textView.setContentCompressionResistancePriority(.required, for: .vertical)
+
+        if textBlock.getHeight() == .auto {
+            // Set Hugging priority Setting a larger value to this priority indicates that we don’t want the view to grow larger than its content.
+            textView.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        } else {
+            // Set Hugging priority Setting a lower value to this priority indicates that we want the view to grow larger than its content.
+            textView.setContentHuggingPriority(.defaultLow, for: .vertical)
         }
         
         return textView
