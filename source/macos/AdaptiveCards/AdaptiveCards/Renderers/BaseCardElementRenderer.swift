@@ -1,7 +1,7 @@
 import AdaptiveCards_bridge
 import AppKit
 
-let kFitViewHorLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 1
+let kFitViewHorizontalLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 1
 
 class BaseCardElementRenderer {
     static let shared = BaseCardElementRenderer()
@@ -111,7 +111,7 @@ class BaseCardElementRenderer {
           |  +---------+                 |
           +------------------------------+
          */
-        view.setContentHuggingPriority(kFitViewHorLayoutConstraintPriority, for: .horizontal)
+        view.setContentHuggingPriority(kFitViewHorizontalLayoutConstraintPriority, for: .horizontal)
     }
     
     func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, parentElement: ACSBaseCardElement?) {
