@@ -109,7 +109,7 @@ class ACSFillerSpaceManager {
     /// if it's not possible
     @discardableResult func activateConstraintsForPadding() -> [NSLayoutConstraint]? {
         if stretchableViews.count > 1 {
-            var paddingConstraints = [ NSLayoutConstraint]()
+            var paddingConstraints = [NSLayoutConstraint]()
             var prevPadding: NSView?
             for paddingValue in stretchableViews {
                 if let padding = paddingValue.nonretainedObjectValue as? NSView {
