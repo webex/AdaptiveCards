@@ -9,15 +9,41 @@ import AppKit
 
 let kFillerViewLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 10
 
+// Concept behind the FillerSpaceManager.
+/// This class use for stretchable padding space
 class StretchableView: NSView {
 }
+///
+/// Stretchable maintain with two scenario.
+/// CASE I : when there is no stretchable view inside the NSStackView.
+/// we are add one dummy padding stretchable view to maintain class stretching and hugging. give hugging and stretching constraint to that view.
+/// CASE II : when there is already stretchable view present inside the NSStackView.
+/// give hugging and stretching constraint to that view.
+/*
+ B = StackView
+ A = inside subview
+ S = stretchable view
+ B+------------------------------+
+  | A+------------------------+  |
+  |  |       H:250            |  |
+  |  |       V:250            |  |
+  |  +------------------------+  |
+  | S+------------------------+  |
+  |  |       H:250            |  |
+  |  |       V:240            |  |
+  |  |                        |  |
+  |  |                        |  |
+  |  |                        |  |
+  |  +------------------------+  |
+  +------------------------------+
+ */
 
 class ACSFillerSpaceManager {
-    private var paddingMap = NSMapTable<NSView, NSMutableArray>()
-    private var stretchableViewSet = NSHashTable<NSView>()
-    private var stretchableViews = [NSValue]()
-    private var paddingSet = NSHashTable<NSView>()
-    private var paddingConstraints = [NSLayoutConstraint]()
+    private var paddingMap: NSMapTable<NSView, NSMutableArray>
+    private var stretchableViewSet: NSHashTable<NSView>
+    private var stretchableViews: [NSValue]
+    private var paddingSet: NSHashTable<NSView>
+    private var paddingConstraints: [NSLayoutConstraint]
     
     init() {
         paddingMap = NSMapTable<NSView, NSMutableArray>(keyOptions: .weakMemory, valueOptions: .strongMemory)
@@ -107,9 +133,8 @@ class ACSFillerSpaceManager {
     }
     
     func deactivateConstraintsForPadding() {
-        if !paddingConstraints.isEmpty {
-            NSLayoutConstraint.deactivate(paddingConstraints)
-        }
+        guard !paddingConstraints.isEmpty else { return }
+        NSLayoutConstraint.deactivate(paddingConstraints)
     }
     
     func isPadding(_ padding: NSView) -> Bool {

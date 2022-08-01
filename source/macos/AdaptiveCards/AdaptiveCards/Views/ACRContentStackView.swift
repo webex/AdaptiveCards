@@ -357,14 +357,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func setMinimumHeight(_ height: NSNumber?) {
         guard let height = height, let heightPt = CGFloat(exactly: height), heightPt > 0 else { return }
-        let constraint = NSLayoutConstraint(
-           item: self,
-           attribute: .height,
-           relatedBy: .greaterThanOrEqual,
-           toItem: nil,
-           attribute: .notAnAttribute,
-           multiplier: 1,
-           constant: heightPt)
+        let constraint = NSLayoutConstraint(item: self, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: heightPt)
         constraint.priority = NSLayoutConstraint.Priority(rawValue: 999)
         constraint.isActive = true
     }
