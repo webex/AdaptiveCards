@@ -16,6 +16,15 @@ class TextBlockRendererTests: XCTestCase {
         resourceResolver = FakeResourceResolver()
     }
     
+    func testHeightProperty() {
+        textBlock = FakeTextBlock.make(text: "Test auto Height Property", heightType: .auto)
+        let autoTextView = renderTextView()
+        XCTAssertEqual(autoTextView.contentHuggingPriority(for: .vertical), NSLayoutConstraint.Priority.defaultHigh)
+        textBlock = FakeTextBlock.make(text: "Test stretch Height Property", heightType: .stretch)
+        let stretchTextView = renderTextView()
+        XCTAssertEqual(stretchTextView.contentHuggingPriority(for: .vertical), NSLayoutConstraint.Priority.defaultLow)
+    }
+    
     func testRendererSetsText() {
         let text = "Hello world!"
         textBlock = .make(text: text)

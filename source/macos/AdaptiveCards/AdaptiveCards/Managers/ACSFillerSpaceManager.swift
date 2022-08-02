@@ -8,14 +8,42 @@ import AdaptiveCards_bridge
 import AppKit
 
 let kFillerViewLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 10
-let kStrechableViewLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow + 10
+
+// Concept behind the FillerSpaceManager.
+/// This class use for stretchable padding space
+class StretchableView: NSView {
+}
+///
+/// Stretchable maintain with two scenario.
+/// CASE I : when there is no stretchable view inside the NSStackView.
+/// we are add one dummy padding stretchable view to maintain class stretching and hugging. give hugging and stretching constraint to that view.
+/// CASE II : when there is already stretchable view present inside the NSStackView.
+/// give hugging and stretching constraint to that view.
+/*
+ B = StackView
+ A = inside subview
+ S = stretchable view
+ B+------------------------------+
+  | A+------------------------+  |
+  |  |       H:250            |  |
+  |  |       V:250            |  |
+  |  +------------------------+  |
+  | S+------------------------+  |
+  |  |       H:250            |  |
+  |  |       V:240            |  |
+  |  |                        |  |
+  |  |                        |  |
+  |  |                        |  |
+  |  +------------------------+  |
+  +------------------------------+
+ */
 
 class ACSFillerSpaceManager {
-    private var paddingMap = NSMapTable<NSView, NSMutableArray>()
-    private var stretchableViewSet = NSHashTable<NSView>()
-    private var stretchableViews = [NSValue]()
-    private var paddingSet = NSHashTable<NSView>()
-    private var paddingConstraints = [NSLayoutConstraint]()
+    private var paddingMap: NSMapTable<NSView, NSMutableArray>
+    private var stretchableViewSet: NSHashTable<NSView>
+    private var stretchableViews: [NSValue]
+    private var paddingSet: NSHashTable<NSView>
+    private var paddingConstraints: [NSLayoutConstraint]
     
     init() {
         paddingMap = NSMapTable<NSView, NSMutableArray>(keyOptions: .weakMemory, valueOptions: .strongMemory)
@@ -49,7 +77,7 @@ class ACSFillerSpaceManager {
     /// stretchable
     
     func addPadding(forView view: NSView) -> NSView {
-        let padding = NSView()
+        let padding = StretchableView()
         ACSFillerSpaceManager.configureHugging(view: padding)
         var values = paddingMap.object(forKey: view) as? [NSValue]
         if values == nil {
@@ -81,7 +109,7 @@ class ACSFillerSpaceManager {
     /// if it's not possible
     @discardableResult func activateConstraintsForPadding() -> [NSLayoutConstraint]? {
         if stretchableViews.count > 1 {
-            var paddingConstraints = [ NSLayoutConstraint]()
+            var paddingConstraints = [NSLayoutConstraint]()
             var prevPadding: NSView?
             for paddingValue in stretchableViews {
                 if let padding = paddingValue.nonretainedObjectValue as? NSView {
@@ -105,9 +133,8 @@ class ACSFillerSpaceManager {
     }
     
     func deactivateConstraintsForPadding() {
-        if !paddingConstraints.isEmpty {
-            NSLayoutConstraint.deactivate(paddingConstraints)
-        }
+        guard !paddingConstraints.isEmpty else { return }
+        NSLayoutConstraint.deactivate(paddingConstraints)
     }
     
     func isPadding(_ padding: NSView) -> Bool {

@@ -3,6 +3,9 @@ import AppKit
 
 protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
+    func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
+    func updateLayoutOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?)
+    func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber, heightType: ACSHeightType, type: ACSCardElementType)
     func applyPadding(_ padding: CGFloat)
 }
 
@@ -25,6 +28,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private let paddingHandler = ACSFillerSpaceManager()
     private var verticalContentAlignment: ACSVerticalContentAlignment = .top
     private var paddings = [NSView]()
+    // Store the Intrinsic size of subviews
+    private var subviewIntrinsicContentSizeCollection: [String: NSValue] = [String: NSValue]()
+    // Hold self view dynamic content intrinsicSize
+    var combinedContentSize: CGSize = .zero
     
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
@@ -54,11 +61,17 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         view.orientation = .vertical
         view.alignment = .leading
         view.spacing = 0
+        view.distribution = .fill
         return view
     }()
     
     var hasStretchableView: Bool {
         return paddingHandler.hasPadding()
+    }
+    
+    // Use intrinsicContentSize, work with hugging priority and autolayout. won't work as expected resluts without it.
+    override var intrinsicContentSize: NSSize {
+        return self.combinedContentSize
     }
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
@@ -202,6 +215,65 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         }
     }
     
+    func increaseIntrinsicContentSize(_ view: NSView) {
+        let key = String(format: "%p", view)
+        subviewIntrinsicContentSizeCollection[key] = NSValue(size: view.intrinsicContentSize)
+    }
+    
+    func decreaseIntrinsicContentSize(_ view: NSView) {
+        // This Empty function design for override methods
+    }
+    
+    func updateIntrinsicContentSize() {
+        // This Empty function design for override methods
+    }
+    
+    func updateIntrinsicContentSize(_ block: @escaping (_ view: Any, _ idx: Int, _ stop: UnsafeMutablePointer<ObjCBool>) -> Void) {
+        (stackView.arrangedSubviews as NSArray).enumerateObjects(block)
+    }
+    
+    func getMaxHeightOfSubviews(afterExcluding view: NSView?) -> CGFloat {
+        return getViewWithMaxDimension(
+            afterExcluding: view,
+            dimension: { [self] vw in
+                var key: String?
+                if let vw = vw {
+                    key = String(format: "%p", vw)
+                }
+                let value = self.subviewIntrinsicContentSizeCollection[key ?? ""]
+                return (value != nil ? value?.sizeValue : .zero)?.height ?? 0.0
+            })
+    }
+    
+    func getMaxWidthOfSubviews(afterExcluding view: NSView?) -> CGFloat {
+        return getViewWithMaxDimension(
+            afterExcluding: view,
+            dimension: { [self] vw in
+                var key: String?
+                if let vw = vw {
+                    key = String(format: "%p", vw)
+                }
+                let value = self.subviewIntrinsicContentSizeCollection[key ?? ""]
+                return (value != nil ? value?.sizeValue : .zero)?.width ?? 0.0
+            })
+    }
+    
+    func getViewWithMaxDimension(afterExcluding view: NSView?, dimension: @escaping (_ view: NSView?) -> CGFloat) -> CGFloat {
+        var currentBest: CGFloat = 0.0
+        self.stackView.arrangedSubviews.forEach { vw in
+            if vw.isNotEqual(to: view) {
+                currentBest = CGFloat(max(currentBest, dimension(vw)))
+            }
+        }
+        return currentBest
+    }
+    
+    func getIntrinsicContentSize(inArragedSubviews view: NSView) -> NSSize {
+        let key = String(format: "%p", view)
+        let value = subviewIntrinsicContentSizeCollection[key]
+        return value?.sizeValue ?? .zero
+    }
+    
     /// this function will tell if the content stack view should have a padding
     /// padding will be added if
     /// none of its subviews is stretchable or has padding and there is at least
@@ -264,8 +336,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         
         guard let leading = stackViewLeadingConstraint, let trailing = stackViewTrailingConstraint, let top = stackViewTopConstraint, let bottom = stackViewBottomConstraint else { return }
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
-        stackView.setHuggingPriority(.fittingSizeCompression, for: .vertical)
-        stackView.setContentHuggingPriority(.fittingSizeCompression, for: .vertical)
+        stackView.setContentHuggingPriority(.defaultLow, for: .vertical)
     }
     
     /// This method can be overridden, but not to be called from anywhere
@@ -286,14 +357,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func setMinimumHeight(_ height: NSNumber?) {
         guard let height = height, let heightPt = CGFloat(exactly: height), heightPt > 0 else { return }
-        let constraint = NSLayoutConstraint(
-           item: self,
-           attribute: .height,
-           relatedBy: .greaterThanOrEqual,
-           toItem: nil,
-           attribute: .notAnAttribute,
-           multiplier: 1,
-           constant: heightPt)
+        let constraint = NSLayoutConstraint(item: self, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: heightPt)
         constraint.priority = NSLayoutConstraint.Priority(rawValue: 999)
         constraint.isActive = true
     }
