@@ -100,6 +100,7 @@ namespace RendererQml
 		static std::string GetHorizontalAnchors(std::string alignType);
 		static std::string GetVerticalAnchors(std::string alignType);
 		static std::string GetWeight(AdaptiveCards::TextWeight weight);
+        static std::string GetWeightString(AdaptiveCards::TextWeight weight);
 
 		static std::string GetDate(const std::string& date);
 		static const bool isValidTime(const std::string& time);

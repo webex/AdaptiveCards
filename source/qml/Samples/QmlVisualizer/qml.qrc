@@ -8,5 +8,10 @@
         <file>CardEditor.qml</file>
         <file>SampleCardListView.qml</file>
         <file>CardOutput.qml</file>
+        <file>ImageRender.qml</file>
+        <file>RichTextBlockRender.qml</file>
+        <file>SeparatorRender.qml</file>
+        <file>TextBlockRender.qml</file>
+        <file>Utils/AdaptiveCardUtils.js</file>
     </qresource>
 </RCC>

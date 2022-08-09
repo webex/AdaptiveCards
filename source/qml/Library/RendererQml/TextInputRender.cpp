@@ -19,10 +19,19 @@ void TextInputElement::initialize()
 {
     mOriginalElementId = mTextinput->GetId();
     mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetPlaceholder());
+    mEscapedValueString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetValue());
+
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    {
+        mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetLabel());
+        mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetErrorMessage());
+    }
+
     mTextinput->SetId(mContext->ConvertToValidId(mTextinput->GetId()));
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     mTextinputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     mTextinputColElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_column");
+    mTextinputColElement->Property("property int minWidth", "200");
     mTextinputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mTextinputColElement->Property("width", "parent.width");
     mTextinputColElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
@@ -51,17 +60,17 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createInputTextLabel(bool
     label->Property("Accessible.ignored", "true");
 
     if (isRequired)
-    { 
-        label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()) << " <font color='" << textConfig.errorMessageColor << "'>*</font>", true);
+    {
+        label->Property("text", RendererQml::Formatter() << "String.raw`" << (mTextinput->GetLabel().empty() ? "Text" : mEscapedLabelString) << " <font color='" << textConfig.errorMessageColor << "'>*</font>`");
     }
     else
-    { 
-        label->Property("text", RendererQml::Formatter() << (mTextinput->GetLabel().empty() ? "Text" : mTextinput->GetLabel()), true);
+    {
+        label->Property("text", RendererQml::Formatter() << "String.raw`" << (mTextinput->GetLabel().empty() ? "Text" : mEscapedLabelString) << "`");
     }
     return label;
 }
 
-std::shared_ptr<RendererQml::QmlTag> TextInputElement::createErrorMessageText(std::string errorMessage, const std::shared_ptr<RendererQml::QmlTag> uiTextInput)
+std::shared_ptr<RendererQml::QmlTag> TextInputElement::createErrorMessageText(const std::shared_ptr<RendererQml::QmlTag> uiTextInput)
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
@@ -73,7 +82,7 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createErrorMessageText(st
 
     std::string color = mContext->GetHexColor(textConfig.errorMessageColor);
     uiErrorMessage->Property("color", color);
-    uiErrorMessage->Property("text", errorMessage, true);
+    uiErrorMessage->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
     uiErrorMessage->Property("visible", RendererQml::Formatter() << uiTextInput->GetId() << ".showErrorMessage");
     return uiErrorMessage;
 }
@@ -127,7 +136,7 @@ void TextInputElement::initSingleLine()
         {
             if(!mTextinput->GetErrorMessage().empty())
             { 
-                auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
+                auto label = createErrorMessageText(uiTextInput);
                 mTextinputColElement->AddChild(label);
             }
             addValidationToInputText(uiTextInput);
@@ -178,7 +187,7 @@ void TextInputElement::initMultiLine()
         {
             if(!mTextinput->GetErrorMessage().empty())
             {
-                auto label = createErrorMessageText(mTextinput->GetErrorMessage(), uiTextInput);
+                auto label = createErrorMessageText(uiTextInput);
                 mTextinputColElement->AddChild(label);
             }
             addValidationToInputText(uiTextInput);
@@ -264,7 +273,7 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createSingleLineTextField
 
     if (!mTextinput->GetValue().empty())
     {
-        uiTextInput->Property("text", mTextinput->GetValue(), true);
+        uiTextInput->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedValueString << "`");
     }
 
     if (!mTextinput->GetPlaceholder().empty())
@@ -322,7 +331,7 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createMultiLineTextAreaEl
 
     if (!mTextinput->GetValue().empty())
     {
-        uiTextInput->Property("text", mTextinput->GetValue(), true);
+        uiTextInput->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedValueString << "`");
     }
 
     if (!mTextinput->GetPlaceholder().empty())
@@ -347,7 +356,6 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createMultiLineBackground
 
 void TextInputElement::addInlineActionMode()
 {
-    auto temp = mTextinput->GetLabel();
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     if (mContext->GetConfig()->GetSupportsInteractivity() && mTextinput->GetInlineAction() != nullptr)
     {
@@ -415,13 +423,13 @@ std::string TextInputElement::getAccessibleName(std::shared_ptr<RendererQml::Qml
     {
         if (!mTextinput->GetLabel().empty())
         {
-            labelString << "accessibleName += '" << mTextinput->GetLabel() << ". ';";
+            labelString << "accessibleName += String.raw`" << mEscapedLabelString << ". `;";
         }
 
-        if(!mTextinput->GetErrorMessage().empty())
+        if (!mTextinput->GetErrorMessage().empty())
         {
             errorString << "if(" << uiTextInput->GetId() << ".showErrorMessage === true){"
-                << "accessibleName += 'Error. " << mTextinput->GetErrorMessage() << ". ';}";
+                << "accessibleName += String.raw`Error. " << mEscapedErrorString << ". `;}";
         }
     }
 
