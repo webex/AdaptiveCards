@@ -120,12 +120,12 @@
     <ClCompile Include="samplecardlist.cpp" />
     <ClCompile Include="samplecardmodel.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <None Include="AdaptiveCardQml\ImageRender.qml" />
+    <None Include="AdaptiveCardQml\RichTextBlockRender.qml" />
+    <None Include="AdaptiveCardQml\SeparatorRender.qml" />
+    <None Include="AdaptiveCardQml\TextBlockRender.qml" />
     <None Include="CardOutput.qml" />
-    <None Include="ImageRender.qml" />
-    <None Include="RichTextBlockRender.qml" />
     <None Include="SampleCardListView.qml" />
-    <None Include="SeparatorRender.qml" />
-    <None Include="TextBlockRender.qml" />
     <None Include="Utils\AdaptiveCardUtils.js" />
     <QtRcc Include="qml.qrc" />
     <None Include="AdaptiveCardItemDelegate.qml" />

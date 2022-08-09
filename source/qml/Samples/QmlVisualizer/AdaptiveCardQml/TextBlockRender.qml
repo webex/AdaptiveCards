@@ -1,4 +1,4 @@
-import "Utils/AdaptiveCardUtils.js" as AdaptiveCardUtils
+import "AdaptiveCardUtils.js" as AdaptiveCardUtils
 import QtQuick 2.15
 
 TextEdit {

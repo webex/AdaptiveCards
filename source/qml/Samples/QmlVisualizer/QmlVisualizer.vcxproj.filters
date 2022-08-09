@@ -81,16 +81,16 @@
     <None Include="CardOutput.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="ImageRender.qml">
+    <None Include="AdaptiveCardQml\ImageRender.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="RichTextBlockRender.qml">
+    <None Include="AdaptiveCardQml\RichTextBlockRender.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="SeparatorRender.qml">
+    <None Include="AdaptiveCardQml\SeparatorRender.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="TextBlockRender.qml">
+    <None Include="AdaptiveCardQml\TextBlockRender.qml">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Utils\AdaptiveCardUtils.js">
