@@ -81,6 +81,21 @@
     <None Include="CardOutput.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="AdaptiveCardQml\ImageRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\RichTextBlockRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\SeparatorRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\TextBlockRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\Utils\AdaptiveCardUtils.js">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="samplecardmodel.h">

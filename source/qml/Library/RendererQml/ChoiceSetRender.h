@@ -21,6 +21,9 @@ private:
     std::shared_ptr<RendererQml::QmlTag> mChoiceSetColElement;
     const std::shared_ptr<AdaptiveCards::ChoiceSetInput>& mChoiceSetInput;
     const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
+    std::string mEscapedPlaceholderString{ "" };
+    std::string mEscapedLabelString{ "" };
+    std::string mEscapedErrorString{ "" };
 
 private:
     void renderChoiceSet(RendererQml::ChoiceSet choiceSet, RendererQml::CheckBoxType checkBoxType, const std::string choiceSetId);

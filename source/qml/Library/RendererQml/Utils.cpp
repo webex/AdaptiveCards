@@ -312,6 +312,19 @@ namespace RendererQml
 		}
 	}
 
+    std::string Utils::GetWeightString(AdaptiveCards::TextWeight weight)
+    {
+        switch (weight)
+        {
+        case AdaptiveCards::TextWeight::Lighter:
+            return "extraLight";
+        case AdaptiveCards::TextWeight::Bolder:
+            return "bold";
+        default:
+            return "normal";
+        }
+    }
+
 	std::string Utils::GetDate(const std::string& date)
 	{
 		//Input format:"yyyy-mm-dd" , Output Format: "new Date(yyyy,mm,dd)"
