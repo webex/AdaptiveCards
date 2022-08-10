@@ -12,6 +12,6 @@
         <file alias="RichTextBlockRender.qml">AdaptiveCardQml/RichTextBlockRender.qml</file>
         <file alias="SeparatorRender.qml">AdaptiveCardQml/SeparatorRender.qml</file>
         <file alias="TextBlockRender.qml">AdaptiveCardQml/TextBlockRender.qml</file>
-        <file alias="AdaptiveCardUtils.js">Utils/AdaptiveCardUtils.js</file>
+        <file alias="AdaptiveCardUtils.js">AdaptiveCardQml/Utils/AdaptiveCardUtils.js</file>
     </qresource>
 </RCC>

@@ -93,7 +93,7 @@
     <None Include="AdaptiveCardQml\TextBlockRender.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Utils\AdaptiveCardUtils.js">
+    <None Include="AdaptiveCardQml\Utils\AdaptiveCardUtils.js">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

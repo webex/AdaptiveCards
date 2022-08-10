@@ -124,9 +124,9 @@
     <None Include="AdaptiveCardQml\RichTextBlockRender.qml" />
     <None Include="AdaptiveCardQml\SeparatorRender.qml" />
     <None Include="AdaptiveCardQml\TextBlockRender.qml" />
+    <None Include="AdaptiveCardQml\Utils\AdaptiveCardUtils.js" />
     <None Include="CardOutput.qml" />
     <None Include="SampleCardListView.qml" />
-    <None Include="Utils\AdaptiveCardUtils.js" />
     <QtRcc Include="qml.qrc" />
     <None Include="AdaptiveCardItemDelegate.qml" />
     <None Include="CardComponent.qml" />
