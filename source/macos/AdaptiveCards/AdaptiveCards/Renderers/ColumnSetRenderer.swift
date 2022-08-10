@@ -61,7 +61,12 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                 columnViews[index].widthAnchor.constraint(equalTo: firstColumn.widthAnchor).isActive = true
             }
             columnSetView.distribution = .fill
-        } else if numberOfAutoItems == totalColumns {
+        } else if numberOfAutoItems > 0 || numberOfAutoItems == totalColumns {
+            let width = ( 350 - ( 10 * ( columnViews.count + 1 ))) / columnViews.count
+            
+            for index in (0 ..< columnViews.count) {
+                columnViews[index].widthAnchor.constraint(equalToConstant: CGFloat(width)).isActive = true
+            }
             columnSetView.distribution = .gravityAreas
         } else if numberOfStretchItems == 0 && numberOfWeightedItems == 0 {
             columnSetView.distribution = .gravityAreas
