@@ -20,6 +20,12 @@ void ToggleInputElement::initialize()
     const std::string origionalElementId = mToggleInput->GetId();
     mToggleInput->SetId(mContext->ConvertToValidId(mToggleInput->GetId()));
 
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    {
+        mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel());
+        mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetErrorMessage());
+    }
+
     mToggleInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     mToggleInputColElement->Property("id", RendererQml::Formatter() << mToggleInput->GetId() << "_column");
     mToggleInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
@@ -77,11 +83,11 @@ void ToggleInputElement::addInputLabel()
 
             if (mToggleInput->GetIsRequired())
             {
-                label->Property("text", RendererQml::Formatter() << (mToggleInput->GetLabel().empty() ? "Text" : mToggleInput->GetLabel()) << " <font color='" << choiceSetConfig.errorMessageColor << "'>*</font>", true);
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mToggleInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << " <font color='" << choiceSetConfig.errorMessageColor << "'>*</font>`");
             }
             else
             {
-                label->Property("text", RendererQml::Formatter() << (mToggleInput->GetLabel().empty() ? "Text" : mToggleInput->GetLabel()), true);
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mToggleInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << "`");
             }
 
             mToggleInputColElement->AddChild(label);
@@ -114,7 +120,7 @@ void ToggleInputElement::addErrorMessage(const std::shared_ptr<RendererQml::QmlT
             uiErrorMessage->Property("Accessible.ignored", "true");
 
             uiErrorMessage->Property("color", mContext->GetHexColor(choiceSetConfig.errorMessageColor));
-            uiErrorMessage->Property("text", mToggleInput->GetErrorMessage(), true);
+            uiErrorMessage->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
             uiErrorMessage->Property("visible", RendererQml::Formatter() << uiCheckBox->GetId() << ".showErrorMessage");
             mToggleInputColElement->AddChild(uiErrorMessage);
         }
@@ -173,13 +179,13 @@ std::string ToggleInputElement::getAccessibleName(std::shared_ptr<RendererQml::Q
     {
         if (!mToggleInput->GetLabel().empty())
         {
-            labelString << "accessibleName += '" << mToggleInput->GetLabel() << ". ';";
+            labelString << "accessibleName += String.raw`" << mEscapedLabelString << ". `;";
         }
 
         if (!mToggleInput->GetErrorMessage().empty())
         {
             errorString << "if(" << uiCheckBox->GetId() << ".showErrorMessage === true){"
-                << "accessibleName += 'Error. " << mToggleInput->GetErrorMessage() << ". ';}";
+                << "accessibleName += String.raw`Error. " << mEscapedErrorString << ". `;}";
         }
     }
 

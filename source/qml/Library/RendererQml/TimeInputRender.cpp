@@ -24,6 +24,11 @@ void TimeInputElement::initialize()
     id = mTimeInput->GetId();
 
     mEscapedPlaceholderString = RendererQml::Utils::getBackQuoteEscapedString(mTimeInput->GetPlaceholder());
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    {
+        mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mTimeInput->GetLabel());
+        mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mTimeInput->GetErrorMessage());
+    }
 
     timePopupId = id + "_timeBox";
     listViewHoursId = id + "_hours";
@@ -33,6 +38,7 @@ void TimeInputElement::initialize()
 
     mTimeInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     mTimeInputColElement->Property("id", RendererQml::Formatter() << id << "_column");
+    mTimeInputColElement->Property("property int minWidth", "200");
     mTimeInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mTimeInputColElement->Property("width", "parent.width");
     mTimeInputColElement->Property("visible", mTimeInput->GetIsVisible() ? "true" : "false");
@@ -432,11 +438,11 @@ void TimeInputElement::addInputLabel(bool isRequired)
 
             if (isRequired)
             {
-                label->Property("text", RendererQml::Formatter() << (mTimeInput->GetLabel().empty() ? "Text" : mTimeInput->GetLabel()) << " <font color='" << mTimeInputConfig.errorMessageColor << "'>*</font>", true);
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mTimeInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << " <font color='" << mTimeInputConfig.errorMessageColor << "'>*</font>`");
             }
             else
             {
-                label->Property("text", RendererQml::Formatter() << (mTimeInput->GetLabel().empty() ? "Text" : mTimeInput->GetLabel()), true);
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mTimeInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << "`");
             }
 
             mTimeInputColElement->AddChild(label);
@@ -465,7 +471,7 @@ void TimeInputElement::addErrorMessage()
             uiErrorMessage->Property("Accessible.ignored", "true");
 
             uiErrorMessage->Property("color", mContext->GetHexColor(mTimeInputConfig.errorMessageColor));
-            uiErrorMessage->Property("text", mTimeInput->GetErrorMessage(), true);
+            uiErrorMessage->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
             uiErrorMessage->Property("visible", RendererQml::Formatter() << id << ".showErrorMessage");
             mTimeInputColElement->AddChild(uiErrorMessage);
         }
@@ -559,13 +565,13 @@ const std::string TimeInputElement::getAccessibleName()
     {
         if (!mTimeInput->GetLabel().empty())
         {
-            labelString << "accessibleName += '" << mTimeInput->GetLabel() << ". ';";
+            labelString << "accessibleName += String.raw`" << mEscapedLabelString << ". `;";
         }
 
         if (!mTimeInput->GetErrorMessage().empty())
         {
             errorString << "if(" << id << ".showErrorMessage === true){"
-                << "accessibleName += 'Error. " << mTimeInput->GetErrorMessage() << ". ';}";
+                << "accessibleName += String.raw`Error. " << mEscapedErrorString << ". `;}";
         }
     }
 

@@ -105,7 +105,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getItemDelegate()
     auto itemDelegateId = mChoiceSet.id + "_itemDelegate";
     auto uiItemDelegate = std::make_shared<RendererQml::QmlTag>("ItemDelegate");
     uiItemDelegate->Property("id", itemDelegateId);
-    uiItemDelegate->Property("width", "parent.width");
+    uiItemDelegate->Property("width", RendererQml::Formatter() << mComboBox->GetId() << ".width");
     uiItemDelegate->Property("height", RendererQml::Formatter() << mChoiceSetConfig.dropDownElementHeight);
     uiItemDelegate->Property("verticalPadding", RendererQml::Formatter() << mChoiceSetConfig.dropDownElementVerticalPadding);
     uiItemDelegate->Property("horizontalPadding", RendererQml::Formatter() << mChoiceSetConfig.dropDownElementHorizontalPadding);

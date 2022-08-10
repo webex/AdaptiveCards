@@ -19,6 +19,8 @@ private:
     const RendererQml::Checkbox mCheckBox;
     const RendererQml::ToggleButtonConfig mCheckBoxConfig;
     const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
+    std::string mEscapedValueOn{ "" };
+    std::string mEscapedValueOff{ "" };
 
 private:
     void initialize();

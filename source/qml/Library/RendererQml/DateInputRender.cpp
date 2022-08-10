@@ -23,6 +23,12 @@ void DateInputElement::initialize()
 
     mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mDateInput->GetPlaceholder());
 
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    {
+        mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mDateInput->GetLabel());
+        mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mDateInput->GetErrorMessage());
+    }
+
     mDateFieldId = mDateInput->GetId();
     mCalendarBoxId = RendererQml::Formatter() << mDateFieldId << "_calendarBox";
     mDateInputColElementId = RendererQml::Formatter() << mDateFieldId << "_column";
@@ -34,6 +40,7 @@ void DateInputElement::initialize()
 
     mDateInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     mDateInputColElement->Property("id", mDateInputColElementId);
+    mDateInputColElement->Property("property int minWidth", "300");
     mDateInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mDateInputColElement->Property("width", "parent.width");
     mDateInputColElement->Property("visible", mDateInput->GetIsVisible() ? "true" : "false");
@@ -168,7 +175,7 @@ void DateInputElement::initDateInputField()
 
     mDateInputTextField->AddFunctions(RendererQml::Formatter() << "function setValidDate(dateString)"
         << "{"
-        << "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};"
+        << "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,Jul: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};"
         << "var d=new Date(" << year_Text << "," << "Months[" << month_Text << "]," << day_Text << ");"
         << "if( d.getFullYear().toString() === " << year_Text << "&& d.getMonth()===Months[" << month_Text << "] && parseInt(d.getDate().toString())===parseInt(" << day_Text << "))"
         << "{selectedDate = d.toLocaleString(Qt.locale(\"en_US\"),\"yyyy-MM-dd\");}"
@@ -347,7 +354,7 @@ std::shared_ptr<RendererQml::QmlTag> DateInputElement::getCalendarListView()
 
     listviewCalendar->AddFunctions(RendererQml::Formatter() << "function setCalendarDateFromString(dateString)"
         << "{"
-        << "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,July: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};"
+        << "var Months = {Jan: 0,Feb: 1,Mar: 2,Apr: 3,May: 4,Jun: 5,Jul: 6,Aug: 7,Sep: 8,Oct: 9,Nov: 10,Dec: 11};"
         << "var y=dateString.match(/[0-9]{4}/);"
         << "dateString=dateString.replace(y,\"\");"
         << "var m=dateString.match(/[a-zA-Z]{3}/);"
@@ -596,11 +603,11 @@ void DateInputElement::addInputLabel(bool isRequired)
 
             if (isRequired)
             {
-                label->Property("text", RendererQml::Formatter() << (mDateInput->GetLabel().empty() ? "Text" : mDateInput->GetLabel()) << " <font color='" << mDateConfig.errorMessageColor << "'>*</font>", true);
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mDateInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << " <font color='" << mDateConfig.errorMessageColor << "'>*</font>`");
             }
             else
             {
-                label->Property("text", RendererQml::Formatter() << (mDateInput->GetLabel().empty() ? "Text" : mDateInput->GetLabel()), true);
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mDateInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << "`");
             }
 
             mDateInputColElement->AddChild(label);
@@ -629,7 +636,7 @@ void DateInputElement::addErrorMessage()
             uiErrorMessage->Property("Accessible.ignored", "true");
 
             uiErrorMessage->Property("color", mContext->GetHexColor(mDateConfig.errorMessageColor));
-            uiErrorMessage->Property("text", mDateInput->GetErrorMessage(), true);
+            uiErrorMessage->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
             uiErrorMessage->Property("visible", RendererQml::Formatter() << mDateInput->GetId() << ".showErrorMessage");
             mDateInputColElement->AddChild(uiErrorMessage);
         }
@@ -704,13 +711,13 @@ const std::string DateInputElement::getAccessibleName()
     {
         if (!mDateInput->GetLabel().empty())
         {
-            labelString << "accessibleName += '" << mDateInput->GetLabel() << ". ';";
+            labelString << "accessibleName += String.raw`" << mEscapedLabelString << ". `;";
         }
 
         if (!mDateInput->GetErrorMessage().empty())
         {
             errorString << "if(" << mDateFieldId << ".showErrorMessage === true){"
-                << "accessibleName += 'Error. " << mDateInput->GetErrorMessage() << ". ';}";
+                << "accessibleName += String.raw`Error. " << mEscapedErrorString << ". `;}";
         }
     }
 
