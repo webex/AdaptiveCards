@@ -17,6 +17,8 @@ std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getQmlTag()
 
 void CheckBoxElement::initialize()
 {
+    mEscapedValueOn = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOn);
+    mEscapedValueOff = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOff);
     if (mCheckBox.type == RendererQml::CheckBoxType::RadioButton)
     {
         mCheckBoxElement = std::make_shared<RendererQml::QmlTag>("RadioButton");
@@ -30,10 +32,8 @@ void CheckBoxElement::initialize()
 
     if (mCheckBox.type == RendererQml::CheckBoxType::Toggle)
     {
-        auto escapedValueOn = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOn);
-        auto escapedValueOff = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOff);
-        mCheckBoxElement->Property("readonly property string valueOn", RendererQml::Formatter() << "String.raw`" << escapedValueOn << "`");
-        mCheckBoxElement->Property("readonly property string valueOff", RendererQml::Formatter() << "String.raw`" << escapedValueOff << "`");
+        mCheckBoxElement->Property("readonly property string valueOn", RendererQml::Formatter() << "String.raw`" << mEscapedValueOn << "`");
+        mCheckBoxElement->Property("readonly property string valueOff", RendererQml::Formatter() << "String.raw`" << mEscapedValueOff << "`");
         mCheckBoxElement->Property("property string value", "checked ? valueOn : valueOff");
         mCheckBoxElement->Property("width", "parent.width");
     }

@@ -20,6 +20,8 @@ private:
     std::shared_ptr<AdaptiveCards::ToggleInput> mToggleInput;
     const RendererQml::ToggleButtonConfig mToggleInputConfig;
     const std::shared_ptr<RendererQml::AdaptiveRenderContext> mContext;
+    std::string mEscapedLabelString{ "" };
+    std::string mEscapedErrorString{ "" };
 
 private:
     void initialize();
