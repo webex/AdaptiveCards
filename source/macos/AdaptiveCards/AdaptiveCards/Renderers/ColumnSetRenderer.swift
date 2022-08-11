@@ -69,7 +69,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             let width = ( Constants.maxCardWidth - ( Constants.padding * ( columnViews.count + 1 ))) / columnViews.count
             
             for index in (0 ..< columnViews.count) {
-                var widthAnchor = columnViews[index].widthAnchor.constraint(equalToConstant: CGFloat(width))
+                let widthAnchor = columnViews[index].widthAnchor.constraint(equalToConstant: CGFloat(width))
                 widthAnchor.priority = .defaultHigh
                 widthAnchor.isActive = true
             }
