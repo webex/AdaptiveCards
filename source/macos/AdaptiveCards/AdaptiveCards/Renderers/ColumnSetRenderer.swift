@@ -2,6 +2,10 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ColumnSetRenderer: BaseCardElementRendererProtocol {
+    private struct Constants {
+        static let maxCardWidth: Int = 350
+        static let padding: Int = 10
+    }
     static let shared = ColumnSetRenderer()
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
@@ -62,10 +66,12 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             }
             columnSetView.distribution = .fill
         } else if numberOfAutoItems > 0 || numberOfAutoItems == totalColumns {
-            let width = ( 350 - ( 10 * ( columnViews.count + 1 ))) / columnViews.count
+            let width = ( Constants.maxCardWidth - ( Constants.padding * ( columnViews.count + 1 ))) / columnViews.count
             
             for index in (0 ..< columnViews.count) {
-                columnViews[index].widthAnchor.constraint(equalToConstant: CGFloat(width)).isActive = true
+                var widthAnchor = columnViews[index].widthAnchor.constraint(equalToConstant: CGFloat(width))
+                widthAnchor.priority = .defaultHigh
+                widthAnchor.isActive = true
             }
             columnSetView.distribution = .gravityAreas
         } else if numberOfStretchItems == 0 && numberOfWeightedItems == 0 {
