@@ -298,6 +298,7 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createMultiLineTextAreaEl
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("Accessible.role", "Accessible.EditableText");
+    uiTextInput->Property("anchors.fill", "parent");
     uiTextInput->AddFunctions(getAccessibleName(uiTextInput));
 
     if (mTextinput->GetMaxLength() > 0)
