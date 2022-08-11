@@ -15,6 +15,12 @@ class FakeColumn: ACSColumn {
     var backgroundImage: ACSBackgroundImage?
     var selectAction: ACSBaseActionElement?
     var padding: Bool = false
+    var height: ACSHeightType = .stretch
+    var type: ACSCardElementType = .columnSet
+    
+    override func getType() -> ACSCardElementType {
+        return type
+    }
     
     override func getWidth() -> String? {
         return width
@@ -58,6 +64,10 @@ class FakeColumn: ACSColumn {
     
     override func setMinHeight(_ value: NSNumber) {
         minHeight = value
+    }
+    
+    override func getHeight() -> ACSHeightType {
+        return height
     }
     
     override func getBleed() -> Bool {

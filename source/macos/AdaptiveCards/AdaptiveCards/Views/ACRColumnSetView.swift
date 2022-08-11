@@ -1,0 +1,62 @@
+//
+//  ACRColumnSetView.swift
+//  AdaptiveCards
+//
+//  Created by uchauhan on 03/08/22.
+//
+
+import AdaptiveCards_bridge
+import AppKit
+
+class ACRColumnSetView: ACRContentStackView {
+    override func addArrangedSubview(_ view: NSView) {
+        super.addArrangedSubview(view)
+        self.increaseIntrinsicContentSize(view)
+    }
+    
+    override func addView(_ view: NSView, in gravity: NSStackView.Gravity) {
+        super.addView(view, in: gravity)
+        self.increaseIntrinsicContentSize(view)
+    }
+    
+    override func increaseIntrinsicContentSize(_ view: NSView) {
+        if !view.isHidden {
+            super.increaseIntrinsicContentSize(view)
+            let size = view.intrinsicContentSize
+            if size.width >= 0 && size.height >= 0 {
+                let combinedSize = CGSize(width: self.combinedContentSize.width + size.width, height: max(self.combinedContentSize.height, size.height))
+                self.combinedContentSize = combinedSize
+            }
+        }
+    }
+    
+    override func decreaseIntrinsicContentSize(_ view: NSView) {
+        // get max height amongst the subviews that is not the view
+        let maxHeightExludingTheView = getMaxHeightOfSubviews(afterExcluding: view)
+        let size = getIntrinsicContentSize(inArragedSubviews: view)
+        // there are three possible cases
+        // 1. maxHeightExludingTheView is equal to the height of the view
+        // 2. maxHeightExludingTheView is bigger than the the height of the view
+        // 3. maxHeightExludingTheView is smaller than the the height of the view
+        // only #3 changes the current height, when the view's height is no longer in considreation
+        // for dimension
+        let newHeight = (maxHeightExludingTheView < size.height) ? maxHeightExludingTheView : combinedContentSize.height
+        self.combinedContentSize = CGSize(width: combinedContentSize.width - size.width, height: newHeight)
+    }
+    
+    override func updateIntrinsicContentSize() {
+        combinedContentSize = CGSize.zero
+        super.updateIntrinsicContentSize({ [self] view, id, bool in
+            print(view, id, bool)
+            guard let view = view as? NSView else { return }
+            let size = view.intrinsicContentSize
+            guard size.width >= 0 && size.height >= 0 else { return }
+            let combinedSize = CGSize(width: combinedContentSize.width + size.width, height: CGFloat(max(combinedContentSize.height, size.height)))
+            combinedContentSize = combinedSize
+        })
+    }
+    
+    override func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber, heightType: ACSHeightType, type: ACSCardElementType) {
+        self.setMinimumHeight(minHeight)
+    }
+}

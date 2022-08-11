@@ -73,8 +73,8 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         if imageProperties.acsImageSize != ACSImageSize.stretch {
             imageView.setContentHuggingPriority(imagePriority, for: .horizontal)
             imageView.setContentHuggingPriority(.defaultHigh, for: .vertical)
-            imageView.setContentCompressionResistancePriority(imagePriority, for: .horizontal)
-            imageView.setContentCompressionResistancePriority(imagePriority, for: .vertical)
+            imageView.setContentCompressionResistancePriority(imagePriority + 2, for: .horizontal)
+            imageView.setContentCompressionResistancePriority(imagePriority + 2, for: .vertical)
         }
         
         if imageView.image != nil {
@@ -133,7 +133,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
     func getImageUILayoutPriority(_ wrapView: NSView?) -> NSLayoutConstraint.Priority {
         if let wrapView = wrapView {
             let priority = wrapView.contentHuggingPriority(for: .horizontal)
-            return (priority > .init(249)) ? .defaultHigh : priority
+            return (priority > ColumnWidth.stretch.huggingPriority) ? .defaultHigh : priority
         }
         return .defaultHigh
     }
