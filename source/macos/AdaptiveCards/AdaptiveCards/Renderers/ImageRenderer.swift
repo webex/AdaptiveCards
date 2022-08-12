@@ -73,8 +73,8 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
         if imageProperties.acsImageSize != ACSImageSize.stretch {
             imageView.setContentHuggingPriority(imagePriority, for: .horizontal)
             imageView.setContentHuggingPriority(.defaultHigh, for: .vertical)
-            imageView.setContentCompressionResistancePriority(imagePriority + 2, for: .horizontal)
-            imageView.setContentCompressionResistancePriority(imagePriority + 2, for: .vertical)
+            imageView.setContentCompressionResistancePriority(imagePriority, for: .horizontal)
+            imageView.setContentCompressionResistancePriority(imagePriority, for: .vertical)
         }
         
         if imageView.image != nil {

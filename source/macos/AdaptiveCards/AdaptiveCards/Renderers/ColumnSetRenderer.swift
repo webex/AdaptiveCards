@@ -16,7 +16,6 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         let columnSetView = ACRColumnSetView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: columnSet.getPadding())
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
         columnSetView.orientation = .horizontal
-        columnSetView.setContentCompressionResistancePriority(.required, for: .vertical)
         var numberOfAutoItems = 0
         var numberOfStretchItems = 0
         var numberOfWeightedItems = 0
@@ -88,7 +87,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                 }
             }
         }
-        columnSetView.configureLayout(columnSet.getVerticalContentAlignment(), minHeight: columnSet.getMinHeight() ?? 0, heightType: columnSet.getHeight(), type: .columnSet)
+        columnSetView.configureLayout(columnSet.getVerticalContentAlignment(), minHeight: columnSet.getMinHeight(), heightType: columnSet.getHeight(), type: .columnSet)
         return columnSetView
     }
     
@@ -103,12 +102,9 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         guard let columnView = columnView as? ACRColumnView else { return }
         let gravityArea: NSStackView.Gravity = columnSet.getHorizontalAlignment() == .center ? .center: (columnSet.getHorizontalAlignment() == .right ? .trailing: .leading)
         
-        if !isfirstElement && column.getSeparator() {
-            // For seperator spacing
-            columnSetView.addSeperator(true, withSpacing: column.getSpacing())
-        } else if !isfirstElement {
-            // For padding Spacing
-            columnSetView.addSpacing(column.getSpacing())
+        if !isfirstElement {
+            // For seperator and spacing
+            columnSetView.addSeparator(column.getSeparator(), withSpacing: column.getSpacing())
         }
         columnView.identifier = NSUserInterfaceItemIdentifier(column.getId() ?? "")
         columnView.isHidden = !column.getIsVisible()

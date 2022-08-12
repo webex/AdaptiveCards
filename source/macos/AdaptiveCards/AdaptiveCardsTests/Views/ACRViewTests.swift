@@ -439,7 +439,7 @@ class ACRViewTests: XCTestCase {
         
         let wrappingView = ACRContentStackView(style: column2.getStyle(), hostConfig: hostConfig, renderConfig: .default)
         wrappingView.addSpacing(column2.getSpacing())
-        wrappingView.addSeperator(column2.getSeparator(), withSpacing: column2.getSpacing())
+        wrappingView.addSeparator(column2.getSeparator(), withSpacing: column2.getSpacing())
         wrappingView.isHidden = !column2.getIsVisible()
         wrappingView.identifier = NSUserInterfaceItemIdentifier(column2.getId() ?? "")
         

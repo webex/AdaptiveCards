@@ -74,8 +74,7 @@ class ACRContainerView: ACRContentStackView {
     
     override func updateIntrinsicContentSize() {
         self.combinedContentSize = CGSize.zero
-        super.updateIntrinsicContentSize({ [self] view, id, bool in
-            print(view, id, bool)
+        super.updateIntrinsicContentSize({ [self] view, _, _ in
             guard let view = view as? NSView else { return }
             let size = view.intrinsicContentSize
             guard !view.isHidden else { return }

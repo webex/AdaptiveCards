@@ -31,7 +31,7 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
             BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: columnView, with: hostConfig, element: element, parentElement: column)
         }
         
-        columnView.configureLayout(column.getVerticalContentAlignment(), minHeight: column.getMinHeight() ?? 0, heightType: column.getHeight(), type: .column)
+        columnView.configureLayout(column.getVerticalContentAlignment(), minHeight: column.getMinHeight(), heightType: column.getHeight(), type: .column)
         
         if column.getVerticalContentAlignment() == .center, let topView = topSpacingView {
             let view = SpacingView()

@@ -9,12 +9,9 @@ class BaseCardElementRenderer {
     func updateView(view: NSView, element: ACSBaseCardElement, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) -> ACRContentStackView {
         let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig, renderConfig: config)
         
-        if !isfirstElement && element.getSeparator() {
-            // For seperator
-            updatedView.addSeperator(true, withSpacing: element.getSpacing())
-        } else if !isfirstElement {
-            // For Spacing
-            updatedView.addSpacing(element.getSpacing())
+        if !isfirstElement {
+            // For seperator and spacing
+            updatedView.addSeparator(element.getSeparator(), withSpacing: element.getSpacing())
         }
         
         if let elem = element as? ACSImage {
@@ -50,12 +47,9 @@ class BaseCardElementRenderer {
     }
     
     func updateLayoutForSeparatorAndAlignment(view: NSView, element: ACSBaseCardElement, parentView: ACRContentStackView, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) {
-        if !isfirstElement && element.getSeparator() {
-            // For seperator
-            parentView.addSeperator(true, withSpacing: element.getSpacing())
-        } else if !isfirstElement {
-            // For Spacing
-            parentView.addSpacing(element.getSpacing())
+        if !isfirstElement {
+            // For seperator and spacing
+            parentView.addSeparator(element.getSeparator(), withSpacing: element.getSpacing())
         }
         
         if let elem = element as? ACSImage {
