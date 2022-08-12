@@ -9,9 +9,9 @@ class BaseCardElementRenderer {
     func updateView(view: NSView, element: ACSBaseCardElement, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) -> ACRContentStackView {
         let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig, renderConfig: config)
         
-        // For Spacing
         if !isfirstElement {
-            updatedView.addSpacing(element.getSpacing())
+            // For seperator and spacing
+            updatedView.addSeparator(element.getSeparator(), withSpacing: element.getSpacing())
         }
         
         if let elem = element as? ACSImage {
@@ -28,11 +28,6 @@ class BaseCardElementRenderer {
                 rootView.registerImageHandlingView(columnView.backgroundImageView, for: url)
             }
             contentStackView.setMinimumHeight(collectionElement.getMinHeight())
-        }
-        
-        // For seperator
-        if element.getSeparator(), !isfirstElement {
-            updatedView.addSeperator(true)
         }
         
         updatedView.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
@@ -52,9 +47,9 @@ class BaseCardElementRenderer {
     }
     
     func updateLayoutForSeparatorAndAlignment(view: NSView, element: ACSBaseCardElement, parentView: ACRContentStackView, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) {
-        // For Spacing
         if !isfirstElement {
-            parentView.addSpacing(element.getSpacing())
+            // For seperator and spacing
+            parentView.addSeparator(element.getSeparator(), withSpacing: element.getSpacing())
         }
         
         if let elem = element as? ACSImage {
@@ -76,13 +71,8 @@ class BaseCardElementRenderer {
             }
         }
         
-        // For seperator
-        if element.getSeparator(), !isfirstElement {
-            parentView.addSeperator(true)
-        }
-        
-        parentView.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
-        parentView.isHidden = !element.getIsVisible()
+        view.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
+        view.isHidden = !element.getIsVisible()
         
         if let inputElement = element as? ACSBaseInputElement {
             parentView.configureInputElements(element: inputElement, view: view)
@@ -167,11 +157,12 @@ class BaseCardElementRenderer {
             }
             
             if collection.getBackgroundImage() != nil {
-                guard let collectionView = collectionView as? ACRColumnView else {
-                    logError("Collection View is not type of ACRColumnView")
-                    return
+                if let collectionView = collectionView as? ACRColumnView {
+                    collectionView.bleedBackgroundImage(padding: padding, top: top, bottom: bottom, leading: leading, trailing: trailing, paddingBottom: paddingBottom, with: bottomAnchor)
                 }
-                collectionView.bleedBackgroundImage(padding: padding, top: top, bottom: bottom, leading: leading, trailing: trailing, paddingBottom: paddingBottom, with: bottomAnchor)
+                if let collectionView = collectionView as? ACRContainerView {
+                    collectionView.bleedBackgroundImage(padding: padding, top: top, bottom: bottom, leading: leading, trailing: trailing, paddingBottom: paddingBottom, with: bottomAnchor)
+                }
                 return
             }
             let backgroundView = NSView()

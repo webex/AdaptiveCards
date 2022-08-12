@@ -22,22 +22,22 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
             topSpacingView = view
         }
         
-        for (index, item) in column.getItems().enumerated() {
-            let renderer = RendererManager.shared.renderer(for: item.getType())
-            let view = renderer.render(element: item, with: hostConfig, style: style, rootView: rootView, parentView: columnView, inputs: [], config: config)
+        for (index, element) in column.getItems().enumerated() {
+            let isFirstElement = index == 0
+            let renderer = RendererManager.shared.renderer(for: element.getType())
+            let view = renderer.render(element: element, with: hostConfig, style: style, rootView: rootView, parentView: columnView, inputs: [], config: config)
             columnView.configureColumnProperties(for: view)
-            let viewWithInheritedProperties = BaseCardElementRenderer.shared.updateView(view: view, element: item, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: index == 0)
-            columnView.addArrangedSubview(viewWithInheritedProperties)
-            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: columnView, with: hostConfig, element: item, parentElement: column)
+            BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: view, element: element, parentView: columnView, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
+            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: columnView, with: hostConfig, element: element, parentElement: column)
         }
+        
+        columnView.configureLayout(column.getVerticalContentAlignment(), minHeight: column.getMinHeight(), heightType: column.getHeight(), type: .column)
         
         if column.getVerticalContentAlignment() == .center, let topView = topSpacingView {
             let view = SpacingView()
             columnView.addArrangedSubview(view)
             view.heightAnchor.constraint(equalTo: topView.heightAnchor).isActive = true
         }
-        
-        columnView.setMinimumHeight(column.getMinHeight())
         
         if let backgroundImage = column.getBackgroundImage(), let url = backgroundImage.getUrl() {
             columnView.setupBackgroundImageProperties(backgroundImage)
@@ -46,8 +46,6 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
         
         columnView.setupSelectAction(column.getSelectAction(), rootView: rootView)
         columnView.setupSelectActionAccessibility(on: columnView, for: column.getSelectAction())
-        
-        columnView.setVerticalHuggingPriority(1)
      
         return columnView
     }

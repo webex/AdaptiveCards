@@ -5,7 +5,7 @@ protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
     func updateLayoutOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?)
-    func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber, heightType: ACSHeightType, type: ACSCardElementType)
+    func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType)
     func applyPadding(_ padding: CGFloat)
 }
 
@@ -32,6 +32,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var subviewIntrinsicContentSizeCollection: [String: NSValue] = [String: NSValue]()
     // Hold self view dynamic content intrinsicSize
     var combinedContentSize: CGSize = .zero
+    var parentView: ACRContentStackView?
     
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
@@ -86,6 +87,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = hostConfig
         self.style = style
         self.renderConfig = renderConfig
+        self.parentView = superview as? ACRContentStackView
         super.init(frame: .zero)
         initialize()
         if needsPadding {
@@ -161,12 +163,19 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         }
     }
     
-    func addSeperator(_ separator: Bool) {
-        guard separator else { return }
-        let seperatorConfig = hostConfig.getSeparator()
-        let lineThickness = seperatorConfig?.lineThickness
-        let lineColor = seperatorConfig?.lineColor
-        addSeperator(thickness: lineThickness ?? 1, color: lineColor ?? "#EEEEEE")
+    func addSeparator(_ separator: Bool, withSpacing space: ACSSpacing) {
+        if separator {
+            var spaceAdded = CGFloat(truncating: HostConfigUtils.getSpacing(space, with: hostConfig))
+            let seperatorConfig = hostConfig.getSeparator()
+            let lineThickness = seperatorConfig?.lineThickness
+            let lineColor = seperatorConfig?.lineColor
+            spaceAdded -= CGFloat(truncating: lineThickness ?? .init(value: 0))
+            addSpacing(spacing: spaceAdded / 2)
+            addSeparator(thickness: lineThickness ?? 1, color: lineColor ?? "#EEEEEE")
+            addSpacing(spacing: spaceAdded / 2)
+        } else {
+            addSpacing(space)
+        }
     }
     
     func addSpacing(_ spacing: ACSSpacing) {
@@ -178,10 +187,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         stackView.setCustomSpacing(spacing, after: view)
     }
     
-    private func addSeperator(thickness: NSNumber, color: String) {
+    private func addSeparator(thickness: NSNumber, color: String) {
         let seperatorView = SpacingView(asSeparatorViewWithThickness: CGFloat(truncating: thickness), color: color, orientation: orientation)
         stackView.addArrangedSubview(seperatorView)
-        stackView.setCustomSpacing(5, after: seperatorView)
         currentSeparatorView = seperatorView
     }
     
@@ -233,29 +241,25 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     func getMaxHeightOfSubviews(afterExcluding view: NSView?) -> CGFloat {
-        return getViewWithMaxDimension(
-            afterExcluding: view,
-            dimension: { [self] vw in
-                var key: String?
-                if let vw = vw {
-                    key = String(format: "%p", vw)
-                }
-                let value = self.subviewIntrinsicContentSizeCollection[key ?? ""]
-                return (value != nil ? value?.sizeValue : .zero)?.height ?? 0.0
-            })
+        return getViewWithMaxDimension(afterExcluding: view, dimension: { [self] vw in
+            var key: String?
+            if let vw = vw {
+                key = String(format: "%p", vw)
+            }
+            let value = self.subviewIntrinsicContentSizeCollection[key ?? ""]
+            return (value != nil ? value?.sizeValue : .zero)?.height ?? 0.0
+        })
     }
     
     func getMaxWidthOfSubviews(afterExcluding view: NSView?) -> CGFloat {
-        return getViewWithMaxDimension(
-            afterExcluding: view,
-            dimension: { [self] vw in
-                var key: String?
-                if let vw = vw {
-                    key = String(format: "%p", vw)
-                }
-                let value = self.subviewIntrinsicContentSizeCollection[key ?? ""]
-                return (value != nil ? value?.sizeValue : .zero)?.width ?? 0.0
-            })
+        return getViewWithMaxDimension(afterExcluding: view, dimension: { [self] vw in
+            var key: String?
+            if let vw = vw {
+                key = String(format: "%p", vw)
+            }
+            let value = self.subviewIntrinsicContentSizeCollection[key ?? ""]
+            return (value != nil ? value?.sizeValue : .zero)?.width ?? 0.0
+        })
     }
     
     func getViewWithMaxDimension(afterExcluding view: NSView?, dimension: @escaping (_ view: NSView?) -> CGFloat) -> CGFloat {
@@ -308,7 +312,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// activation constraint all at once is more efficient than activating
     /// constraints one by one.
     
-    func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber, heightType: ACSHeightType, type: ACSCardElementType) {
+    func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType) {
         self.verticalContentAlignment = verticalContentAlignment
         if self.shouldAddPadding(self.hasStretchableView) {
             self.addPadding()

@@ -4,50 +4,34 @@ import AppKit
 class ColumnSetRenderer: BaseCardElementRendererProtocol {
     static let shared = ColumnSetRenderer()
     
+    struct Constants {
+        static let kFillColumnViewVerticalLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 1
+    }
+    
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         guard let columnSet = element as? ACSColumnSet else {
             logError("Element is not of type ACSColumnSet")
             return NSView()
         }
-        let columnSetView = ACRContentStackView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: columnSet.getPadding())
+        let columnSetView = ACRColumnSetView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: columnSet.getPadding())
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
         columnSetView.orientation = .horizontal
-        let gravityArea: NSStackView.Gravity = columnSet.getHorizontalAlignment() == .center ? .center: (columnSet.getHorizontalAlignment() == .right ? .trailing: .leading)
-        
         var numberOfAutoItems = 0
         var numberOfStretchItems = 0
         var numberOfWeightedItems = 0
         let totalColumns = columnSet.getColumns().count
         var columnViews: [NSView] = []
+        
         for (index, column) in columnSet.getColumns().enumerated() {
+            let isfirstElement = index == 0
             let width = ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth())
-            
             if width.isWeighted { numberOfWeightedItems += 1 }
             if width == .stretch { numberOfStretchItems += 1 }
             if width == .auto { numberOfAutoItems += 1 }
             
             let columnView = ColumnRenderer.shared.render(element: column, with: hostConfig, style: columnSet.getStyle(), rootView: rootView, parentView: columnSetView, inputs: [], config: config)
-            
-            // Check if has extra properties else add column view
             columnViews.append(columnView)
-            guard index > 0, (column.getSpacing() != .none || column.getSeparator()), !column.getItems().isEmpty else {
-                columnView.isHidden = !column.getIsVisible()
-                columnView.identifier = NSUserInterfaceItemIdentifier(column.getId() ?? "")
-                columnSetView.addView(columnView, in: gravityArea)
-                BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column, parentElement: columnSet)
-                continue
-            }
-            let wrappingView = ACRContentStackView(style: column.getStyle(), hostConfig: hostConfig, renderConfig: config)
-            wrappingView.translatesAutoresizingMaskIntoConstraints = false
-            wrappingView.orientation = .horizontal
-            wrappingView.addSpacing(column.getSpacing())
-            wrappingView.addSeperator(column.getSeparator())
-            wrappingView.isHidden = !column.getIsVisible()
-            wrappingView.identifier = NSUserInterfaceItemIdentifier(column.getId() ?? "")
-            
-            wrappingView.addArrangedSubview(columnView)
-            columnView.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
-            columnSetView.addView(wrappingView, in: gravityArea)
+            updateColumnSetSeparatorAndAlignment(columnView: columnView, column: column, columnSetView: columnSetView, columnSet: columnSet, isfirstElement: isfirstElement)
             BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column, parentElement: columnSet)
         }
         
@@ -86,13 +70,11 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                 }
                 weightedValues.append(CGFloat(weighted) / baseWeight)
             }
-            
             if weightedColumnViews.count > 1 {
                 for index in (1 ..< weightedColumnViews.count) {
                     weightedColumnViews[index].widthAnchor.constraint(equalTo: weightedColumnViews[0].widthAnchor, multiplier: weightedValues[index]).isActive = true
                 }
             }
-            
             if numberOfStretchItems > 1 {
                 let stretchColumnIndices = getIndicesOfStretchedColumns(of: columnSet)
                 guard numberOfStretchItems == stretchColumnIndices.count else {
@@ -105,7 +87,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                 }
             }
         }
-        columnSetView.setVerticalHuggingPriority(100)
+        columnSetView.configureLayout(columnSet.getVerticalContentAlignment(), minHeight: columnSet.getMinHeight(), heightType: columnSet.getHeight(), type: .columnSet)
         return columnSetView
     }
     
@@ -114,5 +96,40 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             let width = ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth())
             return width == .stretch ? index : nil
         }
+    }
+    
+    private func updateColumnSetSeparatorAndAlignment(columnView: NSView, column: ACSColumn, columnSetView: ACRContentStackView, columnSet: ACSColumnSet, isfirstElement: Bool) {
+        guard let columnView = columnView as? ACRColumnView else { return }
+        let gravityArea: NSStackView.Gravity = columnSet.getHorizontalAlignment() == .center ? .center: (columnSet.getHorizontalAlignment() == .right ? .trailing: .leading)
+        
+        if !isfirstElement {
+            // For seperator and spacing
+            columnSetView.addSeparator(column.getSeparator(), withSpacing: column.getSpacing())
+        }
+        columnView.identifier = NSUserInterfaceItemIdentifier(column.getId() ?? "")
+        columnView.isHidden = !column.getIsVisible()
+        columnSetView.addView(columnView, in: gravityArea)
+        
+        // Keep Column view horizontal and vertical stretch inside the ColumnSet
+        /*
+         B = ColumnSet StackView
+         A = Column view
+         B+---------------------------+
+          | A+---------+ +---------+  |
+          |  | H:249   | |  H:249  |  |
+          |  | V:250   | |  V:250  |  |
+          |  +---------+ +---------+  |
+          |                           |
+          +---------------------------+
+         
+         B+---------------------------+
+          | A+---------+ +---------+  |
+          |  | H:249   | |  H:249  |  |
+          |  | V:249   | |  V:249  |  |
+          |  |         | |         |  |
+          |  +---------+ +---------+  |
+          +---------------------------+
+         */
+        columnView.setContentHuggingPriority(Constants.kFillColumnViewVerticalLayoutConstraintPriority, for: .vertical)
     }
 }

@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 class HeightTypeSupport {
-    private let supportElemets: [ACSCardElementType] = [.textBlock, .container]
+    private let supportElemets: [ACSCardElementType] = [.textBlock, .richTextBlock, .container, .columnSet]
     
     static let shared = HeightTypeSupport()
     
@@ -68,7 +68,7 @@ class AdaptiveCardRenderer {
         }
         
         if heightSupport {
-            rootView.configureLayout(card.getVerticalContentAlignment(), minHeight: card.getMinHeight() ?? 0, heightType: card.getHeight(), type: .adaptiveCard)
+            rootView.configureLayout(card.getVerticalContentAlignment(), minHeight: card.getMinHeight(), heightType: card.getHeight(), type: .adaptiveCard)
         }
         
         if !card.getActions().isEmpty {

@@ -16,7 +16,6 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.textContainer?.lineFragmentPadding = 0
         textView.textContainerInset = .zero
         textView.layoutManager?.usesFontLeading = false
-        textView.setContentHuggingPriority(.required, for: .vertical)
         textView.backgroundColor = .clear
         
         let linkAttributes: [NSAttributedString.Key: Any] = [
@@ -35,17 +34,17 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
                 logError("Not of type ACSTextRun")
                 continue
             }
-                
+            
             let markdownResult = BridgeTextUtils.processText(fromRichTextBlock: textRun, hostConfig: hostConfig)
             
             let markdownString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
             let textRunContent = TextUtils.addFontProperties(attributedString: markdownString, textProperties: BridgeTextUtils.convertTextRun(toRichTextElementProperties: textRun), hostConfig: hostConfig)
-                
+            
             // Set paragraph style such as line break mode and alignment
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = ACSHostConfig.getTextBlockAlignment(from: richTextBlock.getHorizontalAlignment())
             textRunContent.addAttributes([.paragraphStyle: paragraphStyle], range: NSRange(location: 0, length: textRunContent.length))
-
+            
             // Obtain text color to apply to the attributed string
             if let colorHex = hostConfig.getForegroundColor(style, color: textRun.getTextColor(), isSubtle: textRun.getIsSubtle()) {
                 let foregroundColor = ColorUtils.color(from: colorHex) ?? NSColor.darkGray
@@ -72,23 +71,33 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
                     textView.setupSelectAction(textRun.getSelectAction(), rootView: rootView)
                 }
             }
-                                
+            
             // apply strikethrough to textrun
             if textRun.getStrikethrough() {
                 textRunContent.addAttributes([.strikethroughStyle: 1], range: NSRange(location: 0, length: textRunContent.length))
             }
-                    
+            
             // apply underline to textrun
             if config.supportsSchemeV1_3, textRun.getUnderline() {
                 textRunContent.addAttributes([.underlineStyle: NSUnderlineStyle.single.rawValue], range: NSRange(location: 0, length: textRunContent.length))
             }
             content.append(textRunContent)
         }
- 
+        
         textView.textContainer?.lineBreakMode = .byTruncatingTail
         textView.textStorage?.setAttributedString(content)
         textView.textContainer?.widthTracksTextView = true
-   
-    return textView
+        
+        // Set compression priority higher value means that we don’t want the view to shrink smaller than the intrinsic content size.
+        textView.setContentCompressionResistancePriority(.required, for: .vertical)
+
+        if richTextBlock.getHeight() == .auto {
+            // Set Hugging priority Setting a larger value to this priority indicates that we don’t want the view to grow larger than its content.
+            textView.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        } else {
+            // Set Hugging priority Setting a lower value to this priority indicates that we want the view to grow larger than its content.
+            textView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        }
+        return textView
     }
 }

@@ -133,7 +133,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
     func getImageUILayoutPriority(_ wrapView: NSView?) -> NSLayoutConstraint.Priority {
         if let wrapView = wrapView {
             let priority = wrapView.contentHuggingPriority(for: .horizontal)
-            return (priority > .init(249)) ? .defaultHigh : priority
+            return (priority > ColumnWidth.stretch.huggingPriority) ? .defaultHigh : priority
         }
         return .defaultHigh
     }
