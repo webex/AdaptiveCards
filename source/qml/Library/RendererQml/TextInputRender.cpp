@@ -30,7 +30,8 @@ void TextInputElement::initialize()
     mTextinput->SetId(mContext->ConvertToValidId(mTextinput->GetId()));
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     mTextinputColElement = std::make_shared<RendererQml::QmlTag>("Column");
-    mTextinputColElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_column");
+    mTextinputColElement->Property("id", mTextinput->GetId());
+    mTextinput->SetId(mTextinput->GetId() + "_textField");
     mTextinputColElement->Property("property int minWidth", "200");
     mTextinputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mTextinputColElement->Property("width", "parent.width");

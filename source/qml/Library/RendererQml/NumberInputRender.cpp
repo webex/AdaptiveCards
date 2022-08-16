@@ -43,7 +43,7 @@ void NumberInputElement::initialize()
     const std::string origionalElementId = mInput->GetId();
     mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mInput->GetPlaceholder());
     mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
-    mOrigionalElementId = mInput->GetId();
+    mOrigionalElementId = RendererQml::Formatter() << mInput->GetId() << "_textField";
 
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -53,7 +53,7 @@ void NumberInputElement::initialize()
     }
 
     numberInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
-    numberInputColElement->Property("id", RendererQml::Formatter() << mInput->GetId() << "_column");
+    numberInputColElement->Property("id", mInput->GetId());
     numberInputColElement->Property("property int minWidth", "200");
     numberInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     numberInputColElement->Property("width", "parent.width");

@@ -211,6 +211,7 @@ namespace RendererQml
         }
 
 		bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
+        bodyLayout->Property("onVisibleChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
 
 		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
 
@@ -279,7 +280,7 @@ namespace RendererQml
                 {
                     if (!uiContainer->GetChildren().empty())
                     {
-                        AddSeparator(uiContainer, cardElement, context);
+                        AddSeparator(uiContainer, cardElement, context, uiElement->GetId());
                     }
 
                     if (cardElement->GetHeight() == AdaptiveCards::HeightType::Stretch && cardElement->GetElementTypeString() != "Image")
@@ -390,7 +391,7 @@ namespace RendererQml
                         context->addToShowCardLoaderComponentList(componentId, showCardAction);
 
                         //Add show card loader to the parent container
-                        AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, true, loaderId);
+                        AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, std::string(), true, loaderId);
 
 						auto uiLoader = std::make_shared<QmlTag>("Loader");
                         uiLoader->Property("id", loaderId);
@@ -1020,7 +1021,7 @@ namespace RendererQml
 		return uiFlow;
 	}
 
-	void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context, const bool isShowCard, const std::string loaderId)
+    void AdaptiveCardQmlRenderer::AddSeparator(std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveCards::BaseCardElement> adaptiveElement, std::shared_ptr<AdaptiveRenderContext> context, std::string linkElementId, const bool isShowCard, const std::string loaderId)
 	{
         //Returns only when seperator=false and spacing=none
         if (!adaptiveElement->GetSeparator() && adaptiveElement->GetSpacing() == AdaptiveCards::Spacing::None)
@@ -1034,6 +1035,11 @@ namespace RendererQml
         auto uiSep = std::make_shared<QmlTag>("SeparatorRender");
         uiSep->Property("_isColElement", adaptiveElement->GetElementTypeString() == "Column" ? "true" : "false");
         uiSep->Property("_height", std::to_string(spacing == 0 ? separator.lineThickness : spacing));
+
+        if (!linkElementId.empty())
+        {
+            uiSep->Property("_linkedElement", linkElementId);
+        }
 
         if (isShowCard)
         {
@@ -1824,16 +1830,17 @@ namespace RendererQml
                 function << "for(var i=0;i<requiredElements.length;i++){"
                     "requiredElements[i].showErrorMessage = requiredElements[i].validate();"
                     "isNotSubmittable |= requiredElements[i].showErrorMessage;"
-                    "if (firstElement === undefined && requiredElements[i].showErrorMessage){"
+                    "if (firstElement === undefined && requiredElements[i].showErrorMessage  && requiredElements[i].visible){"
                     "firstElement = requiredElements[i];"
                     "}}";
 
                 function << "if(isNotSubmittable){"
+                    "if(firstElement !== undefined){"
                     "if(firstElement.isButtonGroup !== undefined){"
                         "firstElement.focusFirstButton();"
                     "}else {"
                         "firstElement.forceActiveFocus();"
-                    "}"
+                    "}}"
                     "}else{";
 
                 for (const auto& element : context->getInputElementList())
@@ -2063,7 +2070,7 @@ namespace RendererQml
 			{
 				if (!uiRow->GetChildren().empty())
 				{
-					AddSeparator(uiRow, cardElement, context);
+					AddSeparator(uiRow, cardElement, context, uiElement->GetId());
 				}
 
 				uiRow->AddChild(uiElement);
