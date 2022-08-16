@@ -4,7 +4,7 @@ import AppKit
 class ColumnSetRenderer: BaseCardElementRendererProtocol {
     private struct Constants {
         static let maxCardWidth: Int = 350
-        static let padding: Int = 10
+        static let padding: Int = 12
     }
     static let shared = ColumnSetRenderer()
     
@@ -13,6 +13,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             logError("Element is not of type ACSColumnSet")
             return NSView()
         }
+        var stylePaddingCount = columnSet.getPadding() ? 1 : 0
         let columnSetView = ACRContentStackView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: columnSet.getPadding())
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
         columnSetView.orientation = .horizontal
@@ -24,6 +25,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         let totalColumns = columnSet.getColumns().count
         var columnViews: [NSView] = []
         for (index, column) in columnSet.getColumns().enumerated() {
+            stylePaddingCount += column.getPadding() ? 1 : 0
             let width = ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth())
             
             if width.isWeighted { numberOfWeightedItems += 1 }
@@ -66,7 +68,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             }
             columnSetView.distribution = .fill
         } else if numberOfAutoItems > 0 || numberOfAutoItems == totalColumns {
-            let width = ( Constants.maxCardWidth - ( Constants.padding * ( columnViews.count + 1 ))) / columnViews.count
+            let width = ( Constants.maxCardWidth - ( Constants.padding * ( columnViews.count + stylePaddingCount ))) / columnViews.count
             
             for index in (0 ..< columnViews.count) {
                 let widthAnchor = columnViews[index].widthAnchor.constraint(equalToConstant: CGFloat(width))
