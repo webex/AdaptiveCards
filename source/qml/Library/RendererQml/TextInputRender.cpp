@@ -291,14 +291,13 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createMultiLineTextAreaEl
     uiTextInput->Property("wrapMode", "Text.Wrap");
     uiTextInput->Property("selectByMouse", "true");
     uiTextInput->Property("selectedTextColor", "'white'");
-    uiTextInput->Property("topPadding", RendererQml::Formatter() << textConfig.multiLineTextTopPadding);
-    uiTextInput->Property("bottomPadding", RendererQml::Formatter() << textConfig.multiLineTextBottomPadding);
     uiTextInput->Property("color", mContext->GetHexColor(textConfig.textColor));
     uiTextInput->Property("placeholderTextColor", mContext->GetHexColor(textConfig.placeHolderColor));
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("Accessible.role", "Accessible.EditableText");
-    uiTextInput->Property("anchors.fill", "parent");
+    uiTextInput->Property("height", "parent.height");
+    uiTextInput->Property("width", "parent.width");
     uiTextInput->AddFunctions(getAccessibleName(uiTextInput));
 
     if (mTextinput->GetMaxLength() > 0)
