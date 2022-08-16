@@ -50,7 +50,8 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createInputTextLabel(bool
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto label = std::make_shared<RendererQml::QmlTag>("Label");
-    label->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_label");
+    mLabelId = RendererQml::Formatter() << mTextinput->GetId() << "_label";
+    label->Property("id", mLabelId);
     label->Property("wrapMode", "Text.Wrap");
     label->Property("width", "parent.width");
 
@@ -74,7 +75,8 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createErrorMessageText(co
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
-    uiErrorMessage->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_errorMessage");
+    mErrorMessageId = RendererQml::Formatter() << mTextinput->GetId() << "_errorMessage";
+    uiErrorMessage->Property("id", mErrorMessageId);
     uiErrorMessage->Property("wrapMode", "Text.Wrap");
     uiErrorMessage->Property("width", "parent.width");
     uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << textConfig.labelSize);
@@ -164,20 +166,20 @@ void TextInputElement::initMultiLine()
         }
     }
 
-    mTextinputElement = std::make_shared<RendererQml::QmlTag>("ScrollView");
+    mTextinputElement = std::make_shared<RendererQml::QmlTag>("Rectangle");
+    mTextinputElement->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_input_element");
     mTextinputElement->Property("width", "parent.width");
     mTextinputElement->Property("height", RendererQml::Formatter() << mTextinput->GetId() << ".visible ? " << textConfig.multiLineTextHeight << " : 0");
-    mTextinputElement->Property("ScrollBar.vertical.interactive", "true");
-    mTextinputElement->Property("ScrollBar.horizontal.interactive", "false");
-    mTextinputElement->Property("ScrollBar.horizontal.visible", "false");
+    mTextinputElement->Property("color", "'transparent'");
 
-    if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
-    {
-        mTextinputElement->Property("height", RendererQml::Formatter() << "parent.height > 0 ? parent.height : " << textConfig.multiLineTextHeight);
-    }
+    mScrollViewWrapper = std::make_shared<RendererQml::QmlTag>("ScrollView");
+    mScrollViewWrapper->Property("anchors.fill", "parent");
+    mScrollViewWrapper->Property("ScrollBar.vertical.interactive", "true");
+    mScrollViewWrapper->Property("ScrollBar.horizontal.interactive", "false");
+    mScrollViewWrapper->Property("ScrollBar.horizontal.visible", "false");
 
     auto uiTextInput = createMultiLineTextAreaElement();
-    mTextinputElement->AddChild(uiTextInput);
+    mScrollViewWrapper->AddChild(uiTextInput);
     mContext->addToInputElementList(mOriginalElementId, (uiTextInput->GetId() + ".text"));
     this->addInlineActionMode();
 
@@ -194,6 +196,16 @@ void TextInputElement::initMultiLine()
 
         }
     }
+
+    if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
+    {
+        std::string spacing = std::to_string(RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
+        std::string labelHeight = RendererQml::Formatter() << (mLabelId.empty() ? 0 : (mLabelId + ".height + " + spacing));
+        std::string errorMessageHeight = RendererQml::Formatter() << (mErrorMessageId.empty() ? 0 : (mErrorMessageId + ".visible ? " + mErrorMessageId + ".implicitHeight + " + spacing + ": 0"));
+        mTextinputElement->Property("height", RendererQml::Formatter() << "parent.height > 0 ? (parent.height - (" << labelHeight << ") - (" << errorMessageHeight << " )): " << textConfig.multiLineTextHeight);
+    }
+
+    mTextinputElement->AddChild(mScrollViewWrapper);
 }
 
 void TextInputElement::addValidationToInputText(std::shared_ptr<RendererQml::QmlTag> &uiTextInput)
@@ -295,9 +307,10 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createMultiLineTextAreaEl
     uiTextInput->Property("placeholderTextColor", mContext->GetHexColor(textConfig.placeHolderColor));
     uiTextInput->Property("leftPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
     uiTextInput->Property("rightPadding", RendererQml::Formatter() << textConfig.textHorizontalPadding);
+    uiTextInput->Property("height", RendererQml::Formatter() << mTextinputElement->GetId() << ".height");
+    uiTextInput->Property("width", RendererQml::Formatter() << mTextinputElement->GetId() << ".width");
+
     uiTextInput->Property("Accessible.role", "Accessible.EditableText");
-    uiTextInput->Property("height", "parent.height");
-    uiTextInput->Property("width", "parent.width");
     uiTextInput->AddFunctions(getAccessibleName(uiTextInput));
 
     if (mTextinput->GetMaxLength() > 0)
