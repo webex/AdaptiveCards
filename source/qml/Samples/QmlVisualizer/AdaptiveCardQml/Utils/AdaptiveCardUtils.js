@@ -115,3 +115,19 @@ function handleSubmitAction(paramStr, adaptiveCard, is1_3Enabled) {
     }
     return;
 }
+
+function handleToggleVisibilityAction(targetElements) {
+    var elements = targetElements[0];
+    var values = targetElements[1];
+
+    if (elements.length === 0)
+        return;
+
+    for (var i = 0; i < elements.length; i++) {
+        if (values[i] === null) {
+            elements[i].visible = !elements[i].visible;
+        } else {
+            elements[i].visible = values[i];
+        }
+    }
+}

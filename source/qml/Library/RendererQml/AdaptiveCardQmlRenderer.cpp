@@ -479,6 +479,11 @@ namespace RendererQml
                 onClickedFunction = getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(selectAction), context);
                 parent->Property("Keys.onPressed", Formatter() << "{if (event.key === Qt.Key_Return || event.key === Qt.Key_Space){ " << mouseAreaId << ".clicked( " << mouseAreaId << ".mouseX)}}");
             }
+            else if (selectAction->GetElementTypeString() == "Action.ToggleVisibility")
+            {
+                onClickedFunction = getActionToggleVisibilityClickFunc(std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(selectAction), context);
+                parent->Property("Keys.onPressed", Formatter() << "{if (event.key === Qt.Key_Return || event.key === Qt.Key_Space){ " << mouseAreaId << ".released( " << mouseAreaId << ".mouseX)}}");
+            }
             else if (selectAction->GetElementTypeString() == "Action.Submit")
             {
                 context->addToSubmitActionButtonList(mouseArea, std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(selectAction));
@@ -959,18 +964,23 @@ namespace RendererQml
             if (image->GetSelectAction()->GetElementTypeString() == "Action.Submit")
             {
                 auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(image->GetSelectAction());
-                selectActionId = "Action.Submit";
+                selectActionId = submitAction->GetElementTypeString();
                 std::string submitDataJson = submitAction->GetDataJson();
                 submitDataJson = Utils::Trim(submitDataJson);
                 uiImage->Property("_paramStr", Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`");
-                uiImage->Property("_selectActionId", Formatter() << "String.raw`" << selectActionId << "`");
             }
             else if (image->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
             {
                 auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(image->GetSelectAction());
                 selectActionId = openUrlAction->GetUrl();
-                uiImage->Property("_selectActionId", Formatter() << "String.raw`" << selectActionId << "`");
             }
+            else if (image->GetSelectAction()->GetElementTypeString() == "Action.ToggleVisibility")
+            {
+                auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(image->GetSelectAction());
+                selectActionId = toggleVisibilityAction->GetElementTypeString();
+                uiImage->Property("_toggleVisibilityTarget", getActionToggleVisibilityArray(toggleVisibilityAction, context));
+            }
+            uiImage->Property("_selectActionId", Formatter() << "String.raw`" << selectActionId << "`");
         }
 
         return uiImage;
@@ -1416,7 +1426,7 @@ namespace RendererQml
 			actionSet->SetId(Formatter() << "actionSet_auto_" << std::to_string(context->GetActionSetCounter()));
 		}
 
-		outerContainer->Property("id", actionSet->GetId());
+		outerContainer->Property("id", context->ConvertToValidId(actionSet->GetId()));
 		outerContainer->Property("width", "parent.width");
 
 		if (!actionSet->GetIsVisible())
@@ -1894,6 +1904,44 @@ namespace RendererQml
 
 		return function.str();
   }
+
+    const std::string AdaptiveCardQmlRenderer::getActionToggleVisibilityArray(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& toggleVisibilityAction, const std::shared_ptr<AdaptiveRenderContext>& context)
+    {
+        std::ostringstream targetElements, targetElementValues;
+        targetElements << "[";
+        targetElementValues << "[";
+        for (const auto& targetElement : toggleVisibilityAction->GetTargetElements())
+        {
+            std::string targetElementId;
+            bool isLastELement = (targetElement == *(toggleVisibilityAction->GetTargetElements().rbegin()));
+
+            if (targetElement != nullptr)
+            {
+                targetElementId = context->ConvertToValidId(targetElement->GetElementId());
+
+                switch (targetElement->GetIsVisible())
+                {
+                case AdaptiveCards::IsVisible::IsVisibleTrue:
+                    targetElements << targetElementId << (isLastELement ? "" : ", ");
+                    targetElementValues << "true" << (isLastELement ? "" : ", ");
+                    break;
+                case AdaptiveCards::IsVisible::IsVisibleFalse:
+                    targetElements << targetElementId << (isLastELement ? "" : ", ");
+                    targetElementValues << "false" << (isLastELement ? "" : ", ");
+                    break;
+                default:
+                    targetElements << targetElementId << (isLastELement ? "" : ", ");
+                    targetElementValues << "null" << (isLastELement ? "" : ", ");
+                }
+            }
+        }
+
+        targetElements << "]";
+        targetElementValues << "]";
+
+        std::string targetArray = "[" + targetElements.str() + ", " + targetElementValues.str() + "]";
+        return targetArray;
+    }
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetBackgroundImage(std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage, std::shared_ptr<AdaptiveRenderContext> context, const std::string& imgSource)
 	{
