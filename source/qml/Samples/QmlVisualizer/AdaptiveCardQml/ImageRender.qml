@@ -48,9 +48,27 @@ Rectangle {
     MouseArea {
         id: mouseArea
 
+        function handleMouseAreaClick() {
+            if (_selectActionId === 'Action.Submit') {
+                AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
+                return ;
+            } else {
+                _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
+                return ;
+            }
+        }
+
+        function getAccessibleName() {
+            var accessibleName = 'Image ';
+            accessibleName += (_selectActionId === 'Action.Submit') ? _selectActionId : ('Action.OpenUrl');
+            return accessibleName;
+        }
+
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton
         hoverEnabled: _hoverEnabled
+        activeFocusOnTab: _hoverEnabled
+        Accessible.name: getAccessibleName()
         onEntered: {
             imageRender.color = hoverEnabled ? _actionHoverColor : undefined;
         }
@@ -58,13 +76,16 @@ Rectangle {
             imageRender.color = hoverEnabled ? 'transparent' : undefined;
         }
         onClicked: {
-            if (_selectActionId === 'Action.Submit') {
-                AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
-                return ;
-            } else {
-                _adaptiveCard.buttonClicked("", "Action.OpenUrl", _selectActionId);
-                return ;
+            handleMouseAreaClick();
+        }
+        Keys.onPressed: {
+            if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
+                handleMouseAreaClick();
+                event.accepted = true;
             }
+        }
+        onActiveFocusChanged: {
+            activeFocus ? mouseArea.entered() : mouseArea.exited();
         }
     }
 

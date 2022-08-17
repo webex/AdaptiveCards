@@ -867,10 +867,6 @@ namespace RendererQml
         {
             uiImage->Property("readonly property bool stretch", "true");
         }
-        else
-        {
-            uiImage->Property("readonly property bool stretch", "false");
-        }
 
         if (image->GetPixelWidth() != 0 || image->GetPixelHeight() != 0)
         {
