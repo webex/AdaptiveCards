@@ -865,11 +865,6 @@ namespace RendererQml
         uiImage->Property("_visibleRect", image->GetIsVisible() ? "true" : "false");
         uiImage->Property("_actionHoverColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().emphasisPalette.backgroundColor));
 
-        if (image->GetHeight() == AdaptiveCards::HeightType::Stretch && image->GetPixelHeight() == 0)
-        {
-            uiImage->Property("readonly property bool stretch", "true");
-        }
-
         if (image->GetPixelWidth() != 0 || image->GetPixelHeight() != 0)
         {
             if (image->GetPixelWidth() != 0)
