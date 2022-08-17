@@ -645,6 +645,10 @@ namespace RendererQml
         uiTextBlock->Property("_is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() ? "true" : "false");
 
         std::string textrun_all = "";
+        std::ostringstream toggleVisibilityElements;
+
+        toggleVisibilityElements << "({";
+        bool isFirstElement = true;
 
         for (const auto& inlineRun : richTextBlock->GetInlines())
         {
@@ -658,7 +662,7 @@ namespace RendererQml
                     if (textRun->GetSelectAction()->GetElementTypeString() == "Action.Submit")
                     {
                         auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(textRun->GetSelectAction());
-                        selectActionId = "Action.Submit";
+                        selectActionId = submitAction->GetElementTypeString();
                         std::string submitDataJson = submitAction->GetDataJson();
                         submitDataJson = Utils::Trim(submitDataJson);
                         uiTextBlock->Property("_paramStr", Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`");
@@ -668,11 +672,20 @@ namespace RendererQml
                         auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(textRun->GetSelectAction());
                         selectActionId = openUrlAction->GetUrl();
                     }
+                    else if (textRun->GetSelectAction()->GetElementTypeString() == "Action.ToggleVisibility")
+                    {
+                        auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(textRun->GetSelectAction());
+                        selectActionId = Formatter() << "textRunToggleVisibility_" << context->getSelectActionCounter();
+                        toggleVisibilityElements << (isFirstElement ? "" : ", ") << selectActionId << " : " << getActionToggleVisibilityObject(toggleVisibilityAction, context);
+                        isFirstElement = false;
+                    }
                 }
 
                 textrun_all.append(TextRunRender(textRun, context, selectActionId));
             }
         }
+        toggleVisibilityElements << "})";
+        uiTextBlock->Property("_toggleVisibilityTarget", toggleVisibilityElements.str());
         uiTextBlock->Property("_text", textrun_all, true);
 
         return uiTextBlock;
@@ -978,7 +991,7 @@ namespace RendererQml
             {
                 auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(image->GetSelectAction());
                 selectActionId = toggleVisibilityAction->GetElementTypeString();
-                uiImage->Property("_toggleVisibilityTarget", getActionToggleVisibilityArray(toggleVisibilityAction, context));
+                uiImage->Property("_toggleVisibilityTarget", getActionToggleVisibilityObject(toggleVisibilityAction, context));
             }
             uiImage->Property("_selectActionId", Formatter() << "String.raw`" << selectActionId << "`");
         }
@@ -1905,11 +1918,10 @@ namespace RendererQml
 		return function.str();
   }
 
-    const std::string AdaptiveCardQmlRenderer::getActionToggleVisibilityArray(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& toggleVisibilityAction, const std::shared_ptr<AdaptiveRenderContext>& context)
+    const std::string AdaptiveCardQmlRenderer::getActionToggleVisibilityObject(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& toggleVisibilityAction, const std::shared_ptr<AdaptiveRenderContext>& context)
     {
-        std::ostringstream targetElements, targetElementValues;
+        std::ostringstream targetElements;
         targetElements << "[";
-        targetElementValues << "[";
         for (const auto& targetElement : toggleVisibilityAction->GetTargetElements())
         {
             std::string targetElementId;
@@ -1918,29 +1930,28 @@ namespace RendererQml
             if (targetElement != nullptr)
             {
                 targetElementId = context->ConvertToValidId(targetElement->GetElementId());
+                std::ostringstream targetElementValues;
+                targetElementValues << "{";
+                targetElementValues << "element : " << targetElementId << ", ";
 
                 switch (targetElement->GetIsVisible())
                 {
                 case AdaptiveCards::IsVisible::IsVisibleTrue:
-                    targetElements << targetElementId << (isLastELement ? "" : ", ");
-                    targetElementValues << "true" << (isLastELement ? "" : ", ");
+                    targetElementValues << "value : true";
                     break;
                 case AdaptiveCards::IsVisible::IsVisibleFalse:
-                    targetElements << targetElementId << (isLastELement ? "" : ", ");
-                    targetElementValues << "false" << (isLastELement ? "" : ", ");
+                    targetElementValues << "value : false";
                     break;
                 default:
-                    targetElements << targetElementId << (isLastELement ? "" : ", ");
-                    targetElementValues << "null" << (isLastELement ? "" : ", ");
+                    targetElementValues << "value : null";
                 }
+                targetElementValues << "}";
+                targetElements << targetElementValues.str() << (isLastELement ? "" : ", ");
             }
         }
 
         targetElements << "]";
-        targetElementValues << "]";
-
-        std::string targetArray = "[" + targetElements.str() + ", " + targetElementValues.str() + "]";
-        return targetArray;
+        return targetElements.str();
     }
 
 	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetBackgroundImage(std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage, std::shared_ptr<AdaptiveRenderContext> context, const std::string& imgSource)

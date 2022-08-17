@@ -117,17 +117,13 @@ function handleSubmitAction(paramStr, adaptiveCard, is1_3Enabled) {
 }
 
 function handleToggleVisibilityAction(targetElements) {
-    var elements = targetElements[0];
-    var values = targetElements[1];
-
-    if (elements.length === 0)
-        return;
-
-    for (var i = 0; i < elements.length; i++) {
-        if (values[i] === null) {
-            elements[i].visible = !elements[i].visible;
+    for (var i = 0; i < targetElements.length; i++) {
+        var element = targetElements[i]["element"]
+        var value = targetElements[i]["value"]
+        if (value === null) {
+            element.visible = !element.visible;
         } else {
-            elements[i].visible = values[i];
+            element.visible = value;
         }
     }
 }

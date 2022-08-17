@@ -14,6 +14,7 @@ TextEdit {
     property string _selectionColor: ""
     property string _paramStr: ""
     property bool _is1_3Enabled: false
+    property var _toggleVisibilityTarget: null
 
     function getSelectedRichText() {
         return activeFocus ? selectedText : "";
@@ -36,7 +37,11 @@ TextEdit {
     wrapMode: Text.Wrap
     horizontalAlignment: AdaptiveCardUtils.getHorizontalAlignment(_horizontalAlignment)
     onLinkActivated: {
-        if (_link === 'Action.Submit') {
+        if(_link.startsWith('textRunToggleVisibility_')){
+            AdaptiveCardUtils.handleToggleVisibilityAction(_toggleVisibilityTarget[_link]);
+                return ;
+        }
+        else if (_link === 'Action.Submit') {
             AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
             return ;
         } else {
