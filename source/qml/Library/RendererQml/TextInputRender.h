@@ -15,12 +15,15 @@ public:
 
 private:
 	std::string mOriginalElementId{ "" };
+	std::string mLabelId{ "" };
+	std::string mErrorMessageId{ "" };
     std::string mEscapedPlaceHolderString{ "" };
     std::string mEscapedLabelString{ "" };
     std::string mEscapedErrorString{ "" };
     std::string mEscapedValueString{ "" };
 	std::shared_ptr<RendererQml::QmlTag> mTextinputElement;
 	std::shared_ptr<RendererQml::QmlTag> mTextinputColElement;
+	std::shared_ptr<RendererQml::QmlTag> mScrollViewWrapper;
 	std::shared_ptr<RendererQml::QmlTag> mContainer;
 	const std::shared_ptr<AdaptiveCards::TextInput>& mTextinput;
 	const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;

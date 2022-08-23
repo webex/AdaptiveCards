@@ -179,6 +179,8 @@ namespace RendererQml
             }
         }
 
+        int cardMinHeight = (int(card->GetMinHeight()) - tempMargin > 0 ) ? (int(card->GetMinHeight()) - tempMargin) : 0;
+
         if (!isChildCard)
         {
             auto clipRectangle = std::make_shared<QmlTag>("Rectangle");
@@ -200,23 +202,23 @@ namespace RendererQml
 
             const auto isChildCardString = isChildCard ? "true" : "false";
             bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{"
-                << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ");"
+                << context->getCardRootId() << ".generateStretchHeight(children," << cardMinHeight << ");"
                 << "var cardHeight = " << context->getCardRootId() << ".getCardHeight(" << bodyLayout->GetId() << ".children);"
                 << context->getCardRootId() << ".sendCardHeight(cardHeight + 2 * " << context->getCardRootId() << ".margins);"
                 << "}");
         }
         else
         {
-            bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
+            bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << cardMinHeight << ")}");
         }
 
-		bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
+		bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << cardMinHeight << ")}");
 
-		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << int(card->GetMinHeight()) - tempMargin << ")}");
+		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << cardMinHeight << ")}");
 
 		if (card->GetMinHeight() > 0)
 		{
-			rectangle->Property("Layout.minimumHeight", std::to_string(card->GetMinHeight() - tempMargin));
+			rectangle->Property("Layout.minimumHeight", std::to_string(cardMinHeight));
 		}
 
         //Add submit onclick event
@@ -862,11 +864,6 @@ namespace RendererQml
         uiImage->Property("_sourceImage", GetImagePath(context, image->GetUrl()), true);
         uiImage->Property("_visibleRect", image->GetIsVisible() ? "true" : "false");
         uiImage->Property("_actionHoverColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().emphasisPalette.backgroundColor));
-
-        if (image->GetHeight() == AdaptiveCards::HeightType::Stretch && image->GetPixelHeight() == 0)
-        {
-            uiImage->Property("readonly property bool stretch", "true");
-        }
 
         if (image->GetPixelWidth() != 0 || image->GetPixelHeight() != 0)
         {
