@@ -21,6 +21,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
     
     private (set) var showCardsMap: [NSNumber: NSView] = [:]
     private (set) var currentShowCardItems: ShowCardItems?
+    private var showCardStackViewBottomConstraint = NSLayoutConstraint()
     
     private (set) lazy var stackView: NSStackView = {
         let view = NSStackView()
@@ -79,6 +80,12 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
     }
     
+    func setStretchableHeight() {
+        let padding = StretchableView()
+        ACSFillerSpaceManager.configureHugging(view: padding)
+        self.showCardStackView.addArrangedSubview(padding)
+    }
+    
     func setActions(_ actions: [NSView]) {
         self.actions = actions
         arrangeElementsIfNeeded()
@@ -92,7 +99,8 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         showCardStackView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: exteriorPadding).isActive = true
         showCardStackView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: -exteriorPadding).isActive = true
         showCardStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: exteriorPadding).isActive = true
-        showCardStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: exteriorPadding).isActive = true
+        showCardStackViewBottomConstraint = showCardStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: exteriorPadding)
+        showCardStackViewBottomConstraint.isActive = true
     }
     
     private func removeElements() {
@@ -118,7 +126,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
             return NSView()
         }
         let cardView = rDelegate.actionSetView(self, renderShowCardFor: card)
-        showCardStackView.addArrangedSubview(cardView)
+        showCardStackView.insertArrangedSubview(cardView, at: 0)
         cardView.widthAnchor.constraint(equalTo: showCardStackView.widthAnchor).isActive = true
         return cardView
     }
@@ -140,6 +148,9 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         var curview = NSStackView()
         curview.translatesAutoresizingMaskIntoConstraints = false
         curview.spacing = buttonSpacing
+        // Resolve: We have a ActionSet button, which is nested in a h-stack which itself is nested in an V-stack. As soon as I nest one stack in another, the layout becomes ambiguous.
+        // ref: https://gist.github.com/helje5/0456aafe2a27b4ed37ce08bb7a53f133?permalink_comment_id=2769878#gistcomment-2769878
+        curview.setHuggingPriority(.defaultLow - 1, for: .horizontal)
         
         // adding new child stackview to parent stackview and the parent stackview will align child stackview vertically
         stackView.addArrangedSubview(curview)
@@ -151,6 +162,8 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
                 let newStackView: NSStackView = {
                     let view = NSStackView()
                     view.translatesAutoresizingMaskIntoConstraints = false
+                    // ref: https://gist.github.com/helje5/0456aafe2a27b4ed37ce08bb7a53f133?permalink_comment_id=2769878#gistcomment-2769878
+                    view.setHuggingPriority(.defaultLow - 1, for: .horizontal)
                     return view
                 }()
                 curview = newStackView
@@ -176,11 +189,20 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
             return
         }
         
+        func manageShowCardBottomLayoutConstraint(OnCardVisible value: Bool) {
+            if value {
+                showCardStackViewBottomConstraint.constant = 0
+            } else {
+                showCardStackViewBottomConstraint.constant = exteriorPadding
+            }
+        }
+        
         func manageShowCard(with id: NSNumber) {
             let cardView = showCardsMap[id] ?? renderAndAddShowCard(showCard)
             showCardsMap[cardId] = cardView
             currentShowCardItems = (cardId, button, cardView)
             cardView.isHidden = false
+            manageShowCardBottomLayoutConstraint(OnCardVisible: true)
             return
         }
         
@@ -191,10 +213,12 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
                 if currentCardItems.id == cardId {
                     // current card needs to be shown
                     currentCardItems.showCard.isHidden = false
+                    manageShowCardBottomLayoutConstraint(OnCardVisible: true)
                 } else {
                     // different card needs to shown
                     currentCardItems.showCard.isHidden = true
                     currentCardItems.button.state = .off
+                    manageShowCardBottomLayoutConstraint(OnCardVisible: false)
                     manageShowCard(with: cardId)
                 }
             } else {
@@ -202,6 +226,7 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
             }
         } else {
             currentShowCardItems?.showCard.isHidden = true
+            manageShowCardBottomLayoutConstraint(OnCardVisible: false)
         }
         delegate?.actionSetView(self, didShowCardWith: button)
     }

@@ -25,6 +25,9 @@ open class InputDateRenderer: NSObject, BaseCardElementRendererProtocol {
         }()
         
         rootView.addInputHandler(inputField)
+        if dateElement.getHeight() == .stretch {
+            inputField.setStretchableHeight()
+        }
         return inputField
     }
 }

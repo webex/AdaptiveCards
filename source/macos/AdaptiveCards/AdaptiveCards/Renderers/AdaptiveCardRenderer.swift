@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 class HeightTypeSupport {
-    private let supportElemets: [ACSCardElementType] = [.textBlock, .richTextBlock, .container, .columnSet]
+    private let supportElemets: [ACSCardElementType] = [.textBlock, .richTextBlock, .container, .columnSet, .factSet, .actionSet, .numberInput, .timeInput, .dateInput]
     
     static let shared = HeightTypeSupport()
     

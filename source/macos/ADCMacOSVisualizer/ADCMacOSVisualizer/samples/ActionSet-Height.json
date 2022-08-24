@@ -1,0 +1,51 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "minHeight": "280px",
+    "body": [
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.ShowCard",
+                    "title": "ShowCard",
+                    "card": {
+                        "type": "AdaptiveCard",
+                        "body": [
+                            {
+                                "type": "TextBlock",
+                                "text": "This is a show card"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "Action.OpenUrl",
+                    "title": "OpenUrl",
+                    "url": "https://adaptivecards.io"
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Action.Submit"
+                }
+            ],
+            "height": "stretch"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Action.Submit"
+                }
+            ],
+            "height": "stretch"
+        }
+    ]
+}

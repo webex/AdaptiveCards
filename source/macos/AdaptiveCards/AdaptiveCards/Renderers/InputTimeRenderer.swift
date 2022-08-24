@@ -28,6 +28,9 @@ open class InputTimeRenderer: NSObject, BaseCardElementRendererProtocol {
         }()
         
         rootView.addInputHandler(inputField)
+        if timeElement.getHeight() == .stretch {
+            inputField.setStretchableHeight()
+        }
         return inputField
     }
      // checking input time value and accepting only hours and minutes
