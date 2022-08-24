@@ -37,11 +37,10 @@ TextEdit {
     wrapMode: Text.Wrap
     horizontalAlignment: AdaptiveCardUtils.getHorizontalAlignment(_horizontalAlignment)
     onLinkActivated: {
-        if(_link.startsWith('textRunToggleVisibility_')){
+        if (_link.startsWith('textRunToggleVisibility_')) {
             AdaptiveCardUtils.handleToggleVisibilityAction(_toggleVisibilityTarget[_link]);
-                return ;
-        }
-        else if (_link === 'Action.Submit') {
+            return ;
+        } else if (_link === 'Action.Submit') {
             AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
             return ;
         } else {
@@ -109,7 +108,12 @@ TextEdit {
 
             const mouseGlobal = mapToGlobal(mouse.x, mouse.y);
             _link = parent.linkAt(mouse.x, mouse.y);
-            _adaptiveCard.showToolTipifNeeded(_link, mouseGlobal);
+            if (_link.startsWith('textRunToggleVisibility_'))
+                _adaptiveCard.showToolTipifNeeded('Action.ToggleVisibility', mouseGlobal);
+            else if (_link === 'Action.Submit')
+                _adaptiveCard.showToolTipifNeeded('Action.Submit', mouseGlobal);
+            else
+                _adaptiveCard.showToolTipifNeeded(_link, mouseGlobal);
             if (_link)
                 cursorShape = Qt.PointingHandCursor;
             else

@@ -50,7 +50,7 @@ Rectangle {
         id: mouseArea
 
         function handleMouseAreaClick() {
-            if(_selectActionId ===  'Action.ToggleVisibility') {
+            if (_selectActionId === 'Action.ToggleVisibility') {
                 AdaptiveCardUtils.handleToggleVisibilityAction(_toggleVisibilityTarget);
                 return ;
             } else if (_selectActionId === 'Action.Submit') {
