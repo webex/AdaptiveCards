@@ -114,7 +114,6 @@ namespace RendererQml
 		auto columnLayout = std::make_shared<QmlTag>("ColumnLayout");
 		columnLayout->Property("id", "adaptiveCardLayout");
 		columnLayout->Property("width", "parent.width");
-		uiCard->AddChild(columnLayout);
 
 		auto rectangle = std::make_shared<QmlTag>("Rectangle");
 		rectangle->Property("id", "adaptiveCardRectangle");
@@ -142,6 +141,8 @@ namespace RendererQml
 		AddContainerElements(bodyLayout, card->GetBody(), context);
 		AddActions(bodyLayout, card->GetActions(), context);
         addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context, "Adaptive Card", hasBackgroundImage);
+
+        uiCard->AddChild(columnLayout);
 
 		auto showCardsList = context->getShowCardsLoaderIdsList();
 		auto removeBottomMarginValue = RemoveBottomMarginValue(showCardsList);
@@ -478,27 +479,26 @@ namespace RendererQml
             if (selectAction->GetElementTypeString() == "Action.OpenUrl")
             {
                 onClickedFunction = getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(selectAction), context);
-                parent->Property("Keys.onPressed", Formatter() << "{if (event.key === Qt.Key_Return || event.key === Qt.Key_Space){ " << mouseAreaId << ".clicked( " << mouseAreaId << ".mouseX)}}");
+                mouseArea->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}");
             }
             else if (selectAction->GetElementTypeString() == "Action.ToggleVisibility")
             {
                 onClickedFunction = getActionToggleVisibilityClickFunc(std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(selectAction), context);
-                parent->Property("Keys.onPressed", Formatter() << "{if (event.key === Qt.Key_Return || event.key === Qt.Key_Space){ " << mouseAreaId << ".released( " << mouseAreaId << ".mouseX)}}");
+                mouseArea->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}");
             }
             else if (selectAction->GetElementTypeString() == "Action.Submit")
             {
                 context->addToSubmitActionButtonList(mouseArea, std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(selectAction));
-                parent->Property("Keys.onPressed", Formatter() << "{if (event.key === Qt.Key_Return || event.key === Qt.Key_Space){ " << mouseAreaId << ".released( " << mouseAreaId << ".mouseX)}}");
             }
             else
             {
                 onClickedFunction = "";
             }
-            mouseArea->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}");
-
-            parent->Property("activeFocusOnTab", "true");
-            parent->Property("onActiveFocusChanged", Formatter() << "{ if (activeFocus){ " << mouseAreaId << ".entered();}else{ " << mouseAreaId << ".exited();}}");
-            parent->Property("Accessible.name", Formatter() << parentName << selectAction->GetElementTypeString(), true);
+            mouseArea->Property("Keys.onPressed", Formatter() << "{if (event.key === Qt.Key_Return || event.key === Qt.Key_Space){ " << mouseAreaId << ".clicked( " << mouseAreaId << ".mouseX)}}");
+            mouseArea->Property("activeFocusOnTab", "true");
+            mouseArea->Property("z", "1");
+            mouseArea->Property("onActiveFocusChanged", Formatter() << "{ if (activeFocus){ " << mouseAreaId << ".entered();}else{ " << mouseAreaId << ".exited();}}");
+            mouseArea->Property("Accessible.name", Formatter() << parentName << selectAction->GetElementTypeString(), true);
 
             parent->AddChild(mouseArea);
         }
@@ -1103,8 +1103,6 @@ namespace RendererQml
 		uiRowLayout = std::make_shared<QmlTag>("RowLayout");
 		uiRow = std::make_shared<QmlTag>("Row");
 
-		uiFrame->AddChild(uiRowLayout);
-		uiRowLayout->AddChild(uiRow);
 
 		if (columnSet->GetPadding())
 		{
@@ -1168,7 +1166,9 @@ namespace RendererQml
         addSelectAction(uiFrame, backgroundRect->GetId(), columnSet->GetSelectAction(), context, columnSet->GetElementTypeString());
         uiFrame->Property("background", backgroundRect->ToString());
 
-		uiFrame = addColumnSetElements(columnSet, uiFrame, context);
+        uiRowLayout->AddChild(uiRow);
+        uiFrame->AddChild(uiRowLayout);
+		uiFrame = addColumnSetElements(columnSet, uiFrame, uiRowLayout, uiRow, context);
 
 		for (int i = 0; i < uiRow->GetChildren().size(); i++)
 		{
@@ -1318,7 +1318,6 @@ namespace RendererQml
 
         uiContainer = std::make_shared<QmlTag>("Frame");
         uiColumnLayout = std::make_shared<QmlTag>("ColumnLayout");
-        uiContainer->AddChild(uiColumnLayout);
 
         uiContainer->Property("id", id);
         uiColumnLayout->Property("id", "clayout_" + id);
@@ -1417,6 +1416,8 @@ namespace RendererQml
 		{
 			uiContainer->Property("implicitWidth", "minWidth");
 		}
+
+        uiContainer->AddChild(uiColumnLayout);
 
         return uiContainer;
     }
@@ -1699,7 +1700,7 @@ namespace RendererQml
             const auto action = element.second;
 
             onReleasedFunction = getActionSubmitClickFunc(action, context, buttonElement->GetElement());
-            buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
+            buttonElement->Property((buttonElement->GetElement() == "MouseArea" ? "onClicked" : "onReleased"), Formatter() << "{\n" << onReleasedFunction << "}\n");
         }
     }
 
@@ -2085,7 +2086,7 @@ namespace RendererQml
 		return source;
 	}
 
-	const std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::addColumnSetElements(std::shared_ptr<AdaptiveCards::ColumnSet> columnSet, std::shared_ptr<QmlTag> uiFrame, std::shared_ptr<AdaptiveRenderContext> context)
+	const std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::addColumnSetElements(std::shared_ptr<AdaptiveCards::ColumnSet> columnSet, std::shared_ptr<QmlTag> uiFrame, std::shared_ptr<QmlTag> uiRowLayout, std::shared_ptr<QmlTag> uiRow, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		const int margin = context->GetConfig()->GetSpacing().paddingSpacing;
 		const int no_of_columns = int(columnSet->GetColumns().size());
@@ -2102,9 +2103,6 @@ namespace RendererQml
 		const auto bleedRight = int(AdaptiveCards::ContainerBleedDirection::BleedRight);
 		const auto bleedUp = int(AdaptiveCards::ContainerBleedDirection::BleedUp);
 		const auto bleedDown = int(AdaptiveCards::ContainerBleedDirection::BleedDown);
-
-		std::shared_ptr<QmlTag> uiRowLayout = uiFrame->GetChildren()[0];
-		std::shared_ptr<QmlTag> uiRow = uiRowLayout->GetChildren()[0];
 
 		if (columnSet->GetPadding())
 		{

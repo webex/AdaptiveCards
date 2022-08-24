@@ -63,8 +63,9 @@ Rectangle {
         }
 
         function getAccessibleName() {
-            var accessibleName = 'Image ';
-            accessibleName += (_selectActionId === 'Action.Submit' || _selectActionId === 'Action.ToggleVisibility') ? _selectActionId : ('Action.OpenUrl');
+            var accessibleName = 'Image has ';
+            accessibleName +=  (_selectActionId === 'Action.Submit' || _selectActionId === 'Action.ToggleVisibility') ? _selectActionId : ('Action.OpenUrl ' + _selectActionId);
+            accessibleName += '. To activate press space bar.';
             return accessibleName;
         }
 

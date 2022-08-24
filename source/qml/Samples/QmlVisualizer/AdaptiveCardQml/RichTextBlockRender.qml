@@ -69,10 +69,18 @@ TextEdit {
         }
     }
     onSelectedTextChanged: {
-        if (_link)
-            _accessibleText = selectedText + ' has link,' + _link + '. To activate press space bar.';
-        else
+        if (_link) {
+            var selectActionText = '';
+            if (_link.startsWith('textRunToggleVisibility_'))
+                selectActionText = 'Action.ToggleVisibility';
+            else if (_link === 'Action.Submit')
+                selectActionText = 'Action.Submit';
+            else
+                selectActionText = _link;
+            _accessibleText = selectedText + ' has link,' + selectActionText + '. To activate press space bar.';
+        } else {
             _accessibleText = '';
+        }
     }
     onActiveFocusChanged: {
         if (activeFocus) {

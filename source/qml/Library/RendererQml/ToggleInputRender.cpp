@@ -28,7 +28,7 @@ void ToggleInputElement::initialize()
 
     mToggleInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     mToggleInputColElement->Property("id", RendererQml::Formatter() << mToggleInput->GetId());
-    mToggleInputColElement->Property("property int minWidth", RendererQml::Formatter() << mToggleInput->GetId() << ".implicitWidth");
+    mToggleInputColElement->Property("property int minWidth", RendererQml::Formatter() << mToggleInput->GetId() << "_inputToggle.implicitWidth");
     mToggleInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mToggleInputColElement->Property("width", "parent.width");
     mToggleInputColElement->Property("visible", mToggleInput->GetIsVisible() ? "true" : "false");
