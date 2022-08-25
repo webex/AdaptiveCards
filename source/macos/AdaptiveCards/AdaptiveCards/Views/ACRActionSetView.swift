@@ -189,7 +189,7 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
             return
         }
         
-        func manageShowCardBottomLayoutConstraint(OnCardVisible value: Bool) {
+        func manageShowCardBottomLayoutConstraint(onCardVisible value: Bool) {
             if value {
                 showCardStackViewBottomConstraint.constant = 0
             } else {
@@ -202,7 +202,7 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
             showCardsMap[cardId] = cardView
             currentShowCardItems = (cardId, button, cardView)
             cardView.isHidden = false
-            manageShowCardBottomLayoutConstraint(OnCardVisible: true)
+            manageShowCardBottomLayoutConstraint(onCardVisible: true)
             return
         }
         
@@ -213,12 +213,12 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
                 if currentCardItems.id == cardId {
                     // current card needs to be shown
                     currentCardItems.showCard.isHidden = false
-                    manageShowCardBottomLayoutConstraint(OnCardVisible: true)
+                    manageShowCardBottomLayoutConstraint(onCardVisible: true)
                 } else {
                     // different card needs to shown
                     currentCardItems.showCard.isHidden = true
                     currentCardItems.button.state = .off
-                    manageShowCardBottomLayoutConstraint(OnCardVisible: false)
+                    manageShowCardBottomLayoutConstraint(onCardVisible: false)
                     manageShowCard(with: cardId)
                 }
             } else {
@@ -226,7 +226,7 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
             }
         } else {
             currentShowCardItems?.showCard.isHidden = true
-            manageShowCardBottomLayoutConstraint(OnCardVisible: false)
+            manageShowCardBottomLayoutConstraint(onCardVisible: false)
         }
         delegate?.actionSetView(self, didShowCardWith: button)
     }

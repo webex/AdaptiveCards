@@ -22,7 +22,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         case .right: actionAlignment = .right
         default: actionAlignment = .left
         }
-        return renderView(actionElement: nil, actions: actions, aligned: actionAlignment, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
+        return renderView(actions: actions, aligned: actionAlignment, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
     }
     
     private func renderView(actionElement: ACSBaseCardElement? = nil, actions: [ACSBaseActionElement], aligned alignment: ACSHorizontalAlignment, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
