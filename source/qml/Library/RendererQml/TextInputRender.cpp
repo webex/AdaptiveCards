@@ -51,7 +51,7 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createInputTextLabel(bool
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto label = std::make_shared<RendererQml::QmlTag>("Label");
-    mLabelId = RendererQml::Formatter() << mTextinput->GetId() << "_label";
+    mLabelId = RendererQml::Formatter() << mTextinputColElement->GetId() << "_label";
     label->Property("id", mLabelId);
     label->Property("wrapMode", "Text.Wrap");
     label->Property("width", "parent.width");
@@ -76,7 +76,7 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::createErrorMessageText(co
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
-    mErrorMessageId = RendererQml::Formatter() << mTextinput->GetId() << "_errorMessage";
+    mErrorMessageId = RendererQml::Formatter() << mTextinputColElement->GetId() << "_errorMessage";
     uiErrorMessage->Property("id", mErrorMessageId);
     uiErrorMessage->Property("wrapMode", "Text.Wrap");
     uiErrorMessage->Property("width", "parent.width");

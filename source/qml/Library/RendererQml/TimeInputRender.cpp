@@ -428,7 +428,7 @@ void TimeInputElement::addInputLabel(bool isRequired)
         if (!mTimeInput->GetLabel().empty())
         {
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
-            label->Property("id", RendererQml::Formatter() << id << "_label");
+            label->Property("id", RendererQml::Formatter() << mTimeInput->GetId() << "_label");
             label->Property("wrapMode", "Text.Wrap");
             label->Property("width", "parent.width");
 

@@ -592,7 +592,7 @@ void DateInputElement::addInputLabel(bool isRequired)
         if (!mDateInput->GetLabel().empty())
         {
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
-            label->Property("id", RendererQml::Formatter() << mDateFieldId << "_label");
+            label->Property("id", RendererQml::Formatter() << mDateInputColElement->GetId() << "_label");
             label->Property("wrapMode", "Text.Wrap");
             label->Property("width", "parent.width");
 
@@ -629,7 +629,7 @@ void DateInputElement::addErrorMessage()
         if (!mDateInput->GetErrorMessage().empty())
         {
             auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
-            uiErrorMessage->Property("id", RendererQml::Formatter() << mDateFieldId << "_errorMessage");
+            uiErrorMessage->Property("id", RendererQml::Formatter() << mDateInputColElement->GetId() << "_errorMessage");
             uiErrorMessage->Property("wrapMode", "Text.Wrap");
             uiErrorMessage->Property("width", "parent.width");
             uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << mDateConfig.labelSize);
