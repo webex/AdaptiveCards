@@ -182,22 +182,21 @@ void ComboBoxElement::addBackground()
     backgroundTag->Property("border.color", RendererQml::Formatter() << "(" << mChoiceSet.id << ".activeFocus || " << mChoiceSet.id << ".popup.visible) ? " << mContext->GetHexColor(mChoiceSetConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mChoiceSetConfig.borderColorNormal));
     backgroundTag->Property("border.width", RendererQml::Formatter() << mChoiceSetConfig.borderWidth);
     mComboBox->Property("background", backgroundTag->ToString());
+    mComboBox->Property("currentIndex", RendererQml::Formatter() << (mChoiceSet.placeholder.empty() ? "0" : "-1"));
+    mComboBox->Property("displayText", "currentIndex === -1 ? String.raw`" + mEscapedPlaceHolderString + "` : currentText");
 
-    if (!mChoiceSet.placeholder.empty())
-    {
-        mComboBox->Property("currentIndex", "-1");
-        mComboBox->Property("displayText", "currentIndex === -1 ? String.raw`" + mEscapedPlaceHolderString + "` : currentText");
-    }
-    else if (mChoiceSet.values.size() == 1)
+    if (mChoiceSet.values.size() == 1)
     {
         const std::string target = mChoiceSet.values[0];
         auto index = std::find_if(mChoiceSet.choices.begin(), mChoiceSet.choices.end(), [target](const RendererQml::Checkbox& options) {
             return options.value == target;
             }) - mChoiceSet.choices.begin();
-            //Assign index as 0 in case target does not exist
-            index = (index > (signed int)(mChoiceSet.choices.size() - 1) ? 0 : index);
+
+        if(index < (signed int)(mChoiceSet.choices.size()))
+        {
             mComboBox->Property("currentIndex", std::to_string(index));
             mComboBox->Property("displayText", "currentText");
+        }
     }
 }
 
