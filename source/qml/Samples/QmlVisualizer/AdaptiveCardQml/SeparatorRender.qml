@@ -10,11 +10,12 @@ Rectangle {
     property int _lineThickness: 1
     property string _lineColor: "#B2000000"
     property var _visible: true
+    property var _linkedElement: null
 
     width: parent.width
     height: _height
     color: "transparent"
-    visible: _visible
+    visible: _linkedElement ? _linkedElement.visible : _visible
     Component.onCompleted: {
         if (_isColElement) {
             width = _height;
