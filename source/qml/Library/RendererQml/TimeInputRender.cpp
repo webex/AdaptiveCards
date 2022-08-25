@@ -37,7 +37,8 @@ void TimeInputElement::initialize()
     timeComboboxId = id + "_combobox";
 
     mTimeInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
-    mTimeInputColElement->Property("id", RendererQml::Formatter() << id << "_column");
+    mTimeInputColElement->Property("id", id);
+    id = RendererQml::Formatter() << id << "_timeInput";
     mTimeInputColElement->Property("property int minWidth", "200");
     mTimeInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mTimeInputColElement->Property("width", "parent.width");
@@ -157,7 +158,7 @@ void TimeInputElement::initTimeInputTextField()
 void TimeInputElement::initTimeInputComboBox()
 {
     mTimeInputComboBox = std::make_shared<RendererQml::QmlTag>("ComboBox");
-    mTimeInputComboBox->Property("id", RendererQml::Formatter() << id << "_combobox");
+    mTimeInputComboBox->Property("id", timeComboboxId);
 
     mTimeInputComboBox->Property("Layout.fillWidth", "true");
     mTimeInputComboBox->Property("Keys.onReturnPressed", RendererQml::Formatter() << "{setFocusBackOnClose(" << mTimeInputComboBox->GetId() << ");" << timePopupId << ".open();}");
@@ -427,7 +428,7 @@ void TimeInputElement::addInputLabel(bool isRequired)
         if (!mTimeInput->GetLabel().empty())
         {
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
-            label->Property("id", RendererQml::Formatter() << id << "_label");
+            label->Property("id", RendererQml::Formatter() << mTimeInput->GetId() << "_label");
             label->Property("wrapMode", "Text.Wrap");
             label->Property("width", "parent.width");
 

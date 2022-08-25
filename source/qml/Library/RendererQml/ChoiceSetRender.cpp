@@ -21,7 +21,7 @@ void ChoiceSetElement::initialize()
 
     const bool isWrap = mChoiceSetInput->GetWrap();
     const bool isVisible = mChoiceSetInput->GetIsVisible();
-    const std::string id = mChoiceSetInput->GetId();
+    const std::string id = RendererQml::Formatter() << mChoiceSetInput->GetId() << "_choiceSet";
     bool isChecked;
     int ButtonNumber = 0;
 
@@ -72,7 +72,7 @@ void ChoiceSetElement::initialize()
     );
 
     mChoiceSetColElement = std::make_shared<RendererQml::QmlTag>("Column");
-    mChoiceSetColElement->Property("id", RendererQml::Formatter() << mChoiceSetInput->GetId() << "_column");
+    mChoiceSetColElement->Property("id", RendererQml::Formatter() << mChoiceSetInput->GetId());
     mChoiceSetColElement->Property("property int minWidth", "200");
     mChoiceSetColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mChoiceSetColElement->Property("width", "parent.width");
@@ -175,6 +175,7 @@ std::shared_ptr<RendererQml::QmlTag> ChoiceSetElement::getButtonGroup(RendererQm
     auto uiButtonGroup = std::make_shared<RendererQml::QmlTag>("ButtonGroup");
     uiButtonGroup->Property("id", choiceset.id + "_btngrp");
     uiButtonGroup->Property("property bool isButtonGroup", "true");
+    uiButtonGroup->Property("property bool visible", RendererQml::Formatter() << mChoiceSetColElement->GetId() << ".visible");
     uiButtonGroup->AddFunctions(RendererQml::Formatter() << "function focusFirstButton(){" << choiceset.choices[0].id << ".forceActiveFocus();}");
 
     if (choiceset.isMultiSelect)

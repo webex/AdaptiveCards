@@ -79,7 +79,7 @@ function selectLink(element, next) {
 
 function handleSubmitAction(paramStr, adaptiveCard, is1_3Enabled) {
     var paramJson = {};
-    if(paramStr.startsWith('{') && paramStr.endsWith('}')) {
+    if (paramStr.startsWith('{') && paramStr.endsWith('}')) {
         paramJson = JSON.parse(paramStr);
     }
     else {
@@ -114,4 +114,17 @@ function handleSubmitAction(paramStr, adaptiveCard, is1_3Enabled) {
         adaptiveCard.buttonClicked("Submit action", "Action.Submit", paramslist);
     }
     return;
+}
+
+
+function handleToggleVisibilityAction(targetElements) {
+    for (var i = 0; i < targetElements.length; i++) {
+        var element = targetElements[i]["element"]
+        var value = targetElements[i]["value"]
+        if (value === null) {
+            element.visible = !element.visible;
+        } else {
+            element.visible = value;
+        }
+    }
 }
