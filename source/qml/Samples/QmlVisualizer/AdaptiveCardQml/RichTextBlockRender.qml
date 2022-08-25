@@ -14,6 +14,7 @@ TextEdit {
     property string _selectionColor: ""
     property string _paramStr: ""
     property bool _is1_3Enabled: false
+    property var _toggleVisibilityTarget: null
 
     function getSelectedRichText() {
         return activeFocus ? selectedText : "";
@@ -36,7 +37,10 @@ TextEdit {
     wrapMode: Text.Wrap
     horizontalAlignment: AdaptiveCardUtils.getHorizontalAlignment(_horizontalAlignment)
     onLinkActivated: {
-        if (_link === 'Action.Submit') {
+        if (_link.startsWith('textRunToggleVisibility_')) {
+            AdaptiveCardUtils.handleToggleVisibilityAction(_toggleVisibilityTarget[_link]);
+            return ;
+        } else if (_link === 'Action.Submit') {
             AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
             return ;
         } else {
@@ -65,10 +69,18 @@ TextEdit {
         }
     }
     onSelectedTextChanged: {
-        if (_link)
-            _accessibleText = selectedText + ' has link,' + _link + '. To activate press space bar.';
-        else
+        if (_link) {
+            var selectActionText = '';
+            if (_link.startsWith('textRunToggleVisibility_'))
+                selectActionText = 'Action.ToggleVisibility';
+            else if (_link === 'Action.Submit')
+                selectActionText = 'Action.Submit';
+            else
+                selectActionText = _link;
+            _accessibleText = selectedText + ' has link,' + selectActionText + '. To activate press space bar.';
+        } else {
             _accessibleText = '';
+        }
     }
     onActiveFocusChanged: {
         if (activeFocus) {
@@ -104,7 +116,12 @@ TextEdit {
 
             const mouseGlobal = mapToGlobal(mouse.x, mouse.y);
             _link = parent.linkAt(mouse.x, mouse.y);
-            _adaptiveCard.showToolTipifNeeded(_link, mouseGlobal);
+            if (_link.startsWith('textRunToggleVisibility_'))
+                _adaptiveCard.showToolTipifNeeded('Action.ToggleVisibility', mouseGlobal);
+            else if (_link === 'Action.Submit')
+                _adaptiveCard.showToolTipifNeeded('Action.Submit', mouseGlobal);
+            else
+                _adaptiveCard.showToolTipifNeeded(_link, mouseGlobal);
             if (_link)
                 cursorShape = Qt.PointingHandCursor;
             else

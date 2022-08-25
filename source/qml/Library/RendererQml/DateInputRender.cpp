@@ -29,9 +29,9 @@ void DateInputElement::initialize()
         mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mDateInput->GetErrorMessage());
     }
 
-    mDateFieldId = mDateInput->GetId();
+    mDateInputColElementId = mDateInput->GetId();
+    mDateFieldId = RendererQml::Formatter() << mDateInput->GetId() << "_dateInput";
     mCalendarBoxId = RendererQml::Formatter() << mDateFieldId << "_calendarBox";
-    mDateInputColElementId = RendererQml::Formatter() << mDateFieldId << "_column";
     mDateInputWrapperId = RendererQml::Formatter() << mDateFieldId << "_wrapper";
     mDateInputComboboxId = RendererQml::Formatter() << mDateFieldId << "_combobox";
     mDateInputRowId = RendererQml::Formatter() << mDateFieldId << "_row";
@@ -216,7 +216,7 @@ void DateInputElement::initDateInputWrapper()
     mDateInputWrapper->Property("height", RendererQml::Formatter() << mDateConfig.height);
     mDateInputWrapper->Property("radius", RendererQml::Formatter() << mDateConfig.borderRadius);
     mDateInputWrapper->Property("color", mContext->GetHexColor(mDateConfig.backgroundColorNormal));
-    mDateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateInput->GetId() << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
+    mDateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateFieldId << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
     mDateInputWrapper->Property("border.width", RendererQml::Formatter() << mDateConfig.borderWidth);
     mDateInputWrapper->AddFunctions(getColorFunction());
 }
@@ -560,7 +560,7 @@ void DateInputElement::initDateIconButton()
     mDateIcon->Property("focusPolicy", "Qt.NoFocus");
     mDateIcon->Property("width", "18");
     mDateIcon->Property("height", "18");
-    mDateIcon->Property("icon.color", RendererQml::Formatter() << mDateFieldId << ".showErrorMessage ? " << mContext->GetHexColor(mDateConfig.dateIconColorOnError) << " : " << mDateInput->GetId() << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.dateIconColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.dateIconColorNormal));
+    mDateIcon->Property("icon.color", RendererQml::Formatter() << mDateFieldId << ".showErrorMessage ? " << mContext->GetHexColor(mDateConfig.dateIconColorOnError) << " : " << mDateFieldId << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.dateIconColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.dateIconColorNormal));
     mDateIcon->Property("icon.source", RendererQml::calendar_icon, true);
     std::string onClicked_value = "{ " + mDateFieldId + ".forceActiveFocus(); " + mCalendarBoxId + ".open();}";
     mDateIcon->Property("onClicked", onClicked_value);
@@ -592,7 +592,7 @@ void DateInputElement::addInputLabel(bool isRequired)
         if (!mDateInput->GetLabel().empty())
         {
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
-            label->Property("id", RendererQml::Formatter() << mDateInput->GetId() << "_label");
+            label->Property("id", RendererQml::Formatter() << mDateInputColElement->GetId() << "_label");
             label->Property("wrapMode", "Text.Wrap");
             label->Property("width", "parent.width");
 
@@ -629,7 +629,7 @@ void DateInputElement::addErrorMessage()
         if (!mDateInput->GetErrorMessage().empty())
         {
             auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
-            uiErrorMessage->Property("id", RendererQml::Formatter() << mDateInput->GetId() << "_errorMessage");
+            uiErrorMessage->Property("id", RendererQml::Formatter() << mDateInputColElement->GetId() << "_errorMessage");
             uiErrorMessage->Property("wrapMode", "Text.Wrap");
             uiErrorMessage->Property("width", "parent.width");
             uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << mDateConfig.labelSize);
@@ -637,7 +637,7 @@ void DateInputElement::addErrorMessage()
 
             uiErrorMessage->Property("color", mContext->GetHexColor(mDateConfig.errorMessageColor));
             uiErrorMessage->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
-            uiErrorMessage->Property("visible", RendererQml::Formatter() << mDateInput->GetId() << ".showErrorMessage");
+            uiErrorMessage->Property("visible", RendererQml::Formatter() << mDateFieldId << ".showErrorMessage");
             mDateInputColElement->AddChild(uiErrorMessage);
         }
     }
@@ -676,7 +676,7 @@ void DateInputElement::addValidation()
         mDateInputTextField->AddFunctions(validator.str());
         mDateInputTextField->Property("onSelectedDateChanged", "validate()");
         mDateInputTextField->Property("onShowErrorMessageChanged", RendererQml::Formatter() << mDateInputWrapperId<< ".colorChange(false)");
-        mDateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateInput->GetId() << ".showErrorMessage ? " << mContext->GetHexColor(mDateConfig.borderColorOnError) << " : " << mDateInput->GetId() << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
+        mDateInputWrapper->Property("border.color", RendererQml::Formatter() << mDateFieldId << ".showErrorMessage ? " << mContext->GetHexColor(mDateConfig.borderColorOnError) << " : " << mDateFieldId << ".activeFocus? " << mContext->GetHexColor(mDateConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mDateConfig.borderColorNormal));
     }
 }
 
@@ -687,14 +687,14 @@ const std::string DateInputElement::getColorFunction()
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         colorFunction << "function colorChange(isPressed){"
-            "if (isPressed && !" << mDateInput->GetId() << ".showErrorMessage)  color = " << mContext->GetHexColor(mDateConfig.backgroundColorOnPressed) << ";"
-            "else color = " << mDateInput->GetId() << ".showErrorMessage ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnError) << " : " << mDateInput->GetId() << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnPressed) << " : " << mDateInput->GetId() << ".hovered ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(mDateConfig.backgroundColorNormal) << "}";
+            "if (isPressed && !" << mDateFieldId << ".showErrorMessage)  color = " << mContext->GetHexColor(mDateConfig.backgroundColorOnPressed) << ";"
+            "else color = " << mDateFieldId << ".showErrorMessage ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnError) << " : " << mDateFieldId << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnPressed) << " : " << mDateFieldId << ".hovered ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(mDateConfig.backgroundColorNormal) << "}";
     }
     else
     {
         colorFunction << "function colorChange(isPressed){"
             "if (isPressed)  color = " << mContext->GetHexColor(mDateConfig.backgroundColorOnPressed) << ";"
-            "else color = " << mDateInput->GetId() << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnPressed) << " : " << mDateInput->GetId() << ".hovered ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(mDateConfig.backgroundColorNormal) << "}";
+            "else color = " << mDateFieldId << ".activeFocus ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnPressed) << " : " << mDateFieldId << ".hovered ? " << mContext->GetHexColor(mDateConfig.backgroundColorOnHovered) << " : " << mContext->GetHexColor(mDateConfig.backgroundColorNormal) << "}";
     }
 
     return colorFunction.str();
