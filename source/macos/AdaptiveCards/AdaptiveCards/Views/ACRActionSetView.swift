@@ -190,11 +190,7 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
         }
         
         func manageShowCardBottomLayoutConstraint(onCardVisible value: Bool) {
-            if value {
-                showCardStackViewBottomConstraint.constant = 0
-            } else {
-                showCardStackViewBottomConstraint.constant = exteriorPadding
-            }
+            showCardStackViewBottomConstraint.constant = value ? 0 : exteriorPadding
         }
         
         func manageShowCard(with id: NSNumber) {

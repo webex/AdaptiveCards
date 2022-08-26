@@ -162,11 +162,7 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     }
     
     private func setupConstraints() {
-        contentStackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        contentStackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        contentStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        contentStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        
+        contentStackView.constraint(toFill: self)
         textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         textField.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
