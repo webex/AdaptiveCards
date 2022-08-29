@@ -19,4 +19,11 @@ extension NSView {
         }
         return false
     }
+    
+    func constraint(toFill view: NSView) {
+        self.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        self.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        self.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        self.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    }
 }

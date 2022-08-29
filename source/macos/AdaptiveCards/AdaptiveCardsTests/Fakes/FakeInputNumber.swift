@@ -12,7 +12,8 @@ class FakeInputNumber: ACSNumberInput {
     public var label: String? = ""
     public var isRequired: Bool = false
     public var errorMessage: String?
-
+    public var height: ACSHeightType = .auto
+    
     open override func getValue() -> NSNumber? {
         return value
     }
@@ -92,10 +93,18 @@ class FakeInputNumber: ACSNumberInput {
     override func setErrorMessage(_ errorMessage: String) {
         self.errorMessage = errorMessage
     }
+    
+    override func getHeight() -> ACSHeightType {
+        return height
+    }
+    
+    override func setHeight(_ value: ACSHeightType) {
+        height = value
+    }
 }
 
 extension FakeInputNumber {
-    static func make(value: NSNumber? = 0, placeholder: String? = "", max: NSNumber? = 0, min: NSNumber = 0, visible: Bool? = true, separator: Bool = false, spacing: ACSSpacing = .default, label: String? = nil, isRequired: Bool = false, errorMessage: String? = "") -> FakeInputNumber {
+    static func make(value: NSNumber? = 0, placeholder: String? = "", max: NSNumber? = 0, min: NSNumber = 0, visible: Bool? = true, separator: Bool = false, spacing: ACSSpacing = .default, label: String? = nil, isRequired: Bool = false, errorMessage: String? = "", heightType: ACSHeightType = .auto) -> FakeInputNumber {
         let fakeInputNumber = FakeInputNumber()
         fakeInputNumber.value = value
         fakeInputNumber.placeholder = placeholder
@@ -107,6 +116,7 @@ extension FakeInputNumber {
         fakeInputNumber.label = label
         fakeInputNumber.isRequired = isRequired
         fakeInputNumber.errorMessage = errorMessage
+        fakeInputNumber.height = heightType
         return fakeInputNumber
     }
 }

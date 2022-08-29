@@ -104,6 +104,19 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
             titleView.heightAnchor.constraint(equalTo: valueView.heightAnchor).isActive = true
         }
         
+        if factSet.getHeight() == .stretch {
+            if !titleStack.arrangedSubviews.isEmpty {
+                if let lastView = titleStack.arrangedSubviews.last {
+                    ACSFillerSpaceManager.configureHugging(view: lastView)
+                }
+            }
+            if !valueStack.arrangedSubviews.isEmpty {
+                if let lastView = valueStack.arrangedSubviews.last {
+                    ACSFillerSpaceManager.configureHugging(view: lastView)
+                }
+            }
+        }
+        
         return mainFactView
     }
 }

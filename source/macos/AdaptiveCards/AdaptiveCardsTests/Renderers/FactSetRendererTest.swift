@@ -21,6 +21,33 @@ class FactSetRendererTest: XCTestCase {
         XCTAssertNotNil(factSetView)
     }
     
+    func testHeightProperty() {
+        func makeFactSet(_ height: ACSHeightType) -> (ACRTextView, ACRTextView)? {
+            var factArray: [FakeFacts] = []
+            let fakeFact = FakeFacts()
+            fakeFact.setTitle("Title Exists")
+            fakeFact.setValue("Value Exists too")
+            fakeFact.setLanguage("")
+            factArray.append(fakeFact)
+            factSet = .make(factArray: factArray, heightType: height)
+            let factView = renderFactSet()
+            let renderedFacts = factView.subviews
+            
+            if let titleView = (renderedFacts[0] as? NSStackView)?.arrangedSubviews.last as? ACRTextView,
+               let valueView = (renderedFacts[1] as? NSStackView)?.arrangedSubviews.last as? ACRTextView {
+                return (titleView, valueView)
+            } else {
+                return nil
+            }
+        }
+        guard let (titleViewAuto, valueViewAuto) = makeFactSet(.auto) else { return XCTFail() }
+        XCTAssertEqual(titleViewAuto.contentHuggingPriority(for: .vertical), .defaultLow)
+        XCTAssertEqual(valueViewAuto.contentHuggingPriority(for: .vertical), .defaultLow)
+        guard let (titleViewStretch, valueViewStretch) = makeFactSet(.stretch) else { return XCTFail() }
+        XCTAssertEqual(titleViewStretch.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
+        XCTAssertEqual(valueViewStretch.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
+    }
+    
     func testSingleFact() {
         var factArray: [FakeFacts] = []
         let fakeFact = FakeFacts()
