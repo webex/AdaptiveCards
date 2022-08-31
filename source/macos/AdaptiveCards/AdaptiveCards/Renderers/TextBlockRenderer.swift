@@ -22,6 +22,7 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.layoutManager?.usesFontLeading = false
         textView.setContentHuggingPriority(.required, for: .vertical)
         
+        // NSAttributedString text always sticks to bottom with big lineHeight. so we shifted up from baseline offset by half of its mid point. so text will display in vertically center of frame.
         attributedString.addAttributes([.baselineOffset: (textView.font?.pointSize ?? 0) / 3], range: NSRange(location: 0, length: attributedString.length))
         
         attributedString.enumerateAttributes(in: attributedString.fullRange, using: { attributes, range, _ in
@@ -29,8 +30,9 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
             guard let style = attributes[.paragraphStyle] as? NSMutableParagraphStyle else { return }
             // headIndent default value is 0.0 , so if it is not updated we can proceed to change alignment
             if style.headIndent == 0 {
-                style.alignment = ACSHostConfig.getTextBlockAlignment(from: textBlock.getHorizontalAlignment())
-                attributedString.addAttribute(.paragraphStyle, value: style, range: range)
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.alignment = ACSHostConfig.getTextBlockAlignment(from: textBlock.getHorizontalAlignment())
+                attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: range)
             }
         })
         
