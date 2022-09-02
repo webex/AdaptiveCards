@@ -390,7 +390,7 @@ namespace RendererQml
 						const std::string loaderId = uiAction->GetId() + "_loader";
                         const std::string componentId = uiAction->GetId() + "_component";
                         const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
-                        context->addToShowCardLoaderComponentList(componentId, showCardAction);
+                        context->addToShowCardLoaderComponentList(uiAction->GetId(), showCardAction);
 
                         //Add show card loader to the parent container
                         AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, std::string(), true, loaderId);
@@ -530,9 +530,10 @@ namespace RendererQml
         }
     }
 
-    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::string& componentId, const std::shared_ptr<QmlTag>& uiCard)
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::string& loaderId, const std::shared_ptr<QmlTag>& uiCard)
     {
         auto uiComponent = std::make_shared<QmlTag>("Component");
+        std::string componentId = loaderId + "_component";
         uiComponent->Property("id", componentId);
 
         const std::string layoutId = Formatter() << componentId << "_component_layout";
@@ -544,15 +545,19 @@ namespace RendererQml
         uiColumn->Property("id", layoutId);
         uiColumn->AddFunctions("property var card");
         uiColumn->Property("property string showCard", uiCard_string, true);
-        uiColumn->Property("Component.onCompleted", "reload(showCard)");
-        uiColumn->AddFunctions(Formatter() << "function reload(mCard)\n{\n");
-        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.destroy()\n }\n");
-        uiColumn->AddFunctions(Formatter() << "card = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\n");
-        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked);"
+        uiColumn->Property("property bool loaderVisible", RendererQml::Formatter() << loaderId << ".visible");
+        uiColumn->Property("onLoaderVisibleChanged", "reload(showCard)");
+
+        std::ostringstream reloadFunction;
+        reloadFunction << "function reload(mCard)\n{\n";
+        reloadFunction << "if(loaderVisible && !card){\n";
+        reloadFunction << "card = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\n";
+        reloadFunction << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked);"
             "card.openContextMenu.connect(adaptiveCard.openContextMenu);"
             "card.textEditFocussed.connect(adaptiveCard.textEditFocussed);"
-            "card.setFocusBackOnClose.connect(adaptiveCard.setFocusBackOnClose);;card.showToolTipifNeeded.connect(adaptiveCard.showToolTipifNeeded);}}");
+            "card.setFocusBackOnClose.connect(adaptiveCard.setFocusBackOnClose);card.showToolTipifNeeded.connect(adaptiveCard.showToolTipifNeeded);}}}";
 
+        uiColumn->AddFunctions(reloadFunction.str());
 		uiComponent->AddChild(uiColumn);
 
 		return uiComponent;
@@ -1506,7 +1511,7 @@ namespace RendererQml
             buttonElement->Property("property bool isButtonDisabled", "false");
             buttonElement->Property("enabled", "!isButtonDisabled");
 
-            if (isShowCardButton && !action->GetTitle().empty())
+            if (isShowCardButton)
             {
                 buttonElement->Property("property bool showCard", "false");
             }
@@ -1524,7 +1529,7 @@ namespace RendererQml
             {
                 textSpacing += buttonConfig.imageSize + buttonConfig.iconTextSpacing;
             }
-            if (isShowCardButton)
+            if (isShowCardButton && !action->GetTitle().empty())
             {
                 textSpacing += buttonConfig.iconWidth + buttonConfig.iconTextSpacing;
             }
@@ -1723,6 +1728,7 @@ namespace RendererQml
     {
         for (const auto& componentElement : context->getShowCardLoaderComponentList())
         {
+            std::string componentId = componentElement.first + "_component";
             auto subContext = std::make_shared<AdaptiveRenderContext>(context->GetConfig(), context->GetElementRenderers(), context->GetRenderConfig());
             subContext->setContentIndex(context->getContentIndex());
 
@@ -1748,7 +1754,7 @@ namespace RendererQml
 
                 const auto lastShowCards = context->getLastShowCardComponentIdsList();
                 auto cardConfig = context->GetRenderConfig()->getCardConfig();
-                if (std::find(lastShowCards.begin(), lastShowCards.end(), componentElement.first) != lastShowCards.end())
+                if (std::find(lastShowCards.begin(), lastShowCards.end(), componentId) != lastShowCards.end())
                 {
                     uiCard->Property("radius", Formatter() << cardConfig.cardRadius);
                     uiCard = AddCornerRectangles(uiCard, cardConfig.cardRadius);

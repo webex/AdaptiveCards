@@ -82,7 +82,7 @@ namespace RendererQml
         
     private:
         void SetObjectTypes();
-		static std::shared_ptr<QmlTag> GetComponent(const std::string& componentId, const std::shared_ptr<QmlTag>& uiCard);
+		static std::shared_ptr<QmlTag> GetComponent(const std::string& loaderId, const std::shared_ptr<QmlTag>& uiCard);
 
 		template <typename CardElement>
 		static std::shared_ptr<QmlTag> GetNewColumn(CardElement cardElement, std::shared_ptr<AdaptiveRenderContext> context);
