@@ -31,7 +31,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             
             let columnView = ColumnRenderer.shared.render(element: column, with: hostConfig, style: columnSet.getStyle(), rootView: rootView, parentView: columnSetView, inputs: [], config: config)
             columnViews.append(columnView)
-            updateColumnSetSeparatorAndAlignment(columnView: columnView, column: column, columnSetView: columnSetView, columnSet: columnSet, isfirstElement: isfirstElement)
+            updateColumnSetSeparatorAndAlignment(columnView: columnView, column: column, columnSetView: columnSetView, rootView: rootView, columnSet: columnSet, isfirstElement: isfirstElement, hostConfig: hostConfig)
             BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column, parentElement: columnSet)
         }
         
@@ -87,7 +87,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                 }
             }
         }
-        columnSetView.configureLayout(columnSet.getVerticalContentAlignment(), minHeight: columnSet.getMinHeight(), heightType: columnSet.getHeight(), type: .columnSet)
+        columnSetView.configureLayoutAndVisibility(columnSet.getVerticalContentAlignment(), minHeight: columnSet.getMinHeight(), heightType: columnSet.getHeight(), type: .columnSet)
         return columnSetView
     }
     
@@ -98,17 +98,18 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         }
     }
     
-    private func updateColumnSetSeparatorAndAlignment(columnView: NSView, column: ACSColumn, columnSetView: ACRContentStackView, columnSet: ACSColumnSet, isfirstElement: Bool) {
+    private func updateColumnSetSeparatorAndAlignment(columnView: NSView, column: ACSColumn, columnSetView: ACRContentStackView, rootView: ACRView, columnSet: ACSColumnSet, isfirstElement: Bool, hostConfig: ACSHostConfig) {
         guard let columnView = columnView as? ACRColumnView else { return }
         let gravityArea: NSStackView.Gravity = columnSet.getHorizontalAlignment() == .center ? .center: (columnSet.getHorizontalAlignment() == .right ? .trailing: .leading)
-        
+        var separator: SpacingView?
         if !isfirstElement {
             // For seperator and spacing
-            columnSetView.addSeparator(column.getSeparator(), withSpacing: column.getSpacing())
+            separator = SpacingView.renderSpacer(elem: column, forSuperView: columnSetView, withHostConfig: hostConfig)
         }
         columnView.identifier = NSUserInterfaceItemIdentifier(column.getId() ?? "")
         columnView.isHidden = !column.getIsVisible()
         columnSetView.addView(columnView, in: gravityArea)
+        columnSetView.updateLayoutOfRenderedView(columnView, acoElement: column, separator: separator, rootView: rootView)
         
         // Keep Column view horizontal and vertical stretch inside the ColumnSet
         /*

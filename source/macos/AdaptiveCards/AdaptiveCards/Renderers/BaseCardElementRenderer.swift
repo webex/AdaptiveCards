@@ -11,7 +11,7 @@ class BaseCardElementRenderer {
         
         if !isfirstElement {
             // For seperator and spacing
-            updatedView.addSeparator(element.getSeparator(), withSpacing: element.getSpacing())
+            _ = SpacingView.renderSpacer(elem: element, forSuperView: updatedView, withHostConfig: hostConfig)
         }
         
         if let elem = element as? ACSImage {
@@ -26,6 +26,10 @@ class BaseCardElementRenderer {
             if let columnView = view as? ACRColumnView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
                 columnView.setupBackgroundImageProperties(backgroundImage)
                 rootView.registerImageHandlingView(columnView.backgroundImageView, for: url)
+            }
+            if let containerView = view as? ACRContainerView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
+                containerView.setupBackgroundImageProperties(backgroundImage)
+                rootView.registerImageHandlingView(containerView.backgroundImageView, for: url)
             }
             contentStackView.setMinimumHeight(collectionElement.getMinHeight())
         }
@@ -47,9 +51,10 @@ class BaseCardElementRenderer {
     }
     
     func updateLayoutForSeparatorAndAlignment(view: NSView, element: ACSBaseCardElement, parentView: ACRContentStackView, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) {
+        var separator: SpacingView?
         if !isfirstElement {
             // For seperator and spacing
-            parentView.addSeparator(element.getSeparator(), withSpacing: element.getSpacing())
+            separator = SpacingView.renderSpacer(elem: element, forSuperView: parentView, withHostConfig: hostConfig)
         }
         
         if let elem = element as? ACSImage {
@@ -81,7 +86,7 @@ class BaseCardElementRenderer {
             parentView.addArrangedSubview(view)
         }
         
-        parentView.updateLayoutOfRenderedView(view, acoElement: element, separator: nil, rootView: rootView)
+        parentView.updateLayoutOfRenderedView(view, acoElement: element, separator: separator, rootView: rootView)
         
         // Keep single every view horizontal fit inside the nsstackview
         /*

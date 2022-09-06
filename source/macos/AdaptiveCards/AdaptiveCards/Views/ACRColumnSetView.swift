@@ -55,7 +55,20 @@ class ACRColumnSetView: ACRContentStackView {
         })
     }
     
-    override func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType) {
+    /// call this method after subview is rendered
+    /// it configures height, creates association between the subview and its separator if any
+    /// registers subview for its visibility
+    override func updateLayoutOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
+        guard let renderedView = renderedView, let acoElem = acoElem else { return }
+        self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
+        rootView?.visibilityContext.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
+        if !acoElem.getIsVisible() {
+            self.register(invisibleView: renderedView)
+        }
+    }
+    
+    override func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType) {
+        self.applyVisibilityToSubviews()
         self.setMinimumHeight(minHeight)
     }
 }

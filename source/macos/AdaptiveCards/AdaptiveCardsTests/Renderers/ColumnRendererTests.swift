@@ -93,7 +93,7 @@ class ColumnRendererTests: XCTestCase {
     func testRendersItems() {
         column = .make(items: [FakeTextBlock.make(), FakeInputNumber.make()])
         let columnView = renderColumnView()
-        XCTAssertEqual(columnView.arrangedSubviews.count, 2)
+        XCTAssertEqual(columnView.arrangedSubviews.count, 4)
     }
     
     private func renderColumnView() -> ACRColumnView {

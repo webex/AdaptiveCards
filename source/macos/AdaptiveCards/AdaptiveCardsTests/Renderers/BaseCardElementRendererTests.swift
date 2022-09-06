@@ -38,7 +38,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         backgroundImage = .make(url: "https://picsum.photos/200", fillMode: .repeat)
         container = .make(backgroundImage: backgroundImage)
         let viewWithInheritedProperties = renderBaseCardElementView()
-        guard let updatedView = viewWithInheritedProperties.arrangedSubviews[0] as? ACRColumnView else {
+        guard let updatedView = viewWithInheritedProperties.arrangedSubviews[0] as? ACRContainerView else {
             fatalError()
         }
         XCTAssertEqual(updatedView.backgroundImageView.fillMode, .repeat)
@@ -176,7 +176,7 @@ class BaseCardElementRendererrTests: XCTestCase {
     
     private func renderBaseCardElementView() -> ACRContentStackView {
         let view = containerRenderer.render(element: container, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
-        XCTAssertTrue(view is ACRColumnView)
+        XCTAssertTrue(view is ACRContainerView)
         
         let viewWithInheritedProperties = baseCardRenderer.updateView(view: view, element: container, rootView: FakeRootView(), style: .default, hostConfig: hostConfig, config: .default, isfirstElement: true)
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)

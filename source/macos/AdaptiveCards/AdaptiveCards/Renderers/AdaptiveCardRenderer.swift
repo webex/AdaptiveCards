@@ -32,7 +32,7 @@ class AdaptiveCardRenderer {
             let showCardStyle = hostConfig.getActions()?.showCard.style ?? .default
             style = colorConfig.allowCustomStyle ? card.getStyle() : showCardStyle
         }
-        guard let cardView = renderAdaptiveCard(card, with: hostConfig, style: style, config: config, actionDelegate: parent.delegate, resourceResolver: parent.resolverDelegate) as? ACRView else {
+        guard let cardView = renderAdaptiveCard(card, with: hostConfig, style: style, config: config, actionDelegate: parent.delegate, resourceResolver: parent.resolverDelegate, parentRootView: parent) as? ACRView else {
             logError("renderAdaptiveCard should return ACRView")
             return NSView()
         }
@@ -40,8 +40,12 @@ class AdaptiveCardRenderer {
         return cardView
     }
     
-    private func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, style: ACSContainerStyle, width: CGFloat? = nil, config: RenderConfig, actionDelegate: AdaptiveCardActionDelegate?, resourceResolver: AdaptiveCardResourceResolver?) -> NSView {
+    private func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, style: ACSContainerStyle, width: CGFloat? = nil, config: RenderConfig, actionDelegate: AdaptiveCardActionDelegate?, resourceResolver: AdaptiveCardResourceResolver?, parentRootView: ACRView? = nil) -> NSView {
         let rootView = ACRView(style: style, hostConfig: hostConfig, renderConfig: config)
+        if let visibilityContext = parentRootView?.visibilityContext {
+            // This block invokes by the showcard function. We've passed the same visibility context to the current root view, so we can change visibility any element within the entire card.
+            rootView.visibilityContext = visibilityContext
+        }
         rootView.translatesAutoresizingMaskIntoConstraints = false
         if let width = width {
             rootView.widthAnchor.constraint(equalToConstant: width).isActive = true
@@ -68,7 +72,7 @@ class AdaptiveCardRenderer {
         }
         
         if heightSupport {
-            rootView.configureLayout(card.getVerticalContentAlignment(), minHeight: card.getMinHeight(), heightType: card.getHeight(), type: .adaptiveCard)
+            rootView.configureLayoutAndVisibility(card.getVerticalContentAlignment(), minHeight: card.getMinHeight(), heightType: card.getHeight(), type: .adaptiveCard)
         }
         
         if !card.getActions().isEmpty {

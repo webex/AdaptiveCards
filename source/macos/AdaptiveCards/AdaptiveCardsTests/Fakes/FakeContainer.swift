@@ -96,7 +96,7 @@ class FakeContainer: ACSContainer {
     }
 }
 extension FakeContainer {
-    static func make(style: ACSContainerStyle = .default, elemType: ACSCardElementType = .container, verticalContentAlignment: ACSVerticalContentAlignment = .top, bleed: Bool = false, backgroundImage: ACSBackgroundImage? = nil, heightType: ACSHeightType = .auto, minHeight: NSNumber? = 0, selectAction: ACSBaseActionElement? = .none, items: [ACSBaseCardElement] = [], padding: Bool = false, separator: Bool = false, id: String = "", visible: Bool = false) -> FakeContainer {
+    static func make(style: ACSContainerStyle = .default, elemType: ACSCardElementType = .container, verticalContentAlignment: ACSVerticalContentAlignment = .top, bleed: Bool = false, backgroundImage: ACSBackgroundImage? = nil, heightType: ACSHeightType = .auto, minHeight: NSNumber? = 0, selectAction: ACSBaseActionElement? = .none, items: [ACSBaseCardElement] = [], padding: Bool = false, separator: Bool = false, id: String = "", visible: Bool = true) -> FakeContainer {
         let fakeContainer = FakeContainer()
         fakeContainer.style = style
         fakeContainer.verticalContentAlignment = verticalContentAlignment
