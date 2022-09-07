@@ -4,7 +4,7 @@ import AppKit
 protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
-    func updateLayoutOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?)
+    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?)
     func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType)
     func applyPadding(_ padding: CGFloat)
 }
@@ -288,10 +288,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// call this method after subview is rendered
     /// it configures height, creates association between the subview and its separator if any
     /// registers subview for its visibility
-    func updateLayoutOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
+    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
         guard let renderedView = renderedView, let acoElem = acoElem else { return }
         self.configureHeight(for: renderedView, acoElement: acoElem)
         self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
+        // Through the root view visibility context, register renderview with self manager.
         rootView?.visibilityContext.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
         if !acoElem.getIsVisible() {
             self.register(invisibleView: renderedView)

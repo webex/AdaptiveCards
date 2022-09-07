@@ -86,7 +86,7 @@ class BaseCardElementRenderer {
             parentView.addArrangedSubview(view)
         }
         
-        parentView.updateLayoutOfRenderedView(view, acoElement: element, separator: separator, rootView: rootView)
+        parentView.updateLayoutAndVisibilityOfRenderedView(view, acoElement: element, separator: separator, rootView: rootView)
         
         // Keep single every view horizontal fit inside the nsstackview
         /*

@@ -4,10 +4,12 @@
 //
 //  Created by uchauhan on 30/08/22.
 //
+//  This class is designed to handle the visibility of views as well as the corresponding padding or separator. Class also depended on Filler Space Manager to find associated views.
 
 import AdaptiveCards_bridge
 import AppKit
 
+/// VisibilityManager protocols for handle element visibility
 @objc protocol ACSIVisibilityManagerFacade {
     func hideView(_ view: NSView)
     func unhideView(_ view: NSView)
@@ -74,12 +76,12 @@ class ACSVisibilityManager {
     }
     
     /// change the visibility of the separator of a host view to `visibility`
-    /// `visibility` `YES` indicates that the separator will be hidden
-    func changeVisiblityOfSeparator(_ hostView: NSView, visibilityHidden visibility: Bool, contentStackView: ACRContentStackView) {
+    /// `isHidden` `YES` indicates that the separator will be hidden
+    func changeVisiblityOfSeparator(_ hostView: NSView, visibilityHidden isHidden: Bool, contentStackView: ACRContentStackView) {
         guard let separtor = fillerSpaceManager.getSeparatorFor(OwnerView: hostView) else { return }
-        guard separtor.isHidden != visibility else { return }
-        separtor.isHidden = visibility
-        if visibility {
+        guard separtor.isHidden != isHidden else { return }
+        separtor.isHidden = isHidden
+        if isHidden {
             contentStackView.decreaseIntrinsicContentSize(separtor)
         } else {
             contentStackView.increaseIntrinsicContentSize(separtor)
@@ -87,13 +89,13 @@ class ACSVisibilityManager {
     }
     
     /// change the visibility of the padding of a host view to `visibility`
-    /// `visibility` `YES` indicates that the padding will be hidden
-    func changeVisibilityOfPadding(_ hostView: NSView, visibilityHidden visibility: Bool) {
+    /// `isHidden` `YES` indicates that the padding will be hidden
+    func changeVisibilityOfPadding(_ hostView: NSView, visibilityHidden isHidden: Bool) {
         guard let spacerViews = fillerSpaceManager.getFillerSpaceView(hostView) else { return }
         for value in spacerViews {
             let padding = value.nonretainedObjectValue as? NSView
-            if padding?.isHidden != visibility {
-                padding?.isHidden = visibility
+            if padding?.isHidden != isHidden {
+                padding?.isHidden = isHidden
             }
         }
     }

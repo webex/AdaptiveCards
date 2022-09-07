@@ -109,7 +109,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         columnView.identifier = NSUserInterfaceItemIdentifier(column.getId() ?? "")
         columnView.isHidden = !column.getIsVisible()
         columnSetView.addView(columnView, in: gravityArea)
-        columnSetView.updateLayoutOfRenderedView(columnView, acoElement: column, separator: separator, rootView: rootView)
+        columnSetView.updateLayoutAndVisibilityOfRenderedView(columnView, acoElement: column, separator: separator, rootView: rootView)
         
         // Keep Column view horizontal and vertical stretch inside the ColumnSet
         /*
