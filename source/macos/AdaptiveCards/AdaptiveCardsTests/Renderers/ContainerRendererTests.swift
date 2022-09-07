@@ -36,17 +36,17 @@ class ContainerRendererTests: XCTestCase {
         container = .make(verticalContentAlignment: .top)
         var containerView = renderContainerView(container)
         // For HeightType Property we have add stretchable view. so it will increase count for subviews.
-        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 0)
+        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 1)
         
         container = .make(verticalContentAlignment: .bottom)
         containerView = renderContainerView(container)
         // SpaceView 1
-        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 1)
+        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 2)
         
         container = .make(verticalContentAlignment: .center)
         containerView = renderContainerView(container)
         // SpaceView 2
-        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 2)
+        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 3)
     }
     
     func testSelectActionTargetIsSet() {

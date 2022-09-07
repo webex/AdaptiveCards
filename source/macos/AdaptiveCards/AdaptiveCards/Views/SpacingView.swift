@@ -21,12 +21,12 @@ class SpacingView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    /// Create New Separator
+    /// Create New Spacer
     /// - Parameters:
     ///   - elem: BaseCard Element
     ///   - view: Superview of basecard element
     ///   - config: Host Config
-    /// - Returns: separator
+    /// - Returns: Spacer
     class func renderSpacer(elem: ACSBaseCardElement, forSuperView view: ACRContentStackView, withHostConfig config: ACSHostConfig) -> SpacingView? {
         let separator = SpacingView()
         let requestedSpacing = elem.getSpacing()

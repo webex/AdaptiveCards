@@ -32,7 +32,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var subviewIntrinsicContentSizeCollection: [String: NSValue] = [String: NSValue]()
     // Hold self view dynamic content intrinsicSize
     var combinedContentSize: CGSize = .zero
-    weak var parentView: ACRContentStackView?
     
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
@@ -88,7 +87,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = hostConfig
         self.style = style
         self.renderConfig = renderConfig
-        self.parentView = superview as? ACRContentStackView
         self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
         super.init(frame: .zero)
         initialize()
@@ -130,10 +128,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         setupViews()
         setupConstraints()
         setupTrackingArea()
-    }
-    
-    func getVisibilityManager() -> ACSVisibilityManager {
-        return self.visibilityManager
     }
     
     func addArrangedSubview(_ subview: NSView) {
