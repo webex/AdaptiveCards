@@ -438,4 +438,32 @@ namespace RendererQml
     {
         return m_RequiredInputElementsIdList;
     }
+
+    void AdaptiveRenderContext::addHeightEstimate(int height)
+    {
+        m_HeightEstimate += height;
+    }
+
+    void AdaptiveRenderContext::setHeightEstimate(int height)
+    {
+        m_HeightEstimate = height;
+    }
+
+    const int AdaptiveRenderContext::getHeightEstimate()
+    {
+        return m_HeightEstimate;
+    }
+
+    const int RendererQml::AdaptiveRenderContext::getEstimatedTextHeight(std::string text)
+    {
+        auto cardConfig = this->GetRenderConfig()->getCardConfig();
+
+        int height = 0;
+
+        height += ((((int(text.size()) * cardConfig.averageCharWidth) / cardConfig.cardWidth) + 1) * cardConfig.averageCharHeight);
+        height += (int(std::count(text.begin(), text.end(), '\n')) * cardConfig.averageCharHeight);
+        height += cardConfig.averageSpacing;
+
+        return height;
+    }
 }

@@ -101,6 +101,12 @@ namespace RendererQml
         void addToRequiredInputElementsIdList(const std::string& elementId);
         const std::vector<std::string>& getRequiredInputElementsIdList();
 
+        void addHeightEstimate(int height);
+        void setHeightEstimate(int height);
+        const int getHeightEstimate();
+
+        const int getEstimatedTextHeight(std::string text);
+
     private:
         bool m_isShowCardinAction{ false };
         bool m_isShowCardLastBodyElement{ false };
@@ -139,6 +145,7 @@ namespace RendererQml
         int m_FactSetCounter{ 0 };
         int m_TextBlockCounter{ 0 };
         int m_ContentIndex{ 0 };
+        int m_HeightEstimate{ 0 };
 
     };
 }

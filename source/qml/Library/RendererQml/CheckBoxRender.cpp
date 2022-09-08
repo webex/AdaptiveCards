@@ -63,6 +63,7 @@ void CheckBoxElement::initialize()
 
 std::shared_ptr<RendererQml::QmlTag> CheckBoxElement::getContentItem()
 {
+    mContext->addHeightEstimate(mCheckBoxConfig.rowHeight);
     auto contentItem = std::make_shared<RendererQml::QmlTag>("RowLayout");
 
     contentItem->Property("height", RendererQml::Formatter() << mCheckBoxConfig.rowHeight);

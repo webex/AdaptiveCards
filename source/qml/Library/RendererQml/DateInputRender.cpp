@@ -209,6 +209,7 @@ void DateInputElement::initDateInputField()
 
 void DateInputElement::initDateInputWrapper()
 {
+    mContext->addHeightEstimate(mDateConfig.height);
     mDateInputWrapper = std::make_shared<RendererQml::QmlTag>("Rectangle");
 
     mDateInputWrapper->Property("id", mDateInputWrapperId);
@@ -591,6 +592,7 @@ void DateInputElement::addInputLabel(bool isRequired)
     {
         if (!mDateInput->GetLabel().empty())
         {
+            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mDateInput->GetLabel()));
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
             label->Property("id", RendererQml::Formatter() << mDateInputColElement->GetId() << "_label");
             label->Property("wrapMode", "Text.Wrap");

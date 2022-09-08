@@ -17,6 +17,9 @@ std::shared_ptr<RendererQml::QmlTag> TextInputElement::getQmlTag()
 
 void TextInputElement::initialize()
 {
+    const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
+    mContext->addHeightEstimate(mTextinput->GetIsMultiline() ? textConfig.multiLineTextHeight : textConfig.height);
+
     mOriginalElementId = mTextinput->GetId();
     mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetPlaceholder());
     mEscapedValueString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetValue());
@@ -28,7 +31,6 @@ void TextInputElement::initialize()
     }
 
     mTextinput->SetId(mContext->ConvertToValidId(mTextinput->GetId()));
-    const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     mTextinputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     mTextinputColElement->Property("id", mTextinput->GetId());
     mTextinput->SetId(mTextinput->GetId() + "_textField");
@@ -49,6 +51,7 @@ void TextInputElement::initialize()
 
 std::shared_ptr<RendererQml::QmlTag> TextInputElement::createInputTextLabel(bool isRequired)
 {
+    mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mTextinput->GetLabel()));
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     auto label = std::make_shared<RendererQml::QmlTag>("Label");
     mLabelId = RendererQml::Formatter() << mTextinputColElement->GetId() << "_label";
