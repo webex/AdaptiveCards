@@ -545,10 +545,12 @@
 		A0805F5825E40CB400B3F8EA /* RichTextBlockRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0805F5725E40CB400B3F8EA /* RichTextBlockRendererTest.swift */; };
 		A0805F5D25E40D0F00B3F8EA /* FakeRichTextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0805F5C25E40D0F00B3F8EA /* FakeRichTextBlock.swift */; };
 		A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */; };
+		AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */; };
 		AA371D0628911F63002D618A /* ACRContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA371D0528911F63002D618A /* ACRContainerView.swift */; };
 		AA4D26A6289A679700CA502D /* ACRColumnSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */; };
 		AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */; };
 		AA7A97BD288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */; };
+		AAC42D9628C22937007C4367 /* ACSVisibilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */; };
 		AAE0E9182844D8260034FE2A /* ACRHyperLinkTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */; };
 /* End PBXBuildFile section */
 
@@ -1127,10 +1129,12 @@
 		A0805F5725E40CB400B3F8EA /* RichTextBlockRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextBlockRendererTest.swift; sourceTree = "<group>"; };
 		A0805F5C25E40D0F00B3F8EA /* FakeRichTextBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeRichTextBlock.swift; sourceTree = "<group>"; };
 		A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRenderer.swift; sourceTree = "<group>"; };
+		AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACOVisibilityContext.swift; sourceTree = "<group>"; };
 		AA371D0528911F63002D618A /* ACRContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRContainerView.swift; sourceTree = "<group>"; };
 		AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRColumnSetView.swift; sourceTree = "<group>"; };
 		AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManager.swift; sourceTree = "<group>"; };
 		AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManagerTests.swift; sourceTree = "<group>"; };
+		AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACSVisibilityManager.swift; sourceTree = "<group>"; };
 		AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRHyperLinkTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1178,6 +1182,7 @@
 				A032272425E93C7400E7172E /* ImageUtils.swift */,
 				08D7767025CBF27B0095C1B3 /* LogUtils.swift */,
 				0876273E27734F9800F3347F /* ViewUtils.swift */,
+				AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1803,6 +1808,7 @@
 			children = (
 				08D7767925CC339D0095C1B3 /* RendererManager.swift */,
 				AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */,
+				AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -2384,6 +2390,7 @@
 				2806E8EC26010C3800CF7A40 /* ActionSubmitRenderer.swift in Sources */,
 				AA4D26A6289A679700CA502D /* ACRColumnSetView.swift in Sources */,
 				29E8DF5225E69B2B000EC12F /* ACRChoiceButton.swift in Sources */,
+				AAC42D9628C22937007C4367 /* ACSVisibilityManager.swift in Sources */,
 				0830D55125F90D4C00BBC245 /* Targets.swift in Sources */,
 				29050BFE25D59A3F00AF3CA9 /* InputToggleRenderer.swift in Sources */,
 				088F716526A9925400C52C06 /* SpacingView.swift in Sources */,
@@ -2398,6 +2405,7 @@
 				08B5F91125C924F400A7D37A /* TextBlockRenderer.swift in Sources */,
 				A032272025E9254C00E7172E /* ACRImageProperties.swift in Sources */,
 				13C465E525DD3C07006E4605 /* InputDateRenderer.swift in Sources */,
+				AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */,
 				2910CF012600A82A000910C8 /* ACRActionSetView.swift in Sources */,
 				0801D5EA25C2C3B500AABD6C /* AdaptiveCard.swift in Sources */,
 				29BA82D725E265F4000B7578 /* ChoiceSetInputRenderer.swift in Sources */,

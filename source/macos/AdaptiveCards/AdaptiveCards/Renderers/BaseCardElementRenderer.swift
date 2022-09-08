@@ -9,9 +9,10 @@ class BaseCardElementRenderer {
     func updateView(view: NSView, element: ACSBaseCardElement, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) -> ACRContentStackView {
         let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig, renderConfig: config)
         
+        var separator: SpacingView?
         if !isfirstElement {
             // For seperator and spacing
-            updatedView.addSeparator(element.getSeparator(), withSpacing: element.getSpacing())
+            separator = SpacingView.renderSpacer(elem: element, forSuperView: rootView, withHostConfig: hostConfig)
         }
         
         if let elem = element as? ACSImage {
@@ -26,6 +27,10 @@ class BaseCardElementRenderer {
             if let columnView = view as? ACRColumnView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
                 columnView.setupBackgroundImageProperties(backgroundImage)
                 rootView.registerImageHandlingView(columnView.backgroundImageView, for: url)
+            }
+            if let containerView = view as? ACRContainerView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
+                containerView.setupBackgroundImageProperties(backgroundImage)
+                rootView.registerImageHandlingView(containerView.backgroundImageView, for: url)
             }
             contentStackView.setMinimumHeight(collectionElement.getMinHeight())
         }
@@ -42,14 +47,21 @@ class BaseCardElementRenderer {
                 view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
             }
         }
-        
+        // visibility changes add on height support element, so need to manually register with visibility manager for other elements. this will remove after once elements are support by height changs.
+        rootView.associateSeparator(withOwnerView: separator, ownerView: updatedView)
+        // Through the root view visibility context, register renderview with self manager.
+        rootView.visibilityContext.registerVisibilityManager(rootView, targetViewIdentifier: updatedView.identifier)
+        if !element.getIsVisible() {
+            rootView.register(invisibleView: updatedView)
+        }
         return updatedView
     }
     
     func updateLayoutForSeparatorAndAlignment(view: NSView, element: ACSBaseCardElement, parentView: ACRContentStackView, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) {
+        var separator: SpacingView?
         if !isfirstElement {
             // For seperator and spacing
-            parentView.addSeparator(element.getSeparator(), withSpacing: element.getSpacing())
+            separator = SpacingView.renderSpacer(elem: element, forSuperView: parentView, withHostConfig: hostConfig)
         }
         
         if let elem = element as? ACSImage {
@@ -81,7 +93,7 @@ class BaseCardElementRenderer {
             parentView.addArrangedSubview(view)
         }
         
-        parentView.updateLayoutOfRenderedView(view, acoElement: element, separator: nil, rootView: rootView)
+        parentView.updateLayoutAndVisibilityOfRenderedView(view, acoElement: element, separator: separator, rootView: rootView)
         
         // Keep single every view horizontal fit inside the nsstackview
         /*

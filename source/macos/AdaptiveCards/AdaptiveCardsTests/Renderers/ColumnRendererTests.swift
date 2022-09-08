@@ -51,15 +51,15 @@ class ColumnRendererTests: XCTestCase {
     
     func testVerticalContentAlignment() {
         var columnView = renderColumnView()
-        XCTAssertEqual(columnView.arrangedSubviews.count, 0)
+        XCTAssertEqual(columnView.arrangedSubviews.count, 1)
         
         column = .make(verticalContentAlignment: .center)
         columnView = renderColumnView()
-        XCTAssertEqual(columnView.arrangedSubviews.count, 2)
+        XCTAssertEqual(columnView.arrangedSubviews.count, 3)
         
         column = .make(verticalContentAlignment: .bottom)
         columnView = renderColumnView()
-        XCTAssertEqual(columnView.arrangedSubviews.count, 1)
+        XCTAssertEqual(columnView.arrangedSubviews.count, 2)
     }
     
     func testSelectActionTargetIsSet() {
@@ -93,7 +93,7 @@ class ColumnRendererTests: XCTestCase {
     func testRendersItems() {
         column = .make(items: [FakeTextBlock.make(), FakeInputNumber.make()])
         let columnView = renderColumnView()
-        XCTAssertEqual(columnView.arrangedSubviews.count, 2)
+        XCTAssertEqual(columnView.arrangedSubviews.count, 4)
     }
     
     private func renderColumnView() -> ACRColumnView {

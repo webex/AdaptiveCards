@@ -4,8 +4,8 @@ import AppKit
 protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
-    func updateLayoutOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?)
-    func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType)
+    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?)
+    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType)
     func applyPadding(_ padding: CGFloat)
 }
 
@@ -15,8 +15,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var stackViewTopConstraint: NSLayoutConstraint?
     private var stackViewBottomConstraint: NSLayoutConstraint?
     
-    private (set) var currentSpacingView: SpacingView? // made as set for use in test
-    private var currentSeparatorView: SpacingView?
     private (set) var errorMessageField: NSTextField?
     private (set) var inputLabelField: NSTextField?
     
@@ -26,13 +24,14 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     var target: TargetHandler?
     public var bleed = false
     private let paddingHandler = ACSFillerSpaceManager()
+    private let visibilityManager: ACSVisibilityManager
     private var verticalContentAlignment: ACSVerticalContentAlignment = .top
     private var paddings = [NSView]()
+    private let invisibleViews = NSMutableSet()
     // Store the Intrinsic size of subviews
     private var subviewIntrinsicContentSizeCollection: [String: NSValue] = [String: NSValue]()
     // Hold self view dynamic content intrinsicSize
     var combinedContentSize: CGSize = .zero
-    var parentView: ACRContentStackView?
     
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
@@ -79,6 +78,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = hostConfig
         self.style = style
         self.renderConfig = renderConfig
+        self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
         super.init(frame: .zero)
         initialize()
     }
@@ -87,7 +87,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = hostConfig
         self.style = style
         self.renderConfig = renderConfig
-        self.parentView = superview as? ACRContentStackView
+        self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
         super.init(frame: .zero)
         initialize()
         if needsPadding {
@@ -115,6 +115,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = ACSHostConfig() // TODO: This won't work
         self.style = .none
         self.renderConfig = .default
+        self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
         super.init(coder: coder)
         initialize()
     }
@@ -163,40 +164,8 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         }
     }
     
-    func addSeparator(_ separator: Bool, withSpacing space: ACSSpacing) {
-        if separator {
-            var spaceAdded = CGFloat(truncating: HostConfigUtils.getSpacing(space, with: hostConfig))
-            let seperatorConfig = hostConfig.getSeparator()
-            let lineThickness = seperatorConfig?.lineThickness
-            let lineColor = seperatorConfig?.lineColor
-            spaceAdded -= CGFloat(truncating: lineThickness ?? .init(value: 0))
-            addSpacing(spacing: spaceAdded / 2)
-            addSeparator(thickness: lineThickness ?? 1, color: lineColor ?? "#EEEEEE")
-            addSpacing(spacing: spaceAdded / 2)
-        } else {
-            addSpacing(space)
-        }
-    }
-    
-    func addSpacing(_ spacing: ACSSpacing) {
-        let spaceAdded = HostConfigUtils.getSpacing(spacing, with: hostConfig)
-        addSpacing(spacing: CGFloat(truncating: spaceAdded))
-    }
-    
     func setCustomSpacing(spacing: CGFloat, after view: NSView) {
         stackView.setCustomSpacing(spacing, after: view)
-    }
-    
-    private func addSeparator(thickness: NSNumber, color: String) {
-        let seperatorView = SpacingView(asSeparatorViewWithThickness: CGFloat(truncating: thickness), color: color, orientation: orientation)
-        stackView.addArrangedSubview(seperatorView)
-        currentSeparatorView = seperatorView
-    }
-    
-    private func addSpacing(spacing: CGFloat) {
-        let spacingView = SpacingView(orientation: orientation, spacing: spacing)
-        stackView.addArrangedSubview(spacingView)
-        currentSpacingView = spacingView
     }
     
     // use this method if a subview to the content stack view needs a padding
@@ -278,6 +247,27 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         return value?.sizeValue ?? .zero
     }
     
+    func register(invisibleView: NSView) {
+        self.invisibleViews.add(invisibleView)
+    }
+    
+    /// this method applies visibility to subviews once all of them are rendered and become part of content stack view
+    /// applying visibility as each subview is rendered has known side effects.
+    /// such as its superview, content stack view becomes hidden if a first subview is set hidden.
+    func applyVisibilityToSubviews() {
+        for index in 0..<stackView.subviews.count {
+            let subview = stackView.subviews[index]
+            if !paddingHandler.isPadding(subview) && !(subview is SpacingView) {
+                visibilityManager.addVisibleView(index)
+            }
+        }
+        for subview in invisibleViews {
+            if let view = subview as? NSView {
+                visibilityManager.changeVisiblityOfSeparator(view, visibilityHidden: true, contentStackView: self)
+            }
+        }
+    }
+    
     /// this function will tell if the content stack view should have a padding
     /// padding will be added if
     /// none of its subviews is stretchable or has padding and there is at least
@@ -288,15 +278,25 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// todo part : add visiblity checking for stretchable view.
     
     func shouldAddPadding(_ hasStretchableView: Bool) -> Bool {
-        return !hasStretchableView
+        return !hasStretchableView && visibilityManager.hasVisibleViews
+    }
+    
+    func associateSeparator(withOwnerView separator: SpacingView?, ownerView: NSView) {
+        paddingHandler.associateSeparator(withOwnerView: separator, ownerView: ownerView)
     }
     
     /// call this method after subview is rendered
     /// it configures height, creates association between the subview and its separator if any
     /// registers subview for its visibility
-    func updateLayoutOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
+    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
         guard let renderedView = renderedView, let acoElem = acoElem else { return }
         self.configureHeight(for: renderedView, acoElement: acoElem)
+        self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
+        // Through the root view visibility context, register renderview with self manager.
+        rootView?.visibilityContext.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
+        if !acoElem.getIsVisible() {
+            self.register(invisibleView: renderedView)
+        }
     }
     
     func configureHeight(for view: NSView?, acoElement element: ACSBaseCardElement?) {
@@ -312,10 +312,18 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// activation constraint all at once is more efficient than activating
     /// constraints one by one.
     
-    func configureLayout(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType) {
+    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType) {
         self.verticalContentAlignment = verticalContentAlignment
+        self.applyVisibilityToSubviews()
         if self.shouldAddPadding(self.hasStretchableView) {
             self.addPadding()
+        } else {
+            if !self.hasStretchableView {
+                // add stretchable view for stretch the content when stackview has no visibile view
+                let padding = self.addPadding(for: self)
+                self.paddings.append(padding)
+                self.addArrangedSubview(padding)
+            }
         }
         self.setMinimumHeight(minHeight)
         paddingHandler.activateConstraintsForPadding()
@@ -364,42 +372,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         let constraint = NSLayoutConstraint(item: self, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: heightPt)
         constraint.priority = NSLayoutConstraint.Priority(rawValue: 999)
         constraint.isActive = true
-    }
-    
-    func refreshOnVisibilityChange(from isHiddenOld: Bool) {
-        guard let stackView = superview as? NSStackView else { return }
-        
-        if isHidden {
-             // if an object is hidden then we need to update the visibility of spacing view of the adjacent nonHidden object
-             guard let toggledView = (stackView.arrangedSubviews.first { !$0.isHidden && !($0 is SpacingView) }) as? ACRContentStackView  else { return }
-             toggledView.currentSpacingView?.isHidden = true
-             toggledView.currentSeparatorView?.isHidden = true
-         } else {
-             // Spacer and Separator to be hidden only if this view is the first element of the parent stack
-             // Ignore all Spacing to check firstElement, as they're added for `verticalContentAlignment`. Refer ContainerRenderer / ColumnRenderer.
-             
-             guard let toggledView = (stackView.arrangedSubviews.first { !$0.isHidden && !($0 is SpacingView) }) else { return }
-             let isFirstElement = toggledView == self
-             currentSpacingView?.isHidden = isFirstElement
-             currentSeparatorView?.isHidden = isFirstElement
-
-             // once we toggle any object to visibility , we need to see if the objects in series next to toggled one were already being shown or not . if shown we need to update the currentSpacingView of those items to false
-             
-             guard stackView.arrangedSubviews.count > 1 else { return }
-             // getting index of the toggled object
-             guard let toggledViewIndex = stackView.arrangedSubviews.firstIndex(of: toggledView) else { return }
-
-             // if toggled element is last one no need to continue
-             guard toggledViewIndex < stackView.arrangedSubviews.count - 1 else { return }
-             
-             // if next view in sequence is not hidden set its currentSpacingView?.isHidden to false
-             for index in toggledViewIndex + 1..<stackView.arrangedSubviews.count {
-                 if let nextView = stackView.arrangedSubviews[index] as? ACRContentStackView, !nextView.isHidden {
-                     nextView.currentSpacingView?.isHidden = false
-                     nextView.currentSeparatorView?.isHidden = false
-                 }
-             }
-         }
     }
     
     // MARK: Mouse Events and SelectAction logics
@@ -498,6 +470,16 @@ extension ACRContentStackView: InputHandlingViewErrorDelegate {
     
     var isErrorVisible: Bool {
         return !(errorMessageField?.isHidden ?? true)
+    }
+}
+
+extension ACRContentStackView: ACSVisibilityManagerFacade {
+    func hideView(_ view: NSView) {
+        visibilityManager.hide(view, hostView: self)
+    }
+    
+    func unhideView(_ view: NSView) {
+        visibilityManager.unhideView(view, hostView: self)
     }
 }
 

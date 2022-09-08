@@ -214,7 +214,7 @@ class TextUtils {
                 }
                 newAttrString.endEditing()
                 // Delete trailing newline character
-                if !parserResult.parsedString.contains("\n") {
+                if !parserResult.parsedString.contains("\n") && newAttrString.length > 0 {
                      newAttrString.deleteCharacters(in: NSRange(location: newAttrString.length - 1, length: 1))
                 }
                 return newAttrString

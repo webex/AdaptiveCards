@@ -40,6 +40,7 @@ class StretchableView: NSView {
 
 class ACSFillerSpaceManager {
     private var paddingMap: NSMapTable<NSView, NSMutableArray>
+    private var separatorMap: NSMapTable<NSView, NSValue>
     private var stretchableViewSet: NSHashTable<NSView>
     private var stretchableViews: [NSValue]
     private var paddingSet: NSHashTable<NSView>
@@ -47,6 +48,7 @@ class ACSFillerSpaceManager {
     
     init() {
         paddingMap = NSMapTable<NSView, NSMutableArray>(keyOptions: .weakMemory, valueOptions: .strongMemory)
+        separatorMap = NSMapTable<NSView, NSValue>(keyOptions: .weakMemory, valueOptions: .strongMemory)
         stretchableViewSet = NSHashTable<NSView>(options: .weakMemory, capacity: 5)
         stretchableViews = [NSValue]()
         paddingSet = NSHashTable<NSView>(options: .weakMemory, capacity: 5)
@@ -143,5 +145,16 @@ class ACSFillerSpaceManager {
     
     func getFillerSpaceView(_ view: NSView) -> [NSValue]? {
         return paddingMap.object(forKey: view) as? [NSValue]
+    }
+    
+    func associateSeparator(withOwnerView separator: NSView?, ownerView: NSView?) {
+        separatorMap.setObject(NSValue(nonretainedObject: separator), forKey: ownerView)
+    }
+    
+    func getSeparatorFor(OwnerView ownerView: NSView) -> SpacingView? {
+        if let value = separatorMap.object(forKey: ownerView) {
+            return value.nonretainedObjectValue as? SpacingView
+        }
+        return nil
     }
 }

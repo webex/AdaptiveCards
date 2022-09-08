@@ -33,7 +33,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: view, element: element, parentView: containerView, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
             BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: containerView, with: hostConfig, element: element, parentElement: container)
         }
-        containerView.configureLayout(container.getVerticalContentAlignment(), minHeight: container.getMinHeight(), heightType: container.getHeight(), type: .container)
+        containerView.configureLayoutAndVisibility(container.getVerticalContentAlignment(), minHeight: container.getMinHeight(), heightType: container.getHeight(), type: .container)
         
         // Dont add the trailing space if the vertical content alignment is top/default
         if container.getVerticalContentAlignment() == .center, let topView = leadingBlankSpace {
