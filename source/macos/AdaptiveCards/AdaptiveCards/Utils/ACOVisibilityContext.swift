@@ -13,18 +13,18 @@ class ACOVisibilityContext: NSObject {
     /// store view with its corresponding root content view manager
     /// `Key` : View Id Store with Strong referance
     /// `Value`: corresponding root content view manager Store with Weak referance
-    private let visibilityMap: NSMapTable<NSString, ACSIVisibilityManagerFacade>
+    private let visibilityMap: NSMapTable<NSString, ACSVisibilityManagerFacade>
     
     override init() {
-        visibilityMap = NSMapTable<NSString, ACSIVisibilityManagerFacade>(keyOptions: .strongMemory, valueOptions: .weakMemory)
+        visibilityMap = NSMapTable<NSString, ACSVisibilityManagerFacade>(keyOptions: .strongMemory, valueOptions: .weakMemory)
         super.init()
     }
     
     /// register visibility protocol with targeted view's ID
     /// - Parameters:
-    ///   - manager: ACSIVisibilityManagerFacade adopted ParentView
+    ///   - manager: ACSVisibilityManagerFacade adopted ParentView
     ///   - viewId: targeted visibility view id
-    func registerVisibilityManager(_ manager: ACSIVisibilityManagerFacade?, targetViewIdentifier viewId: NSUserInterfaceItemIdentifier?) {
+    func registerVisibilityManager(_ manager: ACSVisibilityManagerFacade?, targetViewIdentifier viewId: NSUserInterfaceItemIdentifier?) {
         guard let manager = manager, let viewId = viewId else {
             return
         }
@@ -33,8 +33,8 @@ class ACOVisibilityContext: NSObject {
     
     /// get visibility manager for targeted view.
     /// - Parameter viewId: targeted visibility view id
-    /// - Returns: ACSIVisibilityManagerFacade adopted ParentView
-    func retrieveVisiblityManager(withIdentifier viewId: NSUserInterfaceItemIdentifier?) -> ACSIVisibilityManagerFacade? {
+    /// - Returns: ACSVisibilityManagerFacade adopted ParentView
+    func retrieveVisiblityManager(withIdentifier viewId: NSUserInterfaceItemIdentifier?) -> ACSVisibilityManagerFacade? {
         guard let viewId = viewId else {
             return nil
         }

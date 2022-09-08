@@ -10,7 +10,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 /// VisibilityManager protocols for handle element visibility
-@objc protocol ACSIVisibilityManagerFacade {
+@objc protocol ACSVisibilityManagerFacade {
     func hideView(_ view: NSView)
     func unhideView(_ view: NSView)
 }
@@ -20,13 +20,12 @@ class ACSVisibilityManager {
     private var fillerSpaceManager: ACSFillerSpaceManager
     
     /// tracks visible views
-    private var visibleViews: NSMutableOrderedSet
+    private let visibleViews = NSMutableOrderedSet()
     
     var hasVisibleViews: Bool { return !visibleViews.set.isEmpty }
     
     init(_ fillerSpaceManager: ACSFillerSpaceManager) {
         self.fillerSpaceManager = fillerSpaceManager
-        self.visibleViews = NSMutableOrderedSet()
     }
     
     /// adds index of a visible view to a visible views collection, and the index is maintained in sorted order
@@ -35,6 +34,7 @@ class ACSVisibilityManager {
         let indexAsNumber = NSNumber(value: index)
         if visibleViews.contains(indexAsNumber) { return }
         let range = NSRange(location: 0, length: visibleViews.count)
+        /// visibility views hold only index of view, therefore we manage index order.
         let insertionIndex = visibleViews.index(of: indexAsNumber, inSortedRange: range, options: .insertionIndex, usingComparator: { num0, num1 in
             if let n1 = num0 as? NSNumber, let n2 = num1 as? NSNumber {
                 return n1.compare(n2)
@@ -50,6 +50,7 @@ class ACSVisibilityManager {
         let indexAsNumber = NSNumber(value: index)
         if !visibleViews.contains(indexAsNumber) { return }
         let range = NSRange(location: 0, length: visibleViews.count)
+        /// visibility views hold only index of view, therefore we manage index order.
         let removalIndex = visibleViews.index(of: indexAsNumber, inSortedRange: range, options: .insertionIndex, usingComparator: { num0, num1 in
             if let n1 = num0 as? NSNumber, let n2 = num1 as? NSNumber {
                 return n1.compare(n2)
@@ -60,19 +61,16 @@ class ACSVisibilityManager {
     }
     
     /// YES means the index of view is currently the leading or top view
-    func amIHead(_ index: Int) -> Bool {
+    func isHead(_ index: Int) -> Bool {
         let indexAsNumber = NSNumber(value: index)
         guard let firstObj = visibleViews.firstObject as? NSNumber else { return false }
-        return !visibleViews.set.isEmpty && (firstObj == indexAsNumber)
+        return hasVisibleViews && (firstObj == indexAsNumber)
     }
     
     /// returns the current leading or top view's index
     func getHeadIndexOfVisibleViews() -> Int {
-        if !visibleViews.set.isEmpty {
-            guard let firstObj = visibleViews.firstObject as? NSNumber else { return NSNotFound }
-            return firstObj.intValue
-        }
-        return NSNotFound
+        guard hasVisibleViews, let firstObj = visibleViews.firstObject as? NSNumber else { return NSNotFound }
+        return firstObj.intValue
     }
     
     /// change the visibility of the separator of a host view to `visibility`
@@ -112,7 +110,7 @@ class ACSVisibilityManager {
         let subviews = hostView.stackView.subviews
         let index = subviews.firstIndex(of: viewToBeHidden) ?? NSNotFound
         guard index != NSNotFound else { return }
-        let isHead = self.amIHead(index)
+        let isHead = self.isHead(index)
         self.removeVisibleView(at: index)
         
         // setting hidden view to hidden again is a programming error
@@ -142,7 +140,7 @@ class ACSVisibilityManager {
         guard index != NSNotFound else { return }
         let headIndex = self.getHeadIndexOfVisibleViews()
         self.addVisibleView(index)
-        let isHead = self.amIHead(index)
+        let isHead = self.isHead(index)
         // check if the unhidden view will become a head
         if isHead {
             // only enable filler view associated with the `viewTobeUnhidden`

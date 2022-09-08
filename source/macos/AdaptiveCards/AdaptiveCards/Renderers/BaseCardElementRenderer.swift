@@ -9,9 +9,10 @@ class BaseCardElementRenderer {
     func updateView(view: NSView, element: ACSBaseCardElement, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) -> ACRContentStackView {
         let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig, renderConfig: config)
         
+        var separator: SpacingView?
         if !isfirstElement {
             // For seperator and spacing
-            _ = SpacingView.renderSpacer(elem: element, forSuperView: updatedView, withHostConfig: hostConfig)
+            separator = SpacingView.renderSpacer(elem: element, forSuperView: rootView, withHostConfig: hostConfig)
         }
         
         if let elem = element as? ACSImage {
@@ -46,7 +47,13 @@ class BaseCardElementRenderer {
                 view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
             }
         }
-        
+        // visibility changes add on height support element, so need to manually register with visibility manager for other elements. this will remove after once elements are support by height changs.
+        rootView.associateSeparator(withOwnerView: separator, ownerView: updatedView)
+        // Through the root view visibility context, register renderview with self manager.
+        rootView.visibilityContext.registerVisibilityManager(rootView, targetViewIdentifier: updatedView.identifier)
+        if !element.getIsVisible() {
+            rootView.register(invisibleView: updatedView)
+        }
         return updatedView
     }
     

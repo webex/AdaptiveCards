@@ -473,7 +473,7 @@ extension ACRContentStackView: InputHandlingViewErrorDelegate {
     }
 }
 
-extension ACRContentStackView: ACSIVisibilityManagerFacade {
+extension ACRContentStackView: ACSVisibilityManagerFacade {
     func hideView(_ view: NSView) {
         visibilityManager.hide(view, hostView: self)
     }
