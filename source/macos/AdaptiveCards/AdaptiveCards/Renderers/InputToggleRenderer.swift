@@ -13,7 +13,7 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         let attributedString: NSMutableAttributedString
         // NSButton for checkbox
         let title = inputToggle.getTitle() ?? ""
-        let inputToggleView = ACRChoiceButton(renderConfig: config, buttonType: .switch, element: inputToggle)
+        let inputToggleView = ACRInputToggleView(renderConfig: config, element: inputToggle)
         // adding attributes to the string
         attributedString = TextUtils.getRenderAttributedString(text: title, with: hostConfig, renderConfig: config, rootView: rootView, style: style)
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {

@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 class HeightTypeSupport {
-    private let supportElemets: [ACSCardElementType] = [.textBlock, .richTextBlock, .container, .columnSet, .factSet, .actionSet, .numberInput, .timeInput, .dateInput]
+    private let supportElemets: [ACSCardElementType] = [.textBlock, .richTextBlock, .container, .columnSet, .factSet, .actionSet, .numberInput, .timeInput, .dateInput, .textInput, .choiceSetInput, .choiceInput, .toggleInput]
     
     static let shared = HeightTypeSupport()
     
@@ -71,10 +71,6 @@ class AdaptiveCardRenderer {
             }
         }
         
-        if heightSupport {
-            rootView.configureLayoutAndVisibility(card.getVerticalContentAlignment(), minHeight: card.getMinHeight(), heightType: card.getHeight(), type: .adaptiveCard)
-        }
-        
         if !card.getActions().isEmpty {
             let view = ActionSetRenderer.shared.renderActionButtons(actions: card.getActions(), with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [], config: config)
             // getting spacing from hostConfig
@@ -98,6 +94,9 @@ class AdaptiveCardRenderer {
             rootView.registerImageHandlingView(rootView.backgroundImageView, for: url)
         }
         
+        if heightSupport {
+            rootView.configureLayoutAndVisibility(card.getVerticalContentAlignment(), minHeight: card.getMinHeight(), heightType: card.getHeight(), type: .adaptiveCard)
+        }
         rootView.appearance = NSAppearance.getAppearance(isDark: config.isDarkMode)
         rootView.dispatchResolveRequests()
         return rootView

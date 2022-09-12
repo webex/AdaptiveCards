@@ -16,6 +16,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     public var previousButton: ACRChoiceButton?
     public var wrap = false
     public var idString: String?
+    public var errorMessage: String?
     
     private let renderConfig: RenderConfig
     var isRequired = false
@@ -32,10 +33,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     private func setupConstraints() {
-        stackview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        stackview.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        stackview.constraint(toFill: self)
     }
     
     private func handleClickAction(_ clickedButton: ACRChoiceButton) {
@@ -47,6 +45,12 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         } else {
             clickedButton.state = .on
         }
+    }
+    
+    public func setStretchableHeight() {
+        let padding = StretchableView()
+        ACSFillerSpaceManager.configureHugging(view: padding)
+        stackview.addArrangedSubview(padding)
     }
     
     public func addChoiceButton(_ choiceButton: ACRChoiceButton) {
@@ -110,8 +114,107 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
     }
 }
 
+class ACRCompactChoiceSetView: NSView {
+    private let renderConfig: RenderConfig
+    private let element: ACSChoiceSetInput
+    private let style: ACSContainerStyle
+    private let hostConfig: ACSHostConfig
+    private let rootview: ACRView
+    
+    private lazy var contentStackView: NSStackView = {
+        let view = NSStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.orientation = .vertical
+        view.spacing = 0
+        view.alignment = .leading
+        view.distribution = .fill
+        return view
+    }()
+    
+    private (set) lazy var choiceSetPopup: ACRChoiceSetCompactPopupButton = {
+        let view = ACRChoiceSetCompactPopupButton(element: element, renderConfig: renderConfig)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.autoenablesItems = false
+        view.idString = element.getId()
+        view.isRequired = element.getIsRequired()
+        view.setAccessibilityRoleDescription(renderConfig.localisedStringConfig.choiceSetCompactAccessibilityRoleDescriptor)
+        return view
+    }()
+    
+    private let contentView = NSView()
+    
+    var getStackViews: [NSView] {
+        return contentStackView.arrangedSubviews
+    }
+    
+    init(renderConfig: RenderConfig, element: ACSChoiceSetInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig, rootview: ACRView) {
+        self.renderConfig = renderConfig
+        self.element = element
+        self.style = style
+        self.hostConfig = hostConfig
+        self.rootview = rootview
+        super.init(frame: .zero)
+        self.setupView()
+        self.setupContraints()
+        self.rootview.addInputHandler(choiceSetPopup)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupView() {
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(contentStackView)
+        setupChoiceSet()
+        contentView.addSubview(choiceSetPopup)
+        contentStackView.addArrangedSubview(contentView)
+        if element.getHeight() == .stretch {
+            setStretchableHeight()
+        }
+    }
+    
+    private func setupContraints() {
+        contentStackView.constraint(toFill: self)
+        choiceSetPopup.constraint(toFill: contentView, padding: 2)
+        choiceSetPopup.setContentHuggingPriority(.defaultLow - 1, for: .horizontal)
+        choiceSetPopup.setContentCompressionResistancePriority(.required, for: .vertical)
+    }
+    
+    func setupChoiceSet() {
+        var index = 0
+        if let placeholder = element.getPlaceholder(), !placeholder.isEmpty {
+            choiceSetPopup.addItem(withTitle: placeholder)
+            if let menuItem = choiceSetPopup.item(at: 0) {
+                menuItem.isEnabled = false
+            }
+            choiceSetPopup.arrayValues.append(nil)
+            index += 1
+        }
+        for choice in element.getChoices() {
+            let title = choice.getTitle() ?? ""
+            choiceSetPopup.addItem(withTitle: "")
+            let item = choiceSetPopup.item(at: index)
+            item?.title = title
+            // item?.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
+            choiceSetPopup.arrayValues.append(choice.getValue())
+            if element.getValue() == choice.getValue() {
+                choiceSetPopup.select(item)
+                choiceSetPopup.valueSelected = choice.getValue()
+            }
+            index += 1
+        }
+    }
+    
+    private func setStretchableHeight() {
+        let padding = StretchableView()
+        ACSFillerSpaceManager.configureHugging(view: padding)
+        contentStackView.addArrangedSubview(padding)
+    }
+}
+
 // MARK: ACRChoiceSetFieldCompactView
-class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
+class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
     weak var errorDelegate: InputHandlingViewErrorDelegate?
     
     public var idString: String?
@@ -124,11 +227,6 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     private let renderConfig: RenderConfig
     private let label: String?
     private let errorMessage: String?
-    
-    override func viewDidMoveToSuperview() {
-        guard let superview = superview else { return }
-        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
-    }
     
     init(element: ACSChoiceSetInput, renderConfig: RenderConfig) {
         self.renderConfig = renderConfig
@@ -146,12 +244,12 @@ class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
     }
     
     override func mouseEntered(with event: NSEvent) {
-        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
+        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactPopupButton else { return }
         contentView.isHighlighted = true
     }
     
     override func mouseExited(with event: NSEvent) {
-        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
+        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactPopupButton else { return }
         contentView.isHighlighted = false
     }
     

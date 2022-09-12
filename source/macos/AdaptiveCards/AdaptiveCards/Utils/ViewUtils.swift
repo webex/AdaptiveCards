@@ -20,11 +20,11 @@ extension NSView {
         return false
     }
     
-    func constraint(toFill view: NSView) {
-        self.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        self.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        self.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        self.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    func constraint(toFill view: NSView, padding: CGFloat = 0) {
+        self.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding).isActive = true
+        self.topAnchor.constraint(equalTo: view.topAnchor, constant: padding).isActive = true
+        self.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -padding).isActive = true
+        self.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding).isActive = true
     }
     
     func findView(withIdentifier identifier: String) -> NSView? {

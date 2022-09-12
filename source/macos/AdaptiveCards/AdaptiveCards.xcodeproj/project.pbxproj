@@ -547,6 +547,8 @@
 		A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */; };
 		AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */; };
 		AA371D0628911F63002D618A /* ACRContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA371D0528911F63002D618A /* ACRContainerView.swift */; };
+		AA4B4D4A28CF532000734278 /* ACRInputToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */; };
+		AA4B4D4E28CF548800734278 /* ACRSingleLineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */; };
 		AA4D26A6289A679700CA502D /* ACRColumnSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */; };
 		AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */; };
 		AA7A97BD288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */; };
@@ -1131,6 +1133,8 @@
 		A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRenderer.swift; sourceTree = "<group>"; };
 		AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACOVisibilityContext.swift; sourceTree = "<group>"; };
 		AA371D0528911F63002D618A /* ACRContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRContainerView.swift; sourceTree = "<group>"; };
+		AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputToggleView.swift; sourceTree = "<group>"; };
+		AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRSingleLineInputTextView.swift; sourceTree = "<group>"; };
 		AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRColumnSetView.swift; sourceTree = "<group>"; };
 		AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManager.swift; sourceTree = "<group>"; };
 		AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManagerTests.swift; sourceTree = "<group>"; };
@@ -1828,6 +1832,7 @@
 				28F4E2132681DA76000B5131 /* ACRTextView.swift */,
 				28F4E2182681DAE3000B5131 /* ACRScrollView.swift */,
 				2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */,
+				AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */,
 				2887215A26CE2D17007F7910 /* ACRTextField.swift */,
 				28D7A57625F1E7E800AEA09C /* ACRCollectionViewItem.swift */,
 				28D7A57B25F1E84800AEA09C /* ACRCollectionView.swift */,
@@ -1839,6 +1844,7 @@
 				088F716426A9925400C52C06 /* SpacingView.swift */,
 				8141136826F22F87009C4DB7 /* ACRFactSetView.swift */,
 				AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */,
+				AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2371,6 +2377,7 @@
 				08D7767A25CC339D0095C1B3 /* RendererManager.swift in Sources */,
 				28D7A51425E9300300AEA09C /* BaseCardElementRenderer.swift in Sources */,
 				A032271B25E9176D00E7172E /* ACRImageWrappingView.swift in Sources */,
+				AA4B4D4E28CF548800734278 /* ACRSingleLineInputTextView.swift in Sources */,
 				A01CA38D25DFE85D00A07E21 /* BaseProtocol.swift in Sources */,
 				0872608825E6AD420036061C /* ACRColumnView.swift in Sources */,
 				2887215B26CE2D17007F7910 /* ACRTextField.swift in Sources */,
@@ -2400,6 +2407,7 @@
 				29430A5C25F216AA00CBA72E /* ContainerRenderer.swift in Sources */,
 				088F716226A9560600C52C06 /* ActionToggleVisibilityRenderer.swift in Sources */,
 				29E8DF6C25E7B95D000EC12F /* ACRChoiceSetView.swift in Sources */,
+				AA4B4D4A28CF532000734278 /* ACRInputToggleView.swift in Sources */,
 				81C0371B26047C1E00B33324 /* ACRBackgroundImageView.swift in Sources */,
 				28F4E2192681DAE3000B5131 /* ACRScrollView.swift in Sources */,
 				08B5F91125C924F400A7D37A /* TextBlockRenderer.swift in Sources */,
