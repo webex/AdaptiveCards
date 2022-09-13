@@ -36,7 +36,7 @@ class ACRCompactChoiceSetView: NSView {
         return view
     }()
     
-    var getStackViews: [NSView] {
+    var getArrangedSubviews: [NSView] {
         return contentStackView.arrangedSubviews
     }
     

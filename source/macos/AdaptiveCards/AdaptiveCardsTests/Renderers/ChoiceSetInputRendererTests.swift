@@ -35,16 +35,16 @@ class ChoiceSetInputRendererTests: XCTestCase {
         
         var expandChoiceSet = renderChoiceSetView()
         XCTAssertEqual(expandChoiceSet.isRadioGroup, true)
-        XCTAssertEqual(expandChoiceSet.getStackViews.count, 1)
-        XCTAssertNil(expandChoiceSet.getStackViews.last as? StretchableView)
+        XCTAssertEqual(expandChoiceSet.getArrangedSubviews.count, 1)
+        XCTAssertNil(expandChoiceSet.getArrangedSubviews.last as? StretchableView)
         
         choiceSetInput = .make(choices: choices, choiceSetStyle: .expanded, heightType: .stretch)
         
         expandChoiceSet = renderChoiceSetView()
         XCTAssertEqual(expandChoiceSet.isRadioGroup, true)
-        XCTAssertEqual(expandChoiceSet.getStackViews.count, 2)
-        XCTAssertNotNil(expandChoiceSet.getStackViews.last as? StretchableView)
-        guard let stretchView = expandChoiceSet.getStackViews.last as? StretchableView else { return XCTFail() }
+        XCTAssertEqual(expandChoiceSet.getArrangedSubviews.count, 2)
+        XCTAssertNotNil(expandChoiceSet.getArrangedSubviews.last as? StretchableView)
+        guard let stretchView = expandChoiceSet.getArrangedSubviews.last as? StretchableView else { return XCTFail() }
         XCTAssertEqual(stretchView.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
     }
     
@@ -53,16 +53,16 @@ class ChoiceSetInputRendererTests: XCTestCase {
         
         var choiceSetCompactView = renderChoiceSetCompactView()
         XCTAssertEqual(choiceSetCompactView.choiceSetPopup.type, .compact)
-        XCTAssertEqual(choiceSetCompactView.getStackViews.count, 1)
-        XCTAssertNil(choiceSetCompactView.getStackViews.last as? StretchableView)
+        XCTAssertEqual(choiceSetCompactView.getArrangedSubviews.count, 1)
+        XCTAssertNil(choiceSetCompactView.getArrangedSubviews.last as? StretchableView)
         
         choiceSetInput = .make(choices: choices, choiceSetStyle: .compact, heightType: .stretch)
         
         choiceSetCompactView = renderChoiceSetCompactView()
         XCTAssertEqual(choiceSetCompactView.choiceSetPopup.type, .compact)
-        XCTAssertEqual(choiceSetCompactView.getStackViews.count, 2)
-        XCTAssertNotNil(choiceSetCompactView.getStackViews.last as? StretchableView)
-        guard let stretchView = choiceSetCompactView.getStackViews.last as? StretchableView else { return XCTFail() }
+        XCTAssertEqual(choiceSetCompactView.getArrangedSubviews.count, 2)
+        XCTAssertNotNil(choiceSetCompactView.getArrangedSubviews.last as? StretchableView)
+        guard let stretchView = choiceSetCompactView.getArrangedSubviews.last as? StretchableView else { return XCTFail() }
         XCTAssertEqual(stretchView.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
     }
     
@@ -139,7 +139,7 @@ class ChoiceSetInputRendererTests: XCTestCase {
         
         self.choiceSetInput = self.makeExpandedChoiceSetInput(title: buttonHyperLinkTitle, value: "Webex")
         let choiceSetView = renderChoiceSetView()
-        guard let acrChoiceBtn = choiceSetView.getStackViews.first as? ACRChoiceButton else { fatalError() }
+        guard let acrChoiceBtn = choiceSetView.getArrangedSubviews.first as? ACRChoiceButton else { fatalError() }
         XCTAssertEqual(acrChoiceBtn.labelAttributedString.string, markDownTestAns)
         XCTAssertNotNil(acrChoiceBtn.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
     }
@@ -155,7 +155,7 @@ class ChoiceSetInputRendererTests: XCTestCase {
         
         self.choiceSetInput = self.makeExpandedChoiceSetInput(title: markdownString, value: "Webex")
         let choiceSetView = renderChoiceSetView()
-        guard let acrChoiceBtn = choiceSetView.getStackViews.first as? ACRChoiceButton else { fatalError() }
+        guard let acrChoiceBtn = choiceSetView.getArrangedSubviews.first as? ACRChoiceButton else { fatalError() }
         XCTAssertEqual(acrChoiceBtn.labelAttributedString.string, markDownTestAns)
         let italicfont = acrChoiceBtn.labelAttributedString.fontAttributes(in: NSRange.init(location: italicAt, length: 3))[.font] as? NSFont
         XCTAssertTrue(italicfont?.fontDescriptor.symbolicTraits.contains(.italic) ?? false)

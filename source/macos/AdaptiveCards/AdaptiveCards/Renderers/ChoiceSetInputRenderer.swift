@@ -45,7 +45,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         if choiceSetInput.getHeight() == .stretch {
-            if !view.getStackViews.isEmpty {
+            if !view.getArrangedSubviews.isEmpty {
                 view.setStretchableHeight()
             }
         }

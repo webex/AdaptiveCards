@@ -86,7 +86,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         return stringOfSelectedValues.joined(separator: ",")
     }
     
-    var getStackViews: [NSView] {
+    var getArrangedSubviews: [NSView] {
         return stackview.arrangedSubviews
     }
     
