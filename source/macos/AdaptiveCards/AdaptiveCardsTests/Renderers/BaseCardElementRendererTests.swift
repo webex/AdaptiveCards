@@ -138,12 +138,12 @@ class BaseCardElementRendererrTests: XCTestCase {
         let view = ChoiceSetInputRenderer().render(element: inputChoiceSet, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
         XCTAssertTrue(view is ACRCompactChoiceSetView)
         guard let inputChoiceSetView = view as? ACRCompactChoiceSetView else { fatalError() }
-        inputChoiceSetView.choiceSetPopup.errorDelegate = fakeErrorMessageHandlerDelegate
+        inputChoiceSetView.errorDelegate = fakeErrorMessageHandlerDelegate
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorVisible)
-        XCTAssertEqual(inputChoiceSetView.choiceSetPopup.accessibilityValue() as? String, "Label Message, Title")
+        XCTAssertEqual(inputChoiceSetView.accessibilityValue() as? String, "Label Message, Title")
         inputChoiceSetView.choiceSetPopup.errorDelegate?.inputHandlingViewShouldHideError(inputChoiceSetView.choiceSetPopup, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorVisible)
-        XCTAssertEqual(inputChoiceSetView.choiceSetPopup.accessibilityValue() as? String, "Error Error Message, Label Message, Title")
+        XCTAssertEqual(inputChoiceSetView.accessibilityValue() as? String, "Error Error Message, Label Message, Title")
     }
     
     func testInputToggleErrorMessageHandler() {
