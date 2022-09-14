@@ -197,6 +197,10 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
     static let MAXVAL = Double.greatestFiniteMagnitude
     static let MINVAL = -MAXVAL
     
+    var isErrorShown: Bool {
+        return textField.isErrorShown()
+    }
+    
     var minValue: Double {
         get { return stepper.minValue }
         set { stepper.minValue = newValue }

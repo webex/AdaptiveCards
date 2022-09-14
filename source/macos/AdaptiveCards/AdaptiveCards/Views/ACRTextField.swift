@@ -247,6 +247,10 @@ class ACRTextField: NSTextField {
         updateAppearance()
     }
     
+    func isErrorShown() -> Bool {
+        return shouldShowError
+    }
+    
     private func updateAppearance(hasFocus: Bool = false) {
         let isActive = hasFocus && isSelectable
         if shouldShowError {

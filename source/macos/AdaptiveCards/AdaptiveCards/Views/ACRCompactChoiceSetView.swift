@@ -132,6 +132,10 @@ extension ACRCompactChoiceSetView: InputHandlingViewProtocol {
         }
     }
     
+    var isErrorShown: Bool {
+        return self.choiceSetPopup.isErrorShown
+    }
+    
     func showError() {
         choiceSetPopup.showError()
     }

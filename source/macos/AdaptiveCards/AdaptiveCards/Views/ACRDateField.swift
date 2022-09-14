@@ -134,6 +134,10 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         return isBasicValidationsSatisfied
     }
     
+    var isErrorShown: Bool {
+        return textField.isErrorShown()
+    }
+    
     func showError() {
         textField.showError()
         errorDelegate?.inputHandlingViewShouldShowError(self)

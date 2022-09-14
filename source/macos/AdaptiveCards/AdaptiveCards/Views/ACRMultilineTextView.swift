@@ -206,6 +206,10 @@ class ACRMultilineTextView: NSView, NSTextViewDelegate {
 }
 
 extension ACRMultilineTextView: InputHandlingViewProtocol {
+    var isErrorShown: Bool {
+        return shouldShowError
+    }
+    
     var value: String {
         textView.string
     }

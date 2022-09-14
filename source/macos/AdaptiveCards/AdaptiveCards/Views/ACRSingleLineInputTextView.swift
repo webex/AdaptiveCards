@@ -154,6 +154,10 @@ class ACRSingleLineInputTextView: NSView {
     }
 }
 extension ACRSingleLineInputTextView: InputHandlingViewProtocol {
+    var isErrorShown: Bool {
+        return self.textView.isErrorShown
+    }
+    
     var value: String {
         return self.textView.value
     }

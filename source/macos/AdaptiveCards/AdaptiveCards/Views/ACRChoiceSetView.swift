@@ -17,6 +17,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     public var wrap = false
     public var idString: String?
     public var errorMessage: String?
+    private var shouldShowError = false
     
     private let renderConfig: RenderConfig
     var isRequired = false
@@ -37,6 +38,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     private func handleClickAction(_ clickedButton: ACRChoiceButton) {
+        shouldShowError = false
         errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: clickedButton.button)
         guard isRadioGroup else { return }
         if previousButton != clickedButton {
@@ -66,6 +68,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     func showError() {
+        shouldShowError = true
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
@@ -98,6 +101,10 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         return id
     }
     
+    var isErrorShown: Bool {
+        return shouldShowError
+    }
+    
     var isValid: Bool {
         return isRequired ? stackview.arrangedSubviews.contains(where: { let elem = $0 as? ACRChoiceButton; return elem?.state == .on }) : true
     }
@@ -110,6 +117,6 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
     
     func acrChoiceButtonShouldReadError(_ button: ACRChoiceButton) -> Bool {
         guard let delegate = errorDelegate else { return false }
-        return delegate.isErrorVisible
+        return delegate.isErrorVisible(self)
     }
 }

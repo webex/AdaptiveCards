@@ -21,12 +21,14 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
     private let renderConfig: RenderConfig
     private let label: String?
     private let errorMessage: String?
+    private var shouldShowError = false
     
     init(element: ACSChoiceSetInput, renderConfig: RenderConfig) {
         self.renderConfig = renderConfig
         self.label = element.getLabel()
         self.errorMessage = element.getErrorMessage()
         super.init(frame: .zero, pullsDown: false)
+        identifier = NSUserInterfaceItemIdentifier(rawValue: idString ?? "")
         target = self
         action = #selector(popUpButtonUsed(_:))
         let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
@@ -48,10 +50,12 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
     }
     
     @objc private func popUpButtonUsed(_ sender: NSPopUpButton) {
+        shouldShowError = false
         errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: self)
     }
     
     func showError() {
+        shouldShowError = true
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
@@ -72,12 +76,16 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
         return id
     }
     
+    var isErrorShown: Bool {
+        return shouldShowError
+    }
+    
     override func accessibilityValue() -> Any? {
         guard renderConfig.supportsSchemeV1_3 else {
             return itemArray[indexOfSelectedItem].title
         }
         var accessibilityLabel = ""
-        if let errorDelegate = errorDelegate, errorDelegate.isErrorVisible {
+        if let errorDelegate = errorDelegate, errorDelegate.isErrorVisible(self) {
             accessibilityLabel += "Error "
             if let errorMessage = errorMessage, !errorMessage.isEmpty {
                 accessibilityLabel += errorMessage + ", "
