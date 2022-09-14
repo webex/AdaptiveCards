@@ -25,6 +25,7 @@ void ComboBoxElement::initialize()
     mComboBox->Property("valueRole", "'value'");
     mComboBox->Property("width", "parent.width");
     mComboBox->Property("height", RendererQml::Formatter() << mChoiceSetConfig.height);
+    mComboBox->Property("property int choiceWidth", "0");
 
     mComboBox->Property("model", getModel(mChoiceSet.choices));
     mComboBox->Property("indicator", getArrowIcon()->ToString());
@@ -105,7 +106,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getItemDelegate()
     auto itemDelegateId = mChoiceSet.id + "_itemDelegate";
     auto uiItemDelegate = std::make_shared<RendererQml::QmlTag>("ItemDelegate");
     uiItemDelegate->Property("id", itemDelegateId);
-    uiItemDelegate->Property("width", RendererQml::Formatter() << mComboBox->GetId() << ".width");
+    uiItemDelegate->Property("width", RendererQml::Formatter() << "Math.max(" << mChoiceSet.id << ".choiceWidth, " << mChoiceSet.id << ".width)");
     uiItemDelegate->Property("height", RendererQml::Formatter() << mChoiceSetConfig.dropDownElementHeight);
     uiItemDelegate->Property("verticalPadding", RendererQml::Formatter() << mChoiceSetConfig.dropDownElementVerticalPadding);
     uiItemDelegate->Property("horizontalPadding", RendererQml::Formatter() << mChoiceSetConfig.dropDownElementHorizontalPadding);
@@ -121,18 +122,15 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getItemDelegate()
     uiItemDelegate_Text->Property("text", "modelData.text");
     uiItemDelegate_Text->Property("font.family", fontFamily, true);
     uiItemDelegate_Text->Property("font.pixelSize", RendererQml::Formatter() << mChoiceSetConfig.pixelSize);
-    uiItemDelegate_Text->Property("textFormat", "Text.RichText");
     uiItemDelegate_Text->Property("color", mContext->GetHexColor(mChoiceSetConfig.textColor));
     uiItemDelegate_Text->Property("font.family", fontFamily, true);
+    uiItemDelegate_Text->Property("elide", "Text.ElideRight");
 
-    if (mChoiceSet.choices[0].isWrap)
-    {
-        uiItemDelegate_Text->Property("wrapMode", "Text.Wrap");
-    }
-    else
-    {
-        uiItemDelegate_Text->Property("elide", "Text.ElideRight");
-    }
+    std::ostringstream widthFunc;
+    widthFunc << "onImplicitWidthChanged : {";
+    widthFunc << "var maxWidth = implicitWidth > 800 ? 800 : implicitWidth;";
+    widthFunc << mComboBox->GetId() << ".choiceWidth = Math.max(maxWidth, " << mComboBox->GetId() << ".choiceWidth);}";
+    uiItemDelegate_Text->AddFunctions(widthFunc.str());
 
     uiItemDelegate->Property("contentItem", uiItemDelegate_Text->ToString());
 
@@ -164,7 +162,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getPopup()
 
     auto popupTag = std::make_shared<RendererQml::QmlTag>("Popup");
     popupTag->Property("y", RendererQml::Formatter() << mChoiceSet.id << ".height + 5");
-    popupTag->Property("width", RendererQml::Formatter() << mChoiceSet.id << ".width");
+    popupTag->Property("width", RendererQml::Formatter() << "Math.max(" << mChoiceSet.id << ".choiceWidth, " << mChoiceSet.id << ".width)");
     popupTag->Property("padding", RendererQml::Formatter() << mChoiceSetConfig.dropDownPadding);
     popupTag->Property("height", RendererQml::Formatter() << contentListViewId << ".contentHeight + (2 * " << mChoiceSetConfig.dropDownPadding << ")" << " > " << mChoiceSetConfig.dropDownHeight << " ? " << mChoiceSetConfig.dropDownHeight << " :" << contentListViewId << ".contentHeight + ( 2 * " << mChoiceSetConfig.dropDownPadding << ")");
 
