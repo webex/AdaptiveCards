@@ -23,7 +23,7 @@ namespace RendererQml
 		SetRenderConfig(renderConfig);
 	}
 
-	std::pair<std::shared_ptr<RenderedQmlAdaptiveCard>, int> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, int contentIndex, int& estimatedHeight)
+	CardDetails AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, int contentIndex)
 	{
 		std::shared_ptr<RenderedQmlAdaptiveCard> output;
 		auto context = std::make_shared<AdaptiveRenderContext>(GetHostConfig(), GetElementRenderers(), GetRenderConfig());
@@ -40,8 +40,7 @@ namespace RendererQml
 			context->AddWarning(AdaptiveWarning(Code::RenderException, e.what()));
 		}
 
-        estimatedHeight = context->getHeightEstimate();
-		return std::make_pair(output, context->getContentIndex());
+		return CardDetails(*output, context->getContentIndex(), context->getHeightEstimate());
 	}
 
     void AdaptiveCardQmlRenderer::SetObjectTypes()
