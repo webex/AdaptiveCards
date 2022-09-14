@@ -23,7 +23,7 @@ namespace RendererQml
 		SetRenderConfig(renderConfig);
 	}
 
-	CardDetails AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, int contentIndex)
+	CardDetails AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, const int contentIndex)
 	{
 		std::shared_ptr<RenderedQmlAdaptiveCard> output;
 		auto context = std::make_shared<AdaptiveRenderContext>(GetHostConfig(), GetElementRenderers(), GetRenderConfig());
@@ -533,7 +533,7 @@ namespace RendererQml
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::string& loaderId, const std::shared_ptr<QmlTag>& uiCard)
     {
         auto uiComponent = std::make_shared<QmlTag>("Component");
-        std::string componentId = loaderId + "_component";
+        const auto componentId = loaderId + "_component";
         uiComponent->Property("id", componentId);
 
         const std::string layoutId = Formatter() << componentId << "_component_layout";
@@ -807,7 +807,7 @@ namespace RendererQml
 			uiFactSet->Property("visible", "false");
 		}
 
-        int currentHeight = context->getHeightEstimate();
+        const int currentHeight = context->getHeightEstimate();
         int estimatedFactSetHeight = 0;
 		for (const auto fact : factSet->GetFacts())
 		{

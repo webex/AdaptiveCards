@@ -41,7 +41,7 @@ namespace RendererQml
         const int contentIndex;
         const int estimatedHeight;
 
-        CardDetails(RenderedQmlAdaptiveCard cardOutput, int contentIndex, int estimatedHeight)
+        CardDetails(RenderedQmlAdaptiveCard cardOutput, const int contentIndex, const int estimatedHeight)
             : cardOutput(cardOutput)
             , contentIndex(contentIndex)
             , estimatedHeight(estimatedHeight)
@@ -55,7 +55,7 @@ namespace RendererQml
         AdaptiveCardQmlRenderer();
         AdaptiveCardQmlRenderer(std::shared_ptr<AdaptiveCards::HostConfig> hostConfig, std::shared_ptr<AdaptiveCardRenderConfig> renderConfig);
 
-        CardDetails RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, int contentIndex);
+        CardDetails RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, const int contentIndex);
         static std::shared_ptr<QmlTag> GetClearIconButton(std::shared_ptr<AdaptiveRenderContext> context);
         static std::shared_ptr<QmlTag> AdaptiveActionRender(std::shared_ptr<AdaptiveCards::BaseActionElement> adaptiveAction, std::shared_ptr<AdaptiveRenderContext> context);
         static std::shared_ptr<QmlTag> GetIconTag(std::shared_ptr<AdaptiveRenderContext> context);
