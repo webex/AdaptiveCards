@@ -15,18 +15,6 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             view.translatesAutoresizingMaskIntoConstraints = false
             return view
         }()
-        let textView = ACRTextInputView(textFieldWith: config, mode: .text, inputElement: inputBlock)
-        textView.idString = inputBlock.getId()
-        textView.regex = inputBlock.getRegex()
-        textView.isRequired = inputBlock.getIsRequired()
-        var attributedInitialValue: NSMutableAttributedString
-        
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.isEditable = true
-
-        if let maxLen = inputBlock.getMaxLength(), Int(truncating: maxLen) > 0 {
-            textView.maxLen = Int(truncating: maxLen)
-        }
         let action = inputBlock.getInlineAction()
         var renderButton = false
         switch action {
@@ -63,36 +51,9 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
             }
             return multilineView
         } else {
-            // Makes text remain in 1 line
-            textView.cell?.usesSingleLineMode = true
-            textView.maximumNumberOfLines = 1
-            // Make text scroll horizontally
-            textView.cell?.isScrollable = true
-            textView.cell?.truncatesLastVisibleLine = true
-            textView.cell?.lineBreakMode = .byTruncatingTail
-            textView.isHidden = !inputBlock.getIsVisible()
-            textView.setAccessibilityRoleDescription(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
+            let inputTextView = ACRSingleLineInputTextView(renderConfig: config, element: inputBlock, style: style, with: hostConfig, rootview: rootView)
+            return inputTextView
         }
-        // Create placeholder and initial value string if they exist
-        if let placeholderString = inputBlock.getPlaceholder() {
-            textView.placeholderString = placeholderString
-        }
-        
-        if let valueString = inputBlock.getValue() {
-            attributedInitialValue = NSMutableAttributedString(string: valueString)
-            if let maxLen = inputBlock.getMaxLength(), Int(truncating: maxLen) > 0, attributedInitialValue.string.count > Int(truncating: maxLen) {
-                attributedInitialValue = NSMutableAttributedString(string: String(attributedInitialValue.string.dropLast(attributedInitialValue.string.count - Int(truncating: maxLen))))
-            }
-            textView.attributedStringValue = attributedInitialValue
-        }
-        // Add Input Handler
-        rootView.addInputHandler(textView)
-        if renderButton {
-            stackview.addArrangedSubview(textView)
-            addInlineButton(parentview: stackview, view: textView, element: inputBlock, style: style, with: hostConfig, rootview: rootView, config: config)
-            return stackview
-        }
-        return textView
     }
     
     private func addInlineButton(parentview: NSStackView, view: NSView, element: ACSTextInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig, rootview: ACRView, config: RenderConfig) {
@@ -140,59 +101,5 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
         default:
             break
         }
-    }
-}
-
-class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
-    weak var errorDelegate: InputHandlingViewErrorDelegate?
-    
-    var value: String {
-        return stringValue
-    }
-    
-    var key: String {
-        guard let id = idString else {
-            logError("ID must be set on creation")
-            return ""
-        }
-        return id
-    }
-    
-    var isValid: Bool {
-        guard isBasicValidationsSatisfied else { return false }
-        guard !value.isEmpty, let regexVal = regex, !regexVal.isEmpty else { return true }
-        return value.range(of: regexVal, options: .regularExpression, range: nil, locale: nil) != nil
-    }
-    
-    var isRequired = false
-    var maxLen: Int = 0
-    var idString: String?
-    var regex: String?
-    
-    override func textDidChange(_ notification: Notification) {
-        super.textDidChange(notification)
-        if isValid {
-            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: self)
-            hideError()
-        }
-        
-        guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
-        // This stops the user from exceeding the maxLength property of Input.Text if property was set
-        guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
-        textView.string = String(textView.string.dropLast())
-        // Below check added to ensure prefilled value doesn't exceede the maxLength property if set
-        if textView.string.count > maxLen {
-            textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
-        }
-    }
-    
-    override func showError() {
-        super.showError()
-        errorDelegate?.inputHandlingViewShouldShowError(self)
-    }
-    
-    func setAccessibilityFocus() {
-        setAccessibilityFocused(true)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityTitle())
     }
 }

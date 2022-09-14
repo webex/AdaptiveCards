@@ -22,12 +22,48 @@ class ChoiceSetInputRendererTests: XCTestCase {
         choiceSetInput = .make(choices: choices, choiceSetStyle: .compact)
         
         let choiceSetCompactView = renderChoiceSetCompactView()
-        XCTAssertEqual(choiceSetCompactView.type, .compact)
+        XCTAssertEqual(choiceSetCompactView.choiceSetPopup.type, .compact)
         
         choiceSetInput = .make(choices: choices, choiceSetStyle: .expanded)
         
         let choiceSetView = renderChoiceSetView()
         XCTAssertEqual(choiceSetView.isRadioGroup, true)
+    }
+    
+    func testExpandChoiceHeightProperty() {
+        choiceSetInput = .make(choices: choices, choiceSetStyle: .expanded, heightType: .auto)
+        
+        var expandChoiceSet = renderChoiceSetView()
+        XCTAssertEqual(expandChoiceSet.isRadioGroup, true)
+        XCTAssertEqual(expandChoiceSet.getArrangedSubviews.count, 1)
+        XCTAssertNil(expandChoiceSet.getArrangedSubviews.last as? StretchableView)
+        
+        choiceSetInput = .make(choices: choices, choiceSetStyle: .expanded, heightType: .stretch)
+        
+        expandChoiceSet = renderChoiceSetView()
+        XCTAssertEqual(expandChoiceSet.isRadioGroup, true)
+        XCTAssertEqual(expandChoiceSet.getArrangedSubviews.count, 2)
+        XCTAssertNotNil(expandChoiceSet.getArrangedSubviews.last as? StretchableView)
+        guard let stretchView = expandChoiceSet.getArrangedSubviews.last as? StretchableView else { return XCTFail() }
+        XCTAssertEqual(stretchView.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
+    }
+    
+    func testCompactChoiceHeightProperty() {
+        choiceSetInput = .make(choices: choices, choiceSetStyle: .compact, heightType: .auto)
+        
+        var choiceSetCompactView = renderChoiceSetCompactView()
+        XCTAssertEqual(choiceSetCompactView.choiceSetPopup.type, .compact)
+        XCTAssertEqual(choiceSetCompactView.getArrangedSubviews.count, 1)
+        XCTAssertNil(choiceSetCompactView.getArrangedSubviews.last as? StretchableView)
+        
+        choiceSetInput = .make(choices: choices, choiceSetStyle: .compact, heightType: .stretch)
+        
+        choiceSetCompactView = renderChoiceSetCompactView()
+        XCTAssertEqual(choiceSetCompactView.choiceSetPopup.type, .compact)
+        XCTAssertEqual(choiceSetCompactView.getArrangedSubviews.count, 2)
+        XCTAssertNotNil(choiceSetCompactView.getArrangedSubviews.last as? StretchableView)
+        guard let stretchView = choiceSetCompactView.getArrangedSubviews.last as? StretchableView else { return XCTFail() }
+        XCTAssertEqual(stretchView.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
     }
     
     func testRendererIsMultiSelect() {
@@ -58,9 +94,9 @@ class ChoiceSetInputRendererTests: XCTestCase {
         let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
         choiceSetInput = .make(choices: choices, choiceSetStyle: .compact, isRequired: true)
         let view = choiceSetInputRenderer.render(element: choiceSetInput, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
-        XCTAssertTrue(view is ACRChoiceSetCompactView)
-        guard let choiceSetView = view as? ACRChoiceSetCompactView else { fatalError() }
-        XCTAssertTrue(choiceSetView.isRequired)
+        XCTAssertTrue(view is ACRCompactChoiceSetView)
+        guard let choiceSetView = view as? ACRCompactChoiceSetView else { fatalError() }
+        XCTAssertTrue(choiceSetView.choiceSetPopup.isRequired)
     }
     
     func testRequiredPropertySetForExpandedChoiceSet() {
@@ -78,9 +114,9 @@ class ChoiceSetInputRendererTests: XCTestCase {
         choices.append(button)
         choiceSetInput = .make(value: "", choices: choices, choiceSetStyle: .compact, placeholder: "Test", isRequired: true)
         let view = choiceSetInputRenderer.render(element: choiceSetInput, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
-        XCTAssertTrue(view is ACRChoiceSetCompactView)
-        guard let choiceSetView = view as? ACRChoiceSetCompactView else { fatalError() }
-        XCTAssertFalse(choiceSetView.isValid)
+        XCTAssertTrue(view is ACRCompactChoiceSetView)
+        guard let choiceSetView = view as? ACRCompactChoiceSetView else { fatalError() }
+        XCTAssertFalse(choiceSetView.choiceSetPopup.isValid)
     }
     
     func testisInValidSetForExpandedChoiceSet(){
@@ -103,7 +139,7 @@ class ChoiceSetInputRendererTests: XCTestCase {
         
         self.choiceSetInput = self.makeExpandedChoiceSetInput(title: buttonHyperLinkTitle, value: "Webex")
         let choiceSetView = renderChoiceSetView()
-        guard let acrChoiceBtn = choiceSetView.getStackViews.first as? ACRChoiceButton else { fatalError() }
+        guard let acrChoiceBtn = choiceSetView.getArrangedSubviews.first as? ACRChoiceButton else { fatalError() }
         XCTAssertEqual(acrChoiceBtn.labelAttributedString.string, markDownTestAns)
         XCTAssertNotNil(acrChoiceBtn.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
     }
@@ -119,7 +155,7 @@ class ChoiceSetInputRendererTests: XCTestCase {
         
         self.choiceSetInput = self.makeExpandedChoiceSetInput(title: markdownString, value: "Webex")
         let choiceSetView = renderChoiceSetView()
-        guard let acrChoiceBtn = choiceSetView.getStackViews.first as? ACRChoiceButton else { fatalError() }
+        guard let acrChoiceBtn = choiceSetView.getArrangedSubviews.first as? ACRChoiceButton else { fatalError() }
         XCTAssertEqual(acrChoiceBtn.labelAttributedString.string, markDownTestAns)
         let italicfont = acrChoiceBtn.labelAttributedString.fontAttributes(in: NSRange.init(location: italicAt, length: 3))[.font] as? NSFont
         XCTAssertTrue(italicfont?.fontDescriptor.symbolicTraits.contains(.italic) ?? false)
@@ -136,11 +172,11 @@ class ChoiceSetInputRendererTests: XCTestCase {
         return choiceSetView
     }
     
-    private func renderChoiceSetCompactView() -> ACRChoiceSetCompactView {
+    private func renderChoiceSetCompactView() -> ACRCompactChoiceSetView {
         let view = choiceSetInputRenderer.render(element: choiceSetInput, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         
-        XCTAssertTrue(view is ACRChoiceSetCompactView)
-        guard let choiceSetCompactView = view as? ACRChoiceSetCompactView else { fatalError() }
+        XCTAssertTrue(view is ACRCompactChoiceSetView)
+        guard let choiceSetCompactView = view as? ACRCompactChoiceSetView else { fatalError() }
         return choiceSetCompactView
     }
     

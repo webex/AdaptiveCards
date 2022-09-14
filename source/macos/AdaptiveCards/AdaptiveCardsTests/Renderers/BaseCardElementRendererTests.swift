@@ -56,8 +56,8 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         let inputText = FakeInputText.make(isRequired: true, errorMessage: "Error")
         let view = TextInputRenderer().render(element: inputText, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
-        XCTAssertTrue(view is ACRTextInputView)
-        guard let inputTextView = view as? ACRTextInputView else { fatalError() }
+        XCTAssertTrue(view is ACRSingleLineInputTextView)
+        guard let inputTextView = view as? ACRSingleLineInputTextView else { fatalError() }
         
         let viewWithInheritedProperties = baseCardRenderer.updateView(view: view, element: inputText, rootView: FakeRootView(), style: .default, hostConfig: hostConfig, config: config, isfirstElement: true)
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
@@ -136,18 +136,12 @@ class BaseCardElementRendererrTests: XCTestCase {
         let fakeChoice = FakeChoiceInput.make(title: "Title", value: "Value")
         let inputChoiceSet = FakeChoiceSetInput.make(choices: [fakeChoice], choiceSetStyle: .compact, isRequired: true, errorMessage: "Error Message", label: "Label Message")
         let view = ChoiceSetInputRenderer().render(element: inputChoiceSet, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
-        XCTAssertTrue(view is ACRChoiceSetCompactView)
-        guard let inputChoiceSetView = view as? ACRChoiceSetCompactView else { fatalError() }
-        
-        let viewWithInheritedProperties = baseCardRenderer.updateView(view: view, element: inputChoiceSet, rootView: FakeRootView(), style: .default, hostConfig: hostConfig, config: config, isfirstElement: true)
-        XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
-        guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
-        
+        XCTAssertTrue(view is ACRCompactChoiceSetView)
+        guard let inputChoiceSetView = view as? ACRCompactChoiceSetView else { fatalError() }
         inputChoiceSetView.errorDelegate = fakeErrorMessageHandlerDelegate
-        XCTAssertEqual(updatedView.errorMessageField?.stringValue, "Error Message")
         XCTAssertFalse(fakeErrorMessageHandlerDelegate.isErrorVisible)
         XCTAssertEqual(inputChoiceSetView.accessibilityValue() as? String, "Label Message, Title")
-        inputChoiceSetView.errorDelegate?.inputHandlingViewShouldHideError(inputChoiceSetView, currentFocussedView: nil)
+        inputChoiceSetView.choiceSetPopup.errorDelegate?.inputHandlingViewShouldHideError(inputChoiceSetView.choiceSetPopup, currentFocussedView: nil)
         XCTAssertTrue(fakeErrorMessageHandlerDelegate.isErrorVisible)
         XCTAssertEqual(inputChoiceSetView.accessibilityValue() as? String, "Error Error Message, Label Message, Title")
     }
@@ -158,8 +152,8 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         let inputToggle = FakeInputToggle.make(title: "Title", isRequired: true, errorMessage: "Error Message", label: "Label")
         let view = InputToggleRenderer().render(element: inputToggle, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
-        XCTAssertTrue(view is ACRChoiceButton)
-        guard let inputToggleView = view as? ACRChoiceButton else { fatalError() }
+        XCTAssertTrue(view is ACRInputToggleView)
+        guard let inputToggleView = view as? ACRInputToggleView else { fatalError() }
         
         let viewWithInheritedProperties = baseCardRenderer.updateView(view: view, element: inputToggle, rootView: FakeRootView(), style: .default, hostConfig: hostConfig, config: config, isfirstElement: true)
         XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
