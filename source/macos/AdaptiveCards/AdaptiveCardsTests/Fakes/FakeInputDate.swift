@@ -92,6 +92,10 @@ class FakeInputDate: ACSDateInput {
     override func setHeight(_ value: ACSHeightType) {
         height = value
     }
+    
+    open override func getType() -> ACSCardElementType {
+        return .dateInput
+    }
 }
 
 extension FakeInputDate {

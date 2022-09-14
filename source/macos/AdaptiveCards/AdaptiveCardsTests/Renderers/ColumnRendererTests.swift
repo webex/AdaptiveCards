@@ -96,6 +96,12 @@ class ColumnRendererTests: XCTestCase {
         XCTAssertEqual(columnView.arrangedSubviews.count, 4)
     }
     
+    func testDateFieldWidth() {
+        column = .make(items: [FakeInputDate.make()])
+        let columnView = renderColumnView()
+        XCTAssertEqual(columnView.minWidthConstraint.constant, 100)
+    }
+    
     private func renderColumnView() -> ACRColumnView {
         let view = columnRenderer.render(element: column, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         
