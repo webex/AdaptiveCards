@@ -439,12 +439,12 @@ namespace RendererQml
         return m_RequiredInputElementsIdList;
     }
 
-    void AdaptiveRenderContext::addHeightEstimate(int height)
+    void AdaptiveRenderContext::addHeightEstimate(const int height)
     {
         m_HeightEstimate += height;
     }
 
-    void AdaptiveRenderContext::setHeightEstimate(int height)
+    void AdaptiveRenderContext::setHeightEstimate(const int height)
     {
         m_HeightEstimate = height;
     }
@@ -454,7 +454,7 @@ namespace RendererQml
         return m_HeightEstimate;
     }
 
-    const int RendererQml::AdaptiveRenderContext::getEstimatedTextHeight(std::string text)
+    const int RendererQml::AdaptiveRenderContext::getEstimatedTextHeight(const std::string text)
     {
         auto cardConfig = this->GetRenderConfig()->getCardConfig();
 

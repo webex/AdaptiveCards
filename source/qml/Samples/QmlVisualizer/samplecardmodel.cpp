@@ -113,11 +113,10 @@ std::shared_ptr<AdaptiveCards::HostConfig> SampleCardModel::getHostConfig()
 QString SampleCardModel::generateQml(const QString& cardQml)
 {
     std::shared_ptr<int> imgCounter{ 0 };
-    int estimatedHeight = 0;
 
     std::shared_ptr<AdaptiveCards::ParseResult> mainCard = AdaptiveCards::AdaptiveCard::DeserializeFromString(cardQml.toStdString(), "2.0");
     std::map<int, std::string> urls = GetImageUrls(mainCard->GetAdaptiveCard(), std::map<int, std::string>());
-    CardDetails cardDetails = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard(), 0);
+    auto cardDetails = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard(), 0);
     const auto generatedQml = cardDetails.cardOutput.GetResult();
 	
     //SYNCHRONOUS

@@ -38,8 +38,8 @@ namespace RendererQml
     struct CardDetails
     {
         RenderedQmlAdaptiveCard cardOutput;
-        int contentIndex;
-        int estimatedHeight;
+        const int contentIndex;
+        const int estimatedHeight;
 
         CardDetails(RenderedQmlAdaptiveCard cardOutput, int contentIndex, int estimatedHeight)
             : cardOutput(cardOutput)

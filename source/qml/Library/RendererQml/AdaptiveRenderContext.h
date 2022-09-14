@@ -101,11 +101,11 @@ namespace RendererQml
         void addToRequiredInputElementsIdList(const std::string& elementId);
         const std::vector<std::string>& getRequiredInputElementsIdList();
 
-        void addHeightEstimate(int height);
-        void setHeightEstimate(int height);
+        void addHeightEstimate(const int height);
+        void setHeightEstimate(const int height);
         const int getHeightEstimate();
 
-        const int getEstimatedTextHeight(std::string text);
+        const int getEstimatedTextHeight(const std::string text);
 
     private:
         bool m_isShowCardinAction{ false };
