@@ -368,15 +368,12 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     /// This methid can be overridden. super implementation must be called
     func hideErrorMessage(with currentFocussedView: NSView?) {
-        guard let keyValue = (currentFocussedView as? InputHandlingViewProtocol)?.key else {
-            logError("For hide error message, current focus input handle Id not found.")
+        guard let view = currentFocussedView as? InputHandlingViewProtocol else {
+            logError("currentFocussedView is not InputHandlingView.")
             return
         }
-        guard let errorMessageField = self.errorMessageFieldMap.object(forKey: keyValue as NSString) else {
-            logError("For hide error message, field not found in MapTable :: key \(keyValue).")
-            return
-        }
-        errorMessageField.isHidden = true
+        let errorMessageField = getErrorTextField(for: view)
+        errorMessageField?.isHidden = true
     }
     
     func setVerticalHuggingPriority(_ rawValue: Float) {
@@ -468,11 +465,8 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     private func setInputLabel(isHidden hidden: Bool, for view: InputHandlingViewProtocol) {
-        guard let inputLabelField = self.inputLabelFieldMap.object(forKey: view.key as NSString) else {
-            logError("For input label visibility setter, field not found in MapTable :: key \(view.key).")
-            return
-        }
-        inputLabelField.isHidden = hidden
+        let inputLabelField = self.getLabelTextField(for: view)
+        inputLabelField?.isHidden = hidden
     }
     
     override func mouseExited(with event: NSEvent) {
