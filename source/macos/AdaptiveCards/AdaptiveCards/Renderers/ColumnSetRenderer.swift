@@ -6,6 +6,8 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
     
     struct Constants {
         static let kFillColumnViewVerticalLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 1
+        static let maxCardWidth: Int = 350
+        static let padding: Int = 10
     }
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
@@ -46,6 +48,12 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             }
             columnSetView.distribution = .fill
         } else if numberOfAutoItems == totalColumns {
+            let width = ( Constants.maxCardWidth - ( Constants.padding * ( columnViews.count + 1 ))) / columnViews.count
+            for index in (0 ..< columnViews.count) {
+                let widthAnchor = columnViews[index].widthAnchor.constraint(equalToConstant: CGFloat(width))
+                widthAnchor.priority = .defaultHigh
+                widthAnchor.isActive = true
+            }
             columnSetView.distribution = .gravityAreas
         } else if numberOfStretchItems == 0 && numberOfWeightedItems == 0 {
             columnSetView.distribution = .gravityAreas
