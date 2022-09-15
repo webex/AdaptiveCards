@@ -49,6 +49,10 @@ class FakeInputDate: ACSDateInput {
         return id
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getIsVisible() -> Bool {
         return visibility
     }
@@ -95,8 +99,9 @@ class FakeInputDate: ACSDateInput {
 }
 
 extension FakeInputDate {
-    static func make(value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputDate {
+    static func make(id: String? = "", value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputDate {
         let fakeInputDate = FakeInputDate()
+        fakeInputDate.id = id
         fakeInputDate.value = value
         fakeInputDate.placeholder = placeholder
         fakeInputDate.max = max

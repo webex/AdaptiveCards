@@ -62,6 +62,10 @@ class FakeInputNumber: ACSNumberInput {
         return id
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getSeparator() -> Bool {
         return separator
     }
@@ -104,8 +108,9 @@ class FakeInputNumber: ACSNumberInput {
 }
 
 extension FakeInputNumber {
-    static func make(value: NSNumber? = 0, placeholder: String? = "", max: NSNumber? = 0, min: NSNumber = 0, visible: Bool? = true, separator: Bool = false, spacing: ACSSpacing = .default, label: String? = nil, isRequired: Bool = false, errorMessage: String? = "", heightType: ACSHeightType = .auto) -> FakeInputNumber {
+    static func make(id: String? = "", value: NSNumber? = 0, placeholder: String? = "", max: NSNumber? = 0, min: NSNumber = 0, visible: Bool? = true, separator: Bool = false, spacing: ACSSpacing = .default, label: String? = nil, isRequired: Bool = false, errorMessage: String? = "", heightType: ACSHeightType = .auto) -> FakeInputNumber {
         let fakeInputNumber = FakeInputNumber()
+        fakeInputNumber.id = id
         fakeInputNumber.value = value
         fakeInputNumber.placeholder = placeholder
         fakeInputNumber.max = max

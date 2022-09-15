@@ -418,6 +418,22 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         setupErrorMessage(element: element, view: view)
     }
     
+    func getErrorTextField(for inputView: InputHandlingViewProtocol) -> NSTextField? {
+        guard let errorMessageField = self.errorMessageFieldMap.object(forKey: inputView.key as NSString) else {
+            logError("For show error message, field not found in MapTable :: key \(inputView.key).")
+            return nil
+        }
+        return errorMessageField
+    }
+    
+    func getLabelTextField(for inputView: InputHandlingViewProtocol) -> NSTextField? {
+        guard let inputLabelField = self.inputLabelFieldMap.object(forKey: inputView.key as NSString) else {
+            logError("For input label message, field not found in MapTable :: key \(inputView.key).")
+            return nil
+        }
+        return inputLabelField
+    }
+    
     private func setupLabel(for element: ACSBaseInputElement, view: NSView) {
         guard renderConfig.supportsSchemeV1_3, let label = element.getLabel(), !label.isEmpty, let view = view as? InputHandlingViewProtocol else { return }
         logInfo("setup input label.")
@@ -478,12 +494,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
 
 extension ACRContentStackView: InputHandlingViewErrorDelegate {
     func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
-        guard let errorMessageField = self.errorMessageFieldMap.object(forKey: view.key as NSString) else {
-            logError("For show error message, field not found in MapTable :: key \(view.key).")
-            return
-        }
+        let errorMessageField = self.getErrorTextField(for: view)
         if !view.isHidden {
-            errorMessageField.isHidden = false
+            errorMessageField?.isHidden = false
         }
     }
     
@@ -495,12 +508,12 @@ extension ACRContentStackView: InputHandlingViewErrorDelegate {
         let errorMessagePrefixString = renderConfig.localisedStringConfig.errorMessagePrefixString + ", "
         var errorMessageString = ""
         var labelString = ""
-        if let errorMessageField = self.errorMessageFieldMap.object(forKey: view.key as NSString) {
+        if let errorMessageField = self.getErrorTextField(for: view) {
             if !view.isHidden {
                 errorMessageString = errorMessageField.stringValue + ". "
             }
         }
-        if let inputLabelField = self.inputLabelFieldMap.object(forKey: view.key as NSString) {
+        if let inputLabelField = self.getLabelTextField(for: view) {
             if !view.isHidden {
                 labelString = inputLabelField.stringValue + ". "
             }
@@ -510,8 +523,7 @@ extension ACRContentStackView: InputHandlingViewErrorDelegate {
     }
     
     func isErrorVisible(_ view: InputHandlingViewProtocol) -> Bool {
-        guard let errorMessageField = self.errorMessageFieldMap.object(forKey: view.key as NSString) else {
-            logError("For error visibility checker, field not found in MapTable :: key \(view.key).")
+        guard let errorMessageField = self.getErrorTextField(for: view) else {
             return true
         }
         return !errorMessageField.isHidden

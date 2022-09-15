@@ -66,6 +66,10 @@ class FakeInputToggle: ACSToggleInput {
         return id
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getIsVisible() -> Bool {
         return visibility
     }
@@ -103,8 +107,9 @@ class FakeInputToggle: ACSToggleInput {
     }
 }
 extension FakeInputToggle {
-    static func make(title: String? = "", value: String = "false", valueOn: String = "true", valueOff: String = "false", wrap: Bool = false, isRequired: Bool = false, errorMessage: String? = "", label: String? = "", heightType: ACSHeightType = .auto) ->FakeInputToggle {
+    static func make(id: String? = "", title: String? = "", value: String = "false", valueOn: String = "true", valueOff: String = "false", wrap: Bool = false, isRequired: Bool = false, errorMessage: String? = "", label: String? = "", heightType: ACSHeightType = .auto) ->FakeInputToggle {
         let fakeInputToggle = FakeInputToggle()
+        fakeInputToggle.id = id
         fakeInputToggle.title = title
         fakeInputToggle.value = value
         fakeInputToggle.valueOn = valueOn
