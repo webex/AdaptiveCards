@@ -411,7 +411,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func getErrorTextField(for inputView: InputHandlingViewProtocol) -> NSTextField? {
         guard let errorMessageField = self.errorMessageFieldMap.object(forKey: inputView.key as NSString) else {
-            logError("For show error message, field not found in MapTable :: key \(inputView.key).")
+            logError("For show error message, field not found in MapTable.")
             return nil
         }
         return errorMessageField
@@ -419,7 +419,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func getLabelTextField(for inputView: InputHandlingViewProtocol) -> NSTextField? {
         guard let inputLabelField = self.inputLabelFieldMap.object(forKey: inputView.key as NSString) else {
-            logError("For input label message, field not found in MapTable :: key \(inputView.key).")
+            logError("For input label message, field not found in MapTable.")
             return nil
         }
         return inputLabelField
