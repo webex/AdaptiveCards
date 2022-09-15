@@ -16,9 +16,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var stackViewBottomConstraint: NSLayoutConstraint?
     
     // map table store errror message field
-    private var errorMessageFieldMap: NSMapTable<NSString, NSTextField>
+    private let errorMessageFieldMap = NSMapTable<NSString, NSTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     // map table store input label field
-    private var inputLabelFieldMap: NSMapTable<NSString, NSTextField>
+    private let inputLabelFieldMap = NSMapTable<NSString, NSTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     
     let style: ACSContainerStyle
     let hostConfig: ACSHostConfig
@@ -81,8 +81,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.style = style
         self.renderConfig = renderConfig
         self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
-        self.errorMessageFieldMap = NSMapTable(keyOptions: .strongMemory, valueOptions: .weakMemory)
-        self.inputLabelFieldMap = NSMapTable(keyOptions: .strongMemory, valueOptions: .weakMemory)
         super.init(frame: .zero)
         initialize()
     }
@@ -92,8 +90,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.style = style
         self.renderConfig = renderConfig
         self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
-        self.errorMessageFieldMap = NSMapTable(keyOptions: .strongMemory, valueOptions: .weakMemory)
-        self.inputLabelFieldMap = NSMapTable(keyOptions: .strongMemory, valueOptions: .weakMemory)
         super.init(frame: .zero)
         initialize()
         if needsPadding {
@@ -122,8 +118,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.style = .none
         self.renderConfig = .default
         self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
-        self.errorMessageFieldMap = NSMapTable(keyOptions: .strongMemory, valueOptions: .weakMemory)
-        self.inputLabelFieldMap = NSMapTable(keyOptions: .strongMemory, valueOptions: .weakMemory)
         super.init(coder: coder)
         initialize()
     }
