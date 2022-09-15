@@ -129,7 +129,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getItemDelegate()
 
     std::ostringstream widthFunc;
     widthFunc << "onImplicitWidthChanged : {";
-    widthFunc << "var maxWidth = implicitWidth > 800 ? 800 : implicitWidth;";
+    widthFunc << "var maxWidth = implicitWidth > " << mChoiceSetConfig.maxDropDownWidth << " ? " << mChoiceSetConfig.maxDropDownWidth << " : implicitWidth;";
     widthFunc << mComboBox->GetId() << ".choiceWidth = Math.max(maxWidth, " << mComboBox->GetId() << ".choiceWidth);}";
     uiItemDelegate_Text->AddFunctions(widthFunc.str());
 
