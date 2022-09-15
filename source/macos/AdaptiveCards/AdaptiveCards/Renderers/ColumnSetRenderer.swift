@@ -6,8 +6,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
     
     struct Constants {
         static let kFillColumnViewVerticalLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 1
-        static let maxCardWidth: Int = 350
-        static let padding: Int = 10
+        static let maxCardWidth: Float = 350.0
     }
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
@@ -22,6 +21,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         var numberOfStretchItems = 0
         var numberOfWeightedItems = 0
         let totalColumns = columnSet.getColumns().count
+        var totalPaddingSpace = Float.zero
         var columnViews: [NSView] = []
         
         for (index, column) in columnSet.getColumns().enumerated() {
@@ -30,7 +30,8 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             if width.isWeighted { numberOfWeightedItems += 1 }
             if width == .stretch { numberOfStretchItems += 1 }
             if width == .auto { numberOfAutoItems += 1 }
-            
+            let requestedSpacing = column.getSpacing()
+            totalPaddingSpace += HostConfigUtils.getSpacing(requestedSpacing, with: hostConfig).floatValue
             let columnView = ColumnRenderer.shared.render(element: column, with: hostConfig, style: columnSet.getStyle(), rootView: rootView, parentView: columnSetView, inputs: [], config: config)
             columnViews.append(columnView)
             updateColumnSetSeparatorAndAlignment(columnView: columnView, column: column, columnSetView: columnSetView, rootView: rootView, columnSet: columnSet, isfirstElement: isfirstElement, hostConfig: hostConfig)
@@ -48,7 +49,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             }
             columnSetView.distribution = .fill
         } else if numberOfAutoItems == totalColumns {
-            let width = ( Constants.maxCardWidth - ( Constants.padding * ( columnViews.count + 1 ))) / columnViews.count
+            let width = (Constants.maxCardWidth - totalPaddingSpace) / Float(columnViews.count)
             for index in (0 ..< columnViews.count) {
                 let widthAnchor = columnViews[index].widthAnchor.constraint(equalToConstant: CGFloat(width))
                 widthAnchor.priority = .defaultHigh
