@@ -68,6 +68,7 @@ void TimeInputElement::renderTimeElement()
 
 void TimeInputElement::initTimeInputWrapper()
 {
+    mContext->addHeightEstimate(mTimeInputConfig.height);
     mTimeInputWrapper = std::make_shared<RendererQml::QmlTag>("Rectangle");
     mTimeInputWrapper->Property("id", RendererQml::Formatter() << id << "_wrapper");
     mTimeInputWrapper->Property("width", "parent.width");
@@ -427,6 +428,7 @@ void TimeInputElement::addInputLabel(bool isRequired)
     {
         if (!mTimeInput->GetLabel().empty())
         {
+            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mTimeInput->GetLabel()));
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
             label->Property("id", RendererQml::Formatter() << mTimeInput->GetId() << "_label");
             label->Property("wrapMode", "Text.Wrap");

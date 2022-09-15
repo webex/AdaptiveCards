@@ -114,6 +114,7 @@ void ChoiceSetElement::addInputLabel(bool isRequired)
         if (!mChoiceSetInput->GetLabel().empty())
         {
             const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
+            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mChoiceSetInput->GetLabel()));
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
             label->Property("id", RendererQml::Formatter() << mChoiceSetInput->GetId() << "_label");
             label->Property("wrapMode", "Text.Wrap");
