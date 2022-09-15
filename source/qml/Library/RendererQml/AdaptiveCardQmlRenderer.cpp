@@ -23,7 +23,7 @@ namespace RendererQml
 		SetRenderConfig(renderConfig);
 	}
 
-	std::pair<std::shared_ptr<RenderedQmlAdaptiveCard>, int> AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, int contentIndex)
+	CardDetails AdaptiveCardQmlRenderer::RenderCard(std::shared_ptr<AdaptiveCards::AdaptiveCard> card, const int contentIndex)
 	{
 		std::shared_ptr<RenderedQmlAdaptiveCard> output;
 		auto context = std::make_shared<AdaptiveRenderContext>(GetHostConfig(), GetElementRenderers(), GetRenderConfig());
@@ -40,7 +40,7 @@ namespace RendererQml
 			context->AddWarning(AdaptiveWarning(Code::RenderException, e.what()));
 		}
 
-		return std::make_pair(output, context->getContentIndex());
+		return CardDetails(*output, context->getContentIndex(), context->getHeightEstimate());
 	}
 
     void AdaptiveCardQmlRenderer::SetObjectTypes()
@@ -390,7 +390,7 @@ namespace RendererQml
 						const std::string loaderId = uiAction->GetId() + "_loader";
                         const std::string componentId = uiAction->GetId() + "_component";
                         const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
-                        context->addToShowCardLoaderComponentList(componentId, showCardAction);
+                        context->addToShowCardLoaderComponentList(uiAction->GetId(), showCardAction);
 
                         //Add show card loader to the parent container
                         AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, std::string(), true, loaderId);
@@ -530,9 +530,10 @@ namespace RendererQml
         }
     }
 
-    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::string& componentId, const std::shared_ptr<QmlTag>& uiCard)
+    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetComponent(const std::string& loaderId, const std::shared_ptr<QmlTag>& uiCard)
     {
         auto uiComponent = std::make_shared<QmlTag>("Component");
+        const auto componentId = loaderId + "_component";
         uiComponent->Property("id", componentId);
 
         const std::string layoutId = Formatter() << componentId << "_component_layout";
@@ -544,15 +545,19 @@ namespace RendererQml
         uiColumn->Property("id", layoutId);
         uiColumn->AddFunctions("property var card");
         uiColumn->Property("property string showCard", uiCard_string, true);
-        uiColumn->Property("Component.onCompleted", "reload(showCard)");
-        uiColumn->AddFunctions(Formatter() << "function reload(mCard)\n{\n");
-        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.destroy()\n }\n");
-        uiColumn->AddFunctions(Formatter() << "card = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\n");
-        uiColumn->AddFunctions(Formatter() << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked);"
+        uiColumn->Property("property bool loaderVisible", RendererQml::Formatter() << loaderId << ".visible");
+        uiColumn->Property("onLoaderVisibleChanged", "reload(showCard)");
+
+        std::ostringstream reloadFunction;
+        reloadFunction << "function reload(mCard)\n{\n";
+        reloadFunction << "if(loaderVisible && !card){\n";
+        reloadFunction << "card = Qt.createQmlObject(mCard, " << layoutId << ", 'card')\n";
+        reloadFunction << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked);"
             "card.openContextMenu.connect(adaptiveCard.openContextMenu);"
             "card.textEditFocussed.connect(adaptiveCard.textEditFocussed);"
-            "card.setFocusBackOnClose.connect(adaptiveCard.setFocusBackOnClose);;card.showToolTipifNeeded.connect(adaptiveCard.showToolTipifNeeded);}}");
+            "card.setFocusBackOnClose.connect(adaptiveCard.setFocusBackOnClose);card.showToolTipifNeeded.connect(adaptiveCard.showToolTipifNeeded);}}}";
 
+        uiColumn->AddFunctions(reloadFunction.str());
 		uiComponent->AddChild(uiColumn);
 
 		return uiComponent;
@@ -599,6 +604,7 @@ namespace RendererQml
         // CSS Property for underline, striketrhough,etc
         const std::string textDecoration = "none";
         text = Utils::FormatHtmlUrl(text, linkColor, textDecoration);
+        context->addHeightEstimate(context->getEstimatedTextHeight(text));
 
         uiTextBlock->Property("_text", text, true);
 
@@ -688,6 +694,7 @@ namespace RendererQml
         toggleVisibilityElements << "})";
         uiTextBlock->Property("_toggleVisibilityTarget", toggleVisibilityElements.str());
         uiTextBlock->Property("_text", textrun_all, true);
+        context->addHeightEstimate(context->getEstimatedTextHeight(textrun_all));
 
         return uiTextBlock;
 	}
@@ -800,6 +807,8 @@ namespace RendererQml
 			uiFactSet->Property("visible", "false");
 		}
 
+        const int currentHeight = context->getHeightEstimate();
+        int estimatedFactSetHeight = 0;
 		for (const auto fact : factSet->GetFacts())
 		{
 			auto factTitle = std::make_shared<AdaptiveCards::TextBlock>();
@@ -847,7 +856,9 @@ namespace RendererQml
 
 			uiFactSet->AddChild(uiTitle);
 			uiFactSet->AddChild(uiValue);
+            estimatedFactSetHeight += context->getEstimatedTextHeight(fact->GetTitle() + fact->GetValue());
 		}
+        context->setHeightEstimate(currentHeight + estimatedFactSetHeight);
 
         auto parentRectangle = std::make_shared<QmlTag>("Rectangle");
         parentRectangle->Property("implicitHeight", Formatter() << uiFactSet->GetId() << ".height");
@@ -883,11 +894,13 @@ namespace RendererQml
         uiImage->Property("_visibleRect", image->GetIsVisible() ? "true" : "false");
         uiImage->Property("_actionHoverColor", context->GetRGBColor(context->GetConfig()->GetContainerStyles().emphasisPalette.backgroundColor));
 
+        int imageHeightEstimate = 0;
         if (image->GetPixelWidth() != 0 || image->GetPixelHeight() != 0)
         {
             if (image->GetPixelWidth() != 0)
             {
                 uiImage->Property("_imageWidth", Formatter() << image->GetPixelWidth());
+                imageHeightEstimate = image->GetPixelWidth();
             }
             if (image->GetPixelHeight() != 0)
             {
@@ -897,6 +910,7 @@ namespace RendererQml
                 {
                     uiImage->Property("_imageWidth", Formatter() << "aspectWidth");
                 }
+                imageHeightEstimate = image->GetPixelHeight();
             }
 
             if (image->GetPixelWidth() != 0)
@@ -910,7 +924,7 @@ namespace RendererQml
         }
         else
         {
-            int imageWidth;
+            int imageWidth = 0;
             switch (image->GetImageSize())
             {
             case AdaptiveCards::ImageSize::None:
@@ -931,12 +945,14 @@ namespace RendererQml
                 uiImage->Property("_imageWidth", Formatter() << imageWidth);
                 break;
             }
+            imageHeightEstimate = (imageWidth == 0 ? context->GetConfig()->GetImageSizes().smallSize : imageWidth);
 
             if (image->GetImageSize() != AdaptiveCards::ImageSize::None)
             {
                 uiImage->Property("implicitWidth", "width");
             }
         }
+        context->addHeightEstimate(imageHeightEstimate);
 
         if (!image->GetBackgroundColor().empty())
         {
@@ -1050,6 +1066,7 @@ namespace RendererQml
         auto uiSep = std::make_shared<QmlTag>("SeparatorRender");
         uiSep->Property("_isColElement", adaptiveElement->GetElementTypeString() == "Column" ? "true" : "false");
         uiSep->Property("_height", std::to_string(spacing == 0 ? separator.lineThickness : spacing));
+        context->addHeightEstimate(adaptiveElement->GetElementTypeString() == "Column" ? 0 : spacing);
 
         if (!linkElementId.empty())
         {
@@ -1166,6 +1183,7 @@ namespace RendererQml
         addSelectAction(uiFrame, backgroundRect->GetId(), columnSet->GetSelectAction(), context, columnSet->GetElementTypeString());
         uiFrame->Property("background", backgroundRect->ToString());
 
+        int currentHeight = context->getHeightEstimate();
         uiRowLayout->AddChild(uiRow);
         uiFrame->AddChild(uiRowLayout);
 		uiFrame = addColumnSetElements(columnSet, uiFrame, uiRowLayout, uiRow, context);
@@ -1252,6 +1270,7 @@ namespace RendererQml
     std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::ContainerRender(std::shared_ptr<AdaptiveCards::Container> container, std::shared_ptr<AdaptiveRenderContext> context)
     {
         const auto margin = context->GetConfig()->GetSpacing().paddingSpacing;
+        int currentHeight = context->getHeightEstimate();
 
         if (container->GetId().empty())
         {
@@ -1279,6 +1298,9 @@ namespace RendererQml
         {
             uiContainer->Property("width", "parent.width");
         }
+
+        int estimatedContainerHeight = std::max(context->getHeightEstimate() - currentHeight, int(container->GetMinHeight()));
+        context->setHeightEstimate(currentHeight + estimatedContainerHeight);
 
         return uiContainer;
     }
@@ -1429,6 +1451,7 @@ namespace RendererQml
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::ActionSetRender(std::shared_ptr<AdaptiveCards::ActionSet> actionSet, std::shared_ptr<AdaptiveRenderContext> context)
 	{
+        auto actionSetConfig = context->GetRenderConfig()->getActionButtonsConfig();
 		auto outerContainer = std::make_shared<QmlTag>("Column");
 
 		if (actionSet->GetId().empty())
@@ -1459,6 +1482,7 @@ namespace RendererQml
 
 		actionsConfig.actionAlignment = oldActionAlignment;
 		context->GetConfig()->SetActions(actionsConfig);
+        context->addHeightEstimate(actionSetConfig.primaryColorConfig.buttonHeight);
 
 		return outerContainer;
 	}
@@ -1506,7 +1530,7 @@ namespace RendererQml
             buttonElement->Property("property bool isButtonDisabled", "false");
             buttonElement->Property("enabled", "!isButtonDisabled");
 
-            if (isShowCardButton && !action->GetTitle().empty())
+            if (isShowCardButton)
             {
                 buttonElement->Property("property bool showCard", "false");
             }
@@ -1524,7 +1548,7 @@ namespace RendererQml
             {
                 textSpacing += buttonConfig.imageSize + buttonConfig.iconTextSpacing;
             }
-            if (isShowCardButton)
+            if (isShowCardButton && !action->GetTitle().empty())
             {
                 textSpacing += buttonConfig.iconWidth + buttonConfig.iconTextSpacing;
             }
@@ -1723,6 +1747,7 @@ namespace RendererQml
     {
         for (const auto& componentElement : context->getShowCardLoaderComponentList())
         {
+            std::string componentId = componentElement.first + "_component";
             auto subContext = std::make_shared<AdaptiveRenderContext>(context->GetConfig(), context->GetElementRenderers(), context->GetRenderConfig());
             subContext->setContentIndex(context->getContentIndex());
 
@@ -1748,7 +1773,7 @@ namespace RendererQml
 
                 const auto lastShowCards = context->getLastShowCardComponentIdsList();
                 auto cardConfig = context->GetRenderConfig()->getCardConfig();
-                if (std::find(lastShowCards.begin(), lastShowCards.end(), componentElement.first) != lastShowCards.end())
+                if (std::find(lastShowCards.begin(), lastShowCards.end(), componentId) != lastShowCards.end())
                 {
                     uiCard->Property("radius", Formatter() << cardConfig.cardRadius);
                     uiCard = AddCornerRectangles(uiCard, cardConfig.cardRadius);
@@ -2109,6 +2134,9 @@ namespace RendererQml
 			tempMargin = 2 * margin;
 		}
 
+        int currentHeight = context->getHeightEstimate();
+        int estimatedColumnSetHeight = int(columnSet->GetMinHeight());
+
 		for (int i = 0; i < no_of_columns; i++)
 		{
 			auto cardElement = columns[i];
@@ -2169,7 +2197,11 @@ namespace RendererQml
 				}
 
 			}
+            estimatedColumnSetHeight = std::max(estimatedColumnSetHeight, context->getHeightEstimate() - currentHeight);
+            estimatedColumnSetHeight = std::max(estimatedColumnSetHeight, int(columns[i]->GetMinHeight()));
+            context->setHeightEstimate(currentHeight);
 		}
+        context->setHeightEstimate(currentHeight + estimatedColumnSetHeight);
 
 		int parentBleedDirection = 0;
 

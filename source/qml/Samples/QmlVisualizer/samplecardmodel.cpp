@@ -116,8 +116,8 @@ QString SampleCardModel::generateQml(const QString& cardQml)
 
     std::shared_ptr<AdaptiveCards::ParseResult> mainCard = AdaptiveCards::AdaptiveCard::DeserializeFromString(cardQml.toStdString(), "2.0");
     std::map<int, std::string> urls = GetImageUrls(mainCard->GetAdaptiveCard(), std::map<int, std::string>());
-    auto [result, contentIndexes] = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard(), 0);
-    const auto generatedQml = result->GetResult();
+    auto cardDetails = renderer_ptr->RenderCard(mainCard->GetAdaptiveCard(), 0);
+    const auto generatedQml = cardDetails.cardOutput.GetResult();
 	
     //SYNCHRONOUS
     ImageDownloader::clearImageFolder();
