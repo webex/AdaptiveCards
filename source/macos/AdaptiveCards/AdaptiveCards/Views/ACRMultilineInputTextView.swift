@@ -117,6 +117,10 @@ class ACRMultilineInputTextView: NSView {
     }
 }
 extension ACRMultilineInputTextView: InputHandlingViewProtocol {
+    var isErrorShown: Bool {
+        return self.multiLineTextView.isErrorShown
+    }
+    
     var value: String {
         return self.multiLineTextView.value
     }

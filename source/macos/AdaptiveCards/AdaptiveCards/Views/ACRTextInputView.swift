@@ -29,6 +29,10 @@ class ACRTextInputView: ACRTextField, InputHandlingViewProtocol {
         return value.range(of: regexVal, options: .regularExpression, range: nil, locale: nil) != nil
     }
     
+    var isErrorShown: Bool {
+        return super.isErrorShown()
+    }
+    
     var isRequired = false
     var maxLen: Int = 0
     var idString: String?

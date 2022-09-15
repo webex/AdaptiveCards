@@ -15,8 +15,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var stackViewTopConstraint: NSLayoutConstraint?
     private var stackViewBottomConstraint: NSLayoutConstraint?
     
-    private (set) var errorMessageField: NSTextField?
-    private (set) var inputLabelField: NSTextField?
+    // map table store errror message field
+    private let errorMessageFieldMap = NSMapTable<NSString, NSTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
+    // map table store input label field
+    private let inputLabelFieldMap = NSMapTable<NSString, NSTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     
     let style: ACSContainerStyle
     let hostConfig: ACSHostConfig
@@ -360,6 +362,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     /// This methid can be overridden. super implementation must be called
     func hideErrorMessage(with currentFocussedView: NSView?) {
+        guard let view = currentFocussedView as? InputHandlingViewProtocol else {
+            logError("currentFocussedView is not InputHandlingView.")
+            return
+        }
+        let errorMessageField = getErrorTextField(for: view)
         errorMessageField?.isHidden = true
     }
     
@@ -394,7 +401,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     func configureInputElements(element: ACSBaseInputElement, view: NSView) {
-        setupLabel(for: element)
+        setupLabel(for: element, view: view)
         addArrangedSubview(view)
         if view is ACRContentStackView {
             view.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
@@ -402,8 +409,25 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         setupErrorMessage(element: element, view: view)
     }
     
-    private func setupLabel(for element: ACSBaseInputElement) {
-        guard renderConfig.supportsSchemeV1_3, let label = element.getLabel(), !label.isEmpty, inputLabelField?.stringValue != label else { return }
+    func getErrorTextField(for inputView: InputHandlingViewProtocol) -> NSTextField? {
+        guard let errorMessageField = self.errorMessageFieldMap.object(forKey: inputView.key as NSString) else {
+            logError("For show error message, field not found in MapTable.")
+            return nil
+        }
+        return errorMessageField
+    }
+    
+    func getLabelTextField(for inputView: InputHandlingViewProtocol) -> NSTextField? {
+        guard let inputLabelField = self.inputLabelFieldMap.object(forKey: inputView.key as NSString) else {
+            logError("For input label message, field not found in MapTable.")
+            return nil
+        }
+        return inputLabelField
+    }
+    
+    private func setupLabel(for element: ACSBaseInputElement, view: NSView) {
+        guard renderConfig.supportsSchemeV1_3, let label = element.getLabel(), !label.isEmpty, let view = view as? InputHandlingViewProtocol else { return }
+        logInfo("setup input label.")
         let attributedString = NSMutableAttributedString(string: label)
         let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
         let isRequiredSuffix = (hostConfig.getInputs()?.label.requiredInputs.suffix ?? "").isEmpty ? "*" : hostConfig.getInputs()?.label.requiredInputs.suffix ?? "*"
@@ -417,11 +441,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         labelView.attributedStringValue = attributedString
         addArrangedSubview(labelView)
         setCustomSpacing(spacing: 3, after: labelView)
-        inputLabelField = labelView
+        inputLabelFieldMap.setObject(labelView, forKey: view.key as NSString)
     }
     
     private func setupErrorMessage(element: ACSBaseInputElement, view: NSView) {
-        guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol, let errorMessage = element.getErrorMessage(), !errorMessage.isEmpty, errorMessageField?.stringValue != errorMessage else { return }
+        guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol, let errorMessage = element.getErrorMessage(), !errorMessage.isEmpty else { return }
         let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
         let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
         attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
@@ -431,7 +455,12 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         errorField.attributedStringValue = attributedErrorMessageString
         view.errorDelegate = self
         addArrangedSubview(errorField)
-        errorMessageField = errorField
+        errorMessageFieldMap.setObject(errorField, forKey: view.key as NSString)
+    }
+    
+    private func setInputLabel(isHidden hidden: Bool, for view: InputHandlingViewProtocol) {
+        let inputLabelField = self.getLabelTextField(for: view)
+        inputLabelField?.isHidden = hidden
     }
     
     override func mouseExited(with event: NSEvent) {
@@ -453,33 +482,63 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
 
 extension ACRContentStackView: InputHandlingViewErrorDelegate {
     func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
-        errorMessageField?.isHidden = false
+        let errorMessageField = self.getErrorTextField(for: view)
+        if !view.isHidden {
+            errorMessageField?.isHidden = false
+        }
     }
     
     func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
-        hideErrorMessage(with: currentFocussedView)
+        hideErrorMessage(with: view)
     }
     
     func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol, message: String?) {
         let errorMessagePrefixString = renderConfig.localisedStringConfig.errorMessagePrefixString + ", "
-        let errorMessageString = (errorMessageField?.stringValue ?? "") + ". "
-        let labelString = (inputLabelField?.stringValue ?? "") + ". "
+        var errorMessageString = ""
+        var labelString = ""
+        if let errorMessageField = self.getErrorTextField(for: view) {
+            if !view.isHidden {
+                errorMessageString = errorMessageField.stringValue + ". "
+            }
+        }
+        if let inputLabelField = self.getLabelTextField(for: view) {
+            if !view.isHidden {
+                labelString = inputLabelField.stringValue + ". "
+            }
+        }
         let announcementString = message ?? (errorMessagePrefixString + errorMessageString + labelString)
         NSAccessibility.announce(announcementString)
     }
     
-    var isErrorVisible: Bool {
-        return !(errorMessageField?.isHidden ?? true)
+    func isErrorVisible(_ view: InputHandlingViewProtocol) -> Bool {
+        guard let errorMessageField = self.getErrorTextField(for: view) else {
+            return true
+        }
+        return !errorMessageField.isHidden
     }
 }
 
 extension ACRContentStackView: ACSVisibilityManagerFacade {
     func hideView(_ view: NSView) {
         visibilityManager.hide(view, hostView: self)
+        guard let inputView = view as? InputHandlingViewProtocol else {
+            logError("For error visibility checker, field not a input handler :: key.")
+            return
+        }
+        hideErrorMessage(with: inputView)
+        setInputLabel(isHidden: true, for: inputView)
     }
     
     func unhideView(_ view: NSView) {
         visibilityManager.unhideView(view, hostView: self)
+        guard let inputView = view as? InputHandlingViewProtocol else {
+            logError("For error visibility checker, field not a input handler :: key.")
+            return
+        }
+        if inputView.isErrorShown {
+            inputHandlingViewShouldShowError(inputView)
+        }
+        setInputLabel(isHidden: false, for: inputView)
     }
 }
 

@@ -488,6 +488,7 @@ private class FakeInputHandlingView: NSView, InputHandlingViewProtocol {
     var isFocused: Bool = false
     var isValid: Bool = true
     var isRequired: Bool = false
+    var isErrorShown: Bool = false
     var errorDelegate: InputHandlingViewErrorDelegate?
     func showError() {
         errorShown = true

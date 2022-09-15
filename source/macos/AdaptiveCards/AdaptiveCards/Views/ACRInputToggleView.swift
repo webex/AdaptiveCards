@@ -113,6 +113,10 @@ extension ACRInputToggleView: InputHandlingViewProtocol {
         }
     }
     
+    var isErrorShown: Bool {
+        return self.choiceButton.isErrorShown
+    }
+    
     func showError() {
         self.choiceButton.showError()
     }

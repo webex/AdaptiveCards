@@ -72,6 +72,10 @@ class FakeInputText: ACSTextInput {
         regexString = value
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getId() -> String? {
         return id
     }
@@ -122,8 +126,9 @@ class FakeInputText: ACSTextInput {
 }
 
 extension FakeInputText {
-    static func make(placeholderString: String? = "", value: String? = "", isMultiline: Bool = false, maxLength: NSNumber? = 0, style: ACSTextInputStyle = .text, inlineAction: ACSBaseActionElement? = .none, regexString: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputText {
+    static func make(placeholderString: String? = "", id: String? = "", value: String? = "", isMultiline: Bool = false, maxLength: NSNumber? = 0, style: ACSTextInputStyle = .text, inlineAction: ACSBaseActionElement? = .none, regexString: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputText {
         let fakeInputText = FakeInputText()
+        fakeInputText.id = id
         fakeInputText.placeholderString = placeholderString
         fakeInputText.value = value
         fakeInputText.isMultiline = isMultiline

@@ -49,6 +49,10 @@ class FakeInputTime: ACSTimeInput {
         return id
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getIsVisible() -> Bool {
         return visibility
     }
@@ -95,8 +99,9 @@ class FakeInputTime: ACSTimeInput {
 }
 
 extension FakeInputTime {
-    static func make(value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputTime {
+    static func make(id: String? = "", value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputTime {
         let fakeInputTime = FakeInputTime()
+        fakeInputTime.id = id
         fakeInputTime.value = value
         fakeInputTime.placeholder = placeholder
         fakeInputTime.max = max

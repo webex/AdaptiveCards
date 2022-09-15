@@ -63,6 +63,10 @@ class FakeChoiceSetInput: ACSChoiceSetInput {
         return id
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getIsVisible() -> Bool {
         return visibility
     }
@@ -112,8 +116,9 @@ class FakeChoiceSetInput: ACSChoiceSetInput {
     }
 }
 extension FakeChoiceSetInput {
-    static func make(isMultiSelect: Bool = false, value: String = "1", choices: [ACSChoiceInput] = [], wrap: Bool = false, choiceSetStyle: ACSChoiceSetStyle = .expanded, placeholder: String? = "", visibility: Bool = false, isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeChoiceSetInput {
+    static func make(isMultiSelect: Bool = false, id: String = "", value: String = "1", choices: [ACSChoiceInput] = [], wrap: Bool = false, choiceSetStyle: ACSChoiceSetStyle = .expanded, placeholder: String? = "", visibility: Bool = true, isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeChoiceSetInput {
         let fakeChoiceSetInput = FakeChoiceSetInput()
+        fakeChoiceSetInput.id = id
         fakeChoiceSetInput.placeholder = placeholder
         fakeChoiceSetInput.value = value
         fakeChoiceSetInput.choiceSetStyle = choiceSetStyle

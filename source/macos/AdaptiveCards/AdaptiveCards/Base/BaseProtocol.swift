@@ -32,6 +32,7 @@ protocol InputHandlingViewProtocol: NSView {
     var key: String { get }
     var isValid: Bool { get }
     var isRequired: Bool { get }
+    var isErrorShown: Bool { get }
     var errorDelegate: InputHandlingViewErrorDelegate? { get set }
     func showError()
     func setAccessibilityFocus()
@@ -41,7 +42,7 @@ protocol InputHandlingViewErrorDelegate: AnyObject {
     func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol)
     func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?)
     func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol, message: String?)
-    var isErrorVisible: Bool { get }
+    func isErrorVisible(_ view: InputHandlingViewProtocol) -> Bool
 }
 
 protocol ShowCardHandlingView: NSView {
