@@ -40,6 +40,7 @@ std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getQmlTag()
 
 void NumberInputElement::initialize()
 {
+    mContext->addHeightEstimate(numberConfig.height);
     const std::string origionalElementId = mInput->GetId();
     mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mInput->GetPlaceholder());
     mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
@@ -244,6 +245,7 @@ void NumberInputElement::createInputLabel()
     {
         if (!mInput->GetLabel().empty())
         {
+            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mInput->GetLabel()));
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
             label->Property("id", RendererQml::Formatter() << mInput->GetId() << "_label");
             label->Property("wrapMode", "Text.Wrap");

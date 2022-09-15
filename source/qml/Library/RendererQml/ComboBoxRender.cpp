@@ -17,6 +17,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getQmlTag()
 
 void ComboBoxElement::initialize()
 {
+    mContext->addHeightEstimate(mChoiceSetConfig.height);
     mComboBox = std::make_shared<RendererQml::QmlTag>("ComboBox");
     mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mChoiceSet.placeholder);
 
