@@ -47,6 +47,7 @@ extension NSView {
 
 class FakeErrorMessageHandlerDelegate: InputHandlingViewErrorDelegate {
     func isErrorVisible(_ view: InputHandlingViewProtocol) -> Bool {
+        
         return isErrorVisible
     }
     
