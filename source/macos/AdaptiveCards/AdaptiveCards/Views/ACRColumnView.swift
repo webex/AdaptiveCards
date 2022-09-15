@@ -54,7 +54,7 @@ class ACRColumnView: ACRContentStackView {
     private lazy var backgroundImageViewTrailingConstraint = backgroundImageView.trailingAnchor.constraint(equalTo: trailingAnchor)
     
     private (set) var columnWidth: ColumnWidth = .weighted(1)
-    private lazy var minWidthConstraint: NSLayoutConstraint = {
+    private (set) lazy var minWidthConstraint: NSLayoutConstraint = {
         let constraint = widthAnchor.constraint(greaterThanOrEqualToConstant: Constants.minWidth)
         constraint.priority = .defaultHigh
         return constraint
@@ -118,6 +118,9 @@ class ACRColumnView: ACRContentStackView {
     }
     
     func configureColumnProperties(for view: NSView) {
+        if view is ACRDateField || view is ACRSingleLineInputTextView || view is ACRMultilineInputTextView {
+            minWidthConstraint.constant = 100
+        }
         manageWidth(of: view)
     }
     
