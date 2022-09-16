@@ -128,6 +128,7 @@ namespace RendererQml
         int dropDownRadius{ 12 };
         int dropDownPadding{ 8 };
         int dropDownHeight{ 216 };
+        int maxDropDownWidth{ 800 };
     };
 
     struct ToggleButtonConfig
