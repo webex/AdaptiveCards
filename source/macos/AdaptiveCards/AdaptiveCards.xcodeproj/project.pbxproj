@@ -551,6 +551,8 @@
 		AA2696A128D053120095D396 /* ACRTextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2696A028D053120095D396 /* ACRTextInputView.swift */; };
 		AA2696AF28D1CCF90095D396 /* ACRMultilineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2696AE28D1CCF90095D396 /* ACRMultilineTextView.swift */; };
 		AA371D0628911F63002D618A /* ACRContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA371D0528911F63002D618A /* ACRContainerView.swift */; };
+		AA3C416328D84D5D00406C36 /* ACRInputLabelTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3C416228D84D5D00406C36 /* ACRInputLabelTextField.swift */; };
+		AA3C416528D85BE300406C36 /* ACRInputErrorTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3C416428D85BE300406C36 /* ACRInputErrorTextField.swift */; };
 		AA4B4D4A28CF532000734278 /* ACRInputToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */; };
 		AA4B4D4E28CF548800734278 /* ACRSingleLineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */; };
 		AA4D26A6289A679700CA502D /* ACRColumnSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */; };
@@ -1141,6 +1143,8 @@
 		AA2696A028D053120095D396 /* ACRTextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTextInputView.swift; sourceTree = "<group>"; };
 		AA2696AE28D1CCF90095D396 /* ACRMultilineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRMultilineTextView.swift; sourceTree = "<group>"; };
 		AA371D0528911F63002D618A /* ACRContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRContainerView.swift; sourceTree = "<group>"; };
+		AA3C416228D84D5D00406C36 /* ACRInputLabelTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputLabelTextField.swift; sourceTree = "<group>"; };
+		AA3C416428D85BE300406C36 /* ACRInputErrorTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputErrorTextField.swift; sourceTree = "<group>"; };
 		AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputToggleView.swift; sourceTree = "<group>"; };
 		AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRSingleLineInputTextView.swift; sourceTree = "<group>"; };
 		AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRColumnSetView.swift; sourceTree = "<group>"; };
@@ -1846,6 +1850,8 @@
 				AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */,
 				AA2696A028D053120095D396 /* ACRTextInputView.swift */,
 				2887215A26CE2D17007F7910 /* ACRTextField.swift */,
+				AA3C416228D84D5D00406C36 /* ACRInputLabelTextField.swift */,
+				AA3C416428D85BE300406C36 /* ACRInputErrorTextField.swift */,
 				28D7A57625F1E7E800AEA09C /* ACRCollectionViewItem.swift */,
 				28D7A57B25F1E84800AEA09C /* ACRCollectionView.swift */,
 				A032271A25E9176D00E7172E /* ACRImageWrappingView.swift */,
@@ -2382,6 +2388,7 @@
 				AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */,
 				082864FD25C99E300080D767 /* HostConfigUtils.swift in Sources */,
 				0876273F27734F9800F3347F /* ViewUtils.swift in Sources */,
+				AA3C416528D85BE300406C36 /* ACRInputErrorTextField.swift in Sources */,
 				A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */,
 				28D7A52425EFAD8000AEA09C /* ImageSetRenderer.swift in Sources */,
 				08B5F91925C9272500A7D37A /* AdaptiveCardRenderer.swift in Sources */,
@@ -2403,6 +2410,7 @@
 				AA2696AF28D1CCF90095D396 /* ACRMultilineTextView.swift in Sources */,
 				13C41B0725F226C9008A1F2E /* InputTimeRenderer.swift in Sources */,
 				28CE1A4425DFD64B00BFCFD9 /* FactSetRenderer.swift in Sources */,
+				AA3C416328D84D5D00406C36 /* ACRInputLabelTextField.swift in Sources */,
 				08E4044825B46ABA00C2092A /* AdaptiveCards.h in Sources */,
 				AA26969D28D050470095D396 /* ACRCompactChoiceSetView.swift in Sources */,
 				A032272525E93C7400E7172E /* ImageUtils.swift in Sources */,

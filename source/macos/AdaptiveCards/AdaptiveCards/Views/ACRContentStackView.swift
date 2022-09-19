@@ -16,9 +16,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var stackViewBottomConstraint: NSLayoutConstraint?
     
     // map table store errror message field
-    private let errorMessageFieldMap = NSMapTable<NSString, NSTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
+    private let errorMessageFieldMap = NSMapTable<NSString, ACRInputErrorTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     // map table store input label field
-    private let inputLabelFieldMap = NSMapTable<NSString, NSTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
+    private let inputLabelFieldMap = NSMapTable<NSString, ACRInputLabelTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     
     let style: ACSContainerStyle
     let hostConfig: ACSHostConfig
@@ -259,13 +259,13 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     func applyVisibilityToSubviews() {
         for index in 0..<stackView.subviews.count {
             let subview = stackView.subviews[index]
-            if !paddingHandler.isPadding(subview) && !(subview is SpacingView) {
+            if !paddingHandler.isPadding(subview) && !(subview is SpacingView) && !(subview is ACRInputLabelTextField) {
                 visibilityManager.addVisibleView(index)
             }
         }
         for subview in invisibleViews {
             if let view = subview as? NSView {
-                visibilityManager.changeVisiblityOfSeparator(view, visibilityHidden: true, contentStackView: self)
+                self.hideView(view)
             }
         }
     }
@@ -389,17 +389,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
     }
     
-    private func staticTextField() -> NSTextField {
-        let textField = NSTextField()
-        textField.allowsEditingTextAttributes = true
-        textField.isEditable = false
-        textField.isBordered = false
-        textField.isSelectable = true
-        textField.setAccessibilityRole(.none)
-        textField.backgroundColor = .clear
-        return textField
-    }
-    
     func configureInputElements(element: ACSBaseInputElement, view: NSView) {
         setupLabel(for: element, view: view)
         addArrangedSubview(view)
@@ -409,7 +398,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         setupErrorMessage(element: element, view: view)
     }
     
-    func getErrorTextField(for inputView: InputHandlingViewProtocol) -> NSTextField? {
+    func getErrorTextField(for inputView: InputHandlingViewProtocol) -> ACRInputErrorTextField? {
         guard let errorMessageField = self.errorMessageFieldMap.object(forKey: inputView.key as NSString) else {
             logError("For show error message, field not found in MapTable.")
             return nil
@@ -417,7 +406,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         return errorMessageField
     }
     
-    func getLabelTextField(for inputView: InputHandlingViewProtocol) -> NSTextField? {
+    func getLabelTextField(for inputView: InputHandlingViewProtocol) -> ACRInputLabelTextField? {
         guard let inputLabelField = self.inputLabelFieldMap.object(forKey: inputView.key as NSString) else {
             logError("For input label message, field not found in MapTable.")
             return nil
@@ -428,17 +417,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private func setupLabel(for element: ACSBaseInputElement, view: NSView) {
         guard renderConfig.supportsSchemeV1_3, let label = element.getLabel(), !label.isEmpty, let view = view as? InputHandlingViewProtocol else { return }
         logInfo("setup input label.")
-        let attributedString = NSMutableAttributedString(string: label)
-        let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
-        let isRequiredSuffix = (hostConfig.getInputs()?.label.requiredInputs.suffix ?? "").isEmpty ? "*" : hostConfig.getInputs()?.label.requiredInputs.suffix ?? "*"
-        if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
-            attributedString.addAttributes([.foregroundColor: textColor, .font: NSFont.systemFont(ofSize: 16)], range: NSRange(location: 0, length: attributedString.length))
-        }
-        if element.getIsRequired() {
-            attributedString.append(NSAttributedString(string: " " + isRequiredSuffix, attributes: [.foregroundColor: errorStateConfig.textColor, .font: NSFont.systemFont(ofSize: 16)]))
-        }
-        let labelView = staticTextField()
-        labelView.attributedStringValue = attributedString
+        let labelView = ACRInputLabelTextField(inputElement: element, renderConfig: renderConfig, hostConfig: hostConfig, style: style)
         addArrangedSubview(labelView)
         setCustomSpacing(spacing: 3, after: labelView)
         inputLabelFieldMap.setObject(labelView, forKey: view.key as NSString)
@@ -446,13 +425,8 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     private func setupErrorMessage(element: ACSBaseInputElement, view: NSView) {
         guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol, let errorMessage = element.getErrorMessage(), !errorMessage.isEmpty else { return }
-        let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
-        let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
-        attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
         setCustomSpacing(spacing: 5, after: view)
-        let errorField = staticTextField()
-        errorField.isHidden = true
-        errorField.attributedStringValue = attributedErrorMessageString
+        let errorField = ACRInputErrorTextField(inputElement: element, renderConfig: renderConfig, hostConfig: hostConfig, style: style)
         view.errorDelegate = self
         addArrangedSubview(errorField)
         errorMessageFieldMap.setObject(errorField, forKey: view.key as NSString)

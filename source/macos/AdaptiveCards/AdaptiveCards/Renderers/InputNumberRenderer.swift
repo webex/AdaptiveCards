@@ -23,7 +23,6 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
         }()
         
         inputField.stepperShouldWrapValues(false)
-        inputField.isHidden = !inputElement.getIsVisible()
         inputField.id = inputElement.getId()
         rootView.addInputHandler(inputField)
         

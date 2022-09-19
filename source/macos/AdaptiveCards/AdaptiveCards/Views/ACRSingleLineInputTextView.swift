@@ -39,7 +39,6 @@ class ACRSingleLineInputTextView: NSView {
         textView.idString = element.getId()
         textView.regex = element.getRegex()
         textView.isRequired = element.getIsRequired()
-        textView.isHidden = !element.getIsVisible()
         textView.setAccessibilityRoleDescription(renderConfig.localisedStringConfig.inputTextFieldAccessibilityTitle)
         if let maxLen = element.getMaxLength(), Int(truncating: maxLen) > 0 {
             textView.maxLen = Int(truncating: maxLen)

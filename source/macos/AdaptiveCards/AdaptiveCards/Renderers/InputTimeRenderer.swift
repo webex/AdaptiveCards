@@ -23,7 +23,6 @@ open class InputTimeRenderer: NSObject, BaseCardElementRendererProtocol {
             view.initialDateValue = timeValue
             view.placeholder = timeElement.getPlaceholder() ?? ""
             view.idString = timeElement.getId()
-            view.isHidden = !timeElement.getIsVisible()
             return view
         }()
         

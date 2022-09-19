@@ -116,7 +116,6 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             separator = SpacingView.renderSpacer(elem: column, forSuperView: columnSetView, withHostConfig: hostConfig)
         }
         columnView.identifier = NSUserInterfaceItemIdentifier(column.getId() ?? "")
-        columnView.isHidden = !column.getIsVisible()
         columnSetView.addView(columnView, in: gravityArea)
         columnSetView.updateLayoutAndVisibilityOfRenderedView(columnView, acoElement: column, separator: separator, rootView: rootView)
         
