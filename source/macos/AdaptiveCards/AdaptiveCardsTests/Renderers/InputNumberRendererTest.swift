@@ -60,7 +60,12 @@ class InputNumberRendererTest: XCTestCase {
         inputNumber = .make(visible: false)
         
         let inputNumberField = renderNumberInput()
-        XCTAssertEqual(inputNumberField.isHidden, true)
+        XCTAssertEqual(inputNumberField.isHidden, false)
+        
+        let containerElem = FakeContainer.make(items: [inputNumber])
+        let view = ContainerRenderer().render(element: containerElem, with: hostConfig, style: .none, rootView: FakeRootView(), parentView: FakeRootView(), inputs: [], config: .default)
+        guard let containerView = view as? ACRContainerView else { fatalError() }
+        XCTAssertEqual(containerView.getInvisibleViews.count, 1)
     }
     
     func testRendererForMinValue() {

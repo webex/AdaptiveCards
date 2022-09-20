@@ -35,6 +35,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     // Hold self view dynamic content intrinsicSize
     var combinedContentSize: CGSize = .zero
     
+    // for test
+    var getInvisibleViews: NSMutableSet {
+        return self.invisibleViews
+    }
+    
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
         set {
