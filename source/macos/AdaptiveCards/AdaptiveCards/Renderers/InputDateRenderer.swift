@@ -20,7 +20,6 @@ open class InputDateRenderer: NSObject, BaseCardElementRendererProtocol {
             view.initialDateValue = dateElement.getValue() ?? ""
             view.placeholder = dateElement.getPlaceholder() ?? ""
             view.idString = dateElement.getId()
-            view.isHidden = !dateElement.getIsVisible()
             return view
         }()
         

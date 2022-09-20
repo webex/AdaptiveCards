@@ -36,7 +36,6 @@ class BaseCardElementRenderer {
         }
         
         updatedView.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
-        updatedView.isHidden = !element.getIsVisible()
         
         if let inputElement = element as? ACSBaseInputElement {
             updatedView.configureInputElements(element: inputElement, view: view)
@@ -84,7 +83,6 @@ class BaseCardElementRenderer {
         }
         
         view.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
-        view.isHidden = !element.getIsVisible()
         
         if let inputElement = element as? ACSBaseInputElement {
             parentView.configureInputElements(element: inputElement, view: view)

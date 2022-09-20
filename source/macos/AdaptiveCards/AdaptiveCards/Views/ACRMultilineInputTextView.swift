@@ -12,7 +12,6 @@ class ACRMultilineInputTextView: NSView {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.heightType = element.getHeight()
         textView.setId(element.getId())
-        textView.setVisibilty(to: element.getIsVisible())
         if let placeholderString = element.getPlaceholder() {
             textView.setPlaceholder(placeholderString)
         }

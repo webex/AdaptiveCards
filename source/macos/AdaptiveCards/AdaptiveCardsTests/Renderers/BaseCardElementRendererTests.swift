@@ -8,6 +8,7 @@ class BaseCardElementRendererrTests: XCTestCase {
     private var backgroundImage: FakeBackgroundImage!
     private var baseCardRenderer: BaseCardElementRenderer!
     private var containerRenderer: ContainerRenderer!
+    private var fakeRootView: FakeRootView!
    
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -15,7 +16,7 @@ class BaseCardElementRendererrTests: XCTestCase {
         container = .make()
         baseCardRenderer = BaseCardElementRenderer()
         containerRenderer = ContainerRenderer()
-        
+        fakeRootView = FakeRootView()
     }
     
     func testRendererSetsMinHeight() {
@@ -35,10 +36,12 @@ class BaseCardElementRendererrTests: XCTestCase {
         container = .make(visible: true)
         var viewWithInheritedProperties = renderBaseCardElementView()
         XCTAssertEqual(viewWithInheritedProperties.isHidden, false)
+        XCTAssertEqual(fakeRootView.getInvisibleViews.count, 0)
         
         container = .make(visible: false)
         viewWithInheritedProperties = renderBaseCardElementView()
-        XCTAssertEqual(viewWithInheritedProperties.isHidden, true)
+        XCTAssertEqual(viewWithInheritedProperties.isHidden, false)
+        XCTAssertEqual(fakeRootView.getInvisibleViews.count, 1)
     }
     
     func testRendererSetsBackgroundImage() {
@@ -209,13 +212,10 @@ class BaseCardElementRendererrTests: XCTestCase {
     }
     
     private func renderBaseCardElementView() -> ACRContentStackView {
-        let view = containerRenderer.render(element: container, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
+        let view = containerRenderer.render(element: container, with: hostConfig, style: .default, rootView: fakeRootView, parentView: fakeRootView, inputs: [], config: .default)
         XCTAssertTrue(view is ACRContainerView)
         
-        let viewWithInheritedProperties = baseCardRenderer.updateView(view: view, element: container, rootView: FakeRootView(), style: .default, hostConfig: hostConfig, config: .default, isfirstElement: true)
-        XCTAssertTrue(viewWithInheritedProperties is ACRContentStackView)
-        
-        guard let updatedView = viewWithInheritedProperties as? ACRContentStackView else { fatalError() }
-        return updatedView
+        let viewWithInheritedProperties = baseCardRenderer.updateView(view: view, element: container, rootView: fakeRootView, style: .default, hostConfig: hostConfig, config: .default, isfirstElement: true)
+        return viewWithInheritedProperties
     }
 }
