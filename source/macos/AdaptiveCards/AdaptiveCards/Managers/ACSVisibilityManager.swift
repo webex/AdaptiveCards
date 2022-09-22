@@ -91,7 +91,7 @@ class ACSVisibilityManager {
     /// `isHidden` `YES` indicates that the padding will be hidden
     func changeVisibilityOfPadding(_ hostView: NSView, visibilityHidden isHidden: Bool) {
         guard let spacerViews = fillerSpaceManager.getFillerSpaceView(hostView) else {
-            logInfo("couldn't found separator in filler manager..")
+            logInfo("couldn't found padding in filler manager..")
             return
         }
         for value in spacerViews {
