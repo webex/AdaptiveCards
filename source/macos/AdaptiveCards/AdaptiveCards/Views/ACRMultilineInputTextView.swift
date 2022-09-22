@@ -5,7 +5,7 @@ class ACRMultilineInputTextView: NSView {
     private let renderConfig: RenderConfig
     private let element: ACSTextInput
     private let hostConfig: ACSHostConfig
-    private let rootview: ACRView
+    private weak var rootview: ACRView?
     
     private (set) lazy var multiLineTextView: ACRMultilineTextView = {
         let textView = ACRMultilineTextView(config: renderConfig, inputElement: element)
@@ -43,12 +43,12 @@ class ACRMultilineInputTextView: NSView {
         }
     }
     
-    init(renderConfig: RenderConfig, element: ACSTextInput, with hostConfig: ACSHostConfig, rootview: ACRView) {
+    init(renderConfig: RenderConfig, element: ACSTextInput, with hostConfig: ACSHostConfig, rootview: ACRView?) {
         self.renderConfig = renderConfig
         self.element = element
         self.hostConfig = hostConfig
-        self.rootview = rootview
         super.init(frame: .zero)
+        self.rootview = rootview
         self.setupView()
         self.setupContraints()
     }
@@ -59,7 +59,7 @@ class ACRMultilineInputTextView: NSView {
     
     private func setupView() {
         self.addSubview(multiLineTextView)
-        self.rootview.addInputHandler(multiLineTextView)
+        self.rootview?.addInputHandler(multiLineTextView)
         if element.getInlineAction() != nil {
             self.addSubview(inlineButton)
             self.setupInlineButton()
@@ -88,6 +88,9 @@ class ACRMultilineInputTextView: NSView {
     private func setupInlineButton() {
         guard let action = element.getInlineAction() else {
             return logError("InlineAction is nil")
+        }
+        guard let rootview = self.rootview else {
+            return logError("MultiLine TextView InlineAction needs rootview")
         }
         if let iconUrl = action.getIconUrl(), !iconUrl.isEmpty {
             rootview.registerImageHandlingView(inlineButton, for: iconUrl)

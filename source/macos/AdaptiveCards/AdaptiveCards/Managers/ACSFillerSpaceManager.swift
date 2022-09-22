@@ -53,6 +53,11 @@ class ACSFillerSpaceManager {
         stretchableViews = [NSValue]()
         paddingSet = NSHashTable<NSView>(options: .weakMemory, capacity: 5)
         paddingConstraints = [NSLayoutConstraint]()
+        logInfo("init...")
+    }
+    
+    deinit {
+        logInfo("deinit...")
     }
     
     class func configureHugging(view: NSView) {

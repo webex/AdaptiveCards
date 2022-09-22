@@ -13,7 +13,7 @@ class ACRCompactChoiceSetView: NSView {
     private let element: ACSChoiceSetInput
     private let style: ACSContainerStyle
     private let hostConfig: ACSHostConfig
-    private let rootview: ACRView
+    private weak var rootview: ACRView?
     
     private lazy var contentStackView: NSStackView = {
         let view = NSStackView()
@@ -40,16 +40,16 @@ class ACRCompactChoiceSetView: NSView {
         return contentStackView.arrangedSubviews
     }
     
-    init(renderConfig: RenderConfig, element: ACSChoiceSetInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig, rootview: ACRView) {
+    init(renderConfig: RenderConfig, element: ACSChoiceSetInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig, rootview: ACRView?) {
         self.renderConfig = renderConfig
         self.element = element
         self.style = style
         self.hostConfig = hostConfig
-        self.rootview = rootview
         super.init(frame: .zero)
+        self.rootview = rootview
         self.setupView()
         self.setupContraints()
-        self.rootview.addInputHandler(choiceSetPopup)
+        self.rootview?.addInputHandler(choiceSetPopup)
     }
     
     required init?(coder: NSCoder) {

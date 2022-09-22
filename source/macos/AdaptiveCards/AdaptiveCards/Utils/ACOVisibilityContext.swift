@@ -18,6 +18,11 @@ class ACOVisibilityContext: NSObject {
     override init() {
         visibilityMap = NSMapTable<NSString, ACSVisibilityManagerFacade>(keyOptions: .strongMemory, valueOptions: .weakMemory)
         super.init()
+        logInfo("init...")
+    }
+    
+    deinit {
+        logInfo("deinit...")
     }
     
     /// register visibility protocol with targeted view's ID

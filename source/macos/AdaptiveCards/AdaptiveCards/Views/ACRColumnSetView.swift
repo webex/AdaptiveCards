@@ -61,7 +61,7 @@ class ACRColumnSetView: ACRContentStackView {
     override func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
         guard let renderedView = renderedView, let acoElem = acoElem else { return }
         self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
-        rootView?.visibilityContext.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
+        rootView?.visibilityContext?.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
         if !acoElem.getIsVisible() {
             self.register(invisibleView: renderedView)
         }

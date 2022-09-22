@@ -15,16 +15,24 @@ class ACRView: ACRColumnView {
     private var isLayoutDoneOnShowCard = false
     private var focusedElementOnHideError: NSView?
     private var firstFieldWithError: InputHandlingViewProtocol?
-    var visibilityContext: ACOVisibilityContext
+    var visibilityContext: ACOVisibilityContext?
     
     override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
-        visibilityContext = ACOVisibilityContext()
         super.init(style: style, parentStyle: nil, hostConfig: hostConfig, renderConfig: renderConfig, superview: nil, needsPadding: true)
+        logInfo("init...")
+    }
+    
+    convenience init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig, visibilityContext: ACOVisibilityContext?) {
+        self.init(style: style, hostConfig: hostConfig, renderConfig: renderConfig)
+        self.visibilityContext = visibilityContext
     }
     
     required init?(coder: NSCoder) {
-        visibilityContext = ACOVisibilityContext()
         super.init(coder: coder)
+    }
+    
+    deinit {
+        logInfo("deinit...")
     }
     
     private var previousBounds: NSRect?
@@ -142,14 +150,12 @@ class ACRView: ACRColumnView {
     }
     
     private func toggleVisibity(of targets: [ACSToggleVisibilityTarget]) {
-        let facades = NSMutableSet()
         for target in targets {
             guard let id = target.getElementId(), let toggleView = self.findView(withIdentifier: id) else {
                 logError("Target with ID '\(target.getElementId() ?? "nil")' not found for toggleVisibility.")
                 continue
             }
-            let facade = visibilityContext.retrieveVisiblityManager(withIdentifier: toggleView.identifier)
-            facades.add(facade as Any)
+            let facade = visibilityContext?.retrieveVisiblityManager(withIdentifier: toggleView.identifier)
             var isHide = false
             switch target.getIsVisible() {
             case .isVisibleToggle:

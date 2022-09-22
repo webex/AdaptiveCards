@@ -17,15 +17,22 @@ import AppKit
 
 class ACSVisibilityManager {
     /// tracks objects that are used in filling the space
-    private var fillerSpaceManager: ACSFillerSpaceManager
+    private (set) lazy var fillerSpaceManager: ACSFillerSpaceManager = {
+        let filler = ACSFillerSpaceManager()
+        return filler
+    }()
     
     /// tracks visible views
     private let visibleViews = NSMutableOrderedSet()
     
     var hasVisibleViews: Bool { return !visibleViews.set.isEmpty }
     
-    init(_ fillerSpaceManager: ACSFillerSpaceManager) {
-        self.fillerSpaceManager = fillerSpaceManager
+    init() {
+        logInfo("init...")
+    }
+    
+    deinit {
+        logInfo("deinit...")
     }
     
     /// adds index of a visible view to a visible views collection, and the index is maintained in sorted order
