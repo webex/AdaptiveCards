@@ -15,11 +15,10 @@ class ACRView: ACRColumnView {
     private var isLayoutDoneOnShowCard = false
     private var focusedElementOnHideError: NSView?
     private var firstFieldWithError: InputHandlingViewProtocol?
-    var visibilityContext: ACOVisibilityContext?
+    private (set) var visibilityContext: ACOVisibilityContext?
     
     override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         super.init(style: style, parentStyle: nil, hostConfig: hostConfig, renderConfig: renderConfig, superview: nil, needsPadding: true)
-        logInfo("init...")
     }
     
     convenience init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig, visibilityContext: ACOVisibilityContext?) {
@@ -29,10 +28,6 @@ class ACRView: ACRColumnView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-    }
-    
-    deinit {
-        logInfo("deinit...")
     }
     
     private var previousBounds: NSRect?

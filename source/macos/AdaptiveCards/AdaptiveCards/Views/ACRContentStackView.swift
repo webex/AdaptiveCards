@@ -25,7 +25,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     let renderConfig: RenderConfig
     var target: TargetHandler?
     public var bleed = false
-    private let visibilityManager: ACSVisibilityManager
+    private let visibilityManager = ACSVisibilityManager()
     private var verticalContentAlignment: ACSVerticalContentAlignment = .top
     private var paddings = [NSView]()
     private let invisibleViews = NSMutableSet()
@@ -84,7 +84,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = hostConfig
         self.style = style
         self.renderConfig = renderConfig
-        self.visibilityManager = ACSVisibilityManager()
         super.init(frame: .zero)
         initialize()
     }
@@ -93,7 +92,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = hostConfig
         self.style = style
         self.renderConfig = renderConfig
-        self.visibilityManager = ACSVisibilityManager()
         super.init(frame: .zero)
         initialize()
         if needsPadding {
@@ -121,7 +119,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = ACSHostConfig() // TODO: This won't work
         self.style = .none
         self.renderConfig = .default
-        self.visibilityManager = ACSVisibilityManager()
         super.init(coder: coder)
         initialize()
     }
