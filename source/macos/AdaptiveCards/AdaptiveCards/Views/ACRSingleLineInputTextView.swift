@@ -13,7 +13,7 @@ class ACRSingleLineInputTextView: NSView {
     private let element: ACSTextInput
     private let style: ACSContainerStyle
     private let hostConfig: ACSHostConfig
-    private let rootview: ACRView
+    private weak var rootview: ACRView?
     
     private var contentView = NSView()
     private (set) lazy var contentStackView: NSStackView = {
@@ -70,13 +70,13 @@ class ACRSingleLineInputTextView: NSView {
         return button
     }()
     
-    init(renderConfig: RenderConfig, element: ACSTextInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig, rootview: ACRView) {
+    init(renderConfig: RenderConfig, element: ACSTextInput, style: ACSContainerStyle, with hostConfig: ACSHostConfig, rootview: ACRView?) {
         self.renderConfig = renderConfig
         self.element = element
         self.style = style
         self.hostConfig = hostConfig
-        self.rootview = rootview
         super.init(frame: .zero)
+        self.rootview = rootview
         self.setupView()
         self.setupContraints()
     }
@@ -89,7 +89,7 @@ class ACRSingleLineInputTextView: NSView {
         self.addSubview(contentStackView)
         self.contentStackView.addArrangedSubview(contentView)
         self.contentView.addSubview(textView)
-        self.rootview.addInputHandler(textView)
+        self.rootview?.addInputHandler(textView)
         if element.getInlineAction() != nil {
             self.contentView.addSubview(inlineButton)
             self.setupInlineButton()
@@ -119,6 +119,9 @@ class ACRSingleLineInputTextView: NSView {
     private func setupInlineButton() {
         guard let action = element.getInlineAction() else {
             return logError("InlineAction is nil")
+        }
+        guard let rootview = self.rootview else {
+            return logError("SingleLine TextView InlineAction needs rootview")
         }
         if let iconUrl = action.getIconUrl(), !iconUrl.isEmpty {
             rootview.registerImageHandlingView(inlineButton, for: iconUrl)

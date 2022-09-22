@@ -49,7 +49,7 @@ class BaseCardElementRenderer {
         // visibility changes add on height support element, so need to manually register with visibility manager for other elements. this will remove after once elements are support by height changs.
         rootView.associateSeparator(withOwnerView: separator, ownerView: updatedView)
         // Through the root view visibility context, register renderview with self manager.
-        rootView.visibilityContext.registerVisibilityManager(rootView, targetViewIdentifier: updatedView.identifier)
+        rootView.visibilityContext?.registerVisibilityManager(rootView, targetViewIdentifier: updatedView.identifier)
         if !element.getIsVisible() {
             rootView.register(invisibleView: updatedView)
         }

@@ -25,8 +25,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     let renderConfig: RenderConfig
     var target: TargetHandler?
     public var bleed = false
-    private let paddingHandler = ACSFillerSpaceManager()
-    private let visibilityManager: ACSVisibilityManager
+    private let visibilityManager = ACSVisibilityManager()
     private var verticalContentAlignment: ACSVerticalContentAlignment = .top
     private var paddings = [NSView]()
     private let invisibleViews = NSMutableSet()
@@ -73,7 +72,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }()
     
     var hasStretchableView: Bool {
-        return paddingHandler.hasPadding()
+        return visibilityManager.fillerSpaceManager.hasPadding()
     }
     
     // Use intrinsicContentSize, work with hugging priority and autolayout. won't work as expected resluts without it.
@@ -85,7 +84,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = hostConfig
         self.style = style
         self.renderConfig = renderConfig
-        self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
         super.init(frame: .zero)
         initialize()
     }
@@ -94,7 +92,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = hostConfig
         self.style = style
         self.renderConfig = renderConfig
-        self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
         super.init(frame: .zero)
         initialize()
         if needsPadding {
@@ -122,7 +119,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.hostConfig = ACSHostConfig() // TODO: This won't work
         self.style = .none
         self.renderConfig = .default
-        self.visibilityManager = ACSVisibilityManager(self.paddingHandler)
         super.init(coder: coder)
         initialize()
     }
@@ -180,7 +176,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     // is not desirable.
     
     func addPadding(for view: NSView) -> NSView {
-        return paddingHandler.addPadding(forView: view)
+        return visibilityManager.fillerSpaceManager.addPadding(forView: view)
     }
     
     // it simply adds padding to the top and bottom of contents of the content stack view
@@ -264,7 +260,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     func applyVisibilityToSubviews() {
         for index in 0..<stackView.subviews.count {
             let subview = stackView.subviews[index]
-            if !paddingHandler.isPadding(subview) && !(subview is SpacingView) && !(subview is ACRInputLabelTextField) {
+            if !(visibilityManager.fillerSpaceManager.isPadding(subview)) && !(subview is SpacingView) && !(subview is ACRInputLabelTextField) {
                 visibilityManager.addVisibleView(index)
             }
         }
@@ -289,7 +285,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     func associateSeparator(withOwnerView separator: SpacingView?, ownerView: NSView) {
-        paddingHandler.associateSeparator(withOwnerView: separator, ownerView: ownerView)
+        visibilityManager.fillerSpaceManager.associateSeparator(withOwnerView: separator, ownerView: ownerView)
     }
     
     /// call this method after subview is rendered
@@ -300,7 +296,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.configureHeight(for: renderedView, acoElement: acoElem)
         self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
         // Through the root view visibility context, register renderview with self manager.
-        rootView?.visibilityContext.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
+        rootView?.visibilityContext?.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
         if !acoElem.getIsVisible() {
             self.register(invisibleView: renderedView)
         }
@@ -308,7 +304,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func configureHeight(for view: NSView?, acoElement element: ACSBaseCardElement?) {
         guard let view = view, let element = element else { return }
-        self.paddingHandler.configureHeight(view: view, correspondingElement: element)
+        self.visibilityManager.fillerSpaceManager.configureHeight(view: view, correspondingElement: element)
     }
     
     /// call this method once all subviews are rendered
@@ -333,7 +329,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
             }
         }
         self.setMinimumHeight(minHeight)
-        paddingHandler.activateConstraintsForPadding()
+        visibilityManager.fillerSpaceManager.activateConstraintsForPadding()
     }
     
     private func setupTrackingArea() {

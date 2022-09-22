@@ -17,16 +17,14 @@ import AppKit
 
 class ACSVisibilityManager {
     /// tracks objects that are used in filling the space
-    private var fillerSpaceManager: ACSFillerSpaceManager
+    let fillerSpaceManager = ACSFillerSpaceManager()
     
     /// tracks visible views
     private let visibleViews = NSMutableOrderedSet()
     
     var hasVisibleViews: Bool { return !visibleViews.set.isEmpty }
     
-    init(_ fillerSpaceManager: ACSFillerSpaceManager) {
-        self.fillerSpaceManager = fillerSpaceManager
-    }
+    init() { }
     
     /// adds index of a visible view to a visible views collection, and the index is maintained in sorted order
     /// in increasing order.
@@ -76,7 +74,10 @@ class ACSVisibilityManager {
     /// change the visibility of the separator of a host view to `visibility`
     /// `isHidden` `YES` indicates that the separator will be hidden
     func changeVisiblityOfSeparator(_ hostView: NSView, visibilityHidden isHidden: Bool, contentStackView: ACRContentStackView) {
-        guard let separtor = fillerSpaceManager.getSeparatorFor(OwnerView: hostView) else { return }
+        guard let separtor = fillerSpaceManager.getSeparatorFor(ownerView: hostView) else {
+            logInfo("couldn't found separator in filler manager..")
+            return
+        }
         guard separtor.isHidden != isHidden else { return }
         separtor.isHidden = isHidden
         if isHidden {
@@ -89,7 +90,10 @@ class ACSVisibilityManager {
     /// change the visibility of the padding of a host view to `visibility`
     /// `isHidden` `YES` indicates that the padding will be hidden
     func changeVisibilityOfPadding(_ hostView: NSView, visibilityHidden isHidden: Bool) {
-        guard let spacerViews = fillerSpaceManager.getFillerSpaceView(hostView) else { return }
+        guard let spacerViews = fillerSpaceManager.getFillerSpaceView(hostView) else {
+            logInfo("couldn't found padding in filler manager..")
+            return
+        }
         for value in spacerViews {
             let padding = value.nonretainedObjectValue as? NSView
             if padding?.isHidden != isHidden {

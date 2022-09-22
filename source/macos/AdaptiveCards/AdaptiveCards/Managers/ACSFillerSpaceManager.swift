@@ -151,7 +151,7 @@ class ACSFillerSpaceManager {
         separatorMap.setObject(NSValue(nonretainedObject: separator), forKey: ownerView)
     }
     
-    func getSeparatorFor(OwnerView ownerView: NSView) -> SpacingView? {
+    func getSeparatorFor(ownerView: NSView) -> SpacingView? {
         if let value = separatorMap.object(forKey: ownerView) {
             return value.nonretainedObjectValue as? SpacingView
         }
