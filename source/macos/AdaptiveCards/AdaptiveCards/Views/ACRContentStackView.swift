@@ -175,7 +175,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     // use configureHeightFor for all cases except when stretching the subview
     // is not desirable.
     
-    func addPadding(for view: NSView) -> NSView? {
+    func addPadding(for view: NSView) -> NSView {
         return visibilityManager.fillerSpaceManager.addPadding(forView: view)
     }
     
@@ -184,12 +184,12 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func addPadding() {
         if self.verticalContentAlignment == .center || self.verticalContentAlignment == .bottom {
-            guard let padding = self.addPadding(for: self) else { return }
+            let padding = self.addPadding(for: self)
             self.paddings.append(padding)
             self.insertArrangedSubview(padding, at: 0)
         }
         if self.verticalContentAlignment == .center || self.verticalContentAlignment == .top {
-            guard let padding = self.addPadding(for: self) else { return }
+            let padding = self.addPadding(for: self)
             self.paddings.append(padding)
             self.addArrangedSubview(padding)
         }
@@ -323,7 +323,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         } else {
             if !self.hasStretchableView {
                 // add stretchable view for stretch the content when stackview has no visibile view
-                guard let padding = self.addPadding(for: self) else { return }
+                let padding = self.addPadding(for: self)
                 self.paddings.append(padding)
                 self.addArrangedSubview(padding)
             }
