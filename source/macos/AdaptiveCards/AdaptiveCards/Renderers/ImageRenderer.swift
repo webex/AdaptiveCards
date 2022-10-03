@@ -101,30 +101,43 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("imageProperties is null")
             return
         }
-        
+        let constraintIds = ["imageHeight", "imageWidth", "imageAspect", "imageAuto"]
         imageProperties.updateContentSize(size: imageSize)
         
         let cgSize = imageProperties.contentSize
         let priority = self.getImageUILayoutPriority(imageView.superview)
         var constraints: [NSLayoutConstraint] = []
         
+        // This constraint need for image size [small, medium, large]
         constraints.append(NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: cgSize.width))
         constraints.append(NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: cgSize.height))
         constraints[0].priority = priority
+        constraints[0].identifier = "imageWidth"
         constraints[1].priority = priority
+        constraints[1].identifier = "imageHeight"
         
+        // This constraint fit image in container with a aspect ratio
         let aspectRatio = ACRImageProperties.convertToAspectRatio(cgSize)
-        
-        constraints.append(NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .width, multiplier: aspectRatio.heightToWidth, constant: 0))
-        constraints.append(NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: aspectRatio.widthToHeight, constant: 0))
+        if aspectRatio.heightToWidth != 0 {
+            constraints.append(NSLayoutConstraint(item: imageView, attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .width, multiplier: aspectRatio.heightToWidth, constant: 0))
+        } else if aspectRatio.widthToHeight != 0 {
+            constraints.append(NSLayoutConstraint(item: imageView, attribute: .width, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: aspectRatio.widthToHeight, constant: 0))
+        }
         // Give the aspect ratio constraint a two-digit priority boost for first fulfilment. Priorities are calculated when the window loads the view. Otherwise, a constraint conflict will occur.
         constraints[2].priority = priority + 2
-        constraints[3].priority = priority + 2
+        constraints[2].identifier = "imageAspect"
         
         if imageProperties.acsImageSize == .auto {
             constraints.append(imageView.widthAnchor.constraint(lessThanOrEqualToConstant: imageProperties.contentSize.width))
+            constraints[3].identifier = "imageAuto"
         }
         
+        // remove old constraint to avoid dublicates
+        for constraint in imageView.constraints {
+            if constraintIds.contains(constraint.identifier ?? "") {
+                NSLayoutConstraint.deactivate([constraint])
+            }
+        }
         NSLayoutConstraint.activate(constraints)
         superView.update(imageProperties: imageProperties)
     }
