@@ -10,7 +10,7 @@ class ACRViewTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default)
+        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default, visibilityContext: ACOVisibilityContext())
         fakeResourceResolver = FakeResourceResolver()
         actionDelegate = FakeAdaptiveCardActionDelegate()
         
@@ -357,8 +357,8 @@ class ACRViewTests: XCTestCase {
         view.addArrangedSubview(tView2)
         
         // views need to register with visibility manager
-        view.visibilityContext.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
-        view.visibilityContext.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
         
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target1, target2])
         
@@ -378,8 +378,8 @@ class ACRViewTests: XCTestCase {
         view.addArrangedSubview(tView2)
         
         // views need to register with visibility manager
-        view.visibilityContext.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
-        view.visibilityContext.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
         
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target1, target2])
         
@@ -400,8 +400,8 @@ class ACRViewTests: XCTestCase {
         
         
         // views need to register with visibility manager
-        view.visibilityContext.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
-        view.visibilityContext.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
         
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target1, target2])
         
@@ -426,9 +426,9 @@ class ACRViewTests: XCTestCase {
         
         
         // views need to register with visibility manager
-        view.visibilityContext.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
-        view.visibilityContext.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
-        view.visibilityContext.registerVisibilityManager(view, targetViewIdentifier: tView3.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView3.identifier)
         
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target1, target2, target3])
         
