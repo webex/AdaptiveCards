@@ -15,6 +15,22 @@ class InputNumberRendererTest: XCTestCase {
         inputNumberRenderer = InputNumberRenderer()
     }
     
+    func testHeightProperty() {
+        let placeholderString: String = "Sample Placeholder"
+        let val: NSNumber = 23.4
+        inputNumber = .make(value: val, placeholder: placeholderString, heightType: .auto)
+        var inputNumberField = renderNumberInput()
+        XCTAssertEqual(inputNumberField.contentStackView.arrangedSubviews.count, 1)
+        XCTAssertNil(inputNumberField.contentStackView.arrangedSubviews.last as? StretchableView)
+        
+        inputNumber = .make(value: val, placeholder: placeholderString, heightType: .stretch)
+        inputNumberField = renderNumberInput()
+        XCTAssertEqual(inputNumberField.contentStackView.arrangedSubviews.count, 2)
+        XCTAssertNotNil(inputNumberField.contentStackView.arrangedSubviews.last as? StretchableView)
+        guard let stretchView = inputNumberField.contentStackView.arrangedSubviews.last as? StretchableView else { return XCTFail() }
+        XCTAssertEqual(stretchView.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
+    }
+    
     func testRendererSetsValue() {
         let val: NSNumber = 25
         inputNumber = .make(value: val)
@@ -44,7 +60,12 @@ class InputNumberRendererTest: XCTestCase {
         inputNumber = .make(visible: false)
         
         let inputNumberField = renderNumberInput()
-        XCTAssertEqual(inputNumberField.isHidden, true)
+        XCTAssertEqual(inputNumberField.isHidden, false)
+        
+        let containerElem = FakeContainer.make(items: [inputNumber])
+        let view = ContainerRenderer().render(element: containerElem, with: hostConfig, style: .none, rootView: FakeRootView(), parentView: FakeRootView(), inputs: [], config: .default)
+        guard let containerView = view as? ACRContainerView else { fatalError() }
+        XCTAssertEqual(containerView.getInvisibleViews.count, 1)
     }
     
     func testRendererForMinValue() {
@@ -171,7 +192,7 @@ class InputNumberRendererTest: XCTestCase {
     }
     
     private func getAssociatedStepper(of numericField: ACRNumericTextField) -> NSStepper? {
-        guard let stepper = numericField.subviews.last as? NSStepper else { return nil }
+        guard let stepper = numericField.contentStackView.arrangedSubviews.first?.subviews.last as? NSStepper else { return nil }
         return stepper
     }
     

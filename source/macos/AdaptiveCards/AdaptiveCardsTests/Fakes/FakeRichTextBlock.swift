@@ -3,7 +3,7 @@ import AdaptiveCards_bridge
 class FakeRichTextBlock: ACSRichTextBlock {
     public var horizontalAlignment: ACSHorizontalAlignment?
     public var inlines: [ACSInline]?
-
+    public var height: ACSHeightType = .auto
     
     open override func getHorizontalAlignment() -> ACSHorizontalAlignment {
         return horizontalAlignment ?? ACSHorizontalAlignment.left
@@ -16,13 +16,22 @@ class FakeRichTextBlock: ACSRichTextBlock {
     open override func getInlines() -> [ACSInline] {
         return inlines ?? []
     }
+    
+    override func getHeight() -> ACSHeightType {
+        return height
+    }
+    
+    override func setHeight(_ value: ACSHeightType) {
+        height = value
+    }
 }
 
 extension FakeRichTextBlock {
-    static func make(textRun: FakeTextRun = FakeTextRun.make(), horizontalAlignment: ACSHorizontalAlignment = ACSHorizontalAlignment.left) -> FakeRichTextBlock {
+    static func make(textRun: FakeTextRun = FakeTextRun.make(), horizontalAlignment: ACSHorizontalAlignment = ACSHorizontalAlignment.left, heightType: ACSHeightType = .auto) -> FakeRichTextBlock {
         let fakeRichTextBlock = FakeRichTextBlock()
         fakeRichTextBlock.inlines = [textRun as ACSInline]
         fakeRichTextBlock.horizontalAlignment = horizontalAlignment
+        fakeRichTextBlock.height = heightType
         return fakeRichTextBlock
     }
 }

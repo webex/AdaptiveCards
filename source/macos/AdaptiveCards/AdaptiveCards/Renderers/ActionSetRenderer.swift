@@ -9,7 +9,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSActionSet")
             return NSView()
         }
-        return renderView(actions: actionSet.getActions(), aligned: actionSet.getHorizontalAlignment(), with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
+        return renderView(actions: actionSet.getActions(), aligned: actionSet.getHorizontalAlignment(), with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config, actionElement: element)
     }
     
     func renderActionButtons(actions: [ACSBaseActionElement], with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
@@ -25,7 +25,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         return renderView(actions: actions, aligned: actionAlignment, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
     }
     
-    private func renderView(actions: [ACSBaseActionElement], aligned alignment: ACSHorizontalAlignment, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
+    private func renderView(actions: [ACSBaseActionElement], aligned alignment: ACSHorizontalAlignment, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig, actionElement: ACSBaseCardElement? = nil) -> NSView {
         let actionsConfig = hostConfig.getActions()
         let actionsOrientation = actionsConfig?.actionsOrientation ?? .vertical
         let actionsButtonSpacing = actionsConfig?.buttonSpacing ?? 8
@@ -71,6 +71,13 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         
         actionSetView.setActions(actionViews)
         actionSetView.delegate = rootView
+        
+        if let actionElement = actionElement {
+            if actionElement.getHeight() == .stretch {
+                actionSetView.setStretchableHeight()
+            }
+        }
+        
         return actionSetView
     }
 }

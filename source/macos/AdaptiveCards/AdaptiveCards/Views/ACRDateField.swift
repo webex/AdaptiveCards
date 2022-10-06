@@ -26,6 +26,8 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         view.cell?.lineBreakMode = .byTruncatingTail
         view.stringValue = ""
         view.textFieldDelegate = self
+        view.cell?.usesSingleLineMode = true
+        view.maximumNumberOfLines = 1
        return view
     }()
 
@@ -44,6 +46,15 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         return view
     }()
     
+    private (set) lazy var contentStackView: NSStackView = {
+        let view = NSStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.orientation = .vertical
+        view.spacing = 0
+        view.alignment = .leading
+        return view
+    }()
+    
     private lazy var stackview: NSStackView = {
        let view = NSStackView()
        view.orientation = .vertical
@@ -51,6 +62,8 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
        view.translatesAutoresizingMaskIntoConstraints = false
        return view
     }()
+    
+    private var contentView = NSView()
     
     private var popover: NSPopover?
     private let inputElement: ACSBaseInputElement
@@ -121,6 +134,10 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         return isBasicValidationsSatisfied
     }
     
+    var isErrorShown: Bool {
+        return textField.isErrorShown()
+    }
+    
     func showError() {
         textField.showError()
         errorDelegate?.inputHandlingViewShouldShowError(self)
@@ -151,17 +168,25 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     }
     
     private func setupViews() {
-        addSubview(textField)
-        addSubview(iconButton)
+        addSubview(contentStackView)
+        contentStackView.addArrangedSubview(contentView)
+        contentView.addSubview(textField)
+        contentView.addSubview(iconButton)
     }
     
     private func setupConstraints() {
-        textField.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        textField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        textField.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        contentStackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        contentStackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        contentStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        contentStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        
+        textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        textField.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        
         iconButton.leadingAnchor.constraint(equalTo: textField.leadingAnchor, constant: config.inputFieldConfig.leftPadding).isActive = true
-        iconButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        iconButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
     }
     
     private func setupPopover() {
@@ -232,7 +257,13 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         super.viewDidMoveToSuperview()
         // Should look for better solution
         guard let superview = superview else { return }
-        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
+        self.contentView.widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
+    }
+    
+    func setStretchableHeight() {
+        let padding = StretchableView()
+        ACSFillerSpaceManager.configureHugging(view: padding)
+        self.contentStackView.addArrangedSubview(padding)
     }
     
     @objc private func handleDateAction(_ datePicker: NSDatePicker) {

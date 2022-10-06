@@ -1,0 +1,26 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "minHeight": "350px",
+    "body": [
+        {
+            "type": "Input.Toggle",
+            "height": "stretch",
+            "title": "New Input.Toggle",
+            "id": "inputtoggle"
+        },
+        {
+            "type": "Input.Toggle",
+            "height": "auto",
+            "title": "New Input.Toggle",
+            "id": "inputtoggle1"
+        },
+        {
+            "type": "Input.Toggle",
+            "height": "stretch",
+            "title": "New Input.Toggle",
+            "id": "inputtoggle2"
+        }
+    ]
+}

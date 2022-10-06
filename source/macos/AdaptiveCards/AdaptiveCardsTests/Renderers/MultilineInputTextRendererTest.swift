@@ -19,7 +19,7 @@ class MultilineInputTextRendererTest: XCTestCase {
         inputText = .make(placeholderString: placeholderString, isMultiline: true)
         
         let inputTextField = renderTextInput()
-        XCTAssertEqual(inputTextField.textView.placeholderAttrString , NSMutableAttributedString(string: placeholderString, attributes: [.foregroundColor: NSColor.placeholderTextColor, .font: RenderConfig.default.inputFieldConfig.font]))
+        XCTAssertEqual(inputTextField.multiLineTextView.textView.placeholderAttrString , NSMutableAttributedString(string: placeholderString, attributes: [.foregroundColor: NSColor.placeholderTextColor, .font: RenderConfig.default.inputFieldConfig.font]))
     }
     
     func testRendersValue() throws {
@@ -27,7 +27,7 @@ class MultilineInputTextRendererTest: XCTestCase {
         inputText = .make(value: valueString, isMultiline: true)
         
         let inputTextField = renderTextInput()
-        XCTAssertEqual(inputTextField.textView.string, valueString)
+        XCTAssertEqual(inputTextField.multiLineTextView.textView.string, valueString)
     }
     
     func testMaxLengthinInitialValue() throws {
@@ -35,7 +35,7 @@ class MultilineInputTextRendererTest: XCTestCase {
         inputText = .make(value: valueString, isMultiline: true, maxLength: NSNumber(10))
         
         let inputTextField = renderTextInput()
-        XCTAssertEqual(inputTextField.textView.string, "a long str")
+        XCTAssertEqual(inputTextField.multiLineTextView.textView.string, "a long str")
     }
     
     func testAccessibilityValueSet() {
@@ -45,8 +45,8 @@ class MultilineInputTextRendererTest: XCTestCase {
         
         let inputTextField = renderTextInput()
         // Placeholder is added as part of title as it is drawn in Multiline View
-        XCTAssertEqual(inputTextField.textView.accessibilityPlaceholderValue(), "Sample Placeholder")
-        XCTAssertEqual(inputTextField.textView.accessibilityValue(), "somevalue")
+        XCTAssertEqual(inputTextField.multiLineTextView.textView.accessibilityPlaceholderValue(), "Sample Placeholder")
+        XCTAssertEqual(inputTextField.multiLineTextView.textView.accessibilityValue(), "somevalue")
         
     }
     

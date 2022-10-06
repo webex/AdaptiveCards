@@ -19,7 +19,7 @@ class TextInputRendererTest: XCTestCase {
         inputText = .make(placeholderString: placeholderString)
         
         let inputTextField = renderTextInput()
-        XCTAssertEqual(inputTextField.placeholderString , placeholderString)
+        XCTAssertEqual(inputTextField.textView.placeholderString , placeholderString)
     }
     
     func testRendersValue() throws {
@@ -27,7 +27,23 @@ class TextInputRendererTest: XCTestCase {
         inputText = .make(value: valueString)
         
         let inputTextField = renderTextInput()
-        XCTAssertEqual(inputTextField.stringValue, valueString)
+        XCTAssertEqual(inputTextField.value, valueString)
+    }
+    
+    func testRendersHeight() throws {
+        let valueString: String = "somevalue"
+        inputText = .make(value: valueString, heightType: .auto)
+        
+        var inputTextField = renderTextInput()
+        XCTAssertEqual(inputTextField.contentStackView.arrangedSubviews.count, 1)
+        XCTAssertNil(inputTextField.contentStackView.arrangedSubviews.last as? StretchableView)
+        
+        inputText = .make(value: valueString, heightType: .stretch)
+        inputTextField = renderTextInput()
+        XCTAssertEqual(inputTextField.contentStackView.arrangedSubviews.count, 2)
+        XCTAssertNotNil(inputTextField.contentStackView.arrangedSubviews.last as? StretchableView)
+        guard let stretchView = inputTextField.contentStackView.arrangedSubviews.last as? StretchableView else { return XCTFail() }
+        XCTAssertEqual(stretchView.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
     }
     
     func testMaxLengthinInitialValue() throws {
@@ -35,7 +51,7 @@ class TextInputRendererTest: XCTestCase {
         inputText = .make(value: valueString, maxLength: NSNumber(10))
         
         let inputTextField = renderTextInput()
-        XCTAssertEqual(inputTextField.stringValue, "a long str")
+        XCTAssertEqual(inputTextField.value, "a long str")
     }
     
     func testSetAccessibilityValue() {
@@ -43,16 +59,16 @@ class TextInputRendererTest: XCTestCase {
         inputText = .make(value: valueString)
         
         let inputTextField = renderTextInput()
-        XCTAssertEqual(inputTextField.accessibilityChildren()?.count, 1)
+        XCTAssertEqual(inputTextField.textView.accessibilityChildren()?.count, 1)
         // Check for accessibility title removed since function has been overridden and returns nil for this case
-        XCTAssertEqual(inputTextField.accessibilityValue(), "somevalue")
+        XCTAssertEqual(inputTextField.textView.accessibilityValue(), "somevalue")
     }
     
-    private func renderTextInput() -> ACRTextInputView {
+    private func renderTextInput() -> ACRSingleLineInputTextView {
         let view = textInputRenderer.render(element: inputText, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         
-        XCTAssertTrue(view is ACRTextInputView)
-        guard let inputText = view as? ACRTextInputView else { fatalError() }
+        XCTAssertTrue(view is ACRSingleLineInputTextView)
+        guard let inputText = view as? ACRSingleLineInputTextView else { fatalError() }
         return inputText
     }
 }

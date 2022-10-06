@@ -17,16 +17,6 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         return NSSize(width: width, height: size.height)
     }
     
-    override func viewDidMoveToSuperview() {
-        super.viewDidMoveToSuperview()
-        // Should look for better solution
-        guard let superview = superview else { return }
-        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
-        let constraint = heightAnchor.constraint(equalTo: superview.heightAnchor)
-        constraint.priority = .defaultHigh
-        constraint.isActive = true
-    }
-    
     // This point onwards adds placeholder funcunality to TextView
     override func becomeFirstResponder() -> Bool {
         self.needsDisplay = true

@@ -10,11 +10,11 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             return NSView()
         }
         
-        let containerView = ACRColumnView(style: container.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: rootView, needsPadding: container.getPadding())
+        let containerView = ACRContainerView(style: container.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: rootView, needsPadding: container.getPadding())
         containerView.translatesAutoresizingMaskIntoConstraints = false
         
         containerView.bleed = container.getBleed()
-        
+        containerView.frame = parentView.bounds
         // add selectAction
         containerView.setupSelectAction(container.getSelectAction(), rootView: rootView)
         containerView.setupSelectActionAccessibility(on: containerView, for: container.getSelectAction())
@@ -26,14 +26,14 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             leadingBlankSpace = view
         }
         
-        for (index, item) in container.getItems().enumerated() {
+        for (index, element) in container.getItems().enumerated() {
             let isFirstElement = index == 0
-            let renderer = RendererManager.shared.renderer(for: item.getType())
-            let view = renderer.render(element: item, with: hostConfig, style: container.getStyle(), rootView: rootView, parentView: containerView, inputs: [], config: config)
-            let viewWithInheritedProperties = BaseCardElementRenderer().updateView(view: view, element: item, rootView: rootView, style: container.getStyle(), hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
-            containerView.addArrangedSubview(viewWithInheritedProperties)
-            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: containerView, with: hostConfig, element: item, parentElement: container)
+            let renderer = RendererManager.shared.renderer(for: element.getType())
+            let view = renderer.render(element: element, with: hostConfig, style: container.getStyle(), rootView: rootView, parentView: containerView, inputs: [], config: config)
+            BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: view, element: element, parentView: containerView, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
+            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: containerView, with: hostConfig, element: element, parentElement: container)
         }
+        containerView.configureLayoutAndVisibility(container.getVerticalContentAlignment(), minHeight: container.getMinHeight(), heightType: container.getHeight(), type: .container)
         
         // Dont add the trailing space if the vertical content alignment is top/default
         if container.getVerticalContentAlignment() == .center, let topView = leadingBlankSpace {
@@ -42,8 +42,6 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             view.heightAnchor.constraint(equalTo: topView.heightAnchor).isActive = true
         }
         containerView.wantsLayer = true
-        
-        containerView.setVerticalHuggingPriority(1000)
         return containerView
     }
 }

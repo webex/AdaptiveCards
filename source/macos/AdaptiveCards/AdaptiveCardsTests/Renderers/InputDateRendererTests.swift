@@ -13,7 +13,24 @@ class InputDateRendererTest: XCTestCase {
         inputDate = .make()
         inputDateRenderer = InputDateRenderer()
     }
-
+    
+    func testHeightProperty() {
+        let val: String = "2000-10-12"
+        
+        inputDate = .make(value: val, heightType: .auto)
+        var inputDateField = renderDateInput()
+        XCTAssertEqual(inputDateField.contentStackView.arrangedSubviews.count, 1)
+        XCTAssertNil(inputDateField.contentStackView.arrangedSubviews.last as? StretchableView)
+        
+        inputDate = .make(value: val, heightType: .stretch)
+        inputDateField = renderDateInput()
+        
+        XCTAssertEqual(inputDateField.contentStackView.arrangedSubviews.count, 2)
+        XCTAssertNotNil(inputDateField.contentStackView.arrangedSubviews.last as? StretchableView)
+        guard let stretchView = inputDateField.contentStackView.arrangedSubviews.last as? StretchableView else { return XCTFail() }
+        XCTAssertEqual(stretchView.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
+    }
+    
     func testRendererSetsValue() {
         let val: String = "2000-10-12"
         inputDate = .make(value: val)

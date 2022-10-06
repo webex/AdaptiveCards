@@ -11,6 +11,7 @@ class FakeInputDate: ACSDateInput {
     public var errorMessage: String?
     public var label: String?
     public var separator: Bool = false
+    public var height: ACSHeightType = .auto
 
     open override func getValue() -> String? {
         return value
@@ -48,6 +49,10 @@ class FakeInputDate: ACSDateInput {
         return id
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getIsVisible() -> Bool {
         return visibility
     }
@@ -83,11 +88,24 @@ class FakeInputDate: ACSDateInput {
     override func setSeparator(_ value: Bool) {
         separator = value
     }
+    
+    override func getHeight() -> ACSHeightType {
+        return height
+    }
+    
+    override func setHeight(_ value: ACSHeightType) {
+        height = value
+    }
+    
+    open override func getType() -> ACSCardElementType {
+        return .dateInput
+    }
 }
 
 extension FakeInputDate {
-    static func make(value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false) -> FakeInputDate {
+    static func make(id: String? = "", value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputDate {
         let fakeInputDate = FakeInputDate()
+        fakeInputDate.id = id
         fakeInputDate.value = value
         fakeInputDate.placeholder = placeholder
         fakeInputDate.max = max
@@ -96,6 +114,7 @@ extension FakeInputDate {
         fakeInputDate.errorMessage = errorMessage
         fakeInputDate.label = label
         fakeInputDate.separator = separator
+        fakeInputDate.height = heightType
         return fakeInputDate
     }
 }
