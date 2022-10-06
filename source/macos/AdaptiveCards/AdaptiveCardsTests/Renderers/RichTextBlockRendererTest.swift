@@ -19,6 +19,16 @@ class RichTextBlockRendererTests: XCTestCase {
         resourceResolver = FakeResourceResolver()
     }
     
+    func testHeightProperty() {
+        let textRun = FakeTextRun.make(text: sampleText)
+        richTextBlock = FakeRichTextBlock.make(textRun: textRun, heightType: .auto)
+        let autoTextView = renderTextView()
+        XCTAssertEqual(autoTextView.contentHuggingPriority(for: .vertical), NSLayoutConstraint.Priority.defaultHigh)
+        richTextBlock = FakeRichTextBlock.make(textRun: textRun, heightType: .stretch)
+        let stretchTextView = renderTextView()
+        XCTAssertEqual(stretchTextView.contentHuggingPriority(for: .vertical), NSLayoutConstraint.Priority.defaultLow)
+    }
+    
     func testRendererSetsText() {
         let textRun = FakeTextRun.make(text: sampleText)
         

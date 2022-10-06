@@ -1,15 +1,18 @@
 import AdaptiveCards_bridge
 import AppKit
 
+let kFitViewHorizontalLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 1
+
 class BaseCardElementRenderer {
     static let shared = BaseCardElementRenderer()
     
-    func updateView(view: NSView, element: ACSBaseCardElement, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) -> NSView {
+    func updateView(view: NSView, element: ACSBaseCardElement, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) -> ACRContentStackView {
         let updatedView = ACRContentStackView(style: style, hostConfig: hostConfig, renderConfig: config)
         
-        // For Spacing
+        var separator: SpacingView?
         if !isfirstElement {
-            updatedView.addSpacing(element.getSpacing())
+            // For seperator and spacing
+            separator = SpacingView.renderSpacer(elem: element, forSuperView: rootView, withHostConfig: hostConfig)
         }
         
         if let elem = element as? ACSImage {
@@ -25,16 +28,14 @@ class BaseCardElementRenderer {
                 columnView.setupBackgroundImageProperties(backgroundImage)
                 rootView.registerImageHandlingView(columnView.backgroundImageView, for: url)
             }
+            if let containerView = view as? ACRContainerView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
+                containerView.setupBackgroundImageProperties(backgroundImage)
+                rootView.registerImageHandlingView(containerView.backgroundImageView, for: url)
+            }
             contentStackView.setMinimumHeight(collectionElement.getMinHeight())
         }
         
-        // For seperator
-        if element.getSeparator(), !isfirstElement {
-            updatedView.addSeperator(true)
-        }
-        
         updatedView.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
-        updatedView.isHidden = !element.getIsVisible()
         
         if let inputElement = element as? ACSBaseInputElement {
             updatedView.configureInputElements(element: inputElement, view: view)
@@ -45,8 +46,72 @@ class BaseCardElementRenderer {
                 view.widthAnchor.constraint(equalTo: updatedView.widthAnchor).isActive = true
             }
         }
-        
+        // visibility changes add on height support element, so need to manually register with visibility manager for other elements. this will remove after once elements are support by height changs.
+        rootView.associateSeparator(withOwnerView: separator, ownerView: updatedView)
+        // Through the root view visibility context, register renderview with self manager.
+        rootView.visibilityContext?.registerVisibilityManager(rootView, targetViewIdentifier: updatedView.identifier)
+        if !element.getIsVisible() {
+            rootView.register(invisibleView: updatedView)
+        }
         return updatedView
+    }
+    
+    func updateLayoutForSeparatorAndAlignment(view: NSView, element: ACSBaseCardElement, parentView: ACRContentStackView, rootView: ACRView, style: ACSContainerStyle, hostConfig: ACSHostConfig, config: RenderConfig, isfirstElement: Bool) {
+        var separator: SpacingView?
+        if !isfirstElement {
+            // For seperator and spacing
+            separator = SpacingView.renderSpacer(elem: element, forSuperView: parentView, withHostConfig: hostConfig)
+        }
+        
+        if let elem = element as? ACSImage {
+            switch elem.getHorizontalAlignment() {
+            case .center: parentView.alignment = .centerX
+            case .right: parentView.alignment = .trailing
+            default: parentView.alignment = .leading
+            }
+        }
+        
+        if let collectionElement = element as? ACSCollectionTypeElement {
+            if let columnView = view as? ACRColumnView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
+                columnView.setupBackgroundImageProperties(backgroundImage)
+                rootView.registerImageHandlingView(columnView.backgroundImageView, for: url)
+            }
+            if let containerView = view as? ACRContainerView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
+                containerView.setupBackgroundImageProperties(backgroundImage)
+                rootView.registerImageHandlingView(containerView.backgroundImageView, for: url)
+            }
+        }
+        
+        view.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
+        
+        if let inputElement = element as? ACSBaseInputElement {
+            parentView.configureInputElements(element: inputElement, view: view)
+        } else {
+            // When the element is ACSBaseInputElement, this step occurs inside configureInputElements directly
+            parentView.addArrangedSubview(view)
+        }
+        
+        parentView.updateLayoutAndVisibilityOfRenderedView(view, acoElement: element, separator: separator, rootView: rootView)
+        
+        // Keep single every view horizontal fit inside the nsstackview
+        /*
+         B = StackView
+         A = inside subview
+         B+------------------------------+
+          | A+------------------------+  |
+          |  |       H:249            |  |
+          |  |       V:250            |  |
+          |  +------------------------+  |
+          +------------------------------+
+         
+         B+------------------------------+
+          | A+---------+                 |
+          |  | H:250   |                 |
+          |  | V:250   |                 |
+          |  +---------+                 |
+          +------------------------------+
+         */
+        view.setContentHuggingPriority(kFitViewHorizontalLayoutConstraintPriority, for: .horizontal)
     }
     
     func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, parentElement: ACSBaseCardElement?) {
@@ -102,11 +167,12 @@ class BaseCardElementRenderer {
             }
             
             if collection.getBackgroundImage() != nil {
-                guard let collectionView = collectionView as? ACRColumnView else {
-                    logError("Collection View is not type of ACRColumnView")
-                    return
+                if let collectionView = collectionView as? ACRColumnView {
+                    collectionView.bleedBackgroundImage(padding: padding, top: top, bottom: bottom, leading: leading, trailing: trailing, paddingBottom: paddingBottom, with: bottomAnchor)
                 }
-                collectionView.bleedBackgroundImage(padding: padding, top: top, bottom: bottom, leading: leading, trailing: trailing, paddingBottom: paddingBottom, with: bottomAnchor)
+                if let collectionView = collectionView as? ACRContainerView {
+                    collectionView.bleedBackgroundImage(padding: padding, top: top, bottom: bottom, leading: leading, trailing: trailing, paddingBottom: paddingBottom, with: bottomAnchor)
+                }
                 return
             }
             let backgroundView = NSView()

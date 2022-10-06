@@ -28,6 +28,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     private let buttonLabel: String?
     private let buttonTitle: String?
     private let errorMessage: String?
+    private var shouldShowError = false
     var isRequired = false
     
     init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType, element: ACSBaseInputElement, valueOn: String?, valueOff: String?, wrap: Bool, buttonTitle: String?) {
@@ -174,6 +175,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     func showError() {
+        shouldShowError = true
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
@@ -187,7 +189,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
             return delegate.acrChoiceButtonShouldReadError(self)
         }
         if let errorDelegate = errorDelegate {
-            return errorDelegate.isErrorVisible
+            return errorDelegate.isErrorVisible(self)
         }
         return false
     }
@@ -216,6 +218,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         if buttonType == .radio {
             NSAccessibility.announce(valueChangedMessage())
         }
+        shouldShowError = false
         errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: button)
     }
     
@@ -229,6 +232,10 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
             return ""
         }
         return id
+    }
+    
+    var isErrorShown: Bool {
+        return shouldShowError
     }
     
     var isValid: Bool {

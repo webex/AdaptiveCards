@@ -12,6 +12,7 @@ class FakeInputToggle: ACSToggleInput {
     public var isRequired: Bool = false
     public var errorMessage: String?
     public var separator: Bool = false
+    public var height: ACSHeightType = .auto
     
     open override func getTitle() -> String? {
         return title
@@ -65,6 +66,10 @@ class FakeInputToggle: ACSToggleInput {
         return id
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getIsVisible() -> Bool {
         return visibility
     }
@@ -92,10 +97,19 @@ class FakeInputToggle: ACSToggleInput {
     override func setErrorMessage(_ errorMessage: String) {
         self.errorMessage = errorMessage
     }
+    
+    override func getHeight() -> ACSHeightType {
+        return height
+    }
+    
+    override func setHeight(_ value: ACSHeightType) {
+        height = value
+    }
 }
 extension FakeInputToggle {
-    static func make(title: String? = "", value: String = "false", valueOn: String = "true", valueOff: String = "false", wrap: Bool = false, isRequired: Bool = false, errorMessage: String? = "", label: String? = "") ->FakeInputToggle {
+    static func make(id: String? = "", title: String? = "", value: String = "false", valueOn: String = "true", valueOff: String = "false", wrap: Bool = false, isRequired: Bool = false, errorMessage: String? = "", label: String? = "", heightType: ACSHeightType = .auto) ->FakeInputToggle {
         let fakeInputToggle = FakeInputToggle()
+        fakeInputToggle.id = id
         fakeInputToggle.title = title
         fakeInputToggle.value = value
         fakeInputToggle.valueOn = valueOn
@@ -104,6 +118,7 @@ extension FakeInputToggle {
         fakeInputToggle.isRequired = isRequired
         fakeInputToggle.errorMessage = errorMessage
         fakeInputToggle.label = label
+        fakeInputToggle.height = heightType
         return fakeInputToggle
     }
 }

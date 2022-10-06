@@ -23,11 +23,13 @@ open class InputTimeRenderer: NSObject, BaseCardElementRendererProtocol {
             view.initialDateValue = timeValue
             view.placeholder = timeElement.getPlaceholder() ?? ""
             view.idString = timeElement.getId()
-            view.isHidden = !timeElement.getIsVisible()
             return view
         }()
         
         rootView.addInputHandler(inputField)
+        if timeElement.getHeight() == .stretch {
+            inputField.setStretchableHeight()
+        }
         return inputField
     }
      // checking input time value and accepting only hours and minutes

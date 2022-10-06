@@ -1,0 +1,88 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "New TextBlock 1",
+            "wrap": true,
+            "id": "1"
+        },
+        {
+            "type": "TextBlock",
+            "text": "New TextBlock 2",
+            "wrap": true,
+            "separator": true,
+            "id": "2"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "New TextBlock C1",
+                            "wrap": true
+                        }
+                    ],
+                    "id": "c1"
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "New TextBlock C2",
+                            "wrap": true
+                        }
+                    ],
+                    "separator": true,
+                    "id": "c2"
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.ToggleVisibility",
+                    "title": "Visibility T1",
+                    "targetElements": [
+                        "1"
+                    ]
+                },
+                {
+                    "type": "Action.ToggleVisibility",
+                    "title": "Visibility T2",
+                    "targetElements": [
+                        "2"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.ToggleVisibility",
+                    "title": "Visibility C1",
+                    "targetElements": [
+                        "c1"
+                    ]
+                },
+                {
+                    "type": "Action.ToggleVisibility",
+                    "title": "Visibility C2",
+                    "targetElements": [
+                        "c2"
+                    ]
+                }
+            ]
+        }
+    ]
+}

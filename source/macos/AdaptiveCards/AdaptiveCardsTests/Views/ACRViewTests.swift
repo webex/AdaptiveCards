@@ -10,7 +10,7 @@ class ACRViewTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default)
+        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default, visibilityContext: ACOVisibilityContext())
         fakeResourceResolver = FakeResourceResolver()
         actionDelegate = FakeAdaptiveCardActionDelegate()
         
@@ -356,6 +356,10 @@ class ACRViewTests: XCTestCase {
         view.addArrangedSubview(tView1)
         view.addArrangedSubview(tView2)
         
+        // views need to register with visibility manager
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
+        
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target1, target2])
         
         XCTAssertFalse(tView1.isHidden)
@@ -373,6 +377,10 @@ class ACRViewTests: XCTestCase {
         view.addArrangedSubview(tView1)
         view.addArrangedSubview(tView2)
         
+        // views need to register with visibility manager
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
+        
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target1, target2])
         
         XCTAssertFalse(tView1.isHidden)
@@ -389,6 +397,11 @@ class ACRViewTests: XCTestCase {
         tView2.isHidden = false
         view.addArrangedSubview(tView1)
         view.addArrangedSubview(tView2)
+        
+        
+        // views need to register with visibility manager
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
         
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target1, target2])
         
@@ -411,6 +424,12 @@ class ACRViewTests: XCTestCase {
         view.addArrangedSubview(tView2)
         view.addArrangedSubview(tView3)
         
+        
+        // views need to register with visibility manager
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView1.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView2.identifier)
+        view.visibilityContext?.registerVisibilityManager(view, targetViewIdentifier: tView3.identifier)
+        
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target1, target2, target3])
         
         XCTAssertFalse(tView1.isHidden)
@@ -418,70 +437,29 @@ class ACRViewTests: XCTestCase {
         XCTAssertTrue(tView3.isHidden)
     }
     
-    
     func testVisibilityofSpacingView() {
-        let columnSet: FakeColumnSet =  FakeColumnSet.make()
         let hostConfig: FakeHostConfig = FakeHostConfig.make()
+        let columns: [FakeColumn] = [.make(id: "id1", padding: true), .make(id: "id2", padding: true)]
+        let columnSet = FakeColumnSet.make(columns: columns)
         
-        let columnSetView = ColumnSetRendererTests().renderColumnSetViewForActionset(hostConfig: hostConfig, columnSet: columnSet)
-
-        let column1 : FakeColumn = .make(id: "id1", isVisible: true, padding: true)
-        let columnView1 = ColumnRenderer.shared.render(element: column1, with: hostConfig, style: column1.getStyle(), rootView: FakeRootView(), parentView: columnSetView, inputs: [], config: .default)
-        columnView1.identifier = NSUserInterfaceItemIdentifier(column1.getId() ?? "")
+        let columnSetView = ColumnSetRenderer().render(element: columnSet, with: hostConfig, style: .default, rootView: view, parentView: view, inputs: [], config: .default)
+        XCTAssertTrue(columnSetView is ACRContentStackView)
         
-        columnSetView.addView(columnView1, in: .center)
-        
-        BaseCardElementRenderer.shared.configBleed(collectionView: columnView1, parentView: columnSetView, with: hostConfig, element: column1, parentElement: columnSet)
-        
-        let column2 : FakeColumn = .make(id: "id2", isVisible: true, padding: true)
-        let columnView2 = ColumnRenderer.shared.render(element: column2, with: hostConfig, style: column2.getStyle(), rootView: FakeRootView(), parentView: columnSetView, inputs: [], config: .default)
-        
-        
-        let wrappingView = ACRContentStackView(style: column2.getStyle(), hostConfig: hostConfig, renderConfig: .default)
-        wrappingView.addSpacing(column2.getSpacing())
-        wrappingView.addSeperator(column2.getSeparator())
-        wrappingView.isHidden = !column2.getIsVisible()
-        wrappingView.identifier = NSUserInterfaceItemIdentifier(column2.getId() ?? "")
-        
-        wrappingView.addArrangedSubview(columnView2)
-        columnView2.trailingAnchor.constraint(equalTo: wrappingView.trailingAnchor).isActive = true
-        columnSetView.addView(wrappingView, in: .center)
-        
-        BaseCardElementRenderer.shared.configBleed(collectionView: columnView2, parentView: columnSetView, with: hostConfig, element: column2, parentElement: columnSet)
-        
-        
+        guard let columnSetView = columnSetView as? ACRContentStackView else { fatalError() }
         view.addArrangedSubview(columnSetView)
-        
         let target = FakeToggleVisibilityTarget.make(elementId: "id1", isVisible: .isVisibleToggle)
         
-        // initially both columns are visible
-        
-        guard let spacingView = wrappingView.currentSpacingView else {
-            // failure as we need to check spacing view of wrappingView
-            XCTAssertTrue(false)
-            return
-        }
-        
         // initially column 1 , spacing view and wrapping view are visible
-        XCTAssertFalse(columnView1.isHidden)
-        XCTAssertFalse(wrappingView.isHidden)
-        XCTAssertFalse(spacingView.isHidden)
-        
-        // now we initiate action on target with identifier - "id1"
+        XCTAssertEqual(columnSetView.stackView.arrangedSubviews.count, 3)
+        XCTAssertNotNil(columnSetView.stackView.arrangedSubviews[1] as? SpacingView)
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target])
-        
-        // now column1 will hide , wrapping view is visible with spacing view hidden
-        XCTAssertTrue(columnView1.isHidden)
-        XCTAssertFalse(wrappingView.isHidden)
-        XCTAssertTrue(spacingView.isHidden)
-        
-        // again initiate action on target with identifier - "id1"
+        XCTAssertTrue(columnSetView.stackView.arrangedSubviews[0].isHidden)
+        XCTAssertTrue(columnSetView.stackView.arrangedSubviews[1].isHidden)
+        XCTAssertFalse(columnSetView.stackView.arrangedSubviews[2].isHidden)
         view.handleToggleVisibilityAction(actionView: NSButton(), toggleTargets: [target])
-        
-        // now column 1 , spacing view and wrapping view are visible
-        XCTAssertFalse(columnView1.isHidden)
-        XCTAssertFalse(wrappingView.isHidden)
-        XCTAssertFalse(spacingView.isHidden)
+        XCTAssertFalse(columnSetView.stackView.arrangedSubviews[0].isHidden)
+        XCTAssertFalse(columnSetView.stackView.arrangedSubviews[1].isHidden)
+        XCTAssertFalse(columnSetView.stackView.arrangedSubviews[2].isHidden)
     }
     
     func testInputHandlerRefocusTextFieldOnError() {
@@ -510,6 +488,7 @@ private class FakeInputHandlingView: NSView, InputHandlingViewProtocol {
     var isFocused: Bool = false
     var isValid: Bool = true
     var isRequired: Bool = false
+    var isErrorShown: Bool = false
     var errorDelegate: InputHandlingViewErrorDelegate?
     func showError() {
         errorShown = true

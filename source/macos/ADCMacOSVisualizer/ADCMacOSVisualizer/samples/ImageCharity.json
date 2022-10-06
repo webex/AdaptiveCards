@@ -1,0 +1,88 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "body": [
+        {
+            "columns": [
+                {
+                    "items": [
+                        {
+                            "altText": "",
+                            "size": "Medium",
+                            "type": "Image",
+                            "url": "https://picsum.photos/id/153/960/506"
+                        }
+                    ],
+                    "type": "Column",
+                    "width": "auto"
+                }
+            ],
+            "type": "ColumnSet"
+        },
+        {
+            "horizontalAlignment": "Center",
+            "size": "Medium",
+            "spacing": "Medium",
+            "text": "Cisco Manager Charity Match Drive 2021",
+            "type": "TextBlock",
+            "weight": "Bolder"
+        },
+        {
+            "text": "Hello!! Welcome to Cisco's 2021 Charity Match Drive. My name is Charity Bot.",
+            "type": "TextBlock",
+            "wrap": true
+        },
+        {
+            "horizontalAlignment": "Left",
+            "spacing": "Medium",
+            "text": "Please select your role.",
+            "type": "TextBlock"
+        },
+        {
+            "columns": [
+                {
+                    "horizontalAlignment": "Center",
+                    "items": [
+                        {
+                            "actions": [
+                                {
+                                    "data": {
+                                        "buttonId": "employeeBtn"
+                                    },
+                                    "id": "employeeBtn",
+                                    "title": "Employee",
+                                    "type": "Action.Submit"
+                                }
+                            ],
+                            "type": "ActionSet"
+                        }
+                    ],
+                    "type": "Column",
+                    "width": "stretch"
+                },
+                {
+                    "horizontalAlignment": "Center",
+                    "items": [
+                        {
+                            "actions": [
+                                {
+                                    "data": {
+                                        "buttonId": "managerBtn"
+                                    },
+                                    "id": "managerBtn",
+                                    "title": "Manager",
+                                    "type": "Action.Submit"
+                                }
+                            ],
+                            "type": "ActionSet"
+                        }
+                    ],
+                    "type": "Column",
+                    "width": "stretch"
+                }
+            ],
+            "type": "ColumnSet"
+        }
+    ],
+    "type": "AdaptiveCard",
+    "version": "1.2"
+}
