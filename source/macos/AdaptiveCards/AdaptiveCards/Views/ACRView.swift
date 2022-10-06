@@ -15,9 +15,15 @@ class ACRView: ACRColumnView {
     private var isLayoutDoneOnShowCard = false
     private var focusedElementOnHideError: NSView?
     private var firstFieldWithError: InputHandlingViewProtocol?
+    private (set) var visibilityContext: ACOVisibilityContext?
     
     override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         super.init(style: style, parentStyle: nil, hostConfig: hostConfig, renderConfig: renderConfig, superview: nil, needsPadding: true)
+    }
+    
+    convenience init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig, visibilityContext: ACOVisibilityContext?) {
+        self.init(style: style, hostConfig: hostConfig, renderConfig: renderConfig)
+        self.visibilityContext = visibilityContext
     }
     
     required init?(coder: NSCoder) {
@@ -92,59 +98,6 @@ class ACRView: ACRColumnView {
         focusedElementOnHideError = currentFocussedView
     }
     
-    private func findToggledView(with identifier: String) -> NSView? {
-        // find view in self card
-        guard let toggledView = getSubView(with: identifier, in: self) else {
-            var toggledViewToReturn: NSView?
-            
-            // checking if parent card exists
-            guard var superView = getSuperView(for: self) else { return nil }
-            // finding view in parent card
-            toggledViewToReturn = getSubView(with: identifier, in: superView)
-            
-            // if parent card does not have view too , chekcing for view in further cards up the hierarchy
-            while superView.superview != nil && toggledViewToReturn == nil {
-                if let sView = getSuperView(for: superView) {
-                    toggledViewToReturn = getSubView(with: identifier, in: sView)
-                    superView = sView
-                } else {
-                    return toggledViewToReturn
-                }
-            }
-            return toggledViewToReturn
-        }
-        return toggledView
-    }
-    
-    private func getSubView(with id: String, in view: NSView) -> NSView? {
-        if view.subviews.isEmpty {
-            return nil
-        }
-        for subView in view.subviews {
-            if subView == self {
-                return nil
-            }
-            
-            if subView.identifier?.rawValue == id {
-                return subView
-            }
-            if let inSubview = getSubView(with: id, in: subView) {
-                return inSubview
-            }
-        }
-        return nil
-    }
-    
-    private func getSuperView(for view: NSView?) -> NSView? {
-        guard let superView = view?.superview else { return nil }
-        
-        if superView.isKind(of: ACRView.self) {
-            return superView
-        } else {
-            return getSuperView(for: superView)
-        }
-    }
-    
     private func submitCardInputs(actionView: NSView, dataJSON: String?, associatedInputs: Bool) {
         var dict = [String: Any]()
         
@@ -192,31 +145,30 @@ class ACRView: ACRColumnView {
     }
     
     private func toggleVisibity(of targets: [ACSToggleVisibilityTarget]) {
-        var toggledContentStackViews: [(ACRContentStackView, Bool)] = []
         for target in targets {
-            guard let id = target.getElementId(), let toggleView = findToggledView(with: id) else {
+            guard let id = target.getElementId(), let toggleView = self.findView(withIdentifier: id) else {
                 logError("Target with ID '\(target.getElementId() ?? "nil")' not found for toggleVisibility.")
                 continue
             }
-            let oldHiddenValue = toggleView.isHidden
+            let facade = visibilityContext?.retrieveVisiblityManager(withIdentifier: toggleView.identifier)
+            var isHide = false
             switch target.getIsVisible() {
             case .isVisibleToggle:
-                toggleView.isHidden.toggle()
+                isHide = !toggleView.isHidden
             case .isVisibleTrue:
-                toggleView.isHidden = false
+                isHide = false
             case .isVisibleFalse:
-                toggleView.isHidden = true
+                isHide = true
             @unknown default:
                 logError("Unknown ToggleIsVisible value \(target.getIsVisible())")
             }
-            if let contentStackView = toggleView as? ACRContentStackView {
-                toggledContentStackViews.append((contentStackView, oldHiddenValue))
+            if let facade = facade {
+                if isHide {
+                    facade.hideView(toggleView)
+                } else {
+                    facade.unhideView(toggleView)
+                }
             }
-        }
-        
-        // Must be refreshed only after all elements hidden states are updated.
-        for (contentStackView, oldHiddenValue) in toggledContentStackViews {
-            contentStackView.refreshOnVisibilityChange(from: oldHiddenValue)
         }
     }
 }

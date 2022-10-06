@@ -11,6 +11,7 @@ class FakeInputTime: ACSTimeInput {
     public var errorMessage: String?
     public var label: String?
     public var separator: Bool = false
+    public var height: ACSHeightType = .auto
 
     open override func getValue() -> String? {
         return value
@@ -48,6 +49,10 @@ class FakeInputTime: ACSTimeInput {
         return id
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getIsVisible() -> Bool {
         return visibility
     }
@@ -83,11 +88,20 @@ class FakeInputTime: ACSTimeInput {
     override func setSeparator(_ value: Bool) {
         separator = value
     }
+    
+    override func getHeight() -> ACSHeightType {
+        return height
+    }
+    
+    override func setHeight(_ value: ACSHeightType) {
+        height = value
+    }
 }
 
 extension FakeInputTime {
-    static func make(value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false) -> FakeInputTime {
+    static func make(id: String? = "", value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputTime {
         let fakeInputTime = FakeInputTime()
+        fakeInputTime.id = id
         fakeInputTime.value = value
         fakeInputTime.placeholder = placeholder
         fakeInputTime.max = max
@@ -96,6 +110,7 @@ extension FakeInputTime {
         fakeInputTime.errorMessage = errorMessage
         fakeInputTime.label = label
         fakeInputTime.separator = separator
+        fakeInputTime.height = heightType
         return fakeInputTime
     }
 }

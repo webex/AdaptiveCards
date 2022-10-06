@@ -1,0 +1,46 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "minHeight": "400px",
+    "body": [
+        {
+            "type": "RichTextBlock",
+            "inlines": [
+                {
+                    "type": "TextRun",
+                    "text": "New RichTextBlock Height Auto Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                }
+            ]
+        },
+        {
+            "type": "RichTextBlock",
+            "inlines": [
+                {
+                    "type": "TextRun",
+                    "text": "New RichTextBlock Height Stretch Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                }
+            ],
+            "height": "stretch"
+        },
+        {
+            "type": "RichTextBlock",
+            "inlines": [
+                {
+                    "type": "TextRun",
+                    "text": "New RichTextBlock Height Auto Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                }
+            ]
+        },
+        {
+            "type": "RichTextBlock",
+            "inlines": [
+                {
+                    "type": "TextRun",
+                    "text": "New RichTextBlock Height Stretch Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                }
+            ],
+            "height": "stretch"
+        }
+    ]
+}

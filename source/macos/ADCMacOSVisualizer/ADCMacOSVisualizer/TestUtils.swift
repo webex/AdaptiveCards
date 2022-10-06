@@ -3,6 +3,13 @@ import Foundation
 public class TestUtils {
     // Dictionary to test image rendering in case image size is known before hand
     static let imageDimensionsDict: [String: NSSize] = [
+        "https://picsum.photos/id/1069/230/455": NSSize(width: 230, height: 455),
+        "https://picsum.photos/id/1080/230/455": NSSize(width: 230, height: 455),
+        "https://picsum.photos/id/1062/620/287": NSSize(width: 620, height: 287),
+        "https://picsum.photos/id/1062/620/1080": NSSize(width: 620, height: 1080),
+        "https://picsum.photos/id/1080/630/1080": NSSize(width: 630, height: 1080),
+        "https://picsum.photos/id/153/960/506": NSSize(width: 960, height: 506),
+        "https://media.istockphoto.com/vectors/origamisign2blue-vector-id1159533161?k=6&m=1159533161&s=612x612&w=0&h=YpKhQtcoi-Z4JYrnqihgwcxdsTzjRP8UWJchAUyyMgI=": NSSize(width: 612, height: 284),
         "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg": NSSize(width: 400, height: 400),
         "https://messagecardplayground.azurewebsites.net/assets/LocationGreen_A.png": NSSize(width: 23, height: 35),
         "https://messagecardplayground.azurewebsites.net/assets/power_point.png": NSSize(width: 14.0, height: 24.0),

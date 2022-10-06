@@ -14,6 +14,23 @@ class InputTimeRendererTest: XCTestCase {
         inputTimeRenderer = InputTimeRenderer()
     }
     
+    func testHeightProperty() {
+        let val: String = "15:30:32"
+        
+        inputTime = .make(value: val, heightType: .auto)
+        var inputTimeField = renderTimeInput()
+        XCTAssertEqual(inputTimeField.contentStackView.arrangedSubviews.count, 1)
+        XCTAssertNil(inputTimeField.contentStackView.arrangedSubviews.last as? StretchableView)
+        
+        inputTime = .make(value: val, heightType: .stretch)
+        inputTimeField = renderTimeInput()
+        
+        XCTAssertEqual(inputTimeField.contentStackView.arrangedSubviews.count, 2)
+        XCTAssertNotNil(inputTimeField.contentStackView.arrangedSubviews.last as? StretchableView)
+        guard let stretchView = inputTimeField.contentStackView.arrangedSubviews.last as? StretchableView else { return XCTFail() }
+        XCTAssertEqual(stretchView.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
+    }
+    
     func testRendererSetsValue() {
         let val: String = "15:30:32"
         inputTime = .make(value: val)

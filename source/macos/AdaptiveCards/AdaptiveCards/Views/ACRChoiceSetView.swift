@@ -16,6 +16,8 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     public var previousButton: ACRChoiceButton?
     public var wrap = false
     public var idString: String?
+    public var errorMessage: String?
+    private var shouldShowError = false
     
     private let renderConfig: RenderConfig
     var isRequired = false
@@ -32,13 +34,11 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     private func setupConstraints() {
-        stackview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        stackview.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        stackview.constraint(toFill: self)
     }
     
     private func handleClickAction(_ clickedButton: ACRChoiceButton) {
+        shouldShowError = false
         errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: clickedButton.button)
         guard isRadioGroup else { return }
         if previousButton != clickedButton {
@@ -47,6 +47,12 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         } else {
             clickedButton.state = .on
         }
+    }
+    
+    public func setStretchableHeight() {
+        let padding = StretchableView()
+        ACSFillerSpaceManager.configureHugging(view: padding)
+        stackview.addArrangedSubview(padding)
     }
     
     public func addChoiceButton(_ choiceButton: ACRChoiceButton) {
@@ -62,6 +68,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     func showError() {
+        shouldShowError = true
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
@@ -82,7 +89,7 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         return stringOfSelectedValues.joined(separator: ",")
     }
     
-    var getStackViews: [NSView] {
+    var getArrangedSubviews: [NSView] {
         return stackview.arrangedSubviews
     }
     
@@ -92,6 +99,10 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
             return ""
         }
         return id
+    }
+    
+    var isErrorShown: Bool {
+        return shouldShowError
     }
     
     var isValid: Bool {
@@ -106,99 +117,6 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
     
     func acrChoiceButtonShouldReadError(_ button: ACRChoiceButton) -> Bool {
         guard let delegate = errorDelegate else { return false }
-        return delegate.isErrorVisible
-    }
-}
-
-// MARK: ACRChoiceSetFieldCompactView
-class ACRChoiceSetCompactView: NSPopUpButton, InputHandlingViewProtocol {
-    weak var errorDelegate: InputHandlingViewErrorDelegate?
-    
-    public var idString: String?
-    public var valueSelected: String?
-    public var arrayValues: [String?] = []
-    var isRequired = false
-    
-    public let type: ACSChoiceSetStyle = .compact
-    
-    private let renderConfig: RenderConfig
-    private let label: String?
-    private let errorMessage: String?
-    
-    override func viewDidMoveToSuperview() {
-        guard let superview = superview else { return }
-        widthAnchor.constraint(equalTo: superview.widthAnchor).isActive = true
-    }
-    
-    init(element: ACSChoiceSetInput, renderConfig: RenderConfig) {
-        self.renderConfig = renderConfig
-        self.label = element.getLabel()
-        self.errorMessage = element.getErrorMessage()
-        super.init(frame: .zero, pullsDown: false)
-        target = self
-        action = #selector(popUpButtonUsed(_:))
-        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
-        addTrackingArea(trackingArea)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func mouseEntered(with event: NSEvent) {
-        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
-        contentView.isHighlighted = true
-    }
-    
-    override func mouseExited(with event: NSEvent) {
-        guard let contentView = event.trackingArea?.owner as? ACRChoiceSetCompactView else { return }
-        contentView.isHighlighted = false
-    }
-    
-    @objc private func popUpButtonUsed(_ sender: NSPopUpButton) {
-        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: self)
-    }
-    
-    func showError() {
-        errorDelegate?.inputHandlingViewShouldShowError(self)
-    }
-    
-    func setAccessibilityFocus() {
-        setAccessibilityFocused(true)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
-    }
-    
-    var value: String {
-        return arrayValues[indexOfSelectedItem] ?? ""
-    }
-    
-    var key: String {
-        guard let id = idString else {
-            logError("ID must be set on creation")
-            return ""
-        }
-        return id
-    }
-    
-    override func accessibilityValue() -> Any? {
-        guard renderConfig.supportsSchemeV1_3 else {
-            return itemArray[indexOfSelectedItem].title
-        }
-        var accessibilityLabel = ""
-        if let errorDelegate = errorDelegate, errorDelegate.isErrorVisible {
-            accessibilityLabel += "Error "
-            if let errorMessage = errorMessage, !errorMessage.isEmpty {
-                accessibilityLabel += errorMessage + ", "
-            }
-        }
-        if let label = label, !label.isEmpty {
-            accessibilityLabel += label + ", "
-        }
-        accessibilityLabel += itemArray[indexOfSelectedItem].title
-        return accessibilityLabel
-    }
-    
-    var isValid: Bool {
-        return isRequired ? (arrayValues[indexOfSelectedItem] != nil) : true
+        return delegate.isErrorVisible(self)
     }
 }

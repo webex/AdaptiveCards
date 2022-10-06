@@ -31,6 +31,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         view.wrap = choiceSetInput.getWrap()
         view.idString = choiceSetInput.getId()
         view.isRequired = choiceSetInput.getIsRequired()
+        view.errorMessage = choiceSetInput.getErrorMessage()
         for choice in choiceSetInput.getChoices() {
             let title = choice.getTitle() ?? ""
             let attributedString = TextUtils.getRenderAttributedString(text: title, with: hostConfig, renderConfig: renderConfig, rootView: rootView, style: style)
@@ -43,6 +44,12 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
             view.addChoiceButton(choiceButton)
         }
         
+        if choiceSetInput.getHeight() == .stretch {
+            if !view.getArrangedSubviews.isEmpty {
+                view.setStretchableHeight()
+            }
+        }
+        
         rootView.addInputHandler(view)
         return view
     }
@@ -53,35 +60,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
     
     private func choiceSetCompactRenderInternal (choiceSetInput: ACSChoiceSetInput, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, renderConfig: RenderConfig) -> NSView {
         // compact button renderer
-        let choiceSetFieldCompactView = ACRChoiceSetCompactView(element: choiceSetInput, renderConfig: renderConfig)
-        choiceSetFieldCompactView.autoenablesItems = false
-        var index = 0
-        if let placeholder = choiceSetInput.getPlaceholder(), !placeholder.isEmpty {
-            choiceSetFieldCompactView.addItem(withTitle: placeholder)
-            if let menuItem = choiceSetFieldCompactView.item(at: 0) {
-                menuItem.isEnabled = false
-            }
-            choiceSetFieldCompactView.arrayValues.append(nil)
-            index += 1
-        }
-        choiceSetFieldCompactView.idString = choiceSetInput.getId()
-        choiceSetFieldCompactView.isRequired = choiceSetInput.getIsRequired()
-        for choice in choiceSetInput.getChoices() {
-            let title = choice.getTitle() ?? ""
-            choiceSetFieldCompactView.addItem(withTitle: "")
-            let item = choiceSetFieldCompactView.item(at: index)
-            item?.title = title
-            // item?.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
-            choiceSetFieldCompactView.arrayValues.append(choice.getValue())
-            if choiceSetInput.getValue() == choice.getValue() {
-                choiceSetFieldCompactView.select(item)
-                choiceSetFieldCompactView.valueSelected = choice.getValue()
-            }
-            index += 1
-        }
-        
-        rootView.addInputHandler(choiceSetFieldCompactView)
-        choiceSetFieldCompactView.setAccessibilityRoleDescription(renderConfig.localisedStringConfig.choiceSetCompactAccessibilityRoleDescriptor)
-        return choiceSetFieldCompactView
+        let view = ACRCompactChoiceSetView(renderConfig: renderConfig, element: choiceSetInput, style: style, with: hostConfig, rootview: rootView)
+        return view
     }
 }

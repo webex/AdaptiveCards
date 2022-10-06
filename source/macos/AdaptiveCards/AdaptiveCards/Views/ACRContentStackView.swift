@@ -3,6 +3,9 @@ import AppKit
 
 protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
+    func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
+    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?)
+    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType)
     func applyPadding(_ padding: CGFloat)
 }
 
@@ -12,16 +15,29 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var stackViewTopConstraint: NSLayoutConstraint?
     private var stackViewBottomConstraint: NSLayoutConstraint?
     
-    private (set) var currentSpacingView: SpacingView? // made as set for use in test
-    private var currentSeparatorView: SpacingView?
-    private (set) var errorMessageField: NSTextField?
-    private (set) var inputLabelField: NSTextField?
+    // map table store errror message field
+    private let errorMessageFieldMap = NSMapTable<NSString, ACRInputErrorTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
+    // map table store input label field
+    private let inputLabelFieldMap = NSMapTable<NSString, ACRInputLabelTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     
     let style: ACSContainerStyle
     let hostConfig: ACSHostConfig
     let renderConfig: RenderConfig
     var target: TargetHandler?
     public var bleed = false
+    private let visibilityManager = ACSVisibilityManager()
+    private var verticalContentAlignment: ACSVerticalContentAlignment = .top
+    private var paddings = [NSView]()
+    private let invisibleViews = NSMutableSet()
+    // Store the Intrinsic size of subviews
+    private var subviewIntrinsicContentSizeCollection: [String: NSValue] = [String: NSValue]()
+    // Hold self view dynamic content intrinsicSize
+    var combinedContentSize: CGSize = .zero
+    
+    // for test
+    var getInvisibleViews: NSMutableSet {
+        return self.invisibleViews
+    }
     
     public var orientation: NSUserInterfaceLayoutOrientation {
         get { return stackView.orientation }
@@ -51,8 +67,18 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         view.orientation = .vertical
         view.alignment = .leading
         view.spacing = 0
+        view.distribution = .fill
         return view
     }()
+    
+    var hasStretchableView: Bool {
+        return visibilityManager.fillerSpaceManager.hasPadding()
+    }
+    
+    // Use intrinsicContentSize, work with hugging priority and autolayout. won't work as expected resluts without it.
+    override var intrinsicContentSize: NSSize {
+        return self.combinedContentSize
+    }
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         self.hostConfig = hostConfig
@@ -111,6 +137,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         stackView.addArrangedSubview(subview)
     }
     
+    func insertArrangedSubview(_ view: NSView, at insertionIndex: Int) {
+        stackView.insertArrangedSubview(view, at: insertionIndex)
+    }
+    
     func addView(_ view: NSView, in gravity: NSStackView.Gravity) {
         stackView.addView(view, in: gravity)
     }
@@ -137,34 +167,169 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         }
     }
     
-    func addSeperator(_ separator: Bool) {
-        guard separator else { return }
-        let seperatorConfig = hostConfig.getSeparator()
-        let lineThickness = seperatorConfig?.lineThickness
-        let lineColor = seperatorConfig?.lineColor
-        addSeperator(thickness: lineThickness ?? 1, color: lineColor ?? "#EEEEEE")
-    }
-    
-    func addSpacing(_ spacing: ACSSpacing) {
-        let spaceAdded = HostConfigUtils.getSpacing(spacing, with: hostConfig)
-        addSpacing(spacing: CGFloat(truncating: spaceAdded))
-    }
-    
     func setCustomSpacing(spacing: CGFloat, after view: NSView) {
         stackView.setCustomSpacing(spacing, after: view)
     }
     
-    private func addSeperator(thickness: NSNumber, color: String) {
-        let seperatorView = SpacingView(asSeparatorViewWithThickness: CGFloat(truncating: thickness), color: color, orientation: orientation)
-        stackView.addArrangedSubview(seperatorView)
-        stackView.setCustomSpacing(5, after: seperatorView)
-        currentSeparatorView = seperatorView
+    // use this method if a subview to the content stack view needs a padding
+    // use configureHeightFor for all cases except when stretching the subview
+    // is not desirable.
+    
+    func addPadding(for view: NSView) -> NSView {
+        return visibilityManager.fillerSpaceManager.addPadding(forView: view)
     }
     
-    private func addSpacing(spacing: CGFloat) {
-        let spacingView = SpacingView(orientation: orientation, spacing: spacing)
-        stackView.addArrangedSubview(spacingView)
-        currentSpacingView = spacingView
+    // it simply adds padding to the top and bottom of contents of the content stack view
+    // according to vertical alignment
+    
+    func addPadding() {
+        if self.verticalContentAlignment == .center || self.verticalContentAlignment == .bottom {
+            let padding = self.addPadding(for: self)
+            self.paddings.append(padding)
+            self.insertArrangedSubview(padding, at: 0)
+        }
+        if self.verticalContentAlignment == .center || self.verticalContentAlignment == .top {
+            let padding = self.addPadding(for: self)
+            self.paddings.append(padding)
+            self.addArrangedSubview(padding)
+        }
+    }
+    
+    func increaseIntrinsicContentSize(_ view: NSView) {
+        let key = String(format: "%p", view)
+        subviewIntrinsicContentSizeCollection[key] = NSValue(size: view.intrinsicContentSize)
+    }
+    
+    func decreaseIntrinsicContentSize(_ view: NSView) {
+        // This Empty function design for override methods
+    }
+    
+    func updateIntrinsicContentSize() {
+        // This Empty function design for override methods
+    }
+    
+    func updateIntrinsicContentSize(_ block: @escaping (_ view: Any, _ idx: Int, _ stop: UnsafeMutablePointer<ObjCBool>) -> Void) {
+        (stackView.arrangedSubviews as NSArray).enumerateObjects(block)
+    }
+    
+    func getMaxHeightOfSubviews(afterExcluding view: NSView?) -> CGFloat {
+        return getViewWithMaxDimension(afterExcluding: view, dimension: { [self] vw in
+            var key: String?
+            if let vw = vw {
+                key = String(format: "%p", vw)
+            }
+            let value = self.subviewIntrinsicContentSizeCollection[key ?? ""]
+            return (value != nil ? value?.sizeValue : .zero)?.height ?? 0.0
+        })
+    }
+    
+    func getMaxWidthOfSubviews(afterExcluding view: NSView?) -> CGFloat {
+        return getViewWithMaxDimension(afterExcluding: view, dimension: { [self] vw in
+            var key: String?
+            if let vw = vw {
+                key = String(format: "%p", vw)
+            }
+            let value = self.subviewIntrinsicContentSizeCollection[key ?? ""]
+            return (value != nil ? value?.sizeValue : .zero)?.width ?? 0.0
+        })
+    }
+    
+    func getViewWithMaxDimension(afterExcluding view: NSView?, dimension: @escaping (_ view: NSView?) -> CGFloat) -> CGFloat {
+        var currentBest: CGFloat = 0.0
+        self.stackView.arrangedSubviews.forEach { vw in
+            if vw.isNotEqual(to: view) {
+                currentBest = CGFloat(max(currentBest, dimension(vw)))
+            }
+        }
+        return currentBest
+    }
+    
+    func getIntrinsicContentSize(inArragedSubviews view: NSView) -> NSSize {
+        let key = String(format: "%p", view)
+        let value = subviewIntrinsicContentSizeCollection[key]
+        return value?.sizeValue ?? .zero
+    }
+    
+    func register(invisibleView: NSView) {
+        self.invisibleViews.add(invisibleView)
+    }
+    
+    /// this method applies visibility to subviews once all of them are rendered and become part of content stack view
+    /// applying visibility as each subview is rendered has known side effects.
+    /// such as its superview, content stack view becomes hidden if a first subview is set hidden.
+    func applyVisibilityToSubviews() {
+        for index in 0..<stackView.subviews.count {
+            let subview = stackView.subviews[index]
+            if !(visibilityManager.fillerSpaceManager.isPadding(subview)) && !(subview is SpacingView) && !(subview is ACRInputLabelTextField) {
+                visibilityManager.addVisibleView(index)
+            }
+        }
+        for subview in invisibleViews {
+            if let view = subview as? NSView {
+                self.hideView(view)
+            }
+        }
+    }
+    
+    /// this function will tell if the content stack view should have a padding
+    /// padding will be added if
+    /// none of its subviews is stretchable or has padding and there is at least
+    /// one visible view.
+    /// the content stack view has hasStrechableView property, but getting the property value
+    /// has cost, so added the hasStretcahbleView parameter to reduce the number of call to
+    /// the property value.
+    /// todo part : add visiblity checking for stretchable view.
+    
+    func shouldAddPadding(_ hasStretchableView: Bool) -> Bool {
+        return !hasStretchableView && visibilityManager.hasVisibleViews
+    }
+    
+    func associateSeparator(withOwnerView separator: SpacingView?, ownerView: NSView) {
+        visibilityManager.fillerSpaceManager.associateSeparator(withOwnerView: separator, ownerView: ownerView)
+    }
+    
+    /// call this method after subview is rendered
+    /// it configures height, creates association between the subview and its separator if any
+    /// registers subview for its visibility
+    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
+        guard let renderedView = renderedView, let acoElem = acoElem else { return }
+        self.configureHeight(for: renderedView, acoElement: acoElem)
+        self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
+        // Through the root view visibility context, register renderview with self manager.
+        rootView?.visibilityContext?.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
+        if !acoElem.getIsVisible() {
+            self.register(invisibleView: renderedView)
+        }
+    }
+    
+    func configureHeight(for view: NSView?, acoElement element: ACSBaseCardElement?) {
+        guard let view = view, let element = element else { return }
+        self.visibilityManager.fillerSpaceManager.configureHeight(view: view, correspondingElement: element)
+    }
+    
+    /// call this method once all subviews are rendered
+    /// this methods add padding to itself for alignment and stretch
+    /// apply visibility to subviews
+    /// configure min height
+    /// then activate all contraints associated with the configuration.
+    /// activation constraint all at once is more efficient than activating
+    /// constraints one by one.
+    
+    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType) {
+        self.verticalContentAlignment = verticalContentAlignment
+        self.applyVisibilityToSubviews()
+        if self.shouldAddPadding(self.hasStretchableView) {
+            self.addPadding()
+        } else {
+            if !self.hasStretchableView {
+                // add stretchable view for stretch the content when stackview has no visibile view
+                let padding = self.addPadding(for: self)
+                self.paddings.append(padding)
+                self.addArrangedSubview(padding)
+            }
+        }
+        self.setMinimumHeight(minHeight)
+        visibilityManager.fillerSpaceManager.activateConstraintsForPadding()
     }
     
     private func setupTrackingArea() {
@@ -186,8 +351,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         
         guard let leading = stackViewLeadingConstraint, let trailing = stackViewTrailingConstraint, let top = stackViewTopConstraint, let bottom = stackViewBottomConstraint else { return }
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
-        stackView.setHuggingPriority(.fittingSizeCompression, for: .vertical)
-        stackView.setContentHuggingPriority(.fittingSizeCompression, for: .vertical)
+        stackView.setContentHuggingPriority(.defaultLow, for: .vertical)
     }
     
     /// This method can be overridden, but not to be called from anywhere
@@ -199,6 +363,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     /// This methid can be overridden. super implementation must be called
     func hideErrorMessage(with currentFocussedView: NSView?) {
+        guard let view = currentFocussedView as? InputHandlingViewProtocol else {
+            logError("currentFocussedView is not InputHandlingView.")
+            return
+        }
+        let errorMessageField = getErrorTextField(for: view)
         errorMessageField?.isHidden = true
     }
     
@@ -208,43 +377,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func setMinimumHeight(_ height: NSNumber?) {
         guard let height = height, let heightPt = CGFloat(exactly: height), heightPt > 0 else { return }
-        heightAnchor.constraint(greaterThanOrEqualToConstant: heightPt).isActive = true
-    }
-    
-    func refreshOnVisibilityChange(from isHiddenOld: Bool) {
-        guard let stackView = superview as? NSStackView else { return }
-        
-        if isHidden {
-             // if an object is hidden then we need to update the visibility of spacing view of the adjacent nonHidden object
-             guard let toggledView = (stackView.arrangedSubviews.first { !$0.isHidden && !($0 is SpacingView) }) as? ACRContentStackView  else { return }
-             toggledView.currentSpacingView?.isHidden = true
-             toggledView.currentSeparatorView?.isHidden = true
-         } else {
-             // Spacer and Separator to be hidden only if this view is the first element of the parent stack
-             // Ignore all Spacing to check firstElement, as they're added for `verticalContentAlignment`. Refer ContainerRenderer / ColumnRenderer.
-             
-             guard let toggledView = (stackView.arrangedSubviews.first { !$0.isHidden && !($0 is SpacingView) }) else { return }
-             let isFirstElement = toggledView == self
-             currentSpacingView?.isHidden = isFirstElement
-             currentSeparatorView?.isHidden = isFirstElement
-
-             // once we toggle any object to visibility , we need to see if the objects in series next to toggled one were already being shown or not . if shown we need to update the currentSpacingView of those items to false
-             
-             guard stackView.arrangedSubviews.count > 1 else { return }
-             // getting index of the toggled object
-             guard let toggledViewIndex = stackView.arrangedSubviews.firstIndex(of: toggledView) else { return }
-
-             // if toggled element is last one no need to continue
-             guard toggledViewIndex < stackView.arrangedSubviews.count - 1 else { return }
-             
-             // if next view in sequence is not hidden set its currentSpacingView?.isHidden to false
-             for index in toggledViewIndex + 1..<stackView.arrangedSubviews.count {
-                 if let nextView = stackView.arrangedSubviews[index] as? ACRContentStackView, !nextView.isHidden {
-                     nextView.currentSpacingView?.isHidden = false
-                     nextView.currentSeparatorView?.isHidden = false
-                 }
-             }
-         }
+        let constraint = NSLayoutConstraint(item: self, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: heightPt)
+        constraint.priority = NSLayoutConstraint.Priority(rawValue: 999)
+        constraint.isActive = true
     }
     
     // MARK: Mouse Events and SelectAction logics
@@ -255,19 +390,8 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
     }
     
-    private func staticTextField() -> NSTextField {
-        let textField = NSTextField()
-        textField.allowsEditingTextAttributes = true
-        textField.isEditable = false
-        textField.isBordered = false
-        textField.isSelectable = true
-        textField.setAccessibilityRole(.none)
-        textField.backgroundColor = .clear
-        return textField
-    }
-    
     func configureInputElements(element: ACSBaseInputElement, view: NSView) {
-        setupLabel(for: element)
+        setupLabel(for: element, view: view)
         addArrangedSubview(view)
         if view is ACRContentStackView {
             view.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
@@ -275,36 +399,43 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         setupErrorMessage(element: element, view: view)
     }
     
-    private func setupLabel(for element: ACSBaseInputElement) {
-        guard renderConfig.supportsSchemeV1_3, let label = element.getLabel(), !label.isEmpty, inputLabelField?.stringValue != label else { return }
-        let attributedString = NSMutableAttributedString(string: label)
-        let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
-        let isRequiredSuffix = (hostConfig.getInputs()?.label.requiredInputs.suffix ?? "").isEmpty ? "*" : hostConfig.getInputs()?.label.requiredInputs.suffix ?? "*"
-        if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {
-            attributedString.addAttributes([.foregroundColor: textColor, .font: NSFont.systemFont(ofSize: 16)], range: NSRange(location: 0, length: attributedString.length))
+    func getErrorTextField(for inputView: InputHandlingViewProtocol) -> ACRInputErrorTextField? {
+        guard let errorMessageField = self.errorMessageFieldMap.object(forKey: inputView.key as NSString) else {
+            logError("For show error message, field not found in MapTable.")
+            return nil
         }
-        if element.getIsRequired() {
-            attributedString.append(NSAttributedString(string: " " + isRequiredSuffix, attributes: [.foregroundColor: errorStateConfig.textColor, .font: NSFont.systemFont(ofSize: 16)]))
+        return errorMessageField
+    }
+    
+    func getLabelTextField(for inputView: InputHandlingViewProtocol) -> ACRInputLabelTextField? {
+        guard let inputLabelField = self.inputLabelFieldMap.object(forKey: inputView.key as NSString) else {
+            logError("For input label message, field not found in MapTable.")
+            return nil
         }
-        let labelView = staticTextField()
-        labelView.attributedStringValue = attributedString
+        return inputLabelField
+    }
+    
+    private func setupLabel(for element: ACSBaseInputElement, view: NSView) {
+        guard renderConfig.supportsSchemeV1_3, let label = element.getLabel(), !label.isEmpty, let view = view as? InputHandlingViewProtocol else { return }
+        logInfo("setup input label.")
+        let labelView = ACRInputLabelTextField(inputElement: element, renderConfig: renderConfig, hostConfig: hostConfig, style: style)
         addArrangedSubview(labelView)
         setCustomSpacing(spacing: 3, after: labelView)
-        inputLabelField = labelView
+        inputLabelFieldMap.setObject(labelView, forKey: view.key as NSString)
     }
     
     private func setupErrorMessage(element: ACSBaseInputElement, view: NSView) {
-        guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol, let errorMessage = element.getErrorMessage(), !errorMessage.isEmpty, errorMessageField?.stringValue != errorMessage else { return }
-        let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
-        let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
-        attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
+        guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol, let errorMessage = element.getErrorMessage(), !errorMessage.isEmpty else { return }
         setCustomSpacing(spacing: 5, after: view)
-        let errorField = staticTextField()
-        errorField.isHidden = true
-        errorField.attributedStringValue = attributedErrorMessageString
+        let errorField = ACRInputErrorTextField(inputElement: element, renderConfig: renderConfig, hostConfig: hostConfig, style: style)
         view.errorDelegate = self
         addArrangedSubview(errorField)
-        errorMessageField = errorField
+        errorMessageFieldMap.setObject(errorField, forKey: view.key as NSString)
+    }
+    
+    private func setInputLabel(isHidden hidden: Bool, for view: InputHandlingViewProtocol) {
+        let inputLabelField = self.getLabelTextField(for: view)
+        inputLabelField?.isHidden = hidden
     }
     
     override func mouseExited(with event: NSEvent) {
@@ -326,23 +457,63 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
 
 extension ACRContentStackView: InputHandlingViewErrorDelegate {
     func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
-        errorMessageField?.isHidden = false
+        let errorMessageField = self.getErrorTextField(for: view)
+        if !view.isHidden {
+            errorMessageField?.isHidden = false
+        }
     }
     
     func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
-        hideErrorMessage(with: currentFocussedView)
+        hideErrorMessage(with: view)
     }
     
     func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol, message: String?) {
         let errorMessagePrefixString = renderConfig.localisedStringConfig.errorMessagePrefixString + ", "
-        let errorMessageString = (errorMessageField?.stringValue ?? "") + ". "
-        let labelString = (inputLabelField?.stringValue ?? "") + ". "
+        var errorMessageString = ""
+        var labelString = ""
+        if let errorMessageField = self.getErrorTextField(for: view) {
+            if !view.isHidden {
+                errorMessageString = errorMessageField.stringValue + ". "
+            }
+        }
+        if let inputLabelField = self.getLabelTextField(for: view) {
+            if !view.isHidden {
+                labelString = inputLabelField.stringValue + ". "
+            }
+        }
         let announcementString = message ?? (errorMessagePrefixString + errorMessageString + labelString)
         NSAccessibility.announce(announcementString)
     }
     
-    var isErrorVisible: Bool {
-        return !(errorMessageField?.isHidden ?? true)
+    func isErrorVisible(_ view: InputHandlingViewProtocol) -> Bool {
+        guard let errorMessageField = self.getErrorTextField(for: view) else {
+            return true
+        }
+        return !errorMessageField.isHidden
+    }
+}
+
+extension ACRContentStackView: ACSVisibilityManagerFacade {
+    func hideView(_ view: NSView) {
+        visibilityManager.hide(view, hostView: self)
+        guard let inputView = view as? InputHandlingViewProtocol else {
+            logError("For error visibility checker, field not a input handler :: key.")
+            return
+        }
+        hideErrorMessage(with: inputView)
+        setInputLabel(isHidden: true, for: inputView)
+    }
+    
+    func unhideView(_ view: NSView) {
+        visibilityManager.unhideView(view, hostView: self)
+        guard let inputView = view as? InputHandlingViewProtocol else {
+            logError("For error visibility checker, field not a input handler :: key.")
+            return
+        }
+        if inputView.isErrorShown {
+            inputHandlingViewShouldShowError(inputView)
+        }
+        setInputLabel(isHidden: false, for: inputView)
     }
 }
 

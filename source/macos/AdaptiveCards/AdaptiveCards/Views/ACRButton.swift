@@ -89,10 +89,10 @@ class ACRButton: FlatButton, ImageHoldingView {
 }
 
 extension ACRButton {
-    convenience init(actionElement: ACSBaseActionElement, iconPlacement: ACSIconPlacement?, buttonConfig: ButtonConfig, style: ActionStyle? = nil) {
-        let buttonStyle = style ?? ActionStyle(rawValue: actionElement.getStyle() ?? "") ?? .default
+    convenience init(actionElement: ACSBaseActionElement?, iconPlacement: ACSIconPlacement?, buttonConfig: ButtonConfig, style: ActionStyle? = nil) {
+        let buttonStyle = style ?? ActionStyle(rawValue: actionElement?.getStyle() ?? "") ?? .default
         let position = iconPlacement?.imagePosition ?? .imageLeft
-        self.init(wantsChevron: actionElement is ACSShowCardAction, wantsIcon: actionElement.hasValidIcon, iconPosition: position, style: buttonStyle, buttonConfig: buttonConfig)
-        title = actionElement.getTitle() ?? ""
+        self.init(wantsChevron: actionElement is ACSShowCardAction, wantsIcon: actionElement?.hasValidIcon ?? false, iconPosition: position, style: buttonStyle, buttonConfig: buttonConfig)
+        title = actionElement?.getTitle() ?? ""
     }
 }

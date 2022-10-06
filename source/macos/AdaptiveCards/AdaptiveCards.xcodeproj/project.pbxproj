@@ -476,7 +476,7 @@
 		2806E986261AEE4A00CF7A40 /* UnknownElementRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */; };
 		281950432703141500B0D790 /* HostConfigUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281950422703141500B0D790 /* HostConfigUtilsTests.swift */; };
 		2871B11825DD20A30040AB27 /* FakeTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B11725DD20A30040AB27 /* FakeTextInput.swift */; };
-		2871B11D25DD225C0040AB27 /* ACRMultilineInputTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2871B11C25DD225C0040AB27 /* ACRMultilineInputTextView.xib */; };
+		2871B11D25DD225C0040AB27 /* ACRMultilineTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2871B11C25DD225C0040AB27 /* ACRMultilineTextView.xib */; };
 		2871B12A25DD27F10040AB27 /* ACRMultilineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */; };
 		2871B12F25DD292A0040AB27 /* InputNumberRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B12E25DD292A0040AB27 /* InputNumberRenderer.swift */; };
 		2871B13725DD41C60040AB27 /* FakeInputNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B13625DD41C60040AB27 /* FakeInputNumber.swift */; };
@@ -521,7 +521,7 @@
 		29F712F325F750F30052DC41 /* ContainerRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F712F225F750F30052DC41 /* ContainerRendererTests.swift */; };
 		8106A25825EF9894003D4CC9 /* FlatButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106A25625EF9894003D4CC9 /* FlatButton.swift */; };
 		8106A25925EF9894003D4CC9 /* ACRButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106A25725EF9894003D4CC9 /* ACRButton.swift */; };
-		8107117C26E208E5001A7BC2 /* MultiLineInputTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8107117B26E208E5001A7BC2 /* MultiLineInputTextViewTests.swift */; };
+		8107117C26E208E5001A7BC2 /* ACRMultilineTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8107117B26E208E5001A7BC2 /* ACRMultilineTextViewTests.swift */; };
 		8141136926F22F87009C4DB7 /* ACRFactSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8141136826F22F87009C4DB7 /* ACRFactSetView.swift */; };
 		816F6F0726D6E2CB00D34030 /* ACRChoiceSetButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 816F6F0626D6E2CB00D34030 /* ACRChoiceSetButtonTests.swift */; };
 		81980D8C26E66938002CD350 /* ACRChoiceSetViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81980D8B26E66938002CD350 /* ACRChoiceSetViewTests.swift */; };
@@ -536,7 +536,7 @@
 		81C037292604B1F700B33324 /* cisco.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 81C037282604B1F700B33324 /* cisco.jpg */; };
 		A01CA38625DFE3E400A07E21 /* RichTextBlockRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01CA38525DFE3E400A07E21 /* RichTextBlockRenderer.swift */; };
 		A01CA38D25DFE85D00A07E21 /* BaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01CA38C25DFE85D00A07E21 /* BaseProtocol.swift */; };
-		A032271B25E9176D00E7172E /* ACRContentHoldingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A032271A25E9176D00E7172E /* ACRContentHoldingView.swift */; };
+		A032271B25E9176D00E7172E /* ACRImageWrappingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A032271A25E9176D00E7172E /* ACRImageWrappingView.swift */; };
 		A032272025E9254C00E7172E /* ACRImageProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A032271F25E9254C00E7172E /* ACRImageProperties.swift */; };
 		A032272525E93C7400E7172E /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A032272425E93C7400E7172E /* ImageUtils.swift */; };
 		A04EA82425F00C6100C4C7DB /* ImageRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04EA82325F00C6100C4C7DB /* ImageRendererTests.swift */; };
@@ -545,6 +545,21 @@
 		A0805F5825E40CB400B3F8EA /* RichTextBlockRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0805F5725E40CB400B3F8EA /* RichTextBlockRendererTest.swift */; };
 		A0805F5D25E40D0F00B3F8EA /* FakeRichTextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0805F5C25E40D0F00B3F8EA /* FakeRichTextBlock.swift */; };
 		A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */; };
+		AA05DC7E28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA05DC7D28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift */; };
+		AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */; };
+		AA26969D28D050470095D396 /* ACRCompactChoiceSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA26969C28D050470095D396 /* ACRCompactChoiceSetView.swift */; };
+		AA26969F28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA26969E28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift */; };
+		AA2696A128D053120095D396 /* ACRTextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2696A028D053120095D396 /* ACRTextInputView.swift */; };
+		AA2696AF28D1CCF90095D396 /* ACRMultilineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2696AE28D1CCF90095D396 /* ACRMultilineTextView.swift */; };
+		AA371D0628911F63002D618A /* ACRContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA371D0528911F63002D618A /* ACRContainerView.swift */; };
+		AA3C416328D84D5D00406C36 /* ACRInputLabelTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3C416228D84D5D00406C36 /* ACRInputLabelTextField.swift */; };
+		AA3C416528D85BE300406C36 /* ACRInputErrorTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3C416428D85BE300406C36 /* ACRInputErrorTextField.swift */; };
+		AA4B4D4A28CF532000734278 /* ACRInputToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */; };
+		AA4B4D4E28CF548800734278 /* ACRSingleLineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */; };
+		AA4D26A6289A679700CA502D /* ACRColumnSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */; };
+		AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */; };
+		AA7A97BD288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */; };
+		AAC42D9628C22937007C4367 /* ACSVisibilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */; };
 		AAE0E9182844D8260034FE2A /* ACRHyperLinkTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */; };
 /* End PBXBuildFile section */
 
@@ -1054,7 +1069,7 @@
 		2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownElementRenderer.swift; sourceTree = "<group>"; };
 		281950422703141500B0D790 /* HostConfigUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostConfigUtilsTests.swift; sourceTree = "<group>"; };
 		2871B11725DD20A30040AB27 /* FakeTextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeTextInput.swift; sourceTree = "<group>"; };
-		2871B11C25DD225C0040AB27 /* ACRMultilineInputTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ACRMultilineInputTextView.xib; sourceTree = "<group>"; };
+		2871B11C25DD225C0040AB27 /* ACRMultilineTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ACRMultilineTextView.xib; sourceTree = "<group>"; };
 		2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACRMultilineInputTextView.swift; sourceTree = "<group>"; };
 		2871B12E25DD292A0040AB27 /* InputNumberRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputNumberRenderer.swift; sourceTree = "<group>"; };
 		2871B13625DD41C60040AB27 /* FakeInputNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeInputNumber.swift; sourceTree = "<group>"; };
@@ -1099,7 +1114,7 @@
 		29F712F225F750F30052DC41 /* ContainerRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerRendererTests.swift; sourceTree = "<group>"; };
 		8106A25625EF9894003D4CC9 /* FlatButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlatButton.swift; sourceTree = "<group>"; };
 		8106A25725EF9894003D4CC9 /* ACRButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACRButton.swift; sourceTree = "<group>"; };
-		8107117B26E208E5001A7BC2 /* MultiLineInputTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiLineInputTextViewTests.swift; sourceTree = "<group>"; };
+		8107117B26E208E5001A7BC2 /* ACRMultilineTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRMultilineTextViewTests.swift; sourceTree = "<group>"; };
 		8141136826F22F87009C4DB7 /* ACRFactSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRFactSetView.swift; sourceTree = "<group>"; };
 		816F6F0626D6E2CB00D34030 /* ACRChoiceSetButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRChoiceSetButtonTests.swift; sourceTree = "<group>"; };
 		81980D8B26E66938002CD350 /* ACRChoiceSetViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRChoiceSetViewTests.swift; sourceTree = "<group>"; };
@@ -1114,7 +1129,7 @@
 		81C037282604B1F700B33324 /* cisco.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cisco.jpg; sourceTree = "<group>"; };
 		A01CA38525DFE3E400A07E21 /* RichTextBlockRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextBlockRenderer.swift; sourceTree = "<group>"; };
 		A01CA38C25DFE85D00A07E21 /* BaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseProtocol.swift; sourceTree = "<group>"; };
-		A032271A25E9176D00E7172E /* ACRContentHoldingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRContentHoldingView.swift; sourceTree = "<group>"; };
+		A032271A25E9176D00E7172E /* ACRImageWrappingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRImageWrappingView.swift; sourceTree = "<group>"; };
 		A032271F25E9254C00E7172E /* ACRImageProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRImageProperties.swift; sourceTree = "<group>"; };
 		A032272425E93C7400E7172E /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		A04EA82325F00C6100C4C7DB /* ImageRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRendererTests.swift; sourceTree = "<group>"; };
@@ -1123,6 +1138,21 @@
 		A0805F5725E40CB400B3F8EA /* RichTextBlockRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextBlockRendererTest.swift; sourceTree = "<group>"; };
 		A0805F5C25E40D0F00B3F8EA /* FakeRichTextBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeRichTextBlock.swift; sourceTree = "<group>"; };
 		A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRenderer.swift; sourceTree = "<group>"; };
+		AA05DC7D28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputLabelTextFieldTests.swift; sourceTree = "<group>"; };
+		AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACOVisibilityContext.swift; sourceTree = "<group>"; };
+		AA26969C28D050470095D396 /* ACRCompactChoiceSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRCompactChoiceSetView.swift; sourceTree = "<group>"; };
+		AA26969E28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRChoiceSetCompactPopupButton.swift; sourceTree = "<group>"; };
+		AA2696A028D053120095D396 /* ACRTextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTextInputView.swift; sourceTree = "<group>"; };
+		AA2696AE28D1CCF90095D396 /* ACRMultilineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRMultilineTextView.swift; sourceTree = "<group>"; };
+		AA371D0528911F63002D618A /* ACRContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRContainerView.swift; sourceTree = "<group>"; };
+		AA3C416228D84D5D00406C36 /* ACRInputLabelTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputLabelTextField.swift; sourceTree = "<group>"; };
+		AA3C416428D85BE300406C36 /* ACRInputErrorTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputErrorTextField.swift; sourceTree = "<group>"; };
+		AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputToggleView.swift; sourceTree = "<group>"; };
+		AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRSingleLineInputTextView.swift; sourceTree = "<group>"; };
+		AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRColumnSetView.swift; sourceTree = "<group>"; };
+		AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManager.swift; sourceTree = "<group>"; };
+		AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManagerTests.swift; sourceTree = "<group>"; };
+		AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACSVisibilityManager.swift; sourceTree = "<group>"; };
 		AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRHyperLinkTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1170,6 +1200,7 @@
 				A032272425E93C7400E7172E /* ImageUtils.swift */,
 				08D7767025CBF27B0095C1B3 /* LogUtils.swift */,
 				0876273E27734F9800F3347F /* ViewUtils.swift */,
+				AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1403,6 +1434,7 @@
 			isa = PBXGroup;
 			children = (
 				082D913325D67455000226C4 /* TextBlockRendererTests.swift */,
+				AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */,
 				2871B13E25DD41D80040AB27 /* InputNumberRendererTest.swift */,
 				28CE1A6F25E4B96300BFCFD9 /* FactSetRendererTest.swift */,
 				2871B16525DF72290040AB27 /* MultilineInputTextRendererTest.swift */,
@@ -1793,6 +1825,8 @@
 			isa = PBXGroup;
 			children = (
 				08D7767925CC339D0095C1B3 /* RendererManager.swift */,
+				AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */,
+				AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -1804,16 +1838,25 @@
 				8106A25625EF9894003D4CC9 /* FlatButton.swift */,
 				29E8DF5125E69B2B000EC12F /* ACRChoiceButton.swift */,
 				29E8DF6B25E7B95C000EC12F /* ACRChoiceSetView.swift */,
+				AA26969C28D050470095D396 /* ACRCompactChoiceSetView.swift */,
+				AA26969E28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift */,
 				08D9547425D17FF9001442D3 /* ACRView.swift */,
 				0872608725E6AD420036061C /* ACRColumnView.swift */,
-				2871B11C25DD225C0040AB27 /* ACRMultilineInputTextView.xib */,
+				AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */,
+				AA371D0528911F63002D618A /* ACRContainerView.swift */,
+				2871B11C25DD225C0040AB27 /* ACRMultilineTextView.xib */,
 				28F4E2132681DA76000B5131 /* ACRTextView.swift */,
 				28F4E2182681DAE3000B5131 /* ACRScrollView.swift */,
 				2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */,
+				AA2696AE28D1CCF90095D396 /* ACRMultilineTextView.swift */,
+				AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */,
+				AA2696A028D053120095D396 /* ACRTextInputView.swift */,
 				2887215A26CE2D17007F7910 /* ACRTextField.swift */,
+				AA3C416228D84D5D00406C36 /* ACRInputLabelTextField.swift */,
+				AA3C416428D85BE300406C36 /* ACRInputErrorTextField.swift */,
 				28D7A57625F1E7E800AEA09C /* ACRCollectionViewItem.swift */,
 				28D7A57B25F1E84800AEA09C /* ACRCollectionView.swift */,
-				A032271A25E9176D00E7172E /* ACRContentHoldingView.swift */,
+				A032271A25E9176D00E7172E /* ACRImageWrappingView.swift */,
 				13C41B0C25F25D06008A1F2E /* ACRDateField.swift */,
 				81C0371A26047C1E00B33324 /* ACRBackgroundImageView.swift */,
 				2910CF002600A82A000910C8 /* ACRActionSetView.swift */,
@@ -1821,6 +1864,7 @@
 				088F716426A9925400C52C06 /* SpacingView.swift */,
 				8141136826F22F87009C4DB7 /* ACRFactSetView.swift */,
 				AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */,
+				AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1894,7 +1938,8 @@
 				81C037232604AB9D00B33324 /* BackgroundImageViewTests.swift */,
 				281950422703141500B0D790 /* HostConfigUtilsTests.swift */,
 				08E9A59C268DA48F009D7151 /* ImageSetImageViewTests.swift */,
-				8107117B26E208E5001A7BC2 /* MultiLineInputTextViewTests.swift */,
+				8107117B26E208E5001A7BC2 /* ACRMultilineTextViewTests.swift */,
+				AA05DC7D28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2283,7 +2328,7 @@
 				81A94A7925FF86E70018213A /* attachment.png in Resources */,
 				080DD9282689F4430058914A /* recents_20.png in Resources */,
 				080DD9292689F4430058914A /* recents_20_w.png in Resources */,
-				2871B11D25DD225C0040AB27 /* ACRMultilineInputTextView.xib in Resources */,
+				2871B11D25DD225C0040AB27 /* ACRMultilineTextView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2343,32 +2388,43 @@
 				29C3AD38260C7C6A00467069 /* BleedUtils.swift in Sources */,
 				81A3000B260C7961003848DD /* BundleUtils.swift in Sources */,
 				0872609025E6AF530036061C /* ColumnSetRenderer.swift in Sources */,
+				AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */,
 				082864FD25C99E300080D767 /* HostConfigUtils.swift in Sources */,
 				0876273F27734F9800F3347F /* ViewUtils.swift in Sources */,
+				AA3C416528D85BE300406C36 /* ACRInputErrorTextField.swift in Sources */,
 				A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */,
 				28D7A52425EFAD8000AEA09C /* ImageSetRenderer.swift in Sources */,
 				08B5F91925C9272500A7D37A /* AdaptiveCardRenderer.swift in Sources */,
 				08A12EE326987B5C00490977 /* ACSExtensions.swift in Sources */,
+				AA2696A128D053120095D396 /* ACRTextInputView.swift in Sources */,
 				08D7767A25CC339D0095C1B3 /* RendererManager.swift in Sources */,
 				28D7A51425E9300300AEA09C /* BaseCardElementRenderer.swift in Sources */,
-				A032271B25E9176D00E7172E /* ACRContentHoldingView.swift in Sources */,
+				A032271B25E9176D00E7172E /* ACRImageWrappingView.swift in Sources */,
+				AA4B4D4E28CF548800734278 /* ACRSingleLineInputTextView.swift in Sources */,
 				A01CA38D25DFE85D00A07E21 /* BaseProtocol.swift in Sources */,
 				0872608825E6AD420036061C /* ACRColumnView.swift in Sources */,
 				2887215B26CE2D17007F7910 /* ACRTextField.swift in Sources */,
+				AA26969F28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift in Sources */,
+				AA371D0628911F63002D618A /* ACRContainerView.swift in Sources */,
 				088C673C2615C2B00070186C /* ACRContentStackView.swift in Sources */,
 				28D7A57725F1E7E800AEA09C /* ACRCollectionViewItem.swift in Sources */,
 				28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */,
 				2806E986261AEE4A00CF7A40 /* UnknownElementRenderer.swift in Sources */,
+				AA2696AF28D1CCF90095D396 /* ACRMultilineTextView.swift in Sources */,
 				13C41B0725F226C9008A1F2E /* InputTimeRenderer.swift in Sources */,
 				28CE1A4425DFD64B00BFCFD9 /* FactSetRenderer.swift in Sources */,
+				AA3C416328D84D5D00406C36 /* ACRInputLabelTextField.swift in Sources */,
 				08E4044825B46ABA00C2092A /* AdaptiveCards.h in Sources */,
+				AA26969D28D050470095D396 /* ACRCompactChoiceSetView.swift in Sources */,
 				A032272525E93C7400E7172E /* ImageUtils.swift in Sources */,
 				AAE0E9182844D8260034FE2A /* ACRHyperLinkTextView.swift in Sources */,
 				2871B12A25DD27F10040AB27 /* ACRMultilineInputTextView.swift in Sources */,
 				8141136926F22F87009C4DB7 /* ACRFactSetView.swift in Sources */,
 				28F4E2142681DA77000B5131 /* ACRTextView.swift in Sources */,
 				2806E8EC26010C3800CF7A40 /* ActionSubmitRenderer.swift in Sources */,
+				AA4D26A6289A679700CA502D /* ACRColumnSetView.swift in Sources */,
 				29E8DF5225E69B2B000EC12F /* ACRChoiceButton.swift in Sources */,
+				AAC42D9628C22937007C4367 /* ACSVisibilityManager.swift in Sources */,
 				0830D55125F90D4C00BBC245 /* Targets.swift in Sources */,
 				29050BFE25D59A3F00AF3CA9 /* InputToggleRenderer.swift in Sources */,
 				088F716526A9925400C52C06 /* SpacingView.swift in Sources */,
@@ -2378,11 +2434,13 @@
 				29430A5C25F216AA00CBA72E /* ContainerRenderer.swift in Sources */,
 				088F716226A9560600C52C06 /* ActionToggleVisibilityRenderer.swift in Sources */,
 				29E8DF6C25E7B95D000EC12F /* ACRChoiceSetView.swift in Sources */,
+				AA4B4D4A28CF532000734278 /* ACRInputToggleView.swift in Sources */,
 				81C0371B26047C1E00B33324 /* ACRBackgroundImageView.swift in Sources */,
 				28F4E2192681DAE3000B5131 /* ACRScrollView.swift in Sources */,
 				08B5F91125C924F400A7D37A /* TextBlockRenderer.swift in Sources */,
 				A032272025E9254C00E7172E /* ACRImageProperties.swift in Sources */,
 				13C465E525DD3C07006E4605 /* InputDateRenderer.swift in Sources */,
+				AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */,
 				2910CF012600A82A000910C8 /* ACRActionSetView.swift in Sources */,
 				0801D5EA25C2C3B500AABD6C /* AdaptiveCard.swift in Sources */,
 				29BA82D725E265F4000B7578 /* ChoiceSetInputRenderer.swift in Sources */,
@@ -2417,9 +2475,10 @@
 				08352EA52695CFB300B544C3 /* FakeInternalId.swift in Sources */,
 				082E59AE2604E96E00741958 /* FakeAdaptiveCard.swift in Sources */,
 				81AFEA7626281B9400DD47E0 /* ACRNumericTextFieldTests.swift in Sources */,
-				8107117C26E208E5001A7BC2 /* MultiLineInputTextViewTests.swift in Sources */,
+				8107117C26E208E5001A7BC2 /* ACRMultilineTextViewTests.swift in Sources */,
 				0801EDB425F78EB800D64C86 /* FakeColumnSet.swift in Sources */,
 				2871B15025DD4C4D0040AB27 /* TextInputRedererTest.swift in Sources */,
+				AA05DC7E28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift in Sources */,
 				299DE17C26048FBB00605DAD /* ActionsRendererTests.swift in Sources */,
 				28CE1A6B25E4B67B00BFCFD9 /* FakeFactSet.swift in Sources */,
 				2910CF0C2600C6C9000910C8 /* FakeActionSet.swift in Sources */,
@@ -2429,6 +2488,7 @@
 				082D914425D6DC7A000226C4 /* FakeTextBlock.swift in Sources */,
 				A0805F5D25E40D0F00B3F8EA /* FakeRichTextBlock.swift in Sources */,
 				082D913425D67455000226C4 /* TextBlockRendererTests.swift in Sources */,
+				AA7A97BD288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift in Sources */,
 				2871B11825DD20A30040AB27 /* FakeTextInput.swift in Sources */,
 				28CE1A7025E4B96300BFCFD9 /* FactSetRendererTest.swift in Sources */,
 				2982B3F72628933C00E7561C /* BaseCardElementRendererTests.swift in Sources */,

@@ -35,15 +35,31 @@ class ActionSetRendererTests: XCTestCase {
         XCTAssertEqual(actionSetView.actions.count, 1)
     }
     
+    func testHeightProperty() {
+        var hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .horizontal, actionAlignment: .center, buttonSpacing: 2, maxActions: 2, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 1))
+        hostConfig = .make(actions: hostConfigActions)
+        actionSet = .make(actions: [FakeSubmitAction.make(), FakeSubmitAction.make()], heightType: .stretch)
+        var actionSetView = renderActionSetView()
+        XCTAssertNotNil(actionSetView.showCardStackView.arrangedSubviews.last as? StretchableView)
+        guard let stretchView = actionSetView.showCardStackView.arrangedSubviews.last as? StretchableView else { return XCTFail() }
+        XCTAssertEqual(stretchView.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
+        
+        hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .horizontal, actionAlignment: .center, buttonSpacing: 2, maxActions: 2, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 1))
+        hostConfig = .make(actions: hostConfigActions)
+        actionSet = .make(actions: [FakeSubmitAction.make(), FakeSubmitAction.make()], heightType: .auto)
+        actionSetView = renderActionSetView()
+        XCTAssertNil(actionSetView.showCardStackView.arrangedSubviews.last as? StretchableView)
+    }
+    
     func testRendererCheckOrientation() {
-        var hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .horizontal, actionAlignment: .center, buttonSpacing: 2, maxActions: 1, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 1))
+        var hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .horizontal, actionAlignment: .center, buttonSpacing: 2, maxActions: 2, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 1))
         hostConfig = .make(actions: hostConfigActions)
         actionSet = .make(actions: [FakeSubmitAction.make(), FakeSubmitAction.make()])
         
         var actionSetView = renderActionSetView()
         XCTAssertEqual(actionSetView.orientation, .horizontal)
         
-        hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .vertical, actionAlignment: .center, buttonSpacing: 2, maxActions: 1, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 1))
+        hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .vertical, actionAlignment: .center, buttonSpacing: 2, maxActions: 2, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 1))
         hostConfig = .make(actions: hostConfigActions)
         actionSet = .make(actions: [FakeSubmitAction.make(), FakeSubmitAction.make()])
         

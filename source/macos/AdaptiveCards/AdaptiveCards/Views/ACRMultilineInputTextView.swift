@@ -1,231 +1,158 @@
 import AdaptiveCards_bridge
 import AppKit
 
-class ACRMultilineInputTextView: NSView, NSTextViewDelegate {
-    @IBOutlet var contentView: NSView!
-    @IBOutlet var scrollView: ACRScrollView!
-    @IBOutlet var textView: ACRTextView!
+class ACRMultilineInputTextView: NSView {
+    private let renderConfig: RenderConfig
+    private let element: ACSTextInput
+    private let hostConfig: ACSHostConfig
+    private weak var rootview: ACRView?
     
-    weak var errorDelegate: InputHandlingViewErrorDelegate?
-    private var placeholderAttrString: NSAttributedString?
-    private var shouldShowError = false
-    private var errorMessage: String?
-    private var labelString: String?
-    private let config: RenderConfig
-    private let inputConfig: InputFieldConfig
+    private (set) lazy var multiLineTextView: ACRMultilineTextView = {
+        let textView = ACRMultilineTextView(config: renderConfig, inputElement: element)
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.heightType = element.getHeight()
+        textView.setId(element.getId())
+        if let placeholderString = element.getPlaceholder() {
+            textView.setPlaceholder(placeholderString)
+        }
+        if let valueString = element.getValue(), !valueString.isEmpty {
+            textView.setValue(value: valueString, maximumLen: element.getMaxLength())
+        }
+        textView.maxLen = element.getMaxLength() as? Int ?? 0
+        textView.regex = element.getRegex()
+        textView.isRequired = element.getIsRequired()
+        return textView
+    }()
     
-    var maxLen = 0
-    var id: String?
-    var regex: String?
-    var isRequired = false
+    private (set) lazy var inlineButton: ACRButton = {
+        let button = ACRButton(actionElement: element.getInlineAction(), iconPlacement: hostConfig.getActions()?.iconPlacement, buttonConfig: renderConfig.buttonConfig, style: .inline)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
-    private init(config: RenderConfig) {
-        self.config = config
-        self.inputConfig = config.inputFieldConfig
-        super.init(frame: .zero)
-        BundleUtils.loadNibNamed("ACRMultilineInputTextView", owner: self)
-        setupViews()
-        setupConstraints()
+    var inlineButtonTitle: String {
+        return inlineButton.title
     }
     
-    convenience init(config: RenderConfig, inputElement: ACSBaseInputElement) {
-        self.init(config: config)
-        setupInputElementProperties(inputElement: inputElement)
+    var inlineButtonAttributedTitle: NSAttributedString {
+        get {
+            return inlineButton.attributedTitle
+        }
+        set {
+            inlineButton.attributedTitle = newValue
+        }
+    }
+    
+    init(renderConfig: RenderConfig, element: ACSTextInput, with hostConfig: ACSHostConfig, rootview: ACRView?) {
+        self.renderConfig = renderConfig
+        self.element = element
+        self.hostConfig = hostConfig
+        super.init(frame: .zero)
+        self.rootview = rootview
+        self.setupView()
+        self.setupContraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupViews() {
-        addSubview(contentView)
+    private func setupView() {
+        self.addSubview(multiLineTextView)
+        self.rootview?.addInputHandler(multiLineTextView)
+        if element.getInlineAction() != nil {
+            self.addSubview(inlineButton)
+            self.setupInlineButton()
+        }
     }
     
-    private func setupConstraints() {
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        contentView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        contentView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        contentView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        let heightConstraint = contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 100)
-        heightConstraint.isActive = true
-    }
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        scrollView.wantsLayer = true
-        scrollView.focusRingCornerRadius = inputConfig.focusRingCornerRadius
-        scrollView.focusRingType = .exterior
-        scrollView.autohidesScrollers = true
-        scrollView.disableScroll = true
-        textView.delegate = self
-        textView.responderDelegate = self
-        textView.allowsUndo = true
-        textView.isAutomaticQuoteSubstitutionEnabled = false
-        textView.isAutomaticDashSubstitutionEnabled = false
-        textView.isAutomaticTextReplacementEnabled = false
-        textView.smartInsertDeleteEnabled = false
-        textView.font = inputConfig.font
-        textView.textContainer?.lineFragmentPadding = 0
-        textView.textContainerInset = NSSize(width: inputConfig.multilineFieldInsets.left, height: inputConfig.multilineFieldInsets.top)
-        wantsLayer = true
-        layer?.borderWidth = inputConfig.borderWidth
-        layer?.cornerRadius = inputConfig.focusRingCornerRadius
-        textView.setAccessibilityRoleDescription(config.localisedStringConfig.inputTextFieldAccessibilityTitle)
-        
-        // For hover need tracking area
-        let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
-        addTrackingArea(trackingArea)
-        updateAppearance()
-    }
-    
-    override func accessibilityLabel() -> String? {
-        guard config.supportsSchemeV1_3 else { return super.accessibilityTitle() }
-        
-        var accessibilityLabel = ""
-        if shouldShowError {
-            accessibilityLabel += config.localisedStringConfig.errorMessagePrefixString
-            if let errorMessage = errorMessage, !errorMessage.isEmpty {
-                accessibilityLabel += accessibilityLabel.isEmpty ? "" : ", "
-                accessibilityLabel += errorMessage
+    private func setupContraints() {
+        // multiline text view
+        multiLineTextView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        multiLineTextView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        multiLineTextView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        if element.getInlineAction() != nil {
+            inlineButton.leadingAnchor.constraint(equalTo: multiLineTextView.trailingAnchor, constant: 8.0).isActive = true
+            if element.getHeight() == .auto {
+                inlineButton.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+            } else {
+                inlineButton.topAnchor.constraint(equalTo: topAnchor).isActive = true
             }
-        }
-        if let label = labelString, !label.isEmpty {
-            accessibilityLabel += accessibilityLabel.isEmpty ? "" : ", "
-            accessibilityLabel += label
-        }
-        if !textView.string.isEmpty {
-            accessibilityLabel += accessibilityLabel.isEmpty ? "" : ", "
-            accessibilityLabel += textView.string
-        } else if let placeholder = placeholderAttrString?.string, !placeholder.isEmpty {
-            accessibilityLabel += accessibilityLabel.isEmpty ? "" : ", "
-            accessibilityLabel += placeholder
-        }
-        
-        return accessibilityLabel
-    }
-    
-    func setPlaceholder(_ placeholder: String) {
-        let placeholderValue = NSMutableAttributedString(string: placeholder)
-        placeholderValue.addAttributes([.foregroundColor: inputConfig.placeholderTextColor, .font: inputConfig.font], range: NSRange(location: 0, length: placeholderValue.length))
-        textView.placeholderLeftPadding = inputConfig.multilineFieldInsets.left
-        textView.placeholderTopPadding = inputConfig.multilineFieldInsets.top
-        textView.placeholderAttrString = placeholderValue
-        guard !config.supportsSchemeV1_3 else { return }
-        textView.setAccessibilityPlaceholderValue(placeholder)
-    }
-    
-    func setValue(value: String, maximumLen: NSNumber?) {
-        var attributedValue = NSMutableAttributedString(string: value)
-        let maxCharLen = Int(truncating: maximumLen ?? 0)
-        if maxCharLen > 0, attributedValue.string.count > maxCharLen {
-            attributedValue = NSMutableAttributedString(string: String(attributedValue.string.dropLast(attributedValue.string.count - maxCharLen)))
-        }
-        attributedValue.addAttributes([.foregroundColor: NSColor.textColor, .font: inputConfig.font], range: NSRange(location: 0, length: attributedValue.length))
-        textView.textStorage?.setAttributedString(attributedValue)
-    }
-    
-    func setId(_ idString: String?) {
-        self.id = idString
-    }
-    
-    func setVisibilty(to isVisible: Bool) {
-        self.isHidden = !isVisible
-    }
-    
-    func textDidChange(_ notification: Notification) {
-        hideErrorIfNeeded()
-        guard maxLen > 0  else { return } // maxLen returns 0 if propery not set
-        // This stops the user from exceeding the maxLength property of Inut.Text if prroperty was set
-        guard let textView = notification.object as? NSTextView, textView.string.count > maxLen else { return }
-        textView.string = String(textView.string.dropLast())
-        // Below check added to ensure prefilled value doesn't exceede the maxLength property if set
-        if textView.string.count > maxLen {
-            textView.string = String(textView.string.dropLast(textView.string.count - maxLen))
-        }
-    }
-    
-    override func mouseEntered(with event: NSEvent) {
-        super.mouseEntered(with: event)
-        updateAppearance()
-    }
-    
-    override func mouseExited(with event: NSEvent) {
-        super.mouseExited(with: event)
-        updateAppearance()
-    }
-    
-    private func hideErrorIfNeeded() {
-        guard isValid else { return }
-        shouldShowError = false
-        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: self)
-        updateAppearance()
-    }
-    
-    private func updateAppearance(hasFocus: Bool = false) {
-        if shouldShowError {
-            layer?.borderColor = inputConfig.errorStateConfig.borderColor.cgColor
-            textView.backgroundColor = inputConfig.errorStateConfig.backgroundColor
+            inlineButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+            inlineButton.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, multiplier: 0.5).isActive = true
         } else {
-            layer?.borderColor = hasFocus ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
-            textView.backgroundColor = isMouseInView ? inputConfig.highlightedColor : inputConfig.backgroundColor
+            multiLineTextView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         }
-        updateAccessibilityVoiceOverMessage()
     }
     
-    private func setupInputElementProperties(inputElement: ACSBaseInputElement) {
-        guard config.supportsSchemeV1_3 else { return }
-        labelString = inputElement.getLabel()
-        errorMessage = inputElement.getErrorMessage()
-        setAccessibilityPlaceholderValue(nil)
-        updateAccessibilityVoiceOverMessage()
-    }
-    
-    private func updateAccessibilityVoiceOverMessage() {
-        textView.setAccessibilityTitle(accessibilityLabel())
+    private func setupInlineButton() {
+        guard let action = element.getInlineAction() else {
+            return logError("InlineAction is nil")
+        }
+        guard let rootview = self.rootview else {
+            return logError("MultiLine TextView InlineAction needs rootview")
+        }
+        if let iconUrl = action.getIconUrl(), !iconUrl.isEmpty {
+            rootview.registerImageHandlingView(inlineButton, for: iconUrl)
+        }
+        // adding target to the Buttons
+        switch action.getType() {
+        case .openUrl:
+            guard let openURLAction = action as? ACSOpenUrlAction else {
+                logError("Element is not of type ACSOpenUrlAction")
+                return
+            }
+            let target = ActionOpenURLTarget(element: openURLAction, delegate: rootview)
+            target.configureAction(for: inlineButton)
+            rootview.addTarget(target)
+        case .submit:
+            guard let submitAction = action as? ACSSubmitAction else {
+                logError("Element is not of type ACSSubmitAction")
+                return
+            }
+            let target = ActionSubmitTarget(element: submitAction, delegate: rootview)
+            target.configureAction(for: inlineButton)
+            rootview.addTarget(target)
+        default:
+            break
+        }
     }
 }
-
 extension ACRMultilineInputTextView: InputHandlingViewProtocol {
+    var isErrorShown: Bool {
+        return self.multiLineTextView.isErrorShown
+    }
+    
     var value: String {
-        textView.string
+        return self.multiLineTextView.value
     }
     
     var key: String {
-        guard let id = id else {
-            logError("ID must be set on creation")
-            return ""
-        }
-        return id
+        return self.multiLineTextView.key
     }
     
     var isValid: Bool {
-        guard isBasicValidationsSatisfied else { return false }
-        guard !value.isEmpty, let regexVal = regex, !regexVal.isEmpty else { return true }
-        return value.range(of: regexVal, options: .regularExpression, range: nil, locale: nil) != nil
+        return self.multiLineTextView.isValid
+    }
+    
+    var isRequired: Bool {
+        return self.multiLineTextView.isRequired
+    }
+    
+    weak var errorDelegate: InputHandlingViewErrorDelegate? {
+        get {
+            return self.multiLineTextView.errorDelegate
+        }
+        set {
+            self.multiLineTextView.errorDelegate = newValue
+        }
     }
     
     func showError() {
-        shouldShowError = true
-        errorDelegate?.inputHandlingViewShouldShowError(self)
-        updateAppearance()
+        self.multiLineTextView.showError()
     }
     
     func setAccessibilityFocus() {
-        textView.setAccessibilityFocused(true)
-        textView.selectAll(nil)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityLabel())
-    }
-}
-
-extension ACRMultilineInputTextView: ACRTextViewResponderDelegate {
-    func textViewDidBecomeFirstResponder() {
-        scrollView.disableScroll = false
-        updateAppearance(hasFocus: true)
-    }
-    
-    func textViewDidResignFirstResponder() {
-        scrollView.disableScroll = true
-        updateAppearance()
+        self.multiLineTextView.setAccessibilityFocus()
     }
 }

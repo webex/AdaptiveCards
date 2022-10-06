@@ -98,6 +98,12 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         return config
     }
 
+    @IBAction private func clearCardAction(_ sender: NSButton) {
+        if let renderedView = stackView.arrangedSubviews.first {
+            renderedView.removeFromSuperview()
+        }
+    }
+    
     @IBAction private func handleRenderAction(_ sender: Any) {
         renderCard(with: textView.string)
     }

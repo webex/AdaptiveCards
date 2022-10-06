@@ -23,10 +23,12 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
         }()
         
         inputField.stepperShouldWrapValues(false)
-        inputField.isHidden = !inputElement.getIsVisible()
         inputField.id = inputElement.getId()
         rootView.addInputHandler(inputField)
         
+        if inputElement.getHeight() == .stretch {
+            inputField.setStretchableHeight()
+        }
         return inputField
     }
 }
@@ -40,6 +42,17 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     
     private var previousValue = ""
     private let config: RenderConfig
+    
+    private (set) lazy var contentStackView: NSStackView = {
+        let view = NSStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.orientation = .vertical
+        view.spacing = 0
+        view.alignment = .leading
+        return view
+    }()
+    
+    private var contentView = NSView()
     
     init(config: RenderConfig, inputElement: ACSBaseInputElement) {
         self.inputElement = inputElement
@@ -141,18 +154,21 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     }
     
     private func setupViews() {
-        addSubview(textField)
-        addSubview(stepper)
+        addSubview(contentStackView)
+        contentStackView.addArrangedSubview(contentView)
+        contentView.addSubview(textField)
+        contentView.addSubview(stepper)
     }
     
     private func setupConstraints() {
-        textField.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        textField.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        contentStackView.constraint(toFill: self)
+        textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        textField.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         stepper.leadingAnchor.constraint(equalTo: textField.trailingAnchor).isActive = true
-        stepper.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stepper.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        stepper.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        stepper.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        stepper.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        stepper.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
     }
     
     private func setUpControls() {
@@ -167,12 +183,22 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
             textField.hideError()
         }
     }
+    
+    func setStretchableHeight() {
+        let padding = StretchableView()
+        ACSFillerSpaceManager.configureHugging(view: padding)
+        self.contentStackView.addArrangedSubview(padding)
+    }
 }
 
 // MARK: - EXTENSION
 extension ACRNumericTextField: InputHandlingViewProtocol {
     static let MAXVAL = Double.greatestFiniteMagnitude
     static let MINVAL = -MAXVAL
+    
+    var isErrorShown: Bool {
+        return textField.isErrorShown()
+    }
     
     var minValue: Double {
         get { return stepper.minValue }

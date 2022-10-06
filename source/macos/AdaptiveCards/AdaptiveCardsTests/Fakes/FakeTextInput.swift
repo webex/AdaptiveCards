@@ -14,6 +14,7 @@ class FakeInputText: ACSTextInput {
     public var errorMessage: String?
     public var label: String?
     public var separator: Bool = false
+    public var height: ACSHeightType = .auto
     
     override func getPlaceholder() -> String? {
         return placeholderString
@@ -71,6 +72,10 @@ class FakeInputText: ACSTextInput {
         regexString = value
     }
     
+    override func setId(_ value: String) {
+        id = value
+    }
+    
     override func getId() -> String? {
         return id
     }
@@ -110,11 +115,20 @@ class FakeInputText: ACSTextInput {
     override func setSeparator(_ value: Bool) {
         separator = value
     }
+    
+    override func getHeight() -> ACSHeightType {
+        return height
+    }
+    
+    override func setHeight(_ value: ACSHeightType) {
+        height = value
+    }
 }
 
 extension FakeInputText {
-    static func make(placeholderString: String? = "", value: String? = "", isMultiline: Bool = false, maxLength: NSNumber? = 0, style: ACSTextInputStyle = .text, inlineAction: ACSBaseActionElement? = .none, regexString: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false) -> FakeInputText {
+    static func make(placeholderString: String? = "", id: String? = "", value: String? = "", isMultiline: Bool = false, maxLength: NSNumber? = 0, style: ACSTextInputStyle = .text, inlineAction: ACSBaseActionElement? = .none, regexString: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputText {
         let fakeInputText = FakeInputText()
+        fakeInputText.id = id
         fakeInputText.placeholderString = placeholderString
         fakeInputText.value = value
         fakeInputText.isMultiline = isMultiline
@@ -126,6 +140,7 @@ extension FakeInputText {
         fakeInputText.errorMessage = errorMessage
         fakeInputText.label = label
         fakeInputText.separator = separator
+        fakeInputText.height = heightType
         return fakeInputText
     }
 }

@@ -16,6 +16,7 @@ class FakeTextBlock: ACSTextBlock {
     public var separator: Bool = false
     public var isVisible: Bool = true
     public var spacing: ACSSpacing = .default
+    public var height: ACSHeightType = .auto
 
     open override func getText() -> String? {
         return text
@@ -37,6 +38,14 @@ class FakeTextBlock: ACSTextBlock {
         textSize = value
     }
 
+    override func getHeight() -> ACSHeightType {
+        return height
+    }
+    
+    override func setHeight(_ value: ACSHeightType) {
+        height = value
+    }
+    
     open override func getTextWeight() -> ACSTextWeight {
         return textWeight
     }
@@ -123,7 +132,7 @@ class FakeTextBlock: ACSTextBlock {
 }
 
 extension FakeTextBlock {
-    static func make(text: String? = "", textForDateParsing: ACSDateTimePreparser? = nil, textSize: ACSTextSize = .default, textWeight: ACSTextWeight = .default, fontType: ACSFontType = .default, textColor: ACSForegroundColor = .default, wrap: Bool = false, isSubtle: Bool = false, maxLines: NSNumber = 0, horizontalAlignment: ACSHorizontalAlignment = .left, language: String? = "", separator: Bool = false, isVisible: Bool = false, spacing: ACSSpacing = .default) -> FakeTextBlock {
+    static func make(text: String? = "", textForDateParsing: ACSDateTimePreparser? = nil, textSize: ACSTextSize = .default, heightType: ACSHeightType = .auto, textWeight: ACSTextWeight = .default, fontType: ACSFontType = .default, textColor: ACSForegroundColor = .default, wrap: Bool = false, isSubtle: Bool = false, maxLines: NSNumber = 0, horizontalAlignment: ACSHorizontalAlignment = .left, language: String? = "", separator: Bool = false, isVisible: Bool = false, spacing: ACSSpacing = .default) -> FakeTextBlock {
         let fakeTextBlock = FakeTextBlock()
         fakeTextBlock.text = text
         fakeTextBlock.textForDateParsing = textForDateParsing
@@ -139,6 +148,7 @@ extension FakeTextBlock {
         fakeTextBlock.separator = separator
         fakeTextBlock.spacing = spacing
         fakeTextBlock.isVisible = isVisible
+        fakeTextBlock.height = heightType
         return fakeTextBlock
     }
 }

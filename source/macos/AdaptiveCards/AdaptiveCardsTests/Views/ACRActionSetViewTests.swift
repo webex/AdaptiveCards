@@ -116,7 +116,7 @@ class ACRActionSetViewTests: XCTestCase {
         
         XCTAssertTrue(fakeShowCard1.isHidden)
         XCTAssertEqual(actionButtons[0].state, .off)
-        XCTAssertEqual(view.showCardStackView.arrangedSubviews[1], fakeShowCard2)
+        XCTAssertEqual(view.showCardStackView.arrangedSubviews[0], fakeShowCard2)
         XCTAssertFalse(fakeShowCard2.isHidden)
         XCTAssertEqual(actionButtons[1].state, .on)
         
