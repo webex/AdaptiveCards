@@ -40,13 +40,22 @@ std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getQmlTag()
 
 void NumberInputElement::initialize()
 {
+    mContext->addHeightEstimate(numberConfig.height);
     const std::string origionalElementId = mInput->GetId();
     mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mInput->GetPlaceholder());
     mInput->SetId(mContext->ConvertToValidId(mInput->GetId()));
-    mOrigionalElementId = mInput->GetId();
+    mOrigionalElementId = RendererQml::Formatter() << mInput->GetId() << "_textField";
+
+
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    {
+        mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mInput->GetLabel());
+        mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mInput->GetErrorMessage());
+    }
 
     numberInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
-    numberInputColElement->Property("id", RendererQml::Formatter() << mInput->GetId() << "_column");
+    numberInputColElement->Property("id", mInput->GetId());
+    numberInputColElement->Property("property int minWidth", "200");
     numberInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     numberInputColElement->Property("width", "parent.width");
     numberInputColElement->Property("visible", mInput->GetIsVisible() ? "true" : "false");
@@ -217,7 +226,7 @@ void NumberInputElement::initialize()
     uiSplitterRactangle->AddChild(upDownIcon);
     uiSplitterRactangle->AddChild(upIndicatorTag);
     uiSplitterRactangle->AddChild(downIndicatorTag);
-    mContext->addToInputElementList(origionalElementId, (mOrigionalElementId + ".value"));
+    mContext->addToInputElementList(origionalElementId, (mOrigionalElementId + ".value.toString()"));
     uiNumberInput->Property("Accessible.ignored", "true");
     clearIcon->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetPlaceholder().empty() ? "Number Input" : mEscapedPlaceHolderString) << " clear`");
     clearIcon->Property("Accessible.role", "Accessible.Button");
@@ -236,6 +245,7 @@ void NumberInputElement::createInputLabel()
     {
         if (!mInput->GetLabel().empty())
         {
+            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mInput->GetLabel()));
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
             label->Property("id", RendererQml::Formatter() << mInput->GetId() << "_label");
             label->Property("wrapMode", "Text.Wrap");
@@ -246,9 +256,13 @@ void NumberInputElement::createInputLabel()
             label->Property("font.pixelSize", RendererQml::Formatter() << numberConfig.labelSize);
 
             if (mInput->GetIsRequired())
-                label->Property("text", RendererQml::Formatter() << (mInput->GetLabel().empty() ? "Text" : mInput->GetLabel()) << " <font color='" << numberConfig.errorMessageColor << "'>*</font>", true);
+            {
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << " <font color='" << numberConfig.errorMessageColor << "'>*</font>`");
+            }
             else
-                label->Property("text", RendererQml::Formatter() << (mInput->GetLabel().empty() ? "Text" : mInput->GetLabel()), true);
+            {
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << "`");
+            }
 
             numberInputColElement->AddChild(label);
         }
@@ -288,7 +302,7 @@ std::shared_ptr<RendererQml::QmlTag> NumberInputElement::getContentItemTag(const
     {
         contentItemTag->Property("placeholderText", RendererQml::Formatter() << "String.raw`" << mEscapedPlaceHolderString << "`");
     }
-    contentItemTag->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetPlaceholder().empty() ? "Number Input Field" : mEscapedPlaceHolderString) << "`");
+    contentItemTag->Property("Accessible.name", RendererQml::Formatter() << "String.raw`" << (mInput->GetLabel().empty() ? (mInput->GetPlaceholder().empty() ? "Text Field" : mEscapedPlaceHolderString) : mEscapedLabelString) << "`");
     contentItemTag->Property("Accessible.role", "Accessible.EditableText");
     contentItemTag->Property("background", textBackgroundTag->ToString());
     contentItemTag->AddFunctions(getAccessibleName());
@@ -320,7 +334,7 @@ void NumberInputElement::createErrorMessage()
 
     std::string color = mContext->GetHexColor(numberConfig.errorMessageColor);
     uiErrorMessage->Property("color", color);
-    uiErrorMessage->Property("text", mInput->GetErrorMessage(), true);
+    uiErrorMessage->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
     uiErrorMessage->Property("visible", RendererQml::Formatter() << mContentTagId << ".showErrorMessage");
     numberInputColElement->AddChild(uiErrorMessage);
 }
@@ -393,13 +407,13 @@ const std::string NumberInputElement::getAccessibleName()
     {
         if (!mInput->GetLabel().empty())
         {
-            labelString << "accessibleName += '" << mInput->GetLabel() << ". ';";
+            labelString << "accessibleName += String.raw`" << mEscapedLabelString << ". `;";
         }
 
         if (!mInput->GetErrorMessage().empty())
         {
             errorString << "if(" << mContentTagId << ".showErrorMessage === true){"
-                << "accessibleName += 'Error. " << mInput->GetErrorMessage() << ". ';}";
+                << "accessibleName += String.raw`Error. " << mEscapedErrorString << ". `;}";
         }
     }
 

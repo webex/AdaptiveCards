@@ -22,6 +22,8 @@ private:
     std::string mContentTagId{ "" };
     std::string mNumberInputRectId{ "" };
     std::string mEscapedPlaceHolderString{ "" };
+    std::string mEscapedLabelString{ "" };
+    std::string mEscapedErrorString{ "" };
 
 private: 
     void initialize();

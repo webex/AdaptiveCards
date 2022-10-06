@@ -11,6 +11,10 @@ namespace RendererQml
         std::string focusRectangleColor{ "#80FFFFFF" };
         std::string textHighlightBackground{ "#FF092D3B" };
         int cardRadius{ 8 };
+        int cardWidth{ 432 };
+        int averageCharHeight{ 14 };
+        int averageCharWidth{ 6 };
+        int averageSpacing{ 4 };
     };
 
     struct InputFieldConfig
@@ -124,6 +128,7 @@ namespace RendererQml
         int dropDownRadius{ 12 };
         int dropDownPadding{ 8 };
         int dropDownHeight{ 216 };
+        int maxDropDownWidth{ 800 };
     };
 
     struct ToggleButtonConfig

@@ -17,6 +17,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getQmlTag()
 
 void ComboBoxElement::initialize()
 {
+    mContext->addHeightEstimate(mChoiceSetConfig.height);
     mComboBox = std::make_shared<RendererQml::QmlTag>("ComboBox");
     mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mChoiceSet.placeholder);
 
@@ -25,6 +26,7 @@ void ComboBoxElement::initialize()
     mComboBox->Property("valueRole", "'value'");
     mComboBox->Property("width", "parent.width");
     mComboBox->Property("height", RendererQml::Formatter() << mChoiceSetConfig.height);
+    mComboBox->Property("property int choiceWidth", "0");
 
     mComboBox->Property("model", getModel(mChoiceSet.choices));
     mComboBox->Property("indicator", getArrowIcon()->ToString());
@@ -105,7 +107,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getItemDelegate()
     auto itemDelegateId = mChoiceSet.id + "_itemDelegate";
     auto uiItemDelegate = std::make_shared<RendererQml::QmlTag>("ItemDelegate");
     uiItemDelegate->Property("id", itemDelegateId);
-    uiItemDelegate->Property("width", "parent.width");
+    uiItemDelegate->Property("width", RendererQml::Formatter() << "Math.max(" << mChoiceSet.id << ".choiceWidth, " << mChoiceSet.id << ".width)");
     uiItemDelegate->Property("height", RendererQml::Formatter() << mChoiceSetConfig.dropDownElementHeight);
     uiItemDelegate->Property("verticalPadding", RendererQml::Formatter() << mChoiceSetConfig.dropDownElementVerticalPadding);
     uiItemDelegate->Property("horizontalPadding", RendererQml::Formatter() << mChoiceSetConfig.dropDownElementHorizontalPadding);
@@ -121,18 +123,15 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getItemDelegate()
     uiItemDelegate_Text->Property("text", "modelData.text");
     uiItemDelegate_Text->Property("font.family", fontFamily, true);
     uiItemDelegate_Text->Property("font.pixelSize", RendererQml::Formatter() << mChoiceSetConfig.pixelSize);
-    uiItemDelegate_Text->Property("textFormat", "Text.RichText");
     uiItemDelegate_Text->Property("color", mContext->GetHexColor(mChoiceSetConfig.textColor));
     uiItemDelegate_Text->Property("font.family", fontFamily, true);
+    uiItemDelegate_Text->Property("elide", "Text.ElideRight");
 
-    if (mChoiceSet.choices[0].isWrap)
-    {
-        uiItemDelegate_Text->Property("wrapMode", "Text.Wrap");
-    }
-    else
-    {
-        uiItemDelegate_Text->Property("elide", "Text.ElideRight");
-    }
+    std::ostringstream widthFunc;
+    widthFunc << "onImplicitWidthChanged : {";
+    widthFunc << "var maxWidth = implicitWidth > " << mChoiceSetConfig.maxDropDownWidth << " ? " << mChoiceSetConfig.maxDropDownWidth << " : implicitWidth;";
+    widthFunc << mComboBox->GetId() << ".choiceWidth = Math.max(maxWidth, " << mComboBox->GetId() << ".choiceWidth);}";
+    uiItemDelegate_Text->AddFunctions(widthFunc.str());
 
     uiItemDelegate->Property("contentItem", uiItemDelegate_Text->ToString());
 
@@ -164,7 +163,7 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getPopup()
 
     auto popupTag = std::make_shared<RendererQml::QmlTag>("Popup");
     popupTag->Property("y", RendererQml::Formatter() << mChoiceSet.id << ".height + 5");
-    popupTag->Property("width", RendererQml::Formatter() << mChoiceSet.id << ".width");
+    popupTag->Property("width", RendererQml::Formatter() << "Math.max(" << mChoiceSet.id << ".choiceWidth, " << mChoiceSet.id << ".width)");
     popupTag->Property("padding", RendererQml::Formatter() << mChoiceSetConfig.dropDownPadding);
     popupTag->Property("height", RendererQml::Formatter() << contentListViewId << ".contentHeight + (2 * " << mChoiceSetConfig.dropDownPadding << ")" << " > " << mChoiceSetConfig.dropDownHeight << " ? " << mChoiceSetConfig.dropDownHeight << " :" << contentListViewId << ".contentHeight + ( 2 * " << mChoiceSetConfig.dropDownPadding << ")");
 
@@ -182,22 +181,21 @@ void ComboBoxElement::addBackground()
     backgroundTag->Property("border.color", RendererQml::Formatter() << "(" << mChoiceSet.id << ".activeFocus || " << mChoiceSet.id << ".popup.visible) ? " << mContext->GetHexColor(mChoiceSetConfig.borderColorOnFocus) << " : " << mContext->GetHexColor(mChoiceSetConfig.borderColorNormal));
     backgroundTag->Property("border.width", RendererQml::Formatter() << mChoiceSetConfig.borderWidth);
     mComboBox->Property("background", backgroundTag->ToString());
+    mComboBox->Property("currentIndex", RendererQml::Formatter() << (mChoiceSet.placeholder.empty() ? "0" : "-1"));
+    mComboBox->Property("displayText", "currentIndex === -1 ? String.raw`" + mEscapedPlaceHolderString + "` : currentText");
 
-    if (!mChoiceSet.placeholder.empty())
-    {
-        mComboBox->Property("currentIndex", "-1");
-        mComboBox->Property("displayText", "currentIndex === -1 ? String.raw`" + mEscapedPlaceHolderString + "` : currentText");
-    }
-    else if (mChoiceSet.values.size() == 1)
+    if (mChoiceSet.values.size() == 1)
     {
         const std::string target = mChoiceSet.values[0];
         auto index = std::find_if(mChoiceSet.choices.begin(), mChoiceSet.choices.end(), [target](const RendererQml::Checkbox& options) {
             return options.value == target;
             }) - mChoiceSet.choices.begin();
-            //Assign index as 0 in case target does not exist
-            index = (index > (signed int)(mChoiceSet.choices.size() - 1) ? 0 : index);
+
+        if(index < (signed int)(mChoiceSet.choices.size()))
+        {
             mComboBox->Property("currentIndex", std::to_string(index));
             mComboBox->Property("displayText", "currentText");
+        }
     }
 }
 

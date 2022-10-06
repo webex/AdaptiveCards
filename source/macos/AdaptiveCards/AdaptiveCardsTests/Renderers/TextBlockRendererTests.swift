@@ -125,6 +125,15 @@ class TextBlockRendererTests: XCTestCase {
         XCTAssertEqual(textView.backgroundColor, .clear)
     }
     
+    func testListedIndent() {
+        textBlock = .make(text: "1. Open the Cisco AnyConnect Secure Mobility Client from your Applications folder.")
+        let textView = renderTextView()
+        let attributedString = textView.attributedString()
+        guard let paragraphStyle2 = attributedString.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle else { return XCTFail() }
+        XCTAssertEqual(paragraphStyle2.headIndent, 56)
+        XCTAssertEqual(textView.string, "\t1\tOpen the Cisco AnyConnect Secure Mobility Client from your Applications folder.")
+    }
+    
     private func renderTextView() -> ACRTextView {
         let rootView = FakeRootView()
         rootView.resolverDelegate = resourceResolver

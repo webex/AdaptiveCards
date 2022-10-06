@@ -15,9 +15,15 @@ public:
 
 private:
 	std::string mOriginalElementId{ "" };
+	std::string mLabelId{ "" };
+	std::string mErrorMessageId{ "" };
     std::string mEscapedPlaceHolderString{ "" };
+    std::string mEscapedLabelString{ "" };
+    std::string mEscapedErrorString{ "" };
+    std::string mEscapedValueString{ "" };
 	std::shared_ptr<RendererQml::QmlTag> mTextinputElement;
 	std::shared_ptr<RendererQml::QmlTag> mTextinputColElement;
+	std::shared_ptr<RendererQml::QmlTag> mScrollViewWrapper;
 	std::shared_ptr<RendererQml::QmlTag> mContainer;
 	const std::shared_ptr<AdaptiveCards::TextInput>& mTextinput;
 	const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
@@ -33,7 +39,7 @@ private:
     std::shared_ptr<RendererQml::QmlTag> createMultiLineTextAreaElement();
     std::shared_ptr<RendererQml::QmlTag> createMultiLineBackgroundElement();
 	std::shared_ptr<RendererQml::QmlTag> createInputTextLabel(bool isRequired = false);
-	std::shared_ptr<RendererQml::QmlTag> createErrorMessageText(std::string errorMessage, const std::shared_ptr<RendererQml::QmlTag> uiTextInput);
+	std::shared_ptr<RendererQml::QmlTag> createErrorMessageText(const std::shared_ptr<RendererQml::QmlTag> uiTextInput);
 
 	const std::string getColorFunction();
 	std::string getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiTextInput);

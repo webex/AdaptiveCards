@@ -29,6 +29,8 @@ private:
     std::string mDateIconId{ "" };
     std::string mClearIconId{ "" };
     std::string mEscapedPlaceHolderString{ "" };
+    std::string mEscapedLabelString{ "" };
+    std::string mEscapedErrorString{ "" };
 
     std::shared_ptr<RendererQml::QmlTag> mDateInputColElement;
     std::shared_ptr<RendererQml::QmlTag> mDateInputTextField;

@@ -20,8 +20,15 @@ void ToggleInputElement::initialize()
     const std::string origionalElementId = mToggleInput->GetId();
     mToggleInput->SetId(mContext->ConvertToValidId(mToggleInput->GetId()));
 
+    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    {
+        mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel());
+        mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetErrorMessage());
+    }
+
     mToggleInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
-    mToggleInputColElement->Property("id", RendererQml::Formatter() << mToggleInput->GetId() << "_column");
+    mToggleInputColElement->Property("id", RendererQml::Formatter() << mToggleInput->GetId());
+    mToggleInputColElement->Property("property int minWidth", RendererQml::Formatter() << mToggleInput->GetId() << "_inputToggle.implicitWidth");
     mToggleInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mToggleInputColElement->Property("width", "parent.width");
     mToggleInputColElement->Property("visible", mToggleInput->GetIsVisible() ? "true" : "false");
@@ -42,7 +49,7 @@ std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getCheckBox()
     const auto valueOff = !mToggleInput->GetValueOff().empty() ? mToggleInput->GetValueOff() : "false";
     const bool isChecked = mToggleInput->GetValue().compare(valueOn) == 0 ? true : false;
 
-    auto checkBoxElement = std::make_shared<CheckBoxElement>(RendererQml::Checkbox(mToggleInput->GetId(),
+    auto checkBoxElement = std::make_shared<CheckBoxElement>(RendererQml::Checkbox(mToggleInput->GetId() + "_inputToggle",
         RendererQml::CheckBoxType::Toggle,
         mToggleInput->GetTitle(),
         mToggleInput->GetValue(),
@@ -64,6 +71,7 @@ void ToggleInputElement::addInputLabel()
     {
         if (!mToggleInput->GetLabel().empty())
         {
+            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
             const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
             auto label = std::make_shared<RendererQml::QmlTag>("Label");
             label->Property("id", RendererQml::Formatter() << mToggleInput->GetId() << "_label");
@@ -77,11 +85,11 @@ void ToggleInputElement::addInputLabel()
 
             if (mToggleInput->GetIsRequired())
             {
-                label->Property("text", RendererQml::Formatter() << (mToggleInput->GetLabel().empty() ? "Text" : mToggleInput->GetLabel()) << " <font color='" << choiceSetConfig.errorMessageColor << "'>*</font>", true);
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mToggleInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << " <font color='" << choiceSetConfig.errorMessageColor << "'>*</font>`");
             }
             else
             {
-                label->Property("text", RendererQml::Formatter() << (mToggleInput->GetLabel().empty() ? "Text" : mToggleInput->GetLabel()), true);
+                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mToggleInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << "`");
             }
 
             mToggleInputColElement->AddChild(label);
@@ -114,7 +122,7 @@ void ToggleInputElement::addErrorMessage(const std::shared_ptr<RendererQml::QmlT
             uiErrorMessage->Property("Accessible.ignored", "true");
 
             uiErrorMessage->Property("color", mContext->GetHexColor(choiceSetConfig.errorMessageColor));
-            uiErrorMessage->Property("text", mToggleInput->GetErrorMessage(), true);
+            uiErrorMessage->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
             uiErrorMessage->Property("visible", RendererQml::Formatter() << uiCheckBox->GetId() << ".showErrorMessage");
             mToggleInputColElement->AddChild(uiErrorMessage);
         }
@@ -173,13 +181,13 @@ std::string ToggleInputElement::getAccessibleName(std::shared_ptr<RendererQml::Q
     {
         if (!mToggleInput->GetLabel().empty())
         {
-            labelString << "accessibleName += '" << mToggleInput->GetLabel() << ". ';";
+            labelString << "accessibleName += String.raw`" << mEscapedLabelString << ". `;";
         }
 
         if (!mToggleInput->GetErrorMessage().empty())
         {
             errorString << "if(" << uiCheckBox->GetId() << ".showErrorMessage === true){"
-                << "accessibleName += 'Error. " << mToggleInput->GetErrorMessage() << ". ';}";
+                << "accessibleName += String.raw`Error. " << mEscapedErrorString << ". `;}";
         }
     }
 
