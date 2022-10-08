@@ -1548,7 +1548,7 @@ namespace RendererQml
             {
                 textSpacing += buttonConfig.imageSize + buttonConfig.iconTextSpacing;
             }
-            if (isShowCardButton && !action->GetTitle().empty())
+            if (isShowCardButton)
             {
                 textSpacing += buttonConfig.iconWidth + buttonConfig.iconTextSpacing;
             }
@@ -1612,7 +1612,15 @@ namespace RendererQml
             auto contentText = std::make_shared<QmlTag>("Text");
 			contentText->Property("id", contentTextId);
             contentText->Property("anchors.verticalCenter", "parent.verticalCenter");
-            contentText->Property("width", Formatter() << "implicitWidth < " << buttonId << ".width - " << textSpacing << " ? implicitWidth : (" << buttonId << ".width - " << textSpacing << " > 1 ? " << buttonId << ".width - " << textSpacing << " : 1)");
+            contentText->Property("width", "getTextWidth()");
+
+            std::stringstream textWidthFunc;
+            textWidthFunc << "function getTextWidth() {";
+            textWidthFunc << "if (text.length == 0) return 0;";
+            textWidthFunc << "if (implicitWidth < " << textSpacing << ") return implicitWidth;";
+            textWidthFunc << "return implicitWidth < " << buttonId << ".width - " << textSpacing << " ? implicitWidth : (" << buttonId << ".width - " << textSpacing << " > 1 ? " << buttonId << ".width - " << textSpacing << " : 1);}";
+
+            contentText->AddFunctions(textWidthFunc.str());
             if (!action->GetTitle().empty())
             {
                 contentText->Property("text", escapedTitle);
