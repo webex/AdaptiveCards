@@ -126,7 +126,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     private func setupConstraints() {
-        button.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true
         button.topAnchor.constraint(equalTo: topAnchor).isActive = true
         button.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         button.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(16)).isActive = true
@@ -168,7 +168,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         }
         button.image?.size = NSSize(width: 16, height: 16)
         button.alternateImage?.size = NSSize(width: 16, height: 16)
-        button.imageScaling = .scaleProportionallyUpOrDown
+        button.imageScaling = .scaleProportionallyDown
         if buttonType == .switch {
             NSAccessibility.announce(valueChangedMessage())
         }
