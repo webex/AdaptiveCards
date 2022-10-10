@@ -134,9 +134,16 @@ void MarkDownParsedResult::MatchLeftAndRightEmphasises()
 {
     std::vector<std::list<std::shared_ptr<MarkDownEmphasisHtmlGenerator>>::iterator> leftEmphasisToExplore;
     auto currentEmphasis = m_emphasisLookUpTable.begin();
+    auto retry = 0;
 
     while (!(currentEmphasis == m_emphasisLookUpTable.end()))
     {
+        // We retry 5X times emphasisLookUpTable else break as there could be some issue with the formatting.
+        if (++retry > (5 * m_emphasisLookUpTable.size()))
+        {
+            break;
+        }
+
         // keep exploring left until right token is found
         if ((*currentEmphasis)->IsLeftEmphasis() ||
             ((*currentEmphasis)->IsLeftAndRightEmphasis() && leftEmphasisToExplore.empty()))
