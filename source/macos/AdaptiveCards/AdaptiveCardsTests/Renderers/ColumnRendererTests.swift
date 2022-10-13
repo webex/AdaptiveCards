@@ -53,11 +53,11 @@ class ColumnRendererTests: XCTestCase {
         var columnView = renderColumnView()
         XCTAssertEqual(columnView.arrangedSubviews.count, 1)
         
-        column = .make(verticalContentAlignment: .center)
+        column = .make(items: [FakeTextBlock.make()], verticalContentAlignment: .center)
         columnView = renderColumnView()
         XCTAssertEqual(columnView.arrangedSubviews.count, 3)
         
-        column = .make(verticalContentAlignment: .bottom)
+        column = .make(items: [FakeTextBlock.make()], verticalContentAlignment: .bottom)
         columnView = renderColumnView()
         XCTAssertEqual(columnView.arrangedSubviews.count, 2)
     }

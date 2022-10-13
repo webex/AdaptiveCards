@@ -132,7 +132,7 @@ class FakeTextBlock: ACSTextBlock {
 }
 
 extension FakeTextBlock {
-    static func make(text: String? = "", textForDateParsing: ACSDateTimePreparser? = nil, textSize: ACSTextSize = .default, heightType: ACSHeightType = .auto, textWeight: ACSTextWeight = .default, fontType: ACSFontType = .default, textColor: ACSForegroundColor = .default, wrap: Bool = false, isSubtle: Bool = false, maxLines: NSNumber = 0, horizontalAlignment: ACSHorizontalAlignment = .left, language: String? = "", separator: Bool = false, isVisible: Bool = false, spacing: ACSSpacing = .default) -> FakeTextBlock {
+    static func make(text: String? = "", textForDateParsing: ACSDateTimePreparser? = nil, textSize: ACSTextSize = .default, heightType: ACSHeightType = .auto, textWeight: ACSTextWeight = .default, fontType: ACSFontType = .default, textColor: ACSForegroundColor = .default, wrap: Bool = false, isSubtle: Bool = false, maxLines: NSNumber = 0, horizontalAlignment: ACSHorizontalAlignment = .left, language: String? = "", separator: Bool = false, isVisible: Bool = true, spacing: ACSSpacing = .default) -> FakeTextBlock {
         let fakeTextBlock = FakeTextBlock()
         fakeTextBlock.text = text
         fakeTextBlock.textForDateParsing = textForDateParsing

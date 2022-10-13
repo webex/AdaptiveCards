@@ -164,9 +164,9 @@ class ACRView: ACRColumnView {
             }
             if let facade = facade {
                 if isHide {
-                    facade.hideView(toggleView)
+                    facade.visibilityManager(hideView: toggleView)
                 } else {
-                    facade.unhideView(toggleView)
+                    facade.visibilityManager(unhideView: toggleView)
                 }
             }
         }

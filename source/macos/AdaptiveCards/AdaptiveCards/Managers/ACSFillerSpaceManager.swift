@@ -40,7 +40,7 @@ class StretchableView: NSView {
 
 class ACSFillerSpaceManager {
     private var paddingMap: NSMapTable<NSView, NSMutableArray>
-    private var separatorMap: NSMapTable<NSView, NSValue>
+    private var separatorMap: NSMapTable<NSView, NSView>
     private var stretchableViewSet: NSHashTable<NSView>
     private var stretchableViews: [NSValue]
     private var paddingSet: NSHashTable<NSView>
@@ -48,7 +48,7 @@ class ACSFillerSpaceManager {
     
     init() {
         paddingMap = NSMapTable<NSView, NSMutableArray>(keyOptions: .weakMemory, valueOptions: .strongMemory)
-        separatorMap = NSMapTable<NSView, NSValue>(keyOptions: .weakMemory, valueOptions: .strongMemory)
+        separatorMap = NSMapTable<NSView, NSView>(keyOptions: .weakMemory, valueOptions: .weakMemory)
         stretchableViewSet = NSHashTable<NSView>(options: .weakMemory, capacity: 5)
         stretchableViews = [NSValue]()
         paddingSet = NSHashTable<NSView>(options: .weakMemory, capacity: 5)
@@ -147,14 +147,15 @@ class ACSFillerSpaceManager {
         return paddingMap.object(forKey: view) as? [NSValue]
     }
     
-    func associateSeparator(withOwnerView separator: NSView?, ownerView: NSView?) {
-        separatorMap.setObject(NSValue(nonretainedObject: separator), forKey: ownerView)
+    func associateSeparator(withOwnerView separator: NSView, ownerView: NSView) {
+        separatorMap.setObject(separator, forKey: ownerView)
     }
     
     func getSeparatorFor(ownerView: NSView) -> SpacingView? {
-        if let value = separatorMap.object(forKey: ownerView) {
-            return value.nonretainedObjectValue as? SpacingView
+        guard let objSpaceView = separatorMap.object(forKey: ownerView), let spaceView = objSpaceView as? SpacingView else {
+            logError("For OwnerView, Separator not found in separatorMapTable.")
+            return nil
         }
-        return nil
+        return spaceView
     }
 }

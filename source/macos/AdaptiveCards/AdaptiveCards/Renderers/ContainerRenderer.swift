@@ -19,13 +19,6 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         containerView.setupSelectAction(container.getSelectAction(), rootView: rootView)
         containerView.setupSelectActionAccessibility(on: containerView, for: container.getSelectAction())
         
-        var leadingBlankSpace: SpacingView?
-        if container.getVerticalContentAlignment() == .center || container.getVerticalContentAlignment() == .bottom {
-            let view = SpacingView()
-            containerView.addArrangedSubview(view)
-            leadingBlankSpace = view
-        }
-        
         for (index, element) in container.getItems().enumerated() {
             let isFirstElement = index == 0
             let renderer = RendererManager.shared.renderer(for: element.getType())
@@ -34,13 +27,6 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: containerView, with: hostConfig, element: element, parentElement: container)
         }
         containerView.configureLayoutAndVisibility(container.getVerticalContentAlignment(), minHeight: container.getMinHeight(), heightType: container.getHeight(), type: .container)
-        
-        // Dont add the trailing space if the vertical content alignment is top/default
-        if container.getVerticalContentAlignment() == .center, let topView = leadingBlankSpace {
-            let view = SpacingView()
-            containerView.addArrangedSubview(view)
-            view.heightAnchor.constraint(equalTo: topView.heightAnchor).isActive = true
-        }
         containerView.wantsLayer = true
         return containerView
     }
