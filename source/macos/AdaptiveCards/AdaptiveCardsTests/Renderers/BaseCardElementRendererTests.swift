@@ -68,6 +68,18 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertEqual(viewWithInheritedProperties.identifier?.rawValue, "helloworld")
     }
     
+    func testSeparatorSpacingCrash() {
+        // Test case when spacing is none and element is hidden
+        let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        let fakeRootView = ACRView.init(style: .none, hostConfig: hostConfig, renderConfig: config)
+        
+        let invisibleInputNumber = FakeInputNumber.make(id: "1", visible: false, spacing: .none)
+        let container = FakeContainer.make(items: [invisibleInputNumber])
+        let containerView = containerRenderer.render(element: container, with: hostConfig, style: .default, rootView: fakeRootView, parentView: fakeRootView, inputs: [], config: config)
+        guard let containerView = containerView as? ACRContainerView else { fatalError() }
+        guard let inputNumberView = containerView.stackView.findView(withIdentifier: "1") as? ACRNumericTextField else { fatalError() }
+    }
+    
     func testInputTextErrorMessageHandler() {
         let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
         let fakeRootView = ACRView.init(style: .none, hostConfig: hostConfig, renderConfig: config)

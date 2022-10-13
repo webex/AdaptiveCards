@@ -28,9 +28,11 @@ class SpacingView: NSView {
     ///   - config: Host Config
     /// - Returns: Spacer
     class func renderSpacer(elem: ACSBaseCardElement, forSuperView view: ACRContentStackView, withHostConfig config: ACSHostConfig) -> SpacingView? {
-        let separator = SpacingView()
         let requestedSpacing = elem.getSpacing()
-        if requestedSpacing != .none {
+        if requestedSpacing == .none {
+            return nil
+        } else {
+            let separator = SpacingView()
             separator.orientation = view.orientation
             let spacing = HostConfigUtils.getSpacing(requestedSpacing, with: config).doubleValue
             separator.spacing = spacing
@@ -44,8 +46,8 @@ class SpacingView: NSView {
             separator.layer?.backgroundColor = .clear
             view.addArrangedSubview(separator)
             separator.configConstraintLayout()
+            return separator
         }
-        return separator
     }
     
     func configConstraintLayout() {

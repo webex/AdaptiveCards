@@ -4,7 +4,7 @@ import AppKit
 protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
-    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?)
+    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView, acoElement acoElem: ACSBaseCardElement, separator: SpacingView?, rootView: ACRView?)
     func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType)
     func applyPadding(_ padding: CGFloat)
 }
@@ -284,17 +284,18 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         return !hasStretchableView && visibilityManager.hasVisibleViews
     }
     
-    func associateSeparator(withOwnerView separator: SpacingView?, ownerView: NSView) {
+    func associateSeparator(withOwnerView separator: SpacingView, ownerView: NSView) {
         visibilityManager.fillerSpaceManager.associateSeparator(withOwnerView: separator, ownerView: ownerView)
     }
     
     /// call this method after subview is rendered
     /// it configures height, creates association between the subview and its separator if any
     /// registers subview for its visibility
-    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
-        guard let renderedView = renderedView, let acoElem = acoElem else { return }
+    func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView, acoElement acoElem: ACSBaseCardElement, separator: SpacingView?, rootView: ACRView?) {
         self.configureHeight(for: renderedView, acoElement: acoElem)
-        self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
+        if let separator = separator {
+            self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
+        }
         // Through the root view visibility context, register renderview with self manager.
         rootView?.visibilityContext?.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
         if !acoElem.getIsVisible() {
@@ -382,6 +383,28 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         constraint.isActive = true
     }
     
+    private func hideView(_ viewToBeHidden: NSView) {
+        visibilityManager.hide(viewToBeHidden, hostView: self)
+        guard let inputView = viewToBeHidden as? InputHandlingViewProtocol else {
+            logError("For error visibility checker, field not a input handler :: key.")
+            return
+        }
+        hideErrorMessage(with: inputView)
+        setInputLabel(isHidden: true, for: inputView)
+    }
+    
+    private func unhideView(_ viewToBeHidden: NSView) {
+        visibilityManager.unhideView(viewToBeHidden, hostView: self)
+        guard let inputView = viewToBeHidden as? InputHandlingViewProtocol else {
+            logError("For error visibility checker, field not a input handler :: key.")
+            return
+        }
+        if inputView.isErrorShown {
+            inputHandlingViewShouldShowError(inputView)
+        }
+        setInputLabel(isHidden: false, for: inputView)
+    }
+    
     // MARK: Mouse Events and SelectAction logics
     private var previousBackgroundColor: CGColor?
     override func mouseEntered(with event: NSEvent) {
@@ -400,6 +423,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     func getErrorTextField(for inputView: InputHandlingViewProtocol) -> ACRInputErrorTextField? {
+        guard !(self.errorMessageFieldMap.objectEnumerator()?.allObjects.isEmpty ?? true) else {
+            logError("For show error message, MapTable is empty.")
+            return nil
+        }
         guard let errorMessageField = self.errorMessageFieldMap.object(forKey: inputView.key as NSString) else {
             logError("For show error message, field not found in MapTable.")
             return nil
@@ -408,6 +435,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     func getLabelTextField(for inputView: InputHandlingViewProtocol) -> ACRInputLabelTextField? {
+        guard !(self.inputLabelFieldMap.objectEnumerator()?.allObjects.isEmpty ?? true) else {
+            logError("For show label message, MapTable is empty.")
+            return nil
+        }
         guard let inputLabelField = self.inputLabelFieldMap.object(forKey: inputView.key as NSString) else {
             logError("For input label message, field not found in MapTable.")
             return nil
@@ -494,26 +525,12 @@ extension ACRContentStackView: InputHandlingViewErrorDelegate {
 }
 
 extension ACRContentStackView: ACSVisibilityManagerFacade {
-    func hideView(_ view: NSView) {
-        visibilityManager.hide(view, hostView: self)
-        guard let inputView = view as? InputHandlingViewProtocol else {
-            logError("For error visibility checker, field not a input handler :: key.")
-            return
-        }
-        hideErrorMessage(with: inputView)
-        setInputLabel(isHidden: true, for: inputView)
+    func visibilityManager(hideView view: NSView) {
+        self.hideView(view)
     }
     
-    func unhideView(_ view: NSView) {
-        visibilityManager.unhideView(view, hostView: self)
-        guard let inputView = view as? InputHandlingViewProtocol else {
-            logError("For error visibility checker, field not a input handler :: key.")
-            return
-        }
-        if inputView.isErrorShown {
-            inputHandlingViewShouldShowError(inputView)
-        }
-        setInputLabel(isHidden: false, for: inputView)
+    func visibilityManager(unhideView view: NSView) {
+        self.unhideView(view)
     }
 }
 

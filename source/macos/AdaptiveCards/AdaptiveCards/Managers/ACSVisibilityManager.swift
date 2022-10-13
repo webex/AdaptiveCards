@@ -11,8 +11,8 @@ import AppKit
 
 /// VisibilityManager protocols for handle element visibility
 @objc protocol ACSVisibilityManagerFacade {
-    func hideView(_ view: NSView)
-    func unhideView(_ view: NSView)
+    func visibilityManager(hideView view: NSView)
+    func visibilityManager(unhideView view: NSView)
 }
 
 class ACSVisibilityManager {
