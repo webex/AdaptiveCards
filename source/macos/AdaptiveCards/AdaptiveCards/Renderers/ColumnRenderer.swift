@@ -15,13 +15,6 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
         columnView.setWidth(ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth()))
         columnView.bleed = column.getBleed()
         
-        var topSpacingView: SpacingView?
-        if column.getVerticalContentAlignment() == .center || column.getVerticalContentAlignment() == .bottom {
-            let view = SpacingView()
-            columnView.addArrangedSubview(view)
-            topSpacingView = view
-        }
-        
         for (index, element) in column.getItems().enumerated() {
             let isFirstElement = index == 0
             let renderer = RendererManager.shared.renderer(for: element.getType())
@@ -32,12 +25,6 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
         }
         
         columnView.configureLayoutAndVisibility(column.getVerticalContentAlignment(), minHeight: column.getMinHeight(), heightType: column.getHeight(), type: .column)
-        
-        if column.getVerticalContentAlignment() == .center, let topView = topSpacingView {
-            let view = SpacingView()
-            columnView.addArrangedSubview(view)
-            view.heightAnchor.constraint(equalTo: topView.heightAnchor).isActive = true
-        }
         
         if let backgroundImage = column.getBackgroundImage(), let url = backgroundImage.getUrl() {
             columnView.setupBackgroundImageProperties(backgroundImage)

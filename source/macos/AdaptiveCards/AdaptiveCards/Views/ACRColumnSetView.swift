@@ -58,9 +58,10 @@ class ACRColumnSetView: ACRContentStackView {
     /// call this method after subview is rendered
     /// it configures height, creates association between the subview and its separator if any
     /// registers subview for its visibility
-    override func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView?, acoElement acoElem: ACSBaseCardElement?, separator: SpacingView?, rootView: ACRView?) {
-        guard let renderedView = renderedView, let acoElem = acoElem else { return }
-        self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
+    override func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView, acoElement acoElem: ACSBaseCardElement, separator: SpacingView?, rootView: ACRView?) {
+        if let separator = separator {
+            self.associateSeparator(withOwnerView: separator, ownerView: renderedView)
+        }
         rootView?.visibilityContext?.registerVisibilityManager(self, targetViewIdentifier: renderedView.identifier)
         if !acoElem.getIsVisible() {
             self.register(invisibleView: renderedView)
