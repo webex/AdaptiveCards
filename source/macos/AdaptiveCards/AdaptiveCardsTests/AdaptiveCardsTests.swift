@@ -20,7 +20,7 @@ class AdaptiveCardsTests: XCTestCase {
     
     func testRetainCycles() {
         let bundle = Bundle(for: type(of: self))
-        let fileNames = ["ActivityUpdate", "ActionSetSample", "ImageGallery", "Agenda"]
+        let fileNames = ["ActivityUpdate", "ActionSetSample", "ImageGallery", "Agenda", "SeparatorNoneTest"]
         let jsons = fileNames.map { NSDataAsset(name: $0 + ".json", bundle: bundle)!.data }
                         .map { String(data: $0, encoding: .utf8)! }
         
@@ -34,6 +34,7 @@ class AdaptiveCardsTests: XCTestCase {
         weak var weakCard2: NSView?
         weak var weakCard3: NSView?
         weak var weakCard4: NSView?
+        weak var weakCard5: NSView?
         
         var blockExecuted = false
         autoreleasepool {
@@ -41,6 +42,7 @@ class AdaptiveCardsTests: XCTestCase {
             let card2 = AdaptiveCard.render(card: cards[1], with: hostConfig, width: 432, actionDelegate: delegate, resourceResolver: resourceResolver)
             let card3 = AdaptiveCard.render(card: cards[2], with: hostConfig, width: 432, actionDelegate: delegate, resourceResolver: resourceResolver)
             let card4 = AdaptiveCard.render(card: cards[3], with: hostConfig, width: 432, actionDelegate: delegate, resourceResolver: resourceResolver)
+            let card5 = AdaptiveCard.render(card: cards[4], with: hostConfig, width: 432, actionDelegate: delegate, resourceResolver: resourceResolver)
             
             // Simulate show card action
             guard let showCardButton = card1.buttonInHierachy(withTitle: "Set due date") else {
@@ -53,11 +55,13 @@ class AdaptiveCardsTests: XCTestCase {
             weakCard2 = card2
             weakCard3 = card3
             weakCard4 = card4
+            weakCard5 = card5
             
             XCTAssertNotNil(weakCard1)
             XCTAssertNotNil(weakCard2)
             XCTAssertNotNil(weakCard3)
             XCTAssertNotNil(weakCard4)
+            XCTAssertNotNil(weakCard5)
             
             blockExecuted = true
         }
@@ -67,6 +71,7 @@ class AdaptiveCardsTests: XCTestCase {
         XCTAssertNil(weakCard2)
         XCTAssertNil(weakCard3)
         XCTAssertNil(weakCard4)
+        XCTAssertNil(weakCard5)
     }
     
     func testChildToParentToggleVisibility() {

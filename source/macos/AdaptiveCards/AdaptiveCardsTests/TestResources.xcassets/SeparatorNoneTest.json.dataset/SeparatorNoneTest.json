@@ -1,0 +1,30 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "body": [
+        {
+            "size": "Medium",
+            "text": "Hi, I'm Rememory!",
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "wrap": true
+        },
+        {
+            "size": "Medium",
+            "text": "I can help you and your team remember tasks, important events, due dates and more.",
+            "type": "TextBlock",
+            "wrap": true,
+            "isVisible": false,
+            "spacing": "None"
+        },
+        {
+            "id": "card_id",
+            "isVisible": true,
+            "placeholder": "Placeholder text",
+            "type": "Input.Text",
+            "value": "helpcard",
+            "spacing": "None"
+        }
+    ],
+    "type": "AdaptiveCard",
+    "version": "1.2"
+}
