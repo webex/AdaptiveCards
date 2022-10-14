@@ -74,7 +74,7 @@ class ActionSetRendererTests: XCTestCase {
         actionSet = .make(actions: [FakeSubmitAction.make()], aligned: .left)
         
         var actionSetView = renderActionSetView()
-        XCTAssertEqual(actionSetView.alignment, .leading)
+        XCTAssertEqual(actionSetView.horizontalAlignment, .leading)
         
         // check for right alignment
         hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .horizontal, actionAlignment: .left, buttonSpacing: 2, maxActions: 1, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 0))
@@ -82,7 +82,7 @@ class ActionSetRendererTests: XCTestCase {
         actionSet = .make(actions: [FakeSubmitAction.make()], aligned: .right)
         
         actionSetView = renderActionSetView()
-        XCTAssertEqual(actionSetView.alignment, .trailing)
+        XCTAssertEqual(actionSetView.horizontalAlignment, .trailing)
         
         // check for center alignment
         hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .horizontal, actionAlignment: .left, buttonSpacing: 2, maxActions: 1, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 0))
@@ -90,7 +90,7 @@ class ActionSetRendererTests: XCTestCase {
         actionSet = .make(actions: [FakeSubmitAction.make()], aligned: .center)
         
         actionSetView = renderActionSetView()
-        XCTAssertEqual(actionSetView.alignment, .centerY)
+        XCTAssertEqual(actionSetView.horizontalAlignment, .centerY)
     }
     
     func testNumberOfAction() {
