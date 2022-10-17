@@ -14,7 +14,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
     weak var delegate: ACRActionSetViewDelegate?
     
     let orientation: NSUserInterfaceLayoutOrientation
-    let alignment: NSLayoutConstraint.Attribute
+    let horizontalAlignment: NSLayoutConstraint.Attribute
     let buttonSpacing: CGFloat
     let exteriorPadding: CGFloat
     private (set) var actions: [NSView] = []
@@ -28,7 +28,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.orientation = orientation
         view.spacing = buttonSpacing
-        view.alignment = alignment
+        view.alignment = horizontalAlignment
         return view
     }()
     
@@ -43,7 +43,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
     
     init(orientation: NSUserInterfaceLayoutOrientation, alignment: NSLayoutConstraint.Attribute, buttonSpacing: CGFloat, exteriorPadding: CGFloat) {
         self.orientation = orientation
-        self.alignment = alignment
+        self.horizontalAlignment = alignment
         self.buttonSpacing = buttonSpacing
         self.exteriorPadding = exteriorPadding
         super.init(frame: .zero)
@@ -53,7 +53,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
     required init?(coder: NSCoder) {
         self.actions = []
         self.orientation = .vertical
-        self.alignment = .leading
+        self.horizontalAlignment = .leading
         self.buttonSpacing = 8
         self.exteriorPadding = 0
         super.init(coder: coder)
@@ -155,7 +155,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
         // adding new child stackview to parent stackview and the parent stackview will align child stackview vertically
         stackView.addArrangedSubview(curview)
         stackView.orientation = .vertical
-        let gravityArea: NSStackView.Gravity = stackView.alignment == .centerY ? .center: (stackView.alignment == .trailing ? .trailing: .leading)
+        let gravityArea: NSStackView.Gravity = horizontalAlignment == .centerY ? .center: (horizontalAlignment == .trailing ? .trailing: .leading)
         for view in actions {
             accumulatedWidth += view.intrinsicContentSize.width
             if accumulatedWidth > bounds.width {

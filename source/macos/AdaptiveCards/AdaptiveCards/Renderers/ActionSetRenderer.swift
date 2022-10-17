@@ -15,17 +15,17 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
     func renderActionButtons(actions: [ACSBaseActionElement], with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
         // This renders Action in AdaptiveCards if it has horizontal orientation,
         // vertical card are always stretched to fill full width
-        let actionAlignment: ACSHorizontalAlignment
+        let actionHorizontalAlignment: ACSHorizontalAlignment
         switch hostConfig.getActions()?.actionAlignment {
-        case .left : actionAlignment = .left
-        case .center: actionAlignment = .center
-        case .right: actionAlignment = .right
-        default: actionAlignment = .left
+        case .left : actionHorizontalAlignment = .left
+        case .center: actionHorizontalAlignment = .center
+        case .right: actionHorizontalAlignment = .right
+        default: actionHorizontalAlignment = .left
         }
-        return renderView(actions: actions, aligned: actionAlignment, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
+        return renderView(actions: actions, aligned: actionHorizontalAlignment, with: hostConfig, style: style, rootView: rootView, parentView: parentView, inputs: inputs, config: config)
     }
     
-    private func renderView(actions: [ACSBaseActionElement], aligned alignment: ACSHorizontalAlignment, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig, actionElement: ACSBaseCardElement? = nil) -> NSView {
+    private func renderView(actions: [ACSBaseActionElement], aligned horizontalAlignment: ACSHorizontalAlignment, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig, actionElement: ACSBaseCardElement? = nil) -> NSView {
         let actionsConfig = hostConfig.getActions()
         let actionsOrientation = actionsConfig?.actionsOrientation ?? .vertical
         let actionsButtonSpacing = actionsConfig?.buttonSpacing ?? 8
@@ -43,19 +43,15 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         @unknown default: orientation = .vertical
         }
         
-        let resolvedAlignment: NSLayoutConstraint.Attribute
-        switch alignment {
-        case .center: resolvedAlignment = orientation == .horizontal ? .centerY : .centerX
-        case .left: resolvedAlignment = .leading
-        case .right: resolvedAlignment = .trailing
-        @unknown default: resolvedAlignment = .leading
+        let resolvedHorizontalAlignment: NSLayoutConstraint.Attribute
+        switch horizontalAlignment {
+        case .center: resolvedHorizontalAlignment = orientation == .horizontal ? .centerY : .centerX
+        case .left: resolvedHorizontalAlignment = .leading
+        case .right: resolvedHorizontalAlignment = .trailing
+        @unknown default: resolvedHorizontalAlignment = .leading
         }
         
-        let actionSetView = ACRActionSetView(
-            orientation: orientation,
-            alignment: resolvedAlignment,
-            buttonSpacing: CGFloat(exactly: actionsButtonSpacing) ?? 8,
-            exteriorPadding: CGFloat(exactly: exteriorPadding) ?? 0)
+        let actionSetView = ACRActionSetView(orientation: orientation, alignment: resolvedHorizontalAlignment, buttonSpacing: CGFloat(exactly: actionsButtonSpacing) ?? 8, exteriorPadding: CGFloat(exactly: exteriorPadding) ?? 0)
         
         let resolvedCount = min(actions.count, maxAllowedActions)
         let filteredActions = actions[0 ..< resolvedCount]
