@@ -224,7 +224,7 @@ void TextInputElement::addValidationToInputText(std::shared_ptr<RendererQml::Qml
     validator << "function validate(){\n";
     if (!mTextinput->GetRegex().empty())
     {
-        validator << "const regex = new RegExp('" << mTextinput->GetRegex() << "');\n";
+        validator << "const regex = new RegExp(String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetRegex()) << "`);\n";
     }
     validator << "var isValid = ";
     if (mTextinput->GetIsRequired() && !mTextinput->GetRegex().empty()) {
