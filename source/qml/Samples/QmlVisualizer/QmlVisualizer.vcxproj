@@ -120,6 +120,7 @@
     <ClCompile Include="samplecardlist.cpp" />
     <ClCompile Include="samplecardmodel.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <None Include="AdaptiveCardQml\CardConstants.qml" />
     <None Include="AdaptiveCardQml\ImageRender.qml" />
     <None Include="AdaptiveCardQml\RichTextBlockRender.qml" />
     <None Include="AdaptiveCardQml\SeparatorRender.qml" />
