@@ -1,11 +1,11 @@
-pragma Singleton
-import QtQuick 2.15
 import "AdaptiveCardUtils.js" as AdaptiveCardUtils
+import QtQuick 2.15
+pragma Singleton
 
 QtObject {
-    property bool isDarkTheme : false
-
-    readonly property QtObject cardConstants: QtObject{
+    property bool isDarkTheme: false
+    readonly property QtObject
+    cardConstants: QtObject {
         readonly property int cardRadius: 8
         readonly property int cardWidth: 432
         readonly property int averageCharHeight: 14
@@ -16,10 +16,11 @@ QtObject {
         readonly property color textHighlightBackground: AdaptiveCardUtils.getColorSet("text-highlight", "normal", isDarkTheme)
     }
 
-    readonly property QtObject inputFeildConstants: QtObject{
+    readonly property QtObject
+    inputFeildConstants: QtObject {
         readonly property int height: 32
         readonly property int pixelSize: 16
-        readonly property int maxChoiceWidth : 800
+        readonly property int maxChoiceWidth: 800
         readonly property int labelSize: 14
         readonly property int borderRadius: 8
         readonly property int borderWidth: 1
@@ -29,7 +30,7 @@ QtObject {
         readonly property int textVerticalPadding: 4
         readonly property color backgroundColorNormal: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
         readonly property color backgroundColorOnHovered: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
-        readonly property color backgroundColorOnPressed: AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)  
+        readonly property color backgroundColorOnPressed: AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)
         readonly property color backgroundColorOnError: AdaptiveCardUtils.getColorSet("textinput-error-background", "normal", isDarkTheme)
         readonly property color borderColorNormal: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
         readonly property color borderColorOnFocus: AdaptiveCardUtils.getColorSet("textinput-border", "focused", isDarkTheme)
@@ -41,19 +42,22 @@ QtObject {
         readonly property color clearIconColorOnFocus: AdaptiveCardUtils.getColorSet("textinput-border", "focused", isDarkTheme)
     }
 
-    readonly property QtObject inputTextConstants: QtObject{
+    readonly property QtObject
+    inputTextConstants: QtObject {
         readonly property int multiLineTextHeight: 96
         readonly property int multiLineTextTopPadding: 7
         readonly property int multiLineTextBottomPadding: 4
     }
 
-    readonly property QtObject inputNumberConstants: QtObject{
+    readonly property QtObject
+    inputNumberConstants: QtObject {
         readonly property int upDownButtonWidth: 31
         readonly property int upDownIconSize: 16
         readonly property color upDownIconColor: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
     }
 
-    readonly property QtObject inputTimeConstants: QtObject{
+    readonly property QtObject
+    inputTimeConstants: QtObject {
         readonly property int timeIconHorizontalPadding: 12
         readonly property int timePickerBorderRadius: 12
         readonly property int timePickerWidth12Hour: 200
@@ -77,7 +81,8 @@ QtObject {
         readonly property color timePickerElementTextColorNormal: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
     }
 
-    readonly property QtObject inputDateConstants: QtObject{
+    readonly property QtObject
+    inputDateConstants: QtObject {
         readonly property int dateElementSize: 32
         readonly property int dateIconHorizontalPadding: 12
         readonly property int calendarBorderRadius: 12
@@ -100,7 +105,8 @@ QtObject {
         readonly property color notAvailabledateElementTextColor: AdaptiveCardUtils.getColorSet("textinput-placeholder-text", "normal", isDarkTheme)
     }
 
-    readonly property QtObject comboBoxConstants: QtObject{
+    readonly property QtObject
+    comboBoxConstants: QtObject {
         readonly property int arrowIconHorizontalPadding: 9
         readonly property int arrowIconVerticalPadding: 8
         readonly property int arrowIconWidth: 13
@@ -116,14 +122,15 @@ QtObject {
         readonly property int dropDownHeight: 216
         readonly property int maxDropDownWidth: 800
         readonly property color arrowIconColor: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
-        readonly property color dropDownElementColorPressed:  AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)
+        readonly property color dropDownElementColorPressed: AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)
         readonly property color dropDownElementColorHovered: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
         readonly property color dropDownElementColorNormal: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
-        readonly property color dropDownBorderColor: AdaptiveCardUtils.getColorSet("textinput-border","normal", isDarkTheme)
+        readonly property color dropDownBorderColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
         readonly property color dropDownBackgroundColor: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
     }
 
-    readonly property QtObject toggleButtonConstants: QtObject{
+    readonly property QtObject
+    toggleButtonConstants: QtObject {
         readonly property int radioButtonOuterCircleSize: 16
         readonly property int radioButtonInnerCircleSize: 6
         readonly property int checkBoxSize: 16
@@ -153,7 +160,8 @@ QtObject {
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
     }
 
-    readonly property QtObject actionButtonConstants: QtObject{
+    readonly property QtObject
+    actionButtonConstants: QtObject {
         readonly property int buttonRadius: 16
         readonly property int horizotalPadding: 10
         readonly property int verticalPadding: 5
@@ -165,7 +173,8 @@ QtObject {
         readonly property int pixelSize: 14
     }
 
-    readonly property QtObject primaryButtonColors: QtObject{
+    readonly property QtObject
+    primaryButtonColors: QtObject {
         readonly property color buttonColorNormal: AdaptiveCardUtils.getColorSet("button-primary-background", "normal", isDarkTheme)
         readonly property color buttonColorHovered: AdaptiveCardUtils.getColorSet("button-primary-background", "hovered", isDarkTheme)
         readonly property color buttonColorPressed: AdaptiveCardUtils.getColorSet("button-primary-background", "pressed", isDarkTheme)
@@ -181,7 +190,8 @@ QtObject {
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
     }
 
-    readonly property QtObject secondaryButtonColors: QtObject{
+    readonly property QtObject
+    secondaryButtonColors: QtObject {
         readonly property color buttonColorNormal: AdaptiveCardUtils.getColorSet("button-secondary-background", "normal", isDarkTheme)
         readonly property color buttonColorHovered: AdaptiveCardUtils.getColorSet("button-secondary-background", "hovered", isDarkTheme)
         readonly property color buttonColorPressed: AdaptiveCardUtils.getColorSet("button-secondary-background", "pressed", isDarkTheme)
@@ -197,7 +207,8 @@ QtObject {
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
     }
 
-    readonly property QtObject positiveButtonColors: QtObject{
+    readonly property QtObject
+    positiveButtonColors: QtObject {
         readonly property color buttonColorNormal: AdaptiveCardUtils.getColorSet("button-join-outline-background", "normal", isDarkTheme)
         readonly property color buttonColorHovered: AdaptiveCardUtils.getColorSet("button-join-outline-background", "hovered", isDarkTheme)
         readonly property color buttonColorPressed: AdaptiveCardUtils.getColorSet("button-join-outline-background", "pressed", isDarkTheme)
@@ -213,7 +224,8 @@ QtObject {
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
     }
 
-    readonly property QtObject destructiveButtonColors: QtObject{
+    readonly property QtObject
+    destructiveButtonColors: QtObject {
         readonly property color buttonColorNormal: AdaptiveCardUtils.getColorSet("button-cancel-outline-background", "normal", isDarkTheme)
         readonly property color buttonColorHovered: AdaptiveCardUtils.getColorSet("button-cancel-outline-background", "hovered", isDarkTheme)
         readonly property color buttonColorPressed: AdaptiveCardUtils.getColorSet("button-cancel-outline-background", "pressed", isDarkTheme)
@@ -228,4 +240,5 @@ QtObject {
         readonly property color textColorDisabled: AdaptiveCardUtils.getColorSet("button-secondary-text", "disabled", isDarkTheme)
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
     }
+
 }
