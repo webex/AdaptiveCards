@@ -99,6 +99,9 @@
     <None Include="AdaptiveCardQml\CardConstants.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="AdaptiveCardQml\Utils\ThemeUtils.js">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="samplecardmodel.h">

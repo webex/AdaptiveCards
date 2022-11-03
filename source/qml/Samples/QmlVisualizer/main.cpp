@@ -16,7 +16,11 @@ int main(int argc, char* argv[])
     qmlRegisterType<SampleCardModel>("SampleCard", 1, 0, "SampleCardModel");
     qmlRegisterUncreatableType<SampleCardList>("SampleCard", 1, 0, "SampleCardList",
         QStringLiteral("SampleCardList should not be created in QML"));
-    qmlRegisterSingletonType(QUrl("qrc:/CardConstants.qml"), "AdaptiveCardConstants", 1, 0, "CardConstants");
+    qmlRegisterType(QUrl("qrc:/TextBlockRender.qml"), "AdaptiveCards", 1, 0, "TextBlockRender");
+    qmlRegisterType(QUrl("qrc:/RichBlockRender.qml"), "AdaptiveCards", 1, 0, "RichBlockRender");
+    qmlRegisterType(QUrl("qrc:/ImageRender.qml"), "AdaptiveCards", 1, 0, "ImageRender");
+    qmlRegisterType(QUrl("qrc:/SeparatorRender.qml"), "AdaptiveCards", 1, 0, "SeparatorRender");
+    qmlRegisterSingletonType(QUrl("qrc:/CardConstants.qml"), "AdaptiveCards", 1, 0, "CardConstants");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
