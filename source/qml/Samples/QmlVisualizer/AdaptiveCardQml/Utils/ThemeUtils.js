@@ -2,6 +2,8 @@
 
 function getColorSet(colorSet, state, isDarkTheme) {
     var colors = isDarkTheme ? colorsDark[colorSet][state] : colorsLight[colorSet][state]
+    if(!colors)
+        console.log(colorSet, state, colors)
     return Qt.rgba(colors.r / 256, colors.g / 256, colors.b / 256, colors.a);
 }
 

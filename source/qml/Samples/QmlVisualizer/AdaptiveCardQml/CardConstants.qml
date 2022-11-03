@@ -11,7 +11,7 @@ QtObject {
         readonly property int averageCharHeight: 14
         readonly property int averageCharWidth: 6
         readonly property int averageSpacing: 4
-        readonly property color cardBorderColor: AdaptiveCardUtils.getColorSet("card-disabled-border", "pressed", isDarkTheme)
+        readonly property color cardBorderColor: AdaptiveCardUtils.getColorSet("card-disabled-border", "normal", isDarkTheme)
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
         readonly property color textHighlightBackground: AdaptiveCardUtils.getColorSet("text-highlight", "normal", isDarkTheme)
     }
@@ -118,7 +118,7 @@ QtObject {
         readonly property color arrowIconColor: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color dropDownElementColorPressed:  AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)
         readonly property color dropDownElementColorHovered: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
-        readonly property color dropDownElementColorNormal: AdaptiveCardUtils.getColorSet("textinput-background", isDarkTheme)
+        readonly property color dropDownElementColorNormal: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
         readonly property color dropDownBorderColor: AdaptiveCardUtils.getColorSet("textinput-border","normal", isDarkTheme)
         readonly property color dropDownBackgroundColor: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
     }
