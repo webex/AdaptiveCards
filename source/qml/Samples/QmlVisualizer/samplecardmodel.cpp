@@ -193,7 +193,7 @@ void SampleCardModel::setTheme(const QString& theme)
     auto renderConfig = getRenderConfig(isDark);
     renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig, renderConfig));
 
-    emit reloadCardOnThemeChange();
+    emit reloadCardOnThemeChange(isDark);
 }
 
 std::wstring SampleCardModel::toWString(const std::string& input)

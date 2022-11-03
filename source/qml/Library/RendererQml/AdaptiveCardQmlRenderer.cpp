@@ -77,6 +77,7 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick.Layouts 1.3");
         uiCard->AddImports("import QtQuick.Controls 2.15");
         uiCard->AddImports("import QtGraphicalEffects 1.15");
+        uiCard->AddImports("import AdaptiveCards 1.0");
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);

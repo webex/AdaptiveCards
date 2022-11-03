@@ -46,7 +46,7 @@ public:
     Q_INVOKABLE void onOpenContextMenu(const QPoint& pos, const QString& selectedText, const QString& link);
 
 signals:
-    void reloadCardOnThemeChange();
+    void reloadCardOnThemeChange(const bool isDarkTheme);
     void sendCardResponseToQml(const QString& output);
     void enableAdaptiveCardSubmitButton();
 
