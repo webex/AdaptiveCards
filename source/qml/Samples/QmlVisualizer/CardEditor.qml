@@ -3,6 +3,7 @@ import QtQuick.Window 2.15
 import Qt.labs.qmlmodels 1.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.15
+import AdaptiveCards 1.0
 
 Rectangle{
     id: cardEditor
@@ -67,6 +68,7 @@ Rectangle{
         
         onReloadCardOnThemeChange: {
             reloadCard(_aModel.generateQml(multilineInputId.text));
+            CardConstants.isDarkTheme = isDarkTheme
 			//_aModel.rehostImage();
         }
     }

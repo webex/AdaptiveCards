@@ -1,4 +1,5 @@
 .pragma library
+.import "ThemeUtils.js" as ThemeUtils
 
 function getHorizontalAlignment(_horizontalAlignment) {
     if (_horizontalAlignment === "center")
@@ -127,4 +128,8 @@ function handleToggleVisibilityAction(targetElements) {
             element.visible = value;
         }
     }
+}
+
+function getColorSet(colorSet, state, isDarkTheme) {
+    return ThemeUtils.getColorSet(colorSet, state, isDarkTheme)
 }
