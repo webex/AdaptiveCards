@@ -26,9 +26,10 @@ private:
 private:
     void initialize();
     void addInputLabel();
-    void addErrorMessage(const std::shared_ptr<RendererQml::QmlTag>& uiCheckBox);
-    void addColorFunction(const std::shared_ptr<RendererQml::QmlTag>& uiCheckBox);
-    void addValidation(const std::shared_ptr<RendererQml::QmlTag>& uiCheckBox);
-    std::string getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiCheckBox);
-    std::shared_ptr<RendererQml::QmlTag> getCheckBox();
+    void addCheckBox();
+    void addErrorMessage();
+    void addValidation();
+
+private:
+    const std::string origionalElementId;
 };

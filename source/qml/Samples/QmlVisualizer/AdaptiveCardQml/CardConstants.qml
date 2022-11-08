@@ -17,11 +17,11 @@ QtObject {
     }
 
     readonly property QtObject
-    inputFeildConstants: QtObject {
+    inputFieldConstants: QtObject {
         readonly property int height: 32
         readonly property int pixelSize: 16
         readonly property int maxChoiceWidth: 800
-        readonly property int labelSize: 14
+        readonly property int labelPixelSize: 14
         readonly property int borderRadius: 8
         readonly property int borderWidth: 1
         readonly property int clearIconSize: 16
