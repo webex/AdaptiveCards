@@ -42,6 +42,7 @@ void ToggleInputElement::addCheckBox()
     const auto valueOff = !mToggleInput->GetValueOff().empty() ? mToggleInput->GetValueOff() : "false";
     const bool isChecked = mToggleInput->GetValue().compare(valueOn) == 0 ? true : false;
     const auto mCheckBoxConfig = mContext->GetRenderConfig()->getToggleButtonConfig();
+    mContext->addHeightEstimate(mCheckBoxConfig.rowHeight);
     const RendererQml::Checkbox mCheckBox = RendererQml::Checkbox(mToggleInput->GetId() + "_inputToggle",
         RendererQml::CheckBoxType::Toggle,
         mToggleInput->GetTitle(),
@@ -69,7 +70,8 @@ void ToggleInputElement::addCheckBox()
 
     mToggleInputColElement->Property("_cbTitle", text, true);
     mCheckBox.isVisible == true ? mToggleInputColElement->Property("_cbIsVisible", "true") : mToggleInputColElement->Property("_cbIsVisible", "false");
-
+    mCheckBox.isChecked == true ? mToggleInputColElement->Property("_cbIsChecked", "true") : mToggleInputColElement->Property("_cbIsChecked", "false");
+    mCheckBox.isWrap == true ? mToggleInputColElement->Property("_cbisWrap", "true") : mToggleInputColElement->Property("_cbisWrap", "false");
 }
 void ToggleInputElement::addInputLabel()
 {
@@ -105,7 +107,6 @@ void ToggleInputElement::addErrorMessage()
     }
 }
 
-/* TODO Check with govardhan */
 void ToggleInputElement::addValidation()
 {
     mContext->addToInputElementList(origionalElementId, mToggleInputColElement->GetId() + ".isChecked");

@@ -7,6 +7,7 @@ CheckBox {
 
         readonly property string valueOn: _cbValueOn
         readonly property string valueOff:_cbValueOff
+        checked: _cbIsChecked
         property string value: checked ? valueOn : valueOff
         width: parent.width
         text: _cbText

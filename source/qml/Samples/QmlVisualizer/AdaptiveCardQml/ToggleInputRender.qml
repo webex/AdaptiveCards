@@ -22,6 +22,7 @@ Column {
     property bool _cbisWrap 
     property string _cbTitle
     property bool _cbIsVisible
+    property bool _cbIsChecked
     property bool isChecked: _input_toggle_inputToggle.checked
     property bool showErrorMessage:false
     property int minWidth: _input_toggle_inputToggle.implicitWidth
@@ -30,7 +31,7 @@ Column {
     onIsCheckedChanged: validate()
     Label {
         id: _input_toggle_label
-        wrapMode: Text.WordWrap
+        wrapMode: Text.Wrap
         width: parent.width
         color: _color
         font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
@@ -59,7 +60,7 @@ Column {
         Accessible.ignored: true
         color: CardConstants.toggleButtonConstants.errorMessageColor
         text: _mEscapedErrorString
-        visible: showErrorMessage
+        visible: showErrorMessage && _mEscapedErrorString.length
     }
     function validate(){if(showErrorMessage){if(isChecked){showErrorMessage = false}}return !isChecked;}
     function getAccessibleName(){let accessibleName = '';if(showErrorMessage === true){accessibleName += "Error. " + _mEscapedErrorString ;}accessibleName += _mEscapedLabelString;return accessibleName;}
