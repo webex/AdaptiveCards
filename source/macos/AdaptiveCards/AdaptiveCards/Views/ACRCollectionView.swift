@@ -9,7 +9,7 @@ class ACRCollectionView: NSScrollView {
     private let imageSet: ACSImageSet
     private let imageSize: ACSImageSize
     private let hostConfig: ACSHostConfig
-    private let imageViews: [ImageSetImageView]
+    private let imageViews: [ACRImageWrappingView]
     
     private var itemSize: CGSize {
         switch imageSize {
@@ -36,17 +36,13 @@ class ACRCollectionView: NSScrollView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(rootView: ACRView, imageSet: ACSImageSet, hostConfig: ACSHostConfig) {
+    init(rootView: ACRView, parentView: NSView, imageSet: ACSImageSet, hostConfig: ACSHostConfig) {
         self.imageSet = imageSet
         self.hostConfig = hostConfig
         self.imageSize = imageSet.getImageSize()
         self.imageViews = imageSet.getImages().map {
-            let imageView = ImageSetImageView(imageSize: imageSet.getImageSize(), hostConfig: hostConfig)
-            rootView.registerImageHandlingView(imageView, for: $0.getUrl() ?? "")
-            if $0.getStyle() == .person {
-                imageView.isPersonStyle = true
-            }
-            return imageView
+            let imageWrappingView = ImageUtils.returnImageWrappingView(element: $0, hostConfig: hostConfig, rootView: rootView, parentView: parentView)
+            return imageWrappingView
         }
         super.init(frame: .zero)
         

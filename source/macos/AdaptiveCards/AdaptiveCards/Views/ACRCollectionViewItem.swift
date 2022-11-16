@@ -8,7 +8,7 @@ class ACRCollectionViewItem: NSCollectionViewItem {
         view = NSView()
     }
     
-    func setupBounds(with imageView: ImageSetImageView) {
+    func setupBounds(with imageView: ACRImageWrappingView) {
         imageView.removeFromSuperview()
         view.addSubview(imageView)
         imageView.frame = view.bounds

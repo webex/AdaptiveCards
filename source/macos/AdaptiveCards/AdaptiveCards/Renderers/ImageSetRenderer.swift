@@ -9,7 +9,7 @@ class ImageSetRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSImageSet")
             return NSView()
         }
-        let colView = ACRCollectionView(rootView: rootView, imageSet: imageSet, hostConfig: hostConfig)
+        let colView = ACRCollectionView(rootView: rootView, parentView: parentView, imageSet: imageSet, hostConfig: hostConfig)
         colView.translatesAutoresizingMaskIntoConstraints = false
         return colView
     }
