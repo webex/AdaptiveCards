@@ -5,7 +5,6 @@
 ToggleInputElement::ToggleInputElement(std::shared_ptr<AdaptiveCards::ToggleInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
     :mToggleInput(input),
     mContext(context),
-    mToggleInputConfig(context->GetRenderConfig()->getToggleButtonConfig()),
     origionalElementId(mToggleInput->GetId())
 {
     mToggleInputColElement = std::make_shared<RendererQml::QmlTag>("ToggleInputRender");
@@ -41,8 +40,7 @@ void ToggleInputElement::addCheckBox()
     const auto valueOn = !mToggleInput->GetValueOn().empty() ? mToggleInput->GetValueOn() : "true";
     const auto valueOff = !mToggleInput->GetValueOff().empty() ? mToggleInput->GetValueOff() : "false";
     const bool isChecked = mToggleInput->GetValue().compare(valueOn) == 0 ? true : false;
-    const auto mCheckBoxConfig = mContext->GetRenderConfig()->getToggleButtonConfig();
-    mContext->addHeightEstimate(mCheckBoxConfig.rowHeight);
+    mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().checkBoxRowHeight);
     const RendererQml::Checkbox mCheckBox = RendererQml::Checkbox(mToggleInput->GetId() + "_inputToggle",
         RendererQml::CheckBoxType::Toggle,
         mToggleInput->GetTitle(),
@@ -80,7 +78,6 @@ void ToggleInputElement::addInputLabel()
         if (!mToggleInput->GetLabel().empty())
         {
             mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
-            const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
             std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
             mToggleInputColElement->Property("_color", color);
             mToggleInput->GetIsRequired() == true ? mToggleInputColElement->Property("_isRequired", "true") : mToggleInputColElement->Property("_isRequired", "false");

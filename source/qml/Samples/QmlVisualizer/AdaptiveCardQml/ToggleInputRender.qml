@@ -23,14 +23,14 @@ Column {
     property string _cbTitle
     property bool _cbIsVisible
     property bool _cbIsChecked
-    property bool isChecked: _input_toggle_inputToggle.checked
+    property bool isChecked: customCheckBox.checked
     property bool showErrorMessage:false
-    property int minWidth: _input_toggle_inputToggle.implicitWidth
-    onActiveFocusChanged: if(activeFocus) {_input_toggle_inputToggle.forceActiveFocus() }
+    property int minWidth: customCheckBox.implicitWidth
+    onActiveFocusChanged: if(activeFocus) {customCheckBox.forceActiveFocus() }
     
     onIsCheckedChanged: validate()
     Label {
-        id: _input_toggle_label
+        id: _inputToggleLabel
         wrapMode: Text.Wrap
         width: parent.width
         color: _color
@@ -41,8 +41,7 @@ Column {
     }
 
     CustomCheckBox {
-       id: _input_toggle_inputToggle
-   
+        id: customCheckBox
     }
 
 
@@ -53,7 +52,7 @@ Column {
      * Error Message is not Empty 
      */
     Label {
-        id: _input_toggle_errorMessage
+        id: _inputToggleErrorMessage
         wrapMode: Text.Wrap
         width: parent.width
         font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
