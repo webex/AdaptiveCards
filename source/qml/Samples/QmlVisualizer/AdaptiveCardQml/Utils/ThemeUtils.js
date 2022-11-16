@@ -30,9 +30,9 @@ var colorsLight = {
     },
     "text-highlight": {
         "normal": {
-            "r": 255,
-            "g": 199,
-            "b": 246,
+            "r": 199,
+            "g": 246,
+            "b": 255,
             "a": 1
         }
     },
@@ -443,10 +443,10 @@ var colorsDark = {
     },
     "text-highlight": {
         "normal": {
-            "r": 255,
-            "g": 9,
-            "b": 45,
-            "a": 0.23
+            "r": 9,
+            "g": 45,
+            "b": 59,
+            "a": 1
         }
     },
     "textinput-background": {
