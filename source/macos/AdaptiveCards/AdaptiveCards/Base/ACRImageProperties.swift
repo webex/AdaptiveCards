@@ -33,8 +33,8 @@ class ACRImageProperties: NSObject {
         }
         
         acsImageSize = imageElement.getSize()
-        if acsImageSize == .none && isImageSet {
-            acsImageSize = imageSetImageSize == .none ? .medium : imageSetImageSize
+        if  isImageSet {
+            acsImageSize = imageSetImageSize
         } else if acsImageSize == ACSImageSize.none {
             acsImageSize = ACSImageSize.auto
         }
