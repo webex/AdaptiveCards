@@ -19,12 +19,12 @@ class ColumnSetRendererTests: XCTestCase {
         
         let autoColumnSet = FakeColumnSet.make(columns: columns, heightType: .auto)
         let rootAutoView = renderColumnSetInsideContainerView(FakeContainer.make(elemType: .container, minHeight: 200, items: [autoColumnSet]))
-        XCTAssertEqual(rootAutoView.stackView.arrangedSubviews.capacity, 2)
+        XCTAssertEqual(rootAutoView.stackView.arrangedSubviews.capacity, 3)
         XCTAssertEqual(rootAutoView.stackView.arrangedSubviews.first?.contentHuggingPriority(for: .vertical), NSLayoutConstraint.Priority.defaultLow)
         
         let stretchColumnSet = FakeColumnSet.make(columns: columns, heightType: .stretch)
         let rootStretchView = renderColumnSetInsideContainerView(FakeContainer.make(elemType: .container, minHeight: 200, items: [stretchColumnSet]))
-        XCTAssertEqual(rootStretchView.stackView.arrangedSubviews.capacity, 1)
+        XCTAssertEqual(rootStretchView.stackView.arrangedSubviews.capacity, 2)
         XCTAssertEqual(rootStretchView.stackView.arrangedSubviews.first?.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
     }
     
