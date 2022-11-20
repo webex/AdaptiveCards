@@ -129,4 +129,66 @@ class AdaptiveCardsTests: XCTestCase {
             testRetainCycles()
         }
     }
+    
+    func testToggleVisibilityWithLastStretchableView() {
+        self.measure {
+            // Put the code you want to measure the time of here.
+            renderCardWithToggleVisibilityAndMinHeight()
+        }
+    }
+    
+    func testToggleVisibilityWithoutLastStretchableView() {
+        self.measure {
+            renderCardWithToggleVisibilityWithoutMinHeight()
+        }
+    }
+        
+    func renderCardWithToggleVisibilityAndMinHeight() {
+        let bundle = Bundle(for: type(of: self))
+        let filename = "ToggleVisibilityWithMinHeight.json"
+        
+        let dataAsset = NSDataAsset(name: filename, bundle: bundle)?.data
+        guard let data = dataAsset else { return }
+        let jsonString = String(data: data, encoding: .utf8)!
+        
+        let hostConfigData = NSDataAsset(name: "HostConfig.json", bundle: bundle)!.data
+        let hostConfigJSON = String(data: hostConfigData, encoding: .utf8)!
+        let hostConfig = try! AdaptiveCard.parseHostConfig(from: hostConfigJSON).get()
+        
+        weak var weakCard1: NSView?
+        for _ in 0..<50 {
+            let card = AdaptiveCard.from(jsonString: jsonString).getAdaptiveCard()!
+            var blockExecuted = false
+            autoreleasepool {
+                let cardView = AdaptiveCard.render(card: card, with: hostConfig, width: 432, actionDelegate: delegate, resourceResolver: resourceResolver)
+                weakCard1?.addSubview(cardView)
+                blockExecuted = true
+            }
+            
+            XCTAssertTrue(blockExecuted)
+        }
+    }
+    
+    func renderCardWithToggleVisibilityWithoutMinHeight() {
+        let bundle = Bundle(for: type(of: self))
+        let filename = "ToggleVisibilityWithoutMinHeight.json"
+        
+        let dataAsset = NSDataAsset(name: filename, bundle: bundle)?.data
+        guard let data = dataAsset else { return }
+        let jsonString = String(data: data, encoding: .utf8)!
+        
+        let hostConfigData = NSDataAsset(name: "HostConfig.json", bundle: bundle)!.data
+        let hostConfigJSON = String(data: hostConfigData, encoding: .utf8)!
+        let hostConfig = try! AdaptiveCard.parseHostConfig(from: hostConfigJSON).get()
+        
+        weak var weakCard1: NSView?
+        for _ in 0..<50 {
+            let card = AdaptiveCard.from(jsonString: jsonString).getAdaptiveCard()!
+            
+            autoreleasepool {
+                let cardView = AdaptiveCard.render(card: card, with: hostConfig, width: 432, actionDelegate: delegate, resourceResolver: resourceResolver)
+                weakCard1?.addSubview(cardView)
+            }
+        }
+    }
 }
