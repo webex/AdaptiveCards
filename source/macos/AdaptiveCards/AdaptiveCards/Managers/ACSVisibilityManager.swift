@@ -13,6 +13,8 @@ import AppKit
 @objc protocol ACSVisibilityManagerFacade {
     func visibilityManager(hideView view: NSView)
     func visibilityManager(unhideView view: NSView)
+    func visibilityManagerAllStretchableViewsHidden() -> Bool
+    func visibilityManagerSetLastPaddingView(isHidden: Bool)
 }
 
 class ACSVisibilityManager {
@@ -165,5 +167,9 @@ class ACSVisibilityManager {
             }
             self.changeVisiblityOfAssociatedViews(hostView: viewToBeUnhidden, visibilityValue: false, contentStackView: hostView)
         }
+    }
+    
+    func changeVisibilityOfLastPadding(isHidden: Bool) {
+        fillerSpaceManager.toggleLastPaddingVisibility(isHidden: isHidden)
     }
 }

@@ -55,6 +55,7 @@ class AdaptiveCardRenderer {
         }
         rootView.delegate = actionDelegate
         rootView.resolverDelegate = resourceResolver
+        rootView.setMinimumHeight(card.getMinHeight())
         if card.getVersion() == "1.3", !config.supportsSchemeV1_3 {
             logError("CardVersion 1.3 not supported, Card properties of this version and above won't be rendered")
         }
@@ -90,7 +91,6 @@ class AdaptiveCardRenderer {
         // add selectAction
         rootView.setupSelectAction(card.getSelectAction(), rootView: rootView)
         rootView.setupSelectActionAccessibility(on: rootView, for: card.getSelectAction())
-        rootView.setMinimumHeight(card.getMinHeight())
         
         if let backgroundImage = card.getBackgroundImage(), let url = backgroundImage.getUrl() {
             rootView.setupBackgroundImageProperties(backgroundImage)
@@ -98,7 +98,7 @@ class AdaptiveCardRenderer {
         }
         
         if heightSupport {
-            rootView.configureLayoutAndVisibility(card.getVerticalContentAlignment(), minHeight: card.getMinHeight(), heightType: card.getHeight(), type: .adaptiveCard)
+            rootView.configureLayoutAndVisibility(card.getVerticalContentAlignment(), minHeight: card.getMinHeight(), heightType: card.getHeight(), type: .adaptiveCard, isRootMinHeightAvailable: rootView.isMinHeightAvailable)
         }
         rootView.appearance = NSAppearance.getAppearance(isDark: config.isDarkMode)
         rootView.dispatchResolveRequests()
