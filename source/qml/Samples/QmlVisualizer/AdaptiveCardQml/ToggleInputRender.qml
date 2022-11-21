@@ -56,8 +56,13 @@ Column {
         color: _color
         font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
         Accessible.ignored: true
-        text: _isRequired ? _mEscapedLabelString + " " + `<font color='#FFAB0A15'>*</font>` : _mEscapedLabelString
+        text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
         visible: text.length
+
+        
+        Component.onCompleted: {
+            console.log(text)
+        }
     }
 
     CustomCheckBox {

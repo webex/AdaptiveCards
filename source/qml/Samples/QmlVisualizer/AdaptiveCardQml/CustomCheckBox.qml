@@ -133,7 +133,7 @@ CheckBox {
                     event.accepted = selectLink(this, true);
                 } else if (event.key === Qt.Key_Backtab) {
                     event.accepted = selectLink(this, false);
-                } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter || event.key == Qt.Key_Space) {
+                } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
                     if (link)
                         linkActivated(link);
 
