@@ -3,7 +3,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
-// how is required property will be set for Label
 Column {
     id: toggleInput
 
@@ -65,12 +64,6 @@ Column {
         id: customCheckBox
     }
 
-    /* Error Message label
-     * Visiblility :
-     * 1.3
-     * isRequired property is set
-     * Error Message is not Empty
-     */
     Label {
         id: _inputToggleErrorMessage
 
