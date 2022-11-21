@@ -334,8 +334,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         
         // when minheight constraint is applied and all views present have height auto it might cause these views to have ambiguous constraints, hence adding a padding at the end of stackView
         if self.hasStretchableView, let minHeight = minHeight?.intValue, (minHeight > 0 || isRootMinHeightAvailable) {
-            let padding = visibilityManager.fillerSpaceManager.addLastPadding()
-            self.addArrangedSubview(padding)
+            visibilityManager.fillerSpaceManager.addLastStretchableView(for: self)
         }
     }
     
