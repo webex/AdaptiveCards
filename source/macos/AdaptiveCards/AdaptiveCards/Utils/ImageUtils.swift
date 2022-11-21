@@ -129,7 +129,7 @@ class ImageUtils {
     }
     
     // return ACRImageWrappingView
-    static func returnImageWrappingView(element: ACSImage, hostConfig: ACSHostConfig, rootView: ACRView, parentView: NSView, isImageSet: Bool = false, imageSetImageSize: ACSImageSize = .none) -> ACRImageWrappingView {
+    static func getImageWrappingViewFor(element: ACSImage, hostConfig: ACSHostConfig, rootView: ACRView, parentView: NSView, isImageSet: Bool = false, imageSetImageSize: ACSImageSize = .none) -> ACRImageWrappingView {
         let imageProperties = ACRImageProperties(element: element, config: hostConfig, parentView: parentView, isImageSet: isImageSet, imageSetImageSize: imageSetImageSize)
         guard let url = element.getUrl() else {
             logError("URL is not available")

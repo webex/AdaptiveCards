@@ -42,7 +42,7 @@ class ACRCollectionView: NSScrollView {
         let imageSetImageSize: ACSImageSize = imageSet.getImageSize() == .none ? .medium : imageSet.getImageSize()
         self.imageSize = imageSetImageSize
         self.imageViews = imageSet.getImages().map {
-            let imageWrappingView = ImageUtils.returnImageWrappingView(element: $0, hostConfig: hostConfig, rootView: rootView, parentView: parentView, isImageSet: true, imageSetImageSize: imageSetImageSize)
+            let imageWrappingView = ImageUtils.getImageWrappingViewFor(element: $0, hostConfig: hostConfig, rootView: rootView, parentView: parentView, isImageSet: true, imageSetImageSize: imageSetImageSize)
             return imageWrappingView
         }
         super.init(frame: .zero)

@@ -9,7 +9,7 @@ class ImageRenderer: NSObject, BaseCardElementRendererProtocol {
             logError("Element is not of type ACSImage")
             return NSView()
         }
-        let imageWrappingView = ImageUtils.returnImageWrappingView(element: imageElement, hostConfig: hostConfig, rootView: rootView, parentView: parentView)
+        let imageWrappingView = ImageUtils.getImageWrappingViewFor(element: imageElement, hostConfig: hostConfig, rootView: rootView, parentView: parentView)
         return imageWrappingView
     }
 }
