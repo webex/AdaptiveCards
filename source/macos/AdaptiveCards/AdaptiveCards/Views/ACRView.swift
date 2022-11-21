@@ -180,9 +180,9 @@ class ACRView: ACRColumnView {
             
             // toggle the last padding if all other
             if facade?.visibilityManagerAllStretchableViewsHidden() ?? false {
-                facade?.visibilityManagerSetLastPaddingView(isHidden: !isHide)
+                facade?.visibilityManagerSetLastStretchableView(isHidden: !isHide)
             } else {
-                facade?.visibilityManagerSetLastPaddingView(isHidden: isHide)
+                facade?.visibilityManagerSetLastStretchableView(isHidden: isHide)
             }
         }
     }

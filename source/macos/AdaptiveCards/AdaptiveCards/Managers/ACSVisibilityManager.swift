@@ -14,7 +14,7 @@ import AppKit
     func visibilityManager(hideView view: NSView)
     func visibilityManager(unhideView view: NSView)
     func visibilityManagerAllStretchableViewsHidden() -> Bool
-    func visibilityManagerSetLastPaddingView(isHidden: Bool)
+    func visibilityManagerSetLastStretchableView(isHidden: Bool)
 }
 
 class ACSVisibilityManager {
@@ -169,7 +169,7 @@ class ACSVisibilityManager {
         }
     }
     
-    func changeVisibilityOfLastPadding(isHidden: Bool) {
-        fillerSpaceManager.toggleLastPaddingVisibility(isHidden: isHidden)
+    func changeVisibilityOfLastStretchableView(isHidden: Bool) {
+        fillerSpaceManager.toggleLastStretchableViewVisibility(isHidden: isHidden)
     }
 }

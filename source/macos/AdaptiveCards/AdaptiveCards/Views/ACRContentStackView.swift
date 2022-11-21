@@ -542,8 +542,8 @@ extension ACRContentStackView: ACSVisibilityManagerFacade {
         return !visibilityManager.fillerSpaceManager.hasPadding()
     }
     
-    func visibilityManagerSetLastPaddingView(isHidden: Bool) {
-        visibilityManager.changeVisibilityOfLastPadding(isHidden: isHidden)
+    func visibilityManagerSetLastStretchableView(isHidden: Bool) {
+        visibilityManager.changeVisibilityOfLastStretchableView(isHidden: isHidden)
     }
 }
 

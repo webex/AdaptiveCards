@@ -169,7 +169,7 @@ class ACSFillerSpaceManager {
         view.addArrangedSubview(stretchableView)
     }
     
-    func toggleLastPaddingVisibility(isHidden: Bool) {
+    func toggleLastStretchableViewVisibility(isHidden: Bool) {
         lastStretchableView?.isHidden = isHidden
     }
 }
