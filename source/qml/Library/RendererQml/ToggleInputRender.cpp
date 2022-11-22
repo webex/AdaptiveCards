@@ -5,9 +5,14 @@
 ToggleInputElement::ToggleInputElement(std::shared_ptr<AdaptiveCards::ToggleInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
     :mToggleInput(input),
     mContext(context),
-    mToggleInputConfig(context->GetRenderConfig()->getToggleButtonConfig())
+    origionalElementId(mToggleInput->GetId())
 {
+    mToggleInputColElement = std::make_shared<RendererQml::QmlTag>("ToggleInputRender");
     initialize();
+    addInputLabel();
+    addErrorMessage();
+    addCheckBox();
+    addValidation();
 }
 
 std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getQmlTag()
@@ -17,7 +22,6 @@ std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getQmlTag()
 
 void ToggleInputElement::initialize()
 {
-    const std::string origionalElementId = mToggleInput->GetId();
     mToggleInput->SetId(mContext->ConvertToValidId(mToggleInput->GetId()));
 
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -25,31 +29,19 @@ void ToggleInputElement::initialize()
         mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel());
         mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetErrorMessage());
     }
-
-    mToggleInputColElement = std::make_shared<RendererQml::QmlTag>("Column");
     mToggleInputColElement->Property("id", RendererQml::Formatter() << mToggleInput->GetId());
-    mToggleInputColElement->Property("property int minWidth", RendererQml::Formatter() << mToggleInput->GetId() << "_inputToggle.implicitWidth");
+    mToggleInputColElement->Property("_adaptiveCard", "adaptiveCard");
     mToggleInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
-    mToggleInputColElement->Property("width", "parent.width");
     mToggleInputColElement->Property("visible", mToggleInput->GetIsVisible() ? "true" : "false");
-
-    addInputLabel();
-
-    auto uiCheckBox = getCheckBox();
-    uiCheckBox->AddFunctions(getAccessibleName(uiCheckBox));
-    mToggleInputColElement->AddChild(uiCheckBox);
-
-    addErrorMessage(uiCheckBox);
-    mContext->addToInputElementList(origionalElementId, (uiCheckBox->GetId() + ".value"));
 }
 
-std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getCheckBox()
+void ToggleInputElement::addCheckBox()
 {
     const auto valueOn = !mToggleInput->GetValueOn().empty() ? mToggleInput->GetValueOn() : "true";
     const auto valueOff = !mToggleInput->GetValueOff().empty() ? mToggleInput->GetValueOff() : "false";
     const bool isChecked = mToggleInput->GetValue().compare(valueOn) == 0 ? true : false;
-
-    auto checkBoxElement = std::make_shared<CheckBoxElement>(RendererQml::Checkbox(mToggleInput->GetId() + "_inputToggle",
+    mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().checkBoxRowHeight);
+    const RendererQml::Checkbox mCheckBox = RendererQml::Checkbox(mToggleInput->GetId() + "_inputToggle",
         RendererQml::CheckBoxType::Toggle,
         mToggleInput->GetTitle(),
         mToggleInput->GetValue(),
@@ -57,14 +49,28 @@ std::shared_ptr<RendererQml::QmlTag> ToggleInputElement::getCheckBox()
         valueOff,
         mToggleInput->GetWrap(),
         mToggleInput->GetIsVisible(),
-        isChecked), mContext);
-    auto uiCheckBox = checkBoxElement->getQmlTag();
+        isChecked);
+    std::string mEscapedValueOn = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOn);
+    std::string mEscapedValueOff = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOff);
+    mToggleInputColElement->Property("_cbValueOn", RendererQml::Formatter() << "String.raw`" << mEscapedValueOn << "`");
+    mToggleInputColElement->Property("_cbValueOff", RendererQml::Formatter() << "String.raw`" << mEscapedValueOff << "`");
+    mToggleInputColElement->Property("_cbText", RendererQml::Formatter() << "String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.text) << "`");
 
-    addColorFunction(uiCheckBox);
+    std::string text = RendererQml::TextUtils::ApplyTextFunctions(mCheckBox.text, mContext->GetLang());
 
-    return uiCheckBox;
+    auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(text);
+    text = markdownParser->TransformToHtml();
+    text = RendererQml::Utils::HandleEscapeSequences(text);
+
+    const std::string linkColor = mContext->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
+    const std::string textDecoration = "none";
+    text = RendererQml::Utils::FormatHtmlUrl(text, linkColor, textDecoration);
+
+    mToggleInputColElement->Property("_cbTitle", text, true);
+    mCheckBox.isVisible == true ? mToggleInputColElement->Property("_cbIsVisible", "true") : mToggleInputColElement->Property("_cbIsVisible", "false");
+    mCheckBox.isChecked == true ? mToggleInputColElement->Property("_cbIsChecked", "true") : mToggleInputColElement->Property("_cbIsChecked", "false");
+    mCheckBox.isWrap == true ? mToggleInputColElement->Property("_cbisWrap", "true") : mToggleInputColElement->Property("_cbisWrap", "false");
 }
-
 void ToggleInputElement::addInputLabel()
 {
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
@@ -72,27 +78,10 @@ void ToggleInputElement::addInputLabel()
         if (!mToggleInput->GetLabel().empty())
         {
             mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
-            const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
-            auto label = std::make_shared<RendererQml::QmlTag>("Label");
-            label->Property("id", RendererQml::Formatter() << mToggleInput->GetId() << "_label");
-            label->Property("wrapMode", "Text.Wrap");
-            label->Property("width", "parent.width");
-
             std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
-            label->Property("color", color);
-            label->Property("font.pixelSize", RendererQml::Formatter() << choiceSetConfig.labelSize);
-            label->Property("Accessible.ignored", "true");
-
-            if (mToggleInput->GetIsRequired())
-            {
-                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mToggleInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << " <font color='" << choiceSetConfig.errorMessageColor << "'>*</font>`");
-            }
-            else
-            {
-                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mToggleInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << "`");
-            }
-
-            mToggleInputColElement->AddChild(label);
+            mToggleInputColElement->Property("_color", color);
+            mToggleInput->GetIsRequired() == true ? mToggleInputColElement->Property("_isRequired", "true") : mToggleInputColElement->Property("_isRequired", "false");
+            mToggleInputColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");
         }
         else
         {
@@ -104,95 +93,22 @@ void ToggleInputElement::addInputLabel()
     }
 }
 
-void ToggleInputElement::addErrorMessage(const std::shared_ptr<RendererQml::QmlTag>& uiCheckBox)
+void ToggleInputElement::addErrorMessage()
 {
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mToggleInput->GetIsRequired())
     {
-        uiCheckBox->Property("property bool showErrorMessage", "false");
-        addValidation(uiCheckBox);
-
         if (!mToggleInput->GetErrorMessage().empty())
         {
-            const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
-            auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
-            uiErrorMessage->Property("id", RendererQml::Formatter() << mToggleInput->GetId() << "_errorMessage");
-            uiErrorMessage->Property("wrapMode", "Text.Wrap");
-            uiErrorMessage->Property("width", "parent.width");
-            uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << choiceSetConfig.labelSize);
-            uiErrorMessage->Property("Accessible.ignored", "true");
-
-            uiErrorMessage->Property("color", mContext->GetHexColor(choiceSetConfig.errorMessageColor));
-            uiErrorMessage->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
-            uiErrorMessage->Property("visible", RendererQml::Formatter() << uiCheckBox->GetId() << ".showErrorMessage");
-            mToggleInputColElement->AddChild(uiErrorMessage);
+            mToggleInputColElement->Property("_mEscapedErrorString", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
         }
     }
 }
 
-void ToggleInputElement::addColorFunction(const std::shared_ptr<RendererQml::QmlTag>& uiCheckBox)
+void ToggleInputElement::addValidation()
 {
-    uiCheckBox->AddFunctions(RendererQml::Formatter() << "function colorChange(item,isPressed){\n"
-        "if (isPressed) item.indicatorItem.color = item.checked ? " << mContext->GetHexColor(mToggleInputConfig.colorOnCheckedAndPressed) << " : " << mContext->GetHexColor(mToggleInputConfig.colorOnUncheckedAndPressed) << ";\n"
-        "else  item.indicatorItem.color = item.hovered ? (item.checked ? " << mContext->GetHexColor(mToggleInputConfig.colorOnCheckedAndHovered) << " : " << mContext->GetHexColor(mToggleInputConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << mContext->GetHexColor(mToggleInputConfig.colorOnChecked) << " : " << mContext->GetHexColor(mToggleInputConfig.colorOnUnchecked) << ")\n"
-        "if (isPressed) item.indicatorItem.border.color = item.checked ? " << mContext->GetHexColor(mToggleInputConfig.borderColorOnCheckedAndPressed) << " : " << mContext->GetHexColor(mToggleInputConfig.borderColorOnUncheckedAndPressed) << ";\n"
-        "else  item.indicatorItem.border.color = item.hovered ? (item.checked ? " << mContext->GetHexColor(mToggleInputConfig.borderColorOnCheckedAndHovered) << " : " << mContext->GetHexColor(mToggleInputConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << mContext->GetHexColor(mToggleInputConfig.borderColorOnChecked) << " : " << mContext->GetHexColor(mToggleInputConfig.borderColorOnUnchecked) << ")\n"
-        "}\n"
-    );
-    uiCheckBox->Property("onPressed", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", true)");
-    uiCheckBox->Property("onReleased", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false)");
-    uiCheckBox->Property("onHoveredChanged", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false)");
-    uiCheckBox->Property("onCheckedChanged", RendererQml::Formatter() << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false)");
-    uiCheckBox->Property("onActiveFocusChanged", RendererQml::Formatter() << "{" << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false);"
-        << "if(activeFocus){Accessible.name = getAccessibleName() + text}}");
-
-    uiCheckBox->Property("Component.onCompleted", RendererQml::Formatter() << "{\n"
-        << uiCheckBox->GetId() << ".colorChange(" << uiCheckBox->GetId() << ", false);}\n"
-    );
-}
-
-void ToggleInputElement::addValidation(const std::shared_ptr<RendererQml::QmlTag>& uiCheckBox)
-{
-    if (mToggleInput->GetIsVisible())
+    mContext->addToInputElementList(origionalElementId, mToggleInputColElement->GetId() + ".isChecked");
+    if (mToggleInput->GetIsVisible() && mToggleInput->GetIsRequired())
     {
-        mContext->addToRequiredInputElementsIdList(uiCheckBox->GetId());
+        mContext->addToRequiredInputElementsIdList(mToggleInputColElement->GetId());
     }
-    uiCheckBox->Property("property bool showErrorMessage", "false");
-    uiCheckBox->Property("onCheckStateChanged", "validate()");
-
-    std::ostringstream validator;
-
-    validator << "function validate(){"
-        << "if(showErrorMessage){"
-        << "if(checked){"
-        << "showErrorMessage = false"
-        << "}}"
-        << "return !checked;}";
-
-    uiCheckBox->AddFunctions(validator.str());
-}
-
-std::string ToggleInputElement::getAccessibleName(std::shared_ptr<RendererQml::QmlTag> uiCheckBox)
-{
-    std::ostringstream accessibleName;
-    std::ostringstream labelString;
-    std::ostringstream errorString;
-
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
-    {
-        if (!mToggleInput->GetLabel().empty())
-        {
-            labelString << "accessibleName += String.raw`" << mEscapedLabelString << ". `;";
-        }
-
-        if (!mToggleInput->GetErrorMessage().empty())
-        {
-            errorString << "if(" << uiCheckBox->GetId() << ".showErrorMessage === true){"
-                << "accessibleName += String.raw`Error. " << mEscapedErrorString << ". `;}";
-        }
-    }
-
-    accessibleName << "function getAccessibleName(){"
-        << "let accessibleName = '';" << errorString.str() << labelString.str() << "return accessibleName;}";
-
-    return accessibleName.str();
 }

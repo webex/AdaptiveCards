@@ -21,6 +21,8 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/ImageRender.qml"), "AdaptiveCards", 1, 0, "ImageRender");
     qmlRegisterType(QUrl("qrc:/SeparatorRender.qml"), "AdaptiveCards", 1, 0, "SeparatorRender");
     qmlRegisterSingletonType(QUrl("qrc:/CardConstants.qml"), "AdaptiveCards", 1, 0, "CardConstants");
+    qmlRegisterType(QUrl("qrc:/ToggleInputRender.qml"), "AdaptiveCards", 1, 0, "ToggleInputRender");
+    qmlRegisterType(QUrl("qrc:/CustomCheckBox.qml"), "AdaptiveCards", 1, 0, "CustomCheckBox");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
