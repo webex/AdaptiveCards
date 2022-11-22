@@ -5,7 +5,7 @@ protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
     func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView, acoElement acoElem: ACSBaseCardElement, separator: SpacingView?, rootView: ACRView?)
-    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType)
+    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType, isRootMinHeightAvailable: Bool)
     func applyPadding(_ padding: CGFloat)
 }
 
@@ -316,7 +316,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// activation constraint all at once is more efficient than activating
     /// constraints one by one.
     
-    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType) {
+    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType, isRootMinHeightAvailable: Bool) {
         self.verticalContentAlignment = verticalContentAlignment
         self.applyVisibilityToSubviews()
         if self.shouldAddPadding(self.hasStretchableView) {
@@ -331,6 +331,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         }
         self.setMinimumHeight(minHeight)
         visibilityManager.fillerSpaceManager.activateConstraintsForPadding()
+        
+        // when minheight constraint is applied and all views present have height auto it might cause these views to have ambiguous constraints, hence adding a padding at the end of stackView
+        if self.hasStretchableView, let minHeight = minHeight?.intValue, (minHeight > 0 || isRootMinHeightAvailable) {
+            visibilityManager.fillerSpaceManager.addLastStretchableView(for: self)
+        }
     }
     
     private func setupTrackingArea() {
@@ -531,6 +536,14 @@ extension ACRContentStackView: ACSVisibilityManagerFacade {
     
     func visibilityManager(unhideView view: NSView) {
         self.unhideView(view)
+    }
+    
+    func visibilityManagerAllStretchableViewsHidden() -> Bool {
+        return !visibilityManager.fillerSpaceManager.hasPadding()
+    }
+    
+    func visibilityManagerSetLastStretchableView(isHidden: Bool) {
+        visibilityManager.changeVisibilityOfLastStretchableView(isHidden: isHidden)
     }
 }
 

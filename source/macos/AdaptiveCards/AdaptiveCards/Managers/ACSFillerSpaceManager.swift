@@ -45,6 +45,8 @@ class ACSFillerSpaceManager {
     private var stretchableViews: [NSValue]
     private var paddingSet: NSHashTable<NSView>
     private var paddingConstraints: [NSLayoutConstraint]
+    // This will be used only when all stretchable views are hidden and the card can't shrink to take up remaining space
+    private weak var lastStretchableView: StretchableView?
     
     init() {
         paddingMap = NSMapTable<NSView, NSMutableArray>(keyOptions: .weakMemory, valueOptions: .strongMemory)
@@ -157,5 +159,17 @@ class ACSFillerSpaceManager {
             return nil
         }
         return spaceView
+    }
+    
+    func addLastStretchableView(for view: ACRContentStackView) {
+        let stretchableView = StretchableView()
+        ACSFillerSpaceManager.configureHugging(view: stretchableView)
+        lastStretchableView = stretchableView
+        lastStretchableView?.isHidden = true
+        view.addArrangedSubview(stretchableView)
+    }
+    
+    func toggleLastStretchableViewVisibility(isHidden: Bool) {
+        lastStretchableView?.isHidden = isHidden
     }
 }
