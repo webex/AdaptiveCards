@@ -13,7 +13,6 @@ class ACRChoiceSetButtontests: XCTestCase {
         renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: .default,checkBoxButtonConfig: setupCheckBoxButton(), radioButtonConfig: setupRadioButton(), localisedStringConfig: nil)
         choiceSetInput = FakeChoiceSetInput()
         choiceCheckBoxButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch, element: choiceSetInput, title: "Test")
-//        choiceCheckBoxButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch)
         choiceRadioButtonView = ACRChoiceButton(renderConfig: renderConfig, buttonType: .radio, element: choiceSetInput, title: "Test")
     }
     
@@ -129,6 +128,6 @@ class ACRChoiceSetButtontests: XCTestCase {
         let onIcon = NSImage()
         let offIcon = NSImage()
         
-        return ChoiceSetButtonConfig(selectedIcon: onIcon, normalIcon: offIcon, selectedHighlightedIcon: onHoverIcon, highlightedIcon: offHoverIcon, elementSpacing: 12)
+        return ChoiceSetButtonConfig(selectedIcon: onIcon, normalIcon: offIcon, selectedHighlightedIcon: onHoverIcon, highlightedIcon: offHoverIcon, elementSpacing: 16)
     }
 }
