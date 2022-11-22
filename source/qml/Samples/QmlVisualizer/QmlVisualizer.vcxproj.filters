@@ -102,6 +102,12 @@
     <None Include="AdaptiveCardQml\Utils\ThemeUtils.js">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="AdaptiveCardQml\CustomCheckBox.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\ToggleInputRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="samplecardmodel.h">
