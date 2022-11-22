@@ -9,7 +9,7 @@ class ACRCollectionView: NSScrollView {
     private let imageSet: ACSImageSet
     private let imageSize: ACSImageSize
     private let hostConfig: ACSHostConfig
-    private let imageViews: [ImageSetImageView]
+    private let imageViews: [ACRImageWrappingView]
     
     private var itemSize: CGSize {
         switch imageSize {
@@ -36,17 +36,14 @@ class ACRCollectionView: NSScrollView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(rootView: ACRView, imageSet: ACSImageSet, hostConfig: ACSHostConfig) {
+    init(rootView: ACRView, parentView: NSView, imageSet: ACSImageSet, hostConfig: ACSHostConfig) {
         self.imageSet = imageSet
         self.hostConfig = hostConfig
-        self.imageSize = imageSet.getImageSize()
+        let imageSetImageSize: ACSImageSize = imageSet.getImageSize() == .none ? .medium : imageSet.getImageSize()
+        self.imageSize = imageSetImageSize
         self.imageViews = imageSet.getImages().map {
-            let imageView = ImageSetImageView(imageSize: imageSet.getImageSize(), hostConfig: hostConfig)
-            rootView.registerImageHandlingView(imageView, for: $0.getUrl() ?? "")
-            if $0.getStyle() == .person {
-                imageView.isPersonStyle = true
-            }
-            return imageView
+            let imageWrappingView = ImageUtils.getImageWrappingViewFor(element: $0, hostConfig: hostConfig, rootView: rootView, parentView: parentView, isImageSet: true, imageSetImageSize: imageSetImageSize)
+            return imageWrappingView
         }
         super.init(frame: .zero)
         
@@ -146,52 +143,5 @@ extension ACRCollectionView: NSCollectionViewDataSource {
 extension ACRCollectionView: NSCollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> NSSize {
         return itemSize
-    }
-}
-
-class ImageSetImageView: NSImageView, ImageHoldingView {
-    let imageSize: ACSImageSize
-    let hostConfig: ACSHostConfig
-    var isPersonStyle = false
-    
-    init(imageSize: ACSImageSize, hostConfig: ACSHostConfig) {
-        self.imageSize = imageSize.collectionItemResolvedSize
-        self.hostConfig = hostConfig
-        super.init(frame: .zero)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func layout() {
-       super.layout()
-       if isPersonStyle, let subview = subviews.first {
-           let maskLayer = CAShapeLayer()
-           maskLayer.path = CGPath(ellipseIn: subview.bounds, transform: nil)
-           subview.wantsLayer = true
-           subview.layer?.mask = maskLayer
-           subview.layer?.masksToBounds = true
-       }
-    }
-    
-    func setImage(_ image: NSImage) {
-        // If Image is smaller than cell, make image fit cell and maintain aspectRatio
-        let imageRatio = ImageUtils.getAspectRatio(from: image.size)
-        var maxImageSize = ImageUtils.getImageSizeAsCGSize(imageSize: imageSize, with: hostConfig)
-        if imageRatio.height < 1 {
-            maxImageSize.height *= imageRatio.height
-        }
-        image.size = maxImageSize
-        self.image = image
-    }
-}
-
-extension ACSImageSize {
-    var collectionItemResolvedSize: ACSImageSize {
-        switch self {
-        case .auto, .stretch, .none: return .medium
-        default: return self
-        }
     }
 }
