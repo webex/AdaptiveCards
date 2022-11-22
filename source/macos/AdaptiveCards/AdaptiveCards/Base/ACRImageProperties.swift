@@ -15,7 +15,7 @@ class ACRImageProperties: NSObject {
     var pixelWidth: CGFloat = 0
     var pixelHeight: CGFloat = 0
     
-    init(element: ACSBaseCardElement, config: ACSHostConfig, parentView: NSView) {
+    init(element: ACSBaseCardElement, config: ACSHostConfig, parentView: NSView, isImageSet: Bool = false, imageSetImageSize: ACSImageSize = .none) {
         super.init()
         guard let imageElement = element as? ACSImage else {
             logError("Element is not of type ACSImage")
@@ -33,7 +33,9 @@ class ACRImageProperties: NSObject {
         }
         
         acsImageSize = imageElement.getSize()
-        if acsImageSize == ACSImageSize.none {
+        if  isImageSet {
+            acsImageSize = imageSetImageSize
+        } else if acsImageSize == ACSImageSize.none {
             acsImageSize = ACSImageSize.auto
         }
         
