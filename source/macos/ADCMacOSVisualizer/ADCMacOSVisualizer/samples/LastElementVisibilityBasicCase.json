@@ -1,0 +1,46 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "actions": [
+        {
+            "title": "OK",
+            "type": "Action.Submit"
+        }
+    ],
+    "body": [
+        {
+            "errorMessage": "error message error message error message error message ",
+            "height": "stretch",
+            "id": "1",
+            "isRequired": true,
+            "label": "Hello this is label",
+            "type": "Input.Date",
+            "isVisible": true
+        },
+        {
+            "errorMessage": "error message error message error message error message ",
+            "height": "stretch",
+            "id": "3",
+            "isRequired": true,
+            "label": "This is label",
+            "type": "Input.Time",
+            "isVisible": true
+        },
+        {
+            "actions": [
+                {
+                    "targetElements": [
+                        "1",
+                        "3"
+                    ],
+                    "title": "Action.ToggleVisibility",
+                    "type": "Action.ToggleVisibility"
+                }
+            ],
+            "id": "2",
+            "type": "ActionSet"
+        }
+    ],
+    "minHeight": "400px",
+    "type": "AdaptiveCard",
+    "version": "1.3"
+}
