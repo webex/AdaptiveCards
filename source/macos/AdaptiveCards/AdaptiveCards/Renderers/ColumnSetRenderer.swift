@@ -96,7 +96,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                 }
             }
         }
-        columnSetView.configureLayoutAndVisibility(columnSet.getVerticalContentAlignment(), minHeight: columnSet.getMinHeight(), heightType: columnSet.getHeight(), type: .columnSet)
+        columnSetView.configureLayoutAndVisibility(columnSet.getVerticalContentAlignment(), minHeight: columnSet.getMinHeight(), heightType: columnSet.getHeight(), type: .columnSet, isRootMinHeightAvailable: rootView.isMinHeightAvailable)
         return columnSetView
     }
     
