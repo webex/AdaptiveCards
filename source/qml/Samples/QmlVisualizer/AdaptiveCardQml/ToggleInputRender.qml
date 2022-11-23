@@ -11,16 +11,10 @@ Column {
     property string _mEscapedLabelString
     property string _mEscapedErrorString
     property color _color
-    property string _cbValueOn
-    property string _cbValueOff
-    property string _cbText
-    property bool _cbisWrap
-    property string _cbTitle
-    property bool _cbIsVisible
-    property bool _cbIsChecked
     property bool isChecked: customCheckBox.checked
     property bool showErrorMessage: false
     property int minWidth: customCheckBox.implicitWidth
+    property alias checkBox : customCheckBox
 
     function validate() {
         if (showErrorMessage) {
@@ -53,7 +47,7 @@ Column {
 
         wrapMode: Text.Wrap
         width: parent.width
-        color: _color
+        color: CardConstants.toggleButtonConstants.textColor
         font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
         Accessible.ignored: true
         text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
@@ -67,6 +61,7 @@ Column {
 
     CustomCheckBox {
         id: customCheckBox
+        _adaptiveCard : _adaptiveCard
     }
 
     Label {

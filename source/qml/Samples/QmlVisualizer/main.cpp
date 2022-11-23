@@ -23,6 +23,9 @@ int main(int argc, char* argv[])
     qmlRegisterSingletonType(QUrl("qrc:/CardConstants.qml"), "AdaptiveCards", 1, 0, "CardConstants");
     qmlRegisterType(QUrl("qrc:/ToggleInputRender.qml"), "AdaptiveCards", 1, 0, "ToggleInputRender");
     qmlRegisterType(QUrl("qrc:/CustomCheckBox.qml"), "AdaptiveCards", 1, 0, "CustomCheckBox");
+    qmlRegisterType(QUrl("qrc:/ChoiceSetRender.qml"), "AdaptiveCards", 1, 0, "ChoiceSetRender");
+    qmlRegisterType(QUrl("qrc:/ComboboxRender.qml"), "AdaptiveCards", 1, 0, "ComboboxRender");
+    qmlRegisterType(QUrl("qrc:/CustomRadioButton.qml"), "AdaptiveCards", 1, 0, "CustomRadioButton");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();

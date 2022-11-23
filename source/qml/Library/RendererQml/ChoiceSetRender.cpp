@@ -7,6 +7,10 @@ ChoiceSetElement::ChoiceSetElement(std::shared_ptr<AdaptiveCards::ChoiceSetInput
     mContext(context)
 {
     initialize();
+    //mChoiceSetColElement = std::make_shared<RendererQml::QmlTag>("ChoiceSetRender");
+    //mChoiceSetColElement->Property("_adaptiveCard", "adaptiveCard");
+    //mChoiceSetColElement->Property("elementType", "adaptiveCard");
+    //mChoiceSetColElement->Property("_choiceSetModel", "[{ value: String.raw`1`, text: String.raw`Red`},{ value: String.raw`2`, text : String.raw`Green`},{ value: String.raw`3`, text : String.raw`Blue`},]");
 }
 
 std::shared_ptr<RendererQml::QmlTag> ChoiceSetElement::getQmlTag()
@@ -71,9 +75,9 @@ void ChoiceSetElement::initialize()
         mChoiceSetInput->GetPlaceholder()
     );
 
-    mChoiceSetColElement = std::make_shared<RendererQml::QmlTag>("Column");
+    mChoiceSetColElement = std::make_shared<RendererQml::QmlTag>("ChoiceSetRender");
     mChoiceSetColElement->Property("id", RendererQml::Formatter() << mChoiceSetInput->GetId());
-    mChoiceSetColElement->Property("property int minWidth", "200");
+    mChoiceSetColElement->Property("_adaptiveCard", "adaptiveCard");
     mChoiceSetColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mChoiceSetColElement->Property("width", "parent.width");
     mChoiceSetColElement->Property("visible", mChoiceSetInput->GetIsVisible() ? "true" : "false");
@@ -87,24 +91,64 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
 
     addInputLabel(mChoiceSetInput->GetIsRequired());
 
+    std::ostringstream model;
+
     if (checkBoxType == RendererQml::CheckBoxType::ComboBox)
     {
-        auto comboBoxElement = std::make_shared<ComboBoxElement>(choiceSet, mContext);
-        uiChoiceSet = comboBoxElement->getQmlTag();
+        std::string choice_Text;
+        std::string choice_Value;
 
-        uiChoiceSet->Property("onCurrentValueChanged", "{Accessible.name = displayText}");
-        mContext->addToInputElementList(choiceSetId, (uiChoiceSet->GetId() + ".currentValue"));
-        mChoiceSetColElement->AddChild(uiChoiceSet);
+        model << "[";
+        for (const auto& choice : choiceSet.choices)
+        {
+            choice_Text = choice.text;
+            choice_Value = choice.value;
+            model << "{ value: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value) << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
+        }
+        model << "]";
+        mChoiceSetColElement->Property("_elementType", "'Combobox'");
+
+        //uiChoiceSet->Property("onCurrentValueChanged", "{Accessible.name = displayText}");
+        //mChoiceSetColElement->AddChild(uiChoiceSet);
     }
     else
     {
-        uiChoiceSet = getButtonGroup(choiceSet, checkBoxType);
-        addColorFunction();
-        mContext->addToInputElementList(choiceSetId, (uiChoiceSet->GetId() + ".getSelectedValues()"));
+        std::string choice_Text;
+        std::string choice_Value;
+        std::string choice_Wrap;
+        std::string choice_Checked;
+
+        model << "ListModel{Component.onCompleted : {";
+        //uiChoiceSet = getButtonGroup(choiceSet, checkBoxType);
+        for (const auto& choice : choiceSet.choices)
+        {
+            std::string choice_Text = RendererQml::TextUtils::ApplyTextFunctions(choice.text, mContext->GetLang());
+
+            auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(choice_Text);
+            choice_Text = markdownParser->TransformToHtml();
+            choice_Text = RendererQml::Utils::HandleEscapeSequences(choice_Text);
+
+            const std::string linkColor = mContext->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
+            const std::string textDecoration = "none";
+            choice_Text = RendererQml::Utils::FormatHtmlUrl(choice_Text, linkColor, textDecoration);
+
+            choice_Value = choice.value;
+            choice_Wrap = choice.isWrap ? "true" : "false";
+            choice_Checked = choice.isChecked ? "true" : "false";
+            model << "append({ value: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value) << "`,";
+            model << "title: '" << choice_Text << "',";
+            model << "isWrap : " << choice_Wrap << ", isChecked : " << choice_Checked << "}); \n";
+        }
+        model << "}}";
+        mChoiceSetColElement->Property("_elementType", checkBoxType == RendererQml::CheckBoxType::CheckBox ? "'CheckBox'" : "'RadioButton'");
+        //addColorFunction();
     }
 
+    mChoiceSetColElement->Property("_choiceSetModel", model.str());
+    mContext->addToInputElementList(choiceSetId, mChoiceSetColElement->GetId() + ".selectedValues");
+
     addErrorMessage(uiChoiceSet, checkBoxType);
-    uiChoiceSet->AddFunctions(getAccessibleName(uiChoiceSet, checkBoxType));
+    //uiChoiceSet->AddFunctions(getAccessibleName(uiChoiceSet, checkBoxType));
 }
 
 void ChoiceSetElement::addInputLabel(bool isRequired)
@@ -115,26 +159,7 @@ void ChoiceSetElement::addInputLabel(bool isRequired)
         {
             const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
             mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mChoiceSetInput->GetLabel()));
-            auto label = std::make_shared<RendererQml::QmlTag>("Label");
-            label->Property("id", RendererQml::Formatter() << mChoiceSetInput->GetId() << "_label");
-            label->Property("wrapMode", "Text.Wrap");
-            label->Property("width", "parent.width");
-
-            std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
-            label->Property("color", color);
-            label->Property("font.pixelSize", RendererQml::Formatter() << choiceSetConfig.labelSize);
-            label->Property("Accessible.ignored", "true");
-
-            if (isRequired)
-            {
-                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mChoiceSetInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << " <font color='" << choiceSetConfig.errorMessageColor << "'>*</font>`");
-            }
-            else
-            {
-                label->Property("text", RendererQml::Formatter() << "String.raw`" << (mChoiceSetInput->GetLabel().empty() ? "Text" : mEscapedLabelString) << "`");
-            }
-
-            mChoiceSetColElement->AddChild(label);
+            mChoiceSetColElement->Property("_mEscapedLabelString", mEscapedLabelString);
         }
         else
         {
@@ -150,23 +175,11 @@ void ChoiceSetElement::addErrorMessage(const std::shared_ptr<RendererQml::QmlTag
 {
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mChoiceSetInput->GetIsRequired())
     {
-        uiChoiceSet->Property("property bool showErrorMessage", "false");
-        addValidation(uiChoiceSet, checkBoxType);
-
+        //addValidation(uiChoiceSet, checkBoxType);
+        mContext->addToRequiredInputElementsIdList(uiChoiceSet->GetId());
         if (!mChoiceSetInput->GetErrorMessage().empty())
         {
-            const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
-            auto uiErrorMessage = std::make_shared<RendererQml::QmlTag>("Label");
-            uiErrorMessage->Property("id", RendererQml::Formatter() << mChoiceSetInput->GetId() << "_errorMessage");
-            uiErrorMessage->Property("wrapMode", "Text.Wrap");
-            uiErrorMessage->Property("width", "parent.width");
-            uiErrorMessage->Property("font.pixelSize", RendererQml::Formatter() << choiceSetConfig.labelSize);
-            uiErrorMessage->Property("Accessible.ignored", "true");
-
-            uiErrorMessage->Property("color", mContext->GetHexColor(choiceSetConfig.errorMessageColor));
-            uiErrorMessage->Property("text", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
-            uiErrorMessage->Property("visible", RendererQml::Formatter() << uiChoiceSet->GetId() << ".showErrorMessage");
-            mChoiceSetColElement->AddChild(uiErrorMessage);
+            mChoiceSetColElement->Property("_mEscapedErrorString", mEscapedErrorString);
         }
     }
 }
@@ -241,10 +254,6 @@ std::shared_ptr<RendererQml::QmlTag> ChoiceSetElement::getButtonGroup(RendererQm
 
 void ChoiceSetElement::addValidation(std::shared_ptr<RendererQml::QmlTag> uiChoiceSet, RendererQml::CheckBoxType checkBoxType)
 {
-    if (mChoiceSetInput->GetIsVisible())
-    {
-        mContext->addToRequiredInputElementsIdList(uiChoiceSet->GetId());
-    }
     uiChoiceSet->Property("property bool showErrorMessage", "false");
 
     std::ostringstream validator;

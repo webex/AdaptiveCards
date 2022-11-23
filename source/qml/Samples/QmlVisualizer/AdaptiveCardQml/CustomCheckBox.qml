@@ -6,6 +6,12 @@ import QtQuick.Layouts 1.3
 CheckBox {
     id: customCheckBox
 
+    property var _adaptiveCard
+    property string _cbValueOn : ""
+    property string _cbValueOff : ""
+    property bool _cbisWrap
+    property string _cbTitle
+    property bool _cbIsChecked
     readonly property string valueOn: _cbValueOn
     readonly property string valueOff: _cbValueOff
     property string value: checked ? valueOn : valueOff
@@ -32,10 +38,8 @@ CheckBox {
 
     checked: _cbIsChecked
     width: parent.width
-    text: _cbText
     font.pixelSize: CardConstants.toggleButtonConstants.pixelSize
     Keys.onReturnPressed: onButtonClicked()
-    visible: _cbIsVisible
     onPressed: customCheckBox.colorChange(customCheckBox, true)
     onReleased: customCheckBox.colorChange(customCheckBox, false)
     onHoveredChanged: customCheckBox.colorChange(customCheckBox, false)

@@ -121,7 +121,10 @@
     <ClCompile Include="samplecardmodel.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <None Include="AdaptiveCardQml\CardConstants.qml" />
+    <None Include="AdaptiveCardQml\ChoiceSetRender.qml" />
+    <None Include="AdaptiveCardQml\ComboboxRender.qml" />
     <None Include="AdaptiveCardQml\CustomCheckBox.qml" />
+    <None Include="AdaptiveCardQml\CustomRadioButton.qml" />
     <None Include="AdaptiveCardQml\ImageRender.qml" />
     <None Include="AdaptiveCardQml\RichTextBlockRender.qml" />
     <None Include="AdaptiveCardQml\SeparatorRender.qml" />

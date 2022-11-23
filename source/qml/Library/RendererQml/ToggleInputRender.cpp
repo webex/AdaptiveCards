@@ -52,9 +52,8 @@ void ToggleInputElement::addCheckBox()
         isChecked);
     std::string mEscapedValueOn = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOn);
     std::string mEscapedValueOff = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOff);
-    mToggleInputColElement->Property("_cbValueOn", RendererQml::Formatter() << "String.raw`" << mEscapedValueOn << "`");
-    mToggleInputColElement->Property("_cbValueOff", RendererQml::Formatter() << "String.raw`" << mEscapedValueOff << "`");
-    mToggleInputColElement->Property("_cbText", RendererQml::Formatter() << "String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.text) << "`");
+    mToggleInputColElement->Property("checkBox._cbValueOn", RendererQml::Formatter() << "String.raw`" << mEscapedValueOn << "`");
+    mToggleInputColElement->Property("checkBox._cbValueOff", RendererQml::Formatter() << "String.raw`" << mEscapedValueOff << "`");
 
     std::string text = RendererQml::TextUtils::ApplyTextFunctions(mCheckBox.text, mContext->GetLang());
 
@@ -66,10 +65,9 @@ void ToggleInputElement::addCheckBox()
     const std::string textDecoration = "none";
     text = RendererQml::Utils::FormatHtmlUrl(text, linkColor, textDecoration);
 
-    mToggleInputColElement->Property("_cbTitle", text, true);
-    mCheckBox.isVisible == true ? mToggleInputColElement->Property("_cbIsVisible", "true") : mToggleInputColElement->Property("_cbIsVisible", "false");
-    mCheckBox.isChecked == true ? mToggleInputColElement->Property("_cbIsChecked", "true") : mToggleInputColElement->Property("_cbIsChecked", "false");
-    mCheckBox.isWrap == true ? mToggleInputColElement->Property("_cbisWrap", "true") : mToggleInputColElement->Property("_cbisWrap", "false");
+    mToggleInputColElement->Property("checkBox._cbTitle", text, true);
+    mCheckBox.isChecked == true ? mToggleInputColElement->Property("checkBox._cbIsChecked", "true") : mToggleInputColElement->Property("checkBox._cbIsChecked", "false");
+    mCheckBox.isWrap == true ? mToggleInputColElement->Property("checkBox._cbisWrap", "true") : mToggleInputColElement->Property("checkBox._cbisWrap", "false");
 }
 void ToggleInputElement::addInputLabel()
 {
@@ -79,7 +77,6 @@ void ToggleInputElement::addInputLabel()
         {
             mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
             std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
-            mToggleInputColElement->Property("_color", color);
             mToggleInput->GetIsRequired() == true ? mToggleInputColElement->Property("_isRequired", "true") : mToggleInputColElement->Property("_isRequired", "false");
             mToggleInputColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");
         }

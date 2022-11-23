@@ -88,8 +88,6 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getContentItemText()
     uiContentItem_Text->Property("text", "parent.displayText");
     uiContentItem_Text->Property("font.pixelSize", RendererQml::Formatter() << mChoiceSetConfig.pixelSize);
     uiContentItem_Text->Property("verticalAlignment", "Text.AlignVCenter");
-    uiContentItem_Text->Property("padding", RendererQml::Formatter() << mChoiceSetConfig.textHorizontalPadding);
-    uiContentItem_Text->Property("leftPadding", RendererQml::Formatter() << mChoiceSetConfig.textHorizontalPadding);
     uiContentItem_Text->Property("elide", "Text.ElideRight");
     uiContentItem_Text->Property("color", mContext->GetHexColor(mChoiceSetConfig.textColor));
     uiContentItem_Text->Property("leftPadding", RendererQml::Formatter() << mChoiceSetConfig.textHorizontalPadding);
@@ -124,7 +122,6 @@ std::shared_ptr<RendererQml::QmlTag> ComboBoxElement::getItemDelegate()
     uiItemDelegate_Text->Property("font.family", fontFamily, true);
     uiItemDelegate_Text->Property("font.pixelSize", RendererQml::Formatter() << mChoiceSetConfig.pixelSize);
     uiItemDelegate_Text->Property("color", mContext->GetHexColor(mChoiceSetConfig.textColor));
-    uiItemDelegate_Text->Property("font.family", fontFamily, true);
     uiItemDelegate_Text->Property("elide", "Text.ElideRight");
 
     std::ostringstream widthFunc;
