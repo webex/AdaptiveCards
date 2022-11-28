@@ -7,10 +7,6 @@ ChoiceSetElement::ChoiceSetElement(std::shared_ptr<AdaptiveCards::ChoiceSetInput
     mContext(context)
 {
     initialize();
-    //mChoiceSetColElement = std::make_shared<RendererQml::QmlTag>("ChoiceSetRender");
-    //mChoiceSetColElement->Property("_adaptiveCard", "adaptiveCard");
-    //mChoiceSetColElement->Property("elementType", "adaptiveCard");
-    //mChoiceSetColElement->Property("_choiceSetModel", "[{ value: String.raw`1`, text: String.raw`Red`},{ value: String.raw`2`, text : String.raw`Green`},{ value: String.raw`3`, text : String.raw`Blue`},]");
 }
 
 std::shared_ptr<RendererQml::QmlTag> ChoiceSetElement::getQmlTag()
@@ -103,10 +99,24 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         {
             choice_Text = choice.text;
             choice_Value = choice.value;
-            model << "{ value: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value) << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
+            model << "{ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value) << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
         }
         model << "]";
         mChoiceSetColElement->Property("_elementType", "'Combobox'");
+        mChoiceSetColElement->Property("_comboboxCurrentIndex", RendererQml::Formatter() << (choiceSet.placeholder.empty() ? "0" : "-1"));
+
+        if (choiceSet.values.size() == 1)
+        {
+            const std::string target = choiceSet.values[0];
+            auto index = std::find_if(choiceSet.choices.begin(), choiceSet.choices.end(), [target](const RendererQml::Checkbox& options) {
+                return options.value == target;
+                }) - choiceSet.choices.begin();
+
+                if (index < (signed int)(choiceSet.choices.size()))
+                {
+                    mChoiceSetColElement->Property("_comboboxCurrentIndex", std::to_string(index));
+                }
+        }
 
         //uiChoiceSet->Property("onCurrentValueChanged", "{Accessible.name = displayText}");
         //mChoiceSetColElement->AddChild(uiChoiceSet);
@@ -114,9 +124,7 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
     else
     {
         std::string choice_Text;
-        std::string choice_Value;
-        std::string choice_Wrap;
-        std::string choice_Checked;
+        std::string initialValues;
 
         model << "ListModel{Component.onCompleted : {";
         //uiChoiceSet = getButtonGroup(choiceSet, checkBoxType);
@@ -132,14 +140,24 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
             const std::string textDecoration = "none";
             choice_Text = RendererQml::Utils::FormatHtmlUrl(choice_Text, linkColor, textDecoration);
 
-            choice_Value = choice.value;
-            choice_Wrap = choice.isWrap ? "true" : "false";
-            choice_Checked = choice.isChecked ? "true" : "false";
-            model << "append({ value: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value) << "`,";
+            model << "append({ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice.value) << "`,";
             model << "title: '" << choice_Text << "',";
-            model << "isWrap : " << choice_Wrap << ", isChecked : " << choice_Checked << "}); \n";
+            model << "isWrap : " << (choice.isWrap ? "true" : "false") << ", isChecked : " << (choice.isChecked ? "true" : "false") << "}); \n";
+
+            if (choice.isChecked)
+            {
+                initialValues += (!initialValues.empty() ? "," : "");
+                initialValues += choice.value;
+            }
         }
         model << "}}";
+
+        if (!initialValues.empty())
+        {
+            initialValues.insert(0, "String.raw`");
+            initialValues += "`";
+            mChoiceSetColElement->Property("selectedValues", initialValues);
+        }
         mChoiceSetColElement->Property("_elementType", checkBoxType == RendererQml::CheckBoxType::CheckBox ? "'CheckBox'" : "'RadioButton'");
         //addColorFunction();
     }

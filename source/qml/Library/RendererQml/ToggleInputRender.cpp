@@ -66,8 +66,8 @@ void ToggleInputElement::addCheckBox()
     text = RendererQml::Utils::FormatHtmlUrl(text, linkColor, textDecoration);
 
     mToggleInputColElement->Property("checkBox._cbTitle", text, true);
-    mCheckBox.isChecked == true ? mToggleInputColElement->Property("checkBox._cbIsChecked", "true") : mToggleInputColElement->Property("checkBox._cbIsChecked", "false");
-    mCheckBox.isWrap == true ? mToggleInputColElement->Property("checkBox._cbisWrap", "true") : mToggleInputColElement->Property("checkBox._cbisWrap", "false");
+    mToggleInputColElement->Property("checkBox._cbIsChecked", mCheckBox.isChecked == true ? "true" : "false");
+    mToggleInputColElement->Property("checkBox._cbisWrap", mCheckBox.isWrap == true ? "true" : "false");
 }
 void ToggleInputElement::addInputLabel()
 {

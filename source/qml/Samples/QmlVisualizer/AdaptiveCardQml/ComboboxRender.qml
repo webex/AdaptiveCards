@@ -8,15 +8,15 @@ ComboBox{
     property var _model
     property int _currentIndex
     property string _mEscapedPlaceholderString
-    property string _fontFamily
     property var inputFieldConstants : CardConstants.inputFieldConstants
     property var comboBoxConstants : CardConstants.comboBoxConstants
     property var cardConstants : CardConstants.cardConstants
     property int choiceWidth:0
+    property string value : currentValue
 
     id: comboBox
     textRole:'text'
-    valueRole:'value'
+    valueRole:'valueOn'
     width:parent.width
     height:inputFieldConstants.height
     model: _model
@@ -73,7 +73,7 @@ ComboBox{
 
         contentItem:Text{
             text:modelData.text
-            font.family:_fontFamily
+            font.family:"Segeo UI"
             font.pixelSize:inputFieldConstants.pixelSize
             color:inputFieldConstants.textColor
             elide:Text.ElideRight

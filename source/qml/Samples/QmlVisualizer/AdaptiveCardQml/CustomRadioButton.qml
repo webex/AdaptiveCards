@@ -5,12 +5,14 @@ import QtQuick.Layouts 1.3
 RadioButton {
     id: customRadioButton
 
-    property string _rbValueOn
+    signal selectionChanged()
+
+    property string _rbValueOn : ""
     property bool _rbIsChecked
     property bool _rbisWrap
     property string _rbTitle
     property var _adaptiveCard
-    property string value: checked ? _rbValueOn : ""
+    property string value : checked ? _rbValueOn : ""
     property var indicatorItem: customRadioButtonOuterRectancle
     property var toggleButtonConstants : CardConstants.toggleButtonConstants
 
@@ -33,20 +35,27 @@ RadioButton {
             item.indicatorItem.border.color = item.hovered ? (item.checked ? toggleButtonConstants.borderColorOnCheckedAndHovered : toggleButtonConstants.borderColorOnUncheckedAndHovered) : (item.checked ? toggleButtonConstants.borderColorOnChecked : toggleButtonConstants.borderColorOnUnchecked);
     }
 
-    checked: _rbIsChecked
+    checked : _rbIsChecked
     Layout.maximumWidth : parent.parent.parent.width
     font.pixelSize: toggleButtonConstants.pixelSize
     Keys.onReturnPressed: onButtonClicked()
     onPressed: customRadioButton.colorChange(customRadioButton, true)
     onReleased: customRadioButton.colorChange(customRadioButton, false)
     onHoveredChanged: customRadioButton.colorChange(customRadioButton, false)
-    onCheckedChanged: customRadioButton.colorChange(customRadioButton, false)
+
+    onCheckedChanged: {
+        customRadioButton.colorChange(customRadioButton, false)
+        value = checked ? _rbValueOn : ""
+        selectionChanged()
+    }
+
     onActiveFocusChanged: {
         customRadioButton.colorChange(customRadioButton, false);
         if (activeFocus)
             Accessible.name = getAccessibleName() + text;
 
     }
+
     Component.onCompleted: {
         customRadioButton.colorChange(customRadioButton, false);
     }

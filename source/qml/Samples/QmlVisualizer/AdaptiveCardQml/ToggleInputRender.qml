@@ -52,11 +52,6 @@ Column {
         Accessible.ignored: true
         text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
         visible: text.length
-
-        
-        Component.onCompleted: {
-            console.log(text)
-        }
     }
 
     CustomCheckBox {

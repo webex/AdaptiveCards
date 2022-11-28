@@ -2,9 +2,10 @@
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
-// currently Handling only for RendererQml::CheckBoxType::Toggle type
 CheckBox {
     id: customCheckBox
+
+    signal selectionChanged()
 
     property var _adaptiveCard
     property string _cbValueOn : ""
@@ -12,9 +13,7 @@ CheckBox {
     property bool _cbisWrap
     property string _cbTitle
     property bool _cbIsChecked
-    readonly property string valueOn: _cbValueOn
-    readonly property string valueOff: _cbValueOff
-    property string value: checked ? valueOn : valueOff
+    property string value : checked ? _cbValueOn : _cbValueOff
     property var indicatorItem: customCheckBoxButton
 
     function onButtonClicked() {
@@ -43,7 +42,13 @@ CheckBox {
     onPressed: customCheckBox.colorChange(customCheckBox, true)
     onReleased: customCheckBox.colorChange(customCheckBox, false)
     onHoveredChanged: customCheckBox.colorChange(customCheckBox, false)
-    onCheckedChanged: customCheckBox.colorChange(customCheckBox, false)
+
+    onCheckedChanged: {
+        customCheckBox.colorChange(customCheckBox, false)
+        value = checked ? _cbValueOn : _cbValueOff
+        selectionChanged()
+    }
+
     onActiveFocusChanged: {
         customCheckBox.colorChange(customCheckBox, false);
         if (activeFocus)

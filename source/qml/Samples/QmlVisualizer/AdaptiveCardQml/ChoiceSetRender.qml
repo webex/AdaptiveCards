@@ -20,11 +20,11 @@ Column {
 
     function validate() {
         if (showErrorMessage) {
-            if (isChecked)
+            if (selectedValues)
                 showErrorMessage = false;
 
         }
-        return !isChecked;
+        return !selectedValues;
     }
 
     function getAccessibleName() {
@@ -62,9 +62,13 @@ Column {
         active: _elementType === "Combobox"
 
         sourceComponent: ComboboxRender {
+            id: comboBox
             _model : _choiceSetModel
             _mEscapedPlaceholderString : _mEscapedPlaceholderString
             _currentIndex: _comboboxCurrentIndex
+            onValueChanged : {
+                choiceSet.selectedValues = value
+            }
         }
 
     }
@@ -76,25 +80,35 @@ Column {
         active: _elementType === "RadioButton"
 
         sourceComponent: Rectangle{
-            height: radioButtonListView.implicitHeight
+            height: radioButtonColumn.implicitHeight
             width : parent.width
 
             ButtonGroup{
-                buttons: radioButtonListView.children
-                exclusive: true
+                id: radioButtonGroup
+                buttons:radioButtonColumn.children
+                exclusive:true
+
+                function onSelectionChanged(){
+                    choiceSet.selectedValues = AdaptiveCardUtils.onSelectionChanged(radioButtonGroup, false);
+                }
             }
 
-            ListView {
-                id: radioButtonListView
+            Column {
+                id: radioButtonColumn
                 width: parent.width
-                implicitHeight: contentHeight
-                model : _choiceSetModel
-                delegate : CustomRadioButton {
-                    _adaptiveCard : choiceSet._adaptiveCard
-                    _rbValueOn : value
-                    _rbisWrap : isWrap
-                    _rbTitle : title 
-                    _rbIsChecked : isChecked
+                Repeater {
+                    model: _choiceSetModel
+                    CustomRadioButton {
+                        _adaptiveCard : choiceSet._adaptiveCard
+                        _rbValueOn : valueOn
+                        _rbisWrap : isWrap
+                        _rbTitle : title 
+                        _rbIsChecked : isChecked
+
+                        Component.onCompleted : {
+                            selectionChanged.connect(radioButtonGroup.onSelectionChanged)
+                        }
+                    }
                 }
             }
         }
@@ -108,20 +122,35 @@ Column {
         active: _elementType === "CheckBox"
 
         sourceComponent: Rectangle{
-            height: checkBoxListView.implicitHeight
+            height: checkBoxColumn.implicitHeight
             width : parent.width
 
-            ListView {
-                id: checkBoxListView
+            ButtonGroup{
+                id: checkBoxButtonGroup
+                buttons:checkBoxColumn.children
+                exclusive:false
+
+                function onSelectionChanged(){
+                    choiceSet.selectedValues = AdaptiveCardUtils.onSelectionChanged(checkBoxButtonGroup, true);
+                }
+            }
+
+            Column {
+                id: checkBoxColumn
                 width: parent.width
-                implicitHeight: contentHeight
-                model : _choiceSetModel
-                delegate : CustomCheckBox {
-                    _adaptiveCard : choiceSet._adaptiveCard
-                    _cbValueOn : value
-                    _cbisWrap : isWrap
-                    _cbTitle : title
-                    _cbIsChecked : isChecked
+                Repeater {
+                    model: _choiceSetModel
+                    CustomCheckBox {
+                        _adaptiveCard : choiceSet._adaptiveCard
+                        _cbValueOn : valueOn
+                        _cbisWrap : isWrap
+                        _cbTitle : title
+                        _cbIsChecked : isChecked
+
+                        Component.onCompleted : {
+                            selectionChanged.connect(checkBoxButtonGroup.onSelectionChanged)
+                        }
+                    }
                 }
             }
         }
