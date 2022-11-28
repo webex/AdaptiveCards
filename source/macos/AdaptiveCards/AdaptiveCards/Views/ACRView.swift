@@ -11,7 +11,6 @@ class ACRView: ACRColumnView {
     private (set) var imageViewMap: [String: [ImageHoldingView]] = [:]
     private (set) var renderedShowCards: [NSView] = []
     private (set) var initialLayoutDone = false
-    private (set) var isMinHeightAvailable = false
     private var currentFocusedActionElement: NSCell?
     private var isLayoutDoneOnShowCard = false
     private var focusedElementOnHideError: NSView?
@@ -99,13 +98,6 @@ class ACRView: ACRColumnView {
         focusedElementOnHideError = currentFocussedView
     }
     
-    override func setMinimumHeight(_ height: NSNumber?) {
-        super.setMinimumHeight(height)
-        if let height = height?.intValue, height > 0 {
-            isMinHeightAvailable = true
-        }
-    }
-    
     private func submitCardInputs(actionView: NSView, dataJSON: String?, associatedInputs: Bool) {
         var dict = [String: Any]()
         
@@ -185,7 +177,7 @@ class ACRView: ACRColumnView {
         }
         
         for facade in facadeArray {
-            facade?.visibilityManagerReactivateConstraint()
+            facade?.visibilityManagerUpdateConstraint()
         }
         facadeArray.removeAll()
     }

@@ -5,7 +5,7 @@ protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
     func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView, acoElement acoElem: ACSBaseCardElement, separator: SpacingView?, rootView: ACRView?)
-    func configureLayoutAndVisibility(element: NSObject, isRootMinHeightAvailable: Bool)
+    func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, isBackgroundImageAvailable: Bool)
     func applyPadding(_ padding: CGFloat)
 }
 
@@ -324,24 +324,8 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// activation constraint all at once is more efficient than activating
     /// constraints one by one.
     
-    func configureLayoutAndVisibility(element: NSObject, isRootMinHeightAvailable: Bool) {
-        var minHeight: NSNumber?
-        var isBackgroundImageAvailable = false
-        if let cardElement = element as? ACSAdaptiveCard {
-            self.verticalContentAlignment = cardElement.getVerticalContentAlignment()
-            minHeight = cardElement.getMinHeight()
-            let bgImage = cardElement.getBackgroundImage()
-            if let imageUrl = bgImage?.getUrl(), URL(string: imageUrl) != nil {
-                isBackgroundImageAvailable = true
-            }
-        } else if let collectionElement = element as? ACSCollectionTypeElement {
-            self.verticalContentAlignment = collectionElement.getVerticalContentAlignment()
-            minHeight = collectionElement.getMinHeight()
-            let bgImage = collectionElement.getBackgroundImage()
-            if let imageUrl = bgImage?.getUrl(), URL(string: imageUrl) != nil {
-                isBackgroundImageAvailable = true
-            }
-        }
+    func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, isBackgroundImageAvailable: Bool) {
+        self.verticalContentAlignment = verticalContentAlignment
         self.applyVisibilityToSubviews()
         
         if !self.hasStretchableView && !visibilityManager.hasVisibleViews {
@@ -567,7 +551,7 @@ extension ACRContentStackView: ACSVisibilityManagerFacade {
         visibilityManager.changeVisibilityOfLastStretchableView(isHidden: isHidden)
     }
     
-    func visibilityManagerReactivateConstraint() {
+    func visibilityManagerUpdateConstraint() {
         visibilityManager.fillerSpaceManager.deactivateConstraintsForPadding()
         visibilityManager.fillerSpaceManager.activateConstraintsForPadding()
     }

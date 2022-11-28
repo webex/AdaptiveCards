@@ -15,7 +15,7 @@ import AppKit
     func visibilityManager(unhideView view: NSView)
     func visibilityManagerAllStretchableViewsHidden() -> Bool
     func visibilityManagerSetLastStretchableView(isHidden: Bool)
-    func visibilityManagerReactivateConstraint()
+    func visibilityManagerUpdateConstraint()
 }
 
 class ACSVisibilityManager {
