@@ -5,7 +5,7 @@ protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
     func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView, acoElement acoElem: ACSBaseCardElement, separator: SpacingView?, rootView: ACRView?)
-    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType, isRootMinHeightAvailable: Bool)
+    func configureLayoutAndVisibility(element: NSObject, isRootMinHeightAvailable: Bool)
     func applyPadding(_ padding: CGFloat)
 }
 
@@ -26,7 +26,15 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     var target: TargetHandler?
     public var bleed = false
     private let visibilityManager = ACSVisibilityManager()
-    private var verticalContentAlignment: ACSVerticalContentAlignment = .top
+    private var verticalContentAlignment: ACSVerticalContentAlignment = .top {
+        didSet {
+            if self.verticalContentAlignment != .top {
+                // temporary fix to avoid regression.
+                // Plan to make vertical content alignment work with gravity areas hence removing dependency with padding
+                addPadding()
+            }
+        }
+    }
     private var paddings = [NSView]()
     private let invisibleViews = NSMutableSet()
     // Store the Intrinsic size of subviews
@@ -316,26 +324,39 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// activation constraint all at once is more efficient than activating
     /// constraints one by one.
     
-    func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType, isRootMinHeightAvailable: Bool) {
-        self.verticalContentAlignment = verticalContentAlignment
+    func configureLayoutAndVisibility(element: NSObject, isRootMinHeightAvailable: Bool) {
+        var minHeight: NSNumber?
+        var isBackgroundImageAvailable = false
+        if let cardElement = element as? ACSAdaptiveCard {
+            self.verticalContentAlignment = cardElement.getVerticalContentAlignment()
+            minHeight = cardElement.getMinHeight()
+            let bgImage = cardElement.getBackgroundImage()
+            if let imageUrl = bgImage?.getUrl(), URL(string: imageUrl) != nil {
+                isBackgroundImageAvailable = true
+            }
+        } else if let collectionElement = element as? ACSCollectionTypeElement {
+            self.verticalContentAlignment = collectionElement.getVerticalContentAlignment()
+            minHeight = collectionElement.getMinHeight()
+            let bgImage = collectionElement.getBackgroundImage()
+            if let imageUrl = bgImage?.getUrl(), URL(string: imageUrl) != nil {
+                isBackgroundImageAvailable = true
+            }
+        }
         self.applyVisibilityToSubviews()
-        if self.shouldAddPadding(self.hasStretchableView) {
-            self.addPadding()
-        } else {
-            if !self.hasStretchableView {
-                // add stretchable view for stretch the content when stackview has no visibile view
+        
+        if !self.hasStretchableView && !visibilityManager.hasVisibleViews {
+            // add stretchable view for stretch the content when stackview has no visibile view
+            if self.style != .none || isBackgroundImageAvailable {
                 let padding = self.addPadding(for: self)
                 self.paddings.append(padding)
                 self.addArrangedSubview(padding)
             }
+        } else {
+            visibilityManager.fillerSpaceManager.addLastStretchableView(for: self, isHidden: (hasStretchableView || !visibilityManager.hasVisibleViews))
         }
+        
         self.setMinimumHeight(minHeight)
         visibilityManager.fillerSpaceManager.activateConstraintsForPadding()
-        
-        // when minheight constraint is applied and all views present have height auto it might cause these views to have ambiguous constraints, hence adding a padding at the end of stackView
-        if self.hasStretchableView, let minHeight = minHeight?.intValue, (minHeight > 0 || isRootMinHeightAvailable) {
-            visibilityManager.fillerSpaceManager.addLastStretchableView(for: self)
-        }
     }
     
     private func setupTrackingArea() {
@@ -544,6 +565,11 @@ extension ACRContentStackView: ACSVisibilityManagerFacade {
     
     func visibilityManagerSetLastStretchableView(isHidden: Bool) {
         visibilityManager.changeVisibilityOfLastStretchableView(isHidden: isHidden)
+    }
+    
+    func visibilityManagerReactivateConstraint() {
+        visibilityManager.fillerSpaceManager.deactivateConstraintsForPadding()
+        visibilityManager.fillerSpaceManager.activateConstraintsForPadding()
     }
 }
 

@@ -153,6 +153,7 @@ class ACRView: ACRColumnView {
     }
     
     private func toggleVisibity(of targets: [ACSToggleVisibilityTarget]) {
+        var facadeArray: [ACSVisibilityManagerFacade?] = []
         for target in targets {
             guard let id = target.getElementId(), let toggleView = self.findView(withIdentifier: id) else {
                 logError("Target with ID '\(target.getElementId() ?? "nil")' not found for toggleVisibility.")
@@ -179,12 +180,14 @@ class ACRView: ACRColumnView {
             }
             
             // toggle the last padding if all other
-            if facade?.visibilityManagerAllStretchableViewsHidden() ?? false {
-                facade?.visibilityManagerSetLastStretchableView(isHidden: !isHide)
-            } else {
-                facade?.visibilityManagerSetLastStretchableView(isHidden: isHide)
-            }
+            facade?.visibilityManagerSetLastStretchableView(isHidden: !(facade?.visibilityManagerAllStretchableViewsHidden() ?? false))
+            facadeArray.append(facade)
         }
+        
+        for facade in facadeArray {
+            facade?.visibilityManagerReactivateConstraint()
+        }
+        facadeArray.removeAll()
     }
 }
 

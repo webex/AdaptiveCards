@@ -24,7 +24,7 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
             BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: columnView, with: hostConfig, element: element, parentElement: column)
         }
         
-        columnView.configureLayoutAndVisibility(column.getVerticalContentAlignment(), minHeight: column.getMinHeight(), heightType: column.getHeight(), type: .column, isRootMinHeightAvailable: rootView.isMinHeightAvailable)
+        columnView.configureLayoutAndVisibility(element: column, isRootMinHeightAvailable: rootView.isMinHeightAvailable)
         
         if let backgroundImage = column.getBackgroundImage(), let url = backgroundImage.getUrl() {
             columnView.setupBackgroundImageProperties(backgroundImage)

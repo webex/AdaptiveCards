@@ -98,7 +98,7 @@ class AdaptiveCardRenderer {
         }
         
         if heightSupport {
-            rootView.configureLayoutAndVisibility(card.getVerticalContentAlignment(), minHeight: card.getMinHeight(), heightType: card.getHeight(), type: .adaptiveCard, isRootMinHeightAvailable: rootView.isMinHeightAvailable)
+            rootView.configureLayoutAndVisibility(element: card, isRootMinHeightAvailable: rootView.isMinHeightAvailable)
         }
         rootView.appearance = NSAppearance.getAppearance(isDark: config.isDarkMode)
         rootView.dispatchResolveRequests()

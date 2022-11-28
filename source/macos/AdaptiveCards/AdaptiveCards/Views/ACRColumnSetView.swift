@@ -68,8 +68,8 @@ class ACRColumnSetView: ACRContentStackView {
         }
     }
     
-    override func configureLayoutAndVisibility(_ verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, heightType: ACSHeightType, type: ACSCardElementType, isRootMinHeightAvailable: Bool) {
+    override func configureLayoutAndVisibility(element: NSObject, isRootMinHeightAvailable: Bool) {
         self.applyVisibilityToSubviews()
-        self.setMinimumHeight(minHeight)
+        self.setMinimumHeight((element as? ACSCollectionTypeElement)?.getMinHeight())
     }
 }
