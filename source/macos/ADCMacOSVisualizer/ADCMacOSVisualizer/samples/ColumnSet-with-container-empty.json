@@ -29,8 +29,22 @@
                     "type": "Container",
                     "style": "attention",
                     "height": "auto"
+                },
+                {
+                    "type": "TextBlock",
+                    "wrap": true,
+                    "text": "Test Text box"
                 }
             ]
+        },
+        {
+            "type": "Container",
+            "style": "warning"
+        },
+        {
+            "type": "TextBlock",
+            "wrap": true,
+            "text": "Test Text box"
         }
     ]
 }

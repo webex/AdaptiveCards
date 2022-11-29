@@ -161,11 +161,11 @@ class ACSFillerSpaceManager {
         return spaceView
     }
     
-    func addLastStretchableView(for view: ACRContentStackView) {
+    func addLastStretchableView(for view: ACRContentStackView, isHidden: Bool = true) {
         let stretchableView = StretchableView()
         ACSFillerSpaceManager.configureHugging(view: stretchableView)
         lastStretchableView = stretchableView
-        lastStretchableView?.isHidden = true
+        lastStretchableView?.isHidden = isHidden
         view.addArrangedSubview(stretchableView)
     }
     

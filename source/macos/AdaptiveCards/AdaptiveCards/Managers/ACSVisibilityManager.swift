@@ -15,6 +15,7 @@ import AppKit
     func visibilityManager(unhideView view: NSView)
     func visibilityManagerAllStretchableViewsHidden() -> Bool
     func visibilityManagerSetLastStretchableView(isHidden: Bool)
+    func visibilityManagerUpdateConstraint()
 }
 
 class ACSVisibilityManager {
@@ -127,6 +128,14 @@ class ACSVisibilityManager {
             // decrease the intrinsic content size by the intrinsic content size of
             // `viewToBeHidden` otherwise, viewTobeHidden's size will be included
             hostView.decreaseIntrinsicContentSize(viewToBeHidden)
+            if let inputView = viewToBeHidden as? InputHandlingViewProtocol {
+                if let errorLabel = hostView.getErrorTextField(for: inputView) {
+                    hostView.decreaseIntrinsicContentSize(errorLabel)
+                }
+                if let label = hostView.getLabelTextField(for: inputView) {
+                    hostView.decreaseIntrinsicContentSize(label)
+                }
+            }
             self.changeVisiblityOfAssociatedViews(hostView: viewToBeHidden, visibilityValue: true, contentStackView: hostView)
         }
         // if `viewToBeHidden` is a head, get new head if any, and hide its separator
