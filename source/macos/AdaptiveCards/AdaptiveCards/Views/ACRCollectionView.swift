@@ -26,7 +26,6 @@ class ACRCollectionView: NSScrollView {
     
     private lazy var collectionView: NSCollectionView = {
         let view = NSCollectionView()
-        view.autoresizingMask = [.minXMargin, .minYMargin, .maxXMargin, .maxYMargin, .width, .height]
         view.itemPrototype = nil
         view.backgroundColors = [.clear]
         return view
@@ -46,18 +45,13 @@ class ACRCollectionView: NSScrollView {
             return imageWrappingView
         }
         super.init(frame: .zero)
-        
-        let layout = NSCollectionViewFlowLayout()
+        let layout = ACSCollectionViewAlignLayout()
         layout.sectionInset = NSEdgeInsets(top: Constants.padding, left: Constants.padding, bottom: Constants.padding, right: Constants.padding)
-        layout.minimumLineSpacing = Constants.padding
-        layout.minimumInteritemSpacing = Constants.padding
-
+        self.needsLayout = true
         collectionView.collectionViewLayout = layout
         collectionView.register(ACRCollectionViewItem.self, forItemWithIdentifier: ACRCollectionViewItem.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
-        
-        autoresizingMask = [.minXMargin, .minYMargin, .maxXMargin, .maxYMargin, .width, .height]
         wantsLayer = true
         documentView = collectionView
         
@@ -70,30 +64,45 @@ class ACRCollectionView: NSScrollView {
     }
     
     // Calculate ContentSize for CollectionView
-    private func calculateContentSize() -> CGSize? {
-        guard bounds.width > 0 else {
+    private func collectionViewContentSize() -> CGSize? {
+        guard !imageSet.getImages().isEmpty, !self.bounds.width.isZero else {
             return nil
         }
+        let itemCount = imageSet.getImages().count
+        let spacing = CGFloat(HostConfigUtils.getSpacing(imageSet.getSpacing(), with: hostConfig).floatValue)
+        let frameWidth = self.bounds.width
+        var totalHeight = CGFloat.zero
+        var maxHeight = CGFloat.zero
+        var rowWidth = CGFloat.zero
         
-        let cellCounts = imageSet.getImages().count
-        let insets = 2 * Constants.padding
-        let boundsWidth = bounds.width - insets
-        let itemSizeWithSpacing = itemSize.width + Constants.padding
-        
-        var numberOfItemsPerRow = floor(boundsWidth / itemSizeWithSpacing)
-        // if addtional image can be fit by removing spacing, do so
-        if (numberOfItemsPerRow * itemSizeWithSpacing) + itemSize.width <= boundsWidth {
-            numberOfItemsPerRow += 1
+        for index in 0..<itemCount {
+            if let imgItemProperties = imageViews[index].imageProperties {
+                var explicitDimensions = NSSize.zero
+                if imgItemProperties.hasExplicitDimensions && imgItemProperties.pixelWidth.isNormal && imgItemProperties.pixelHeight.isNormal {
+                    explicitDimensions = NSSize(width: imgItemProperties.pixelWidth > self.bounds.width ? self.bounds.width : imgItemProperties.pixelWidth, height: imgItemProperties.pixelHeight)
+                } else if imgItemProperties.hasExplicitDimensions && max(imgItemProperties.pixelWidth, imgItemProperties.pixelHeight).isNormal {
+                    let maxValue = max(imgItemProperties.pixelWidth, imgItemProperties.pixelHeight)
+                    explicitDimensions = NSSize(width: maxValue, height: maxValue)
+                } else {
+                    explicitDimensions = itemSize
+                }
+                let tempWidth = (rowWidth + explicitDimensions.width + spacing)
+                if tempWidth <= frameWidth {
+                    rowWidth += explicitDimensions.width + spacing
+                    maxHeight = max(maxHeight, explicitDimensions.height)
+                } else {
+                    // add old
+                    totalHeight += maxHeight + spacing
+                    // start new
+                    maxHeight = explicitDimensions.height
+                    rowWidth = explicitDimensions.width + spacing
+                }
+                if index == itemCount - 1 {
+                    totalHeight += maxHeight
+                }
+            }
         }
-        
-        guard numberOfItemsPerRow > 0 else {
-            return nil
-        }
-        
-        let numberOfRows = ceil(CGFloat(cellCounts) / numberOfItemsPerRow)
-        let calcHeight = (numberOfRows * itemSize.height) + insets + (numberOfRows - 1) * Constants.padding
-        return CGSize(width: boundsWidth,
-                      height: calcHeight - 1) // subracting 1pt because sometimes cells don't render if exact ht is passed
+        return CGSize(width: frameWidth, height: totalHeight)
     }
     
     var pBoundsWidth: CGFloat?
@@ -107,7 +116,7 @@ class ACRCollectionView: NSScrollView {
     
     override var intrinsicContentSize: NSSize {
         guard let contentSize = pContentSize else {
-            guard let calcSize = calculateContentSize() else {
+            guard let calcSize = collectionViewContentSize() else {
                 return super.intrinsicContentSize
             }
             pContentSize = calcSize
@@ -140,8 +149,42 @@ extension ACRCollectionView: NSCollectionViewDataSource {
     }
 }
 
-extension ACRCollectionView: NSCollectionViewDelegateFlowLayout {
+extension ACRCollectionView: ACSCollectionViewAlignLayoutDelegate {
+    func collectionView(_ collectionView: ACSCollectionView, layout: ACSCollectionViewAlignLayout, itemsVerticalAlignmentInSection section: Int) -> ACSCollectionViewItemsVerticalAlignment {
+        return .top
+    }
+    
+    func collectionView(_ collectionView: ACSCollectionView, layout: ACSCollectionViewAlignLayout, itemsHorizontalAlignmentInSection section: Int) -> ACSCollectionViewItemsHorizontalAlignment {
+        return .left
+    }
+    
+    func collectionView(_ collectionView: ACSCollectionView, layout: ACSCollectionViewAlignLayout, itemsDirectionInSection section: Int) -> ACSCollectionViewItemsDirection {
+        return .LTR
+    }
+    
+    func collectionView(_ collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        let itemSpace = CGFloat(HostConfigUtils.getSpacing(self.imageSet.getSpacing(), with: hostConfig).floatValue)
+        return itemSpace
+    }
+    
+    func collectionView(_ collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        let itemSpace = CGFloat(HostConfigUtils.getSpacing(self.imageSet.getSpacing(), with: hostConfig).floatValue)
+        return itemSpace
+    }
+    
     func collectionView(_ collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> NSSize {
+        guard let itemProperties = imageViews[indexPath.item].imageProperties else { return itemSize }
+        if itemProperties.hasExplicitDimensions {
+            var size = NSSize.zero
+            if !itemProperties.pixelWidth.isZero && !itemProperties.pixelHeight.isZero {
+                size = NSSize(width: itemProperties.pixelWidth > self.bounds.width ? self.bounds.width : itemProperties.pixelWidth, height: itemProperties.pixelHeight)
+                return size
+            } else if itemProperties.pixelWidth.isZero || itemProperties.pixelHeight.isZero {
+                let maxValue = max(itemProperties.pixelWidth, itemProperties.pixelHeight)
+                size = NSSize(width: maxValue, height: maxValue)
+                return size
+            }
+        }
         return itemSize
     }
 }
