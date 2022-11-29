@@ -19,7 +19,8 @@ class ColumnSetRendererTests: XCTestCase {
         
         let autoColumnSet = FakeColumnSet.make(columns: columns, heightType: .auto)
         let rootAutoView = renderColumnSetInsideContainerView(FakeContainer.make(elemType: .container, minHeight: 200, items: [autoColumnSet]))
-        XCTAssertEqual(rootAutoView.stackView.arrangedSubviews.capacity, 3)
+        // Since no padding is added and is handled by lastPadding, decrease number of elements
+        XCTAssertEqual(rootAutoView.stackView.arrangedSubviews.capacity, 2)
         XCTAssertEqual(rootAutoView.stackView.arrangedSubviews.first?.contentHuggingPriority(for: .vertical), NSLayoutConstraint.Priority.defaultLow)
         
         let stretchColumnSet = FakeColumnSet.make(columns: columns, heightType: .stretch)

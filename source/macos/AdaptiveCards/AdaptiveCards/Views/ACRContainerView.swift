@@ -68,8 +68,10 @@ class ACRContainerView: ACRContentStackView {
         // 3. possibleMaxWidthExcludingTheView is smaller than the the height of the view
         // only #3 changes the current height, when the view's height is no longer in considreation
         // for dimension
-        let newWidth = (maxWidthExcludingTheView < size.width) ? maxWidthExcludingTheView : combinedContentSize.width
-        self.combinedContentSize = CGSize(width: newWidth, height: self.combinedContentSize.height - size.height)
+        if size.width >= 0 && size.height >= 0 {
+            let newWidth = (maxWidthExcludingTheView < size.width) ? maxWidthExcludingTheView : combinedContentSize.width
+            self.combinedContentSize = CGSize(width: newWidth, height: self.combinedContentSize.height - size.height)
+        }
     }
     
     override func updateIntrinsicContentSize() {

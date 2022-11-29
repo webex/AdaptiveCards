@@ -26,7 +26,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: view, element: element, parentView: containerView, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
             BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: containerView, with: hostConfig, element: element, parentElement: container)
         }
-        containerView.configureLayoutAndVisibility(container.getVerticalContentAlignment(), minHeight: container.getMinHeight(), heightType: container.getHeight(), type: .container, isRootMinHeightAvailable: rootView.isMinHeightAvailable)
+        containerView.configureLayoutAndVisibility(verticalContentAlignment: container.getVerticalContentAlignment(), minHeight: container.getMinHeight(), isBackgroundImageAvailable: !(container.getBackgroundImage()?.getUrl()?.isEmpty ?? true))
         containerView.wantsLayer = true
         return containerView
     }

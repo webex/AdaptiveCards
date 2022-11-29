@@ -11,7 +11,6 @@ class ACRView: ACRColumnView {
     private (set) var imageViewMap: [String: [ImageHoldingView]] = [:]
     private (set) var renderedShowCards: [NSView] = []
     private (set) var initialLayoutDone = false
-    private (set) var isMinHeightAvailable = false
     private var currentFocusedActionElement: NSCell?
     private var isLayoutDoneOnShowCard = false
     private var focusedElementOnHideError: NSView?
@@ -99,13 +98,6 @@ class ACRView: ACRColumnView {
         focusedElementOnHideError = currentFocussedView
     }
     
-    override func setMinimumHeight(_ height: NSNumber?) {
-        super.setMinimumHeight(height)
-        if let height = height?.intValue, height > 0 {
-            isMinHeightAvailable = true
-        }
-    }
-    
     private func submitCardInputs(actionView: NSView, dataJSON: String?, associatedInputs: Bool) {
         var dict = [String: Any]()
         
@@ -153,6 +145,7 @@ class ACRView: ACRColumnView {
     }
     
     private func toggleVisibity(of targets: [ACSToggleVisibilityTarget]) {
+        var facadeArray: [ACSVisibilityManagerFacade?] = []
         for target in targets {
             guard let id = target.getElementId(), let toggleView = self.findView(withIdentifier: id) else {
                 logError("Target with ID '\(target.getElementId() ?? "nil")' not found for toggleVisibility.")
@@ -179,12 +172,14 @@ class ACRView: ACRColumnView {
             }
             
             // toggle the last padding if all other
-            if facade?.visibilityManagerAllStretchableViewsHidden() ?? false {
-                facade?.visibilityManagerSetLastStretchableView(isHidden: !isHide)
-            } else {
-                facade?.visibilityManagerSetLastStretchableView(isHidden: isHide)
-            }
+            facade?.visibilityManagerSetLastStretchableView(isHidden: !(facade?.visibilityManagerAllStretchableViewsHidden() ?? false))
+            facadeArray.append(facade)
         }
+        
+        for facade in facadeArray {
+            facade?.visibilityManagerUpdateConstraint()
+        }
+        facadeArray.removeAll()
     }
 }
 

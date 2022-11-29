@@ -53,13 +53,14 @@ class ColumnRendererTests: XCTestCase {
         var columnView = renderColumnView()
         XCTAssertEqual(columnView.arrangedSubviews.count, 1)
         
+        // since we removed padding view all together and replaced with lastPadding but use paddingView for vertical content alignment this has changed
         column = .make(items: [FakeTextBlock.make()], verticalContentAlignment: .center)
         columnView = renderColumnView()
-        XCTAssertEqual(columnView.arrangedSubviews.count, 3)
+        XCTAssertEqual(columnView.arrangedSubviews.count, 4)
         
         column = .make(items: [FakeTextBlock.make()], verticalContentAlignment: .bottom)
         columnView = renderColumnView()
-        XCTAssertEqual(columnView.arrangedSubviews.count, 2)
+        XCTAssertEqual(columnView.arrangedSubviews.count, 3)
     }
     
     func testSelectActionTargetIsSet() {
@@ -101,6 +102,26 @@ class ColumnRendererTests: XCTestCase {
         let columnView = renderColumnView()
         XCTAssertEqual(columnView.minWidthConstraint.constant, 100)
     }
+    
+    func testIntrinsicContentSizeWithHiddenInputElements() {
+        let inputField = FakeInputText.make(id: "id", isRequired: true, errorMessage: "error message", label: "label message", separator: false, heightType: .auto, isVisible: false)
+        column = FakeColumn.make(isVisible: true, items: [inputField])
+        let columnView = renderColumnView()
+        XCTAssertEqual(columnView.intrinsicContentSize, .zero)
+    }
+    
+    func testPaddingWhenContainerEmptyWithoutStyle() {
+        // No padding added
+        column = FakeColumn.make(isVisible: true, style: .none)
+        var columnView = renderColumnView()
+        XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 0)
+        
+        //Added padding
+        column = FakeColumn.make(isVisible: true, style: .default)
+        columnView = renderColumnView()
+        XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 1)
+    }
+
     
     private func renderColumnView() -> ACRColumnView {
         let view = columnRenderer.render(element: column, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)

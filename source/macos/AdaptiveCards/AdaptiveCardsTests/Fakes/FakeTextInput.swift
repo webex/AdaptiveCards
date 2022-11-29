@@ -84,6 +84,10 @@ class FakeInputText: ACSTextInput {
         return visibility
     }
     
+    override func setIsVisible(_ value: Bool) {
+        visibility = value
+    }
+    
     override func getIsRequired() -> Bool {
         return isRequired
     }
@@ -123,10 +127,14 @@ class FakeInputText: ACSTextInput {
     override func setHeight(_ value: ACSHeightType) {
         height = value
     }
+    
+    override func getType() -> ACSCardElementType {
+        return .textInput
+    }
 }
 
 extension FakeInputText {
-    static func make(placeholderString: String? = "", id: String? = "", value: String? = "", isMultiline: Bool = false, maxLength: NSNumber? = 0, style: ACSTextInputStyle = .text, inlineAction: ACSBaseActionElement? = .none, regexString: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputText {
+    static func make(placeholderString: String? = "", id: String? = "", value: String? = "", isMultiline: Bool = false, maxLength: NSNumber? = 0, style: ACSTextInputStyle = .text, inlineAction: ACSBaseActionElement? = .none, regexString: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto, isVisible: Bool = true) -> FakeInputText {
         let fakeInputText = FakeInputText()
         fakeInputText.id = id
         fakeInputText.placeholderString = placeholderString
@@ -141,6 +149,7 @@ extension FakeInputText {
         fakeInputText.label = label
         fakeInputText.separator = separator
         fakeInputText.height = heightType
+        fakeInputText.visibility = isVisible
         return fakeInputText
     }
 }
