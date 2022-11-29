@@ -1,21 +1,21 @@
-﻿import QtQuick 2.15
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
 CheckBox {
     id: customCheckBox
 
-    signal selectionChanged()
-
     property var _adaptiveCard
     property var _consumer
-    property string _cbValueOn : ""
-    property string _cbValueOff : ""
+    property string _cbValueOn: ""
+    property string _cbValueOff: ""
     property bool _cbisWrap
     property string _cbTitle
     property bool _cbIsChecked
-    property string value : checked ? _cbValueOn : _cbValueOff
+    property string value: checked ? _cbValueOn : _cbValueOff
     property var indicatorItem: customCheckBoxButton
+
+    signal selectionChanged()
 
     function onButtonClicked() {
         checked = !checked;
@@ -43,13 +43,11 @@ CheckBox {
     onPressed: customCheckBox.colorChange(customCheckBox, true)
     onReleased: customCheckBox.colorChange(customCheckBox, false)
     onHoveredChanged: customCheckBox.colorChange(customCheckBox, false)
-
     onCheckedChanged: {
-        customCheckBox.colorChange(customCheckBox, false)
-        value = checked ? _cbValueOn : _cbValueOff
-        selectionChanged()
+        customCheckBox.colorChange(customCheckBox, false);
+        value = checked ? _cbValueOn : _cbValueOff;
+        selectionChanged();
     }
-
     onActiveFocusChanged: {
         customCheckBox.colorChange(customCheckBox, false);
         if (activeFocus && _consumer)

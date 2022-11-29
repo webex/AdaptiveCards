@@ -16,7 +16,7 @@ Column {
     property string _elementType
     property int minWidth: CardConstants.comboBoxConstants.choiceSetMinWidth
     property int _comboboxCurrentIndex
-    property string selectedValues : ""
+    property string selectedValues: ""
 
     function validate() {
         if (showErrorMessage) {
@@ -38,9 +38,8 @@ Column {
 
     width: parent.width
     onActiveFocusChanged: {
-        if (activeFocus){
+        if (activeFocus)
             nextItemInFocusChain().forceActiveFocus();
-        }
 
     }
 
@@ -58,24 +57,26 @@ Column {
 
     Loader {
         id: comboboxLoader
+
         height: item ? item.height : 0
         width: parent.width
         active: _elementType === "Combobox"
 
         sourceComponent: ComboboxRender {
             id: comboBox
-            _model : _choiceSetModel
-            _mEscapedPlaceholderString : choiceSet._mEscapedPlaceholderString
-            _currentIndex: _comboboxCurrentIndex
-            _consumer : choiceSet
 
-            Component.onCompleted : {
+            _model: _choiceSetModel
+            _mEscapedPlaceholderString: choiceSet._mEscapedPlaceholderString
+            _currentIndex: _comboboxCurrentIndex
+            _consumer: choiceSet
+            Component.onCompleted: {
                 selectionChanged.connect(function() {
-                     choiceSet.selectedValues = currentValue ? currentValue : ""
-                    if(_isRequired)
-                        validate()
-                })
-                choiceSet.selectedValues = currentValue ? currentValue : ""
+                    choiceSet.selectedValues = currentValue ? currentValue : "";
+                    if (_isRequired)
+                        validate();
+
+                });
+                choiceSet.selectedValues = currentValue ? currentValue : "";
             }
         }
 
@@ -83,123 +84,135 @@ Column {
 
     Loader {
         id: radioButtonLoader
+
         height: item ? item.height : 0
         width: parent.width
         active: _elementType === "RadioButton"
 
-        sourceComponent: Rectangle{
+        sourceComponent: Rectangle {
             id: radioButtonRectangle
+
+            property int focusRadioIndex: 0
+
             height: radioButtonListView.height
             width: parent.width
             color: "transparent"
             activeFocusOnTab: true
-            property int focusRadioIndex : 0
+            onActiveFocusChanged: {
+                if (activeFocus)
+                    radioButtonGroup.buttons[focusRadioIndex].forceActiveFocus();
 
-            onActiveFocusChanged : {
-                if(activeFocus){
-                    radioButtonGroup.buttons[focusRadioIndex].forceActiveFocus()
-                }
             }
 
-            ButtonGroup{
+            ButtonGroup {
                 id: radioButtonGroup
-                buttons:radioButtonListView.contentItem.children
-                exclusive:true
 
-                function onSelectionChanged(){
+                function onSelectionChanged() {
                     choiceSet.selectedValues = AdaptiveCardUtils.onSelectionChanged(radioButtonGroup, false);
-                    if(_isRequired)
-                        validate()
+                    if (_isRequired)
+                        validate();
+
                 }
+
+                buttons: radioButtonListView.contentItem.children
+                exclusive: true
             }
 
-            ListView{
+            ListView {
                 id: radioButtonListView
+
+                function focusRadioButtons(focusIndex) {
+                    radioButtonRectangle.focusRadioIndex = focusIndex;
+                    radioButtonGroup.buttons[radioButtonRectangle.focusRadioIndex].checked = true;
+                    radioButtonGroup.buttons[radioButtonRectangle.focusRadioIndex].forceActiveFocus();
+                }
+
                 height: contentItem.height
                 width: parent.width
                 model: _choiceSetModel
-
                 Keys.onPressed: {
                     if (event.key === Qt.Key_Up) {
-                        focusRadioButtons((radioButtonRectangle.focusRadioIndex - 1 + radioButtonListView.count) % radioButtonListView.count)
+                        focusRadioButtons((radioButtonRectangle.focusRadioIndex - 1 + radioButtonListView.count) % radioButtonListView.count);
                         event.accepted = true;
                     } else if (event.key === Qt.Key_Down) {
-                        focusRadioButtons((radioButtonRectangle.focusRadioIndex + 1) % radioButtonListView.count)
+                        focusRadioButtons((radioButtonRectangle.focusRadioIndex + 1) % radioButtonListView.count);
                         event.accepted = true;
                     }
-                }
-
-                function focusRadioButtons(focusIndex){
-                    radioButtonRectangle.focusRadioIndex = focusIndex
-                    radioButtonGroup.buttons[radioButtonRectangle.focusRadioIndex].checked = true
-                    radioButtonGroup.buttons[radioButtonRectangle.focusRadioIndex].forceActiveFocus()
                 }
 
                 delegate: CustomRadioButton {
-                    _adaptiveCard : choiceSet._adaptiveCard
-                    _rbValueOn : valueOn
-                    _rbisWrap : isWrap
-                    _rbTitle : title 
-                    _rbIsChecked : isChecked
-                    _consumer : choiceSet
+                    _adaptiveCard: choiceSet._adaptiveCard
+                    _rbValueOn: valueOn
+                    _rbisWrap: isWrap
+                    _rbTitle: title
+                    _rbIsChecked: isChecked
+                    _consumer: choiceSet
+                    Component.onCompleted: {
+                        selectionChanged.connect(radioButtonGroup.onSelectionChanged);
+                        if (_rbIsChecked)
+                            radioButtonRectangle.focusRadioIndex = index;
 
-                    Component.onCompleted : {
-                        selectionChanged.connect(radioButtonGroup.onSelectionChanged)
-                        if(_rbIsChecked) {
-                            radioButtonRectangle.focusRadioIndex = index
-                        }
                     }
                 }
+
             }
+
         }
 
     }
 
     Loader {
         id: checkBoxLoader
+
         height: item ? item.height : 0
         width: parent.width
         active: _elementType === "CheckBox"
 
-        sourceComponent: Rectangle{
+        sourceComponent: Rectangle {
             id: checkBoxRectangle
+
             height: checkBoxListView.height
-            width : parent.width
+            width: parent.width
             color: "transparent"
 
-            ButtonGroup{
+            ButtonGroup {
                 id: checkBoxButtonGroup
-                buttons:checkBoxListView.contentItem.children
-                exclusive:false
 
-                function onSelectionChanged(){
+                function onSelectionChanged() {
                     choiceSet.selectedValues = AdaptiveCardUtils.onSelectionChanged(checkBoxButtonGroup, true);
-                    if(_isRequired)
-                        validate()
+                    if (_isRequired)
+                        validate();
+
                 }
+
+                buttons: checkBoxListView.contentItem.children
+                exclusive: false
             }
 
-            ListView{
+            ListView {
                 id: checkBoxListView
+
                 height: contentItem.height
                 width: parent.width
                 model: _choiceSetModel
-                keyNavigationEnabled :false
+                keyNavigationEnabled: false
 
                 delegate: CustomCheckBox {
-                    _adaptiveCard : choiceSet._adaptiveCard
-                    _cbValueOn : valueOn
-                    _cbisWrap : isWrap
-                    _cbTitle : title
-                    _cbIsChecked : isChecked
-                    _consumer : choiceSet
-
-                    Component.onCompleted : {
-                        selectionChanged.connect(checkBoxButtonGroup.onSelectionChanged)
+                    _adaptiveCard: choiceSet._adaptiveCard
+                    _cbValueOn: valueOn
+                    _cbisWrap: isWrap
+                    _cbTitle: title
+                    _cbIsChecked: isChecked
+                    _consumer: choiceSet
+                    Component.onCompleted: {
+                        selectionChanged.connect(checkBoxButtonGroup.onSelectionChanged);
                     }
                 }
+
             }
+
         }
+
     }
 
     Label {

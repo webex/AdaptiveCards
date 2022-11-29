@@ -5,17 +5,17 @@ import QtQuick.Layouts 1.3
 RadioButton {
     id: customRadioButton
 
-    signal selectionChanged()
-
     property var _consumer
     property var _adaptiveCard
-    property string _rbValueOn : ""
+    property string _rbValueOn: ""
     property bool _rbIsChecked
     property bool _rbisWrap
     property string _rbTitle
-    property string value : checked ? _rbValueOn : ""
+    property string value: checked ? _rbValueOn : ""
     property var indicatorItem: customRadioButtonOuterRectancle
-    property var toggleButtonConstants : CardConstants.toggleButtonConstants
+    property var toggleButtonConstants: CardConstants.toggleButtonConstants
+
+    signal selectionChanged()
 
     function onButtonClicked() {
         checked = !checked;
@@ -36,29 +36,25 @@ RadioButton {
             item.indicatorItem.border.color = item.hovered ? (item.checked ? toggleButtonConstants.borderColorOnCheckedAndHovered : toggleButtonConstants.borderColorOnUncheckedAndHovered) : (item.checked ? toggleButtonConstants.borderColorOnChecked : toggleButtonConstants.borderColorOnUnchecked);
     }
 
-    checked : _rbIsChecked
+    checked: _rbIsChecked
     activeFocusOnTab: false
-    Layout.maximumWidth : parent.parent.parent.width
+    Layout.maximumWidth: parent.parent.parent.width
     font.pixelSize: toggleButtonConstants.pixelSize
     Keys.onReturnPressed: onButtonClicked()
     onPressed: customRadioButton.colorChange(customRadioButton, true)
     onReleased: customRadioButton.colorChange(customRadioButton, false)
     onHoveredChanged: customRadioButton.colorChange(customRadioButton, false)
-
     onCheckedChanged: {
-        customRadioButton.colorChange(customRadioButton, false)
-        value = checked ? _rbValueOn : ""
-        selectionChanged()
+        customRadioButton.colorChange(customRadioButton, false);
+        value = checked ? _rbValueOn : "";
+        selectionChanged();
     }
-
     onActiveFocusChanged: {
         customRadioButton.colorChange(customRadioButton, false);
-        if (activeFocus){
+        if (activeFocus)
             Accessible.name = _consumer.getAccessibleName() + getContentText();
-        }
 
     }
-
     Component.onCompleted: {
         customRadioButton.colorChange(customRadioButton, false);
     }
@@ -71,22 +67,25 @@ RadioButton {
         width: customRadioButton.width
         spacing: toggleButtonConstants.rowSpacing
 
-        Rectangle{
-            id:customRadioButtonOuterRectancle
+        Rectangle {
+            id: customRadioButtonOuterRectancle
+
             width: toggleButtonConstants.radioButtonOuterCircleSize
             height: toggleButtonConstants.radioButtonOuterCircleSize
             y: toggleButtonConstants.indicatorTopPadding
-            radius:height/2
+            radius: height / 2
             border.width: parent.checked ? 0 : toggleButtonConstants.borderWidth
-            Rectangle{
-                width:toggleButtonConstants.radioButtonInnerCircleSize
-                height:toggleButtonConstants.radioButtonInnerCircleSize
-                x:(parent.width - width)/2
-                y:(parent.height - height)/2
-                radius:height/2
-                color:customRadioButton.checked ? toggleButtonConstants.radioButtonInnerCircleColorOnChecked : 'transparent'
-                visible:customRadioButton.checked
+
+            Rectangle {
+                width: toggleButtonConstants.radioButtonInnerCircleSize
+                height: toggleButtonConstants.radioButtonInnerCircleSize
+                x: (parent.width - width) / 2
+                y: (parent.height - height) / 2
+                radius: height / 2
+                color: customRadioButton.checked ? toggleButtonConstants.radioButtonInnerCircleColorOnChecked : 'transparent'
+                visible: customRadioButton.checked
             }
+
         }
 
         TextEdit {

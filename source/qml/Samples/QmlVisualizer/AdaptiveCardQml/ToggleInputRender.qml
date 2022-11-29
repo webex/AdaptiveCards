@@ -1,4 +1,4 @@
-﻿import "AdaptiveCardUtils.js" as AdaptiveCardUtils
+import "AdaptiveCardUtils.js" as AdaptiveCardUtils
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
@@ -14,7 +14,7 @@ Column {
     property bool isChecked: customCheckBox.checked
     property bool showErrorMessage: false
     property int minWidth: customCheckBox.implicitWidth
-    property alias checkBox : customCheckBox
+    property alias checkBox: customCheckBox
 
     function validate() {
         if (showErrorMessage) {
@@ -56,8 +56,9 @@ Column {
 
     CustomCheckBox {
         id: customCheckBox
-        _adaptiveCard : toggleInput._adaptiveCard
-        _consumer : toggleInput
+
+        _adaptiveCard: toggleInput._adaptiveCard
+        _consumer: toggleInput
     }
 
     Label {
