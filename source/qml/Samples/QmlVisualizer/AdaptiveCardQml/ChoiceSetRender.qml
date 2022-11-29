@@ -30,16 +30,17 @@ Column {
     function getAccessibleName() {
         let accessibleName = '';
         if (showErrorMessage === true)
-            accessibleName += "Error. " + _mEscapedErrorString;
+            accessibleName += "Error. " + _mEscapedErrorString + '. ';
 
-        accessibleName += _mEscapedLabelString;
+        accessibleName += _mEscapedLabelString + '. ';
         return accessibleName;
     }
 
     width: parent.width
     onActiveFocusChanged: {
-        if (activeFocus)
-            customCheckBox.forceActiveFocus();
+        if (activeFocus){
+            nextItemInFocusChain().forceActiveFocus();
+        }
 
     }
 
@@ -64,10 +65,17 @@ Column {
         sourceComponent: ComboboxRender {
             id: comboBox
             _model : _choiceSetModel
-            _mEscapedPlaceholderString : _mEscapedPlaceholderString
+            _mEscapedPlaceholderString : choiceSet._mEscapedPlaceholderString
             _currentIndex: _comboboxCurrentIndex
-            onValueChanged : {
-                choiceSet.selectedValues = value
+            _consumer : choiceSet
+
+            Component.onCompleted : {
+                selectionChanged.connect(function() {
+                     choiceSet.selectedValues = currentValue ? currentValue : ""
+                    if(_isRequired)
+                        validate()
+                })
+                choiceSet.selectedValues = currentValue ? currentValue : ""
             }
         }
 
@@ -80,33 +88,65 @@ Column {
         active: _elementType === "RadioButton"
 
         sourceComponent: Rectangle{
-            height: radioButtonColumn.implicitHeight
-            width : parent.width
+            id: radioButtonRectangle
+            height: radioButtonListView.height
+            width: parent.width
+            color: "transparent"
+            activeFocusOnTab: true
+            property int focusRadioIndex : 0
+
+            onActiveFocusChanged : {
+                if(activeFocus){
+                    radioButtonGroup.buttons[focusRadioIndex].forceActiveFocus()
+                }
+            }
 
             ButtonGroup{
                 id: radioButtonGroup
-                buttons:radioButtonColumn.children
+                buttons:radioButtonListView.contentItem.children
                 exclusive:true
 
                 function onSelectionChanged(){
                     choiceSet.selectedValues = AdaptiveCardUtils.onSelectionChanged(radioButtonGroup, false);
+                    if(_isRequired)
+                        validate()
                 }
             }
 
-            Column {
-                id: radioButtonColumn
+            ListView{
+                id: radioButtonListView
+                height: contentItem.height
                 width: parent.width
-                Repeater {
-                    model: _choiceSetModel
-                    CustomRadioButton {
-                        _adaptiveCard : choiceSet._adaptiveCard
-                        _rbValueOn : valueOn
-                        _rbisWrap : isWrap
-                        _rbTitle : title 
-                        _rbIsChecked : isChecked
+                model: _choiceSetModel
 
-                        Component.onCompleted : {
-                            selectionChanged.connect(radioButtonGroup.onSelectionChanged)
+                Keys.onPressed: {
+                    if (event.key === Qt.Key_Up) {
+                        focusRadioButtons((radioButtonRectangle.focusRadioIndex - 1 + radioButtonListView.count) % radioButtonListView.count)
+                        event.accepted = true;
+                    } else if (event.key === Qt.Key_Down) {
+                        focusRadioButtons((radioButtonRectangle.focusRadioIndex + 1) % radioButtonListView.count)
+                        event.accepted = true;
+                    }
+                }
+
+                function focusRadioButtons(focusIndex){
+                    radioButtonRectangle.focusRadioIndex = focusIndex
+                    radioButtonGroup.buttons[radioButtonRectangle.focusRadioIndex].checked = true
+                    radioButtonGroup.buttons[radioButtonRectangle.focusRadioIndex].forceActiveFocus()
+                }
+
+                delegate: CustomRadioButton {
+                    _adaptiveCard : choiceSet._adaptiveCard
+                    _rbValueOn : valueOn
+                    _rbisWrap : isWrap
+                    _rbTitle : title 
+                    _rbIsChecked : isChecked
+                    _consumer : choiceSet
+
+                    Component.onCompleted : {
+                        selectionChanged.connect(radioButtonGroup.onSelectionChanged)
+                        if(_rbIsChecked) {
+                            radioButtonRectangle.focusRadioIndex = index
                         }
                     }
                 }
@@ -122,34 +162,39 @@ Column {
         active: _elementType === "CheckBox"
 
         sourceComponent: Rectangle{
-            height: checkBoxColumn.implicitHeight
+            id: checkBoxRectangle
+            height: checkBoxListView.height
             width : parent.width
+            color: "transparent"
 
             ButtonGroup{
                 id: checkBoxButtonGroup
-                buttons:checkBoxColumn.children
+                buttons:checkBoxListView.contentItem.children
                 exclusive:false
 
                 function onSelectionChanged(){
                     choiceSet.selectedValues = AdaptiveCardUtils.onSelectionChanged(checkBoxButtonGroup, true);
+                    if(_isRequired)
+                        validate()
                 }
             }
 
-            Column {
-                id: checkBoxColumn
+            ListView{
+                id: checkBoxListView
+                height: contentItem.height
                 width: parent.width
-                Repeater {
-                    model: _choiceSetModel
-                    CustomCheckBox {
-                        _adaptiveCard : choiceSet._adaptiveCard
-                        _cbValueOn : valueOn
-                        _cbisWrap : isWrap
-                        _cbTitle : title
-                        _cbIsChecked : isChecked
+                model: _choiceSetModel
 
-                        Component.onCompleted : {
-                            selectionChanged.connect(checkBoxButtonGroup.onSelectionChanged)
-                        }
+                delegate: CustomCheckBox {
+                    _adaptiveCard : choiceSet._adaptiveCard
+                    _cbValueOn : valueOn
+                    _cbisWrap : isWrap
+                    _cbTitle : title
+                    _cbIsChecked : isChecked
+                    _consumer : choiceSet
+
+                    Component.onCompleted : {
+                        selectionChanged.connect(checkBoxButtonGroup.onSelectionChanged)
                     }
                 }
             }

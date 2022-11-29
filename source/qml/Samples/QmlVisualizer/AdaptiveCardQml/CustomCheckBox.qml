@@ -8,6 +8,7 @@ CheckBox {
     signal selectionChanged()
 
     property var _adaptiveCard
+    property var _consumer
     property string _cbValueOn : ""
     property string _cbValueOff : ""
     property bool _cbisWrap
@@ -51,8 +52,8 @@ CheckBox {
 
     onActiveFocusChanged: {
         customCheckBox.colorChange(customCheckBox, false);
-        if (activeFocus)
-            Accessible.name = getAccessibleName() + text;
+        if (activeFocus && _consumer)
+            Accessible.name = _consumer.getAccessibleName() + getContentText();
 
     }
     Component.onCompleted: {

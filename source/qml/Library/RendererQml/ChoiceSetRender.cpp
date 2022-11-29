@@ -78,13 +78,16 @@ void ChoiceSetElement::initialize()
     mChoiceSetColElement->Property("width", "parent.width");
     mChoiceSetColElement->Property("visible", mChoiceSetInput->GetIsVisible() ? "true" : "false");
 
+    if (!mEscapedErrorString.empty())
+    {
+        mChoiceSetColElement->Property("_mEscapedPlaceholderString", RendererQml::Formatter() << "String.raw`" << mEscapedPlaceholderString << "`");
+    }
+
     renderChoiceSet(choiceSet, type, choiceSetId);
 }
 
 void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, RendererQml::CheckBoxType checkBoxType, const std::string choiceSetId)
 {
-    std::shared_ptr<RendererQml::QmlTag> uiChoiceSet;
-
     addInputLabel(mChoiceSetInput->GetIsRequired());
 
     std::ostringstream model;
@@ -103,7 +106,7 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         }
         model << "]";
         mChoiceSetColElement->Property("_elementType", "'Combobox'");
-        mChoiceSetColElement->Property("_comboboxCurrentIndex", RendererQml::Formatter() << (choiceSet.placeholder.empty() ? "0" : "-1"));
+        mChoiceSetColElement->Property("_comboboxCurrentIndex", "-1");
 
         if (choiceSet.values.size() == 1)
         {
@@ -119,7 +122,6 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         }
 
         //uiChoiceSet->Property("onCurrentValueChanged", "{Accessible.name = displayText}");
-        //mChoiceSetColElement->AddChild(uiChoiceSet);
     }
     else
     {
@@ -127,7 +129,6 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         std::string initialValues;
 
         model << "ListModel{Component.onCompleted : {";
-        //uiChoiceSet = getButtonGroup(choiceSet, checkBoxType);
         for (const auto& choice : choiceSet.choices)
         {
             std::string choice_Text = RendererQml::TextUtils::ApplyTextFunctions(choice.text, mContext->GetLang());
@@ -159,13 +160,12 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
             mChoiceSetColElement->Property("selectedValues", initialValues);
         }
         mChoiceSetColElement->Property("_elementType", checkBoxType == RendererQml::CheckBoxType::CheckBox ? "'CheckBox'" : "'RadioButton'");
-        //addColorFunction();
     }
 
     mChoiceSetColElement->Property("_choiceSetModel", model.str());
     mContext->addToInputElementList(choiceSetId, mChoiceSetColElement->GetId() + ".selectedValues");
 
-    addErrorMessage(uiChoiceSet, checkBoxType);
+    addErrorMessage();
     //uiChoiceSet->AddFunctions(getAccessibleName(uiChoiceSet, checkBoxType));
 }
 
@@ -177,7 +177,7 @@ void ChoiceSetElement::addInputLabel(bool isRequired)
         {
             const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
             mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mChoiceSetInput->GetLabel()));
-            mChoiceSetColElement->Property("_mEscapedLabelString", mEscapedLabelString);
+            mChoiceSetColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");
         }
         else
         {
@@ -189,15 +189,15 @@ void ChoiceSetElement::addInputLabel(bool isRequired)
     }
 }
 
-void ChoiceSetElement::addErrorMessage(const std::shared_ptr<RendererQml::QmlTag> uiChoiceSet, RendererQml::CheckBoxType checkBoxType)
+void ChoiceSetElement::addErrorMessage()
 {
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mChoiceSetInput->GetIsRequired())
     {
-        //addValidation(uiChoiceSet, checkBoxType);
-        mContext->addToRequiredInputElementsIdList(uiChoiceSet->GetId());
+        mChoiceSetColElement->Property("_isRequired", "true");
+        mContext->addToRequiredInputElementsIdList(mChoiceSetColElement->GetId());
         if (!mChoiceSetInput->GetErrorMessage().empty())
         {
-            mChoiceSetColElement->Property("_mEscapedErrorString", mEscapedErrorString);
+            mChoiceSetColElement->Property("_mEscapedErrorString", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
         }
     }
 }
@@ -296,19 +296,6 @@ void ChoiceSetElement::addValidation(std::shared_ptr<RendererQml::QmlTag> uiChoi
         << "return !isValid;}";
 
     uiChoiceSet->AddFunctions(validator.str());
-}
-
-void ChoiceSetElement::addColorFunction()
-{
-    auto toggleButtonConfig = mContext->GetRenderConfig()->getToggleButtonConfig();
-
-    mChoiceSetColElement->AddFunctions(RendererQml::Formatter() << "function colorChange(item,isPressed){\n"
-        "if (isPressed) item.indicatorItem.color = item.checked ? " << mContext->GetHexColor(toggleButtonConfig.colorOnCheckedAndPressed) << " : " << mContext->GetHexColor(toggleButtonConfig.colorOnUncheckedAndPressed) << ";\n"
-        "else  item.indicatorItem.color = item.hovered ? (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.colorOnCheckedAndHovered) << " : " << mContext->GetHexColor(toggleButtonConfig.colorOnUncheckedAndHovered) << ") : (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.colorOnChecked) << " : " << mContext->GetHexColor(toggleButtonConfig.colorOnUnchecked) << ")\n"
-        "if (isPressed) item.indicatorItem.border.color = item.checked ? " << mContext->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndPressed) << " : " << mContext->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndPressed) << ";\n"
-        "else  item.indicatorItem.border.color = item.hovered ? (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.borderColorOnCheckedAndHovered) << " : " << mContext->GetHexColor(toggleButtonConfig.borderColorOnUncheckedAndHovered) << ") : (item.checked ? " << mContext->GetHexColor(toggleButtonConfig.borderColorOnChecked) << " : " << mContext->GetHexColor(toggleButtonConfig.borderColorOnUnchecked) << ")\n"
-        "}\n"
-    );
 }
 
 const std::string ChoiceSetElement::getChoiceSetSelectedValuesFunc(const std::shared_ptr<RendererQml::QmlTag> btnGroup, const bool isMultiselect)

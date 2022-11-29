@@ -5,6 +5,9 @@ import QtQuick.Layouts 1.3
 import AdaptiveCards 1.0
 
 ComboBox{
+
+    signal selectionChanged()
+    property var _consumer
     property var _model
     property int _currentIndex
     property string _mEscapedPlaceholderString
@@ -12,7 +15,6 @@ ComboBox{
     property var comboBoxConstants : CardConstants.comboBoxConstants
     property var cardConstants : CardConstants.cardConstants
     property int choiceWidth:0
-    property string value : currentValue
 
     id: comboBox
     textRole:'text'
@@ -137,13 +139,14 @@ ComboBox{
     onActiveFocusChanged:{
         colorChange(false);
         if(activeFocus){
-            Accessible.name = getAccessibleName()
+            Accessible.name =  getAccessibleName()
         }
     }
 
     onHoveredChanged:colorChange(false)
     onCurrentValueChanged:{
         Accessible.name = displayText
+        selectionChanged()
     }
 
     function colorChange(isPressed){
@@ -152,9 +155,11 @@ ComboBox{
     }
 
     function getAccessibleName(){
-        let accessibleName = '';
+        let accessibleName = _consumer.getAccessibleName() + ' ';
         if(comboBox.currentIndex !== -1){
             accessibleName += (comboBox.displayText + '. ');
+        } else if(_mEscapedPlaceholderString) {
+            accessibleName += _mEscapedPlaceholderString + '. '
         } else {
             accessibleName += 'Choice Set';
         }

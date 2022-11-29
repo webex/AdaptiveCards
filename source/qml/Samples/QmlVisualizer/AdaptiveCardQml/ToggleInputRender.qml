@@ -56,7 +56,8 @@ Column {
 
     CustomCheckBox {
         id: customCheckBox
-        _adaptiveCard : _adaptiveCard
+        _adaptiveCard : toggleInput._adaptiveCard
+        _consumer : toggleInput
     }
 
     Label {

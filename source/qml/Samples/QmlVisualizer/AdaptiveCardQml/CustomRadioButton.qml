@@ -7,11 +7,12 @@ RadioButton {
 
     signal selectionChanged()
 
+    property var _consumer
+    property var _adaptiveCard
     property string _rbValueOn : ""
     property bool _rbIsChecked
     property bool _rbisWrap
     property string _rbTitle
-    property var _adaptiveCard
     property string value : checked ? _rbValueOn : ""
     property var indicatorItem: customRadioButtonOuterRectancle
     property var toggleButtonConstants : CardConstants.toggleButtonConstants
@@ -36,6 +37,7 @@ RadioButton {
     }
 
     checked : _rbIsChecked
+    activeFocusOnTab: false
     Layout.maximumWidth : parent.parent.parent.width
     font.pixelSize: toggleButtonConstants.pixelSize
     Keys.onReturnPressed: onButtonClicked()
@@ -51,8 +53,10 @@ RadioButton {
 
     onActiveFocusChanged: {
         customRadioButton.colorChange(customRadioButton, false);
-        if (activeFocus)
-            Accessible.name = getAccessibleName() + text;
+        if (activeFocus){
+            //checked = true
+            Accessible.name = _consumer.getAccessibleName() + getContentText();
+        }
 
     }
 
@@ -135,6 +139,8 @@ RadioButton {
                     if (link)
                         linkActivated(link);
 
+                    event.accepted = true;
+                } else if (event.key == Qt.Key_Up || event.key == Qt.Key_Down) {
                     event.accepted = true;
                 }
             }
