@@ -184,6 +184,7 @@ Column {
                 height: contentItem.height
                 width: parent.width
                 model: _choiceSetModel
+                keyNavigationEnabled :false
 
                 delegate: CustomCheckBox {
                     _adaptiveCard : choiceSet._adaptiveCard

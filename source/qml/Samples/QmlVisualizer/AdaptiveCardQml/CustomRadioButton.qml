@@ -54,7 +54,6 @@ RadioButton {
     onActiveFocusChanged: {
         customRadioButton.colorChange(customRadioButton, false);
         if (activeFocus){
-            //checked = true
             Accessible.name = _consumer.getAccessibleName() + getContentText();
         }
 

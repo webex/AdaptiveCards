@@ -63,12 +63,6 @@
     <ClCompile Include="ToggleInputRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CheckBoxRender.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ComboBoxRender.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DateInputRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -138,12 +132,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToggleInputRender.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CheckBoxRender.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ComboBoxRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DateInputRender.h">
