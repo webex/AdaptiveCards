@@ -54,8 +54,7 @@ class ACSCollectionViewAlignLayout: ACSCollectionViewFlowLayout {
         var updatedAttributes = originalAttributes
         for attributes in originalAttributes {
             if attributes.representedElementKind == nil || attributes.representedElementCategory == ACSCollectionElementCategoryItemCell {
-                let index = updatedAttributes.firstIndex(of: attributes) ?? NSNotFound
-                if let attrsIndex = attributes.indexPath, let attr = self.layoutAttributesForItem(at: attrsIndex) {
+                if let index = updatedAttributes.firstIndex(of: attributes), let attrsIndex = attributes.indexPath, let attr = self.layoutAttributesForItem(at: attrsIndex) {
                     updatedAttributes[index] = attr
                 }
             }
@@ -76,10 +75,8 @@ class ACSCollectionViewAlignLayout: ACSCollectionViewFlowLayout {
             if isLineStart {
                 // Get all NSCollectionViewLayoutAttributes of the current row
                 let line = lineAttributesArray(withStart: currentAttributes)
-                if !(line?.isEmpty ?? true) {
-                    // Calculate and cache all NSCollectionViewLayoutAttributes frames for the current row
-                    calculateAndCacheFrame(forItemAttributesArray: line)
-                }
+                // Calculate and cache all NSCollectionViewLayoutAttributes frames for the current row
+                calculateAndCacheFrame(forItemAttributesArray: line)
             }
             // Get the item frame at the current indexPath
             frameValue = self.getCachedItemFrame(at: indexPath)
@@ -91,7 +88,7 @@ class ACSCollectionViewAlignLayout: ACSCollectionViewFlowLayout {
     }
 }
 extension ACSCollectionViewAlignLayout {
-    func minimumInteritemSpacingForSection(at section: Int?) -> CGFloat {
+    private func minimumInteritemSpacingForSection(at section: Int?) -> CGFloat {
         if let section = section, let collectionView = self.collectionView, let delegate = collectionView.delegate as? ACSCollectionViewAlignLayoutDelegate {
             return delegate.collectionView?(collectionView, layout: self, minimumInteritemSpacingForSectionAt: section) ?? .zero
         } else {
@@ -99,7 +96,7 @@ extension ACSCollectionViewAlignLayout {
         }
     }
     
-    func insetForSectionAtIndex(at section: Int?) -> ACSEdgeInsets {
+    private func insetForSectionAtIndex(at section: Int?) -> ACSEdgeInsets {
         if let section = section, let collectionView = self.collectionView, let delegate = collectionView.delegate as? ACSCollectionViewAlignLayoutDelegate {
             return delegate.collectionView?(collectionView, layout: self, insetForSectionAt: section) ?? NSEdgeInsetsZero
         } else {
@@ -107,7 +104,7 @@ extension ACSCollectionViewAlignLayout {
         }
     }
     
-    func itemsHorizontalAlignmentForSectionAtIndex(at section: Int?) -> ACSCollectionViewItemsHorizontalAlignment {
+    private func itemsHorizontalAlignmentForSectionAtIndex(at section: Int?) -> ACSCollectionViewItemsHorizontalAlignment {
         if let section = section, let collectionView = self.collectionView, let delegate = collectionView.delegate as? ACSCollectionViewAlignLayoutDelegate {
             return delegate.collectionView(collectionView, layout: self, itemsHorizontalAlignmentInSection: section)
         } else {
@@ -115,7 +112,7 @@ extension ACSCollectionViewAlignLayout {
         }
     }
     
-    func itemsVerticalAlignmentForSectionAtIndex(at section: Int?) -> ACSCollectionViewItemsVerticalAlignment {
+    private func itemsVerticalAlignmentForSectionAtIndex(at section: Int?) -> ACSCollectionViewItemsVerticalAlignment {
         if let section = section, let collectionView = self.collectionView, let delegate = collectionView.delegate as? ACSCollectionViewAlignLayoutDelegate {
             return delegate.collectionView(collectionView, layout: self, itemsVerticalAlignmentInSection: section)
         } else {
@@ -123,7 +120,7 @@ extension ACSCollectionViewAlignLayout {
         }
     }
     
-    func itemsDirectionForSectionAtIndex(at section: Int?) -> ACSCollectionViewItemsDirection {
+    private func itemsDirectionForSectionAtIndex(at section: Int?) -> ACSCollectionViewItemsDirection {
         if let section = section, let collectionView = self.collectionView, let delegate = collectionView.delegate as? ACSCollectionViewAlignLayoutDelegate {
             return delegate.collectionView(collectionView, layout: self, itemsDirectionInSection: section)
         } else {
@@ -132,7 +129,7 @@ extension ACSCollectionViewAlignLayout {
     }
 }
 extension ACSCollectionViewAlignLayout {
-    func isCollectionViewNewLineStart(at indexPath: IndexPath) -> Bool {
+    private func isCollectionViewNewLineStart(at indexPath: IndexPath) -> Bool {
         if indexPath.item == 0 {
             return true
         }
@@ -154,7 +151,7 @@ extension ACSCollectionViewAlignLayout {
         return !currentLineFrame.intersects(previousLineFrame)
     }
     
-    func lineAttributesArray(withStart startAttributes: ACSCollectionViewLayoutAttributes?) -> [ACSCollectionViewLayoutAttributes]? {
+    private func lineAttributesArray(withStart startAttributes: ACSCollectionViewLayoutAttributes?) -> [ACSCollectionViewLayoutAttributes]? {
         var lineAttributesArray: [ACSCollectionViewLayoutAttributes] = []
         if let startAttributes = startAttributes {
             lineAttributesArray.append(startAttributes)
@@ -165,7 +162,7 @@ extension ACSCollectionViewAlignLayout {
             let insets = insetForSectionAtIndex(at: startAttributes.indexPath?.section)
             var index = startAttributes.indexPath?.item ?? 0
             
-            var isLineEnd = index == itemCount - 1
+            var isLineEnd = false
             while !isLineEnd {
                 index += 1
                 if index == itemCount {
@@ -188,21 +185,20 @@ extension ACSCollectionViewAlignLayout {
     }
 }
 extension ACSCollectionViewAlignLayout {
-    func setCacheItemFrame(_ frame: CGRect, for indexPath: IndexPath?) {
+    private func setCacheItemFrame(_ frame: CGRect, for indexPath: IndexPath?) {
         if let indexPath = indexPath {
-            print("item index \(indexPath.item) = \(frame)")
             self.cachedFrame[indexPath] = frame
         }
     }
     
-    func getCachedItemFrame(at indexPath: IndexPath?) -> CGRect? {
+    private func getCachedItemFrame(at indexPath: IndexPath?) -> CGRect? {
         if let indexPath = indexPath {
             return self.cachedFrame[indexPath]
         }
         return nil
     }
     
-    func calculateAndCacheFrame(forItemAttributesArray attributes: [ACSCollectionViewLayoutAttributes]?) {
+    private func calculateAndCacheFrame(forItemAttributesArray attributes: [ACSCollectionViewLayoutAttributes]?) {
         if let attributes = attributes, let collectionView = self.collectionView {
             let section = attributes.first?.indexPath?.section ?? 0
             let horizontalAlignment = itemsHorizontalAlignmentForSectionAtIndex(at: section)
