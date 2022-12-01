@@ -1,4 +1,4 @@
-﻿import "AdaptiveCardUtils.js" as AdaptiveCardUtils
+import "AdaptiveCardUtils.js" as AdaptiveCardUtils
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
@@ -11,16 +11,10 @@ Column {
     property string _mEscapedLabelString
     property string _mEscapedErrorString
     property color _color
-    property string _cbValueOn
-    property string _cbValueOff
-    property string _cbText
-    property bool _cbisWrap
-    property string _cbTitle
-    property bool _cbIsVisible
-    property bool _cbIsChecked
     property bool isChecked: customCheckBox.checked
     property bool showErrorMessage: false
     property int minWidth: customCheckBox.implicitWidth
+    property alias checkBox: customCheckBox
 
     function validate() {
         if (showErrorMessage) {
@@ -48,36 +42,25 @@ Column {
     }
     onIsCheckedChanged: validate()
 
-    Label {
+    InputLabel {
         id: _inputToggleLabel
 
-        wrapMode: Text.Wrap
-        width: parent.width
-        color: _color
-        font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
-        Accessible.ignored: true
-        text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
-        visible: text.length
-
-        
-        Component.onCompleted: {
-            console.log(text)
-        }
+        _label: _mEscapedLabelString
+        _required: _isRequired
+        visible: _label.length
     }
 
     CustomCheckBox {
         id: customCheckBox
+
+        _adaptiveCard: toggleInput._adaptiveCard
+        _consumer: toggleInput
     }
 
-    Label {
+    InputErrorMessage {
         id: _inputToggleErrorMessage
 
-        wrapMode: Text.Wrap
-        width: parent.width
-        font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
-        Accessible.ignored: true
-        color: CardConstants.toggleButtonConstants.errorMessageColor
-        text: _mEscapedErrorString
+        _errorMessage: _mEscapedErrorString
         visible: showErrorMessage && _mEscapedErrorString.length
     }
 

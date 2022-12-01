@@ -133,3 +133,20 @@ function handleToggleVisibilityAction(targetElements) {
 function getColorSet(colorSet, state, isDarkTheme) {
     return ThemeUtils.getColorSet(colorSet, state, isDarkTheme)
 }
+
+function onSelectionChanged(buttonGroup, isMultiSelect) {
+    var values = "";
+    for (var i = 0; i < buttonGroup.buttons.length; ++i) {
+        if (buttonGroup.buttons[i].checked && values !== "") {
+            values += ",";
+        }
+
+        if (buttonGroup.buttons[i].checked) {
+            values += buttonGroup.buttons[i].value;
+
+            if (!isMultiSelect)
+                break;
+        }
+    }
+    return values;
+}

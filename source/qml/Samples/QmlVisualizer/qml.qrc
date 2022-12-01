@@ -17,5 +17,11 @@
         <file alias="ThemeUtils.js">AdaptiveCardQml/Utils/ThemeUtils.js</file>
         <file alias="CustomCheckBox.qml">AdaptiveCardQml/CustomCheckBox.qml</file>
         <file alias="ToggleInputRender.qml">AdaptiveCardQml/ToggleInputRender.qml</file>
+        <file alias="ChoiceSetRender.qml">AdaptiveCardQml/ChoiceSetRender.qml</file>
+        <file alias="ComboboxRender.qml">AdaptiveCardQml/ComboboxRender.qml</file>
+        <file alias="CustomRadioButton.qml">AdaptiveCardQml/CustomRadioButton.qml</file>
+        <file alias="InputErrorMessage.qml">AdaptiveCardQml/InputErrorMessage.qml</file>
+        <file alias="InputLabel.qml">AdaptiveCardQml/InputLabel.qml</file>
+        <file alias="CardGenericTextElement.qml">AdaptiveCardQml/CardGenericTextElement.qml</file>
     </qresource>
 </RCC>
