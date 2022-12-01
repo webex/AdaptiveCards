@@ -46,11 +46,11 @@ class ACRCollectionView: NSScrollView {
         }
         super.init(frame: .zero)
         let layout = ACSCollectionViewAlignLayout()
-        self.needsLayout = true
         collectionView.collectionViewLayout = layout
         collectionView.register(ACRCollectionViewItem.self, forItemWithIdentifier: ACRCollectionViewItem.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
+        needsLayout = true
         wantsLayer = true
         documentView = collectionView
         
