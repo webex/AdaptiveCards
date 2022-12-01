@@ -121,6 +121,9 @@ QtObject {
         readonly property int dropDownPadding: 8
         readonly property int dropDownHeight: 216
         readonly property int maxDropDownWidth: 800
+        readonly property int indicatorWidth : 35
+        readonly property int scrollbarWidth : 10
+        readonly property int choiceSetMinWidth : 200
         readonly property color arrowIconColor: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color dropDownElementColorPressed: AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)
         readonly property color dropDownElementColorHovered: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)

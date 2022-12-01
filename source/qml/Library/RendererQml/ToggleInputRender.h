@@ -3,7 +3,6 @@
 #include <memory>
 
 #include "AdaptiveCardQmlRenderer.h"
-#include "CheckBoxRender.h"
 #include "QmlTag.h"
 
 class ToggleInputElement
