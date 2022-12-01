@@ -1,0 +1,81 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+            "type": "ImageSet",
+            "imageSize": "Small",
+            "images": [
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Small"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "width": "250px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/100/300",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "width": "500px",
+                    "height": "100px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Small"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Small"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Small"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Small"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/380/100",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "width": "380px",
+                    "height": "100px"
+                }
+            ]
+        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch"
+                }
+            ]
+        }
+    ]
+}

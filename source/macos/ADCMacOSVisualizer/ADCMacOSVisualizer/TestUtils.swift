@@ -3,6 +3,9 @@ import Foundation
 public class TestUtils {
     // Dictionary to test image rendering in case image size is known before hand
     static let imageDimensionsDict: [String: NSSize] = [
+        "https://picsum.photos/200/300": NSSize(width: 200, height: 300),
+        "https://picsum.photos/100/300": NSSize(width: 100, height: 300),
+        "https://picsum.photos/380/100": NSSize(width: 380, height: 100),
         "https://picsum.photos/id/1069/230/455": NSSize(width: 230, height: 455),
         "https://picsum.photos/id/1080/230/455": NSSize(width: 230, height: 455),
         "https://picsum.photos/id/1062/620/287": NSSize(width: 620, height: 287),
