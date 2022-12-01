@@ -5,7 +5,7 @@ protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
     func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView, acoElement acoElem: ACSBaseCardElement, separator: SpacingView?, rootView: ACRView?)
-    func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, isBackgroundImageAvailable: Bool)
+    func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?)
     func applyPadding(_ padding: CGFloat)
 }
 
@@ -143,6 +143,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func addArrangedSubview(_ subview: NSView) {
         stackView.addArrangedSubview(subview)
+        if subview is ACRContentStackView {
+            subview.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
+        }
     }
     
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int) {
@@ -324,18 +327,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// activation constraint all at once is more efficient than activating
     /// constraints one by one.
     
-    func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, isBackgroundImageAvailable: Bool) {
+    func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?) {
         self.verticalContentAlignment = verticalContentAlignment
         self.applyVisibilityToSubviews()
         
-        if !self.hasStretchableView && !visibilityManager.hasVisibleViews {
-            // add stretchable view for stretch the content when stackview has no visibile view
-            if self.style != .none || isBackgroundImageAvailable {
-                let padding = self.addPadding(for: self)
-                self.paddings.append(padding)
-                self.addArrangedSubview(padding)
-            }
-        } else {
+        if self.hasStretchableView || visibilityManager.hasVisibleViews {
             visibilityManager.fillerSpaceManager.addLastStretchableView(for: self, isHidden: (hasStretchableView || !visibilityManager.hasVisibleViews))
         }
         

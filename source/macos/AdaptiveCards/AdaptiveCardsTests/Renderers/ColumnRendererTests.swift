@@ -50,12 +50,13 @@ class ColumnRendererTests: XCTestCase {
     }
     
     func testVerticalContentAlignment() {
-        var columnView = renderColumnView()
-        XCTAssertEqual(columnView.arrangedSubviews.count, 1)
+        // Removing this since we don't need subviews to have padding to have explicit width
+//        var columnView = renderColumnView()
+//        XCTAssertEqual(columnView.arrangedSubviews.count, 1)
         
         // since we removed padding view all together and replaced with lastPadding but use paddingView for vertical content alignment this has changed
         column = .make(items: [FakeTextBlock.make()], verticalContentAlignment: .center)
-        columnView = renderColumnView()
+        var columnView = renderColumnView()
         XCTAssertEqual(columnView.arrangedSubviews.count, 4)
         
         column = .make(items: [FakeTextBlock.make()], verticalContentAlignment: .bottom)
@@ -113,13 +114,14 @@ class ColumnRendererTests: XCTestCase {
     func testPaddingWhenContainerEmptyWithoutStyle() {
         // No padding added
         column = FakeColumn.make(isVisible: true, style: .none)
-        var columnView = renderColumnView()
+        let columnView = renderColumnView()
         XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 0)
         
-        //Added padding
-        column = FakeColumn.make(isVisible: true, style: .default)
-        columnView = renderColumnView()
-        XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 1)
+        // Removing this since we don't need subviews to have padding to have explicit width
+//        Added padding
+//        column = FakeColumn.make(isVisible: true, style: .default)
+//        columnView = renderColumnView()
+//        XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 1)
     }
 
     
