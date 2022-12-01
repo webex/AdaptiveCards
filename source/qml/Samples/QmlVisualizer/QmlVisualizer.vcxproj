@@ -126,6 +126,9 @@
     <None Include="AdaptiveCardQml\CustomCheckBox.qml" />
     <None Include="AdaptiveCardQml\CustomRadioButton.qml" />
     <None Include="AdaptiveCardQml\ImageRender.qml" />
+    <None Include="AdaptiveCardQml\InputErrorMessage.qml" />
+    <None Include="AdaptiveCardQml\InputLabel.qml" />
+    <None Include="AdaptiveCardQml\CardGenericTextElement.qml" />
     <None Include="AdaptiveCardQml\RichTextBlockRender.qml" />
     <None Include="AdaptiveCardQml\SeparatorRender.qml" />
     <None Include="AdaptiveCardQml\TextBlockRender.qml" />

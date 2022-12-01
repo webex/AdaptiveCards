@@ -20,5 +20,8 @@
         <file alias="ChoiceSetRender.qml">AdaptiveCardQml/ChoiceSetRender.qml</file>
         <file alias="ComboboxRender.qml">AdaptiveCardQml/ComboboxRender.qml</file>
         <file alias="CustomRadioButton.qml">AdaptiveCardQml/CustomRadioButton.qml</file>
+        <file alias="InputErrorMessage.qml">AdaptiveCardQml/InputErrorMessage.qml</file>
+        <file alias="InputLabel.qml">AdaptiveCardQml/InputLabel.qml</file>
+        <file alias="CardGenericTextElement.qml">AdaptiveCardQml/CardGenericTextElement.qml</file>
     </qresource>
 </RCC>

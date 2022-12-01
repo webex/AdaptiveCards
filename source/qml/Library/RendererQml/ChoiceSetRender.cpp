@@ -78,7 +78,7 @@ void ChoiceSetElement::initialize()
     mChoiceSetColElement->Property("width", "parent.width");
     mChoiceSetColElement->Property("visible", mChoiceSetInput->GetIsVisible() ? "true" : "false");
 
-    if (!mEscapedErrorString.empty())
+    if (!mEscapedPlaceholderString.empty())
     {
         mChoiceSetColElement->Property("_mEscapedPlaceholderString", RendererQml::Formatter() << "String.raw`" << mEscapedPlaceholderString << "`");
     }

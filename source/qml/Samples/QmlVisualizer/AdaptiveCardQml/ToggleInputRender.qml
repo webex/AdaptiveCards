@@ -42,16 +42,12 @@ Column {
     }
     onIsCheckedChanged: validate()
 
-    Label {
+    InputLabel {
         id: _inputToggleLabel
 
-        wrapMode: Text.Wrap
-        width: parent.width
-        color: CardConstants.toggleButtonConstants.textColor
-        font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
-        Accessible.ignored: true
-        text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
-        visible: text.length
+        _label: _mEscapedLabelString
+        _required: _isRequired
+        visible: _label.length
     }
 
     CustomCheckBox {
@@ -61,15 +57,10 @@ Column {
         _consumer: toggleInput
     }
 
-    Label {
+    InputErrorMessage {
         id: _inputToggleErrorMessage
 
-        wrapMode: Text.Wrap
-        width: parent.width
-        font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
-        Accessible.ignored: true
-        color: CardConstants.toggleButtonConstants.errorMessageColor
-        text: _mEscapedErrorString
+        _errorMessage: _mEscapedErrorString
         visible: showErrorMessage && _mEscapedErrorString.length
     }
 

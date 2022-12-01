@@ -43,16 +43,12 @@ Column {
 
     }
 
-    Label {
+    InputLabel {
         id: _choiceSetLabel
 
-        wrapMode: Text.Wrap
-        width: parent.width
-        color: CardConstants.toggleButtonConstants.textColor
-        font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
-        Accessible.ignored: true
-        text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
-        visible: text.length
+        _label: _mEscapedLabelString
+        _required: _isRequired
+        visible: _label.length
     }
 
     Loader {
@@ -215,16 +211,11 @@ Column {
 
     }
 
-    Label {
+    InputErrorMessage {
         id: _choiceSetErrorMessage
 
-        wrapMode: Text.Wrap
-        width: parent.width
-        font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
-        Accessible.ignored: true
-        color: CardConstants.toggleButtonConstants.errorMessageColor
-        text: _mEscapedErrorString
-        visible: showErrorMessage && _mEscapedErrorString.length
+        _errorMessage: _mEscapedErrorString
+        visible: showErrorMessage && _errorMessage.length
     }
 
 }
