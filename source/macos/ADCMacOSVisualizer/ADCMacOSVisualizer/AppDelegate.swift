@@ -4,7 +4,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        let minWindowSize = NSSize(width: 840, height: 540)
+        let minWindowSize = NSSize(width: 1366, height: 768)
         window = NSWindow(contentRect: NSRect(origin: .zero, size: minWindowSize), styleMask: [.miniaturizable, .closable, .titled, .resizable], backing: .buffered, defer: false)
         window?.title = "ADCMacOSVisualizer"
         window?.minSize = minWindowSize
