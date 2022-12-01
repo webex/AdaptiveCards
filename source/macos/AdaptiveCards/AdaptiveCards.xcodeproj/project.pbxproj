@@ -545,6 +545,7 @@
 		A0805F5D25E40D0F00B3F8EA /* FakeRichTextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0805F5C25E40D0F00B3F8EA /* FakeRichTextBlock.swift */; };
 		A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */; };
 		AA05DC7E28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA05DC7D28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift */; };
+		AA09229D2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA09229C2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift */; };
 		AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */; };
 		AA26969D28D050470095D396 /* ACRCompactChoiceSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA26969C28D050470095D396 /* ACRCompactChoiceSetView.swift */; };
 		AA26969F28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA26969E28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift */; };
@@ -1137,6 +1138,7 @@
 		A0805F5C25E40D0F00B3F8EA /* FakeRichTextBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeRichTextBlock.swift; sourceTree = "<group>"; };
 		A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRenderer.swift; sourceTree = "<group>"; };
 		AA05DC7D28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputLabelTextFieldTests.swift; sourceTree = "<group>"; };
+		AA09229C2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSCollectionViewAlignLayout.swift; sourceTree = "<group>"; };
 		AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACOVisibilityContext.swift; sourceTree = "<group>"; };
 		AA26969C28D050470095D396 /* ACRCompactChoiceSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRCompactChoiceSetView.swift; sourceTree = "<group>"; };
 		AA26969E28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRChoiceSetCompactPopupButton.swift; sourceTree = "<group>"; };
@@ -1199,6 +1201,7 @@
 				08D7767025CBF27B0095C1B3 /* LogUtils.swift */,
 				0876273E27734F9800F3347F /* ViewUtils.swift */,
 				AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */,
+				AA09229C2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2436,6 +2439,7 @@
 				28F4E2192681DAE3000B5131 /* ACRScrollView.swift in Sources */,
 				08B5F91125C924F400A7D37A /* TextBlockRenderer.swift in Sources */,
 				A032272025E9254C00E7172E /* ACRImageProperties.swift in Sources */,
+				AA09229D2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift in Sources */,
 				13C465E525DD3C07006E4605 /* InputDateRenderer.swift in Sources */,
 				AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */,
 				2910CF012600A82A000910C8 /* ACRActionSetView.swift in Sources */,

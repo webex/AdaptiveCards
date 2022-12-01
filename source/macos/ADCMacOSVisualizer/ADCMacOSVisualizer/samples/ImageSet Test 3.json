@@ -1,0 +1,66 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.2",
+    "body": [
+        {
+            "type": "ImageSet",
+            "imageSize": "small",
+            "images": [
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Medium",
+                    "width": "250px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/100/300",
+                    "altText": "Cat",
+                    "size": "Medium",
+                    "width": "500px",
+                    "height": "100px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/200/300",
+                    "altText": "Cat",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://picsum.photos/380/100",
+                    "altText": "Cat",
+                    "size": "Medium",
+                    "width": "380px",
+                    "height": "100px"
+                }
+            ]
+        }
+    ]
+}
