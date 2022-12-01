@@ -40,7 +40,10 @@ void ToggleInputElement::addCheckBox()
     const auto valueOn = !mToggleInput->GetValueOn().empty() ? mToggleInput->GetValueOn() : "true";
     const auto valueOff = !mToggleInput->GetValueOff().empty() ? mToggleInput->GetValueOff() : "false";
     const bool isChecked = mToggleInput->GetValue().compare(valueOn) == 0 ? true : false;
-    mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().checkBoxRowHeight);
+    if (mToggleInput->GetIsVisible())
+    {
+        mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().checkBoxRowHeight);
+    }
     const RendererQml::Checkbox mCheckBox = RendererQml::Checkbox(mToggleInput->GetId() + "_inputToggle",
         RendererQml::CheckBoxType::Toggle,
         mToggleInput->GetTitle(),
@@ -75,7 +78,10 @@ void ToggleInputElement::addInputLabel()
     {
         if (!mToggleInput->GetLabel().empty())
         {
-            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
+            if (mToggleInput->GetIsVisible())
+            {
+                mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
+            }
             std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
             mToggleInput->GetIsRequired() == true ? mToggleInputColElement->Property("_isRequired", "true") : mToggleInputColElement->Property("_isRequired", "false");
             mToggleInputColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");

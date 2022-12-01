@@ -38,7 +38,6 @@ CheckBox {
 
     checked: _cbIsChecked
     width: parent.width
-    font.pixelSize: CardConstants.toggleButtonConstants.pixelSize
     Keys.onReturnPressed: onButtonClicked()
     onPressed: customCheckBox.colorChange(customCheckBox, true)
     onReleased: customCheckBox.colorChange(customCheckBox, false)
@@ -61,8 +60,8 @@ CheckBox {
     indicator: Rectangle {
     }
 
-    contentItem: RowLayout {
-        height: CardConstants.toggleButtonConstants.rowHeight
+    contentItem: Row {
+        id: customCheckBoxRLayout
         width: customCheckBox.width
         spacing: CardConstants.toggleButtonConstants.rowSpacing
 
@@ -101,7 +100,7 @@ CheckBox {
 
             text: _cbTitle
             wrapMode: _cbisWrap ? Text.Wrap : Text.NoWrap
-            Layout.fillWidth: true
+            width: parent.width - customCheckBoxButton.width - spacing
             Component.onCompleted: {
                 onTextElementClicked.connect(customCheckBox.onButtonClicked);
             }

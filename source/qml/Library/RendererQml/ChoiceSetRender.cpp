@@ -94,6 +94,10 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
 
     if (checkBoxType == RendererQml::CheckBoxType::ComboBox)
     {
+        if (mChoiceSetInput->GetIsVisible())
+        {
+            mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().inputElementHeight);
+        }
         std::string choice_Text;
         std::string choice_Value;
 
@@ -123,6 +127,10 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
     }
     else
     {
+        if (mChoiceSetInput->GetIsVisible())
+        {
+            mContext->addHeightEstimate(int(choiceSet.choices.size()) * mContext->GetRenderConfig()->getCardConfig().checkBoxRowHeight);
+        }
         std::string choice_Text;
         std::string initialValues;
 
@@ -173,7 +181,10 @@ void ChoiceSetElement::addInputLabel(bool isRequired)
         if (!mChoiceSetInput->GetLabel().empty())
         {
             const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
-            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mChoiceSetInput->GetLabel()));
+            if (mChoiceSetInput->GetIsVisible())
+            {
+                mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mChoiceSetInput->GetLabel()));
+            }
             mChoiceSetColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");
         }
         else
