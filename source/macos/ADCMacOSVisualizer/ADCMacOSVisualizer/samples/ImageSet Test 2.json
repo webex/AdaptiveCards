@@ -1,0 +1,80 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.2",
+    "body": [
+        {
+            "type": "ImageSet",
+            "images": [
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "width": "100px",
+                    "height": "70px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "width": "70px",
+                    "height": "100px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "width": "300px",
+                    "height": "100px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Small"
+                }
+            ],
+            "imageSize": "Small"
+        },
+        {
+            "type": "ImageSet",
+            "images": [
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "width": "200px",
+                    "height": "70px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "width": "70px",
+                    "height": "100px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "width": "500px",
+                    "height": "100px"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Small",
+                    "height": "500px"
+                }
+            ],
+            "imageSize": "Small"
+        }
+    ]
+}
