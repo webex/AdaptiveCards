@@ -155,6 +155,7 @@ class ImageUtils {
         // Setting up content holder view
         let wrappingView = ACRImageWrappingView(imageProperties: imageProperties, imageView: imageView)
         wrappingView.translatesAutoresizingMaskIntoConstraints = false
+        wrappingView.isImageSet = isImageSet
         // Background color attribute
         if let backgroundColor = element.getBackgroundColor(), !backgroundColor.isEmpty {
             imageView.wantsLayer = true

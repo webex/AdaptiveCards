@@ -60,7 +60,6 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
     }
     
     func update(imageProperties: ACRImageProperties) {
-        isImageSet = true
         self.imageProperties = imageProperties
         self.invalidateIntrinsicContentSize()
     }
