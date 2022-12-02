@@ -58,16 +58,7 @@ void ToggleInputElement::addCheckBox()
     mToggleInputColElement->Property("checkBox._cbValueOn", RendererQml::Formatter() << "String.raw`" << mEscapedValueOn << "`");
     mToggleInputColElement->Property("checkBox._cbValueOff", RendererQml::Formatter() << "String.raw`" << mEscapedValueOff << "`");
 
-    std::string text = RendererQml::TextUtils::ApplyTextFunctions(mCheckBox.text, mContext->GetLang());
-
-    auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(text);
-    text = markdownParser->TransformToHtml();
-    text = RendererQml::Utils::HandleEscapeSequences(text);
-
-    const std::string linkColor = mContext->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
-    const std::string textDecoration = "none";
-    text = RendererQml::Utils::FormatHtmlUrl(text, linkColor, textDecoration);
-
+    std::string text = RendererQml::AdaptiveCardQmlRenderer::ParseMarkdownString(mCheckBox.text, mContext);
     mToggleInputColElement->Property("checkBox._cbTitle", text, true);
     mToggleInputColElement->Property("checkBox._cbIsChecked", mCheckBox.isChecked == true ? "true" : "false");
     mToggleInputColElement->Property("checkBox._cbisWrap", mCheckBox.isWrap == true ? "true" : "false");

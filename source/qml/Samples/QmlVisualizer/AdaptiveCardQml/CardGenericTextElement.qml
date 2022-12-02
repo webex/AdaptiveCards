@@ -7,8 +7,9 @@ import QtQuick.Layouts 1.3
 TextEdit {
     id: textElement
 
-    property string accessibleText: getText(0, length)
-    property string link: ""
+    property string _accessibleText: getText(0, length)
+    property string _link: ""
+    property var _adaptiveCard
 
     signal onTextElementClicked()
 
@@ -36,11 +37,10 @@ TextEdit {
     wrapMode: Text.Wrap
     text: ""
     onLinkActivated: {
-        _adaptiveCard.buttonClicked("", "Action.OpenUrl", link);
-        console.log(link);
+        _adaptiveCard.buttonClicked("", "Action.OpenUrl", _link);
     }
     activeFocusOnTab: true
-    Accessible.name: accessibleText
+    Accessible.name: _accessibleText
     readOnly: true
     selectByMouse: true
     selectByKeyboard: true
@@ -48,12 +48,12 @@ TextEdit {
     selectedTextColor: color
     Keys.onPressed: {
         if (event.key === Qt.Key_Tab) {
-            event.accepted = selectLink(this, true);
+            event.accepted = AdaptiveCardUtils.selectLink(this, true);
         } else if (event.key === Qt.Key_Backtab) {
-            event.accepted = selectLink(this, false);
+            event.accepted = AdaptiveCardUtils.selectLink(this, false);
         } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
-            if (link)
-                linkActivated(link);
+            if (_link)
+                linkActivated(_link);
 
             event.accepted = true;
         } else if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
@@ -61,15 +61,15 @@ TextEdit {
         }
     }
     onSelectedTextChanged: {
-        if (link)
-            accessibleText = selectedText + ' has link,' + link + '. To activate press space bar.';
+        if (_link)
+            _accessibleText = selectedText + ' has link,' + _link + '. To activate press space bar.';
         else
-            accessibleText = '';
+            _accessibleText = '';
     }
     onActiveFocusChanged: {
         if (activeFocus) {
-            textEditFocussed(textElement);
-            accessibleText = getText(0, length);
+            _adaptiveCard.textEditFocussed(textElement);
+            _accessibleText = getText(0, length);
         }
     }
 
@@ -86,7 +86,7 @@ TextEdit {
             const mouseGlobal = mapToGlobal(mouseX, mouseY);
             const posAtMessage = mapToItem(_adaptiveCard, mouse.x, mouse.y);
             if (mouse.button === Qt.RightButton) {
-                openContextMenu(mouseGlobal, textElement.selectedText, parent.linkAt(mouse.x, mouse.y));
+                _adaptiveCard.openContextMenu(mouseGlobal, textElement.selectedText, parent.linkAt(mouse.x, mouse.y));
                 mouse.accepted = true;
             } else if (mouse.button === Qt.LeftButton) {
                 parent.cursorPosition = parent.positionAt(posAtMessage.x, posAtMessage.y);
@@ -101,9 +101,9 @@ TextEdit {
             if (mouse.buttons & Qt.LeftButton)
                 parent.moveCursorSelection(parent.positionAt(mouse.x, mouse.y));
 
-            var link = parent.linkAt(mouse.x, mouse.y);
-            _adaptiveCard.showToolTipifNeeded(link, mouseGlobal);
-            if (link)
+            _link = parent.linkAt(mouse.x, mouse.y);
+            _adaptiveCard.showToolTipifNeeded(_link, mouseGlobal);
+            if (_link)
                 cursorShape = Qt.PointingHandCursor;
             else
                 cursorShape = Qt.IBeamCursor;
