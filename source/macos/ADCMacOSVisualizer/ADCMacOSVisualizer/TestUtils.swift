@@ -56,6 +56,15 @@ public class TestUtils {
         "https://adaptivecards.io/content/send.png": NSSize(width: 69, height: 70),
         "https://unsplash.it/80?image=1082": NSSize(width: 80, height: 80),
         "https://unsplash.it/80?image=1083": NSSize(width: 80, height: 80),
-        "https://unsplash.it/80?image=1080": NSSize(width: 80, height: 80)
+        "https://unsplash.it/80?image=1080": NSSize(width: 80, height: 80),
+        "https://picsum.photos/200/200?image=100": NSSize(width: 200, height: 200),
+        "https://picsum.photos/300/200?image=200": NSSize(width: 300, height: 200),
+        "https://picsum.photos/300/200?image=301": NSSize(width: 300, height: 200),
+        "https://picsum.photos/200/200?image=400": NSSize(width: 200, height: 200),
+        "https://picsum.photos/300/200?image=500": NSSize(width: 300, height: 200),
+        "https://picsum.photos/200/200?image=600": NSSize(width: 200, height: 200),
+        "https://picsum.photos/300/200?image=700": NSSize(width: 300, height: 200),
+        "https://picsum.photos/300/200?image=800": NSSize(width: 300, height: 200),
+        "https://picsum.photos/300/200?image=900": NSSize(width: 300, height: 200)
     ]
 }
