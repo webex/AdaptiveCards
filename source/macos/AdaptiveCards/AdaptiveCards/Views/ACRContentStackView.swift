@@ -282,16 +282,15 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         }
     }
     
-    /// this function will tell if the content stack view should have a padding
-    /// padding will be added if
+    /// this function will tell if the content stack view should show a padding
+    /// padding will be visible if
     /// none of its subviews is stretchable or has padding and there is at least
     /// one visible view.
     /// the content stack view has hasStrechableView property, but getting the property value
     /// has cost, so added the hasStretcahbleView parameter to reduce the number of call to
     /// the property value.
-    /// todo part : add visiblity checking for stretchable view.
     
-    func shouldAddPadding(_ hasStretchableView: Bool) -> Bool {
+    func shouldShowPadding(_ hasStretchableView: Bool) -> Bool {
         return !hasStretchableView && visibilityManager.hasVisibleViews
     }
     
@@ -332,7 +331,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         self.applyVisibilityToSubviews()
         
         if self.hasStretchableView || visibilityManager.hasVisibleViews {
-            visibilityManager.fillerSpaceManager.addLastStretchableView(for: self, isHidden: (hasStretchableView || !visibilityManager.hasVisibleViews))
+            visibilityManager.fillerSpaceManager.addLastStretchableView(for: self, isHidden: !shouldShowPadding(hasStretchableView))
         }
         
         self.setMinimumHeight(minHeight)
