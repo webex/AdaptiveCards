@@ -13,12 +13,8 @@ class ACRCollectionView: NSScrollView {
     
     private var itemSize: CGSize {
         switch imageSize {
-        case .stretch, .none:
+        case .none, .auto, .stretch:
             return ImageUtils.getImageSizeAsCGSize(imageSize: .medium, with: hostConfig)
-        case .auto:
-            let mediumSize = ImageUtils.getImageSizeAsCGSize(imageSize: .medium, with: hostConfig)
-            let itemWidth = min(mediumSize.width, bounds.width)
-            return CGSize(width: itemWidth, height: itemWidth)
         default:
             return ImageUtils.getImageSizeAsCGSize(imageSize: imageSize, with: hostConfig)
         }
@@ -38,7 +34,7 @@ class ACRCollectionView: NSScrollView {
     init(rootView: ACRView, parentView: NSView, imageSet: ACSImageSet, hostConfig: ACSHostConfig) {
         self.imageSet = imageSet
         self.hostConfig = hostConfig
-        let imageSetImageSize: ACSImageSize = imageSet.getImageSize() == .none ? .medium : imageSet.getImageSize()
+        let imageSetImageSize: ACSImageSize = (imageSet.getImageSize() == .none || imageSet.getImageSize() == .auto || imageSet.getImageSize() == .stretch) ? .medium : imageSet.getImageSize()
         self.imageSize = imageSetImageSize
         self.imageViews = imageSet.getImages().map {
             let imageWrappingView = ImageUtils.getImageWrappingViewFor(element: $0, hostConfig: hostConfig, rootView: rootView, parentView: parentView, isImageSet: true, imageSetImageSize: imageSetImageSize)
@@ -79,13 +75,21 @@ class ACRCollectionView: NSScrollView {
                 var explicitDimensions = NSSize.zero
                 if imgItemProperties.hasExplicitDimensions && imgItemProperties.pixelWidth.isNormal && imgItemProperties.pixelHeight.isNormal {
                     explicitDimensions = NSSize(width: imgItemProperties.pixelWidth > self.bounds.width ? self.bounds.width : imgItemProperties.pixelWidth, height: imgItemProperties.pixelHeight)
-                } else if imgItemProperties.hasExplicitDimensions && max(imgItemProperties.pixelWidth, imgItemProperties.pixelHeight).isNormal {
-                    let maxValue = max(imgItemProperties.pixelWidth, imgItemProperties.pixelHeight)
-                    explicitDimensions = NSSize(width: maxValue, height: maxValue)
+                } else if imgItemProperties.hasExplicitDimensions && (imgItemProperties.pixelWidth.isNormal || imgItemProperties.pixelHeight.isNormal) {
+                    if let contentSize = imageViews[index].imageProperties?.contentSize {
+                        explicitDimensions = contentSize
+                    } else {
+                        let maxValue = max(imgItemProperties.pixelWidth, imgItemProperties.pixelHeight)
+                        explicitDimensions = NSSize(width: maxValue, height: maxValue)
+                    }
                 } else {
-                    explicitDimensions = itemSize
+                    if let contentSize = imageViews[index].imageProperties?.contentSize {
+                        explicitDimensions = contentSize
+                    } else {
+                        explicitDimensions = itemSize
+                    }
                 }
-                let tempWidth = (rowWidth + explicitDimensions.width + interItemSpacing)
+                let tempWidth = (rowWidth + explicitDimensions.width)
                 if tempWidth <= frameWidth {
                     rowWidth += explicitDimensions.width + interItemSpacing
                     maxHeight = max(maxHeight, explicitDimensions.height)
@@ -176,10 +180,18 @@ extension ACRCollectionView: ACSCollectionViewAlignLayoutDelegate {
             if !itemProperties.pixelWidth.isZero && !itemProperties.pixelHeight.isZero {
                 size = NSSize(width: itemProperties.pixelWidth > self.bounds.width ? self.bounds.width : itemProperties.pixelWidth, height: itemProperties.pixelHeight)
                 return size
-            } else if itemProperties.pixelWidth.isZero || itemProperties.pixelHeight.isZero {
+            } else if itemProperties.pixelWidth.isNormal || itemProperties.pixelHeight.isNormal {
+                if let contentSize = imageViews[indexPath.item].imageProperties?.contentSize {
+                    size = contentSize
+                    return size
+                }
                 let maxValue = max(itemProperties.pixelWidth, itemProperties.pixelHeight)
                 size = NSSize(width: maxValue, height: maxValue)
                 return size
+            }
+        } else {
+            if let contentSize = imageViews[indexPath.item].imageProperties?.contentSize {
+                return contentSize
             }
         }
         return itemSize
