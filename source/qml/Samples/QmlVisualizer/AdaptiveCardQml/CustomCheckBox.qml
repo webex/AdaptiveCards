@@ -60,7 +60,7 @@ CheckBox {
     indicator: Rectangle {
     }
 
-    contentItem: Row {
+    contentItem: RowLayout {
         id: customCheckBoxRLayout
         width: customCheckBox.width
         spacing: CardConstants.toggleButtonConstants.rowSpacing
@@ -100,7 +100,7 @@ CheckBox {
 
             text: _cbTitle
             wrapMode: _cbisWrap ? Text.Wrap : Text.NoWrap
-            width: parent.width - customCheckBoxButton.width - spacing
+            Layout.fillWidth: true
             Component.onCompleted: {
                 onTextElementClicked.connect(customCheckBox.onButtonClicked);
             }
