@@ -1,0 +1,658 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Input.Text",
+            "id": "card_id",
+            "value": "Request",
+            "isVisible": false
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "style": "Person",
+                                    "url": "https://i.ibb.co/1ZYV8sD/OCP.png",
+                                    "size": "Medium",
+                                    "height": "50px"
+                                }
+                            ],
+                            "width": "auto"
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "OCP Resource Request",
+                                    "weight": "Lighter",
+                                    "color": "Accent"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "weight": "Bolder",
+                                    "text": "VMR20221119200",
+                                    "wrap": true,
+                                    "color": "Light",
+                                    "size": "Large",
+                                    "spacing": "Small"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet"
+                }
+            ],
+            "bleed": true
+        },
+        {
+            "type": "ColumnSet",
+            "spacing": "Small",
+            "columns": [
+                {
+                    "type": "Column",
+                    "spacing": "Small",
+                    "width": 30,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Request Type",
+                            "color": "Light",
+                            "wrap": true,
+                            "spacing": "Small"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "spacing": "Small",
+                    "width": 70,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "VM Request",
+                            "color": "Light",
+                            "wrap": true,
+                            "spacing": "Small"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "spacing": "Small",
+            "columns": [
+                {
+                    "type": "Column",
+                    "spacing": "Small",
+                    "width": 30,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Request By",
+                            "wrap": true,
+                            "color": "Light",
+                            "spacing": "Small"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "spacing": "Small",
+                    "width": 70,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "minsu",
+                            "color": "Light",
+                            "wrap": true,
+                            "spacing": "Small"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "spacing": "Small",
+            "columns": [
+                {
+                    "type": "Column",
+                    "spacing": "Small",
+                    "width": 30,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Created At",
+                            "color": "Light",
+                            "wrap": true,
+                            "spacing": "Small"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "spacing": "Small",
+                    "width": 70,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "2022-11-19T12:40:08.459857",
+                            "color": "Light",
+                            "wrap": true,
+                            "spacing": "Small"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "spacing": "Small",
+            "columns": [
+                {
+                    "type": "Column",
+                    "spacing": "Small",
+                    "width": 30,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Status",
+                            "color": "Light",
+                            "wrap": true,
+                            "spacing": "Small"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "spacing": "Small",
+                    "width": 70,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "created",
+                            "color": "Light",
+                            "wrap": true,
+                            "spacing": "Small"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "separator": true,
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 90,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Request Details",
+                                    "wrap": true,
+                                    "spacing": "Small",
+                                    "color": "Accent"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "OCP Zone",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "ci02qa",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Project Name",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "wbx3-lab",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Container",
+                    "separator": true,
+                    "items": [
+                        {
+                            "type": "ColumnSet",
+                            "spacing": "Small",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "width": 90,
+                                    "spacing": "Small",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "text": "VM Request",
+                                            "wrap": true,
+                                            "spacing": "Small",
+                                            "color": "Accent"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Pmo Project ID",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "PRO0000001",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Support Group",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "N/A",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Vcpu",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "8",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Ram",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "64",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Disk",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "80",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Ephemeral Disk",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "0",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Aggregate",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "N/A",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "spacing": "Small",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 30,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "QTY",
+                                    "color": "Light",
+                                    "width": "30",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": 70,
+                            "spacing": "Small",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "10",
+                                    "color": "Light",
+                                    "width": "70",
+                                    "wrap": true,
+                                    "spacing": "Small"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "bleed": true
+        },
+        {
+            "type": "ColumnSet"
+        },
+        {
+            "type": "ActionSet",
+            "spacing": "Small",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Approve",
+                    "style": "positive",
+                    "data": {
+                        "action": "approve",
+                        "submit_id": "approve",
+                        "id": "VMR20221119200"
+                    }
+                },
+                {
+                    "type": "Action.ShowCard",
+                    "title": "Reject",
+                    "style": "destructive",
+                    "card": {
+                        "type": "AdaptiveCard",
+                        "body": [
+                            {
+                                "type": "Input.Text",
+                                "id": "reject_message",
+                                "placeholder": "Please specify an appropriate reason for rejection.",
+                                "isMultiline": true
+                            }
+                        ],
+                        "actions": [
+                            {
+                                "type": "Action.Submit",
+                                "title": "Send",
+                                "data": {
+                                    "id": "VMR20221119200",
+                                    "action": "reject",
+                                    "submit_id": "reject"
+                                }
+                            }
+                        ],
+                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3"
+}
