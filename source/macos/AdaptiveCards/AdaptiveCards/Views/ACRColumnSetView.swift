@@ -68,7 +68,7 @@ class ACRColumnSetView: ACRContentStackView {
         }
     }
     
-    override func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?, isBackgroundImageAvailable: Bool) {
+    override func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?) {
         self.applyVisibilityToSubviews()
         self.setMinimumHeight(minHeight)
     }

@@ -85,9 +85,6 @@ class ACRColumnView: ACRContentStackView {
         
         manageWidth(of: subview)
         super.addArrangedSubview(subview)
-        if subview is ACRContentStackView {
-            subview.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
-        }
     }
     
     override func setupViews() {

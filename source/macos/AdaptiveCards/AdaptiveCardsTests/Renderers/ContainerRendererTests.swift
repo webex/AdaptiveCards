@@ -35,12 +35,13 @@ class ContainerRendererTests: XCTestCase {
     
     func testRendererSetsVerticalContentAlignment() {
         container = .make(verticalContentAlignment: .top)
-        var containerView = renderContainerView(container)
-        // For HeightType Property we have add stretchable view. so it will increase count for subviews.
-        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 1)
+        // Removing this since we don't need subviews to have padding to have explicit width
+//        var containerView = renderContainerView(container)
+//        // For HeightType Property we have add stretchable view. so it will increase count for subviews.
+//        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 1)
         
         container = .make(verticalContentAlignment: .bottom, items: [FakeTextBlock.make()])
-        containerView = renderContainerView(container)
+        var containerView = renderContainerView(container)
         // since we removed padding view all together and replaced with lastPadding but use paddingView for vertical content alignment this has changed
         // SpaceView 1
         XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 3)
@@ -87,12 +88,14 @@ class ContainerRendererTests: XCTestCase {
     
     func testPaddingWhenContainerEmptyWithoutStyle() {
         // No padding added
-        var containerView = renderContainerView(FakeContainer.make(style: .none, elemType: .container, visible: true))
+        let containerView = renderContainerView(FakeContainer.make(style: .none, elemType: .container, visible: true))
         XCTAssertEqual(containerView.stackView.arrangedSubviews.count, 0)
         
+        
+        // Removing this test since now we don't need to add a padding to make containers visible
         //Added padding
-        containerView = renderContainerView(FakeContainer.make(style: .default, elemType: .container, visible: true))
-        XCTAssertEqual(containerView.stackView.arrangedSubviews.count, 1)
+//        containerView = renderContainerView(FakeContainer.make(style: .default, elemType: .container, visible: true))
+//        XCTAssertEqual(containerView.stackView.arrangedSubviews.count, 1)
     }
     
     func testRendersItems() {
