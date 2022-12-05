@@ -62,7 +62,7 @@ RadioButton {
     indicator: Rectangle {
     }
 
-    contentItem: Row {
+    contentItem: RowLayout {
         height: toggleButtonConstants.rowHeight
         width: customRadioButton.width
         spacing: toggleButtonConstants.rowSpacing
@@ -93,7 +93,7 @@ RadioButton {
 
             text: _rbTitle
             wrapMode: _rbisWrap ? Text.Wrap : Text.NoWrap
-            width: parent.width - customRadioButtonOuterRectancle.width - spacing
+            Layout.fillWidth: true
             Component.onCompleted: {
                 onTextElementClicked.connect(customRadioButton.onButtonClicked);
             }
