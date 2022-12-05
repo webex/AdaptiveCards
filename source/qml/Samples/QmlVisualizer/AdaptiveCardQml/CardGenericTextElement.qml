@@ -32,7 +32,6 @@ TextEdit {
     verticalAlignment: Text.AlignVCenter
     font.pixelSize: CardConstants.toggleButtonConstants.pixelSize
     color: CardConstants.toggleButtonConstants.textColor
-    width: parent.width
     wrapMode: Text.Wrap
     text: ""
     onLinkActivated: {

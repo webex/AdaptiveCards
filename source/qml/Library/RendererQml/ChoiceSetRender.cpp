@@ -148,7 +148,7 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
             choice_Text = RendererQml::Utils::FormatHtmlUrl(choice_Text, linkColor, textDecoration);
 
             model << "append({ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice.value) << "`,";
-            model << "title: '" << choice_Text << "',";
+            model << "title: \"" << choice_Text << "\",";
             model << "isWrap : " << (choice.isWrap ? "true" : "false") << ", isChecked : " << (choice.isChecked ? "true" : "false") << "}); \n";
 
             if (choice.isChecked)
