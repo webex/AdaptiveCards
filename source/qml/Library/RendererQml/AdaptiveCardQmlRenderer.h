@@ -61,7 +61,7 @@ namespace RendererQml
         static std::shared_ptr<QmlTag> GetIconTag(std::shared_ptr<AdaptiveRenderContext> context);
         static std::shared_ptr<QmlTag> GetStretchRectangle(std::shared_ptr<QmlTag> element);
         static std::shared_ptr<QmlTag> GetTextBlockMouseArea(std::string id, bool isButton = false);
-        static std::shared_ptr<QmlTag> AddAccessibilityToTextBlock(std::shared_ptr<QmlTag> uiTextBlock, std::shared_ptr<AdaptiveRenderContext> context);
+        static std::string ParseMarkdownString(std::string text, std::shared_ptr<AdaptiveRenderContext> context);
 
     protected:
         static void addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context, const std::string parentName, const bool hasBackgroundImage = false);
@@ -115,15 +115,6 @@ namespace RendererQml
 		static const std::string getActionShowCardClickFunc(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveRenderContext>& context);
 		static const std::string getActionToggleVisibilityClickFunc(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
 		static const std::string getActionToggleVisibilityObject(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
-
-		static const std::string getStretchWidth();
-		static const std::string getStretchHeight();
-		static const std::string getMinWidth();
-		static const std::string getMinWidthActionSet();
-		static const std::string getMinWidthFactSet();
-		static const std::string getSelectLinkFunction();
-        static const std::string getCardHeightFunction();
-        static const std::string getActinSetHorizontalAlignFunc();
 
 		template <typename CardElement>
 		static const std::shared_ptr<QmlTag> applyHorizontalBleed(CardElement cardElement, std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveRenderContext> context);
