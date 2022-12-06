@@ -92,6 +92,7 @@ RadioButton {
             id: customRadioButtonTitle
 
             text: _rbTitle
+            _adaptiveCard: customRadioButton._adaptiveCard
             wrapMode: _rbisWrap ? Text.Wrap : Text.NoWrap
             Layout.fillWidth: true
             Component.onCompleted: {

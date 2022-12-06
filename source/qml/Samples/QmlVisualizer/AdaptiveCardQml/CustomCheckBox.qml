@@ -99,6 +99,7 @@ CheckBox {
             id: customCheckBoxTitle
 
             text: _cbTitle
+            _adaptiveCard: customCheckBox._adaptiveCard
             wrapMode: _cbisWrap ? Text.Wrap : Text.NoWrap
             Layout.fillWidth: true
             Component.onCompleted: {
