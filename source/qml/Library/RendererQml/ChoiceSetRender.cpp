@@ -137,15 +137,7 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         model << "ListModel{Component.onCompleted : {";
         for (const auto& choice : choiceSet.choices)
         {
-            std::string choice_Text = RendererQml::TextUtils::ApplyTextFunctions(choice.text, mContext->GetLang());
-
-            auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(choice_Text);
-            choice_Text = markdownParser->TransformToHtml();
-            choice_Text = RendererQml::Utils::HandleEscapeSequences(choice_Text);
-
-            const std::string linkColor = mContext->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
-            const std::string textDecoration = "none";
-            choice_Text = RendererQml::Utils::FormatHtmlUrl(choice_Text, linkColor, textDecoration);
+            std::string choice_Text = RendererQml::AdaptiveCardQmlRenderer::ParseMarkdownString(choice.text, mContext);
 
             model << "append({ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice.value) << "`,";
             model << "title: \"" << choice_Text << "\",";
