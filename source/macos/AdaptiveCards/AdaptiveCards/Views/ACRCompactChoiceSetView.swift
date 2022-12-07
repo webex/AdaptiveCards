@@ -84,6 +84,7 @@ class ACRCompactChoiceSetView: NSView {
             choiceSetPopup.addItem(withTitle: "")
             let item = choiceSetPopup.item(at: index)
             item?.title = title
+            item?.toolTip = title
             // item?.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
             choiceSetPopup.arrayValues.append(choice.getValue())
             if element.getValue() == choice.getValue() {
