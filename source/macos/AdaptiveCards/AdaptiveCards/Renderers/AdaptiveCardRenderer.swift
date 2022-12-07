@@ -101,7 +101,7 @@ class AdaptiveCardRenderer {
             rootView.configureLayoutAndVisibility(verticalContentAlignment: card.getVerticalContentAlignment(), minHeight: card.getMinHeight())
         }
         rootView.appearance = NSAppearance.getAppearance(isDark: config.isDarkMode)
-        rootView.dispatchResolveRequests()
+        rootView.dispatchImageResolveRequests()
         return rootView
     }
 }

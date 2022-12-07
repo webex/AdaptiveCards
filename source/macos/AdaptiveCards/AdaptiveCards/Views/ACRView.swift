@@ -74,12 +74,6 @@ class ACRView: ACRColumnView {
         return resolverDelegate?.adaptiveCard(self, dimensionsForImageWith: url)
     }
     
-    func dispatchResolveRequests() {
-        for url in imageViewMap.keys {
-            resolverDelegate?.adaptiveCard(self, requestImageFor: url)
-        }
-    }
-    
     func resetKeyboardFocus() {
         if isLayoutDoneOnShowCard, let lastFocusedElement = currentFocusedActionElement {
             lastFocusedElement.controlView?.setAccessibilityFocused(true)
@@ -252,6 +246,12 @@ extension ACRView: ImageResourceHandlerView {
             self.renderedShowCards
                 .compactMap { $0 as? ImageResourceHandlerView }
                 .forEach { $0.setImage(image, forURLsContaining: matcher) }
+        }
+    }
+    
+    func dispatchImageResolveRequests() {
+        for url in imageViewMap.keys {
+            resolverDelegate?.adaptiveCard(self, requestImageFor: url)
         }
     }
 }
