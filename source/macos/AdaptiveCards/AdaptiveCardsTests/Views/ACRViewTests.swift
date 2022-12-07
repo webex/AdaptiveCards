@@ -49,7 +49,7 @@ class ACRViewTests: XCTestCase {
         view.registerImageHandlingView(imageView2, for: "test2")
         view.registerImageHandlingView(imageView3, for: "test3")
         
-        view.dispatchResolveRequests()
+        view.dispatchImageResolveRequests()
         
         XCTAssertEqual(fakeResourceResolver.calledCount, 3)
         wait(for: [imageView1.expectation!, imageView2.expectation!, imageView3.expectation!], timeout: 0.2)
@@ -66,7 +66,7 @@ class ACRViewTests: XCTestCase {
         view.registerImageHandlingView(FakeImageHoldingView(), for: "test")
         view.registerImageHandlingView(FakeImageHoldingView(), for: "test2")
         
-        view.dispatchResolveRequests()
+        view.dispatchImageResolveRequests()
         
         XCTAssertEqual(fakeResourceResolver.calledCount, 2)
         XCTAssertEqual(fakeResourceResolver.calledURLs.count, 2)
@@ -87,7 +87,7 @@ class ACRViewTests: XCTestCase {
         view.registerImageHandlingView(imageView2, for: "test")
         view.registerImageHandlingView(imageView3, for: "test")
         
-        view.dispatchResolveRequests()
+        view.dispatchImageResolveRequests()
         
         XCTAssertEqual(fakeResourceResolver.calledCount, 1)
         wait(for: [imageView1.expectation!, imageView2.expectation!, imageView3.expectation!], timeout: 0.2)
