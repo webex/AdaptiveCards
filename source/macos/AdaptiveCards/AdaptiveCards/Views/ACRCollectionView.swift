@@ -20,7 +20,7 @@ class ACRCollectionView: NSScrollView {
         }
     }
     
-    private lazy var collectionView: NSCollectionView = {
+    private(set) lazy var collectionView: NSCollectionView = {
         let view = NSCollectionView()
         view.itemPrototype = nil
         view.backgroundColors = [.clear]
@@ -31,7 +31,8 @@ class ACRCollectionView: NSScrollView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(rootView: ACRView, parentView: NSView, imageSet: ACSImageSet, hostConfig: ACSHostConfig) {
+    // Need to be able to inject layout for testing purpose
+    init(rootView: ACRView, parentView: NSView, imageSet: ACSImageSet, hostConfig: ACSHostConfig, collectionLayout: NSCollectionViewLayout = ACSCollectionViewAlignLayout(), frameRect: NSRect = .zero) {
         self.imageSet = imageSet
         self.hostConfig = hostConfig
         let imageSetImageSize: ACSImageSize = (imageSet.getImageSize() == .none || imageSet.getImageSize() == .auto || imageSet.getImageSize() == .stretch) ? .medium : imageSet.getImageSize()
@@ -40,9 +41,8 @@ class ACRCollectionView: NSScrollView {
             let imageWrappingView = ImageUtils.getImageWrappingViewFor(element: $0, hostConfig: hostConfig, rootView: rootView, parentView: parentView, isImageSet: true, imageSetImageSize: imageSetImageSize)
             return imageWrappingView
         }
-        super.init(frame: .zero)
-        let layout = ACSCollectionViewAlignLayout()
-        collectionView.collectionViewLayout = layout
+        super.init(frame: frameRect)
+        collectionView.collectionViewLayout = collectionLayout
         collectionView.register(ACRCollectionViewItem.self, forItemWithIdentifier: ACRCollectionViewItem.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
