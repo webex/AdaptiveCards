@@ -126,6 +126,9 @@
     <None Include="AdaptiveCardQml\CardGenericTextElement.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="AdaptiveCardQml\AdaptiveActionRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="samplecardmodel.h">

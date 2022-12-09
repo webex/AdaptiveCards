@@ -23,5 +23,6 @@
         <file alias="InputErrorMessage.qml">AdaptiveCardQml/InputErrorMessage.qml</file>
         <file alias="InputLabel.qml">AdaptiveCardQml/InputLabel.qml</file>
         <file alias="CardGenericTextElement.qml">AdaptiveCardQml/CardGenericTextElement.qml</file>
+        <file alias="AdaptiveActionRender.qml">AdaptiveCardQml/AdaptiveActionRender.qml</file>
     </qresource>
 </RCC>

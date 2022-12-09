@@ -174,6 +174,7 @@ QtObject {
         readonly property int imageSize: 14
         readonly property int iconTextSpacing: 5
         readonly property int pixelSize: 14
+        readonly property int fontWeight: Font.DemiBold 
     }
 
     readonly property QtObject
