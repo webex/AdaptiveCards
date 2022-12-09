@@ -22,7 +22,10 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/SeparatorRender.qml"), "AdaptiveCards", 1, 0, "SeparatorRender");
     qmlRegisterSingletonType(QUrl("qrc:/CardConstants.qml"), "AdaptiveCards", 1, 0, "CardConstants");
     qmlRegisterType(QUrl("qrc:/ToggleInputRender.qml"), "AdaptiveCards", 1, 0, "ToggleInputRender");
+    qmlRegisterType(QUrl("qrc:/TextInputRender.qml"), "AdaptiveCards", 1, 0, "TextInputRender");
     qmlRegisterType(QUrl("qrc:/CustomCheckBox.qml"), "AdaptiveCards", 1, 0, "CustomCheckBox");
+    qmlRegisterType(QUrl("qrc:/SinglelineTextInputRender.qml"), "AdaptiveCards", 1, 0, "SinglelineTextInputRender");
+    qmlRegisterType(QUrl("qrc:/MultiLineTextInputRender.qml"), "AdaptiveCards", 1, 0, "MultiLineTextInputRender");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();

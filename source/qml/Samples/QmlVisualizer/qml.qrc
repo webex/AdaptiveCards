@@ -17,5 +17,8 @@
         <file alias="ThemeUtils.js">AdaptiveCardQml/Utils/ThemeUtils.js</file>
         <file alias="CustomCheckBox.qml">AdaptiveCardQml/CustomCheckBox.qml</file>
         <file alias="ToggleInputRender.qml">AdaptiveCardQml/ToggleInputRender.qml</file>
+        <file alias="TextInputRender.qml">AdaptiveCardQml/TextInputRender.qml</file>
+        <file alias="SingleLineTextInputRender.qml">AdaptiveCardQml/SingleLineTextInputRender.qml</file>
+        <file alias="MultiLineTextInputRender.qml">AdaptiveCardQml/MultiLineTextInputRender.qml</file>
     </qresource>
 </RCC>
