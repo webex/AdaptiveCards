@@ -2,46 +2,76 @@
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
+import "AdaptiveCardUtils.js" as AdaptiveCardUtils
 
 
 Button {
-
-    property int _textSpacing
+    property string _buttonConfigType
     property bool _isIconLeftOfTitle
-    property bool _isActionSubmit
+    property string _escapedTitle
+    property bool _isShowCardButton
+    property var _adaptiveCard
+    property bool _is1_3Enabled
+    property var _paramStr
+    property var _toggleVisibilityTarget: null
+    property bool _isActionSubmit: false
     property bool _isActionOpenUrl
     property bool _isActionToggleVisibility
-    property bool showCard
-    property var _buttonColors : CardConstants.primaryButtonColors
-    property bool _hasIconUrl: false
-    property var _imgSource: ""
-    property string _escapedTitle
-    property var _iconSource: ""
+    property string _selectActionId: ""
+    
+    property bool _hasIconUrl
+    property var _imgSource
+    
+    property var _iconSource
     property var _getActionToggleVisibilityClickFunc: ""
-    onReleased: onReleasedFunction()
-    property string _actionTitle: ""
+    property int _textSpacing: getTextSpacing()
+    property var _onReleased: ""
+    property var _buttonColors : getButtonConfig()
+    onReleased: handleMouseAreaClick() 
 
 
-    function onReleasedFunction() {
-        if(_isActionOpenUrl) {
-            return adaptiveCard.buttonClicked(_actionTitle, "Action.OpenUrl", "https://adaptivecards.io");
-        }
-        else if(_isActionToggleVisibility) {
-            return _getActionToggleVisibilityClickFunc
-        }
-        else {
-            return ""
-        }
 
+    function handleMouseAreaClick() {
+        if (_isActionToggleVisibility && _selectActionId === 'Action.ToggleVisibility') {
+            AdaptiveCardUtils.handleToggleVisibilityAction(_toggleVisibilityTarget);
+            return ;
+        } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
+            AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
+            return ;
+        } else if(_isActionOpenUrl){
+            _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
+            return ;
+        }
     }
-    /* TODO Check This */
+
+    function getButtonConfig() {
+
+        if(_buttonConfigType === 'positiveColorConfig')
+            return CardConstants.positiveButtonColors
+        else if(_buttonConfigType ===  'destructiveColorConfig')
+            return CardConstants.destructiveButtonColors
+        else {
+            return CardConstants.primaryButtonColors
+        }
+    }
+
+    function getTextSpacing() {
+        if(_hasIconUrl) {
+            return CardConstants.actionButtonConstants.imageSize + CardConstants.actionButtonConstants.iconTextSpacing;
+        }
+        if(_isShowCardButton) {
+            return CardConstants.actionButtonConstants.iconWidth + CardConstants.actionButtonConstants.iconTextSpacing;
+        }
+        return 2 * CardConstants.actionButtonConstants.horizotalPadding - 2;
+    }
+
     Connections{
-        //enable : _isActionSubmit
+    
         id:buttonAuto1Connection
         target:_aModel
         function onEnableAdaptiveCardSubmitButton()
         {
-            if (actionButton.isButtonDisabled) {
+            if (_isActionSubmit && actionButton.isButtonDisabled) {
                 actionButton.isButtonDisabled = false;
             }
         }
@@ -76,8 +106,8 @@ Button {
         }
 
         function setColorForBackground() {
-            if(showCard == true) {
-                if(actionButton.showCard || actionButton.down) {
+            if(_isShowCardButton == true) {
+                if(actionButton._isShowCardButton || actionButton.down) {
                     return _buttonColors.buttonColorPressed
                 }
                 else {
@@ -128,104 +158,108 @@ Button {
 
     contentItem: Item {
         height: parent.height
-        implicitWidth: contentItemRow.implicitWidth
-        Accessible.name: contentItemRowContentText.text
+        implicitWidth: _isIconLeftOfTitle == true ? contentItemRow.implicitWidth : contentItemCol.implicitWidth
+        Accessible.name: _isIconLeftOfTitle == true ? contentRowLayout.contentItemContentText : contentColLayout.contentItemContentText
 
         Row {
             id: contentItemRow
             spacing: CardConstants.actionButtonConstants.iconTextSpacing
             padding:0
             height:parent.height
+            visible: _isIconLeftOfTitle == true
 
-            Image {
-                id: contentItemRowImg
-                visible: _hasIconUrl
-                cache: false
-                height: CardConstants.actionButtonConstants.imageSize
-                width: CardConstants.actionButtonConstants.imageSize
-                fillMode: Image.PreserveAspectFit
-                anchors.verticalCenter: _isIconLeftOfTitle ? parent.verticalCenter : undefined
-                anchors.horizontalCenter: !_isIconLeftOfTitle ? parent.horizontalCenter : undefined
-                source: actionButton._imgSource
+            Loader {
+                    active: _hasIconUrl
+                    sourceComponent:    Image {
+                        id: contentItemColImg
+                        visible: _hasIconUrl
+                        cache: false
+                        height: CardConstants.actionButtonConstants.imageSize
+                        width: CardConstants.actionButtonConstants.imageSize
+                        fillMode: Image.PreserveAspectFit
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: actionButton._imgSource
+                    }
+              }  
+
+            ActionsContentLayout {
+                id: contentRowLayout
             }
 
-            Row {
-                spacing: CardConstants.actionButtonConstants.iconTextSpacing
-                padding: 0
-                height: parent.height
-
-                Text {
-                    id: contentItemRowContentText
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: getTextWidth()
-                    text: _escapedTitle
-                    font.pixelSize: CardConstants.actionButtonConstants.pixelSize
-                    font.weight: CardConstants.actionButtonConstants.fontWeight
-                    elide: Text.ElideRight
-                    color: getTextColor()
-                    function getTextWidth() {if (text.length == 0) return 0;if (implicitWidth < _textSpacing) return implicitWidth;return implicitWidth < actionButton.width - _textSpacing ? implicitWidth : (actionButton.width - _textSpacing > 1 ? actionButton.width - _textSpacing : 1);}
-
-                    function getTextColor() {
-                        if(showCard == true) {
-                            if(actionButton.showCard || actionButton.showCard || actionButton.down ) {
-                                return _buttonColors.textColorHovered
-                            }
-                            else {
-                                return _buttonColors.textColorNormal
-                            }
-                        }
-
-                        else if(_isActionSubmit == true) {
-                            if(actionButton.isButtonDisabled) {
-                                return _buttonColors.textColorDisabled
-                            }
-                            else {
-                                if(actionButton.hovered || actionButton.down) {
-                                    return _buttonColors.textColorHovered
-                                }
-                                else {
-                                    return _buttonColors.textColorNormal
-                                }
-                            }
-
-                        }
-                        else {
-                            if(actionButton.hovered || actionButton.down) {
-                                    return _buttonColors.textColorHovered
-                            }
-                            else {
-                                return _buttonColors.textColorNormal
-                            }
-                        }
-
-                    }//  getTextColor ends here
-
-
-
-                }// Text Ends Here
-
-                Button {
-                    visible: showCard
+            Loader {
+                active: _isShowCardButton
+                anchors.verticalCenter: contentRowLayout.verticalCenter
+                sourceComponent:    Button {
+                    visible: _isShowCardButton
                     background:Rectangle{
                         anchors.fill:parent
                         color:'transparent'
                     }
                     id: contentItemRowContentShowCard
-                    width: contentItemRowContentText.font.pixelSize
-                    height: contentItemRowContentText.font.pixelSize
+                    width: contentRowLayout.fontPixelSizeAlias
+                    height: contentRowLayout.fontPixelSizeAlias
                     anchors.margins: 2
                     horizontalPadding: 0
                     verticalPadding: 0
                     icon.width:12
                     icon.height:12
                     focusPolicy:Qt.NoFocus
-                    anchors.verticalCenter: contentItemRowContentText.verticalCenter
-                    icon.color: contentItemRowContentText.color
-                    icon.source: _iconSource
+                    icon.color: contentRowLayout.colorAlias
+                    icon.source: _isShowCardButton == true ? _iconSource : ""
                     onReleased: actionButton.onReleased()                 
-                }
+                } 
+            }
+        }
 
-            } // Row Ends Here
+
+        Column {
+            id: contentItemCol
+            spacing: CardConstants.actionButtonConstants.iconTextSpacing
+            padding:0
+            height:parent.height
+            visible: _isIconLeftOfTitle == false
+
+            Loader {
+                    active: _hasIconUrl
+                    sourceComponent:    Image {
+                        id: contentItemColImg
+                        visible: _hasIconUrl
+                        cache: false
+                        height: CardConstants.actionButtonConstants.imageSize
+                        width: CardConstants.actionButtonConstants.imageSize
+                        fillMode: Image.PreserveAspectFit
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        source: actionButton._imgSource
+                    }
+              }  
+
+            ActionsContentLayout {
+                id: contentColLayout
+            }
+
+            Loader {
+                active: _isShowCardButton
+                //anchors.verticalCenter: contentColLayout.verticalCenter
+                sourceComponent:    Button {
+                    visible: _isShowCardButton
+                    background:Rectangle{
+                        anchors.fill:parent
+                        color:'transparent'
+                    }
+                    id: contentItemColContentShowCard
+                    width: contentColLayout.fontPixelSizeAlias
+                    height: contentColLayout.fontPixelSizeAlias
+                    anchors.margins: 2
+                    horizontalPadding: 0
+                    verticalPadding: 0
+                    icon.width:12
+                    icon.height:12
+                    focusPolicy:Qt.NoFocus
+                    icon.color: contentColLayout.colorAlias
+                    icon.source: _isShowCardButton == true ? _iconSource : ""
+                    onReleased: actionButton.onReleased()                 
+                } 
+            }
         }
 
         Rectangle {
@@ -238,24 +272,9 @@ Button {
             border.width: actionButton.activeFocus ? 1 : 0
         }
 
-
     } // Content Item Ends Here
 
-    Accessible.name: contentItemRowContentText.text
+    Accessible.name: _isIconLeftOfTitle == true ? contentRowLayout.contentItemContentText : contentColLayout.contentItemContentText
 
 } // Button Ends Here
 
-
-
-
-
-/*Rectangle {
-    width: 200
-    height: 100
-    color: "red"
-
-    Text {
-        anchors.centerIn: parent
-        text: "Hello, World!"
-    }
-}*/

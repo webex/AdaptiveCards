@@ -1490,76 +1490,41 @@ namespace RendererQml
 
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::AdaptiveActionRender(std::shared_ptr<AdaptiveCards::BaseActionElement> action, std::shared_ptr<AdaptiveRenderContext> context)
     {
-
-
-#if 1
         if (context->GetConfig()->GetSupportsInteractivity())
         {
-            ActionButtonConfig buttonConfig;
+            auto buttonElement = std::make_shared<QmlTag>("AdaptiveActionRender");
 
-            //TODO: Add border color and style: default/positive/destructive
             if (!Utils::IsNullOrWhitespace(action->GetStyle()) && !Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
             {
                 if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
                 {
-                    buttonConfig = context->GetRenderConfig()->getActionButtonsConfig().positiveColorConfig;
+                    buttonElement->Property("_buttonConfigType",  "'positiveColorConfig'");
                 }
                 else if (Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
                 {
-                    buttonConfig = context->GetRenderConfig()->getActionButtonsConfig().destructiveColorConfig;
+                    buttonElement->Property("_buttonConfigType",  "'destructiveColorConfig'");
                 }
                 else
                 {
-                    buttonConfig = context->GetRenderConfig()->getActionButtonsConfig().primaryColorConfig;
+                    buttonElement->Property("_buttonConfigType",  "'primaryColorConfig'");
                 }
             }
             else
             {
-                buttonConfig = context->GetRenderConfig()->getActionButtonsConfig().primaryColorConfig;
+                buttonElement->Property("_buttonConfigType",  "'primaryColorConfig'");
             }
-            auto buttonElement = std::make_shared<QmlTag>("AdaptiveActionRender");
 
-            const auto config = context->GetConfig();
-            const auto actionsConfig = config->GetActions();
-            bool isIconLeftOfTitle = actionsConfig.iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle;
-            if (isIconLeftOfTitle) {
-                buttonElement->Property("_isIconLeftOfTitle", "true");
-            }
-            else {
-                buttonElement->Property("_isIconLeftOfTitle", "false");
-            }
-            std::string escapedTitle = Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "`";
-            buttonElement->Property("_escapedTitle", Formatter() << escapedTitle);
-            const std::string buttonId = Formatter() << "button_auto_" << context->getButtonCounter();
-            buttonElement->Property("id", buttonId);
+            buttonElement->Property("_isIconLeftOfTitle", context->GetConfig()->GetActions().iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle ? "true" : "false");
+            buttonElement->Property("_escapedTitle", RendererQml::Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "`");
+            buttonElement->Property("id", Formatter() << "button_auto_" << context->getButtonCounter());
             const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
             if (isShowCardButton)
             {
-                buttonElement->Property("showCard", "true");
+                buttonElement->Property("_isShowCardButton", "true");
+                buttonElement->Property("_iconSource", RendererQml::arrow_down_12, true);
             }
-            int textSpacing = 2 * buttonConfig.horizotalPadding - 2;
-            if (!action->GetIconUrl().empty())
-            {
-                textSpacing += buttonConfig.imageSize + buttonConfig.iconTextSpacing;
-            }
-            if (isShowCardButton)
-            {
-                textSpacing += buttonConfig.iconWidth + buttonConfig.iconTextSpacing;
-            }
-            buttonElement->Property("_textSpacing", Formatter() << textSpacing);
-            if (action->GetElementTypeString() == "Action.Submit") {
-                buttonElement->Property("_isActionSubmit", "true");
-            }
-            else {
-                buttonElement->Property("_isActionSubmit", "false");
-            }
-
-            if (action->GetElementTypeString() == "Action.OpenUrl") {
-                buttonElement->Property("_isActionOpenUrl", "true");
-            }
-            else {
-                buttonElement->Property("_isActionOpenUrl", "false");
-            }
+            buttonElement->Property("_isActionSubmit", action->GetElementTypeString() == "Action.Submit" ? "true" : "false");
+            buttonElement->Property("_isActionOpenUrl", action->GetElementTypeString() == "Action.OpenUrl" ? "true" : "false");
 
             if (action->GetElementTypeString() == "Action.ToggleVisibility") {
                 buttonElement->Property("_isActionToggleVisibility", "true");
@@ -1573,225 +1538,13 @@ namespace RendererQml
                 buttonElement->Property("_hasIconUrl", "true");
                 buttonElement->Property("_imgSource", GetImagePath(context, action->GetIconUrl()), true);
             }
-            buttonElement->Property("_iconSource", RendererQml::arrow_down_12, true);
-
-            if (action->GetElementTypeString() == "Action.OpenUrl")
-            {
-                buttonElement->Property("_actionTitle", RendererQml::Formatter() << "String.raw`" << action->GetTitle() << "`");
-            }
-            else if (action->GetElementTypeString() == "Action.ShowCard")
-            {
-                context->addToShowCardButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(action));
-            }
-            else if (action->GetElementTypeString() == "Action.ToggleVisibility")
-            {
-                std::string onReleasedFunction;
-                onReleasedFunction = getActionToggleVisibilityClickFunc(std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action), context);
-                buttonElement->Property("_getActionToggleVisibilityClickFunc", Formatter() << "{\n" << onReleasedFunction << "}\n");
-            }
-            else if (action->GetElementTypeString() == "Action.Submit")
-            {
-                context->addToSubmitActionButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action));
-                //buttonElement->AddChild(connectionElement);
-            }
-            return buttonElement;
-        }
-        return nullptr;
-#endif
-
-#if 0
-        if (context->GetConfig()->GetSupportsInteractivity())
-        {
-            ActionButtonConfig buttonConfig;
-
-            //TODO: Add border color and style: default/positive/destructive
-            if (!Utils::IsNullOrWhitespace(action->GetStyle()) && !Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
-            {
-                if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
-                {
-                    buttonConfig = context->GetRenderConfig()->getActionButtonsConfig().positiveColorConfig;
-                }
-                else if (Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
-                {
-                    buttonConfig = context->GetRenderConfig()->getActionButtonsConfig().destructiveColorConfig;
-                }
-                else
-                {
-                    buttonConfig = context->GetRenderConfig()->getActionButtonsConfig().primaryColorConfig;
-                }
-            }
-            else
-            {
-                buttonConfig = context->GetRenderConfig()->getActionButtonsConfig().primaryColorConfig;
-            }
-            const auto config = context->GetConfig();
-            const auto actionsConfig = config->GetActions();
-            const std::string buttonId = Formatter() << "button_auto_" << context->getButtonCounter();
-            const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
-            const bool isIconLeftOfTitle = actionsConfig.iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle;
-
-            auto buttonElement = std::make_shared<QmlTag>("Button");
-
-            //Add button background
-            auto bgRectangle = std::make_shared<QmlTag>("Rectangle");
-			const std::string bgRectangleId = Formatter() << buttonId << "_bg";
-            bgRectangle->Property("id", bgRectangleId);
-            bgRectangle->Property("anchors.fill", "parent");
-            bgRectangle->Property("radius", Formatter() << buttonConfig.buttonRadius);
-
-            //Add button content item
-            int textSpacing = 2 * buttonConfig.horizotalPadding - 2;
-            if (!action->GetIconUrl().empty())
-            {
-                textSpacing += buttonConfig.imageSize + buttonConfig.iconTextSpacing;
-            }
-            if (isShowCardButton)
-            {
-                textSpacing += buttonConfig.iconWidth + buttonConfig.iconTextSpacing;
-            }
-            auto contentItem = std::make_shared<QmlTag>("Item");
-            auto contentLayout = std::make_shared<QmlTag>(isIconLeftOfTitle ? "Row" : "Column");
-            contentLayout->Property("id", Formatter() << buttonId << (isIconLeftOfTitle ? "_row" : "_col"));
-            contentLayout->Property("spacing", Formatter() << buttonConfig.iconTextSpacing);
-            contentLayout->Property("padding", "0");
-            contentLayout->Property("height", Formatter() << "parent.height");
-
-            contentItem->AddChild(contentLayout);
-            contentItem->Property("height", "parent.height");
-            contentItem->Property("implicitWidth", Formatter() << contentLayout->GetId() << ".implicitWidth");
-
-            auto focusRectangle = std::make_shared<QmlTag>("Rectangle");
-            focusRectangle->Property("width", Formatter() << buttonElement->GetId() << ".width");
-            focusRectangle->Property("height", Formatter() << buttonElement->GetId() << ".height");
-            focusRectangle->Property("x", Formatter() << "-" << buttonConfig.horizotalPadding);
-            focusRectangle->Property("y", Formatter() << "-" << buttonConfig.verticalPadding);
-            focusRectangle->Property("color", "transparent", true);
-            focusRectangle->Property("border.color", context->GetHexColor(buttonConfig.focusRectangleColor));
-            focusRectangle->Property("border.width", Formatter() << buttonId << ".activeFocus ? 1 : 0");
-            contentItem->AddChild(focusRectangle);
-
-            //Add button icon
-            if (!action->GetIconUrl().empty())
-            {
-				buttonElement->Property("readonly property bool hasIconUrl", "true");
-                buttonElement->Property("property var imgSource", GetImagePath(context, action->GetIconUrl()), true);
-
-                auto contentImage = std::make_shared<QmlTag>("Image");
-                contentImage->Property("id", Formatter() << buttonId << "_img");
-                contentImage->Property("cache", "false");
-                contentImage->Property("height", Formatter() << buttonConfig.imageSize);
-                contentImage->Property("width", Formatter() << buttonConfig.imageSize);
-                contentImage->Property("fillMode", "Image.PreserveAspectFit");
-
-                if (isIconLeftOfTitle)
-                {
-                    contentImage->Property("anchors.verticalCenter", "parent.verticalCenter");
-                }
-                else
-                {
-                    contentImage->Property("anchors.horizontalCenter", "parent.horizontalCenter");
-                }
-
-                contentImage->Property("source", Formatter() << buttonId << ".imgSource");
-
-                contentLayout->AddChild(contentImage);
-            }
-
-            //Add content Text
-            auto textLayout = std::make_shared<QmlTag>("Row");
-            textLayout->Property("spacing", Formatter() << buttonConfig.iconTextSpacing);
-            textLayout->Property("padding", "0");
-            textLayout->Property("height", Formatter() << "parent.height");
-
-            std::string escapedTitle = Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "`";
-
-			const std::string contentTextId = buttonId + "_contentText";
-            auto contentText = std::make_shared<QmlTag>("Text");
-			contentText->Property("id", contentTextId);
-            contentText->Property("anchors.verticalCenter", "parent.verticalCenter");
-            contentText->Property("width", "getTextWidth()");
-
-            std::stringstream textWidthFunc;
-            textWidthFunc << "function getTextWidth() {";
-            textWidthFunc << "if (text.length == 0) return 0;";
-            textWidthFunc << "if (implicitWidth < " << textSpacing << ") return implicitWidth;";
-            textWidthFunc << "return implicitWidth < " << buttonId << ".width - " << textSpacing << " ? implicitWidth : (" << buttonId << ".width - " << textSpacing << " > 1 ? " << buttonId << ".width - " << textSpacing << " : 1);}";
-
-            contentText->AddFunctions(textWidthFunc.str());
-            if (!action->GetTitle().empty())
-            {
-                contentText->Property("text", escapedTitle);
-            }
-            contentText->Property("font.pixelSize", Formatter() << buttonConfig.pixelSize);
-            contentText->Property("font.weight", buttonConfig.fontWeight);
-            contentText->Property("elide", "Text.ElideRight");
-            contentItem->Property("Accessible.name", Formatter() << contentText->GetId() << ".text");
-
-            auto connectionElement = std::make_shared<QmlTag>("Connections");
-            connectionElement->Property("id", Formatter() << buttonElement->GetId() << "_connection");
-            connectionElement->Property("target", "_aModel");
-            connectionElement->AddFunctions(Formatter() << "function onEnableAdaptiveCardSubmitButton()"
-                << "\n{"
-                << "\n if (" << buttonElement->GetId() << ".isButtonDisabled) {"
-                << "\n" << buttonElement->GetId() << ".isButtonDisabled = false;"
-                << "\n}"
-                << "\n}");
-
-            if (isShowCardButton)
-            {
-                bgRectangle->Property("border.color", context->GetHexColor(buttonConfig.borderColorNormal));
-                bgRectangle->Property("color", Formatter() << "(" << buttonId << ".showCard || " << buttonId << ".down )? " << context->GetHexColor(buttonConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(buttonConfig.buttonColorHovered) << " : " << context->GetHexColor(buttonConfig.buttonColorNormal));
-                contentText->Property("color", Formatter() << "( " << buttonId << ".showCard || " << buttonId << ".hovered || " << buttonId << ".down) ? " << context->GetHexColor(buttonConfig.textColorHovered) << " : " << context->GetHexColor(buttonConfig.textColorNormal));
-            }
-            else if (action->GetElementTypeString() == "Action.Submit")
-            {
-                bgRectangle->Property("border.color", Formatter() << buttonElement->GetId() << ".isButtonDisabled ? " << context->GetHexColor(buttonConfig.buttonColorDisabled) << " : " << context->GetHexColor(buttonConfig.borderColorNormal));
-                bgRectangle->Property("color", Formatter() << buttonElement->GetId() << ".isButtonDisabled ? " << context->GetHexColor(buttonConfig.buttonColorDisabled) << ": (" << buttonId << ".down ? " << context->GetHexColor(buttonConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(buttonConfig.buttonColorHovered) << " : " << context->GetHexColor(buttonConfig.buttonColorNormal) << ")");
-                contentText->Property("color", Formatter() << buttonElement->GetId() << ".isButtonDisabled ? " << context->GetHexColor(buttonConfig.textColorDisabled) << ": (" << "( " << buttonId << ".hovered || " << buttonId << ".down )? " << context->GetHexColor(buttonConfig.textColorHovered) << " : " << context->GetHexColor(buttonConfig.textColorNormal) << ")");
-            }
-            else
-            {
-                bgRectangle->Property("border.color", context->GetHexColor(buttonConfig.borderColorNormal));
-                bgRectangle->Property("color", Formatter() << buttonId << ".down ? " << context->GetHexColor(buttonConfig.buttonColorPressed) << " : (" << buttonId << ".hovered ) ? " << context->GetHexColor(buttonConfig.buttonColorHovered) << " : " << context->GetHexColor(buttonConfig.buttonColorNormal));
-                contentText->Property("color", Formatter() << "( " << buttonId << ".hovered || " << buttonId << ".down )? " << context->GetHexColor(buttonConfig.textColorHovered) << " : " << context->GetHexColor(buttonConfig.textColorNormal));
-            }
-
-            textLayout->AddChild(contentText);
-            buttonElement->Property("background", bgRectangle->ToString());
-
-            if (isShowCardButton)
-            {
-                auto showCardIconBackground = std::make_shared<QmlTag>("");
-				showCardIconBackground->Property("anchors.fill", "parent");
-				showCardIconBackground->Property("color", "'transparent'");
-
-                const std::string iconId = Formatter() << buttonId << "_icon";
-				auto showCardIcon = GetIconTag(context);
-                showCardIcon->Property("id", iconId);
-				showCardIcon->RemoveProperty("anchors.right");
-                showCardIcon->RemoveProperty("anchors.top");
-				showCardIcon->RemoveProperty("anchors.bottom");
-				showCardIcon->Property("width", Formatter() << contentTextId << ".font.pixelSize");
-				showCardIcon->Property("height", Formatter() << contentTextId << ".font.pixelSize");
-				showCardIcon->Property("anchors.verticalCenter", Formatter() << contentTextId << ".verticalCenter");
-				showCardIcon->Property("horizontalPadding", "0");
-				showCardIcon->Property("verticalPadding", "0");
-				showCardIcon->Property("icon.color", Formatter() << contentTextId << ".color");
-				showCardIcon->Property("icon.width", "12");
-				showCardIcon->Property("icon.height", "12");
-				showCardIcon->Property("icon.source", RendererQml::arrow_down_12, true);
-				showCardIcon->Property("background", showCardIconBackground->ToString());
-                showCardIcon->Property("onReleased", Formatter() << buttonId << ".released();");
-                textLayout->AddChild(showCardIcon);
-            }
-
-            contentLayout->AddChild(textLayout);
-            buttonElement->Property("contentItem", contentItem->ToString());
-
             std::string onReleasedFunction;
+            std::string selectActionId = "";
             if (action->GetElementTypeString() == "Action.OpenUrl")
             {
-                onReleasedFunction = getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action), context);
+                auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action);
+                selectActionId = openUrlAction->GetUrl();
+
             }
             else if (action->GetElementTypeString() == "Action.ShowCard")
             {
@@ -1799,26 +1552,26 @@ namespace RendererQml
             }
             else if (action->GetElementTypeString() == "Action.ToggleVisibility")
             {
-                onReleasedFunction = getActionToggleVisibilityClickFunc(std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action), context);
+                auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
+                selectActionId = toggleVisibilityAction->GetElementTypeString();
+                buttonElement->Property("_toggleVisibilityTarget", getActionToggleVisibilityObject(toggleVisibilityAction, context));
             }
             else if (action->GetElementTypeString() == "Action.Submit")
             {
-                context->addToSubmitActionButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action));
-                buttonElement->AddChild(connectionElement);
+                auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
+                selectActionId = submitAction->GetElementTypeString();
+                std::string submitDataJson = submitAction->GetDataJson();
+                submitDataJson = Utils::Trim(submitDataJson);
+                buttonElement->Property("_paramStr", Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`");
             }
-            else
-            {
-                onReleasedFunction = "";
-            }
+            buttonElement->Property("_is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false");
+            buttonElement->Property("_adaptiveCard", "adaptiveCard");
+            buttonElement->Property("_selectActionId", Formatter() << "String.raw`" << selectActionId << "`");
 
-            buttonElement->Property("onReleased", Formatter() << "{\n" << onReleasedFunction << "}\n");
-
-            buttonElement->Property("Accessible.name", escapedTitle);
             return buttonElement;
         }
-
         return nullptr;
-#endif
+
     }
 
     void AdaptiveCardQmlRenderer::addSubmitActionButtonClickFunc(const std::shared_ptr<AdaptiveRenderContext>& context)
