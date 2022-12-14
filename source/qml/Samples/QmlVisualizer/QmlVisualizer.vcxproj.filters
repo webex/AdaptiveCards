@@ -132,6 +132,12 @@
     <None Include="AdaptiveCardQml\ActionsContentLayout.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="AdaptiveCardQml\AddActionRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\AddActionRenderVertical.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="samplecardmodel.h">

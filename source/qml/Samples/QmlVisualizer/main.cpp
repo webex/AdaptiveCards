@@ -31,6 +31,8 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/InputErrorMessage.qml"), "AdaptiveCards", 1, 0, "InputErrorMessage");
     qmlRegisterType(QUrl("qrc:/AdaptiveActionRender.qml"), "AdaptiveCards", 1, 0, "AdaptiveActionRender");
     qmlRegisterType(QUrl("qrc:/ActionsContentLayout.qml"), "AdaptiveCards", 1, 0, "ActionsContentLayout");
+    qmlRegisterType(QUrl("qrc:/AddActionRender.qml"), "AdaptiveCards", 1, 0, "AddActionRender");
+    qmlRegisterType(QUrl("qrc:/AddActionRenderVertical.qml"), "AdaptiveCards", 1, 0, "AddActionRenderVertical");
     
 
     QQuickView view;
