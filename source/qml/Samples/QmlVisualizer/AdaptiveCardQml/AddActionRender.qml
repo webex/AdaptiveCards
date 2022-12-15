@@ -2,24 +2,25 @@
 import "AdaptiveCardUtils.js" as AdaptiveCardUtils
 
 Flow {
+    id: flowActionId
     property int _spacing
     property string _layoutDirection
     property var actionButtonModel
+    property var adaptiveCard
     
     width: parent.width
     spacing: _spacing
     layoutDirection: _layoutDirection === 'Qt.RightToLeft' ? Qt.RightToLeft : Qt.LeftToRight
 
-    Repeater {
+
+     Repeater {
         model: actionButtonModel
-
-    Loader {
-        height: item ? item.height : 0
-        width: (parent.width > implicitWidth) ? implicitWidth : parent.width
-        active: !_isactionAlignmentCenter
-
-            sourceComponent: 
-                AdaptiveActionRender {
+        Rectangle {
+            id: _buttonId
+            height : _id.height
+            width : _id.width
+     
+            AdaptiveActionRender {
                     _buttonConfigType: buttonConfigType
                     _isIconLeftOfTitle: isIconLeftOfTitle
                     _escapedTitle: escapedTitle
@@ -34,9 +35,11 @@ Flow {
                     _toggleVisibilityTarget: toggleVisibilityTarget
                     _paramStr: paramStr
                     _is1_3Enabled: is1_3Enabled
-                    _adaptiveCard: adaptiveCard
+                    _adaptiveCard: flowActionId.adaptiveCard
                     _selectActionId: selectActionId
+                    width: implicitWidth
                 }
-        }
-    }
+            }
+
+     }
 }

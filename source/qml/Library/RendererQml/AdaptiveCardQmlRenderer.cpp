@@ -353,21 +353,23 @@ namespace RendererQml
             std::ostringstream actionElements;
             std::shared_ptr<QmlTag> uiRectangle;
             std::ostringstream actionsModel;
-            actionsModel << "ListModel { ";
+            uiButtonStrip->Property("adaptiveCard", Formatter() << "adaptiveCard");
+            actionsModel << "ListModel {Component.onCompleted : { ";
             for (unsigned int i = 0; i < maxActions; i++)
             {
-                actionsModel << "ListElement { ";
+                actionsModel << "append({";
                 // add actions buttons
                 const auto action = actions[i];
+                const auto buttonIndex = context->getButtonCounter();
                 if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
                 {
-                    rectangleElements << (i == 0 ? "[" : "") << uiRectangle->GetId() << (i == maxActions - 1 ? "]" : ",");
-                    actionElements << (i == 0 ? "[" : "") << "button_auto_" << context->getButtonCounter() << (i == maxActions - 1 ? "]" : ",");
-                    actionsModel << "_isactionAlignmentCenter: " <<  "true" << "; \n";
+                    rectangleElements << (i == 0 ? "[" : "") << "button_auto_" << buttonIndex << "_rectangle" << (i == maxActions - 1 ? "]" : ",");
+                    actionElements << (i == 0 ? "[" : "") << "button_auto_" << buttonIndex << (i == maxActions - 1 ? "]" : ",");
+                    actionsModel << "_isactionAlignmentCenter: " <<  "true" << ", \n";
 
                 }
                 else {
-                    actionsModel << "_isactionAlignmentCenter: " <<  "false" << "; \n";
+                    actionsModel << "_isactionAlignmentCenter: " <<  "false" << ", \n";
                 }
                 
                 if (context->GetConfig()->GetSupportsInteractivity())
@@ -378,52 +380,54 @@ namespace RendererQml
                     {
                         if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
                         {
-                            actionsModel << "buttonConfigType: \"positiveColorConfig\"; \n";
+                            actionsModel << "buttonConfigType: \"positiveColorConfig\", \n";
                         }
                         else if (Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
                         {
-                            actionsModel << "buttonConfigType: \"destructiveColorConfig\"; \n";
+                            actionsModel << "buttonConfigType: \"destructiveColorConfig\", \n";
                         }
                         else
                         {
-                            actionsModel << "buttonConfigType: \"primaryColorConfig\"; \n";
+                            actionsModel << "buttonConfigType: \"primaryColorConfig\", \n";
                         }
                     }
                     else
                     {
-                        actionsModel << "buttonConfigType: \"primaryColorConfig\"; \n";
+                        actionsModel << "buttonConfigType: \"primaryColorConfig\", \n";
                     }
 
-                    actionsModel << "isIconLeftOfTitle: " << (context->GetConfig()->GetActions().iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle ? "true" : "false") << "; \n";
-                    actionsModel << "escapedTitle: "  << "\"" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "\"; \n";
-                    actionsModel << "_id: " << "\"button_auto_" << context->getButtonCounter() << "\"; \n";;
+                    actionsModel << "isIconLeftOfTitle: " << (context->GetConfig()->GetActions().iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle ? "true" : "false") << ", \n";
+                    actionsModel << "escapedTitle: "  << "\"" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "\", \n";
+                    actionsModel << "_id: " << "\"button_auto_" << buttonIndex << "\", \n";
+                    actionsModel << "_buttonId: " << "\"button_auto_" << buttonIndex << "_rectangle" << "\", \n";
                     const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
                     if (isShowCardButton)
                     {
-                        actionsModel << "isShowCardButton: " << "true" << "; \n";
-                        actionsModel << "iconSource: " << "\"" << RendererQml::arrow_down_12 << "\" \n";;
+                        actionsModel << "isShowCardButton: " << "true" << ", \n";
+                        actionsModel << "iconSource: " << "\"" << RendererQml::arrow_down_12 << "\", \n";
                     }
                     else {
-                        actionsModel << "isShowCardButton: " << "false" << "; \n";
-                        actionsModel << "iconSource: " << "\"" << "\" \n";;
-                    }buttonElement->Property("_isActionSubmit", action->GetElementTypeString() == "Action.Submit" ? "true" : "false");
-                    actionsModel << "isActionSubmit: " << (action->GetElementTypeString() == "Action.Submit" ? "true" : "false") << "; \n";buttonElement->Property("_isActionOpenUrl", action->GetElementTypeString() == "Action.OpenUrl" ? "true" : "false");
-                    actionsModel << "isActionOpenUrl: " << (action->GetElementTypeString() == "Action.OpenUrl" ? "true" : "false") << "; \n";
+                        actionsModel << "isShowCardButton: " << "false" << ", \n";
+                        actionsModel << "iconSource: " << "\"" << "\", \n";
+                    }
+                    
+                    actionsModel << "isActionSubmit: " << (action->GetElementTypeString() == "Action.Submit" ? "true" : "false") << ", \n";
+                    actionsModel << "isActionOpenUrl: " << (action->GetElementTypeString() == "Action.OpenUrl" ? "true" : "false") << ", \n";
                     if (action->GetElementTypeString() == "Action.ToggleVisibility") {
-                        actionsModel << "isActionToggleVisibility: " << "true" << "; \n";
+                        actionsModel << "isActionToggleVisibility: " << "true" << ", \n";
                     }
                     else {
-                        actionsModel << "isActionToggleVisibility: " << "false" << "; \n";
+                        actionsModel << "isActionToggleVisibility: " << "false" << ", \n";
                     }
 
                     if (!action->GetIconUrl().empty())
                     {
-                        actionsModel << "hasIconUrl: " << "true" << "; \n";
-                        actionsModel << "imgSource: " << "\"" << GetImagePath(context, action->GetIconUrl()) << "\" ; \n";
+                        actionsModel << "hasIconUrl: " << "true" << ", \n";
+                        actionsModel << "imgSource: " << "\"" << GetImagePath(context, action->GetIconUrl()) << "\" , \n";
                     }
                     else {
-                        actionsModel << "hasIconUrl: " << "false" << "; \n";
-                        actionsModel << "imgSource: " << "\"" <<  "\" ; \n";
+                        actionsModel << "hasIconUrl: " << "false" << ", \n";
+                        actionsModel << "imgSource: " << "\"" <<  "\" , \n";
 
                     }
                     std::string onReleasedFunction;
@@ -432,40 +436,42 @@ namespace RendererQml
                     {
                         auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action);
                         selectActionId = openUrlAction->GetUrl();
-                        actionsModel << "paramStr: " << "\"" << "\"; \n";
-                        actionsModel << "toggleVisibilityTarget: " << "\"" << "\"; \n";
+                        actionsModel << "paramStr: " << "\"" << "\", \n";
+                        actionsModel << "toggleVisibilityTarget: " << "\"" << "\", \n";
 
                     }
                     else if (action->GetElementTypeString() == "Action.ShowCard")
                     {
                         context->addToShowCardButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(action));
-                        actionsModel << "paramStr: " << "\"" << "\"; \n";
-                        actionsModel << "toggleVisibilityTarget: " << "\"" << "\"; \n";
+                        actionsModel << "paramStr: " << "\"" << "\", \n";
+                        actionsModel << "toggleVisibilityTarget: " << "\"" << "\", \n";
                     }
                     else if (action->GetElementTypeString() == "Action.ToggleVisibility")
                     {
                         auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
                         selectActionId = toggleVisibilityAction->GetElementTypeString();
-                        actionsModel << "toggleVisibilityTarget: " << "\"" << getActionToggleVisibilityObject(toggleVisibilityAction, context) << "\" ; \n";
-                        actionsModel << "paramStr: " << "\"" << "\"; \n";
+                        actionsModel << "toggleVisibilityTarget: "  << "\"" << getActionToggleVisibilityObject(toggleVisibilityAction, context) << " \" , \n";
+                        actionsModel << "paramStr: " << "\"" << "\", \n";
                     }
                     else if (action->GetElementTypeString() == "Action.Submit")
                     {
                         auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
                         selectActionId = submitAction->GetElementTypeString();
                         std::string submitDataJson = submitAction->GetDataJson();
-                        submitDataJson = Utils::Trim(submitDataJson);
-                        actionsModel << "paramStr: \""  << submitDataJson << "\"; \n";
-                        actionsModel << "toggleVisibilityTarget: " << "\"" << "\"; \n";
+                        //submitDataJson = Utils::Trim(submitDataJson);
+                        
+                        submitDataJson.erase(std::remove(submitDataJson.begin(), submitDataJson.end(), '"'), submitDataJson.end());
+                        actionsModel << "paramStr: \""  << submitDataJson << "\", \n";
+                        actionsModel << "toggleVisibilityTarget: " << "\"" << "\", \n";
                     }
                     
-                    actionsModel << "is1_3Enabled: " << (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false") << "; \n";
-                    actionsModel << "adaptiveCard: " << "\"adaptiveCard\"" << "; \n";
-                    actionsModel << "selectActionId: " << "\"" << selectActionId << "\"" << "; \n";
+                    actionsModel << "is1_3Enabled: " << (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false") << ", \n";
+                    
+                    actionsModel << "selectActionId: " << "\"" << selectActionId << "\"" << ", \n";
 
                 }
 
-                actionsModel << " }";
+                actionsModel << " });";
 
                 /*
                 auto uiAction = context->Render(actions[i]);
@@ -505,7 +511,7 @@ namespace RendererQml
                 }
                 */
             }
-            actionsModel << "}";
+            actionsModel << "} }";
             uiButtonStrip->Property("actionButtonModel", actionsModel.str());
 
             if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
@@ -1654,7 +1660,7 @@ namespace RendererQml
                 buttonElement->Property("_paramStr", Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`");
             }
             buttonElement->Property("_is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false");
-            buttonElement->Property("_adaptiveCard", "adaptiveCard");
+            //buttonElement->Property("_adaptiveCard", "adaptiveCard");
             buttonElement->Property("_selectActionId", Formatter() << "String.raw`" << selectActionId << "`");
 
             return buttonElement;

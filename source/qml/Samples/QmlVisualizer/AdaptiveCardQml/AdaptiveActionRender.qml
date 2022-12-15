@@ -33,9 +33,12 @@ Button {
 
     function handleMouseAreaClick() {
         if (_isActionToggleVisibility && _selectActionId === 'Action.ToggleVisibility') {
-            AdaptiveCardUtils.handleToggleVisibilityAction(_toggleVisibilityTarget);
+           
+            AdaptiveCardUtils.handleToggleVisibilityAction(JSON.parse(_toggleVisibilityTarget));
             return ;
         } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
+            console.log("_paramStr" + _paramStr)
+            console.log("_adaptiveCard" + _adaptiveCard)
             AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
             return ;
         } else if(_isActionOpenUrl){
