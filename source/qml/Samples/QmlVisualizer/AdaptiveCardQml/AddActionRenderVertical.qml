@@ -6,6 +6,7 @@ Column {
     property int _spacing
     property var actionButtonModel
     property var adaptiveCard
+    property var _toggleVisibilityTarget: null
     
     width: parent.width
     spacing: _spacing
@@ -31,7 +32,7 @@ Column {
                     _isActionToggleVisibility: isActionToggleVisibility
                     _hasIconUrl: hasIconUrl
                     _imgSource: imgSource
-                    _toggleVisibilityTarget: toggleVisibilityTarget
+                    _toggleVisibilityTarget: isActionToggleVisibility ? colActionId._toggleVisibilityTarget[index] : null
                     _paramStr: paramStr
                     _is1_3Enabled: is1_3Enabled
                     _adaptiveCard: colActionId.adaptiveCard

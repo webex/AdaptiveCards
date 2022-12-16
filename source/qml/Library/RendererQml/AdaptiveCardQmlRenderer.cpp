@@ -339,10 +339,12 @@ namespace RendererQml
 
             std::ostringstream rectangleElements;
             std::ostringstream actionElements;
+            std::ostringstream toggleVisibilityTarget;
             std::shared_ptr<QmlTag> uiRectangle;
             std::ostringstream actionsModel;
             uiButtonStrip->Property("adaptiveCard", Formatter() << "adaptiveCard");
             actionsModel << "ListModel {Component.onCompleted : { ";
+            toggleVisibilityTarget << "{";
             for (unsigned int i = 0; i < maxActions; i++)
             {
                 actionsModel << "append({";
@@ -423,20 +425,18 @@ namespace RendererQml
                         auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action);
                         selectActionId = openUrlAction->GetUrl();
                         actionsModel << "paramStr: " << "\"" << "\", \n";
-                        actionsModel << "toggleVisibilityTarget: " << "\"" << "\", \n";
 
                     }
                     else if (action->GetElementTypeString() == "Action.ShowCard")
                     {
                         context->addToShowCardButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(action));
                         actionsModel << "paramStr: " << "\"" << "\", \n";
-                        actionsModel << "toggleVisibilityTarget: " << "\"" << "\", \n";
                     }
                     else if (action->GetElementTypeString() == "Action.ToggleVisibility")
                     {
                         auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
                         selectActionId = toggleVisibilityAction->GetElementTypeString();
-                        actionsModel << "toggleVisibilityTarget: " << "\"" << getActionToggleVisibilityObject(toggleVisibilityAction, context) << " \" , \n";
+                        toggleVisibilityTarget << i << ": " << getActionToggleVisibilityObject(toggleVisibilityAction, context) << ",";
                         actionsModel << "paramStr: " << "\"" << "\", \n";
                     }
                     else if (action->GetElementTypeString() == "Action.Submit")
@@ -448,7 +448,6 @@ namespace RendererQml
 
                         submitDataJson.erase(std::remove(submitDataJson.begin(), submitDataJson.end(), '"'), submitDataJson.end());
                         actionsModel << "paramStr: \"" << submitDataJson << "\", \n";
-                        actionsModel << "toggleVisibilityTarget: " << "\"" << "\", \n";
                     }
 
                     actionsModel << "is1_3Enabled: " << (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false") << ", \n";
@@ -494,7 +493,9 @@ namespace RendererQml
                 actionsModel << " });";
             }
             actionsModel << "} }";
+            toggleVisibilityTarget << "}";
             uiButtonStrip->Property("actionButtonModel", actionsModel.str());
+            uiButtonStrip->Property("_toggleVisibilityTarget", toggleVisibilityTarget.str());
 
             if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
             {

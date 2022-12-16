@@ -7,6 +7,7 @@ Flow {
     property string _layoutDirection
     property var actionButtonModel
     property var adaptiveCard
+    property var _toggleVisibilityTarget: null
     
     width: parent.width
     spacing: _spacing
@@ -35,7 +36,7 @@ Flow {
                     _isActionToggleVisibility: isActionToggleVisibility
                     _hasIconUrl: hasIconUrl
                     _imgSource: imgSource
-                    _toggleVisibilityTarget: toggleVisibilityTarget
+                    _toggleVisibilityTarget: isActionToggleVisibility ? flowActionId._toggleVisibilityTarget[index] : null
                     _paramStr: paramStr
                     _is1_3Enabled: is1_3Enabled
                     _adaptiveCard: flowActionId.adaptiveCard
