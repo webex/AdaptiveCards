@@ -11,17 +11,19 @@ Column {
     spacing: _spacing
 
      Repeater {
+        id: defaultRepeaterId
         model: actionButtonModel
         Rectangle {
-            id: _buttonId
-            height : _id.height
-            width : _id.width
+            
+            height : adaptiveActionRenderId.height
+            width : adaptiveActionRenderId.width
+            color: 'transparent'
      
             AdaptiveActionRender {
+                    id: adaptiveActionRenderId
                     _buttonConfigType: buttonConfigType
                     _isIconLeftOfTitle: isIconLeftOfTitle
                     _escapedTitle: escapedTitle
-                    id: _id
                     _isShowCardButton: isShowCardButton
                     _iconSource: iconSource
                     _isActionSubmit: isActionSubmit
@@ -35,6 +37,7 @@ Column {
                     _adaptiveCard: colActionId.adaptiveCard
                     _selectActionId: selectActionId
                     width: implicitWidth
+                    _loaderId: loaderId
                 }
             }
 

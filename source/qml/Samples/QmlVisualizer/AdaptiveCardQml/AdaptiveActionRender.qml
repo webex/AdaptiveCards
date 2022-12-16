@@ -18,6 +18,7 @@ Button {
     property bool _isActionOpenUrl
     property bool _isActionToggleVisibility
     property string _selectActionId: ""
+    property var _loaderId
     
     property bool _hasIconUrl
     property var _imgSource
@@ -33,8 +34,8 @@ Button {
 
     function handleMouseAreaClick() {
         if (_isActionToggleVisibility && _selectActionId === 'Action.ToggleVisibility') {
-           
-            AdaptiveCardUtils.handleToggleVisibilityAction(JSON.parse(_toggleVisibilityTarget));
+           console.log("_toggleVisibilityTarget" + _toggleVisibilityTarget)
+            AdaptiveCardUtils.handleToggleVisibilityAction(/*JSON.parse*/(_toggleVisibilityTarget));
             return ;
         } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
             console.log("_paramStr" + _paramStr)
@@ -44,6 +45,12 @@ Button {
         } else if(_isActionOpenUrl){
             _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
             return ;
+        }
+        else if(_isShowCardButton){
+            console.log("_isShowCardButton : " + _isShowCardButton)
+            console.log("__loaderId.visible : " + _loaderId.visible)
+            console.log("_loaderId : " + _loaderId)
+             _loaderId.visible = !_loaderId.visible
         }
     }
 
