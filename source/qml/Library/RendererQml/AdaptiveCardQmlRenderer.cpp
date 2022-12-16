@@ -78,6 +78,7 @@ namespace RendererQml
         uiCard->AddImports("import QtQuick.Controls 2.15");
         uiCard->AddImports("import QtGraphicalEffects 1.15");
         uiCard->AddImports("import AdaptiveCards 1.0");
+        uiCard->AddImports("import \"AdaptiveCardUtils.js\" as AdaptiveCardUtils");
         uiCard->Property("id", "adaptiveCard");
         context->setCardRootId(uiCard->GetId());
 		context->setCardRootElement(uiCard);
@@ -204,19 +205,19 @@ namespace RendererQml
 
             const auto isChildCardString = isChildCard ? "true" : "false";
             bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{"
-                << context->getCardRootId() << ".generateStretchHeight(children," << cardMinHeight << ");"
-                << "var cardHeight = " << context->getCardRootId() << ".getCardHeight(" << bodyLayout->GetId() << ".children);"
+                << "AdaptiveCardUtils.generateStretchHeight(children, " << cardMinHeight << "); "
+                << "var cardHeight = AdaptiveCardUtils.getCardHeight(" << bodyLayout->GetId() << ".children);"
                 << context->getCardRootId() << ".sendCardHeight(cardHeight + 2 * " << context->getCardRootId() << ".margins);"
                 << "}");
         }
         else
         {
-            bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << cardMinHeight << ")}");
+            bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{AdaptiveCardUtils.generateStretchHeight(children," << cardMinHeight << ")}");
         }
 
-		bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << cardMinHeight << ")}");
+		bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{AdaptiveCardUtils.generateStretchHeight(children," << cardMinHeight << ")}");
 
-		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children," << cardMinHeight << ")}");
+		bodyLayout->Property("onImplicitWidthChanged", Formatter() << "{AdaptiveCardUtils.generateStretchHeight(children," << cardMinHeight << ")}");
 
 		if (card->GetMinHeight() > 0)
 		{
@@ -254,19 +255,6 @@ namespace RendererQml
                 submitElements += ((element == *submitElementsList.rbegin()) ? "}" : ",");
             }
             uiCard->Property("property var submitElements", submitElements);
-        }
-
-		// Add height and width calculation function
-        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchHeight());
-        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getStretchWidth());
-        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidth());
-        uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthActionSet());
-		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getMinWidthFactSet());
-		uiCard->AddFunctions(AdaptiveCardQmlRenderer::getSelectLinkFunction());
-
-        if (!isChildCard)
-        {
-            uiCard->AddFunctions(AdaptiveCardQmlRenderer::getCardHeightFunction());
         }
 
 		return uiCard;
@@ -518,10 +506,9 @@ namespace RendererQml
             {
                 uiButtonStrip->Property("property var rectangleElements", rectangleElements.str());
                 uiButtonStrip->Property("property var actionElements", actionElements.str());
-                uiButtonStrip->Property("onWidthChanged", "horizontalAlign()");
-                uiButtonStrip->Property("onImplicitWidthChanged", "horizontalAlign()");
-                uiButtonStrip->Property("Component.onCompleted", "horizontalAlign()");
-                uiButtonStrip->AddFunctions(getActinSetHorizontalAlignFunc());
+                uiButtonStrip->Property("onWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
+                uiButtonStrip->Property("onImplicitWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
+                uiButtonStrip->Property("Component.onCompleted", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
             }
 
             // add show card click function
@@ -690,16 +677,7 @@ namespace RendererQml
         uiTextBlock->Property("_fontFamily", fontFamily, true);
         uiTextBlock->Property("_selectionColor ", Formatter() << context->GetHexColor(cardConfig.textHighlightBackground));
 
-        std::string text = TextUtils::ApplyTextFunctions(textBlock->GetText(), context->GetLang());
-
-        auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(text);
-        text = markdownParser->TransformToHtml();
-        text = Utils::HandleEscapeSequences(text);
-
-        const std::string linkColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
-        // CSS Property for underline, striketrhough,etc
-        const std::string textDecoration = "none";
-        text = Utils::FormatHtmlUrl(text, linkColor, textDecoration);
+        std::string text = ParseMarkdownString(textBlock->GetText(), context);
         context->addHeightEstimate(context->getEstimatedTextHeight(text));
 
         uiTextBlock->Property("_text", text, true);
@@ -895,7 +873,7 @@ namespace RendererQml
 		uiFactSet->Property("rows", std::to_string(factSet->GetFacts().size()));
 		uiFactSet->Property("height", "implicitHeight");
 		uiFactSet->Property("property int titleWidth", "0");
-		uiFactSet->Property("property int minWidth", Formatter() << context->getCardRootId() << ".getMinWidthFactSet(children, columnSpacing)");
+		uiFactSet->Property("property int minWidth", Formatter() << "AdaptiveCardUtils.getMinWidthFactSet(children, columnSpacing)");
 		uiFactSet->AddFunctions("function setTitleWidth(item){	if (item.width > titleWidth){ titleWidth = item.width }}");
 
 		if (!factSet->GetIsVisible())
@@ -1325,7 +1303,7 @@ namespace RendererQml
 			uiFrame->Property("width", "parent.width");
 		}
 
-		uiFrame->Property("onWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchWidth( row_" << id << ".children, parent.width - (" << marginReleased << "))}");
+		uiFrame->Property("onWidthChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchWidth( row_" << id << ".children, parent.width - (" << marginReleased << "))}");
 
 		return uiFrame;
 	}
@@ -1515,20 +1493,20 @@ namespace RendererQml
 		if (cardElement->GetElementTypeString() == "Container")
 		{
 			stretchHeight = Formatter() << "minHeight - " << tempMargin;
-			uiContainer->Property("onMinHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight( column_" << id << ".children," << stretchHeight << " )}");
+			uiContainer->Property("onMinHeightChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchHeight( column_" << id << ".children," << stretchHeight << " )}");
 		}
 		else if (cardElement->GetElementTypeString() == "Column")
 		{
 			stretchHeight = Formatter() << "stretchMinHeight - " << tempMargin;
 			uiContainer->Property("property int stretchMinHeight", "0");
-			uiContainer->Property("onStretchMinHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight( column_" << id << ".children," << stretchHeight << " )}");
+			uiContainer->Property("onStretchMinHeightChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchHeight( column_" << id << ".children," << stretchHeight << " )}");
 		}
 
-		uiColumn->Property("onImplicitHeightChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << "." << stretchHeight << " )}");
+		uiColumn->Property("onImplicitHeightChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchHeight(children, " << id << "." << stretchHeight << " )}");
 
-		uiColumn->Property("onImplicitWidthChanged", Formatter() << "{" << context->getCardRootId() << ".generateStretchHeight(children, " << id << "." << stretchHeight << " )}");
+		uiColumn->Property("onImplicitWidthChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchHeight(children, " << id << "." << stretchHeight << " )}");
 
-		uiContainer->Property("property int minWidth", Formatter() << "{" << context->getCardRootId() << ".getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempWidth << "}");
+		uiContainer->Property("property int minWidth", Formatter() << "{ AdaptiveCardUtils.getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempWidth << "}");
 
 		if (cardElement->GetElementTypeString() == "Column")
 		{
@@ -1563,7 +1541,7 @@ namespace RendererQml
 			outerContainer->Property("visible", "false");
 		}
 
-		outerContainer->Property("property int minWidth", Formatter() << "{" << context->getCardRootId() << ".getMinWidthActionSet( children[1].children," << context->GetConfig()->GetActions().buttonSpacing << ")}");
+		outerContainer->Property("property int minWidth", Formatter() << "{ AdaptiveCardUtils.getMinWidthActionSet( children[1].children," << context->GetConfig()->GetActions().buttonSpacing << ")}");
 
 		auto actionsConfig = context->GetConfig()->GetActions();
 		const auto oldActionAlignment = context->GetConfig()->GetActions().actionAlignment;
@@ -2240,357 +2218,6 @@ namespace RendererQml
 		return uiFrame;
 	}
 
-	const std::string RendererQml::AdaptiveCardQmlRenderer::getStretchHeight()
-	{
-		std::string stretchHeightFunction =  R"(function generateStretchHeight(childrens,minHeight){
-			var n = childrens.length
-			var implicitHt = 0;
-			var stretchCount = 0;
-			var stretchMinHeight = 0;
-			for(var i=0;i<childrens.length;i++)
-			{
-				if(typeof childrens[i].seperator !== 'undefined')
-				{
-					implicitHt += childrens[i].height;
-					stretchMinHeight += childrens[i].height;
-				}
-				else
-				{
-					implicitHt += childrens[i].implicitHeight;
-					if(typeof childrens[i].stretch !== 'undefined')
-					{
-						stretchCount++;
-					}
-					else
-					{
-						stretchMinHeight += childrens[i].implicitHeight;
-					}
-				}
-			}
-			stretchMinHeight = (minHeight - stretchMinHeight)/stretchCount
-			for(i=0;(i<childrens.length);i++)
-			{
-				if(typeof childrens[i].seperator === 'undefined')
-				{
-					if(typeof childrens[i].stretch !== 'undefined' && typeof childrens[i].minHeight !== 'undefined')
-					{
-						childrens[i].minHeight = Math.max(childrens[i].minHeight,stretchMinHeight)
-					}
-				}
-			}
-			if(stretchCount > 0 && implicitHt < minHeight)
-			{
-				var stretctHeight = (minHeight - implicitHt)/stretchCount
-				for(i=0;i<childrens.length;i++)
-				{
-					if(typeof childrens[i].seperator === 'undefined')
-					{
-						if(typeof childrens[i].stretch !== 'undefined')
-						{
-							childrens[i].height = childrens[i].implicitHeight + stretctHeight
-						}
-					}
-				}
-			}
-			else
-			{
-				for(i=0;i<childrens.length;i++)
-				{
-					if(typeof childrens[i].seperator === 'undefined')
-					{
-						if(typeof childrens[i].stretch !== 'undefined')
-						{
-							childrens[i].height = childrens[i].implicitHeight
-						}
-					}
-				}
-			}
-		})";
-
-		stretchHeightFunction.erase(std::remove(stretchHeightFunction.begin(), stretchHeightFunction.end(), '\t'), stretchHeightFunction.end());
-
-		return stretchHeightFunction;
-	}
-
-	const std::string RendererQml::AdaptiveCardQmlRenderer::getStretchWidth()
-	{
-		std::string stretchWidthFunction =  R"(function generateStretchWidth(childrens,width){
-			var implicitWid = 0
-			var autoWid = 0
-			var autoCount = 0
-			var weightSum = 0
-			var stretchCount = 0
-			var weightPresent = 0
-			for(var i=0;i<childrens.length;i++)
-			{
-				if(typeof childrens[i].seperator !== 'undefined')
-				{
-					implicitWid += childrens[i].width
-				}
-				else
-				{
-					if(childrens[i].widthProperty.endsWith("px"))
-					{
-						childrens[i].width = parseInt(childrens[i].widthProperty.slice(0,-2))
-						implicitWid += childrens[i].width
-					}
-					else
-					{
-						if(childrens[i].widthProperty === "auto")
-						{
-							autoCount++
-						}
-						else if(childrens[i].widthProperty === "stretch")
-						{
-							stretchCount++
-							implicitWid += 50;
-						}
-						else
-						{
-							weightPresent = 1
-							weightSum += parseInt(childrens[i].widthProperty)
-						}
-					}
-				}
-			}
-			autoWid = (width - implicitWid)/(weightPresent + autoCount)
-			var flags = new Array(childrens.length).fill(0)
-			for(i=0;i<childrens.length;i++)
-			{
-				if(typeof childrens[i].seperator === 'undefined')
-				{
-					if(childrens[i].widthProperty === "auto")
-					{
-						if(childrens[i].minWidth < autoWid)
-						{
-							childrens[i].width = childrens[i].minWidth
-							implicitWid += childrens[i].width
-							flags[i] = 1;
-							autoCount--;
-							autoWid = (width - implicitWid)/(weightPresent + autoCount)
-						}
-					}
-				}
-			}
-			for(i=0;i<childrens.length;i++)
-			{
-				if(typeof childrens[i].seperator === 'undefined')
-				{
-					if(childrens[i].widthProperty === "auto")
-					{
-						if(flags[i] === 0)
-						{
-							childrens[i].width = autoWid
-							implicitWid += childrens[i].width
-						}
-					}
-					else if(childrens[i].widthProperty !== "stretch" && !childrens[i].widthProperty.endsWith("px"))
-					{
-						if(weightSum !== 0)
-						{
-							childrens[i].width = ((parseInt(childrens[i].widthProperty)/weightSum) * autoWid)
-							implicitWid += childrens[i].width
-						}
-					}
-				}
-			}
-			var stretchWidth = (width - implicitWid)/stretchCount
-			for(i=0;i<childrens.length;i++)
-			{
-				if(typeof childrens[i].seperator === 'undefined')
-				{
-					if(childrens[i].widthProperty === 'stretch')
-					{
-						childrens[i].width = 50+stretchWidth
-					}
-				}
-			}
-		})";
-
-		stretchWidthFunction.erase(std::remove(stretchWidthFunction.begin(), stretchWidthFunction.end(), '\t'), stretchWidthFunction.end());
-
-		return stretchWidthFunction;
-	}
-
-	const std::string RendererQml::AdaptiveCardQmlRenderer::getMinWidth()
-	{
-		std::string minWidthFunction =  R"(function getMinWidth(childrens){
-			var min = 0
-			for(var j =0;j<childrens.length;j++)
-			{
-				if(typeof childrens[j].minWidth === 'undefined')
-				{
-					min = Math.max(min,Math.ceil(childrens[j].implicitWidth))
-				}
-				else
-				{
-					min = Math.max(min,Math.ceil(childrens[j].minWidth))
-				}
-			}
-			return min
-		})";
-
-		minWidthFunction.erase(std::remove(minWidthFunction.begin(), minWidthFunction.end(), '\t'), minWidthFunction.end());
-
-		return minWidthFunction;
-	}
-
-	const std::string RendererQml::AdaptiveCardQmlRenderer::getMinWidthActionSet()
-	{
-		std::string minWidthActionSet =  R"(function getMinWidthActionSet(childrens,spacing){
-			var min = 0
-			for(var j =0;j<childrens.length;j++)
-			{
-				min += Math.ceil(childrens[j].implicitWidth)
-			}
-			min += ((childrens.length - 1)*spacing)
-			return min
-		})";
-
-		minWidthActionSet.erase(std::remove(minWidthActionSet.begin(), minWidthActionSet.end(), '\t'), minWidthActionSet.end());
-
-		return minWidthActionSet;
-	}
-
-	const std::string RendererQml::AdaptiveCardQmlRenderer::getMinWidthFactSet()
-	{
-		std::string minWidthFactSet =  R"(function getMinWidthFactSet(childrens, spacing){
-			var min = 0
-			for(var j=0;j<childrens.length;j+=2)
-			{
-				min = Math.max(min,childrens[j].implicitWidth + childrens[j+1].implicitWidth + spacing)
-			}
-			return min;
-		})";
-
-		minWidthFactSet.erase(std::remove(minWidthFactSet.begin(), minWidthFactSet.end(), '\t'), minWidthFactSet.end());
-
-		return minWidthFactSet;
-	}
-
-    const std::string RendererQml::AdaptiveCardQmlRenderer::getSelectLinkFunction()
-    {
-        std::string selectLinkFunction = R"(function selectLink(element, next) {
-            let start, end;
-            if (next) {
-                element.cursorPosition = element.selectionEnd + 1;
-                element.deselect();
-                while (element.cursorPosition < element.length && element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === "")element.cursorPosition++
-                if (element.cursorPosition !== element.length) {
-                    start = element.selectionEnd - 1;
-                    element.link = element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2));
-                    while (element.cursorPosition < element.length && element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === element.link)element.cursorPosition++
-                    if (element.cursorPosition <= element.length) {
-                        element.cursorPosition--;
-                        if(element.linkAt(element.cursorRectangle.x + 1, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === element.link){
-                            element.cursorPosition++;
-                        }
-                        end = element.cursorPosition;
-                        element.select(start, end);
-                        return true;
-                    }
-                }
-            } else {
-                element.cursorPosition = element.selectionStart - 1;
-                element.deselect();
-                while (element.cursorPosition > 0 && element.linkAt(element.cursorRectangle.x + 1, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === "")element.cursorPosition--
-                if (element.cursorPosition !== 0) {
-                    end = element.selectionStart + 1;
-                    element.link = element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2));
-                    while (element.cursorPosition > 0 && element.linkAt(element.cursorRectangle.x, (element.cursorRectangle.y + element.cursorRectangle.height/2)) === element.link)element.cursorPosition--
-                    if (element.cursorPosition >= 0) {
-                        start = element.cursorPosition;
-                        element.select(end, start);
-                        return true;
-                    }
-                }
-            }
-            element.accessibleText = element.cursorPosition === 0 ? element.getText(0, element.length) : ""
-            element.link = ""
-            return false;
-        })";
-
-        selectLinkFunction.erase(std::remove(selectLinkFunction.begin(), selectLinkFunction.end(), '\t'), selectLinkFunction.end());
-
-        return selectLinkFunction;
-    }
-
-    const std::string RendererQml::AdaptiveCardQmlRenderer::getCardHeightFunction()
-    {
-        std::string cardHeightFunction = R"(function getCardHeight(childrens){
-            var cardHeight = 0
-            for(var i=0;i<childrens.length;i++)
-            {
-                if(childrens[i].visible === true && childrens[i].isOpacityMask === undefined)
-                {
-                    cardHeight += childrens[i].height;
-                }
-            }
-            return cardHeight;
-        })";
-
-        cardHeightFunction.erase(std::remove(cardHeightFunction.begin(), cardHeightFunction.end(), '\t'), cardHeightFunction.end());
-
-        return cardHeightFunction;
-    }
-
-    const std::string RendererQml::AdaptiveCardQmlRenderer::getActinSetHorizontalAlignFunc()
-    {
-        std::string actionSetHorizontalAlignFunc = R"(function horizontalAlign(){
-            var noElementsInCol = [];
-            var colWidths = [];
-            var wid = 0
-            var noElements = 0;
-
-            for(var i=0;i<actionElements.length;i++){
-                let itemWidth = actionElements[i].width + (i == 0 ? 0 : spacing);
-                if(wid + itemWidth <= width){
-                    noElements++;
-                    wid += itemWidth;
-                }
-                else{
-                    noElementsInCol.push(noElements);
-                    colWidths.push(wid);
-                    noElements = 1;
-                    wid = itemWidth;
-                }
-                actionElements[i].anchors.left = undefined;
-                actionElements[i].anchors.right = undefined;
-                actionElements[i].anchors.horizontalCenter = undefined;
-                rectangleElements[i].width = actionElements[i].width;
-            }
-            noElementsInCol.push(noElements);
-            colWidths.push(wid);
-
-            var itemNo = 0;
-            for(i=0;i<noElementsInCol.length;i++){
-                var itemStart = itemNo;
-                var itemEnd = itemNo + noElementsInCol[i] - 1;
-                if(itemStart < 0 || itemEnd < 0){
-                    continue;
-                }
-                itemNo += noElementsInCol[i];
-                if(itemStart === itemEnd){
-                    rectangleElements[itemStart].width = width;
-                    actionElements[itemStart].anchors.horizontalCenter = rectangleElements[itemStart].horizontalCenter;
-                }
-                else{
-                    var extraWidth = (width - colWidths[i])/2;
-
-                    rectangleElements[itemStart].width = actionElements[itemStart].width + extraWidth;
-                    actionElements[itemStart].anchors.right = rectangleElements[itemStart].right;
-
-                    rectangleElements[itemEnd].width = actionElements[itemEnd].width + extraWidth;
-                    actionElements[itemEnd].anchors.left = rectangleElements[itemEnd].left;
-                }
-            }
-        })";
-
-        actionSetHorizontalAlignFunc.erase(std::remove(actionSetHorizontalAlignFunc.begin(), actionSetHorizontalAlignFunc.end(), '\t'), actionSetHorizontalAlignFunc.end());
-
-        return actionSetHorizontalAlignFunc;
-    }
-
     std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetIconTag(std::shared_ptr<AdaptiveRenderContext> context)
     {
         auto iconBackgroundTag = std::make_shared<QmlTag>("Rectangle");
@@ -2787,49 +2414,6 @@ namespace RendererQml
         return uiCard;
     }
 
-    std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::AddAccessibilityToTextBlock(std::shared_ptr<QmlTag> uiTextBlock, std::shared_ptr<AdaptiveRenderContext> context)
-    {
-        auto cardConfig = context->GetRenderConfig()->getCardConfig();
-
-        uiTextBlock->Property("property string accessibleText", "getText(0, length)");
-        uiTextBlock->Property("property string link", "", true);
-        uiTextBlock->Property("activeFocusOnTab", "true");
-        uiTextBlock->Property("Accessible.name", "accessibleText");
-        uiTextBlock->Property("readOnly", "true");
-        uiTextBlock->Property("selectByMouse", "true");
-        uiTextBlock->Property("selectByKeyboard", "true");
-        uiTextBlock->Property("selectionColor ", Formatter() << context->GetHexColor(cardConfig.textHighlightBackground));
-        uiTextBlock->Property("selectedTextColor ", "color");
-        uiTextBlock->Property("Keys.onPressed", Formatter() << "{"
-            << "if (event.key === Qt.Key_Tab) {event.accepted = selectLink(this, true);}"
-            << "else if (event.key === Qt.Key_Backtab) {event.accepted = selectLink(this, false);}"
-            << " else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter || event.key == Qt.Key_Space) { if (link) {linkActivated(link);} event.accepted = true;}}");
-
-        uiTextBlock->Property("onSelectedTextChanged", Formatter() << "{"
-            << "if (link) { accessibleText = selectedText + ' has link,' + link + '. To activate press space bar.';}"
-            << "else {accessibleText = ''}}");
-
-        uiTextBlock->Property("onActiveFocusChanged", Formatter() << "{"
-            << "if (activeFocus) { textEditFocussed(" << uiTextBlock->GetId() << "); accessibleText = getText(0,length);}}");
-
-        uiTextBlock->AddFunctions("function getSelectedRichText() {return activeFocus ? selectedText : \"\";}");
-
-        uiTextBlock->AddFunctions(Formatter() << "function getExternalLinkUnderCursor() {if(!activeFocus) return \"\";"
-            << "const possibleLinkPosition = selectionEnd > cursorPosition ? cursorPosition + 1 : cursorPosition;"
-            << "let rectangle = positionToRectangle(possibleLinkPosition);"
-            << "let correctedX = (rectangle.x > 0 ? rectangle.x - 1 : 0);"
-            << "return linkAt(correctedX, rectangle.y);}");
-
-        auto uiFocusRectangle = std::make_shared<QmlTag>("Rectangle");
-        uiFocusRectangle->Property("anchors.fill", "parent");
-        uiFocusRectangle->Property("color", "transparent", true);
-        uiFocusRectangle->Property("border.width", "parent.activeFocus ? 1 : 0");
-        uiFocusRectangle->Property("border.color", Formatter() << "parent.activeFocus ? '" << cardConfig.focusRectangleColor << "' : 'transparent'");
-        uiTextBlock->AddChild(uiFocusRectangle);
-
-        return uiTextBlock;
-    }
-
     std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetStretchRectangle(std::shared_ptr<QmlTag> element)
     {
         auto stretchRectangle = std::make_shared<QmlTag>("Rectangle");
@@ -2855,5 +2439,19 @@ namespace RendererQml
         opacityMask->Property("maskSource", rectangle->ToString());
         opacityMask->Property("readonly property bool isOpacityMask", "true");
         return opacityMask;
+    }
+
+    std::string RendererQml::AdaptiveCardQmlRenderer::ParseMarkdownString(std::string text, std::shared_ptr<AdaptiveRenderContext> context)
+    {
+        std::string parsedText = RendererQml::TextUtils::ApplyTextFunctions(text, context->GetLang());
+
+        auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(parsedText);
+        parsedText = markdownParser->TransformToHtml();
+        parsedText = RendererQml::Utils::HandleEscapeSequences(parsedText);
+
+        const std::string linkColor = context->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
+        const std::string textDecoration = "none";
+        parsedText = RendererQml::Utils::FormatHtmlUrl(parsedText, linkColor, textDecoration);
+        return parsedText;
     }
 }
