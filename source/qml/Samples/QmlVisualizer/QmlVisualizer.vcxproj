@@ -122,8 +122,8 @@
     <ClCompile Include="stdafx.cpp" />
     <None Include="AdaptiveCardQml\ActionsContentLayout.qml" />
     <None Include="AdaptiveCardQml\AdaptiveActionRender.qml" />
-    <None Include="AdaptiveCardQml\AddActionRender.qml" />
-    <None Include="AdaptiveCardQml\AddActionRenderVertical.qml" />
+    <None Include="AdaptiveCardQml\ActionSetHorizontalRender.qml" />
+    <None Include="AdaptiveCardQml\ActionSetVerticalRender.qml" />
     <None Include="AdaptiveCardQml\CardConstants.qml" />
     <None Include="AdaptiveCardQml\ChoiceSetRender.qml" />
     <None Include="AdaptiveCardQml\ComboboxRender.qml" />

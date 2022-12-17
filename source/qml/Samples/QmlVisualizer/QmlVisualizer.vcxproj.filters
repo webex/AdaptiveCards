@@ -132,10 +132,10 @@
     <None Include="AdaptiveCardQml\ActionsContentLayout.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="AdaptiveCardQml\AddActionRender.qml">
+    <None Include="AdaptiveCardQml\ActionSetHorizontalRender.qml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="AdaptiveCardQml\AddActionRenderVertical.qml">
+    <None Include="AdaptiveCardQml\ActionSetVerticalRender.qml">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

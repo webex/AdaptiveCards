@@ -302,14 +302,14 @@ namespace RendererQml
 
             if (actionsConfig.actionsOrientation == AdaptiveCards::ActionsOrientation::Horizontal)
             {
-                uiButtonStrip = std::make_shared<QmlTag>("AddActionRender");
+                uiButtonStrip = std::make_shared<QmlTag>("ActionSetHorizontalRender");
                 uiButtonStrip->Property("_spacing", Formatter() << actionsConfig.buttonSpacing);
                 uiButtonStrip->Property("_layoutDirection", actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Right ? "'Qt.RightToLeft'" : "'Qt.LeftToRight'");
             }
             else
             {
                 //TODO: Implement AdaptiveCards::ActionsOrientation::Vertical
-                uiButtonStrip = std::make_shared<QmlTag>("AddActionRenderVertical");
+                uiButtonStrip = std::make_shared<QmlTag>("ActionSetVerticalRender");
                 uiButtonStrip->Property("width", "parent.width");
                 uiButtonStrip->Property("_spacing", std::to_string(actionsConfig.buttonSpacing));
             }
@@ -337,10 +337,7 @@ namespace RendererQml
             AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
             uiContainer->AddChild(uiButtonStrip);
 
-            std::ostringstream rectangleElements;
-            std::ostringstream actionElements;
             std::ostringstream toggleVisibilityTarget;
-            std::shared_ptr<QmlTag> uiRectangle;
             std::ostringstream actionsModel;
             uiButtonStrip->Property("adaptiveCard", Formatter() << "adaptiveCard");
             actionsModel << "ListModel {Component.onCompleted : { ";
@@ -351,16 +348,6 @@ namespace RendererQml
                 // add actions buttons
                 const auto action = actions[i];
                 const auto buttonIndex = context->getButtonCounter();
-                if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
-                {
-                    rectangleElements << (i == 0 ? "[" : "") << "button_auto_" << buttonIndex << "_rectangle" << (i == maxActions - 1 ? "]" : ",");
-                    actionElements << (i == 0 ? "[" : "") << "button_auto_" << buttonIndex << (i == maxActions - 1 ? "]" : ",");
-                    actionsModel << "_isactionAlignmentCenter: " << "true" << ", \n";
-
-                }
-                else {
-                    actionsModel << "_isactionAlignmentCenter: " << "false" << ", \n";
-                }
 
                 if (context->GetConfig()->GetSupportsInteractivity())
                 {
@@ -442,7 +429,6 @@ namespace RendererQml
                         auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
                         selectActionId = submitAction->GetElementTypeString();
                         std::string submitDataJson = submitAction->GetDataJson();
-                        //submitDataJson = Utils::Trim(submitDataJson);
 
                         submitDataJson.erase(std::remove(submitDataJson.begin(), submitDataJson.end(), '"'), submitDataJson.end());
                         actionsModel << "paramStr: \"" << submitDataJson << "\", \n";
@@ -498,16 +484,7 @@ namespace RendererQml
             toggleVisibilityTarget << "}";
             uiButtonStrip->Property("actionButtonModel", actionsModel.str());
             uiButtonStrip->Property("_toggleVisibilityTarget", toggleVisibilityTarget.str());
-
-            /*if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
-            {
-                uiButtonStrip->Property("property var rectangleElements", rectangleElements.str());
-                uiButtonStrip->Property("property var actionElements", actionElements.str());
-                uiButtonStrip->Property("onWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
-                uiButtonStrip->Property("onImplicitWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
-                uiButtonStrip->Property("onImplicitHeightChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
-                uiButtonStrip->Property("Component.onCompleted", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
-            } */
+            uiButtonStrip->Property("isCentreAlign", actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center ? "true" : "false");
 
             // add show card click function
             addShowCardButtonClickFunc(context);
@@ -1635,7 +1612,7 @@ namespace RendererQml
                 buttonElement->Property("_paramStr", Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`");
             }
             buttonElement->Property("_is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false");
-            //buttonElement->Property("_adaptiveCard", "adaptiveCard");
+            buttonElement->Property("_adaptiveCard", "adaptiveCard");
             buttonElement->Property("_selectActionId", Formatter() << "String.raw`" << selectActionId << "`");
 
             return buttonElement;

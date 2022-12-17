@@ -1,19 +1,19 @@
 ﻿import QtQuick 2.3
 import "AdaptiveCardUtils.js" as AdaptiveCardUtils
 
-Flow {
-    id: flowActionId
+Column {
+    id: colActionId
     property int _spacing
-    property string _layoutDirection
     property var actionButtonModel
     property var adaptiveCard
     property var _toggleVisibilityTarget: null
+
     property var activeShowCard: null
     property var prevLoaderId: null
-    property bool isCentreAlign: true
+    property bool isCentreAlign: false
     onWidthChanged: handleCentreAligmentFunction()
     onImplicitWidthChanged: handleCentreAligmentFunction()
-    //onImplicitHeightChanged: handleCentreAligmentFunction()
+    onImplicitHeightChanged: handleCentreAligmentFunction()
     Component.onCompleted: { handleCentreAligmentFunction() }
 
     function handleCentreAligmentFunction() {
@@ -43,24 +43,22 @@ Flow {
         prevLoaderId = showcardLoaderElement
     }
 
+    
     width: parent.width
     spacing: _spacing
-    layoutDirection: _layoutDirection === 'Qt.RightToLeft' ? Qt.RightToLeft : Qt.LeftToRight
     property var rectangleElements: []
     property var actionElements: []
 
      Repeater {
         id: defaultRepeaterId
         model: actionButtonModel
-
         Rectangle {
             
             height : adaptiveActionRenderId.height
             width : adaptiveActionRenderId.width
             color: 'transparent'
-            Component.onCompleted: { rectangleElements.push(this) }
+     
             AdaptiveActionRender {
-                    
                     id: adaptiveActionRenderId
                     _buttonConfigType: buttonConfigType
                     _isIconLeftOfTitle: isIconLeftOfTitle
@@ -71,12 +69,12 @@ Flow {
                     _isActionToggleVisibility: isActionToggleVisibility
                     _hasIconUrl: hasIconUrl
                     _imgSource: imgSource
-                    _toggleVisibilityTarget: isActionToggleVisibility ? flowActionId._toggleVisibilityTarget[index] : null
+                    _toggleVisibilityTarget: isActionToggleVisibility ? colActionId._toggleVisibilityTarget[index] : null
                     _paramStr: paramStr
                     _is1_3Enabled: is1_3Enabled
-                    _adaptiveCard: flowActionId.adaptiveCard
+                    _adaptiveCard: colActionId.adaptiveCard
                     _selectActionId: selectActionId
-                    width: implicitWidth
+                    width: colActionId.width > implicitWidth ? implicitWidth : colActionId.width
                     _loaderId: loaderId
 
                     Component.onCompleted: { adaptiveActionRenderId.handleShowCardToggleVisibility.connect(setActiveShowCard)

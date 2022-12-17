@@ -25,7 +25,7 @@
         <file alias="CardGenericTextElement.qml">AdaptiveCardQml/CardGenericTextElement.qml</file>
         <file alias="AdaptiveActionRender.qml">AdaptiveCardQml/AdaptiveActionRender.qml</file>
         <file alias="ActionsContentLayout.qml">AdaptiveCardQml/ActionsContentLayout.qml</file>
-        <file alias="AddActionRender.qml">AdaptiveCardQml/AddActionRender.qml</file>
-        <file alias="AddActionRenderVertical.qml">AdaptiveCardQml/AddActionRenderVertical.qml</file>
+        <file alias="ActionSetHorizontalRender.qml">AdaptiveCardQml/ActionSetHorizontalRender.qml</file>
+        <file alias="ActionSetVerticalRender.qml">AdaptiveCardQml/ActionSetVerticalRender.qml</file>
     </qresource>
 </RCC>

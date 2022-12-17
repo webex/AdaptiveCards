@@ -35,12 +35,9 @@ Button {
 
     function handleMouseAreaClick() {
         if (_isActionToggleVisibility && _selectActionId === 'Action.ToggleVisibility') {
-           console.log("_toggleVisibilityTarget" + _toggleVisibilityTarget)
-            AdaptiveCardUtils.handleToggleVisibilityAction(/*JSON.parse*/(_toggleVisibilityTarget));
+            AdaptiveCardUtils.handleToggleVisibilityAction((_toggleVisibilityTarget));
             return ;
         } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
-            console.log("_paramStr" + _paramStr)
-            console.log("_adaptiveCard" + _adaptiveCard)
             AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
             return ;
         } else if(_isActionOpenUrl){
@@ -86,7 +83,6 @@ Button {
     }
 
     id: actionButton
-    width: (parent.width > implicitWidth) ? implicitWidth : parent.width
     horizontalPadding: CardConstants.actionButtonConstants.horizotalPadding
     verticalPadding: CardConstants.actionButtonConstants.verticalPadding
     height: CardConstants.actionButtonConstants.buttonHeight
@@ -115,7 +111,6 @@ Button {
 
         function setColorForBackground() {
             if(_isShowCardButton == true) {
-            console.log("actionButton.down : " + actionButton.down + " actionButton.showCard: " + actionButton.showCard)
                 if(actionButton.showCard || actionButton.down) {
                     return _buttonColors.buttonColorPressed
                 }
