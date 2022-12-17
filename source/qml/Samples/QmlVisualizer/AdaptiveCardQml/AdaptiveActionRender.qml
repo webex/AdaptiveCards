@@ -19,17 +19,18 @@ Button {
     property bool _isActionToggleVisibility
     property string _selectActionId: ""
     property var _loaderId
-    
+    property bool showCard: false
     property bool _hasIconUrl
     property var _imgSource
     
-    property var _iconSource
+    property string _iconSource: CardConstants.showCardArrowDownImage
+    property string _iconSourceUp: CardConstants.showCardArrowUpImage
     property var _getActionToggleVisibilityClickFunc: ""
     property int _textSpacing: getTextSpacing()
     property var _onReleased: ""
     property var _buttonColors : getButtonConfig()
     onReleased: handleMouseAreaClick() 
-
+    signal handleShowCardToggleVisibility(var showcardLoaderElement, var currButtonElemID)
 
 
     function handleMouseAreaClick() {
@@ -47,10 +48,7 @@ Button {
             return ;
         }
         else if(_isShowCardButton){
-            console.log("_isShowCardButton : " + _isShowCardButton)
-            console.log("__loaderId.visible : " + _loaderId.visible)
-            console.log("_loaderId : " + _loaderId)
-             _loaderId.visible = !_loaderId.visible
+             handleShowCardToggleVisibility(_loaderId, this)
         }
     }
 
@@ -117,7 +115,8 @@ Button {
 
         function setColorForBackground() {
             if(_isShowCardButton == true) {
-                if(actionButton._isShowCardButton || actionButton.down) {
+            console.log("actionButton.down : " + actionButton.down + " actionButton.showCard: " + actionButton.showCard)
+                if(actionButton.showCard || actionButton.down) {
                     return _buttonColors.buttonColorPressed
                 }
                 else {
@@ -215,7 +214,7 @@ Button {
                     icon.height:12
                     focusPolicy:Qt.NoFocus
                     icon.color: contentRowLayout.colorAlias
-                    icon.source: _isShowCardButton == true ? _iconSource : ""
+                    icon.source: !showCard ? _iconSource : _iconSourceUp
                     onReleased: actionButton.onReleased()                 
                 } 
             }
@@ -266,7 +265,7 @@ Button {
                     icon.height:12
                     focusPolicy:Qt.NoFocus
                     icon.color: contentColLayout.colorAlias
-                    icon.source: _isShowCardButton == true ? _iconSource : ""
+                    icon.source: !showCard ? _iconSource : _iconSourceUp
                     onReleased: actionButton.onReleased()                 
                 } 
             }

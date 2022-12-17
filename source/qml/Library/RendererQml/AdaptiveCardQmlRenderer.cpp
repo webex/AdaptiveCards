@@ -392,11 +392,9 @@ namespace RendererQml
                     if (isShowCardButton)
                     {
                         actionsModel << "isShowCardButton: " << "true" << ", \n";
-                        actionsModel << "iconSource: " << "\"" << RendererQml::arrow_down_12 << "\", \n";
                     }
                     else {
                         actionsModel << "isShowCardButton: " << "false" << ", \n";
-                        actionsModel << "iconSource: " << "\"" << "\", \n";
                     }
 
                     actionsModel << "isActionSubmit: " << (action->GetElementTypeString() == "Action.Submit" ? "true" : "false") << ", \n";
@@ -460,7 +458,7 @@ namespace RendererQml
                 {
                     // Add to loader source component list
                     const std::string loaderId = Formatter() << "button_auto_1" << buttonIndex << "_loader";
-                    actionsModel << "loaderId: " << "" << loaderId << "" << ", \n";
+                    actionsModel << "loaderId: "  <<  loaderId  << ", \n";
                     const std::string componentId = loaderId + "_component";
                     const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
                     context->addToShowCardLoaderComponentList(loaderId, showCardAction);
@@ -487,7 +485,11 @@ namespace RendererQml
                     uiContainer->AddChild(uiLoader);
                 }
                 else {
-                    actionsModel << "loaderId: " << "\"" << "\"" << ", \n";
+                    const std::string loaderId = Formatter() << "button_auto_1" << buttonIndex << "_loader";
+                    actionsModel << "loaderId: " << loaderId << ", \n";
+                    auto uiLoader = std::make_shared<QmlTag>("Loader");
+                    uiLoader->Property("id", loaderId);
+                    uiContainer->AddChild(uiLoader);
                 }
 
                 actionsModel << " });";
@@ -497,14 +499,15 @@ namespace RendererQml
             uiButtonStrip->Property("actionButtonModel", actionsModel.str());
             uiButtonStrip->Property("_toggleVisibilityTarget", toggleVisibilityTarget.str());
 
-            if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
+            /*if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
             {
                 uiButtonStrip->Property("property var rectangleElements", rectangleElements.str());
                 uiButtonStrip->Property("property var actionElements", actionElements.str());
                 uiButtonStrip->Property("onWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
                 uiButtonStrip->Property("onImplicitWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
+                uiButtonStrip->Property("onImplicitHeightChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
                 uiButtonStrip->Property("Component.onCompleted", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
-            }
+            } */
 
             // add show card click function
             addShowCardButtonClickFunc(context);
@@ -1589,7 +1592,6 @@ namespace RendererQml
             if (isShowCardButton)
             {
                 buttonElement->Property("_isShowCardButton", "true");
-                buttonElement->Property("_iconSource", RendererQml::arrow_down_12, true);
             }
             buttonElement->Property("_isActionSubmit", action->GetElementTypeString() == "Action.Submit" ? "true" : "false");
             buttonElement->Property("_isActionOpenUrl", action->GetElementTypeString() == "Action.OpenUrl" ? "true" : "false");

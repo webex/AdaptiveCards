@@ -26,7 +26,6 @@ Column {
                     _isIconLeftOfTitle: isIconLeftOfTitle
                     _escapedTitle: escapedTitle
                     _isShowCardButton: isShowCardButton
-                    _iconSource: iconSource
                     _isActionSubmit: isActionSubmit
                     _isActionOpenUrl: isActionOpenUrl
                     _isActionToggleVisibility: isActionToggleVisibility

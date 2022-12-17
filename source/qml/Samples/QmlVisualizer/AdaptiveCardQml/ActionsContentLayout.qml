@@ -23,7 +23,7 @@ Row {
 
         function getTextColor() {
             if(_isShowCardButton == true) {
-                if(actionButton.isShowCardButton || actionButton._isShowCardButton || actionButton.down ) {
+                if(actionButton.showCard || actionButton.hovered || actionButton.down ) {
                     return _buttonColors.textColorHovered
                 }
                 else {
