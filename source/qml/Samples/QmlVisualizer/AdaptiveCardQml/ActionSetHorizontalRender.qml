@@ -65,6 +65,7 @@ Flow {
             AdaptiveActionRender {
                 id: adaptiveActionRenderId
 
+                objectName: _objectName
                 _buttonConfigType: buttonConfigType
                 _isIconLeftOfTitle: isIconLeftOfTitle
                 _escapedTitle: escapedTitle

@@ -377,6 +377,9 @@ namespace RendererQml
                         actionsModel << "buttonConfigType: \"primaryColorConfig\", \n";
                     }
 
+                    const std::string buttonObjectName = Formatter() << "button_auto_" << buttonIndex;
+                    actionsModel << "_objectName: \"" << buttonObjectName << "\", \n";
+
                     actionsModel << "isIconLeftOfTitle: " << (context->GetConfig()->GetActions().iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle ? "true" : "false") << ", \n";
                     actionsModel << "escapedTitle: " << "\"" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "\", \n";
                     const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);

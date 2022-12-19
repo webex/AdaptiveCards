@@ -56,10 +56,14 @@ Column {
             height: adaptiveActionRenderId.height
             width: adaptiveActionRenderId.width
             color: 'transparent'
+            Component.onCompleted: {
+                rectangleElements.push(this);
+            }
 
             AdaptiveActionRender {
                 id: adaptiveActionRenderId
 
+                objectName: _objectName
                 _buttonConfigType: buttonConfigType
                 _isIconLeftOfTitle: isIconLeftOfTitle
                 _escapedTitle: escapedTitle
