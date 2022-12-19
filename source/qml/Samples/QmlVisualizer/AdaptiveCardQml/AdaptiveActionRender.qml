@@ -1,11 +1,17 @@
-﻿import QtQuick 2.15
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.15
-import QtGraphicalEffects 1.15
-import "AdaptiveCardUtils.js" as AdaptiveCardUtils
+// Button Ends Here
 
+import "AdaptiveCardUtils.js" as AdaptiveCardUtils
+import QtGraphicalEffects 1.15
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.3
 
 Button {
+    // background rectangle ends here
+    // Content Item Ends Here
+
+    id: actionButton
+
     property string _buttonConfigType
     property bool _isIconLeftOfTitle
     property string _escapedTitle
@@ -22,16 +28,15 @@ Button {
     property bool showCard: false
     property bool _hasIconUrl
     property var _imgSource
-    
     property string _iconSource: CardConstants.showCardArrowDownImage
     property string _iconSourceUp: CardConstants.showCardArrowUpImage
     property var _getActionToggleVisibilityClickFunc: ""
     property int _textSpacing: getTextSpacing()
     property var _onReleased: ""
-    property var _buttonColors : getButtonConfig()
-    onReleased: handleMouseAreaClick() 
-    signal handleShowCardToggleVisibility(var showcardLoaderElement, var currButtonElemID)
+    property var _buttonColors: getButtonConfig()
+    property bool isButtonDisabled: false
 
+    signal handleShowCardToggleVisibility(var showcardLoaderElement, var currButtonElemID)
 
     function handleMouseAreaClick() {
         if (_isActionToggleVisibility && _selectActionId === 'Action.ToggleVisibility') {
@@ -40,125 +45,115 @@ Button {
         } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
             AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
             return ;
-        } else if(_isActionOpenUrl){
+        } else if (_isActionOpenUrl) {
             _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
             return ;
-        }
-        else if(_isShowCardButton){
-             handleShowCardToggleVisibility(_loaderId, this)
+        } else if (_isShowCardButton) {
+            handleShowCardToggleVisibility(_loaderId, this);
         }
     }
 
     function getButtonConfig() {
-
-        if(_buttonConfigType === 'positiveColorConfig')
-            return CardConstants.positiveButtonColors
-        else if(_buttonConfigType ===  'destructiveColorConfig')
-            return CardConstants.destructiveButtonColors
-        else {
-            return CardConstants.primaryButtonColors
-        }
+        if (_buttonConfigType === 'positiveColorConfig')
+            return CardConstants.positiveButtonColors;
+        else if (_buttonConfigType === 'destructiveColorConfig')
+            return CardConstants.destructiveButtonColors;
+        else
+            return CardConstants.primaryButtonColors;
     }
 
     function getTextSpacing() {
-        if(_hasIconUrl) {
+        if (_hasIconUrl)
             return CardConstants.actionButtonConstants.imageSize + CardConstants.actionButtonConstants.iconTextSpacing;
-        }
-        if(_isShowCardButton) {
+
+        if (_isShowCardButton)
             return CardConstants.actionButtonConstants.iconWidth + CardConstants.actionButtonConstants.iconTextSpacing;
-        }
+
         return 2 * CardConstants.actionButtonConstants.horizotalPadding - 2;
     }
 
-    Connections{
-    
-        id:buttonAuto1Connection
-        target:_aModel
-        function onEnableAdaptiveCardSubmitButton()
-        {
-            if (_isActionSubmit && actionButton.isButtonDisabled) {
-                actionButton.isButtonDisabled = false;
-            }
-        }
-    }
-
-    id: actionButton
+    onReleased: handleMouseAreaClick()
     horizontalPadding: CardConstants.actionButtonConstants.horizotalPadding
     verticalPadding: CardConstants.actionButtonConstants.verticalPadding
     height: CardConstants.actionButtonConstants.buttonHeight
-    Keys.onPressed:{if(event.key === Qt.Key_Return){down=true;event.accepted=true;}}
-    Keys.onReleased:{if(event.key === Qt.Key_Return){down=false;actionButton.onReleased();event.accepted=true;}}
-    property bool isButtonDisabled:false
-    enabled:!isButtonDisabled
+    Keys.onPressed: {
+        if (event.key === Qt.Key_Return) {
+            down = true;
+            event.accepted = true;
+        }
+    }
+    Keys.onReleased: {
+        if (event.key === Qt.Key_Return) {
+            down = false;
+            actionButton.onReleased();
+            event.accepted = true;
+        }
+    }
+    enabled: !isButtonDisabled
+    Accessible.name: _isIconLeftOfTitle == true ? contentRowLayout.contentItemContentText : contentColLayout.contentItemContentText
+
+    Connections {
+        id: buttonAuto1Connection
+
+        function onEnableAdaptiveCardSubmitButton() {
+            if (_isActionSubmit && actionButton.isButtonDisabled)
+                actionButton.isButtonDisabled = false;
+
+        }
+
+        target: _aModel
+    }
 
     background: Rectangle {
         id: actionButtonBg
-        anchors.fill: parent
-        radius: CardConstants.actionButtonConstants.buttonRadius
-
-        border.color: setBorderColorForBackground()
-        color: setColorForBackground()
-
 
         function setBorderColorForBackground() {
-            if(_isActionSubmit == true) {
-                return (isButtonDisabled ? _buttonColors.buttonColorDisabled :  _buttonColors.borderColorNormal)
-            }
-            else {
-                return _buttonColors.borderColorNormal
-            }
+            if (_isActionSubmit == true)
+                return (isButtonDisabled ? _buttonColors.buttonColorDisabled : _buttonColors.borderColorNormal);
+            else
+                return _buttonColors.borderColorNormal;
         }
 
         function setColorForBackground() {
-            if(_isShowCardButton == true) {
-                if(actionButton.showCard || actionButton.down) {
-                    return _buttonColors.buttonColorPressed
+            if (_isShowCardButton == true) {
+                if (actionButton.showCard || actionButton.down) {
+                    return _buttonColors.buttonColorPressed;
+                } else {
+                    if (actionButton.hovered)
+                        return _buttonColors.buttonColorHovered;
+                    else
+                        return _buttonColors.buttonColorNormal;
                 }
-                else {
-                    if(actionButton.hovered) {
-                        return _buttonColors.buttonColorHovered
-                    }
-                    else {
-                        return _buttonColors.buttonColorNormal
-                    } 
-                }
-                
-            }
-            else if(_isActionSubmit == true) {
-                if(actionButton.isButtonDisabled) {
-                    _buttonColors.buttonColorDisabled
-                }
-                else {
-                    if(actionButton.down) {
-                        return _buttonColors.buttonColorPressed
-                    }
-                    else {
-                        if(actionButton.hovered) {
-                            return _buttonColors.buttonColorHovered
-                        }
-                        else {
-                            return _buttonColors.buttonColorNormal
-                        }    
+            } else if (_isActionSubmit == true) {
+                if (actionButton.isButtonDisabled) {
+                    _buttonColors.buttonColorDisabled;
+                } else {
+                    if (actionButton.down) {
+                        return _buttonColors.buttonColorPressed;
+                    } else {
+                        if (actionButton.hovered)
+                            return _buttonColors.buttonColorHovered;
+                        else
+                            return _buttonColors.buttonColorNormal;
                     }
                 }
-                
-            }
-            else {
-                if(actionButton.down) {
-                    return _buttonColors.buttonColorPressed
-                }
-                else {
-                    if(actionButton.hovered) {
-                        return _buttonColors.buttonColorHovered
-                    }
-                    else {
-                        return _buttonColors.buttonColorNormal
-                    }
+            } else {
+                if (actionButton.down) {
+                    return _buttonColors.buttonColorPressed;
+                } else {
+                    if (actionButton.hovered)
+                        return _buttonColors.buttonColorHovered;
+                    else
+                        return _buttonColors.buttonColorNormal;
                 }
             }
         }
 
-    } // background rectangle ends here
+        anchors.fill: parent
+        radius: CardConstants.actionButtonConstants.buttonRadius
+        border.color: setBorderColorForBackground()
+        color: setColorForBackground()
+    }
 
     contentItem: Item {
         height: parent.height
@@ -167,24 +162,28 @@ Button {
 
         Row {
             id: contentItemRow
+
             spacing: CardConstants.actionButtonConstants.iconTextSpacing
-            padding:0
-            height:parent.height
+            padding: 0
+            height: parent.height
             visible: _isIconLeftOfTitle == true
 
             Loader {
-                    active: _hasIconUrl
-                    sourceComponent:    Image {
-                        id: contentItemColImg
-                        visible: _hasIconUrl
-                        cache: false
-                        height: CardConstants.actionButtonConstants.imageSize
-                        width: CardConstants.actionButtonConstants.imageSize
-                        fillMode: Image.PreserveAspectFit
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: actionButton._imgSource
-                    }
-              }  
+                active: _hasIconUrl
+
+                sourceComponent: Image {
+                    id: contentItemColImg
+
+                    visible: _hasIconUrl
+                    cache: false
+                    height: CardConstants.actionButtonConstants.imageSize
+                    width: CardConstants.actionButtonConstants.imageSize
+                    fillMode: Image.PreserveAspectFit
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: actionButton._imgSource
+                }
+
+            }
 
             ActionsContentLayout {
                 id: contentRowLayout
@@ -193,49 +192,58 @@ Button {
             Loader {
                 active: _isShowCardButton
                 anchors.verticalCenter: contentRowLayout.verticalCenter
-                sourceComponent:    Button {
-                    visible: _isShowCardButton
-                    background:Rectangle{
-                        anchors.fill:parent
-                        color:'transparent'
-                    }
+
+                sourceComponent: Button {
                     id: contentItemRowContentShowCard
+
+                    visible: _isShowCardButton
                     width: contentRowLayout.fontPixelSizeAlias
                     height: contentRowLayout.fontPixelSizeAlias
                     anchors.margins: 2
                     horizontalPadding: 0
                     verticalPadding: 0
-                    icon.width:12
-                    icon.height:12
-                    focusPolicy:Qt.NoFocus
+                    icon.width: 12
+                    icon.height: 12
+                    focusPolicy: Qt.NoFocus
                     icon.color: contentRowLayout.colorAlias
                     icon.source: !showCard ? _iconSource : _iconSourceUp
-                    onReleased: actionButton.onReleased()                 
-                } 
-            }
-        }
+                    onReleased: actionButton.onReleased()
 
+                    background: Rectangle {
+                        anchors.fill: parent
+                        color: 'transparent'
+                    }
+
+                }
+
+            }
+
+        }
 
         Column {
             id: contentItemCol
+
             spacing: CardConstants.actionButtonConstants.iconTextSpacing
-            padding:0
-            height:parent.height
+            padding: 0
+            height: parent.height
             visible: _isIconLeftOfTitle == false
 
             Loader {
-                    active: _hasIconUrl
-                    sourceComponent:    Image {
-                        id: contentItemColImg
-                        visible: _hasIconUrl
-                        cache: false
-                        height: CardConstants.actionButtonConstants.imageSize
-                        width: CardConstants.actionButtonConstants.imageSize
-                        fillMode: Image.PreserveAspectFit
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        source: actionButton._imgSource
-                    }
-              }  
+                active: _hasIconUrl
+
+                sourceComponent: Image {
+                    id: contentItemColImg
+
+                    visible: _hasIconUrl
+                    cache: false
+                    height: CardConstants.actionButtonConstants.imageSize
+                    width: CardConstants.actionButtonConstants.imageSize
+                    fillMode: Image.PreserveAspectFit
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    source: actionButton._imgSource
+                }
+
+            }
 
             ActionsContentLayout {
                 id: contentColLayout
@@ -243,42 +251,45 @@ Button {
 
             Loader {
                 active: _isShowCardButton
+
                 //anchors.verticalCenter: contentColLayout.verticalCenter
-                sourceComponent:    Button {
-                    visible: _isShowCardButton
-                    background:Rectangle{
-                        anchors.fill:parent
-                        color:'transparent'
-                    }
+                sourceComponent: Button {
                     id: contentItemColContentShowCard
+
+                    visible: _isShowCardButton
                     width: contentColLayout.fontPixelSizeAlias
                     height: contentColLayout.fontPixelSizeAlias
                     anchors.margins: 2
                     horizontalPadding: 0
                     verticalPadding: 0
-                    icon.width:12
-                    icon.height:12
-                    focusPolicy:Qt.NoFocus
+                    icon.width: 12
+                    icon.height: 12
+                    focusPolicy: Qt.NoFocus
                     icon.color: contentColLayout.colorAlias
                     icon.source: !showCard ? _iconSource : _iconSourceUp
-                    onReleased: actionButton.onReleased()                 
-                } 
+                    onReleased: actionButton.onReleased()
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        color: 'transparent'
+                    }
+
+                }
+
             }
+
         }
 
         Rectangle {
-            width:actionButton.width
-            height:actionButton.height
+            width: actionButton.width
+            height: actionButton.height
             x: -CardConstants.actionButtonConstants.horizotalPadding
             y: -CardConstants.actionButtonConstants.verticalPadding
-            color:"transparent"
+            color: "transparent"
             border.color: _buttonColors.focusRectangleColor
             border.width: actionButton.activeFocus ? 1 : 0
         }
 
-    } // Content Item Ends Here
+    }
 
-    Accessible.name: _isIconLeftOfTitle == true ? contentRowLayout.contentItemContentText : contentColLayout.contentItemContentText
-
-} // Button Ends Here
-
+}

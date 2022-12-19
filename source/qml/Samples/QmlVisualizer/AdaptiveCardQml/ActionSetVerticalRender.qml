@@ -1,87 +1,89 @@
-﻿import QtQuick 2.3
 import "AdaptiveCardUtils.js" as AdaptiveCardUtils
+import QtQuick 2.3
 
 Column {
     id: colActionId
+
     property int _spacing
     property var actionButtonModel
     property var adaptiveCard
     property var _toggleVisibilityTarget: null
-
     property var activeShowCard: null
     property var prevLoaderId: null
     property bool isCentreAlign: false
-    onWidthChanged: handleCentreAligmentFunction()
-    onImplicitWidthChanged: handleCentreAligmentFunction()
-    onImplicitHeightChanged: handleCentreAligmentFunction()
-    Component.onCompleted: { handleCentreAligmentFunction() }
-
-    function handleCentreAligmentFunction() {
-        if(isCentreAlign) {
-            AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)
-        }
-    }
-
-
-    function setActiveShowCard( showcardLoaderElement, buttonElement ) {
-        if(prevLoaderId !== null) {
-            prevLoaderId.visible = false
-        
-        }
-        if(activeShowCard !== null) {
-            activeShowCard.showCard = !activeShowCard.showCard
-        }
-        if(buttonElement == activeShowCard) {
-            activeShowCard = null
-            prevLoaderId = null 
-            return
-        }
-        buttonElement.showCard = !buttonElement.showCard
-        showcardLoaderElement.visible= !showcardLoaderElement.visible
-        activeShowCard = buttonElement
-
-        prevLoaderId = showcardLoaderElement
-    }
-
-    
-    width: parent.width
-    spacing: _spacing
     property var rectangleElements: []
     property var actionElements: []
 
-     Repeater {
-        id: defaultRepeaterId
-        model: actionButtonModel
-        Rectangle {
-            
-            height : adaptiveActionRenderId.height
-            width : adaptiveActionRenderId.width
-            color: 'transparent'
-     
-            AdaptiveActionRender {
-                    id: adaptiveActionRenderId
-                    _buttonConfigType: buttonConfigType
-                    _isIconLeftOfTitle: isIconLeftOfTitle
-                    _escapedTitle: escapedTitle
-                    _isShowCardButton: isShowCardButton
-                    _isActionSubmit: isActionSubmit
-                    _isActionOpenUrl: isActionOpenUrl
-                    _isActionToggleVisibility: isActionToggleVisibility
-                    _hasIconUrl: hasIconUrl
-                    _imgSource: imgSource
-                    _toggleVisibilityTarget: isActionToggleVisibility ? colActionId._toggleVisibilityTarget[index] : null
-                    _paramStr: paramStr
-                    _is1_3Enabled: is1_3Enabled
-                    _adaptiveCard: colActionId.adaptiveCard
-                    _selectActionId: selectActionId
-                    width: colActionId.width > implicitWidth ? implicitWidth : colActionId.width
-                    _loaderId: loaderId
+    function handleCentreAligmentFunction() {
+        if (isCentreAlign)
+            AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements);
 
-                    Component.onCompleted: { adaptiveActionRenderId.handleShowCardToggleVisibility.connect(setActiveShowCard)
-                        actionElements.push(this)
-                    }
+    }
+
+    function setActiveShowCard(showcardLoaderElement, buttonElement) {
+        if (prevLoaderId !== null)
+            prevLoaderId.visible = false;
+
+        if (activeShowCard !== null)
+            activeShowCard.showCard = !activeShowCard.showCard;
+
+        if (buttonElement == activeShowCard) {
+            activeShowCard = null;
+            prevLoaderId = null;
+            return ;
+        }
+        buttonElement.showCard = !buttonElement.showCard;
+        showcardLoaderElement.visible = !showcardLoaderElement.visible;
+        activeShowCard = buttonElement;
+        prevLoaderId = showcardLoaderElement;
+    }
+
+    onWidthChanged: handleCentreAligmentFunction()
+    onImplicitWidthChanged: handleCentreAligmentFunction()
+    onImplicitHeightChanged: handleCentreAligmentFunction()
+    Component.onCompleted: {
+        handleCentreAligmentFunction();
+    }
+    width: parent.width
+    spacing: _spacing
+
+    Repeater {
+        id: defaultRepeaterId
+
+        model: actionButtonModel
+
+        Rectangle {
+            height: adaptiveActionRenderId.height
+            width: adaptiveActionRenderId.width
+            color: 'transparent'
+
+            AdaptiveActionRender {
+                id: adaptiveActionRenderId
+
+                _buttonConfigType: buttonConfigType
+                _isIconLeftOfTitle: isIconLeftOfTitle
+                _escapedTitle: escapedTitle
+                _isShowCardButton: isShowCardButton
+                _isActionSubmit: isActionSubmit
+                _isActionOpenUrl: isActionOpenUrl
+                _isActionToggleVisibility: isActionToggleVisibility
+                _hasIconUrl: hasIconUrl
+                _imgSource: imgSource
+                _toggleVisibilityTarget: isActionToggleVisibility ? colActionId._toggleVisibilityTarget[index] : null
+                _paramStr: paramStr
+                _is1_3Enabled: is1_3Enabled
+                _adaptiveCard: colActionId.adaptiveCard
+                _selectActionId: selectActionId
+                width: colActionId.width > implicitWidth ? implicitWidth : colActionId.width
+                _loaderId: loaderId
+                Component.onCompleted: {
+                    adaptiveActionRenderId.handleShowCardToggleVisibility.connect(setActiveShowCard);
+                    actionElements.push(this);
                 }
             }
 
-     }
+        }
+
+    }
+
 }
