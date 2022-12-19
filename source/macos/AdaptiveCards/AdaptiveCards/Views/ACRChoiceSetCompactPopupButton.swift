@@ -52,6 +52,7 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
     @objc private func popUpButtonUsed(_ sender: NSPopUpButton) {
         shouldShowError = false
         errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: self)
+        setToolTip()
     }
     
     func showError() {
@@ -62,6 +63,10 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
     func setAccessibilityFocus() {
         setAccessibilityFocused(true)
         errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: nil)
+    }
+    
+    func setToolTip() {
+        toolTip = itemArray[indexOfSelectedItem].title
     }
     
     var value: String {
