@@ -98,6 +98,10 @@ namespace RendererQml
         uiCard->AddFunctions("MouseArea{anchors.fill: parent;onPressed: {adaptiveCard.nextItemInFocusChain().forceActiveFocus(); mouse.accepted = true;}}");
         uiCard->Property("radius", Formatter() << (isChildCard ? 0 : cardConfig.cardRadius));
 
+        auto uiLoader = std::make_shared<QmlTag>("Loader");
+        uiLoader->Property("id", "placeholderLoaderId");
+        uiCard->AddChild(uiLoader);
+
         const auto hasBackgroundImage = card->GetBackgroundImage() != nullptr;
 		if (hasBackgroundImage)
 		{
@@ -471,11 +475,8 @@ namespace RendererQml
                     uiContainer->AddChild(uiLoader);
                 }
                 else {
-                    const std::string loaderId = Formatter() << "button_auto_1" << buttonIndex << "_loader";
+                    const std::string loaderId = Formatter() << "placeholderLoaderId";
                     actionsModel << "loaderId: " << loaderId << ", \n";
-                    auto uiLoader = std::make_shared<QmlTag>("Loader");
-                    uiLoader->Property("id", loaderId);
-                    uiContainer->AddChild(uiLoader);
                 }
 
                 actionsModel << " });";
