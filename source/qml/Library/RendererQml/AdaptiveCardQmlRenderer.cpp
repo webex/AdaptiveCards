@@ -1586,7 +1586,6 @@ namespace RendererQml
                 buttonElement->Property("_hasIconUrl", "true");
                 buttonElement->Property("_imgSource", GetImagePath(context, action->GetIconUrl()), true);
             }
-            std::string onReleasedFunction;
             std::string selectActionId = "";
             if (action->GetElementTypeString() == "Action.OpenUrl")
             {
