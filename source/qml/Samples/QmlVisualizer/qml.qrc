@@ -27,5 +27,6 @@
         <file alias="ActionsContentLayout.qml">AdaptiveCardQml/ActionsContentLayout.qml</file>
         <file alias="ActionSetHorizontalRender.qml">AdaptiveCardQml/ActionSetHorizontalRender.qml</file>
         <file alias="ActionSetVerticalRender.qml">AdaptiveCardQml/ActionSetVerticalRender.qml</file>
+        <file alias="ActionSetRepeaterElement.qml">AdaptiveCardQml/ActionSetRepeaterElement.qml</file>
     </qresource>
 </RCC>

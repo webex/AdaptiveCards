@@ -121,6 +121,7 @@
     <ClCompile Include="samplecardmodel.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <None Include="AdaptiveCardQml\ActionsContentLayout.qml" />
+    <None Include="AdaptiveCardQml\ActionSetRepeaterElement.qml" />
     <None Include="AdaptiveCardQml\AdaptiveActionRender.qml" />
     <None Include="AdaptiveCardQml\ActionSetHorizontalRender.qml" />
     <None Include="AdaptiveCardQml\ActionSetVerticalRender.qml" />

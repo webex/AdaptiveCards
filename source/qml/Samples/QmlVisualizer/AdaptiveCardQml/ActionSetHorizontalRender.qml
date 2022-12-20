@@ -49,47 +49,15 @@ Flow {
     spacing: _spacing
     layoutDirection: _layoutDirection === 'Qt.RightToLeft' ? Qt.RightToLeft : Qt.LeftToRight
 
-    Repeater {
-        id: defaultRepeaterId
-
+   ActionSetRepeaterElement {
         model: actionButtonModel
-
-        Rectangle {
-            height: adaptiveActionRenderId.height
-            width: adaptiveActionRenderId.width
-            color: 'transparent'
-            Component.onCompleted: {
-                rectangleElements.push(this);
-            }
-
-            AdaptiveActionRender {
-                id: adaptiveActionRenderId
-
-                objectName: _objectName
-                _buttonConfigType: buttonConfigType
-                _isIconLeftOfTitle: isIconLeftOfTitle
-                _escapedTitle: escapedTitle
-                _isShowCardButton: isShowCardButton
-                _isActionSubmit: isActionSubmit
-                _isActionOpenUrl: isActionOpenUrl
-                _isActionToggleVisibility: isActionToggleVisibility
-                _hasIconUrl: hasIconUrl
-                _imgSource: imgSource
-                _toggleVisibilityTarget: isActionToggleVisibility ? flowActionId._toggleVisibilityTarget[index] : null
-                _paramStr: paramStr
-                _is1_3Enabled: is1_3Enabled
-                _adaptiveCard: flowActionId.adaptiveCard
-                _selectActionId: selectActionId
-                width: flowActionId.width > implicitWidth ? implicitWidth : flowActionId.width
-                _loaderId: loaderId
-                Component.onCompleted: {
-                    adaptiveActionRenderId.handleShowCardToggleVisibility.connect(setActiveShowCard);
-                    actionElements.push(this);
-                }
-            }
-
-        }
-
-    }
+        _rectangleElements: rectangleElements
+        _actionElements: actionElements
+        toggleVisibilityTarget: _toggleVisibilityTarget
+        _setActiveShowCard: setActiveShowCard
+        _adaptivecard: adaptiveCard
+        _width:  flowActionId.width > implicitWidth ? implicitWidth :  flowActionId.width
+        parentElement: flowActionId
+   }
 
 }

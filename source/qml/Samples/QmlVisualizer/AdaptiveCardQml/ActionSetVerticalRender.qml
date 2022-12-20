@@ -17,7 +17,6 @@ Column {
     function handleCentreAligmentFunction() {
         if (isCentreAlign)
             AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements);
-
     }
 
     function setActiveShowCard(showcardLoaderElement, buttonElement) {
@@ -47,47 +46,14 @@ Column {
     width: parent.width
     spacing: _spacing
 
-    Repeater {
-        id: defaultRepeaterId
-
+    ActionSetRepeaterElement {
         model: actionButtonModel
-
-        Rectangle {
-            height: adaptiveActionRenderId.height
-            width: adaptiveActionRenderId.width
-            color: 'transparent'
-            Component.onCompleted: {
-                rectangleElements.push(this);
-            }
-
-            AdaptiveActionRender {
-                id: adaptiveActionRenderId
-
-                objectName: _objectName
-                _buttonConfigType: buttonConfigType
-                _isIconLeftOfTitle: isIconLeftOfTitle
-                _escapedTitle: escapedTitle
-                _isShowCardButton: isShowCardButton
-                _isActionSubmit: isActionSubmit
-                _isActionOpenUrl: isActionOpenUrl
-                _isActionToggleVisibility: isActionToggleVisibility
-                _hasIconUrl: hasIconUrl
-                _imgSource: imgSource
-                _toggleVisibilityTarget: isActionToggleVisibility ? colActionId._toggleVisibilityTarget[index] : null
-                _paramStr: paramStr
-                _is1_3Enabled: is1_3Enabled
-                _adaptiveCard: colActionId.adaptiveCard
-                _selectActionId: selectActionId
-                width: colActionId.width > implicitWidth ? implicitWidth : colActionId.width
-                _loaderId: loaderId
-                Component.onCompleted: {
-                    adaptiveActionRenderId.handleShowCardToggleVisibility.connect(setActiveShowCard);
-                    actionElements.push(this);
-                }
-            }
-
-        }
-
-    }
-
+        _rectangleElements: rectangleElements
+        _actionElements: actionElements
+        toggleVisibilityTarget: _toggleVisibilityTarget
+        _setActiveShowCard: setActiveShowCard
+        _adaptivecard: adaptiveCard
+        _width:  colActionId.width > implicitWidth ? implicitWidth :  colActionId.width
+        parentElement: colActionId
+   }
 }
