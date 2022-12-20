@@ -164,6 +164,21 @@ class ChoiceSetInputRendererTests: XCTestCase {
         XCTAssertNotNil(acrChoiceBtn.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
     }
     
+    func testCompactChoiceSetTooltip() {
+        button = .make(title: "Test Title 1", value: "Test Value 1")
+        let button2 = FakeChoiceInput.make(title: "Test Title 2", value: "Test Value 2")
+        choices.removeAll()
+        choices.append(button)
+        choices.append(button2)
+        choiceSetInput = .make(choices: choices, choiceSetStyle: .compact, heightType: .auto)
+        
+        let choiceSetCompactView = renderChoiceSetCompactView()
+        
+        XCTAssertEqual(choiceSetCompactView.choiceSetPopup.toolTip, "Test Title 1")
+        XCTAssertEqual(choiceSetCompactView.choiceSetPopup.itemArray[0].toolTip, "Test Title 1")
+        XCTAssertEqual(choiceSetCompactView.choiceSetPopup.itemArray[1].toolTip, "Test Title 2")
+    }
+    
     private func renderChoiceSetView() -> ACRChoiceSetView {
         let view = choiceSetInputRenderer.render(element: choiceSetInput, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         
