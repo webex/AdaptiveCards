@@ -173,9 +173,7 @@
     <ClCompile Include="AdaptiveRenderArgs.cpp" />
     <ClCompile Include="AdaptiveRenderContext.cpp" />
     <ClCompile Include="AdaptiveWarning.cpp" />
-    <ClCompile Include="CheckBoxRender.cpp" />
     <ClCompile Include="ChoiceSetRender.cpp" />
-    <ClCompile Include="ComboBoxRender.cpp" />
     <ClCompile Include="Formatter.cpp" />
     <ClCompile Include="NumberInputRender.cpp" />
     <ClCompile Include="pch.cpp" />
@@ -198,9 +196,7 @@
     <ClInclude Include="AdaptiveRenderArgs.h" />
     <ClInclude Include="AdaptiveRenderContext.h" />
     <ClInclude Include="AdaptiveWarning.h" />
-    <ClInclude Include="CheckBoxRender.h" />
     <ClInclude Include="ChoiceSetRender.h" />
-    <ClInclude Include="ComboBoxRender.h" />
     <ClInclude Include="Formatter.h" />
     <ClInclude Include="ImageDataURI.h" />
     <ClInclude Include="NumberInputRender.h" />

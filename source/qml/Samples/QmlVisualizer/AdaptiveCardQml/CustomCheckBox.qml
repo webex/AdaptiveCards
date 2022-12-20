@@ -1,15 +1,21 @@
-﻿import QtQuick 2.15
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
-// currently Handling only for RendererQml::CheckBoxType::Toggle type
 CheckBox {
     id: customCheckBox
 
-    readonly property string valueOn: _cbValueOn
-    readonly property string valueOff: _cbValueOff
-    property string value: checked ? valueOn : valueOff
+    property var _adaptiveCard
+    property var _consumer
+    property string _cbValueOn: ""
+    property string _cbValueOff: ""
+    property bool _cbisWrap
+    property string _cbTitle
+    property bool _cbIsChecked
+    property string value: checked ? _cbValueOn : _cbValueOff
     property var indicatorItem: customCheckBoxButton
+
+    signal selectionChanged()
 
     function onButtonClicked() {
         checked = !checked;
@@ -32,18 +38,19 @@ CheckBox {
 
     checked: _cbIsChecked
     width: parent.width
-    text: _cbText
-    font.pixelSize: CardConstants.toggleButtonConstants.pixelSize
     Keys.onReturnPressed: onButtonClicked()
-    visible: _cbIsVisible
     onPressed: customCheckBox.colorChange(customCheckBox, true)
     onReleased: customCheckBox.colorChange(customCheckBox, false)
     onHoveredChanged: customCheckBox.colorChange(customCheckBox, false)
-    onCheckedChanged: customCheckBox.colorChange(customCheckBox, false)
+    onCheckedChanged: {
+        customCheckBox.colorChange(customCheckBox, false);
+        value = checked ? _cbValueOn : _cbValueOff;
+        selectionChanged();
+    }
     onActiveFocusChanged: {
         customCheckBox.colorChange(customCheckBox, false);
-        if (activeFocus)
-            Accessible.name = getAccessibleName() + text;
+        if (activeFocus && _consumer)
+            Accessible.name = _consumer.getAccessibleName() + getContentText();
 
     }
     Component.onCompleted: {
@@ -54,7 +61,7 @@ CheckBox {
     }
 
     contentItem: RowLayout {
-        height: CardConstants.toggleButtonConstants.rowHeight
+        id: customCheckBoxRLayout
         width: customCheckBox.width
         spacing: CardConstants.toggleButtonConstants.rowSpacing
 
@@ -88,116 +95,16 @@ CheckBox {
 
         }
 
-        TextEdit {
+        CardGenericTextElement {
             id: customCheckBoxTitle
 
-            property string accessibleText: getText(0, length)
-            property string link: ""
-
-            function getSelectedRichText() {
-                return activeFocus ? selectedText : "";
-            }
-
-            function getExternalLinkUnderCursor() {
-                if (!activeFocus)
-                    return "";
-
-                const possibleLinkPosition = selectionEnd > cursorPosition ? cursorPosition + 1 : cursorPosition;
-                let rectangle = positionToRectangle(possibleLinkPosition);
-                let correctedX = (rectangle.x > 0 ? rectangle.x - 1 : 0);
-                return linkAt(correctedX, rectangle.y);
-            }
-
-            clip: true
-            textFormat: Text.RichText
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
-            font.pixelSize: CardConstants.toggleButtonConstants.pixelSize
-            color: CardConstants.toggleButtonConstants.textColor
-            Layout.fillWidth: true
-            wrapMode: _cbisWrap ? Text.Wrap : Text.NoWrap
             text: _cbTitle
-            onLinkActivated: {
-                _adaptiveCard.buttonClicked("", "Action.OpenUrl", link);
-                console.log(link);
+            _adaptiveCard: customCheckBox._adaptiveCard
+            wrapMode: _cbisWrap ? Text.Wrap : Text.NoWrap
+            Layout.fillWidth: true
+            Component.onCompleted: {
+                onTextElementClicked.connect(customCheckBox.onButtonClicked);
             }
-            activeFocusOnTab: true
-            Accessible.name: accessibleText
-            readOnly: true
-            selectByMouse: true
-            selectByKeyboard: true
-            selectionColor: CardConstants.cardConstants.textHighlightBackground
-            selectedTextColor: color
-            Keys.onPressed: {
-                if (event.key === Qt.Key_Tab) {
-                    event.accepted = selectLink(this, true);
-                } else if (event.key === Qt.Key_Backtab) {
-                    event.accepted = selectLink(this, false);
-                } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
-                    if (link)
-                        linkActivated(link);
-
-                    event.accepted = true;
-                }
-            }
-            onSelectedTextChanged: {
-                if (link)
-                    accessibleText = selectedText + ' has link,' + link + '. To activate press space bar.';
-                else
-                    accessibleText = '';
-            }
-            onActiveFocusChanged: {
-                if (activeFocus) {
-                    textEditFocussed(customCheckBoxTitle);
-                    accessibleText = getText(0, length);
-                }
-            }
-
-            MouseArea {
-                id: customCheckBoxTitleMouseArea
-
-                anchors.fill: parent
-                hoverEnabled: true
-                preventStealing: true
-                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor
-                acceptedButtons: Qt.RightButton | Qt.LeftButton
-                onPressed: {
-                    mouse.accepted = false;
-                    const mouseGlobal = mapToGlobal(mouseX, mouseY);
-                    const posAtMessage = mapToItem(_adaptiveCard, mouse.x, mouse.y);
-                    if (mouse.button === Qt.RightButton) {
-                        openContextMenu(mouseGlobal, customCheckBoxTitle.selectedText, parent.linkAt(mouse.x, mouse.y));
-                        mouse.accepted = true;
-                    } else if (mouse.button === Qt.LeftButton) {
-                        parent.cursorPosition = parent.positionAt(posAtMessage.x, posAtMessage.y);
-                        parent.forceActiveFocus();
-                        if (!parent.linkAt(mouse.x, mouse.y))
-                            onButtonClicked();
-
-                    }
-                }
-                onPositionChanged: {
-                    const mouseGlobal = mapToGlobal(mouse.x, mouse.y);
-                    if (mouse.buttons & Qt.LeftButton)
-                        parent.moveCursorSelection(parent.positionAt(mouse.x, mouse.y));
-
-                    var link = parent.linkAt(mouse.x, mouse.y);
-                    _adaptiveCard.showToolTipifNeeded(link, mouseGlobal);
-                    if (link)
-                        cursorShape = Qt.PointingHandCursor;
-                    else
-                        cursorShape = Qt.IBeamCursor;
-                    mouse.accepted = true;
-                }
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                color: "transparent"
-                border.width: parent.activeFocus ? 1 : 0
-                border.color: parent.activeFocus ? CardConstants.toggleButtonConstants.focusRectangleColor : 'transparent'
-            }
-
         }
 
     }

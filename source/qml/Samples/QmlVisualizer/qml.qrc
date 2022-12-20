@@ -20,5 +20,16 @@
         <file alias="TextInputRender.qml">AdaptiveCardQml/TextInputRender.qml</file>
         <file alias="SingleLineTextInputRender.qml">AdaptiveCardQml/SingleLineTextInputRender.qml</file>
         <file alias="MultiLineTextInputRender.qml">AdaptiveCardQml/MultiLineTextInputRender.qml</file>
+        <file alias="ChoiceSetRender.qml">AdaptiveCardQml/ChoiceSetRender.qml</file>
+        <file alias="ComboboxRender.qml">AdaptiveCardQml/ComboboxRender.qml</file>
+        <file alias="CustomRadioButton.qml">AdaptiveCardQml/CustomRadioButton.qml</file>
+        <file alias="InputErrorMessage.qml">AdaptiveCardQml/InputErrorMessage.qml</file>
+        <file alias="InputLabel.qml">AdaptiveCardQml/InputLabel.qml</file>
+        <file alias="CardGenericTextElement.qml">AdaptiveCardQml/CardGenericTextElement.qml</file>
+        <file alias="AdaptiveActionRender.qml">AdaptiveCardQml/AdaptiveActionRender.qml</file>
+        <file alias="ActionsContentLayout.qml">AdaptiveCardQml/ActionsContentLayout.qml</file>
+        <file alias="ActionSetHorizontalRender.qml">AdaptiveCardQml/ActionSetHorizontalRender.qml</file>
+        <file alias="ActionSetVerticalRender.qml">AdaptiveCardQml/ActionSetVerticalRender.qml</file>
+        <file alias="ActionSetRepeaterElement.qml">AdaptiveCardQml/ActionSetRepeaterElement.qml</file>
     </qresource>
 </RCC>

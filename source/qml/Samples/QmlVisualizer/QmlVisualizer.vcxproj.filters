@@ -117,6 +117,39 @@
     <None Include="AdaptiveCardQml\MultiLineTextInputRender.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="AdaptiveCardQml\CustomRadioButton.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\ChoiceSetRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\ComboboxRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\InputErrorMessage.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\InputLabel.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\CardGenericTextElement.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\AdaptiveActionRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\ActionsContentLayout.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\ActionSetHorizontalRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\ActionSetVerticalRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\ActionSetRepeaterElement.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="samplecardmodel.h">

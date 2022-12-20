@@ -40,7 +40,10 @@ void ToggleInputElement::addCheckBox()
     const auto valueOn = !mToggleInput->GetValueOn().empty() ? mToggleInput->GetValueOn() : "true";
     const auto valueOff = !mToggleInput->GetValueOff().empty() ? mToggleInput->GetValueOff() : "false";
     const bool isChecked = mToggleInput->GetValue().compare(valueOn) == 0 ? true : false;
-    mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().checkBoxRowHeight);
+    if (mToggleInput->GetIsVisible())
+    {
+        mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().checkBoxRowHeight);
+    }
     const RendererQml::Checkbox mCheckBox = RendererQml::Checkbox(mToggleInput->GetId() + "_inputToggle",
         RendererQml::CheckBoxType::Toggle,
         mToggleInput->GetTitle(),
@@ -52,24 +55,13 @@ void ToggleInputElement::addCheckBox()
         isChecked);
     std::string mEscapedValueOn = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOn);
     std::string mEscapedValueOff = RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.valueOff);
-    mToggleInputColElement->Property("_cbValueOn", RendererQml::Formatter() << "String.raw`" << mEscapedValueOn << "`");
-    mToggleInputColElement->Property("_cbValueOff", RendererQml::Formatter() << "String.raw`" << mEscapedValueOff << "`");
-    mToggleInputColElement->Property("_cbText", RendererQml::Formatter() << "String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(mCheckBox.text) << "`");
+    mToggleInputColElement->Property("checkBox._cbValueOn", RendererQml::Formatter() << "String.raw`" << mEscapedValueOn << "`");
+    mToggleInputColElement->Property("checkBox._cbValueOff", RendererQml::Formatter() << "String.raw`" << mEscapedValueOff << "`");
 
-    std::string text = RendererQml::TextUtils::ApplyTextFunctions(mCheckBox.text, mContext->GetLang());
-
-    auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(text);
-    text = markdownParser->TransformToHtml();
-    text = RendererQml::Utils::HandleEscapeSequences(text);
-
-    const std::string linkColor = mContext->GetColor(AdaptiveCards::ForegroundColor::Accent, false, false);
-    const std::string textDecoration = "none";
-    text = RendererQml::Utils::FormatHtmlUrl(text, linkColor, textDecoration);
-
-    mToggleInputColElement->Property("_cbTitle", text, true);
-    mCheckBox.isVisible == true ? mToggleInputColElement->Property("_cbIsVisible", "true") : mToggleInputColElement->Property("_cbIsVisible", "false");
-    mCheckBox.isChecked == true ? mToggleInputColElement->Property("_cbIsChecked", "true") : mToggleInputColElement->Property("_cbIsChecked", "false");
-    mCheckBox.isWrap == true ? mToggleInputColElement->Property("_cbisWrap", "true") : mToggleInputColElement->Property("_cbisWrap", "false");
+    std::string text = RendererQml::AdaptiveCardQmlRenderer::ParseMarkdownString(mCheckBox.text, mContext);
+    mToggleInputColElement->Property("checkBox._cbTitle", text, true);
+    mToggleInputColElement->Property("checkBox._cbIsChecked", mCheckBox.isChecked == true ? "true" : "false");
+    mToggleInputColElement->Property("checkBox._cbisWrap", mCheckBox.isWrap == true ? "true" : "false");
 }
 void ToggleInputElement::addInputLabel()
 {
@@ -77,9 +69,11 @@ void ToggleInputElement::addInputLabel()
     {
         if (!mToggleInput->GetLabel().empty())
         {
-            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
+            if (mToggleInput->GetIsVisible())
+            {
+                mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
+            }
             std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
-            mToggleInputColElement->Property("_color", color);
             mToggleInput->GetIsRequired() == true ? mToggleInputColElement->Property("_isRequired", "true") : mToggleInputColElement->Property("_isRequired", "false");
             mToggleInputColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");
         }

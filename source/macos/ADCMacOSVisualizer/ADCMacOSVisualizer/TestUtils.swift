@@ -3,6 +3,9 @@ import Foundation
 public class TestUtils {
     // Dictionary to test image rendering in case image size is known before hand
     static let imageDimensionsDict: [String: NSSize] = [
+        "https://picsum.photos/200/300": NSSize(width: 200, height: 300),
+        "https://picsum.photos/100/300": NSSize(width: 100, height: 300),
+        "https://picsum.photos/380/100": NSSize(width: 380, height: 100),
         "https://picsum.photos/id/1069/230/455": NSSize(width: 230, height: 455),
         "https://picsum.photos/id/1080/230/455": NSSize(width: 230, height: 455),
         "https://picsum.photos/id/1062/620/287": NSSize(width: 620, height: 287),
@@ -53,6 +56,15 @@ public class TestUtils {
         "https://adaptivecards.io/content/send.png": NSSize(width: 69, height: 70),
         "https://unsplash.it/80?image=1082": NSSize(width: 80, height: 80),
         "https://unsplash.it/80?image=1083": NSSize(width: 80, height: 80),
-        "https://unsplash.it/80?image=1080": NSSize(width: 80, height: 80)
+        "https://unsplash.it/80?image=1080": NSSize(width: 80, height: 80),
+        "https://picsum.photos/200/200?image=100": NSSize(width: 200, height: 200),
+        "https://picsum.photos/300/200?image=200": NSSize(width: 300, height: 200),
+        "https://picsum.photos/300/200?image=301": NSSize(width: 300, height: 200),
+        "https://picsum.photos/200/200?image=400": NSSize(width: 200, height: 200),
+        "https://picsum.photos/300/200?image=500": NSSize(width: 300, height: 200),
+        "https://picsum.photos/200/200?image=600": NSSize(width: 200, height: 200),
+        "https://picsum.photos/300/200?image=700": NSSize(width: 300, height: 200),
+        "https://picsum.photos/300/200?image=800": NSSize(width: 300, height: 200),
+        "https://picsum.photos/300/200?image=900": NSSize(width: 300, height: 200)
     ]
 }

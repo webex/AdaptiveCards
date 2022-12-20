@@ -16,6 +16,7 @@ namespace RendererQml
         int averageCharWidth{ 6 };
         int averageSpacing{ 4 };
         int checkBoxRowHeight{ 24 };
+        int inputElementHeight{ 32 };
     };
 
     struct InputFieldConfig
