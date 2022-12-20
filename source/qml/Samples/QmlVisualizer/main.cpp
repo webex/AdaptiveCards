@@ -29,6 +29,11 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/TextElement.qml"), "AdaptiveCards", 1, 0, "TextElement");
     qmlRegisterType(QUrl("qrc:/InputLabel.qml"), "AdaptiveCards", 1, 0, "InputLabel");
     qmlRegisterType(QUrl("qrc:/InputErrorMessage.qml"), "AdaptiveCards", 1, 0, "InputErrorMessage");
+    qmlRegisterType(QUrl("qrc:/AdaptiveActionRender.qml"), "AdaptiveCards", 1, 0, "AdaptiveActionRender");
+    qmlRegisterType(QUrl("qrc:/ActionsContentLayout.qml"), "AdaptiveCards", 1, 0, "ActionsContentLayout");
+    qmlRegisterType(QUrl("qrc:/ActionSetHorizontalRender.qml"), "AdaptiveCards", 1, 0, "ActionSetHorizontalRender");
+    qmlRegisterType(QUrl("qrc:/ActionSetVerticalRender.qml"), "AdaptiveCards", 1, 0, "ActionSetVerticalRender");
+    qmlRegisterType(QUrl("qrc:/ActionSetRepeaterElement.qml"), "AdaptiveCards", 1, 0, "ActionSetRepeaterElement");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
