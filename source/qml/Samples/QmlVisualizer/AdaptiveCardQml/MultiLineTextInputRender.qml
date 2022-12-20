@@ -28,10 +28,11 @@ Rectangle {
             placeholderTextColor: CardConstants.inputFieldConstants.placeHolderColor
             leftPadding: CardConstants.inputFieldConstants.textHorizontalPadding
             rightPadding: CardConstants.inputFieldConstants.textHorizontalPadding
-            height:_inputtextTextFieldWrapper.height
+            height:_inputtextTextFieldWrapper.height// need to check for strech height
             width:_inputtextTextFieldWrapper.width
             Accessible.role:Accessible.EditableText
-            onTextChanged: { if(_isRequired || _regex != "" ) {
+            onTextChanged: { remove(_maxLength, length)
+            if(_isRequired || _regex != "" ) {
                     validate()
                 }
                 _submitValue = text

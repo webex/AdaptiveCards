@@ -61,6 +61,9 @@ namespace RendererQml
         static std::shared_ptr<QmlTag> GetIconTag(std::shared_ptr<AdaptiveRenderContext> context);
         static std::shared_ptr<QmlTag> GetStretchRectangle(std::shared_ptr<QmlTag> element);
         static std::shared_ptr<QmlTag> GetTextBlockMouseArea(std::string id, bool isButton = false);
+        static std::shared_ptr<QmlTag> AddAccessibilityToTextBlock(std::shared_ptr<QmlTag> uiTextBlock, std::shared_ptr<AdaptiveRenderContext> context);
+        static const std::string GetImagePath(std::shared_ptr<AdaptiveRenderContext> context, const std::string url);
+        static const std::string getActionToggleVisibilityObject(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
         static std::string ParseMarkdownString(std::string text, std::shared_ptr<AdaptiveRenderContext> context);
 
     protected:
@@ -114,7 +117,6 @@ namespace RendererQml
         static const std::string getActionSubmitClickFunc(const std::shared_ptr<AdaptiveCards::SubmitAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context, std::string elementType);
 		static const std::string getActionShowCardClickFunc(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveRenderContext>& context);
 		static const std::string getActionToggleVisibilityClickFunc(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
-		static const std::string getActionToggleVisibilityObject(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
 
 		template <typename CardElement>
 		static const std::shared_ptr<QmlTag> applyHorizontalBleed(CardElement cardElement, std::shared_ptr<QmlTag> uiContainer, std::shared_ptr<AdaptiveRenderContext> context);
@@ -127,8 +129,6 @@ namespace RendererQml
         static void ValidateShowCardInActions(const std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>>& actions, std::shared_ptr<AdaptiveRenderContext> context);
 
         static const std::string RemoveBottomMarginValue(std::vector<std::string> showCardsList);
-
-        static const std::string GetImagePath(std::shared_ptr<AdaptiveRenderContext> context, const std::string url);
 
         static std::shared_ptr<QmlTag> AddCornerRectangles(std::shared_ptr<QmlTag> uiCard, int rectangleSize);
 

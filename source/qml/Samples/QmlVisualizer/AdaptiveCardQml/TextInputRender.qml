@@ -16,12 +16,30 @@ Column{
     property string _mEscapedPlaceHolderString
     property string _mEscapedValueString
     property bool _supportsInterActivity
-    property bool _supportsInlineAction
-    property int _heightType
+    property bool _isInlineShowCardAction
     property string _regex: ""
     property int _maxLength
     property string _submitValue
     property bool _isMultiLineText
+    property bool _isheightStreched
+
+
+    // Button Properties
+    property var buttonConfigType
+    property bool isIconLeftOfTitle
+    property string escapedTitle
+    property bool isShowCardButton
+    property bool isActionSubmit
+    property bool isActionOpenUrl
+    property bool isActionToggleVisibility
+    property bool hasIconUrl
+    property string imgSource: ""
+    property var toggleVisibilityTarget
+    property var paramStr
+    property bool is1_3Enabled
+    property var adaptiveCard
+    property var selectActionId
+
 
     property int minWidth: 200
     spacing: _spacing
@@ -69,21 +87,26 @@ Column{
         font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
         Accessible.ignored: true
         text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
-        visible: text.length
+        visible: text.length && is1_3Enabled
     }
 
     Row {
         id: _inputtextTextFieldRow
         spacing: 5
         width: parent.width
-        //height: _heightType == 1 ? parent.height > 0 ? parent.height :CardConstants.inputFieldConstants.multiLineTextHeight: CardConstants.inputFieldConstants.height
+        /* Validate this some issue here height: getStrechHeight()
 
-
+       function getStrechHeight() {
+            if(_isheightStreched) {
+                return  parent.height > 0 ? parent.height : textConfig.multiLineTextHeight
+            }
+            return parent.height
+        }*/
        Loader {
             id: singlineLoaderElement
             //property alias inputtextTextField: _inputtextTextFieldWrapper.__inputtextTextField
             height: item ? item.height : 0
-            width: parent.width
+            width: (_supportsInterActivity && !_isInlineShowCardAction) ? parent.width - ( buttonLoaderElement.width + _inputtextTextFieldRow.spacing ) : parent.width
             active: !_isMultiLineText
             sourceComponent: SingleLineTextInputRender {
                 id: _inputtextTextFieldWrapper
@@ -95,13 +118,36 @@ Column{
             id: multilineLoaderElement
             //property alias inputtextTextField: _inputtextTextFieldWrapper.__inputtextTextField
             height: item ? item.height : 0
-            width: parent.width
+            width: (_supportsInterActivity && !_isInlineShowCardAction) ? parent.width - ( buttonLoaderElement.width + _inputtextTextFieldRow.spacing ) : parent.width
             active: _isMultiLineText
             sourceComponent: MultiLineTextInputRender {
                 id: _inputtextTextFieldWrapper
                 _showErrorMessage: showErrorMessage
             }
-        }       
+        }     
+        
+        Loader {
+            id: buttonLoaderElement
+            active: (_supportsInterActivity && !_isInlineShowCardAction)
+            anchors.bottom: _isMultiLineText ? parent.bottom : undefined
+            sourceComponent: AdaptiveActionRender {
+                id: _inputtextTextFieldWrapper
+                _buttonConfigType: buttonConfigType
+                _isIconLeftOfTitle: isIconLeftOfTitle
+                _escapedTitle: escapedTitle
+                _isShowCardButton: isShowCardButton
+                _isActionSubmit: isActionSubmit
+                _isActionOpenUrl: isActionOpenUrl
+                _isActionToggleVisibility: isActionToggleVisibility
+                _hasIconUrl: hasIconUrl
+                _imgSource: imgSource
+                _toggleVisibilityTarget: toggleVisibilityTarget
+                _paramStr: paramStr
+                _is1_3Enabled: is1_3Enabled
+                _adaptiveCard: adaptiveCard
+                _selectActionId: selectActionId
+            }
+        }
     }
 
     Label{

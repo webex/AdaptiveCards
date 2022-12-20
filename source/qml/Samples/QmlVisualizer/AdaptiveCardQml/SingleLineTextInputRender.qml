@@ -11,7 +11,6 @@ Rectangle {
     border.color:_inputtextTextField.outerShowErrorMessage? CardConstants.inputFieldConstants.borderColorOnError:_inputtextTextField.activeFocus? CardConstants.inputFieldConstants.borderColorOnFocus : CardConstants.inputFieldConstants.borderColorNormal
     border.width: CardConstants.inputFieldConstants.borderWidth
     radius: CardConstants.inputFieldConstants.borderRadius
-    width: (_supportsInterActivity== true && _supportsInlineAction == true) ? parent.width - button_auto_1.width - _inputtext_textField_row.spacing : parent.width
     color: CardConstants.inputFieldConstants.backgroundColorNormal
     height: CardConstants.inputFieldConstants.height
 
@@ -68,7 +67,8 @@ Rectangle {
         placeholderText:activeFocus? '' : _mEscapedPlaceHolderString
         width:parent.width
 
-        onTextChanged: { if(_isRequired || _regex != "" ) {
+        onTextChanged: { remove(_maxLength, length)
+        if(_isRequired || _regex != "" ) {
                 validate()
             }
             _submitValue = text

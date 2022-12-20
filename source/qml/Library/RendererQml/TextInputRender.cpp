@@ -4,8 +4,7 @@
 
 TextInputElement::TextInputElement(std::shared_ptr<AdaptiveCards::TextInput>& input, std::shared_ptr<RendererQml::AdaptiveRenderContext>& context)
 	:mTextinput(input),
-	mContext(context),
-    mContainer(nullptr)
+	mContext(context)
 {
     mTextinputColElement = std::make_shared<RendererQml::QmlTag>("TextInputRender");
     initialize();
@@ -20,11 +19,14 @@ void TextInputElement::initialize()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     mContext->addHeightEstimate(mTextinput->GetIsMultiline() ? textConfig.multiLineTextHeight : textConfig.height);
+    mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mTextinput->GetLabel()));
 
     mOriginalElementId = mTextinput->GetId();
-    mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetPlaceholder());
-    mEscapedValueString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetValue());
+    std::string mEscapedPlaceHolderString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetPlaceholder());
+    std::string mEscapedValueString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetValue());
 
+    std::string mEscapedErrorString{ "" };
+    std::string mEscapedLabelString{ "" };
     if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
     {
         mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mTextinput->GetLabel());
@@ -36,8 +38,6 @@ void TextInputElement::initialize()
     mTextinput->SetId(mTextinput->GetId() + "_textField");
     
     mTextinputColElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
-
-
 
     /* Setting QML Properties */
 
@@ -56,19 +56,18 @@ void TextInputElement::initialize()
         if (mTextinput->GetInlineAction()->GetElementType() == AdaptiveCards::ActionType::ShowCard &&
             mContext->GetConfig()->GetActions().showCard.actionMode == AdaptiveCards::ActionMode::Inline)
         {
-            mTextinputColElement->Property("_supportsInlineAction", "false");
+            mTextinputColElement->Property("_isInlineShowCardAction", "true");
         }
         else
         {
-            mTextinputColElement->Property("_supportsInlineAction", "true");
+            mTextinputColElement->Property("_isInlineShowCardAction", "false");
         }
     }
     else
     {
         mTextinputColElement->Property("_supportsInterActivity", "false");
-        mTextinputColElement->Property("_supportsInlineAction", "false");
+        mTextinputColElement->Property("_isInlineShowCardAction", "false");
     }
-    //mTextinputColElement->Property("_heightType", RendererQml::Formatter() << mTextinput->GetHeight());
     if (mTextinput->GetRegex() != "")
     {
         mTextinputColElement->Property("_regex", RendererQml::Formatter() << "String.raw`" << mTextinput->GetRegex() << "`");
@@ -90,44 +89,26 @@ void TextInputElement::initialize()
     }
 
     mContext->addToInputElementList(mOriginalElementId, (mTextinput->GetId() + "._submitValue"));
+
+    if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
+    {
+        mTextinputColElement->Property("_isheightStreched", mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch ? "true" : "false");
+    }
+
     if (mTextinput->GetIsMultiline())
     {
         mTextinputColElement->Property("_isMultiLineText", "true");
-        initMultiLine();
+        addActions();
     }
     else
     {
         mTextinputColElement->Property("_isMultiLineText", "false");
-        initSingleLine();
+        addActions();
     }
 }
 
-void TextInputElement::initSingleLine()
-{
-   
-    this->addInlineActionMode();
-}
 
-void TextInputElement::initMultiLine()
-{
-   
-    // To be discussed mTextinputElement->Property("height", RendererQml::Formatter() << mTextinput->GetId() << ".visible ? " << textConfig.multiLineTextHeight << " : 0");
-
-    this->addInlineActionMode();
-
-    /*if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
-    {
-        std::string spacing = std::to_string(RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
-        std::string labelHeight = RendererQml::Formatter() << (mLabelId.empty() ? 0 : (mLabelId + ".height + " + spacing));
-        std::string errorMessageHeight = RendererQml::Formatter() << (mErrorMessageId.empty() ? 0 : (mErrorMessageId + ".visible ? " + mErrorMessageId + ".implicitHeight + " + spacing + ": 0"));
-        mTextinputElement->Property("height", RendererQml::Formatter() << "parent.height > 0 ? (parent.height - (" << labelHeight << ") - (" << errorMessageHeight << " )): " << textConfig.multiLineTextHeight);
-    }*/
-
-    //mTextinputElement->AddChild(mScrollViewWrapper);
-}
-
-
-void TextInputElement::addInlineActionMode()
+void TextInputElement::addActions()
 {
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     if (mContext->GetConfig()->GetSupportsInteractivity() && mTextinput->GetInlineAction() != nullptr)
@@ -137,31 +118,72 @@ void TextInputElement::addInlineActionMode()
             mContext->GetConfig()->GetActions().showCard.actionMode == AdaptiveCards::ActionMode::Inline)
         {
             mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "Inline ShowCard not supported for InlineAction"));
-            mTextinputColElement->AddChild(mTextinputElement);
         }
 
-        else
-        {
-            mContainer = std::make_shared<RendererQml::QmlTag>("Row");
-            mContainer->Property("id", RendererQml::Formatter() << mTextinput->GetId() << "_row");
-            mContainer->Property("spacing", "5");
-            mContainer->Property("width", "parent.width");
+        else {
+            std::shared_ptr<AdaptiveCards::BaseActionElement> action = mTextinput->GetInlineAction();
+            auto context = mContext;
 
-            auto buttonElement = RendererQml::AdaptiveCardQmlRenderer::AdaptiveActionRender(mTextinput->GetInlineAction(), mContext);
+            auto buttonElement = std::make_shared<RendererQml::QmlTag>("AdaptiveActionRender");
 
-            if (mTextinput->GetIsMultiline())
+            if (!RendererQml::Utils::IsNullOrWhitespace(action->GetStyle()) && !RendererQml::Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
             {
-                buttonElement->Property("anchors.bottom", "parent.bottom");
+                if (RendererQml::Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
+                {
+                    mTextinputColElement->Property("buttonConfigType", "'positiveColorConfig'");
+                }
+                else if (RendererQml::Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
+                {
+                    mTextinputColElement->Property("buttonConfigType", "'destructiveColorConfig'");
+                }
+                else
+                {
+                    mTextinputColElement->Property("buttonConfigType", "'primaryColorConfig'");
+                }
             }
-            mTextinputElement->Property("width", RendererQml::Formatter() << "parent.width - " << buttonElement->GetId() << ".width - " << mContainer->GetId() << ".spacing");
-            mContainer->AddChild(mTextinputElement);
-            mContainer->AddChild(buttonElement);
-            mTextinputColElement->AddChild(mContainer);
-
-            if (mTextinput->GetHeight() == AdaptiveCards::HeightType::Stretch)
+            else
             {
-                mContainer->Property("height", RendererQml::Formatter() << "parent.height > 0 ? parent.height : " << textConfig.multiLineTextHeight);
+                mTextinputColElement->Property("buttonConfigType", "'primaryColorConfig'");
             }
+
+            mTextinputColElement->Property("isIconLeftOfTitle", context->GetConfig()->GetActions().iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle ? "true" : "false");
+            mTextinputColElement->Property("escapedTitle", RendererQml::Formatter() << "String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(action->GetTitle()) << "`");
+            // always sending as false not supported 
+            mTextinputColElement->Property("isShowCardButton", "false");
+            mTextinputColElement->Property("isActionSubmit", action->GetElementTypeString() == "Action.Submit" ? "true" : "false");
+            mTextinputColElement->Property("isActionOpenUrl", action->GetElementTypeString() == "Action.OpenUrl" ? "true" : "false");
+            mTextinputColElement->Property("isActionToggleVisibility", action->GetElementTypeString() == "Action.ToggleVisibility" ? "true" : "false");
+
+            if (!action->GetIconUrl().empty())
+            {
+                mTextinputColElement->Property("hasIconUrl", "true");
+                mTextinputColElement->Property("imgSource", RendererQml::AdaptiveCardQmlRenderer::GetImagePath(context, action->GetIconUrl()), true);
+            }
+            std::string selectActionId = "";
+            if (action->GetElementTypeString() == "Action.OpenUrl")
+            {
+                auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action);
+                selectActionId = openUrlAction->GetUrl();
+
+            }
+            else if (action->GetElementTypeString() == "Action.ToggleVisibility")
+            {
+                auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
+                selectActionId = toggleVisibilityAction->GetElementTypeString();
+                mTextinputColElement->Property("toggleVisibilityTarget", RendererQml::AdaptiveCardQmlRenderer::getActionToggleVisibilityObject(toggleVisibilityAction, context));
+            }
+            else if (action->GetElementTypeString() == "Action.Submit")
+            {
+                auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
+                selectActionId = submitAction->GetElementTypeString();
+                std::string submitDataJson = submitAction->GetDataJson();
+                submitDataJson = RendererQml::Utils::Trim(submitDataJson);
+                mTextinputColElement->Property("paramStr", RendererQml::Formatter() << "String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(submitDataJson) << "`");
+            }
+            mTextinputColElement->Property("is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false");
+            mTextinputColElement->Property("adaptiveCard", "adaptiveCard");
+            mTextinputColElement->Property("selectActionId", RendererQml::Formatter() << "String.raw`" << selectActionId << "`");
+
         }
     }
 }
