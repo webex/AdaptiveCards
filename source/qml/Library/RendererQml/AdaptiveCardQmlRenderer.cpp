@@ -353,100 +353,97 @@ namespace RendererQml
                 const auto action = actions[i];
                 const auto buttonIndex = context->getButtonCounter();
 
-                if (context->GetConfig()->GetSupportsInteractivity())
-                {
-                    auto buttonElement = std::make_shared<QmlTag>("AdaptiveActionRender");
 
-                    if (!Utils::IsNullOrWhitespace(action->GetStyle()) && !Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
+                auto buttonElement = std::make_shared<QmlTag>("AdaptiveActionRender");
+
+                if (!Utils::IsNullOrWhitespace(action->GetStyle()) && !Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
+                {
+                    if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
                     {
-                        if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
-                        {
-                            actionsModel << "buttonConfigType: \"positiveColorConfig\", \n";
-                        }
-                        else if (Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
-                        {
-                            actionsModel << "buttonConfigType: \"destructiveColorConfig\", \n";
-                        }
-                        else
-                        {
-                            actionsModel << "buttonConfigType: \"primaryColorConfig\", \n";
-                        }
+                        actionsModel << "buttonConfigType: \"positiveColorConfig\", \n";
+                    }
+                    else if (Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
+                    {
+                        actionsModel << "buttonConfigType: \"destructiveColorConfig\", \n";
                     }
                     else
                     {
                         actionsModel << "buttonConfigType: \"primaryColorConfig\", \n";
                     }
+                }
+                else
+                {
+                    actionsModel << "buttonConfigType: \"primaryColorConfig\", \n";
+                }
 
-                    const std::string buttonObjectName = Formatter() << "button_auto_" << buttonIndex;
-                    actionsModel << "_objectName: \"" << buttonObjectName << "\", \n";
+                const std::string buttonObjectName = Formatter() << "button_auto_" << buttonIndex;
+                actionsModel << "_objectName: \"" << buttonObjectName << "\", \n";
 
-                    actionsModel << "isIconLeftOfTitle: " << (context->GetConfig()->GetActions().iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle ? "true" : "false") << ", \n";
-                    actionsModel << "escapedTitle: " << "\"" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "\", \n";
-                    const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
-                    if (isShowCardButton)
-                    {
-                        actionsModel << "isShowCardButton: " << "true" << ", \n";
-                    }
-                    else {
-                        actionsModel << "isShowCardButton: " << "false" << ", \n";
-                    }
+                actionsModel << "isIconLeftOfTitle: " << (context->GetConfig()->GetActions().iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle ? "true" : "false") << ", \n";
+                actionsModel << "escapedTitle: " << "\"" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "\", \n";
+                const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
+                if (isShowCardButton)
+                {
+                    actionsModel << "isShowCardButton: " << "true" << ", \n";
+                }
+                else {
+                    actionsModel << "isShowCardButton: " << "false" << ", \n";
+                }
 
-                    actionsModel << "isActionSubmit: " << (action->GetElementTypeString() == "Action.Submit" ? "true" : "false") << ", \n";
-                    actionsModel << "isActionOpenUrl: " << (action->GetElementTypeString() == "Action.OpenUrl" ? "true" : "false") << ", \n";
-                    if (action->GetElementTypeString() == "Action.ToggleVisibility") {
-                        actionsModel << "isActionToggleVisibility: " << "true" << ", \n";
-                    }
-                    else {
-                        actionsModel << "isActionToggleVisibility: " << "false" << ", \n";
-                    }
+                actionsModel << "isActionSubmit: " << (action->GetElementTypeString() == "Action.Submit" ? "true" : "false") << ", \n";
+                actionsModel << "isActionOpenUrl: " << (action->GetElementTypeString() == "Action.OpenUrl" ? "true" : "false") << ", \n";
+                if (action->GetElementTypeString() == "Action.ToggleVisibility") {
+                    actionsModel << "isActionToggleVisibility: " << "true" << ", \n";
+                }
+                else {
+                    actionsModel << "isActionToggleVisibility: " << "false" << ", \n";
+                }
 
-                    if (!action->GetIconUrl().empty())
-                    {
-                        actionsModel << "hasIconUrl: " << "true" << ", \n";
-                        actionsModel << "imgSource: " << "\"" << GetImagePath(context, action->GetIconUrl()) << "\" , \n";
-                    }
-                    else {
-                        actionsModel << "hasIconUrl: " << "false" << ", \n";
-                        actionsModel << "imgSource: " << "\"" << "\" , \n";
-
-                    }
-                    std::string onReleasedFunction;
-                    std::string selectActionId = "";
-                    if (action->GetElementTypeString() == "Action.OpenUrl")
-                    {
-                        auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action);
-                        selectActionId = openUrlAction->GetUrl();
-                        actionsModel << "paramStr: " << "\"" << "\", \n";
-
-                    }
-                    else if (action->GetElementTypeString() == "Action.ShowCard")
-                    {
-                        context->addToShowCardButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(action));
-                        actionsModel << "paramStr: " << "\"" << "\", \n";
-                    }
-                    else if (action->GetElementTypeString() == "Action.ToggleVisibility")
-                    {
-                        auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
-                        selectActionId = toggleVisibilityAction->GetElementTypeString();
-                        toggleVisibilityTarget << i << ": " << getActionToggleVisibilityObject(toggleVisibilityAction, context) << ",";
-                        actionsModel << "paramStr: " << "\"" << "\", \n";
-                    }
-                    else if (action->GetElementTypeString() == "Action.Submit")
-                    {
-                        auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
-                        selectActionId = submitAction->GetElementTypeString();
-                        std::string submitDataJson = submitAction->GetDataJson();
-
-                        submitDataJson.erase(std::remove(submitDataJson.begin(), submitDataJson.end(), '"'), submitDataJson.end());
-                        actionsModel << "paramStr: \"" << submitDataJson << "\", \n";
-                    }
-
-                    actionsModel << "is1_3Enabled: " << (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false") << ", \n";
-
-                    actionsModel << "selectActionId: " << "\"" << selectActionId << "\"" << ", \n";
+                if (!action->GetIconUrl().empty())
+                {
+                    actionsModel << "hasIconUrl: " << "true" << ", \n";
+                    actionsModel << "imgSource: " << "\"" << GetImagePath(context, action->GetIconUrl()) << "\" , \n";
+                }
+                else {
+                    actionsModel << "hasIconUrl: " << "false" << ", \n";
+                    actionsModel << "imgSource: " << "\"" << "\" , \n";
 
                 }
-                
+                std::string selectActionId = "";
+                if (action->GetElementTypeString() == "Action.OpenUrl")
+                {
+                    auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action);
+                    selectActionId = openUrlAction->GetUrl();
+                    actionsModel << "paramStr: " << "\"" << "\", \n";
+
+                }
+                else if (action->GetElementTypeString() == "Action.ShowCard")
+                {
+                    context->addToShowCardButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(action));
+                    actionsModel << "paramStr: " << "\"" << "\", \n";
+                }
+                else if (action->GetElementTypeString() == "Action.ToggleVisibility")
+                {
+                    auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
+                    selectActionId = toggleVisibilityAction->GetElementTypeString();
+                    toggleVisibilityTarget << i << ": " << getActionToggleVisibilityObject(toggleVisibilityAction, context) << ",";
+                    actionsModel << "paramStr: " << "\"" << "\", \n";
+                }
+                else if (action->GetElementTypeString() == "Action.Submit")
+                {
+                    auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
+                    selectActionId = submitAction->GetElementTypeString();
+                    std::string submitDataJson = submitAction->GetDataJson();
+
+                    submitDataJson.erase(std::remove(submitDataJson.begin(), submitDataJson.end(), '"'), submitDataJson.end());
+                    actionsModel << "paramStr: \"" << submitDataJson << "\", \n";
+                }
+
+                actionsModel << "is1_3Enabled: " << (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false") << ", \n";
+
+                actionsModel << "selectActionId: " << "\"" << selectActionId << "\"" << ", \n";
+
+
                 if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
                 {
                     // Add to loader source component list
