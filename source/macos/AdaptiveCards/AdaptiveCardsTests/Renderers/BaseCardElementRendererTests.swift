@@ -47,14 +47,10 @@ class BaseCardElementRendererrTests: XCTestCase {
     func testRendererSetsBackgroundImage() {
         backgroundImage = .make(url: "https://picsum.photos/200", fillMode: .repeat)
         container = .make(backgroundImage: backgroundImage)
-        let viewWithInheritedProperties = renderBaseCardElementView()
-        guard let updatedView = viewWithInheritedProperties.arrangedSubviews[0] as? ACRContainerView else {
-            fatalError()
-        }
-        XCTAssertEqual(updatedView.backgroundImageView.fillMode, .repeat)
+        let renderingCardView = renderBaseCardElementView()
+        XCTAssertEqual(renderingCardView.backgroundImageView.fillMode, .repeat)
         
         let view = containerRenderer.render(element: container, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
-        XCTAssertTrue(view is ACRContainerView)
         guard let view = view as? ACRContainerView else { fatalError() }
         let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
         let fakeRootView = ACRView.init(style: .none, hostConfig: hostConfig, renderConfig: config)
@@ -223,11 +219,13 @@ class BaseCardElementRendererrTests: XCTestCase {
         XCTAssertEqual(inputView.accessibilityLabel(), "Label, Title")
     }
     
-    private func renderBaseCardElementView() -> ACRContentStackView {
+    private func renderBaseCardElementView() -> ACRContainerView {
         let view = containerRenderer.render(element: container, with: hostConfig, style: .default, rootView: fakeRootView, parentView: fakeRootView, inputs: [], config: .default)
         XCTAssertTrue(view is ACRContainerView)
         
-        let viewWithInheritedProperties = baseCardRenderer.updateView(view: view, element: container, rootView: fakeRootView, style: .default, hostConfig: hostConfig, config: .default, isfirstElement: true)
-        return viewWithInheritedProperties
+        baseCardRenderer.updateLayoutForSeparatorAndAlignment(view: view, element: container, parentView: fakeRootView, rootView: fakeRootView, style: .default, hostConfig: hostConfig, config: .default, isfirstElement: true)
+        
+        guard let view = view as? ACRContainerView else { fatalError() }
+        return view
     }
 }
