@@ -75,6 +75,7 @@ class ACRCompactChoiceSetView: NSView {
             choiceSetPopup.addItem(withTitle: placeholder)
             if let menuItem = choiceSetPopup.item(at: 0) {
                 menuItem.isEnabled = false
+                menuItem.toolTip = placeholder
             }
             choiceSetPopup.arrayValues.append(nil)
             index += 1
@@ -84,6 +85,7 @@ class ACRCompactChoiceSetView: NSView {
             choiceSetPopup.addItem(withTitle: "")
             let item = choiceSetPopup.item(at: index)
             item?.title = title
+            item?.toolTip = title
             // item?.attributedTitle = getAttributedString(title: title, with: hostConfig, style: style, wrap: choiceSetInput.getWrap())
             choiceSetPopup.arrayValues.append(choice.getValue())
             if element.getValue() == choice.getValue() {
@@ -92,6 +94,7 @@ class ACRCompactChoiceSetView: NSView {
             }
             index += 1
         }
+        choiceSetPopup.setToolTip()
     }
     
     private func setStretchableHeight() {
