@@ -272,7 +272,7 @@ Column {
             }
 
             MouseArea {
-                id: _numberInputSpinBox_up_indicator_area
+                id: _numberInputSpinBoxUpIndicatorArea
 
                 width: parent.width
                 height: parent.height / 2
@@ -284,11 +284,11 @@ Column {
             }
 
             MouseArea {
-                id: _numberInputSpinBox_down_indicator_area
+                id: _numberInputSpinBoxDownIndicatorArea
 
                 width: parent.width
                 height: parent.height / 2
-                anchors.top: _numberInputSpinBox_up_indicator_area.bottom
+                anchors.top: _numberInputSpinBoxUpIndicatorArea.bottom
                 onReleased: {
                     _numberInputSpinBox.changeValue(Qt.Key_Down);
                     _numberInputArrowRectangle.forceActiveFocus();
