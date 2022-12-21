@@ -29,6 +29,7 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/TextElement.qml"), "AdaptiveCards", 1, 0, "TextElement");
     qmlRegisterType(QUrl("qrc:/InputLabel.qml"), "AdaptiveCards", 1, 0, "InputLabel");
     qmlRegisterType(QUrl("qrc:/InputErrorMessage.qml"), "AdaptiveCards", 1, 0, "InputErrorMessage");
+    qmlRegisterType(QUrl("qrc:/NumberInputRender.qml"), "AdaptiveCards", 1, 0, "NumberInputRender");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();

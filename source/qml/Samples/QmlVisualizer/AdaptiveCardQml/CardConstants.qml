@@ -28,6 +28,8 @@ QtObject {
         readonly property int clearIconHorizontalPadding: 12
         readonly property int textHorizontalPadding: 12
         readonly property int textVerticalPadding: 4
+        readonly property int iconPadding: 4
+        readonly property int columnSpacing: 3
         readonly property color backgroundColorNormal: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
         readonly property color backgroundColorOnHovered: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
         readonly property color backgroundColorOnPressed: AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)
@@ -53,6 +55,7 @@ QtObject {
     inputNumberConstants: QtObject {
         readonly property int upDownButtonWidth: 31
         readonly property int upDownIconSize: 16
+        readonly property int numberInputMinWidth: 200
         readonly property color upDownIconColor: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
     }
 
@@ -121,9 +124,9 @@ QtObject {
         readonly property int dropDownPadding: 8
         readonly property int dropDownHeight: 216
         readonly property int maxDropDownWidth: 800
-        readonly property int indicatorWidth : 35
-        readonly property int scrollbarWidth : 10
-        readonly property int choiceSetMinWidth : 200
+        readonly property int indicatorWidth: 35
+        readonly property int scrollbarWidth: 10
+        readonly property int choiceSetMinWidth: 200
         readonly property color arrowIconColor: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color dropDownElementColorPressed: AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)
         readonly property color dropDownElementColorHovered: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
@@ -244,4 +247,6 @@ QtObject {
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
     }
 
+    readonly property string clearIconImage: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Y29tbW9uLWFjdGlvbnMvY2FuY2VsXzEwPC90aXRsZT48cGF0aCBkPSJNNS43MDcyNSA1LjAwMDI1bDIuNjQ2LTIuNjQ2Yy4xOTYtLjE5Ni4xOTYtLjUxMiAwLS43MDgtLjE5NS0uMTk1LS41MTEtLjE5NS0uNzA3IDBsLTIuNjQ2IDIuNjQ3LTIuNjQ3LTIuNjQ3Yy0uMTk1LS4xOTUtLjUxMS0uMTk1LS43MDcgMC0uMTk1LjE5Ni0uMTk1LjUxMiAwIC43MDhsMi42NDcgMi42NDYtMi42NDcgMi42NDZjLS4xOTUuMTk2LS4xOTUuNTEyIDAgLjcwOC4wOTguMDk3LjIyNi4xNDYuMzU0LjE0Ni4xMjggMCAuMjU2LS4wNDkuMzUzLS4xNDZsMi42NDctMi42NDcgMi42NDYgMi42NDdjLjA5OC4wOTcuMjI2LjE0Ni4zNTQuMTQ2LjEyOCAwIC4yNTYtLjA0OS4zNTMtLjE0Ni4xOTYtLjE5Ni4xOTYtLjUxMiAwLS43MDhsLTIuNjQ2LTIuNjQ2eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+"
+    readonly property string numberInputUpDownArrowImage: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHZpZXdCb3g9IjAgMCAxNCAxNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEzLjQ0NzQgOS43NzYzOEMxMy40MTggOS43MTc2MyAxMy4zNzc0IDkuNjY1MjUgMTMuMzI3OCA5LjYyMjIyQzEzLjI3ODIgOS41NzkxOCAxMy4yMjA2IDkuNTQ2MzUgMTMuMTU4MyA5LjUyNTU4QzEzLjA5NiA5LjUwNDgxIDEzLjAzMDIgOS40OTY1MiAxMi45NjQ3IDkuNTAxMThDMTIuODk5MiA5LjUwNTgzIDEyLjgzNTIgOS41MjMzNSAxMi43NzY1IDkuNTUyNzNMNy4wMDAwNCAxMi40NDA5TDEuMjIzNzkgOS41NTI3M0MxLjEwNTE2IDkuNDkzNDEgMC45Njc4MzIgOS40ODM2NSAwLjg0MjAwOSA5LjUyNTU5QzAuNzE2MTg2IDkuNTY3NTIgMC42MTIxNzYgOS42NTc3MyAwLjU1Mjg2MSA5Ljc3NjM1QzAuNDkzNTQ1IDkuODk0OTggMC40ODM3ODIgMTAuMDMyMyAwLjUyNTcyIDEwLjE1ODFDMC41Njc2NTggMTAuMjg0IDAuNjU3ODYxIDEwLjM4OCAwLjc3NjQ4NiAxMC40NDczTDYuNzc2NDkgMTMuNDQ3M0M2Ljg0NTk0IDEzLjQ4MiA2LjkyMjUgMTMuNSA3LjAwMDE0IDEzLjVDNy4wNzc3NyAxMy41IDcuMTU0MzQgMTMuNDgyIDcuMjIzNzkgMTMuNDQ3M0wxMy4yMjM4IDEwLjQ0NzNDMTMuMjgyNSAxMC40MTc5IDEzLjMzNDkgMTAuMzc3MyAxMy4zNzc5IDEwLjMyNzdDMTMuNDIxIDEwLjI3OCAxMy40NTM4IDEwLjIyMDQgMTMuNDc0NiAxMC4xNTgxQzEzLjQ5NTMgMTAuMDk1OCAxMy41MDM2IDEwLjAzMDEgMTMuNDk4OSA5Ljk2NDU2QzEzLjQ5NDMgOS44OTkwNSAxMy40NzY4IDkuODM1MTEgMTMuNDQ3NCA5Ljc3NjM4WiIgZmlsbD0iYmxhY2siIGZpbGwtb3BhY2l0eT0iMC45NSIvPgo8cGF0aCBkPSJNMTMuMjIzOSAzLjU1MjcyTDcuMjIzNjkgMC41NTI3MjRDNy4xNTQyNCAwLjUxODA1IDcuMDc3NjggMC41IDcuMDAwMDYgMC41QzYuOTIyNDQgMC41IDYuODQ1ODggMC41MTgwNSA2Ljc3NjQ0IDAuNTUyNzI0TDAuNzc2NDM4IDMuNTUyNzJDMC42NTc4MTMgMy42MTIwMyAwLjU2NzYwOCAzLjcxNjA0IDAuNTI1NjY1IDMuODQxODZDMC41MDQ4OTcgMy45MDQxNSAwLjQ5NjYwNCAzLjk2OTkzIDAuNTAxMjU3IDQuMDM1NDRDMC41MDU5MTEgNC4xMDA5NCAwLjUyMzQyMSA0LjE2NDg5IDAuNTUyNzg4IDQuMjIzNjJDMC41ODIxNTUgNC4yODIzNiAwLjYyMjgwMyA0LjMzNDc0IDAuNjcyNDEzIDQuMzc3NzdDMC43MjIwMjIgNC40MjA3OSAwLjc3OTYyIDQuNDUzNjMgMC44NDE5MTkgNC40NzQ0QzAuOTY3NzM3IDQuNTE2MzQgMS4xMDUwNiA0LjUwNjU4IDEuMjIzNjkgNC40NDcyN0w3LjAwMDA5IDEuNTU5MDdMMTIuNzc2NyA0LjQ0NzI3QzEyLjg5NTMgNC41MDY1OCAxMy4wMzI2IDQuNTE2MzQgMTMuMTU4NSA0LjQ3NDRDMTMuMjIwOCA0LjQ1MzYzIDEzLjI3ODQgNC40MjA3OSAxMy4zMjggNC4zNzc3N0MxMy4zNzc2IDQuMzM0NzQgMTMuNDE4MiA0LjI4MjM2IDEzLjQ0NzYgNC4yMjM2MkMxMy40NzcgNC4xNjQ4OSAxMy40OTQ1IDQuMTAwOTQgMTMuNDk5MSA0LjAzNTQ0QzEzLjUwMzggMy45Njk5MyAxMy40OTU1IDMuOTA0MTUgMTMuNDc0NyAzLjg0MTg2QzEzLjQ1MzkgMy43Nzk1NiAxMy40MjExIDMuNzIxOTYgMTMuMzc4MSAzLjY3MjM1QzEzLjMzNTEgMy42MjI3NCAxMy4yODI3IDMuNTgyMDkgMTMuMjIzOSAzLjU1MjcyWiIgZmlsbD0iYmxhY2siIGZpbGwtb3BhY2l0eT0iMC45NSIvPgo8L3N2Zz4K"
 }

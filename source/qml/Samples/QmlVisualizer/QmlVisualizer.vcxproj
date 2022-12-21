@@ -129,6 +129,7 @@
     <None Include="AdaptiveCardQml\InputErrorMessage.qml" />
     <None Include="AdaptiveCardQml\InputLabel.qml" />
     <None Include="AdaptiveCardQml\CardGenericTextElement.qml" />
+    <None Include="AdaptiveCardQml\NumberInputRender.qml" />
     <None Include="AdaptiveCardQml\RichTextBlockRender.qml" />
     <None Include="AdaptiveCardQml\SeparatorRender.qml" />
     <None Include="AdaptiveCardQml\TextBlockRender.qml" />
