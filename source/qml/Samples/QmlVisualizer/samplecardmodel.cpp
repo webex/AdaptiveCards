@@ -268,9 +268,8 @@ void SampleCardModel::showToolTipOnElement(bool show, const QString& text, QQuic
         {
             QToolTip::showText(rect.center(), text);
         }
-        mCurrentTooltipItem = item;
     }
-    else// if(mCurrentTooltipItem == item)
+    else
     {
         QToolTip::hideText();
     }

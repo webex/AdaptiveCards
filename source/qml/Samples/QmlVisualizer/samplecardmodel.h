@@ -68,7 +68,6 @@ private:
     static std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>>> GetActionImageUrls(std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>> cardElement, std::map<int, std::string> urls, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>> showCards);
 
     QMenu* mContextMenu{ nullptr };
-    QQuickItem* mCurrentTooltipItem{ nullptr };
     std::shared_ptr<AdaptiveCardRenderConfig> getRenderConfig(const bool isDark);
     CardConfig getCardConfig(const bool isDark);
     template<typename InputConfig>
