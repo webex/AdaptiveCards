@@ -243,6 +243,39 @@ void SampleCardModel::onOpenContextMenu(const QPoint& pos, const QString& select
     mContextMenu->popup(pos);
 }
 
+void SampleCardModel::showToolTipifNeeded(const QString& text, const QPoint& location)
+{
+    if (!text.isEmpty())
+    {
+        QToolTip::showText(location, text);
+    }
+    else
+    {
+        QToolTip::hideText();
+    }
+}
+
+void SampleCardModel::showToolTipOnElement(bool show, const QString& text, QQuickItem* item, bool isWordWrapEnabled)
+{
+    if (show && item && !text.isEmpty() && item->opacity() > 0)
+    {
+        const QRect rect(item->mapToGlobal({ 0, 0 }).toPoint(), item->size().toSize());
+        if (rect.contains(QCursor::pos()))
+        {
+            QToolTip::showText(QCursor::pos(), text);
+        }
+        else
+        {
+            QToolTip::showText(rect.center(), text);
+        }
+        mCurrentTooltipItem = item;
+    }
+    else// if(mCurrentTooltipItem == item)
+    {
+        QToolTip::hideText();
+    }
+}
+
 void SampleCardModel::actionOpenUrlButtonClicked(const QString& title, const QString& type, const QString& data)
 {
     QString output;

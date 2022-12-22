@@ -10,6 +10,8 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMenu>
+#include <QToolTip>
+#include <QQuickItem>
 
 using namespace RendererQml;
 
@@ -44,6 +46,8 @@ public:
     Q_INVOKABLE void setTheme(const QString& theme);
     Q_INVOKABLE void onAdaptiveCardButtonClicked(const QString& title, const QString& type, const QString& data);
     Q_INVOKABLE void onOpenContextMenu(const QPoint& pos, const QString& selectedText, const QString& link);
+    Q_INVOKABLE void showToolTipifNeeded(const QString& text, const QPoint& location);
+    Q_INVOKABLE void showToolTipOnElement(bool show, const QString& text, QQuickItem* item, bool isWordWrapEnabled = true);
 
 signals:
     void reloadCardOnThemeChange(const bool isDarkTheme);
@@ -64,6 +68,7 @@ private:
     static std::pair<std::map<int, std::string>, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>>> GetActionImageUrls(std::vector<std::shared_ptr<AdaptiveCards::BaseActionElement>> cardElement, std::map<int, std::string> urls, std::vector<std::shared_ptr<AdaptiveCards::AdaptiveCard>> showCards);
 
     QMenu* mContextMenu{ nullptr };
+    QQuickItem* mCurrentTooltipItem{ nullptr };
     std::shared_ptr<AdaptiveCardRenderConfig> getRenderConfig(const bool isDark);
     CardConfig getCardConfig(const bool isDark);
     template<typename InputConfig>
