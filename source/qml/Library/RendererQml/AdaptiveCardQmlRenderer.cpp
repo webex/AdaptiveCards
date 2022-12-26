@@ -89,6 +89,7 @@ namespace RendererQml
         uiCard->AddFunctions("signal textEditFocussed(var textEdit)");
         uiCard->AddFunctions("signal setFocusBackOnClose(var element)");
         uiCard->AddFunctions("signal showToolTipifNeeded(var link, var point)");
+        uiCard->AddFunctions("signal showToolTipOnElement(bool show, var text, var point)");
 		//1px extra height to accomodate the border of a showCard if present at the bottom
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
 		uiCard->Property("Layout.fillWidth", "true");
@@ -434,7 +435,6 @@ namespace RendererQml
                     auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
                     selectActionId = submitAction->GetElementTypeString();
                     std::string submitDataJson = submitAction->GetDataJson();
-
                     submitDataJson.erase(std::remove(submitDataJson.begin(), submitDataJson.end(), '"'), submitDataJson.end());
                     actionsModel << "paramStr: \"" << submitDataJson << "\", \n";
                 }
@@ -614,7 +614,9 @@ namespace RendererQml
         reloadFunction << "if (card)\n{ \ncard.buttonClicked.connect(adaptiveCard.buttonClicked);"
             "card.openContextMenu.connect(adaptiveCard.openContextMenu);"
             "card.textEditFocussed.connect(adaptiveCard.textEditFocussed);"
-            "card.setFocusBackOnClose.connect(adaptiveCard.setFocusBackOnClose);card.showToolTipifNeeded.connect(adaptiveCard.showToolTipifNeeded);}}}";
+            "card.setFocusBackOnClose.connect(adaptiveCard.setFocusBackOnClose);"
+            "card.showToolTipifNeeded.connect(adaptiveCard.showToolTipifNeeded);"
+            "card.showToolTipOnElement.connect(adaptiveCard.showToolTipOnElement);}}}";
 
         uiColumn->AddFunctions(reloadFunction.str());
 		uiComponent->AddChild(uiColumn);

@@ -28,5 +28,6 @@
         <file alias="ActionSetHorizontalRender.qml">AdaptiveCardQml/ActionSetHorizontalRender.qml</file>
         <file alias="ActionSetVerticalRender.qml">AdaptiveCardQml/ActionSetVerticalRender.qml</file>
         <file alias="ActionSetRepeaterElement.qml">AdaptiveCardQml/ActionSetRepeaterElement.qml</file>
+        <file alias="NumberInputRender.qml">AdaptiveCardQml/NumberInputRender.qml</file>
     </qresource>
 </RCC>

@@ -26,12 +26,8 @@ void ChoiceSetElement::initialize()
     int ButtonNumber = 0;
 
     mEscapedPlaceholderString = RendererQml::Utils::getBackQuoteEscapedString(mChoiceSetInput->GetPlaceholder());
-
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
-    {
-        mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mChoiceSetInput->GetLabel());
-        mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mChoiceSetInput->GetErrorMessage());
-    }
+    mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mChoiceSetInput->GetLabel());
+    mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mChoiceSetInput->GetErrorMessage());
 
     RendererQml::Checkboxes choices;
     enum RendererQml::CheckBoxType type;
@@ -168,37 +164,31 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
 
 void ChoiceSetElement::addInputLabel(bool isRequired)
 {
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    if (!mChoiceSetInput->GetLabel().empty())
     {
-        if (!mChoiceSetInput->GetLabel().empty())
+        const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
+        if (mChoiceSetInput->GetIsVisible())
         {
-            const auto choiceSetConfig = mContext->GetRenderConfig()->getInputChoiceSetDropDownConfig();
-            if (mChoiceSetInput->GetIsVisible())
-            {
-                mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mChoiceSetInput->GetLabel()));
-            }
-            mChoiceSetColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");
+            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mChoiceSetInput->GetLabel()));
         }
-        else
+        mChoiceSetColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");
+    }
+    else
+    {
+        if (mChoiceSetInput->GetIsRequired())
         {
-            if (mChoiceSetInput->GetIsRequired())
-            {
-                mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
-            }
+            mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
         }
     }
 }
 
 void ChoiceSetElement::addErrorMessage()
 {
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mChoiceSetInput->GetIsRequired())
+    mChoiceSetColElement->Property("_isRequired", "true");
+    mContext->addToRequiredInputElementsIdList(mChoiceSetColElement->GetId());
+    if (!mChoiceSetInput->GetErrorMessage().empty())
     {
-        mChoiceSetColElement->Property("_isRequired", "true");
-        mContext->addToRequiredInputElementsIdList(mChoiceSetColElement->GetId());
-        if (!mChoiceSetInput->GetErrorMessage().empty())
-        {
-            mChoiceSetColElement->Property("_mEscapedErrorString", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
-        }
+        mChoiceSetColElement->Property("_mEscapedErrorString", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
     }
 }
 

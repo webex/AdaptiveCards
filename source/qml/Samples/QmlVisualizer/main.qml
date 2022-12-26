@@ -59,6 +59,8 @@ Row{
                         cardListViewLoader.item.reloadCard.connect(loader.item.reloadCard)
                         loader.item.adaptiveCardButtonClicked.connect(root.onAdaptiveCardButtonClicked)
                         loader.item.openContextMenu.connect(root.onOpenContextMenu);
+                        loader.item.showToolTipifNeeded.connect(root.showToolTipifNeeded)
+                        loader.item.showToolTipOnElement.connect(root.showToolTipOnElement);
                     }
                 }
             }
@@ -98,5 +100,13 @@ Row{
 
     function onOpenContextMenu(pos, text, link){
         _aModel.onOpenContextMenu(pos, text, link)
+    }
+
+    function showToolTipifNeeded(text, pos){
+        _aModel.showToolTipifNeeded(text, pos)
+    }
+
+    function showToolTipOnElement(show, text, item){
+        _aModel.showToolTipOnElement(show, text, item)
     }
 }

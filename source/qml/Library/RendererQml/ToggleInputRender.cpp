@@ -24,11 +24,9 @@ void ToggleInputElement::initialize()
 {
     mToggleInput->SetId(mContext->ConvertToValidId(mToggleInput->GetId()));
 
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
-    {
-        mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel());
-        mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetErrorMessage());
-    }
+    mEscapedLabelString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel());
+    mEscapedErrorString = RendererQml::Utils::getBackQuoteEscapedString(mToggleInput->GetErrorMessage());
+
     mToggleInputColElement->Property("id", RendererQml::Formatter() << mToggleInput->GetId());
     mToggleInputColElement->Property("_adaptiveCard", "adaptiveCard");
     mToggleInputColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
@@ -65,36 +63,30 @@ void ToggleInputElement::addCheckBox()
 }
 void ToggleInputElement::addInputLabel()
 {
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+    if (!mToggleInput->GetLabel().empty())
     {
-        if (!mToggleInput->GetLabel().empty())
+        if (mToggleInput->GetIsVisible())
         {
-            if (mToggleInput->GetIsVisible())
-            {
-                mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
-            }
-            std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
-            mToggleInput->GetIsRequired() == true ? mToggleInputColElement->Property("_isRequired", "true") : mToggleInputColElement->Property("_isRequired", "false");
-            mToggleInputColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");
+            mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mToggleInput->GetLabel()));
         }
-        else
+        std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
+        mToggleInput->GetIsRequired() == true ? mToggleInputColElement->Property("_isRequired", "true") : mToggleInputColElement->Property("_isRequired", "false");
+        mToggleInputColElement->Property("_mEscapedLabelString", RendererQml::Formatter() << "String.raw`" << mEscapedLabelString << "`");
+    }
+    else
+    {
+        if (mToggleInput->GetIsRequired())
         {
-            if (mToggleInput->GetIsRequired())
-            {
-                mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
-            }
+            mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
         }
     }
 }
 
 void ToggleInputElement::addErrorMessage()
 {
-    if (mContext->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && mToggleInput->GetIsRequired())
+    if (!mToggleInput->GetErrorMessage().empty())
     {
-        if (!mToggleInput->GetErrorMessage().empty())
-        {
-            mToggleInputColElement->Property("_mEscapedErrorString", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
-        }
+        mToggleInputColElement->Property("_mEscapedErrorString", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
     }
 }
 
