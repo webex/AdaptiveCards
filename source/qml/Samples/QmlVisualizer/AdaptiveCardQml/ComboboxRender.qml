@@ -7,6 +7,7 @@ import QtQuick.Layouts 1.3
 ComboBox {
     id: comboBox
 
+    property var _adaptiveCard
     property var _consumer
     property var _model
     property int _currentIndex
@@ -55,7 +56,11 @@ ComboBox {
             Accessible.name = getAccessibleName();
 
     }
-    onHoveredChanged: colorChange(false)
+    onHoveredChanged: {
+        colorChange(false);
+        if(hovered)
+            _adaptiveCard.showToolTipOnElement(hovered, displayText, comboBox);
+    }
     onCurrentValueChanged: {
         Accessible.name = displayText;
         selectionChanged();
@@ -127,6 +132,13 @@ ComboBox {
             }
         }
 
+        HoverHandler {
+            onHoveredChanged: {
+                if(hovered)
+                    _adaptiveCard.showToolTipOnElement(hovered, modelData.text, comboBoxItemDelegate);
+            }
+        }
+
     }
 
     popup: Popup {
@@ -148,11 +160,6 @@ ComboBox {
             clip: true
             model: comboBox.delegateModel
             currentIndex: comboBox.highlightedIndex
-            onCurrentIndexChanged: {
-                if (currentIndex !== -1)
-                    comboBox.currentIndex = currentIndex;
-
-            }
             Keys.onReturnPressed: comboBox.accepted()
 
             ScrollBar.vertical: ScrollBar {
