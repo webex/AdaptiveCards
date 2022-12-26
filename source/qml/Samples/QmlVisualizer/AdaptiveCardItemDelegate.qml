@@ -10,6 +10,8 @@ Item {
     signal reloadCard(var card)
     signal adaptiveCardButtonClicked(var title, var type, var data)
     signal openContextMenu(var pos, var text, var link)
+    signal showToolTipifNeeded(var text, var pos)
+    signal showToolTipOnElement(bool show,var text, var pos)
 
     height: mainLayout.height
     width: listView.width
@@ -44,6 +46,8 @@ Item {
                         reloadCard.connect(item.reload)
                         item.adaptiveCardButtonClicked.connect(adaptiveCardButtonClicked)
                         item.openContextMenu.connect(openContextMenu)
+                        item.showToolTipifNeeded.connect(showToolTipifNeeded)
+                        item.showToolTipOnElement.connect(showToolTipOnElement)
                     }
                 }
             }
