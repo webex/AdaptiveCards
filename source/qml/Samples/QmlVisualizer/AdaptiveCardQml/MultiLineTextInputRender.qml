@@ -32,7 +32,7 @@ Rectangle {
             width:_inputtextTextFieldWrapper.width
             Accessible.role:Accessible.EditableText
             function assignMaxLength() {
-                if(_maxLength != 0) { maximumLength = _maxLength;}
+                if(_maxLength != 0) { maximumLength: _maxLength;}
             }
             onTextChanged: { if(_maxLength != 0) {remove(_maxLength, length) }
             if(_isRequired || _regex != "" ) {

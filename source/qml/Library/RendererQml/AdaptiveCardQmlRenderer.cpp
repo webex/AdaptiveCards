@@ -2428,4 +2428,34 @@ namespace RendererQml
         parsedText = RendererQml::Utils::FormatHtmlUrl(parsedText, linkColor, textDecoration);
         return parsedText;
     }
+
+    std::string RendererQml::AdaptiveCardQmlRenderer::getActionData(const std::shared_ptr<RendererQml::AdaptiveRenderContext>& context, std::shared_ptr<AdaptiveCards::BaseActionElement> action, std::string& selectActionId)
+    {
+        if (action->GetElementTypeString() == "Action.OpenUrl")
+        {
+            auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action);
+            selectActionId = openUrlAction->GetUrl();
+            return "";
+        }
+        else if (action->GetElementTypeString() == "Action.ShowCard")
+        {
+            return "";
+        }
+        else if (action->GetElementTypeString() == "Action.ToggleVisibility")
+        {
+            auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
+            selectActionId = toggleVisibilityAction->GetElementTypeString();
+            return getActionToggleVisibilityObject(toggleVisibilityAction, context);
+        }
+        else if (action->GetElementTypeString() == "Action.Submit")
+        {
+            auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
+            selectActionId = submitAction->GetElementTypeString();
+            std::string submitDataJson = submitAction->GetDataJson();
+            submitDataJson = Utils::Trim(submitDataJson);
+            return Utils::getBackQuoteEscapedString(submitDataJson);
+        }
+        return "";
+    }
+
 }

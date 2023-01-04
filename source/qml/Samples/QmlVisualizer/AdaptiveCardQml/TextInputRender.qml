@@ -45,16 +45,12 @@ Column{
     spacing: _spacing
     width: parent.width
 
-
-    /* Action Button To be discussed */
     property bool _isShowCardButton
     property var _inputtextTextField: !_isMultiLineText ? singlineLoaderElement.item.inputtextTextField : multilineLoaderElement.item.inputtextTextField 
 
-    /* Ends here */
-
     property bool showErrorMessage: false
     function validate(){
-       //Issue Here  const regex = new RegExp(String.raw`%s%s`);
+       const regex = new RegExp(String.raw`%s%s`);
         var isValid = (text !== '' && regex.test(text))
         if (showErrorMessage) {
             if (isValid) {
@@ -75,7 +71,6 @@ Column{
         else{
             accessibleName += _mEscapedPlaceHolderString;
         }
-        console.log("Text is : " + _inputtextTextField.text)
         return accessibleName;
     }
     
@@ -103,7 +98,6 @@ Column{
         }
        Loader {
             id: singlineLoaderElement
-            //property alias inputtextTextField: _inputtextTextFieldWrapper.__inputtextTextField
             height: item ? item.height : 0
             width: (_supportsInterActivity && !_isInlineShowCardAction) ? parent.width - ( buttonLoaderElement.width + _inputtextTextFieldRow.spacing ) : parent.width
             active: !_isMultiLineText
@@ -115,9 +109,7 @@ Column{
 
         Loader {
             id: multilineLoaderElement
-            //property alias inputtextTextField: _inputtextTextFieldWrapper.__inputtextTextField
-            //height: item ? item.height : 0
-            height: _isheightStreched ? parent.height : _isMultiLineText ? CardConstants.inputTextConstants.multiLineTextHeight : item.height
+            height: _isheightStreched ? parent.height : _isMultiLineText ? CardConstants.inputTextConstants.multiLineTextHeight : 0
             width: (_supportsInterActivity && !_isInlineShowCardAction) ? parent.width - ( buttonLoaderElement.width + _inputtextTextFieldRow.spacing ) : parent.width
             active: _isMultiLineText
             sourceComponent: MultiLineTextInputRender {

@@ -65,6 +65,7 @@ namespace RendererQml
         static const std::string GetImagePath(std::shared_ptr<AdaptiveRenderContext> context, const std::string url);
         static const std::string getActionToggleVisibilityObject(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context);
         static std::string ParseMarkdownString(std::string text, std::shared_ptr<AdaptiveRenderContext> context);
+        static std::string getActionData(const std::shared_ptr<RendererQml::AdaptiveRenderContext>& context, std::shared_ptr<AdaptiveCards::BaseActionElement> action, std::string& selectActionId);
 
     protected:
         static void addSelectAction(const std::shared_ptr<QmlTag>& parent, const std::string& rectId, const std::shared_ptr<AdaptiveCards::BaseActionElement>& selectAction, const std::shared_ptr<AdaptiveRenderContext>& context, const std::string parentName, const bool hasBackgroundImage = false);

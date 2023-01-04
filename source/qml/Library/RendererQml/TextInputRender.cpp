@@ -162,23 +162,16 @@ void TextInputElement::addActions()
             std::string selectActionId = "";
             if (action->GetElementTypeString() == "Action.OpenUrl")
             {
-                auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action);
-                selectActionId = openUrlAction->GetUrl();
+                RendererQml::AdaptiveCardQmlRenderer::getActionData(context, action, selectActionId);
 
             }
             else if (action->GetElementTypeString() == "Action.ToggleVisibility")
             {
-                auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
-                selectActionId = toggleVisibilityAction->GetElementTypeString();
-                mTextinputColElement->Property("toggleVisibilityTarget", RendererQml::AdaptiveCardQmlRenderer::getActionToggleVisibilityObject(toggleVisibilityAction, context));
+                mTextinputColElement->Property("toggleVisibilityTarget", RendererQml::AdaptiveCardQmlRenderer::getActionData(context, action, selectActionId));
             }
             else if (action->GetElementTypeString() == "Action.Submit")
             {
-                auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
-                selectActionId = submitAction->GetElementTypeString();
-                std::string submitDataJson = submitAction->GetDataJson();
-                submitDataJson = RendererQml::Utils::Trim(submitDataJson);
-                mTextinputColElement->Property("paramStr", RendererQml::Formatter() << "String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(submitDataJson) << "`");
+                mTextinputColElement->Property("paramStr", RendererQml::Formatter() << "String.raw`" << RendererQml::AdaptiveCardQmlRenderer::getActionData(context, action, selectActionId) << "`");
             }
             mTextinputColElement->Property("is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false");
             mTextinputColElement->Property("adaptiveCard", "adaptiveCard");
