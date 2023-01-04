@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/ActionSetHorizontalRender.qml"), "AdaptiveCards", 1, 0, "ActionSetHorizontalRender");
     qmlRegisterType(QUrl("qrc:/ActionSetVerticalRender.qml"), "AdaptiveCards", 1, 0, "ActionSetVerticalRender");
     qmlRegisterType(QUrl("qrc:/ActionSetRepeaterElement.qml"), "AdaptiveCards", 1, 0, "ActionSetRepeaterElement");
+    qmlRegisterType(QUrl("qrc:/NumberInputRender.qml"), "AdaptiveCards", 1, 0, "NumberInputRender");
     qmlRegisterType(QUrl("qrc:/SinglelineTextInputRender.qml"), "AdaptiveCards", 1, 0, "SinglelineTextInputRender");
     qmlRegisterType(QUrl("qrc:/MultiLineTextInputRender.qml"), "AdaptiveCards", 1, 0, "MultiLineTextInputRender");
 

@@ -150,6 +150,9 @@
     <None Include="AdaptiveCardQml\ActionSetRepeaterElement.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="AdaptiveCardQml\NumberInputRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="samplecardmodel.h">

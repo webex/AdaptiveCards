@@ -65,6 +65,7 @@ Column {
             _mEscapedPlaceholderString: choiceSet._mEscapedPlaceholderString
             _currentIndex: _comboboxCurrentIndex
             _consumer: choiceSet
+            _adaptiveCard: choiceSet._adaptiveCard
             Component.onCompleted: {
                 selectionChanged.connect(function() {
                     choiceSet.selectedValues = currentValue ? currentValue : "";
