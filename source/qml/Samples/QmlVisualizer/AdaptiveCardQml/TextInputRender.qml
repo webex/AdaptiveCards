@@ -94,14 +94,13 @@ Column{
         id: _inputtextTextFieldRow
         spacing: 5
         width: parent.width
-        /* Validate this some issue here height: getStrechHeight()
+        height: _isheightStreched ? getStrechHeight() : implicitHeight
 
        function getStrechHeight() {
-            if(_isheightStreched) {
-                return  parent.height > 0 ? parent.height : textConfig.multiLineTextHeight
+            if(_isheightStreched || _isMultiLineText) {
+                return  parent.height > 0 ? parent.height : CardConstants.inputTextConstants.multiLineTextHeight
             }
-            return parent.height
-        }*/
+        }
        Loader {
             id: singlineLoaderElement
             //property alias inputtextTextField: _inputtextTextFieldWrapper.__inputtextTextField
@@ -117,12 +116,14 @@ Column{
         Loader {
             id: multilineLoaderElement
             //property alias inputtextTextField: _inputtextTextFieldWrapper.__inputtextTextField
-            height: item ? item.height : 0
+            //height: item ? item.height : 0
+            height: _isheightStreched ? parent.height : _isMultiLineText ? CardConstants.inputTextConstants.multiLineTextHeight : item.height
             width: (_supportsInterActivity && !_isInlineShowCardAction) ? parent.width - ( buttonLoaderElement.width + _inputtextTextFieldRow.spacing ) : parent.width
             active: _isMultiLineText
             sourceComponent: MultiLineTextInputRender {
                 id: _inputtextTextFieldWrapper
                 _showErrorMessage: showErrorMessage
+                height: _isheightStreched ? parent.height : CardConstants.inputTextConstants.multiLineTextHeight
             }
         }     
         

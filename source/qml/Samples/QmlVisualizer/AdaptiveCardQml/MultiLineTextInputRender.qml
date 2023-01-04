@@ -31,11 +31,17 @@ Rectangle {
             height:_inputtextTextFieldWrapper.height// need to check for strech height
             width:_inputtextTextFieldWrapper.width
             Accessible.role:Accessible.EditableText
-            onTextChanged: { remove(_maxLength, length)
+            function assignMaxLength() {
+                if(_maxLength != 0) { maximumLength = _maxLength;}
+            }
+            onTextChanged: { if(_maxLength != 0) {remove(_maxLength, length) }
             if(_isRequired || _regex != "" ) {
                     validate()
                 }
                 _submitValue = text
+            }
+            Component.onCompleted: {
+                assignMaxLength();
             }
 
             background:Rectangle{

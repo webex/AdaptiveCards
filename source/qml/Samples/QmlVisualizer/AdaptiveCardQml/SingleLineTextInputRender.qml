@@ -67,7 +67,7 @@ Rectangle {
         placeholderText:activeFocus? '' : _mEscapedPlaceHolderString
         width:parent.width
 
-        onTextChanged: { remove(_maxLength, length)
+        onTextChanged: { if(_maxLength != 0) {remove(_maxLength, length) }
         if(_isRequired || _regex != "" ) {
                 validate()
             }
