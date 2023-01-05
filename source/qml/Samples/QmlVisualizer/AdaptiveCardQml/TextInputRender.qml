@@ -50,8 +50,8 @@ Column{
 
     property bool showErrorMessage: false
     function validate(){
-       const regex = new RegExp(String.raw`%s%s`);
-        var isValid = (text !== '' && regex.test(text))
+       const regex = new RegExp(_regex);
+        var isValid = (_inputtextTextField.text !== '' && regex.test(_inputtextTextField.text))
         if (showErrorMessage) {
             if (isValid) {
                 showErrorMessage = false
@@ -82,7 +82,6 @@ Column{
         font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
         Accessible.ignored: true
         text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
-        visible: text.length && is1_3Enabled
     }
 
     Row {

@@ -36,6 +36,11 @@ void TextInputElement::initialize()
     mTextinput->SetId(mContext->ConvertToValidId(mTextinput->GetId()));
     mTextinputColElement->Property("id", mTextinput->GetId());
     mTextinput->SetId(mTextinput->GetId() + "_textField");
+    if (mTextinput->GetIsRequired() || !mTextinput->GetRegex().empty())
+    {
+        mContext->addToRequiredInputElementsIdList(mTextinput->GetId());
+    }
+    mContext->addToInputElementList(mOriginalElementId, (mTextinput->GetId() + "._submitValue"));
     
     mTextinputColElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
 
