@@ -29,5 +29,8 @@
         <file alias="ActionSetVerticalRender.qml">AdaptiveCardQml/ActionSetVerticalRender.qml</file>
         <file alias="ActionSetRepeaterElement.qml">AdaptiveCardQml/ActionSetRepeaterElement.qml</file>
         <file alias="NumberInputRender.qml">AdaptiveCardQml/NumberInputRender.qml</file>
+        <file alias="DateInputPopout.qml">AdaptiveCardQml/DateInputPopout.qml</file>
+        <file alias="DateInputRender.qml">AdaptiveCardQml/DateInputRender.qml</file>
+        <file alias="DateInputTextField.qml">AdaptiveCardQml/DateInputTextField.qml</file>
     </qresource>
 </RCC>

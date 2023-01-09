@@ -130,6 +130,9 @@
     <None Include="AdaptiveCardQml\ComboboxRender.qml" />
     <None Include="AdaptiveCardQml\CustomCheckBox.qml" />
     <None Include="AdaptiveCardQml\CustomRadioButton.qml" />
+    <None Include="AdaptiveCardQml\DateInputPopout.qml" />
+    <None Include="AdaptiveCardQml\DateInputRender.qml" />
+    <None Include="AdaptiveCardQml\DateInputTextField.qml" />
     <None Include="AdaptiveCardQml\ImageRender.qml" />
     <None Include="AdaptiveCardQml\InputErrorMessage.qml" />
     <None Include="AdaptiveCardQml\InputLabel.qml" />
