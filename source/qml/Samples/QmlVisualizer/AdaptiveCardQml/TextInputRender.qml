@@ -49,6 +49,16 @@ Column{
     property var _inputtextTextField: !_isMultiLineText ? singlineLoaderElement.item.inputtextTextField : multilineLoaderElement.item.inputtextTextField 
 
     property bool showErrorMessage: false
+    onShowErrorMessageChanged: {
+        if(_isMultiLineText) {
+            if(showErrorMessage) {
+                _inputtextTextFieldRow.height = _inputtextTextFieldRow.height - _inputtextErrorMessage.height
+            }
+            else {
+                _inputtextTextFieldRow.height = _inputtextTextFieldRow.height + _inputtextErrorMessage.height
+            }
+        }
+    }
     function validate(){
        const regex = new RegExp(_regex);
         var isValid = (_inputtextTextField.text !== '' && regex.test(_inputtextTextField.text))
@@ -82,6 +92,7 @@ Column{
         font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
         Accessible.ignored: true
         text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
+        visible: _mEscapedLabelString.length
     }
 
     Row {
@@ -91,8 +102,8 @@ Column{
         height: _isheightStreched ? getStrechHeight() : implicitHeight
 
        function getStrechHeight() {
-            if(_isheightStreched || _isMultiLineText) {
-                return  parent.height > 0 ? parent.height : CardConstants.inputTextConstants.multiLineTextHeight
+            if(_isheightStreched && _isMultiLineText) {
+                return  parent.height > 0 ? parent.height - y : CardConstants.inputTextConstants.multiLineTextHeight
             }
         }
        Loader {
@@ -109,8 +120,9 @@ Column{
         Loader {
             id: multilineLoaderElement
             height: _isheightStreched ? parent.height : _isMultiLineText ? CardConstants.inputTextConstants.multiLineTextHeight : 0
-            width: (_supportsInterActivity && !_isInlineShowCardAction) ? parent.width - ( buttonLoaderElement.width + _inputtextTextFieldRow.spacing ) : parent.width
+            width: _isMultiLineText ? ((_supportsInterActivity && !_isInlineShowCardAction) ? parent.width - ( buttonLoaderElement.width + _inputtextTextFieldRow.spacing ) : parent.width) : 0
             active: _isMultiLineText
+
             sourceComponent: MultiLineTextInputRender {
                 id: _inputtextTextFieldWrapper
                 _showErrorMessage: showErrorMessage
@@ -121,7 +133,7 @@ Column{
         Loader {
             id: buttonLoaderElement
             active: (_supportsInterActivity && !_isInlineShowCardAction)
-            anchors.bottom: _isMultiLineText ? parent.bottom : undefined
+            anchors.bottom: _isMultiLineText ? parent.bottom : parent.bottom
             sourceComponent: AdaptiveActionRender {
                 id: _inputtextTextFieldWrapper
                 _buttonConfigType: buttonConfigType
