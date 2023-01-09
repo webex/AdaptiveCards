@@ -84,15 +84,11 @@ Column{
         return accessibleName;
     }
     
-    Label {
+    InputLabel {
         id: _inputTextLabel
-        wrapMode: Text.Wrap
-        width: parent.width
-        color: _labelColor
-        font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
-        Accessible.ignored: true
-        text: _isRequired ? _mEscapedLabelString + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _mEscapedLabelString
-        visible: _mEscapedLabelString.length
+        _label: _mEscapedLabelString
+        _required: _isRequired
+        visible: _label
     }
 
     Row {
@@ -154,15 +150,11 @@ Column{
         }
     }
 
-    Label{
-        id:_inputtextErrorMessage
-        wrapMode:Text.Wrap
-        width:parent.width
-        font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
-        Accessible.ignored:true
-        color: CardConstants.inputFieldConstants.errorMessageColor
-        text: _mEscapedErrorString
-        visible: showErrorMessage
+    InputErrorMessage {
+        id: _inputtextErrorMessage
+
+        _errorMessage: _mEscapedErrorString
+        visible: showErrorMessage && _mEscapedErrorString
     }
 
 }
