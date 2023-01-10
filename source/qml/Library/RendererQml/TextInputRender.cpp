@@ -44,8 +44,6 @@ void TextInputElement::initialize()
     
     mTextinputColElement->Property("visible", mTextinput->GetIsVisible() ? "true" : "false");
 
-    /* Setting QML Properties */
-
     mTextinputColElement->Property("_spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
     mTextinputColElement->Property("id", mTextinput->GetId());
     std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
@@ -78,7 +76,6 @@ void TextInputElement::initialize()
         mTextinputColElement->Property("_regex", RendererQml::Formatter() << "String.raw`" << mTextinput->GetRegex() << "`");
     }
     mTextinputColElement->Property("_maxLength", RendererQml::Formatter() << mTextinput->GetMaxLength());
-    /* Ends Here */
 
 
     mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mTextinput->GetLabel()));
@@ -118,7 +115,6 @@ void TextInputElement::addActions()
     const auto textConfig = mContext->GetRenderConfig()->getInputTextConfig();
     if (mContext->GetConfig()->GetSupportsInteractivity() && mTextinput->GetInlineAction() != nullptr)
     {
-        // ShowCard Inline Action Mode is not supported
         if (mTextinput->GetInlineAction()->GetElementType() == AdaptiveCards::ActionType::ShowCard &&
             mContext->GetConfig()->GetActions().showCard.actionMode == AdaptiveCards::ActionMode::Inline)
         {

@@ -49,15 +49,15 @@ Flow {
     spacing: _spacing
     layoutDirection: _layoutDirection === 'Qt.RightToLeft' ? Qt.RightToLeft : Qt.LeftToRight
 
-   ActionSetRepeaterElement {
+    ActionSetRepeaterElement {
         model: _numActions
         _actionButtonModel: actionButtonModel
         _rectangleElements: rectangleElements
         _actionElements: actionElements
         _setActiveShowCard: setActiveShowCard
         _adaptivecard: adaptiveCard
-        _width:  flowActionId.width > implicitWidth ? implicitWidth :  flowActionId.width
+        _width: flowActionId.width > implicitWidth ? implicitWidth : flowActionId.width
         parentElement: flowActionId
-   }
+    }
 
 }
