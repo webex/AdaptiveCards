@@ -45,6 +45,12 @@ Column{
     spacing: _spacing
     width: parent.width
 
+    onActiveFocusChanged: {
+        if (activeFocus)
+            nextItemInFocusChain().forceActiveFocus();
+
+    }
+
     property bool _isShowCardButton
     property var _inputtextTextField: !_isMultiLineText ? singlineLoaderElement.item.inputtextTextField : multilineLoaderElement.item.inputtextTextField 
 

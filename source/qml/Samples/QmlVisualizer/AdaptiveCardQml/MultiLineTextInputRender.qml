@@ -77,6 +77,14 @@ Rectangle {
             }
 
             Accessible.name:""
+            Keys.onTabPressed: {
+                nextItemInFocusChain().forceActiveFocus();
+                event.accepted = true;
+            }
+            Keys.onBacktabPressed: {
+                nextItemInFocusChain(false).forceActiveFocus();
+                event.accepted = true;
+            }
             font.pixelSize: CardConstants.inputFieldConstants.pixelSize
             text: _mEscapedValueString
             placeholderText: activeFocus? '' : _mEscapedPlaceHolderString
