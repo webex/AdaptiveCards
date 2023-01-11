@@ -5,10 +5,10 @@ Flow {
     id: flowActionId
 
     property int _spacing
-    property int _numActions
     property string _layoutDirection
-    property var actionButtonModel: null
+    property var actionButtonModel
     property var adaptiveCard
+    property var _toggleVisibilityTarget: null
     property var activeShowCard: null
     property var prevLoaderId: null
     property bool isCentreAlign: false
@@ -50,10 +50,10 @@ Flow {
     layoutDirection: _layoutDirection === 'Qt.RightToLeft' ? Qt.RightToLeft : Qt.LeftToRight
 
    ActionSetRepeaterElement {
-        model: _numActions
-        _actionButtonModel: actionButtonModel
+        model: actionButtonModel
         _rectangleElements: rectangleElements
         _actionElements: actionElements
+        toggleVisibilityTarget: _toggleVisibilityTarget
         _setActiveShowCard: setActiveShowCard
         _adaptivecard: adaptiveCard
         _width:  flowActionId.width > implicitWidth ? implicitWidth :  flowActionId.width

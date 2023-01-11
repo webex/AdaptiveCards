@@ -5,9 +5,9 @@ Column {
     id: colActionId
 
     property int _spacing
-    property int _numActions
-    property var actionButtonModel: null
+    property var actionButtonModel
     property var adaptiveCard
+    property var _toggleVisibilityTarget: null
     property var activeShowCard: null
     property var prevLoaderId: null
     property bool isCentreAlign: false
@@ -47,10 +47,10 @@ Column {
     spacing: _spacing
 
     ActionSetRepeaterElement {
-        model: _numActions
-        _actionButtonModel: actionButtonModel
+        model: actionButtonModel
         _rectangleElements: rectangleElements
         _actionElements: actionElements
+        toggleVisibilityTarget: _toggleVisibilityTarget
         _setActiveShowCard: setActiveShowCard
         _adaptivecard: adaptiveCard
         _width:  colActionId.width > implicitWidth ? implicitWidth :  colActionId.width

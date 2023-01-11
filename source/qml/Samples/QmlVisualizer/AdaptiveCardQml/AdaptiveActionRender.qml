@@ -93,9 +93,9 @@ Button {
     Accessible.name: _isIconLeftOfTitle == true ? contentRowLayout.contentItemContentText : contentColLayout.contentItemContentText
 
     Connections {
-        id: buttonConnection
+        id: buttonAuto1Connection
 
-        function onEnableAdaptiveCardSubmitButton(cardIndex) {
+        function onEnableAdaptiveCardSubmitButton() {
             if (_isActionSubmit && actionButton.isButtonDisabled)
                 actionButton.isButtonDisabled = false;
 
@@ -170,9 +170,7 @@ Button {
 
             Loader {
                 active: _hasIconUrl
-
-                sourceComponent: imageComponent
-                anchors.verticalCenter: parent.verticalCenter
+                sourceComponent: Loader { sourceComponent: imageComponent; anchors.verticalCenter: parent.verticalCenter }
             }
 
             ActionsContentLayout {
@@ -181,8 +179,8 @@ Button {
 
             Loader {
                 active: _isShowCardButton
-                sourceComponent: imageComponent
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: contentRowLayout.verticalCenter
+                sourceComponent: showcardComponent
             }
 
         }

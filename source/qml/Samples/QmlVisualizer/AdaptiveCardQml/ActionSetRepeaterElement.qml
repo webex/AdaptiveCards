@@ -5,15 +5,13 @@ Repeater {
 
     property var _rectangleElements
     property var _actionElements
-    property var _actionButtonModel
+    property var toggleVisibilityTarget
     property var _setActiveShowCard
     property var _adaptivecard
     property var _width
     property var parentElement
 
     Rectangle {
-
-        property var actionModel: _actionButtonModel[index]
         height: adaptiveActionRenderId.height
         width: adaptiveActionRenderId.width
         color: 'transparent'
@@ -24,23 +22,23 @@ Repeater {
         AdaptiveActionRender {
             id: adaptiveActionRenderId
 
-            objectName: actionModel._objectName
-            _buttonConfigType: actionModel.buttonConfigType
-            _isIconLeftOfTitle: actionModel.isIconLeftOfTitle
-            _escapedTitle: actionModel.escapedTitle
-            _isShowCardButton: actionModel.isShowCardButton
-            _isActionSubmit: actionModel.isActionSubmit
-            _isActionOpenUrl: actionModel.isActionOpenUrl
-            _isActionToggleVisibility: actionModel.isActionToggleVisibility
-            _hasIconUrl: actionModel.hasIconUrl
-            _imgSource: actionModel.imgSource
-            _toggleVisibilityTarget: actionModel.sisActionToggleVisibility ? actionModel.toggleVisibilityTarget.index : null
-            _paramStr: actionModel.isActionSubmit ? actionModel.paramStr : ""
-            _is1_3Enabled: actionModel.is1_3Enabled
-            _adaptiveCard: defaultRepeaterId._adaptivecard
-            _selectActionId: actionModel.selectActionId
+            objectName: _objectName
+            _buttonConfigType: buttonConfigType
+            _isIconLeftOfTitle: isIconLeftOfTitle
+            _escapedTitle: escapedTitle
+            _isShowCardButton: isShowCardButton
+            _isActionSubmit: isActionSubmit
+            _isActionOpenUrl: isActionOpenUrl
+            _isActionToggleVisibility: isActionToggleVisibility
+            _hasIconUrl: hasIconUrl
+            _imgSource: imgSource
+            _toggleVisibilityTarget: isActionToggleVisibility ? toggleVisibilityTarget[index] : null
+            _paramStr: paramStr
+            _is1_3Enabled: is1_3Enabled
+            _adaptiveCard: _adaptivecard
+            _selectActionId: selectActionId
             width: parentElement.width > implicitWidth ? implicitWidth : parentElement.width
-            _loaderId: actionModel.loaderId
+            _loaderId: loaderId
             Component.onCompleted: {
                 adaptiveActionRenderId.handleShowCardToggleVisibility.connect(_setActiveShowCard);
                 _actionElements.push(this);
