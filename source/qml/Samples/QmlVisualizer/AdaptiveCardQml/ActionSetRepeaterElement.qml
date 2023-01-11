@@ -1,4 +1,4 @@
-import QtQuick 2.3
+﻿import QtQuick 2.3
 
 Repeater {
     id: defaultRepeaterId
@@ -12,8 +12,8 @@ Repeater {
     property var parentElement
 
     Rectangle {
-        property var actionModel: _actionButtonModel[index]
 
+        property var actionModel: _actionButtonModel[index]
         height: adaptiveActionRenderId.height
         width: adaptiveActionRenderId.width
         color: 'transparent'
