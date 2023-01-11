@@ -104,6 +104,50 @@ Button {
         target: _aModel
     }
 
+    Component {
+        id: imageComponent
+
+        Image {
+            id: contentItemColImg
+
+            visible: _hasIconUrl
+            cache: false
+            height: CardConstants.actionButtonConstants.imageSize
+            width: CardConstants.actionButtonConstants.imageSize
+            fillMode: Image.PreserveAspectFit
+            source: actionButton._imgSource
+        }
+
+    }
+
+    Component {
+        id: showcardComponent
+
+        Button {
+            id: contentItemRowContentShowCard
+
+            visible: _isShowCardButton
+            width: contentRowLayout.fontPixelSizeAlias
+            height: contentRowLayout.fontPixelSizeAlias
+            anchors.margins: 2
+            horizontalPadding: 0
+            verticalPadding: 0
+            icon.width: 12
+            icon.height: 12
+            focusPolicy: Qt.NoFocus
+            icon.color: contentRowLayout.colorAlias
+            icon.source: !showCard ? _iconSource : _iconSourceUp
+            onReleased: actionButton.onReleased()
+
+            background: Rectangle {
+                anchors.fill: parent
+                color: 'transparent'
+            }
+
+        }
+
+    }
+
     background: Rectangle {
         id: actionButtonBg
 
@@ -224,42 +268,4 @@ Button {
 
     }
 
-
-    Component {
-        id: imageComponent
-         Image {
-            id: contentItemColImg
-            visible: _hasIconUrl
-            cache: false
-            height: CardConstants.actionButtonConstants.imageSize
-            width: CardConstants.actionButtonConstants.imageSize
-            fillMode: Image.PreserveAspectFit
-            source: actionButton._imgSource
-         }
-    }
-
-    Component {
-            id: showcardComponent
-        Button {
-            id: contentItemRowContentShowCard
-
-            visible: _isShowCardButton
-            width: contentRowLayout.fontPixelSizeAlias
-            height: contentRowLayout.fontPixelSizeAlias
-            anchors.margins: 2
-            horizontalPadding: 0
-            verticalPadding: 0
-            icon.width: 12
-            icon.height: 12
-            focusPolicy: Qt.NoFocus
-            icon.color: contentRowLayout.colorAlias
-            icon.source: !showCard ? _iconSource : _iconSourceUp
-            onReleased: actionButton.onReleased()
-
-            background: Rectangle {
-                anchors.fill: parent
-                color: 'transparent'
-            }
-        }
-    }
 }

@@ -1,4 +1,4 @@
-﻿import QtQuick 2.3
+import QtQuick 2.3
 
 Repeater {
     id: defaultRepeaterId
@@ -13,6 +13,7 @@ Repeater {
 
     Rectangle {
         property var actionModel: _actionButtonModel[index]
+
         height: adaptiveActionRenderId.height
         width: adaptiveActionRenderId.width
         color: 'transparent'
@@ -33,7 +34,7 @@ Repeater {
             _isActionToggleVisibility: actionModel.isActionToggleVisibility
             _hasIconUrl: actionModel.hasIconUrl
             _imgSource: actionModel.imgSource
-             _toggleVisibilityTarget: actionModel.isActionToggleVisibility ? actionModel.toggleVisibilityTarget : null
+            _toggleVisibilityTarget: actionModel.isActionToggleVisibility ? actionModel.toggleVisibilityTarget : null
             _paramStr: actionModel.isActionSubmit ? actionModel.paramStr : ""
             _is1_3Enabled: actionModel.is1_3Enabled
             _adaptiveCard: defaultRepeaterId._adaptivecard

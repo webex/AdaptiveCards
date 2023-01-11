@@ -17,6 +17,7 @@ Column {
     function handleCentreAligmentFunction() {
         if (isCentreAlign)
             AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements);
+
     }
 
     function setActiveShowCard(showcardLoaderElement, buttonElement) {
@@ -53,7 +54,8 @@ Column {
         _actionElements: actionElements
         _setActiveShowCard: setActiveShowCard
         _adaptivecard: adaptiveCard
-        _width:  colActionId.width > implicitWidth ? implicitWidth :  colActionId.width
+        _width: colActionId.width > implicitWidth ? implicitWidth : colActionId.width
         parentElement: colActionId
-   }
+    }
+
 }
