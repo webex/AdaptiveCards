@@ -73,7 +73,7 @@ Column {
 
     }
     onShowErrorMessageChanged: {
-        if (_isMultiLineText) {
+        if (_isheightStreched && _isMultiLineText) {
             if (showErrorMessage)
                 _inputtextTextFieldRow.height = _inputtextTextFieldRow.height - _inputtextErrorMessage.height;
             else
