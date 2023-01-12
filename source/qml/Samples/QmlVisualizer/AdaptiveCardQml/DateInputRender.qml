@@ -8,15 +8,17 @@ Column {
 
     property var _adaptiveCard
     property bool _isRequired
+    property bool _validationRequired
     property string _mEscapedLabelString
     property string _mEscapedErrorString
     property string _mEscapedPlaceholderString
-    property bool showErrorMessage: false
-    property var _minDate
-    property var _maxDate
-    property var _currentDate
     property string _dateInputFormat
     property string _submitVal
+    property var _minDate: new Date('0-0-1')
+    property var _maxDate: new Date('3000-0-1')
+    property var _currentDate
+    property bool showErrorMessage: false
+    property int minWidth: CardConstants.inputDateConstants.dateInputMinWidth
 
     /*function validate() {
         if (showErrorMessage) {
@@ -57,13 +59,13 @@ Column {
         height: CardConstants.inputFieldConstants.height
         radius: CardConstants.inputFieldConstants.borderRadius
         color: CardConstants.inputFieldConstants.backgroundColorNormal
-        border.color: showErrorMessage ? CardConstants.inputFieldConstants.borderColorOnError : _date1_dateInput.activeFocus? CardConstants.inputFieldConstants.borderColorOnFocus : CardConstants.inputFieldConstants.borderColorNormal
+        border.color: showErrorMessage ? CardConstants.inputFieldConstants.borderColorOnError : dateInputTextField.activeFocus? CardConstants.inputFieldConstants.borderColorOnFocus : CardConstants.inputFieldConstants.borderColorNormal
         border.width: CardConstants.inputFieldConstants.borderWidth
 
         /*function colorChange(isPressed){
-            if (isPressed && !_date1_dateInput.showErrorMessage)
-                color = '#4D000000';
-            else color = _date1_dateInput.showErrorMessage ? '#FFFFE8EA' : _date1_dateInput.activeFocus ? '#4D000000' : _date1_dateInput.hovered ? '#0A000000' : '#FFFFFFFF'
+            if (isPressed && !dateInputTextField.showErrorMessage)
+                color = CardConstants.inputFieldConstants.backgroundColorOnPressed;
+            else color = dateInputTextField.showErrorMessage ? CardConstants.inputFieldConstants.backgroundColorOnError : dateInputTextField.activeFocus ? CardConstants.inputFieldConstants.backgroundColorOnPressed : dateInputTextField.hovered ? CardConstants.inputFieldConstants.backgroundColorOnHovered : CardConstants.inputFieldConstants.backgroundColorNormal
         }*/
 
         RowLayout {
@@ -83,7 +85,7 @@ Column {
                 verticalPadding: 0
                 icon.width: CardConstants.inputDateConstants.dateIconSize
                 icon.height: CardConstants.inputDateConstants.dateIconSize
-                icon.color: showErrorMessage ? CardConstants.inputDateConstants.dateIconColorOnError : _date1_dateInput.activeFocus ? CardConstants.inputDateConstants.dateIconColorOnFocus : CardConstants.inputDateConstants.dateIconColorNormal
+                icon.color: showErrorMessage ? CardConstants.inputDateConstants.dateIconColorOnError : dateInputTextField.activeFocus ? CardConstants.inputDateConstants.dateIconColorOnFocus : CardConstants.inputDateConstants.dateIconColorNormal
                 icon.source: CardConstants.calendarIcon
                 Keys.onReturnPressed: onClicked()
                 id: dateInputIcon
@@ -91,8 +93,8 @@ Column {
                 Layout.alignment: Qt.AlignVCenter
                 focusPolicy: Qt.NoFocus
                 /*onClicked:{ 
-                    _date1_dateInput.forceActiveFocus();
-                    _date1_dateInput_calendarBox.open();
+                    dateInputTextField.forceActiveFocus();
+                    dateInputTextField_calendarBox.open();
                 }*/
             }
 
@@ -101,6 +103,7 @@ Column {
                 Layout.fillWidth: true
                 popup: DateInputPopout{
                     dateInputElement: dateInput
+                    dateInputField: dateInputTextField
                 }
                 indicator:Rectangle{}
                 focusPolicy:Qt.NoFocus
@@ -108,10 +111,10 @@ Column {
                     setFocusBackOnClose(dateInputCombobox);
                     this.popup.open();
                 }
-                //onActiveFocusChanged:_date1_dateInput_wrapper.colorChange(false)
+                //onActiveFocusChanged:dateInputTextField_wrapper.colorChange(false)
                 background: TextField{
                     id: dateInputTextField
-                    text: "Hello World"
+                    text: _currentDate ? _currentDate : "";
                 }
                 Accessible.ignored:true
             }
@@ -131,10 +134,10 @@ Column {
                 Keys.onReturnPressed:onClicked()
                 id:dateInputClearIcon
                 Layout.rightMargin:CardConstants.inputFieldConstants.clearIconHorizontalPadding
-                //visible:(!_date1_dateInput.focus && _date1_dateInput.text !=="") || (_date1_dateInput.focus && _date1_dateInput.text !== "\/\/")
+                //visible:(!dateInputTextField.focus && dateInputTextField.text !=="") || (dateInputTextField.focus && dateInputTextField.text !== "\/\/")
                 /*onClicked: {
                     nextItemInFocusChain().forceActiveFocus();
-                    _date1_dateInput.clear();
+                    dateInputTextField.clear();
                 }*/
                 Accessible.name:"Date Picker clear"
                 Accessible.role:Accessible.Button

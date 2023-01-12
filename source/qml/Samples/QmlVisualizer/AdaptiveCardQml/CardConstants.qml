@@ -98,6 +98,7 @@ QtObject {
         readonly property int arrowIconSize: 28
         readonly property int dateIconButtonSize: 18
         readonly property int dateIconSize: 16
+        readonly property int dateInputMinWidth: 300
         readonly property color dateIconColorNormal: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color dateIconColorOnFocus: AdaptiveCardUtils.getColorSet("textinput-border", "focused", isDarkTheme)
         readonly property color dateIconColorOnError: AdaptiveCardUtils.getColorSet("textinput-error-border", "focused", isDarkTheme)

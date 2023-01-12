@@ -32,7 +32,7 @@ private:
     std::string mEscapedLabelString{ "" };
     std::string mEscapedErrorString{ "" };
 
-    std::shared_ptr<RendererQml::QmlTag> mDateInputColElement;
+    std::shared_ptr<RendererQml::QmlTag> mDateInputElement;
     std::shared_ptr<RendererQml::QmlTag> mDateInputTextField;
     std::shared_ptr<RendererQml::QmlTag> mDateInputWrapper;
     std::shared_ptr<RendererQml::QmlTag> mDateInputCombobox;

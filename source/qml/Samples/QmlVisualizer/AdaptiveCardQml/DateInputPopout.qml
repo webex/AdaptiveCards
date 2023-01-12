@@ -9,8 +9,7 @@ Popup {
     property var dateInputElement
     property var dateInputField
 
-    // y: dateInputField.height + 2
-    // x: -16 - 12
+    y: dateInputField.height + 2
     width: CardConstants.inputDateConstants.calendarWidth
     height: CardConstants.inputDateConstants.calendarHeight
     bottomInset: 0
@@ -39,7 +38,8 @@ Popup {
         icon.source: CardConstants.calendarRightArrowIcon
         Accessible.name: "Next Month"
         onReleased: {
-            calendarView.setDate(new Date(calendarView.curCalendarYear, calendarView.curCalendarYear - 1, 1));
+            let tempDate = new Date(calendarView.curCalendarYear, calendarView.curCalendarMonth + 1, 1)
+            calendarView.setDate(tempDate);
             calendarView.getDateForSR(tempDate);
         }
 
@@ -47,9 +47,9 @@ Popup {
         KeyNavigation.backtab: prevMonthButton
 
         background: Rectangle {
-            color: CardConstants.inputDateConstans.calendarBackgroundColor
+            color: CardConstants.inputDateConstants.calendarBackgroundColor
             border.width: parent.activeFocus ? 1 : 0
-            border.color: CardConstants.inputDateConstans.calendarBorderColor
+            border.color: CardConstants.inputDateConstants.calendarBorderColor
         }
 
     }
@@ -72,16 +72,17 @@ Popup {
         icon.source: CardConstants.calendarLeftArrowIcon
         Accessible.name: "Previous Month"
         onReleased: {
-            calendarView.setDate(new Date(calendarView.curCalendarYear, calendarView.curCalendarYear + 1, 1));
+            let tempDate = new Date(calendarView.curCalendarYear, calendarView.curCalendarMonth - 1, 1)
+            calendarView.setDate(tempDate);
             calendarView.getDateForSR(tempDate);
         }
         KeyNavigation.tab: nextMonthButton
         KeyNavigation.backtab: calendarView
 
         background: Rectangle {
-            color: CardConstants.inputDateConstans.calendarBackgroundColor
+            color: CardConstants.inputDateConstants.calendarBackgroundColor
             border.width: parent.activeFocus ? 1 : 0
-            border.color: CardConstants.inputDateConstans.calendarBorderColor
+            border.color: CardConstants.inputDateConstants.calendarBorderColor
         }
 
     }
@@ -101,7 +102,7 @@ Popup {
 
             property int curCalendarYear: 0
             property int curCalendarMonth: 0
-            property date selectedDate: dateInputElement._currentDate
+            property date selectedDate: dateInputElement._currentDate ? dateInputElement._currentDate : new Date()
             property string accessibilityPrefix: "Date Picker. The current date is"
             property string dateForSR: ''
 
@@ -129,13 +130,14 @@ Popup {
                     selectedDate = dateInputElement._minDate;
                 else if (selectedDate > dateInputElement._maxDate)
                     selectedDate = dateInputElement._maxDate;
+                setDate(selectedDate)
             }
 
             snapMode: ListView.SnapOneItem
             orientation: Qt.Horizontal
             clip: true
             model: 36000
-            onClicked: setDate(clickedDate)
+            //onClicked: setDate(clickedDate)
 
             Keys.onPressed: {
                 var date = new Date(selectedDate);
@@ -254,7 +256,7 @@ Popup {
                                 id: monthViewDelegateMouseArea
 
                                 anchors.fill: parent
-                                enabled: monthViewDelegateText.text && day >= 0 && (new Date(year, month, date) >= calendarView.dateInputElement._minDate) && (new Date(year, month, date) <= calendarView.dateInputElement._maxDate)
+                                enabled: monthViewDelegateText.text && day >= 0 && (new Date(year, month, date) >= dateInputElement._minDate) && (new Date(year, month, date) <= dateInputElement._maxDate)
                                 hoverEnabled: true
 
                                 onReleased: {
