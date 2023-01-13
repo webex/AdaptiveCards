@@ -13,14 +13,6 @@ class BaseCardElementRenderer {
             separator = SpacingView.renderSpacer(elem: element, forSuperView: parentView, withHostConfig: hostConfig)
         }
         
-        if let elem = element as? ACSImage {
-            switch elem.getHorizontalAlignment() {
-            case .center: parentView.alignment = .centerX
-            case .right: parentView.alignment = .trailing
-            default: parentView.alignment = .leading
-            }
-        }
-        
         if let collectionElement = element as? ACSCollectionTypeElement {
             if let columnView = view as? ACRColumnView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
                 columnView.setupBackgroundImageProperties(backgroundImage)
