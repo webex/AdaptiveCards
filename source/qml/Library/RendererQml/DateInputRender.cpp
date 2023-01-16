@@ -40,7 +40,7 @@ void DateInputElement::initialize()
 
     if (!mDateInput->GetMax().empty() && RendererQml::Utils::isValidDate(mDateInput->GetMax()))
     {
-        mDateInputElement->Property("_minDate", RendererQml::Utils::GetDate(mDateInput->GetMax()));
+        mDateInputElement->Property("_maxDate", RendererQml::Utils::GetDate(mDateInput->GetMax()));
     }
 
     if (!mDateInput->GetValue().empty() && RendererQml::Utils::isValidDate(mDateInput->GetValue()))

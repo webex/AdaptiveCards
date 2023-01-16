@@ -8,10 +8,12 @@ Popup {
 
     property var dateInputElement
     property var dateInputField
+    property var inputFieldConstants: CardConstants.inputFieldConstants
+    property var inputDateConstants: CardConstants.inputDateConstants
 
     y: dateInputField.height + 2
-    width: CardConstants.inputDateConstants.calendarWidth
-    height: CardConstants.inputDateConstants.calendarHeight
+    width: inputDateConstants.calendarWidth
+    height: inputDateConstants.calendarHeight
     bottomInset: 0
     topInset: 0
     rightInset: 0
@@ -21,6 +23,39 @@ Popup {
     onClosed: dateInputField.forceActiveFocus()
 
     Button {
+        id: prevMonthButton
+
+        width: icon.width
+        anchors.top: parent.top
+        anchors.right: nextMonthButton.left
+        anchors.margins: 0
+        padding: 0
+        icon.width: inputDateConstants.arrowIconSize
+        icon.height: inputDateConstants.arrowIconSize
+        focusPolicy: Qt.NoFocus
+        icon.color: inputDateConstants.monthChangeButtonColor
+        height: icon.height
+        Keys.onReturnPressed: onReleased()
+        Accessible.role: Accessible.Button
+        icon.source: CardConstants.calendarLeftArrowIcon
+        Accessible.name: "Previous Month"
+        onReleased: {
+            let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() - 1, 1)
+            calendarView.setDate(tempDate);
+            calendarView.getDateForSR(tempDate);
+        }
+        KeyNavigation.tab: nextMonthButton
+        KeyNavigation.backtab: calendarView
+
+        background: Rectangle {
+            color: inputDateConstants.calendarBackgroundColor
+            border.width: parent.activeFocus ? 1 : 0
+            border.color: inputDateConstants.calendarBorderColor
+        }
+
+    }
+
+    Button {
         id: nextMonthButton
 
         width: icon.width
@@ -28,17 +63,17 @@ Popup {
         anchors.right: parent.right
         anchors.margins: 0
         padding: 0
-        icon.width: CardConstants.inputDateConstants.arrowIconSize
-        icon.height: CardConstants.inputDateConstants.arrowIconSize
+        icon.width: inputDateConstants.arrowIconSize
+        icon.height: inputDateConstants.arrowIconSize
         focusPolicy: Qt.NoFocus
-        icon.color: Qt.rgba(0, 0, 0, 0.95) // Move to Card Constants
+        icon.color: inputDateConstants.monthChangeButtonColor
         height: icon.height
         Keys.onReturnPressed: onReleased()
         Accessible.role: Accessible.Button
         icon.source: CardConstants.calendarRightArrowIcon
         Accessible.name: "Next Month"
         onReleased: {
-            let tempDate = new Date(calendarView.curCalendarYear, calendarView.curCalendarMonth + 1, 1)
+            let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() + 1, 1)
             calendarView.setDate(tempDate);
             calendarView.getDateForSR(tempDate);
         }
@@ -47,69 +82,32 @@ Popup {
         KeyNavigation.backtab: prevMonthButton
 
         background: Rectangle {
-            color: CardConstants.inputDateConstants.calendarBackgroundColor
+            color: inputDateConstants.calendarBackgroundColor
             border.width: parent.activeFocus ? 1 : 0
-            border.color: CardConstants.inputDateConstants.calendarBorderColor
-        }
-
-    }
-
-    Button {
-        id: prevMonthButton
-
-        width: icon.width
-        anchors.top: parent.top
-        anchors.right: nextMonthButton.left
-        anchors.margins: 0
-        padding: 0
-        icon.width: CardConstants.inputDateConstants.arrowIconSize
-        icon.height: CardConstants.inputDateConstants.arrowIconSize
-        focusPolicy: Qt.NoFocus
-        icon.color: Qt.rgba(0, 0, 0, 0.95) // Move to Card Constants
-        height: icon.height
-        Keys.onReturnPressed: onReleased()
-        Accessible.role: Accessible.Button
-        icon.source: CardConstants.calendarLeftArrowIcon
-        Accessible.name: "Previous Month"
-        onReleased: {
-            let tempDate = new Date(calendarView.curCalendarYear, calendarView.curCalendarMonth - 1, 1)
-            calendarView.setDate(tempDate);
-            calendarView.getDateForSR(tempDate);
-        }
-        KeyNavigation.tab: nextMonthButton
-        KeyNavigation.backtab: calendarView
-
-        background: Rectangle {
-            color: CardConstants.inputDateConstants.calendarBackgroundColor
-            border.width: parent.activeFocus ? 1 : 0
-            border.color: CardConstants.inputDateConstants.calendarBorderColor
+            border.color: inputDateConstants.calendarBorderColor
         }
 
     }
 
     background: Rectangle {
-        radius: CardConstants.inputDateConstants.calendarBorderRadius
-        border.color: CardConstants.inputDateConstants.calendarBorderColor
-        color: CardConstants.inputDateConstants.calendarBackgroundColor
+        radius: inputDateConstants.calendarBorderRadius
+        border.color: inputDateConstants.calendarBorderColor
+        color: inputDateConstants.calendarBackgroundColor
     }
 
     contentItem: Rectangle {
-        radius: CardConstants.inputDateConstants.calendarBorderRadius
-        color: CardConstants.inputDateConstants.calendarBackgroundColor
+        radius: inputDateConstants.calendarBorderRadius
+        color: inputDateConstants.calendarBackgroundColor
 
         ListView {
             id: calendarView
 
-            property int curCalendarYear: 0
-            property int curCalendarMonth: 0
             property date selectedDate: dateInputElement._currentDate ? dateInputElement._currentDate : new Date()
             property string accessibilityPrefix: "Date Picker. The current date is"
             property string dateForSR: ''
 
             function setDate(clickedDate) {
                 selectedDate = clickedDate;
-                curCalendarYear = selectedDate.getFullYear();
-                curCalendarMonth = selectedDate.getMonth();
                 var curIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth();
                 currentIndex = curIndex;
                 positionViewAtIndex(curIndex, ListView.Center);
@@ -137,7 +135,6 @@ Popup {
             orientation: Qt.Horizontal
             clip: true
             model: 36000
-            //onClicked: setDate(clickedDate)
 
             Keys.onPressed: {
                 var date = new Date(selectedDate);
@@ -179,9 +176,9 @@ Popup {
                     id: calendarViewHeader
 
                     anchors.left: parent.left
-                    color: CardConstants.inputFieldConstants.textColor
+                    color: inputFieldConstants.textColor
                     text: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][calendarViewDelegate.month] + ' ' + calendarViewDelegate.year
-                    font.pixelSize: CardConstants.inputFieldConstants.pixelSize
+                    font.pixelSize: inputFieldConstants.pixelSize
                 }
 
                 Grid {
@@ -191,7 +188,7 @@ Popup {
                     anchors.right: parent.right
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
-                    anchors.topMargin: CardConstants.inputDateConstants.dateGridTopMargin
+                    anchors.topMargin: inputDateConstants.dateGridTopMargin
                     clip: true
                     columns: 7
                     rows: 7
@@ -215,31 +212,31 @@ Popup {
                             }
                             Accessible.name: calendarView.accessibilityPrefix + calendarView.dateForSR
                             Accessible.role: Accessible.NoRole
-                            width: CardConstants.inputDateConstants.dateElementSize
-                            height: CardConstants.inputDateConstants.dateElementSize
-                            color: new Date(year, month, date).toDateString() == calendarView.selectedDate.toDateString() && monthViewDelegateMouseArea.enabled ? CardConstants.inputDateConstants.dateElementColorOnFocus : monthViewDelegateMouseArea.containsMouse ? CardConstants.inputDateConstants.dateElementColorOnHover : CardConstants.inputDateConstants.dateElementColorNormal
+                            width: inputDateConstants.dateElementSize
+                            height: inputDateConstants.dateElementSize
+                            color: new Date(year, month, date).toDateString() == calendarView.selectedDate.toDateString() && monthViewDelegateMouseArea.enabled ? inputDateConstants.dateElementColorOnFocus : monthViewDelegateMouseArea.containsMouse ? inputDateConstants.dateElementColorOnHover : inputDateConstants.dateElementColorNormal
                             radius: 0.5 * width
 
                             Rectangle {
-                                width: CardConstants.inputDateConstants.dateElementSize
-                                height: CardConstants.inputDateConstants.dateElementSize
+                                width: inputDateConstants.dateElementSize
+                                height: inputDateConstants.dateElementSize
                                 color: 'transparent'
                                 border.width: calendarView.activeFocus && new Date(year, month, date).toDateString() == calendarView.selectedDate.toDateString() ? 1 : 0
-                                border.color: CardConstants.inputDateConstants.calendarBorderColor
+                                border.color: inputDateConstants.calendarBorderColor
                             }
 
                             Text {
                                 id: monthViewDelegateText
 
                                 anchors.centerIn: parent
-                                font.pixelSize: CardConstants.inputDateConstants.calendarDateTextSize
+                                font.pixelSize: inputDateConstants.calendarDateTextSize
                                 color: {
                                     if (monthViewDelegate.cellDate.toDateString() === calendarView.selectedDate.toDateString() && monthViewDelegateMouseArea.enabled)
                                         "white";
                                     else if (monthViewDelegate.cellDate.getMonth() === calendarViewDelegate.month && monthViewDelegateMouseArea.enabled)
-                                        CardConstants.inputDateConstants.dateElementTextColorNormal;
+                                        inputDateConstants.dateElementTextColorNormal;
                                     else
-                                        CardConstants.inputDateConstants.notAvailabledateElementTextColor;
+                                        inputDateConstants.notAvailabledateElementTextColor;
                                 }
 
                                 text: {

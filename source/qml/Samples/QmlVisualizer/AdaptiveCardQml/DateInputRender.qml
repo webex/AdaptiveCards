@@ -14,8 +14,8 @@ Column {
     property string _mEscapedPlaceholderString
     property string _dateInputFormat
     property string _submitVal
-    property var _minDate: new Date('0-0-1')
-    property var _maxDate: new Date('3000-0-1')
+    property var _minDate: new Date(0, 0, 1)
+    property var _maxDate: new Date(3000, 0, 1)
     property var _currentDate
     property bool showErrorMessage: false
     property int minWidth: CardConstants.inputDateConstants.dateInputMinWidth

@@ -109,6 +109,7 @@ QtObject {
         readonly property color dateElementColorOnFocus: AdaptiveCardUtils.getColorSet("checkbox-checked-border", "pressed", isDarkTheme)
         readonly property color dateElementTextColorNormal: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color notAvailabledateElementTextColor: AdaptiveCardUtils.getColorSet("textinput-placeholder-text", "normal", isDarkTheme)
+        readonly property color monthChangeButtonColor: AdaptiveCardUtils.getColorSet("button-primary-background", "normal", isDarkTheme)
     }
 
     readonly property QtObject
