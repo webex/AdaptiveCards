@@ -21,25 +21,8 @@ private:
     std::string mEscapedPlaceHolderString{ "" };
     std::string mEscapedLabelString{ "" };
     std::string mEscapedErrorString{ "" };
-    //std::string mMinimumDate{ "" };
-    //std::string mMaximumDate{ "" };
-    //std::string mDateFieldId{ "" };
-    //std::string mCalendarBoxId{ "" };
-    //std::string mDateInputColElementId{ "" };
-    //std::string mDateInputWrapperId{ "" };
-    //std::string mDateInputComboboxId{ "" };
-    //std::string mDateInputRowId{ "" };
-    //std::string mDateIconId{ "" };
-    //std::string mClearIconId{ "" };
 
     std::shared_ptr<RendererQml::QmlTag> mDateInputElement;
-    //std::shared_ptr<RendererQml::QmlTag> mDateInputTextField;
-    //std::shared_ptr<RendererQml::QmlTag> mDateInputWrapper;
-    //std::shared_ptr<RendererQml::QmlTag> mDateInputCombobox;
-    //std::shared_ptr<RendererQml::QmlTag> mDateInputCalendar;
-    //std::shared_ptr<RendererQml::QmlTag> mDateInputRow;
-    //std::shared_ptr<RendererQml::QmlTag> mDateIcon;
-    //std::shared_ptr<RendererQml::QmlTag> mClearIcon;
 
     const std::shared_ptr<AdaptiveCards::DateInput>& mDateInput;
     const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
@@ -47,24 +30,6 @@ private:
 
 private:
     void initialize();
-
-    //void renderDateElement();
-    //void initDateInputField();
-    //void initDateInputWrapper();
-    //void initDateInputComboBox();
-    //void initCalendar();
-    //void initDateIconButton();
-    //void initClearIconButton();
-
-    //void addInputLabel(bool isRequired = false);
-    //void addErrorMessage();
-    //void addValidation();
-
-    //std::shared_ptr<RendererQml::QmlTag> getCalendarListView();
-    //std::shared_ptr<RendererQml::QmlTag> getCalendarListViewDelegate(const std::string listViewId);
-    //std::shared_ptr<RendererQml::QmlTag> getArrowIconButton(const std::string arrowType, const std::string listViewId);
-
-    //const std::string getColorFunction();
-    //const std::string getAccessibleName();
+    void addDateFormat();
 };
 

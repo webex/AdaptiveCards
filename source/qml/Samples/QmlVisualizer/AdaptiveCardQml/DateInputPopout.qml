@@ -12,15 +12,25 @@ Popup {
     property var inputDateConstants: CardConstants.inputDateConstants
 
     y: dateInputField.height + 2
+    x: (-inputFieldConstants.clearIconSize - inputDateConstants.dateIconHorizontalPadding)
     width: inputDateConstants.calendarWidth
     height: inputDateConstants.calendarHeight
     bottomInset: 0
     topInset: 0
     rightInset: 0
     leftInset: 0
-
-    onOpened: calendarView.forceActiveFocus()
-    onClosed: dateInputField.forceActiveFocus()
+    onOpened: {
+        calendarView.forceActiveFocus();
+        calendarView.selectedDate = dateInputElement._currentDate ? dateInputElement._currentDate : new Date();
+        calendarView.setDate(calendarView.selectedDate);
+    }
+    onClosed: {
+        if (calendarView.selectedDate) {
+            dateInputElement._currentDate = calendarView.selectedDate;
+            dateInputField.setTextFromDate(calendarView.selectedDate);
+        }
+        dateInputField.forceActiveFocus();
+    }
 
     Button {
         id: prevMonthButton
@@ -38,9 +48,9 @@ Popup {
         Keys.onReturnPressed: onReleased()
         Accessible.role: Accessible.Button
         icon.source: CardConstants.calendarLeftArrowIcon
-        Accessible.name: "Previous Month"
+        Accessible.name: 'Previous Month'
         onReleased: {
-            let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() - 1, 1)
+            let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() - 1, 1);
             calendarView.setDate(tempDate);
             calendarView.getDateForSR(tempDate);
         }
@@ -71,13 +81,12 @@ Popup {
         Keys.onReturnPressed: onReleased()
         Accessible.role: Accessible.Button
         icon.source: CardConstants.calendarRightArrowIcon
-        Accessible.name: "Next Month"
+        Accessible.name: 'Next Month'
         onReleased: {
-            let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() + 1, 1)
+            let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() + 1, 1);
             calendarView.setDate(tempDate);
             calendarView.getDateForSR(tempDate);
         }
-
         KeyNavigation.tab: calendarView
         KeyNavigation.backtab: prevMonthButton
 
@@ -103,7 +112,7 @@ Popup {
             id: calendarView
 
             property date selectedDate: dateInputElement._currentDate ? dateInputElement._currentDate : new Date()
-            property string accessibilityPrefix: "Date Picker. The current date is"
+            property string accessibilityPrefix: 'Date Picker. The current date is'
             property string dateForSR: ''
 
             function setDate(clickedDate) {
@@ -128,28 +137,25 @@ Popup {
                     selectedDate = dateInputElement._minDate;
                 else if (selectedDate > dateInputElement._maxDate)
                     selectedDate = dateInputElement._maxDate;
-                setDate(selectedDate)
+                setDate(selectedDate);
             }
-
             snapMode: ListView.SnapOneItem
             orientation: Qt.Horizontal
             clip: true
             model: 36000
-
             Keys.onPressed: {
                 var date = new Date(selectedDate);
-                if (event.key === Qt.Key_Right) {
+                if (event.key === Qt.Key_Right)
                     date.setDate(date.getDate() + 1);
-                } else if (event.key === Qt.Key_Left) {
+                else if (event.key === Qt.Key_Left)
                     date.setDate(date.getDate() - 1);
-                } else if (event.key === Qt.Key_Up) {
+                else if (event.key === Qt.Key_Up)
                     date.setDate(date.getDate() - 7);
-                } else if (event.key === Qt.Key_Down) {
+                else if (event.key === Qt.Key_Down)
                     date.setDate(date.getDate() + 7);
-                } else if (event.key === Qt.Key_Return) {
-                    dateInputField.text = selectedDate.toLocaleString(Qt.locale("en_US"), "MMM\/dd\/yyyy");
+                else if (event.key === Qt.Key_Return)
                     dateInputPopout.close();
-                } else if (event.key === Qt.Key_Tab)
+                else if (event.key === Qt.Key_Tab)
                     prevMonthButton.forceActiveFocus();
                 else if (event.key === Qt.Key_Backtab)
                     nextMonthButton.forceActiveFocus();
@@ -232,13 +238,12 @@ Popup {
                                 font.pixelSize: inputDateConstants.calendarDateTextSize
                                 color: {
                                     if (monthViewDelegate.cellDate.toDateString() === calendarView.selectedDate.toDateString() && monthViewDelegateMouseArea.enabled)
-                                        "white";
+                                        'white';
                                     else if (monthViewDelegate.cellDate.getMonth() === calendarViewDelegate.month && monthViewDelegateMouseArea.enabled)
                                         inputDateConstants.dateElementTextColorNormal;
                                     else
                                         inputDateConstants.notAvailabledateElementTextColor;
                                 }
-
                                 text: {
                                     if (day < 0)
                                         monthViewDelegate.dayArray[index];
@@ -255,10 +260,9 @@ Popup {
                                 anchors.fill: parent
                                 enabled: monthViewDelegateText.text && day >= 0 && (new Date(year, month, date) >= dateInputElement._minDate) && (new Date(year, month, date) <= dateInputElement._maxDate)
                                 hoverEnabled: true
-
                                 onReleased: {
                                     calendarView.selectedDate = monthViewDelegate.cellDate;
-                                    dateInputElement._currentDate = calendarView.selectedDate
+                                    dateInputElement._currentDate = calendarView.selectedDate;
                                     dateInputPopout.close();
                                 }
                             }

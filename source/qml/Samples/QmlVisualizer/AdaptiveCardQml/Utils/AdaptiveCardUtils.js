@@ -406,3 +406,40 @@ function horizontalAlignActionSet(actionSet, actionElements, rectangleElements) 
         }
     }
 }
+
+function getDateFromString(text, dateFormat, regex) {
+    if (!text.match(regex))
+        return;
+
+    var Months = {
+        "Jan": 0,
+        "Feb": 1,
+        "Mar": 2,
+        "Apr": 3,
+        "May": 4,
+        "Jun": 5,
+        "Jul": 6,
+        "Aug": 7,
+        "Sep": 8,
+        "Oct": 9,
+        "Nov": 10,
+        "Dec": 11
+    };
+    let d;
+
+    switch (dateFormat) {
+        case "MMM\/dd\/yyyy":
+            d = new Date(text.slice(7, 11), Months[text.slice(0, 3)], text.slice(4, 6))
+            break;
+        case "dd\/MMM\/yyyy":
+            d = new Date(text.slice(7, 11), Months[text.slice(3, 6)], text.slice(0, 2))
+            break;
+        case "yyyy\/MMM\/dd":
+            d = new Date(text.slice(0, 4), Months[text.slice(5, 8)], text.slice(9, 11))
+            break;
+        case "yyyy\/dd\/MMM":
+            d = new Date(text.slice(0, 4), Months[text.slice(8, 11)], text.slice(5, 7))
+            break;
+    }
+    return d;
+}

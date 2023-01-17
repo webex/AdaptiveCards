@@ -13,37 +13,60 @@ Column {
     property string _mEscapedErrorString
     property string _mEscapedPlaceholderString
     property string _dateInputFormat
-    property string _submitVal
+    property string _inputMask
+    property var _regex
     property var _minDate: new Date(0, 0, 1)
     property var _maxDate: new Date(3000, 0, 1)
     property var _currentDate
+    property string _submitValue: getSubmitValue()
     property bool showErrorMessage: false
     property int minWidth: CardConstants.inputDateConstants.dateInputMinWidth
+    property var inputFieldConstants: CardConstants.inputFieldConstants
+    property var inputDateConstants: CardConstants.inputDateConstants
 
-    /*function validate() {
+    function colorChange(isPressed) {
+        if (isPressed && !showErrorMessage)
+            dateWrapper.color = inputFieldConstants.backgroundColorOnPressed;
+        else
+            dateWrapper.color = showErrorMessage ? inputFieldConstants.backgroundColorOnError : dateInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : dateInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
+    }
+
+    function validate() {
+        var isValid = true;
+        if (_currentDate)
+            isValid = ((_currentDate >= _minDate) && (_currentDate <= _maxDate));
+        else if (_isRequired)
+            isValid = false;
         if (showErrorMessage) {
-            if (isChecked)
+            if (isValid)
                 showErrorMessage = false;
 
         }
-        return !isChecked;
-    }*/
+        return !isValid;
+    }
 
-    /*function getAccessibleName() {
-        let accessibleName = '';
-        if (showErrorMessage === true)
-            accessibleName += "Error. " + _mEscapedErrorString;
+    function getSubmitValue() {
+        if (!dateInputTextField.text.match(_regex))
+            return '';
 
-        accessibleName += _mEscapedLabelString;
-        return accessibleName;
-    }*/
+        if (_currentDate && Number(_currentDate))
+            return _currentDate.toLocaleString(Qt.locale('en_US'), 'yyyy-MM-dd');
 
-    width: parent.width
-    /*onActiveFocusChanged: {
+        return '';
+    }
+
+    onActiveFocusChanged: {
         if (activeFocus)
-            customCheckBox.forceActiveFocus();
+            dateInputTextField.forceActiveFocus();
 
-    }*/
+    }
+    on_CurrentDateChanged: {
+        if (_isRequired || _validationRequired)
+            validate();
+
+    }
+    onShowErrorMessageChanged: colorChange(false)
+    width: parent.width
 
     InputLabel {
         id: inputDateLabel
@@ -53,96 +76,107 @@ Column {
         visible: _label.length
     }
 
-    Rectangle{
+    Rectangle {
         id: dateWrapper
-        width:parent.width
-        height: CardConstants.inputFieldConstants.height
-        radius: CardConstants.inputFieldConstants.borderRadius
-        color: CardConstants.inputFieldConstants.backgroundColorNormal
-        border.color: showErrorMessage ? CardConstants.inputFieldConstants.borderColorOnError : dateInputTextField.activeFocus? CardConstants.inputFieldConstants.borderColorOnFocus : CardConstants.inputFieldConstants.borderColorNormal
-        border.width: CardConstants.inputFieldConstants.borderWidth
 
-        /*function colorChange(isPressed){
-            if (isPressed && !dateInputTextField.showErrorMessage)
-                color = CardConstants.inputFieldConstants.backgroundColorOnPressed;
-            else color = dateInputTextField.showErrorMessage ? CardConstants.inputFieldConstants.backgroundColorOnError : dateInputTextField.activeFocus ? CardConstants.inputFieldConstants.backgroundColorOnPressed : dateInputTextField.hovered ? CardConstants.inputFieldConstants.backgroundColorOnHovered : CardConstants.inputFieldConstants.backgroundColorNormal
-        }*/
+        width: parent.width
+        height: inputFieldConstants.height
+        radius: inputFieldConstants.borderRadius
+        color: inputFieldConstants.backgroundColorNormal
+        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : dateInputTextField.activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+        border.width: inputFieldConstants.borderWidth
 
         RowLayout {
             id: dateInputRow
+
             width: parent.width
             height: parent.height
             spacing: 0
 
-            Button{
-                background:Rectangle{
-                    color:'transparent'
-                }
+            Button {
+                id: dateInputIcon
 
-                width: CardConstants.inputDateConstants.dateIconButtonSize
-                height: CardConstants.inputDateConstants.dateIconButtonSize
+                width: inputDateConstants.dateIconButtonSize
+                height: inputDateConstants.dateIconButtonSize
                 horizontalPadding: 0
                 verticalPadding: 0
-                icon.width: CardConstants.inputDateConstants.dateIconSize
-                icon.height: CardConstants.inputDateConstants.dateIconSize
-                icon.color: showErrorMessage ? CardConstants.inputDateConstants.dateIconColorOnError : dateInputTextField.activeFocus ? CardConstants.inputDateConstants.dateIconColorOnFocus : CardConstants.inputDateConstants.dateIconColorNormal
+                icon.width: inputDateConstants.dateIconSize
+                icon.height: inputDateConstants.dateIconSize
+                icon.color: showErrorMessage ? inputDateConstants.dateIconColorOnError : dateInputTextField.activeFocus ? inputDateConstants.dateIconColorOnFocus : inputDateConstants.dateIconColorNormal
                 icon.source: CardConstants.calendarIcon
                 Keys.onReturnPressed: onClicked()
-                id: dateInputIcon
-                Layout.leftMargin: CardConstants.inputDateConstants.dateIconHorizontalPadding
+                Layout.leftMargin: inputDateConstants.dateIconHorizontalPadding
                 Layout.alignment: Qt.AlignVCenter
                 focusPolicy: Qt.NoFocus
-                /*onClicked:{ 
-                    dateInputTextField.forceActiveFocus();
-                    dateInputTextField_calendarBox.open();
-                }*/
+                onClicked: {
+                    dateInputPopout.open();
+                }
+
+                background: Rectangle {
+                    color: 'transparent'
+                }
+
             }
 
-            ComboBox{
+            ComboBox {
                 id: dateInputCombobox
+
                 Layout.fillWidth: true
-                popup: DateInputPopout{
-                    dateInputElement: dateInput
-                    dateInputField: dateInputTextField
-                }
-                indicator:Rectangle{}
-                focusPolicy:Qt.NoFocus
-                Keys.onReturnPressed:{
+                focusPolicy: Qt.NoFocus
+                onActiveFocusChanged: colorChange(false)
+                Accessible.ignored: true
+                Keys.onReturnPressed: {
                     setFocusBackOnClose(dateInputCombobox);
                     this.popup.open();
                 }
-                //onActiveFocusChanged:dateInputTextField_wrapper.colorChange(false)
-                background: TextField{
-                    id: dateInputTextField
-                    text: _currentDate ? _currentDate : "";
+
+                indicator: Rectangle {
                 }
-                Accessible.ignored:true
+
+                popup: DateInputPopout {
+                    id: dateInputPopout
+
+                    dateInputElement: dateInput
+                    dateInputField: dateInputTextField
+                }
+
+                background: DateInputTextField {
+                    id: dateInputTextField
+
+                    dateInputElement: dateInput
+                    dateInputPopout: dateInputPopout
+                }
+
             }
 
-            Button{
-                background:Rectangle{
-                    color:'transparent'
-                }
+            Button {
+                id: dateInputClearIcon
 
-                width: CardConstants.inputFieldConstants.clearIconSize
-                horizontalPadding:0
-                verticalPadding:0
-                icon.width: CardConstants.inputFieldConstants.clearIconSize
-                icon.height:CardConstants.inputFieldConstants.clearIconSize
-                icon.color:activeFocus ? CardConstants.inputFieldConstants.clearIconColorOnFocus : CardConstants.inputFieldConstants.clearIconColorNormal
+                width: inputFieldConstants.clearIconSize
+                horizontalPadding: 0
+                verticalPadding: 0
+                icon.width: inputFieldConstants.clearIconSize
+                icon.height: inputFieldConstants.clearIconSize
+                icon.color: activeFocus ? inputFieldConstants.clearIconColorOnFocus : inputFieldConstants.clearIconColorNormal
                 icon.source: CardConstants.clearIconImage
-                Keys.onReturnPressed:onClicked()
-                id:dateInputClearIcon
-                Layout.rightMargin:CardConstants.inputFieldConstants.clearIconHorizontalPadding
-                //visible:(!dateInputTextField.focus && dateInputTextField.text !=="") || (dateInputTextField.focus && dateInputTextField.text !== "\/\/")
-                /*onClicked: {
+                Keys.onReturnPressed: onClicked()
+                Layout.rightMargin: inputFieldConstants.clearIconHorizontalPadding
+                visible: (!dateInputTextField.focus && dateInputTextField.text !== '') || (dateInputTextField.focus && dateInputTextField.text !== '\/\/')
+                onClicked: {
                     nextItemInFocusChain().forceActiveFocus();
                     dateInputTextField.clear();
-                }*/
-                Accessible.name:"Date Picker clear"
-                Accessible.role:Accessible.Button
+                }
+                Accessible.name: 'Date Picker clear'
+                Accessible.role: Accessible.Button
+
+                background: Rectangle {
+                    color: 'transparent'
+                }
+
             }
+
         }
+
     }
 
     InputErrorMessage {
