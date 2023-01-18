@@ -84,7 +84,9 @@ function handleSubmitAction(paramStr, adaptiveCard, is1_3Enabled) {
         paramJson = JSON.parse(paramStr);
     }
     else {
-        paramJson["data"] = paramStr;
+        if (paramStr && paramStr != "null") {
+            paramJson["data"] = paramStr;
+        }
     }
 
     var requiredElements = adaptiveCard.requiredElements;

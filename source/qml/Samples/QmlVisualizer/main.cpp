@@ -22,6 +22,7 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/SeparatorRender.qml"), "AdaptiveCards", 1, 0, "SeparatorRender");
     qmlRegisterSingletonType(QUrl("qrc:/CardConstants.qml"), "AdaptiveCards", 1, 0, "CardConstants");
     qmlRegisterType(QUrl("qrc:/ToggleInputRender.qml"), "AdaptiveCards", 1, 0, "ToggleInputRender");
+    qmlRegisterType(QUrl("qrc:/TextInputRender.qml"), "AdaptiveCards", 1, 0, "TextInputRender");
     qmlRegisterType(QUrl("qrc:/CustomCheckBox.qml"), "AdaptiveCards", 1, 0, "CustomCheckBox");
     qmlRegisterType(QUrl("qrc:/ChoiceSetRender.qml"), "AdaptiveCards", 1, 0, "ChoiceSetRender");
     qmlRegisterType(QUrl("qrc:/ComboboxRender.qml"), "AdaptiveCards", 1, 0, "ComboboxRender");
@@ -35,6 +36,8 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/ActionSetVerticalRender.qml"), "AdaptiveCards", 1, 0, "ActionSetVerticalRender");
     qmlRegisterType(QUrl("qrc:/ActionSetRepeaterElement.qml"), "AdaptiveCards", 1, 0, "ActionSetRepeaterElement");
     qmlRegisterType(QUrl("qrc:/NumberInputRender.qml"), "AdaptiveCards", 1, 0, "NumberInputRender");
+    qmlRegisterType(QUrl("qrc:/SinglelineTextInputRender.qml"), "AdaptiveCards", 1, 0, "SinglelineTextInputRender");
+    qmlRegisterType(QUrl("qrc:/MultiLineTextInputRender.qml"), "AdaptiveCards", 1, 0, "MultiLineTextInputRender");
     qmlRegisterType(QUrl("qrc:/DateInputRender.qml"), "AdaptiveCards", 1, 0, "DateInputRender");
     qmlRegisterType(QUrl("qrc:/DateInputTextField.qml"), "AdaptiveCards", 1, 0, "DateInputTextField");
     qmlRegisterType(QUrl("qrc:/DateInputPopout.qml"), "AdaptiveCards", 1, 0, "DateInputPopout");
