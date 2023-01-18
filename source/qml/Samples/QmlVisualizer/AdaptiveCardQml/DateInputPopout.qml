@@ -205,7 +205,7 @@ Popup {
                         delegate: Rectangle {
                             id: monthViewDelegate
 
-                            property bool datePickerFocusCheck: calendarView.activeFocus && calendarView.activeFocus && new Date(year, month, date).toDateString() == calendarView.selectedDate.toDateString()
+                            property bool datePickerFocusCheck: calendarView.activeFocus && new Date(year, month, date).toDateString() === calendarView.selectedDate.toDateString()
                             property int day: index - 7
                             property int date: day - calendarViewDelegate.firstDay + 1
                             property variant dayArray: ['M', 'T', 'W', 'T', 'F', 'S', 'S']
@@ -218,6 +218,7 @@ Popup {
                             }
                             Accessible.name: calendarView.accessibilityPrefix + calendarView.dateForSR
                             Accessible.role: Accessible.NoRole
+                            Accessible.ignored : !activeFocus
                             width: inputDateConstants.dateElementSize
                             height: inputDateConstants.dateElementSize
                             color: new Date(year, month, date).toDateString() == calendarView.selectedDate.toDateString() && monthViewDelegateMouseArea.enabled ? inputDateConstants.dateElementColorOnFocus : monthViewDelegateMouseArea.containsMouse ? inputDateConstants.dateElementColorOnHover : inputDateConstants.dateElementColorNormal
