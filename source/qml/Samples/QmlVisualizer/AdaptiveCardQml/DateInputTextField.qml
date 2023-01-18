@@ -28,6 +28,8 @@ TextField {
         let tempDate = AdaptiveCardUtils.getDateFromString(text, dateInputElement._dateInputFormat, dateInputElement._regex);
         if (tempDate && Number(tempDate) && tempDate !== dateInputElement._currentDate)
             dateInputElement._currentDate = tempDate;
+        else
+            dateInputElement._currentDate = null
 
         Accessible.name = getAccessibleName();
     }

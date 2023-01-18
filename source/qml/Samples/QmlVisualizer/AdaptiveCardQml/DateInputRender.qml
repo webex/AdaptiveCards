@@ -15,8 +15,8 @@ Column {
     property string _dateInputFormat
     property string _inputMask
     property var _regex
-    property var _minDate: new Date(0, 0, 1)
-    property var _maxDate: new Date(3000, 0, 1)
+    property var _minDate: new Date(0, 0, 2)
+    property var _maxDate: new Date(3000, 0, 0)
     property var _currentDate
     property string _submitValue: getSubmitValue()
     property bool showErrorMessage: false
@@ -34,7 +34,7 @@ Column {
     function validate() {
         var isValid = true;
         if (_currentDate)
-            isValid = ((_currentDate >= _minDate) && (_currentDate <= _maxDate));
+            isValid = ((_currentDate > _minDate) && (_currentDate < _maxDate));
         else if (_isRequired)
             isValid = false;
         if (showErrorMessage) {
@@ -53,6 +53,11 @@ Column {
             return _currentDate.toLocaleString(Qt.locale('en_US'), 'yyyy-MM-dd');
 
         return '';
+    }
+
+    Component.onCompleted : {
+        _minDate.setDate(_minDate.getDate() - 1);
+        _maxDate.setDate(_maxDate.getDate() + 1);
     }
 
     onActiveFocusChanged: {
@@ -165,6 +170,7 @@ Column {
                 onClicked: {
                     nextItemInFocusChain().forceActiveFocus();
                     dateInputTextField.clear();
+                    _currentDate = null;
                 }
                 Accessible.name: 'Date Picker clear'
                 Accessible.role: Accessible.Button

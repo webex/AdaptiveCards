@@ -25,11 +25,14 @@ Popup {
         calendarView.setDate(calendarView.selectedDate);
     }
     onClosed: {
+        dateInputField.forceActiveFocus();
+    }
+
+    function setGlobalDate() {
         if (calendarView.selectedDate) {
             dateInputElement._currentDate = calendarView.selectedDate;
             dateInputField.setTextFromDate(calendarView.selectedDate);
         }
-        dateInputField.forceActiveFocus();
     }
 
     Button {
@@ -153,13 +156,15 @@ Popup {
                     date.setDate(date.getDate() - 7);
                 else if (event.key === Qt.Key_Down)
                     date.setDate(date.getDate() + 7);
-                else if (event.key === Qt.Key_Return)
+                else if (event.key === Qt.Key_Return) {
+                    setGlobalDate();
                     dateInputPopout.close();
+                }
                 else if (event.key === Qt.Key_Tab)
                     prevMonthButton.forceActiveFocus();
                 else if (event.key === Qt.Key_Backtab)
                     nextMonthButton.forceActiveFocus();
-                if (date >= dateInputElement._minDate && date <= dateInputElement._maxDate) {
+                if (date > dateInputElement._minDate && date < dateInputElement._maxDate) {
                     selectedDate = new Date(date);
                     currentIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth();
                 }
@@ -259,12 +264,14 @@ Popup {
                                 id: monthViewDelegateMouseArea
 
                                 anchors.fill: parent
-                                enabled: monthViewDelegateText.text && day >= 0 && (new Date(year, month, date) >= dateInputElement._minDate) && (new Date(year, month, date) <= dateInputElement._maxDate)
+                                enabled: monthViewDelegateText.text && day >= 0 && (new Date(year, month, date) > dateInputElement._minDate) && (new Date(year, month, date) < dateInputElement._maxDate)
                                 hoverEnabled: true
                                 onReleased: {
-                                    calendarView.selectedDate = monthViewDelegate.cellDate;
-                                    dateInputElement._currentDate = calendarView.selectedDate;
-                                    dateInputPopout.close();
+                                    if(enabled){
+                                        calendarView.selectedDate = monthViewDelegate.cellDate;
+                                        setGlobalDate();
+                                        dateInputPopout.close();
+                                    }
                                 }
                             }
 
