@@ -26,6 +26,8 @@ Column {
         if (_numberInputTextField.text.length !== 0 && Number(_numberInputTextField.text) >= _numberInputSpinBox.from && Number(_numberInputTextField.text) <= _numberInputSpinBox.to) {
             showErrorMessage = false;
             return false;
+        } else if (_numberInputTextField.text.length === 0 && _validationRequired) {
+            return false;
         } else {
             return true;
         }

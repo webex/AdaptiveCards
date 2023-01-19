@@ -484,15 +484,28 @@ namespace RendererQml
 		const std::string Medium_yyddmmFormat = Formatter() << "%Y" << dateSeperator << "%d" << dateSeperator << "%b";
 		std::string Medium_yyddmmBuffer = FetchSystemDateTime(Medium_yyddmmFormat);
 
-		if (SystemDateBuffer.compare(ddmmyyBuffer) == 0 || SystemDateBuffer.compare(Medium_ddmmyyBuffer) == 0)
+        //Short Year Format eg: 19-Mar-21
+        const std::string ShortYear_ddmmyyFormat = Formatter() << "%d" << dateSeperator << "%b" << dateSeperator << "%y";
+        std::string ShortYear_ddmmyyBuffer = FetchSystemDateTime(ShortYear_ddmmyyFormat);
+
+        const std::string ShortYear_mmddyyFormat = Formatter() << "%b" << dateSeperator << "%d" << dateSeperator << "%y";
+        std::string ShortYear_mmddyyBuffer = FetchSystemDateTime(ShortYear_mmddyyFormat);
+
+        const std::string ShortYear_yymmddFormat = Formatter() << "%y" << dateSeperator << "%b" << dateSeperator << "%d";
+        std::string ShortYear_yymmddBuffer = FetchSystemDateTime(ShortYear_yymmddFormat);
+
+        const std::string ShortYear_yyddmmFormat = Formatter() << "%y" << dateSeperator << "%d" << dateSeperator << "%b";
+        std::string ShortYear_yyddmmBuffer = FetchSystemDateTime(ShortYear_yyddmmFormat);
+
+		if (SystemDateBuffer.compare(ddmmyyBuffer) == 0 || SystemDateBuffer.compare(Medium_ddmmyyBuffer) == 0 || SystemDateBuffer.compare(ShortYear_ddmmyyBuffer) == 0)
 		{
 			return RendererQml::DateFormat::ddmmyy;
 		}
-		else if (SystemDateBuffer.compare(yymmddBuffer) == 0 || SystemDateBuffer.compare(Medium_yymmddBuffer) == 0)
+		else if (SystemDateBuffer.compare(yymmddBuffer) == 0 || SystemDateBuffer.compare(Medium_yymmddBuffer) == 0 || SystemDateBuffer.compare(ShortYear_yymmddBuffer) == 0)
 		{
 			return RendererQml::DateFormat::yymmdd;
 		}
-		else if (SystemDateBuffer.compare(yyddmmBuffer) == 0 || SystemDateBuffer.compare(Medium_yyddmmBuffer) == 0)
+		else if (SystemDateBuffer.compare(yyddmmBuffer) == 0 || SystemDateBuffer.compare(Medium_yyddmmBuffer) == 0 || SystemDateBuffer.compare(ShortYear_yyddmmBuffer) == 0)
 		{
 			return RendererQml::DateFormat::yyddmm;
 		}

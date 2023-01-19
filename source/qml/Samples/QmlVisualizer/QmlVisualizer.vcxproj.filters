@@ -153,6 +153,15 @@
     <None Include="AdaptiveCardQml\NumberInputRender.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="AdaptiveCardQml\DateInputPopout.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\DateInputRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AdaptiveCardQml\DateInputTextField.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="samplecardmodel.h">
