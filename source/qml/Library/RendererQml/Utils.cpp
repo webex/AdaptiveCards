@@ -628,18 +628,11 @@ namespace RendererQml
 
     std::string RendererQml::Utils::getBackQuoteEscapedString(std::string str)
     {
-        std::string rawString = "";
-        for (int i = 0; i < str.size(); i++)
-        {
-            if (str[i] == '`')
-            {
-                rawString += "${'`'}";
-            }
-            else
-            {
-                rawString += str[i];
-            }
-        }
-        return rawString;
+        str = Replace(str, "<", "&lt;");
+        str = Replace(str, ">", "&gt;");
+        str = Replace(str, "`", "${'`'}");
+        str.insert(0, "<span>");
+        str += "</span>";
+        return str;
     }
 }
