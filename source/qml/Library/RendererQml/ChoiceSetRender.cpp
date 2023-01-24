@@ -184,8 +184,11 @@ void ChoiceSetElement::addInputLabel(bool isRequired)
 
 void ChoiceSetElement::addErrorMessage()
 {
-    mChoiceSetColElement->Property("_isRequired", "true");
-    mContext->addToRequiredInputElementsIdList(mChoiceSetColElement->GetId());
+    if (mChoiceSetInput->GetIsRequired())
+    {
+        mChoiceSetColElement->Property("_isRequired", "true");
+        mContext->addToRequiredInputElementsIdList(mChoiceSetColElement->GetId());
+    }
     if (!mChoiceSetInput->GetErrorMessage().empty())
     {
         mChoiceSetColElement->Property("_mEscapedErrorString", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
