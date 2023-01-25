@@ -487,3 +487,13 @@ function getTimeFieldString(hours, minutes, is12Hour) {
 
     return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}${amPm}`
 }
+
+function escapeHtml(str) {
+    const escapedStr = str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    return `<span>${escapedStr}</span>`
+}
