@@ -15,5 +15,5 @@ Label {
     color: CardConstants.toggleButtonConstants.textColor
     font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
     Accessible.ignored: true
-    text: _isRequired ? _label + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : _label
+    text: _isRequired ? AdaptiveCardUtils.escapeHtml(_label) + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : AdaptiveCardUtils.escapeHtml(_label)
 }
