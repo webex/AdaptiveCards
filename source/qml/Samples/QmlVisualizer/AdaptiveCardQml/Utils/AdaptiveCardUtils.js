@@ -445,3 +445,13 @@ function getDateFromString(text, dateFormat, regex) {
     }
     return d;
 }
+
+function escapeHtml(str) {
+    const escapedStr = str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    return `<span>${escapedStr}</span>`
+}
