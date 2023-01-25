@@ -41,6 +41,10 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/DateInputRender.qml"), "AdaptiveCards", 1, 0, "DateInputRender");
     qmlRegisterType(QUrl("qrc:/DateInputTextField.qml"), "AdaptiveCards", 1, 0, "DateInputTextField");
     qmlRegisterType(QUrl("qrc:/DateInputPopout.qml"), "AdaptiveCards", 1, 0, "DateInputPopout");
+    qmlRegisterType(QUrl("qrc:/TimeInputRender.qml"), "AdaptiveCards", 1, 0, "TimeInputRender");
+    qmlRegisterType(QUrl("qrc:/TimeInputTextField.qml"), "AdaptiveCards", 1, 0, "TimeInputTextField");
+    qmlRegisterType(QUrl("qrc:/TimeInputPopout.qml"), "AdaptiveCards", 1, 0, "TimeInputPopout");
+    qmlRegisterType(QUrl("qrc:/TimePickerListView.qml"), "AdaptiveCards", 1, 0, "TimePickerListView");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
