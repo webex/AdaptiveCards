@@ -446,6 +446,48 @@ function getDateFromString(text, dateFormat, regex) {
     return d;
 }
 
+function getTimeFromString(text, is12Hour, regex) {
+    if(!text.match(regex))
+        return [-1, -1];
+
+    let colonIndex = text.indexOf(':');
+    let hours = Number(text.slice(0, colonIndex));
+    let minutes = Number(text.slice(colonIndex + 1));
+
+    if(is12Hour) {
+        let spaceIndex = text.indexOf(' ')
+
+        let amPm = text.slice(spaceIndex + 1);
+        minutes = Number(text.slice(colonIndex + 1, spaceIndex))
+
+        if(amPm === 'AM' && hours === 12)
+            hours = 0;
+        else if(amPm === 'PM' && hours !== 12)
+            hours += 12;
+    }
+    return [hours, minutes]
+}
+
+function getTimeFieldString(hours, minutes, is12Hour) {
+    if(hours < 0 || minutes < 0)
+        return '';
+
+    let amPm = '';
+
+    if(is12Hour) {
+        amPm = hours < 12 ? ' AM' : ' PM';
+        if(hours === 0)
+            hours = 12;
+        else if(hours > 12)
+            hours -= 12;
+    }
+
+    hours = hours.toString().padStart(2, '0');
+    minutes = minutes.toString().padStart(2, '0')
+
+    return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}${amPm}`
+}
+
 function escapeHtml(str) {
     const escapedStr = str
         .replace(/&/g, "&amp;")
