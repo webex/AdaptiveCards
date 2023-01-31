@@ -144,6 +144,10 @@
     <None Include="AdaptiveCardQml\SingleLineTextInputRender.qml" />
     <None Include="AdaptiveCardQml\TextBlockRender.qml" />
     <None Include="AdaptiveCardQml\TextInputRender.qml" />
+    <None Include="AdaptiveCardQml\TimeInputPopout.qml" />
+    <None Include="AdaptiveCardQml\TimeInputRender.qml" />
+    <None Include="AdaptiveCardQml\TimeInputTextField.qml" />
+    <None Include="AdaptiveCardQml\TimePickerListView.qml" />
     <None Include="AdaptiveCardQml\ToggleInputRender.qml" />
     <None Include="AdaptiveCardQml\Utils\AdaptiveCardUtils.js" />
     <None Include="AdaptiveCardQml\Utils\ThemeUtils.js" />

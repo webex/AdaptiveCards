@@ -16,25 +16,12 @@ public:
     std::shared_ptr<RendererQml::QmlTag> getQmlTag();
 
 private:
-    std::string origionalElementId{ "" };
-    std::string id{ "" };
-    std::string timePopupId{ "" };
-    std::string timeComboboxId{ "" };
-    std::string listViewHoursId{ "" };
-    std::string listViewMinId{ "" };
-    std::string listViewttId{ "" };
+    std::string mOrigionalElementId{ "" };
     std::string mEscapedPlaceholderString{ "" };
     std::string mEscapedLabelString{ "" };
     std::string mEscapedErrorString{ "" };
 
-    std::shared_ptr<RendererQml::QmlTag> mTimeInputColElement;
-    std::shared_ptr<RendererQml::QmlTag> mTimeInputWrapper;
-    std::shared_ptr<RendererQml::QmlTag> mTimeInputComboBox;
-    std::shared_ptr<RendererQml::QmlTag> mTimeInputPopup;
-    std::shared_ptr<RendererQml::QmlTag> mTimeInputTextField;
-    std::shared_ptr<RendererQml::QmlTag> mTimeInputRow;
-    std::shared_ptr<RendererQml::QmlTag> mTimeIcon;
-    std::shared_ptr<RendererQml::QmlTag> mClearIcon;
+    std::shared_ptr<RendererQml::QmlTag> mTimeInputElement;
 
     const std::shared_ptr<AdaptiveCards::TimeInput>& mTimeInput;
     const std::shared_ptr<RendererQml::AdaptiveRenderContext>& mContext;
@@ -42,23 +29,6 @@ private:
     const bool mIs12hour;
 
 private:
-    void renderTimeElement();
-
     void initialize();
-    void initTimeInputWrapper();
-    void initTimeInputTextField();
-    void initTimeInputComboBox();
-    void initTimeInputPopup();
-    void initTimeInputRow();
-    void initTimeIcon();
-    void initClearIcon();
-
-    void addInputLabel(bool isRequired = false);
-    void addErrorMessage();
-    void addValidation();
-
-    const std::string getColorFunction();
-    const std::string getAccessibleName();
-    std::shared_ptr<RendererQml::QmlTag> getListViewTagforTimeInput(const std::string& parent_id, const std::string& listView_id, std::map<std::string, std::map<std::string, std::string>>& properties, bool isThirdTag, std::shared_ptr<RendererQml::AdaptiveRenderContext> context);
 };
 
