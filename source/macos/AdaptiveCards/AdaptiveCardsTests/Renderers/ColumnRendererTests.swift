@@ -50,10 +50,6 @@ class ColumnRendererTests: XCTestCase {
     }
     
     func testVerticalContentAlignment() {
-        // Removing this since we don't need subviews to have padding to have explicit width
-//        var columnView = renderColumnView()
-//        XCTAssertEqual(columnView.arrangedSubviews.count, 1)
-        
         // since we removed padding view all together and replaced with lastPadding but use paddingView for vertical content alignment this has changed
         column = .make(items: [FakeTextBlock.make()], verticalContentAlignment: .center)
         var columnView = renderColumnView()
@@ -62,6 +58,11 @@ class ColumnRendererTests: XCTestCase {
         column = .make(items: [FakeTextBlock.make()], verticalContentAlignment: .bottom)
         columnView = renderColumnView()
         XCTAssertEqual(columnView.arrangedSubviews.count, 3)
+        
+        column = .make(items: [FakeTextBlock.make(heightType: .stretch)], verticalContentAlignment: .center)
+        columnView = renderColumnView()
+        XCTAssertTrue(columnView.arrangedSubviews.last?.isHidden ?? false)
+        XCTAssertEqual(columnView.arrangedSubviews.count, 2)
     }
     
     func testSelectActionTargetIsSet() {
@@ -115,15 +116,14 @@ class ColumnRendererTests: XCTestCase {
         // No padding added
         column = FakeColumn.make(isVisible: true, style: .none)
         let columnView = renderColumnView()
-        XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 0)
-        
-        // Removing this since we don't need subviews to have padding to have explicit width
-//        Added padding
-//        column = FakeColumn.make(isVisible: true, style: .default)
-//        columnView = renderColumnView()
-//        XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 1)
+        XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 1)
     }
-
+    
+    func testColumnWithHeight() {
+        column = FakeColumn.make(isVisible: true, style: .accent, height: .stretch)
+        let columnView = renderColumnView()
+        XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 1)
+    }
     
     private func renderColumnView() -> ACRColumnView {
         let view = columnRenderer.render(element: column, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
