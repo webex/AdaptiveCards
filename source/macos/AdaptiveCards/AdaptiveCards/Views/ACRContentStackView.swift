@@ -327,6 +327,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// constraints one by one.
     
     func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?) {
+        // If a container has a stretchable view, set the top vertical alignment.
         self.verticalContentAlignment = self.hasStretchableView ? .top : verticalContentAlignment
         self.applyVisibilityToSubviews()
         
