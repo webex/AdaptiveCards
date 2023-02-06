@@ -31,6 +31,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             if width == .stretch { numberOfStretchItems += 1 }
             if width == .auto { numberOfAutoItems += 1 }
             let requestedSpacing = column.getSpacing()
+            column.setHeight(columnSet.getHeight())
             totalPaddingSpace += HostConfigUtils.getSpacing(requestedSpacing, with: hostConfig).floatValue
             let columnView = ColumnRenderer.shared.render(element: column, with: hostConfig, style: columnSet.getStyle(), rootView: rootView, parentView: columnSetView, inputs: [], config: config)
             columnViews.append(columnView)
