@@ -50,6 +50,11 @@ class ContainerRendererTests: XCTestCase {
         containerView = renderContainerView(container)
         // SpaceView 2
         XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 4)
+        
+        container = .make(verticalContentAlignment: .center, minHeight: 300, items: [FakeTextBlock.make(heightType: .stretch)])
+        containerView = renderContainerView(container)
+        XCTAssertTrue(containerView.arrangedSubviews.last?.isHidden ?? false)
+        XCTAssertEqual(containerView.arrangedSubviews.count, 2)
     }
     
     func testSelectActionTargetIsSet() {

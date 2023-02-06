@@ -70,6 +70,10 @@ class FakeColumn: ACSColumn {
         return height
     }
     
+    override func setHeight(_ value: ACSHeightType) {
+        self.height = value
+    }
+    
     override func getBleed() -> Bool {
         return bleed
     }
@@ -116,7 +120,7 @@ class FakeColumn: ACSColumn {
 }
 
 extension FakeColumn {
-    static func make(id: String? = "", isVisible: Bool = true, width: String? = "", pixelWidth: NSNumber? = 0, items: [ACSBaseCardElement] = [], style: ACSContainerStyle = .default, verticalContentAlignment: ACSVerticalContentAlignment = .top, minHeight: NSNumber? = nil, bleed: Bool = false, spacing: ACSSpacing = .default, separator: Bool = false, backgroundImage: ACSBackgroundImage? = nil, selectAction: ACSBaseActionElement? = nil, padding: Bool = false) -> FakeColumn {
+    static func make(id: String? = "", isVisible: Bool = true, width: String? = "", pixelWidth: NSNumber? = 0, items: [ACSBaseCardElement] = [], style: ACSContainerStyle = .default, verticalContentAlignment: ACSVerticalContentAlignment = .top, height: ACSHeightType = .stretch, minHeight: NSNumber? = nil, bleed: Bool = false, spacing: ACSSpacing = .default, separator: Bool = false, backgroundImage: ACSBackgroundImage? = nil, selectAction: ACSBaseActionElement? = nil, padding: Bool = false) -> FakeColumn {
         let fakeColumn = FakeColumn()
         fakeColumn.id = id
         fakeColumn.isVisible = isVisible
@@ -128,6 +132,7 @@ extension FakeColumn {
         fakeColumn.minHeight = minHeight
         fakeColumn.bleed = bleed
         fakeColumn.spacing = spacing
+        fakeColumn.height = height
         fakeColumn.separator = separator
         fakeColumn.backgroundImage = backgroundImage
         fakeColumn.selectAction = selectAction
