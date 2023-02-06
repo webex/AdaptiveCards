@@ -327,7 +327,8 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// constraints one by one.
     
     func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?) {
-        self.verticalContentAlignment = verticalContentAlignment
+        // If a container has a stretchable view, set the top vertical alignment.
+        self.verticalContentAlignment = self.hasStretchableView ? .top : verticalContentAlignment
         self.applyVisibilityToSubviews()
         
         if self.hasStretchableView || visibilityManager.hasVisibleViews {
@@ -336,6 +337,12 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         
         self.setMinimumHeight(minHeight)
         visibilityManager.fillerSpaceManager.activateConstraintsForPadding()
+    }
+    
+    func setStretchableHeight() {
+        if !self.hasStretchableView {
+            visibilityManager.fillerSpaceManager.addLastStretchableView(for: self, isHidden: false)
+        }
     }
     
     private func setupTrackingArea() {

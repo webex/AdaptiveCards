@@ -73,6 +73,9 @@ class ACSFillerSpaceManager {
                 }
             }
         }
+        if !(self.lastStretchableView?.isHidden ?? true) {
+            return true
+        }
         return false
     }
     
