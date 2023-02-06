@@ -27,6 +27,9 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: containerView, with: hostConfig, element: element, parentElement: container)
         }
         containerView.configureLayoutAndVisibility(verticalContentAlignment: container.getVerticalContentAlignment(), minHeight: container.getMinHeight())
+        if container.getHeight() == .stretch {
+            containerView.setStretchableHeight()
+        }
         containerView.wantsLayer = true
         return containerView
     }
