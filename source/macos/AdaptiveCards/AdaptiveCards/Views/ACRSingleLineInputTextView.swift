@@ -62,7 +62,7 @@ class ACRSingleLineInputTextView: NSView {
         let button = ACRButton(actionElement: element.getInlineAction(), iconPlacement: hostConfig.getActions()?.iconPlacement, buttonConfig: renderConfig.buttonConfig, style: .inline)
         button.translatesAutoresizingMaskIntoConstraints = false
         let attributedString: NSMutableAttributedString
-        attributedString = NSMutableAttributedString(string: button.title.isEmpty ? "Action" : button.title)
+        attributedString = NSMutableAttributedString(string: button.title.isEmpty ? "" : button.title)
         if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: true), let textColor = ColorUtils.color(from: colorHex) {
             attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
         }
@@ -107,7 +107,6 @@ class ACRSingleLineInputTextView: NSView {
         textView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         if element.getInlineAction() != nil {
             inlineButton.leadingAnchor.constraint(equalTo: textView.trailingAnchor, constant: 8.0).isActive = true
-            inlineButton.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
             inlineButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
             inlineButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
             inlineButton.widthAnchor.constraint(lessThanOrEqualTo: textView.widthAnchor, multiplier: 0.5).isActive = true

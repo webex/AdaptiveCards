@@ -96,4 +96,10 @@ class ACRButtonTests: XCTestCase {
         button = ACRButton(frame: .zero, wantsChevron: false, wantsIcon: false, iconPosition: .imageLeft, style: .default, buttonConfig: .default)
         XCTAssertNotNil(button.chevronDownIcon)
     }
+    
+    func testEmptyButtonSize() {
+        button = ACRButton(frame: .zero, wantsChevron: false, wantsIcon: false, iconPosition: .imageAbove, style: .default, buttonConfig: .default)
+        button.title = ""
+        XCTAssertEqual(button.intrinsicContentSize.width, button.intrinsicContentSize.height + ACRButton.Constants.buttonEmptyPadding)
+    }
 }
