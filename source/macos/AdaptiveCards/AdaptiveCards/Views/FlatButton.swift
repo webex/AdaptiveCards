@@ -23,6 +23,10 @@ extension CALayer {
 }
 
 open class FlatButton: NSButton, CALayerDelegate {
+    struct Constants {
+        static let buttonEmptyPadding: CGFloat = 4
+    }
+    
     internal var containerLayer = CALayer()
     internal var iconLayer = CAShapeLayer()
     internal var alternateIconLayer = CAShapeLayer()
@@ -190,6 +194,8 @@ open class FlatButton: NSButton, CALayerDelegate {
         totalWidth += showsIcon && (imagePosition == .imageLeft || imagePosition == .imageRight) ? iconImageSize.width + horizontalInternalSpacing : 0
         totalWidth += showsChevron ? chevronImageSize.width + horizontalInternalSpacing : 0
         totalHeight += (imagePosition == .imageBelow || imagePosition == .imageAbove) ? iconImageSize.height : 0
+        // If button is completely empty, add some spacing
+        totalWidth += (title.isEmpty && !showsIcon && !showsChevron) ? (totalHeight - contentInsets.left - contentInsets.right + Constants.buttonEmptyPadding ) : 0
         return NSSize(width: totalWidth, height: totalHeight)
     }
     

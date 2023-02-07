@@ -318,7 +318,7 @@
 		088C673C2615C2B00070186C /* ACRContentStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088C673B2615C2B00070186C /* ACRContentStackView.swift */; };
 		088F716226A9560600C52C06 /* ActionToggleVisibilityRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088F716126A9560600C52C06 /* ActionToggleVisibilityRenderer.swift */; };
 		088F716526A9925400C52C06 /* SpacingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088F716426A9925400C52C06 /* SpacingView.swift */; };
-		089DC88025B6C8AE00626E8F /* libAdaptiveCards-shared.a in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 08E403B125B46A2600C2092A /* libAdaptiveCards-shared.a */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		089DC88025B6C8AE00626E8F /* libAdaptiveCards-shared.a in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 08E403B125B46A2600C2092A /* libAdaptiveCards-shared.a */; };
 		089DC8D725B856FA00626E8F /* BridgeConverter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 089DC8D625B856FA00626E8F /* BridgeConverter.mm */; };
 		08A12EE326987B5C00490977 /* ACSExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A12EE226987B5C00490977 /* ACSExtensions.swift */; };
 		08B5F91125C924F400A7D37A /* TextBlockRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B5F91025C924F400A7D37A /* TextBlockRenderer.swift */; };
