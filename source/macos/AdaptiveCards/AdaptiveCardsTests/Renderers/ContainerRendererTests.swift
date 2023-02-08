@@ -20,6 +20,12 @@ class ContainerRendererTests: XCTestCase {
         XCTAssertEqual(containerView.layer?.backgroundColor, nil)
     }
     
+    func testStretchableEmptyContainer() {
+        let fakeStretchContainer = FakeContainer.make(elemType: .container, heightType: .stretch)
+        let stretchContainer = renderContainerView(fakeStretchContainer)
+        XCTAssertEqual(stretchContainer.arrangedSubviews.capacity, 1)
+    }
+    
     func testHeightProperty() {
         let autoContainer = FakeContainer.make(elemType: .container, heightType: .auto)
         let rootAutoView = renderContainerView(FakeContainer.make(elemType: .container, minHeight: 200, items: [autoContainer]))
@@ -34,14 +40,14 @@ class ContainerRendererTests: XCTestCase {
     }
     
     func testRendererSetsVerticalContentAlignment() {
-        container = .make(verticalContentAlignment: .top)
+        container = .make(verticalContentAlignment: .top, items: [FakeTextBlock.make()])
         // Removing this since we don't need subviews to have padding to have explicit width
-//        var containerView = renderContainerView(container)
-//        // For HeightType Property we have add stretchable view. so it will increase count for subviews.
-//        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 1)
+        var containerView = renderContainerView(container)
+        // For HeightType Property we have add stretchable view. so it will increase count for subviews.
+        XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 2)
         
         container = .make(verticalContentAlignment: .bottom, items: [FakeTextBlock.make()])
-        var containerView = renderContainerView(container)
+        containerView = renderContainerView(container)
         // since we removed padding view all together and replaced with lastPadding but use paddingView for vertical content alignment this has changed
         // SpaceView 1
         XCTAssertEqual(containerView.stackView.arrangedSubviews.capacity, 3)
@@ -92,24 +98,14 @@ class ContainerRendererTests: XCTestCase {
     }
     
     func testPaddingWhenContainerEmptyWithoutStyle() {
-        // No padding added
         let containerView = renderContainerView(FakeContainer.make(style: .none, elemType: .container, visible: true))
         XCTAssertEqual(containerView.stackView.arrangedSubviews.count, 0)
-        
-        
-        // Removing this test since now we don't need to add a padding to make containers visible
-        //Added padding
-//        containerView = renderContainerView(FakeContainer.make(style: .default, elemType: .container, visible: true))
-//        XCTAssertEqual(containerView.stackView.arrangedSubviews.count, 1)
     }
     
     func testRendersItems() {
-        /// TO DO: Test Failed due to Height Property which is not yet add in InputToggleView
-        /// we will add test case, once done with input toggle
-        
-        /*container = .make(items: [FakeInputToggle.make()])
+        container = .make(items: [FakeInputToggle.make()])
         let containerView = renderContainerView(container)
-        XCTAssertEqual(containerView.arrangedSubviews.count, 1)*/
+        XCTAssertEqual(containerView.arrangedSubviews.count, 2)
     }
     
     private func renderContainerView(_ element: ACSContainer) -> ACRContainerView {
