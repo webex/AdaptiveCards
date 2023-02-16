@@ -85,6 +85,9 @@ std::shared_ptr<BaseCardElement> ColumnSetParser::Deserialize(ParseContext& cont
 	 container->SetHorizontalAlignment(ParseUtil::GetEnumValue<HorizontalAlignment>(
         value, AdaptiveCardSchemaKey::HorizontalAlignment, HorizontalAlignment::Left, HorizontalAlignmentFromString));
 
+	 container->SetHorizontalAlignment(ParseUtil::GetEnumValue<HorizontalAlignment>(
+        value, AdaptiveCardSchemaKey::HorizontalAlignment, HorizontalAlignment::Left, HorizontalAlignmentFromString));
+
     return container;
 }
 
