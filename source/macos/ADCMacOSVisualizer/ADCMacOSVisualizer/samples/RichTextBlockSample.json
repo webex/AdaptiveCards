@@ -12,6 +12,10 @@
                 },
                 {
                     "type": "TextRun",
+                    "text": "We **do** _not_ support [makrdown](www.cisco.com). "
+                },
+                {
+                    "type": "TextRun",
                     "text": "We support colors,",
                     "color": "Good"
                 },

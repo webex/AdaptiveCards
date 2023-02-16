@@ -30,13 +30,12 @@ class RichTextBlockRendererTests: XCTestCase {
     }
     
     func testRendererSetsText() {
-        let textRun = FakeTextRun.make(text: sampleText)
+        let textRun = FakeTextRun.make(text: "**Hello**")
         
         richTextBlock = .make(textRun: textRun)
         
         let textView = renderTextView()
-        XCTAssertEqual(textView.string, sampleText)
-        XCTAssertTrue(resourceResolver.textResolverCalled)
+        XCTAssertEqual(textView.string, "**Hello**")
     }
     
     func testRendererRightAlignsText() {
