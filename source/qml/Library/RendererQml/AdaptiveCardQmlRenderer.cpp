@@ -307,16 +307,27 @@ namespace RendererQml
 
             if (actionsConfig.actionsOrientation == AdaptiveCards::ActionsOrientation::Horizontal)
             {
-                uiButtonStrip = std::make_shared<QmlTag>("ActionSetHorizontalRender");
-                uiButtonStrip->Property("_spacing", Formatter() << actionsConfig.buttonSpacing);
-                uiButtonStrip->Property("_layoutDirection", actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Right ? "'Qt.RightToLeft'" : "'Qt.LeftToRight'");
+                uiButtonStrip = std::make_shared<QmlTag>("Flow");
+                uiButtonStrip->Property("width", "parent.width");
+                uiButtonStrip->Property("spacing", std::to_string(actionsConfig.buttonSpacing));
+
+                switch (actionsConfig.actionAlignment)
+                {
+                case AdaptiveCards::ActionAlignment::Right:
+                    uiButtonStrip->Property("layoutDirection", "Qt.RightToLeft");
+                    break;
+                case AdaptiveCards::ActionAlignment::Center:
+                default:
+                    uiButtonStrip->Property("layoutDirection", "Qt.LeftToRight");
+                    break;
+                }
             }
             else
             {
                 //TODO: Implement AdaptiveCards::ActionsOrientation::Vertical
-                uiButtonStrip = std::make_shared<QmlTag>("ActionSetVerticalRender");
+                uiButtonStrip = std::make_shared<QmlTag>("Column");
                 uiButtonStrip->Property("width", "parent.width");
-                uiButtonStrip->Property("_spacing", std::to_string(actionsConfig.buttonSpacing));
+                uiButtonStrip->Property("spacing", std::to_string(actionsConfig.buttonSpacing));
             }
 
             const unsigned int maxActions = std::min<unsigned int>(actionsConfig.maxActions, (unsigned int)actions.size());
@@ -342,146 +353,72 @@ namespace RendererQml
             AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context);
             uiContainer->AddChild(uiButtonStrip);
 
-            std::ostringstream actionsButtonModel;
-            uiButtonStrip->Property("adaptiveCard", Formatter() << "adaptiveCard");
-            actionsButtonModel << "{";
+            std::ostringstream rectangleElements;
+            std::ostringstream actionElements;
+            std::shared_ptr<QmlTag> uiRectangle;
+
             for (unsigned int i = 0; i < maxActions; i++)
             {
-                actionsButtonModel << i << " : {";
                 // add actions buttons
-                const auto action = actions[i];
-                const auto buttonIndex = context->getButtonCounter();
-
-
-                auto buttonElement = std::make_shared<QmlTag>("AdaptiveActionRender");
-
-                if (!Utils::IsNullOrWhitespace(action->GetStyle()) && !Utils::CaseInsensitiveCompare(action->GetStyle(), "default"))
+                auto uiAction = context->Render(actions[i]);
+                if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
                 {
-                    if (Utils::CaseInsensitiveCompare(action->GetStyle(), "positive"))
+                    uiRectangle = std::make_shared<RendererQml::QmlTag>("Rectangle");
+                    uiRectangle->Property("id", Formatter() << uiAction->GetId() << "_rectangle");
+                    uiRectangle->Property("height", Formatter() << uiAction->GetId() << ".height");
+                    uiRectangle->Property("width", Formatter() << uiAction->GetId() << ".width");
+                    uiRectangle->Property("color", "'transparent'");
+                    uiAction->Property("width", "(parent.parent.width > implicitWidth) ? implicitWidth : parent.parent.width");
+
+                    rectangleElements << (i == 0 ? "[" : "") << uiRectangle->GetId() << (i == maxActions - 1 ? "]" : ",");
+                    actionElements << (i == 0 ? "[" : "") << uiAction->GetId() << (i == maxActions - 1 ? "]" : ",");
+                    uiRectangle->AddChild(uiAction);
+                }
+
+                if (uiAction != nullptr)
+                {
+                    if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
                     {
-                        actionsButtonModel << "buttonConfigType: \"positiveColorConfig\",";
-                    }
-                    else if (Utils::CaseInsensitiveCompare(action->GetStyle(), "destructive"))
-                    {
-                        actionsButtonModel << "buttonConfigType: \"destructiveColorConfig\",";
-                    }
-                    else
-                    {
-                        actionsButtonModel << "buttonConfigType: \"primaryColorConfig\",";
-                    }
-                }
-                else
-                {
-                    actionsButtonModel << "buttonConfigType: \"primaryColorConfig\",";
-                }
+                        // Add to loader source component list
+                        const std::string loaderId = uiAction->GetId() + "_loader";
+                        const std::string componentId = uiAction->GetId() + "_component";
+                        const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
+                        context->addToShowCardLoaderComponentList(uiAction->GetId(), showCardAction);
 
-                const std::string buttonObjectName = Formatter() << "button_auto_" << buttonIndex;
-                actionsButtonModel << "_objectName: \"" << buttonObjectName << "\",";
+                        // Add show card loader to the parent container
+                        AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, std::string(), true, loaderId);
 
-                actionsButtonModel << "isIconLeftOfTitle: " << (context->GetConfig()->GetActions().iconPlacement == AdaptiveCards::IconPlacement::LeftOfTitle ? "true" : "false") << ",";
-                actionsButtonModel << "escapedTitle: " << "\"" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "\",";
-                const bool isShowCardButton = Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(action);
-                if (isShowCardButton)
-                {
-                    actionsButtonModel << "isShowCardButton: " << "true" << ",";
-                }
-                else {
-                    actionsButtonModel << "isShowCardButton: " << "false" << ",";
-                }
+                        auto uiLoader = std::make_shared<QmlTag>("Loader");
+                        uiLoader->Property("id", loaderId);
+                        // 1px shift to avoid child card displaying over parent card's border
+                        uiLoader->Property("x", "-margins + 1");
+                        uiLoader->Property("sourceComponent", componentId);
+                        uiLoader->Property("visible", "false");
+                        // 2 px reduction in width to avoid child card displaying over parent card's border
+                        uiLoader->Property("width", Formatter() << uiContainer->GetProperty("id") << ".width + 2*margins - 2");
+                        uiLoader->Property("readonly property bool removeBottomMargin", removeBottomMargin ? "true" : "false");
 
-                actionsButtonModel << "isActionSubmit: " << (action->GetElementTypeString() == "Action.Submit" ? "true" : "false") << ",";
-                actionsButtonModel << "isActionOpenUrl: " << (action->GetElementTypeString() == "Action.OpenUrl" ? "true" : "false") << ",";
-                if (action->GetElementTypeString() == "Action.ToggleVisibility") {
-                    actionsButtonModel << "isActionToggleVisibility: " << "true" << ",";
-                }
-                else {
-                    actionsButtonModel << "isActionToggleVisibility: " << "false" << ",";
-                }
+                        if (removeBottomMargin)
+                        {
+                            context->addToLastShowCardComponentIdsList(componentId);
+                        }
 
-                if (!action->GetIconUrl().empty())
-                {
-                    actionsButtonModel << "hasIconUrl: " << "true" << ",";
-                    actionsButtonModel << "imgSource: " << "\"" << GetImagePath(context, action->GetIconUrl()) << "\" ,";
-                }
-                else {
-                    actionsButtonModel << "hasIconUrl: " << "false" << ",";
-                    actionsButtonModel << "imgSource: " << "\"" << "\" ,";
-
-                }
-                std::string selectActionId = "";
-                if (action->GetElementTypeString() == "Action.OpenUrl")
-                {
-                    auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action);
-                    selectActionId = openUrlAction->GetUrl();
-                    actionsButtonModel << "paramStr: " << "\"" << "\",";
-
-                }
-                else if (action->GetElementTypeString() == "Action.ShowCard")
-                {
-                    context->addToShowCardButtonList(buttonElement, std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(action));
-                    actionsButtonModel << "paramStr: " << "\"" << "\",";
-                }
-                else if (action->GetElementTypeString() == "Action.ToggleVisibility")
-                {
-                    auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(action);
-                    selectActionId = toggleVisibilityAction->GetElementTypeString();
-                    actionsButtonModel << "paramStr: " << "\"" << "\",";
-                }
-                else if (action->GetElementTypeString() == "Action.Submit")
-                {
-                    auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
-                    selectActionId = submitAction->GetElementTypeString();
-                    std::string submitDataJson = submitAction->GetDataJson();
-                    submitDataJson.erase(std::remove(submitDataJson.begin(), submitDataJson.end(), '"'), submitDataJson.end());
-                    actionsButtonModel << "paramStr: \"" << submitDataJson << "\",";
-                }
-
-                actionsButtonModel << "is1_3Enabled: " << (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false") << ",";
-
-                actionsButtonModel << "selectActionId: " << "\"" << selectActionId << "\"" << ",";
-
-
-                if (Utils::IsInstanceOfSmart<AdaptiveCards::ShowCardAction>(actions[i]))
-                {
-                    // Add to loader source component list
-                    const std::string loaderId = Formatter() << "button_auto_1" << buttonIndex << "_loader";
-                    actionsButtonModel << "loaderId: "  <<  loaderId  << ",";
-                    const std::string componentId = loaderId + "_component";
-                    const auto showCardAction = std::dynamic_pointer_cast<AdaptiveCards::ShowCardAction>(actions[i]);
-                    context->addToShowCardLoaderComponentList(loaderId, showCardAction);
-
-                    //Add show card loader to the parent container
-                    AddSeparator(uiContainer, std::make_shared<AdaptiveCards::Container>(), context, std::string(), true, loaderId);
-
-                    auto uiLoader = std::make_shared<QmlTag>("Loader");
-                    uiLoader->Property("id", loaderId);
-                    //1px shift to avoid child card displaying over parent card's border
-                    uiLoader->Property("x", "-margins + 1");
-                    uiLoader->Property("sourceComponent", componentId);
-                    uiLoader->Property("visible", "false");
-                    //2 px reduction in width to avoid child card displaying over parent card's border
-                    uiLoader->Property("width", Formatter() << uiContainer->GetProperty("id") << ".width + 2*margins - 2");
-                    uiLoader->Property("readonly property bool removeBottomMargin", removeBottomMargin ? "true" : "false");
-
-                    if (removeBottomMargin)
-                    {
-                        context->addToLastShowCardComponentIdsList(componentId);
+                        context->addToShowCardsLoaderIdsList(loaderId);
+                        uiContainer->AddChild(uiLoader);
                     }
 
-                    context->addToShowCardsLoaderIdsList(loaderId);
-                    uiContainer->AddChild(uiLoader);
+                    uiButtonStrip->AddChild(actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center ? uiRectangle : uiAction);
                 }
-                else {
-                    const std::string loaderId = Formatter() << "placeholderLoaderId";
-                    actionsButtonModel << "loaderId: " << loaderId << ", \n";
-                }
-
-                actionsButtonModel << "},";
             }
-            actionsButtonModel << "}";
-            uiButtonStrip->Property("_numActions", Formatter() << maxActions);
-            uiButtonStrip->Property("actionButtonModel", actionsButtonModel.str());
-            uiButtonStrip->Property("isCentreAlign", actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center ? "true" : "false");
+
+            if (actionsConfig.actionAlignment == AdaptiveCards::ActionAlignment::Center)
+            {
+                uiButtonStrip->Property("property var rectangleElements", rectangleElements.str());
+                uiButtonStrip->Property("property var actionElements", actionElements.str());
+                uiButtonStrip->Property("onWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
+                uiButtonStrip->Property("onImplicitWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
+                uiButtonStrip->Property("Component.onCompleted", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
+            }
 
             // add show card click function
             addShowCardButtonClickFunc(context);
@@ -717,7 +654,7 @@ namespace RendererQml
                     if (textRun->GetSelectAction()->GetElementTypeString() == "Action.Submit")
                     {
                         auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(textRun->GetSelectAction());
-                        selectActionId = submitAction->GetElementTypeString();
+                        selectActionId = Formatter() << "Action.Submit_" << (submitAction->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto ? "auto" : "");
                         std::string submitDataJson = submitAction->GetDataJson();
                         submitDataJson = Utils::Trim(submitDataJson);
                         uiTextBlock->Property("_paramStr", Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`");
@@ -1040,6 +977,7 @@ namespace RendererQml
                 selectActionId = submitAction->GetElementTypeString();
                 std::string submitDataJson = submitAction->GetDataJson();
                 submitDataJson = Utils::Trim(submitDataJson);
+                uiImage->Property("_hasAssociatedInputs", Formatter() << (submitAction->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto ? "true" : "false"));
                 uiImage->Property("_paramStr", Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`");
             }
             else if (image->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
@@ -1607,6 +1545,7 @@ namespace RendererQml
                 selectActionId = submitAction->GetElementTypeString();
                 std::string submitDataJson = submitAction->GetDataJson();
                 submitDataJson = Utils::Trim(submitDataJson);
+                buttonElement->Property("_hasAssociatedInputs", Formatter() << (submitAction->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto ? "true" : "false"));
                 buttonElement->Property("_paramStr", Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`");
             }
             buttonElement->Property("_is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false");
@@ -1721,7 +1660,6 @@ namespace RendererQml
 
 		function << "\n" << buttonElement->GetId() << ".showCard = !" << buttonElement->GetId() << ".showCard";
 		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
-		function << "\n" << buttonElement->GetId() << "_icon.icon.source = " << buttonElement->GetId() << ".showCard ? " << "\"" << RendererQml::arrow_up_12 << "\"" << ":" << "\"" << RendererQml::arrow_down_12 << "\"";
 		return function.str();
 	}
 

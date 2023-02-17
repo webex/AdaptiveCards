@@ -37,6 +37,7 @@ Column {
     property var adaptiveCard
     property var selectActionId
     property int minWidth: 200
+    property bool hasAssociatedInputs: false
     property bool _isShowCardButton
     property var _inputtextTextField: !_isMultiLineText ? singlineLoaderElement.item.inputtextTextField : multilineLoaderElement.item.inputtextTextField
     property bool showErrorMessage: false
@@ -156,6 +157,7 @@ Column {
                 _is1_3Enabled: is1_3Enabled
                 _adaptiveCard: adaptiveCard
                 _selectActionId: selectActionId
+                _hasAssociatedInputs: hasAssociatedInputs
             }
 
         }
