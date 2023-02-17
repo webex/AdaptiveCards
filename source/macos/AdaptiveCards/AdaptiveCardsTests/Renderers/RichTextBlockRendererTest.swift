@@ -30,13 +30,21 @@ class RichTextBlockRendererTests: XCTestCase {
     }
     
     func testRendererSetsText() {
-        let textRun = FakeTextRun.make(text: sampleText)
+        let textRun = FakeTextRun.make(text: "**Hello**")
         
         richTextBlock = .make(textRun: textRun)
         
         let textView = renderTextView()
-        XCTAssertEqual(textView.string, sampleText)
-        XCTAssertTrue(resourceResolver.textResolverCalled)
+        XCTAssertEqual(textView.string, "**Hello**")
+    }
+    
+    func testRendererMarkDownText() {
+        let textRun = FakeTextRun.make(text: "[google](www.goggle.com) **Date-Time** parsing: {{DATE(2017-02-14T06:08:39Z,LONG)}} {{TIME(2017-02-14T06:08:39Z)}}")
+        
+        richTextBlock = .make(textRun: textRun)
+        
+        let textView = renderTextView()
+        XCTAssertEqual(textView.string, "[google](www.goggle.com) **Date-Time** parsing: February 14, 2017 11:38 AM")
     }
     
     func testRendererRightAlignsText() {
