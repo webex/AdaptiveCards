@@ -52,6 +52,7 @@ Popup {
         Accessible.role: Accessible.Button
         icon.source: CardConstants.calendarLeftArrowIcon
         Accessible.name: 'Previous Month'
+        Accessible.ignored: true
         onReleased: {
             let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() - 1, 1);
             calendarView.setDate(tempDate);
@@ -85,6 +86,7 @@ Popup {
         Accessible.role: Accessible.Button
         icon.source: CardConstants.calendarRightArrowIcon
         Accessible.name: 'Next Month'
+        Accessible.ignored: true
         onReleased: {
             let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() + 1, 1);
             calendarView.setDate(tempDate);
