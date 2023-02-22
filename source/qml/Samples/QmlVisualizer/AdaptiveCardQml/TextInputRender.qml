@@ -44,12 +44,16 @@ Column {
 
     function validate() {
         const regex = new RegExp(_regex);
-        var isValid = (_inputtextTextField.text !== '' && regex.test(_inputtextTextField.text));
-        if (showErrorMessage) {
-            if (isValid)
-                showErrorMessage = false;
+        let isValid = true;
 
-        }
+        if (_isRequired)
+            isValid = (_inputtextTextField.text !== '' && regex.test(_inputtextTextField.text));
+        else if (_inputtextTextField.text !== '')
+            isValid = regex.test(_inputtextTextField.text);
+
+        if (showErrorMessage && isValid)
+            showErrorMessage = false;
+
         return !isValid;
     }
 
