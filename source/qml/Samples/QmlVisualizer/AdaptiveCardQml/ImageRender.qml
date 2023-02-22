@@ -24,6 +24,7 @@ Rectangle {
     property int aspectWidth: image.implicitWidth / image.implicitHeight * height
     property string _actionHoverColor: "transparent"
     property var _toggleVisibilityTarget: null
+    property bool _hasAssociatedInputs: false
 
     visible: _visibleRect
     width: (parent.width > 0 && parent.width < _imageWidth) ? parent.width : _imageWidth
@@ -54,7 +55,7 @@ Rectangle {
                 AdaptiveCardUtils.handleToggleVisibilityAction(_toggleVisibilityTarget);
                 return ;
             } else if (_selectActionId === 'Action.Submit') {
-                AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
+                AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _hasAssociatedInputs);
                 return ;
             } else {
                 _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);

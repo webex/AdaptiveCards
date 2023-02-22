@@ -78,7 +78,7 @@ function selectLink(element, next) {
     return false;
 }
 
-function handleSubmitAction(paramStr, adaptiveCard, is1_3Enabled) {
+function handleSubmitAction(paramStr, adaptiveCard, hasAssociatedInputs = true) {
     var paramJson = {};
     if (paramStr.startsWith('{') && paramStr.endsWith('}')) {
         paramJson = JSON.parse(paramStr);
@@ -94,14 +94,16 @@ function handleSubmitAction(paramStr, adaptiveCard, is1_3Enabled) {
     var firstElement = undefined;
     var isNotSubmittable = false;
 
-    for (var i = 0; i < requiredElements.length; i++) {
-        requiredElements[i].showErrorMessage = requiredElements[i].validate();
-        isNotSubmittable |= requiredElements[i].showErrorMessage;
-        if (firstElement === undefined && requiredElements[i].showErrorMessage && requiredElements[i].visible) {
-            firstElement = requiredElements[i];
+    if (hasAssociatedInputs) {
+        for (var i = 0; i < requiredElements.length; i++) {
+            requiredElements[i].showErrorMessage = requiredElements[i].validate();
+            isNotSubmittable |= requiredElements[i].showErrorMessage;
+            if (firstElement === undefined && requiredElements[i].showErrorMessage && requiredElements[i].visible) {
+                firstElement = requiredElements[i];
+            }
         }
     }
-    if (isNotSubmittable && is1_3Enabled) {
+    if (isNotSubmittable) {
         if (firstElement !== undefined) {
             if (firstElement.isButtonGroup !== undefined) {
                 firstElement.focusFirstButton();

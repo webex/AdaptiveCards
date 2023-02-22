@@ -37,18 +37,23 @@ Column {
     property var adaptiveCard
     property var selectActionId
     property int minWidth: 200
+    property bool hasAssociatedInputs: false
     property bool _isShowCardButton
     property var _inputtextTextField: !_isMultiLineText ? singlineLoaderElement.item.inputtextTextField : multilineLoaderElement.item.inputtextTextField
     property bool showErrorMessage: false
 
     function validate() {
         const regex = new RegExp(_regex);
-        var isValid = (_inputtextTextField.text !== '' && regex.test(_inputtextTextField.text));
-        if (showErrorMessage) {
-            if (isValid)
-                showErrorMessage = false;
+        let isValid = true;
 
-        }
+        if (_isRequired)
+            isValid = (_inputtextTextField.text !== '' && regex.test(_inputtextTextField.text));
+        else if (_inputtextTextField.text !== '')
+            isValid = regex.test(_inputtextTextField.text);
+
+        if (showErrorMessage && isValid)
+            showErrorMessage = false;
+
         return !isValid;
     }
 
@@ -156,6 +161,7 @@ Column {
                 _is1_3Enabled: is1_3Enabled
                 _adaptiveCard: adaptiveCard
                 _selectActionId: selectActionId
+                _hasAssociatedInputs: hasAssociatedInputs
             }
 
         }
