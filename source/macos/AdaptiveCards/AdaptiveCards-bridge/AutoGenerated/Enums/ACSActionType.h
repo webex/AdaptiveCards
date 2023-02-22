@@ -9,12 +9,14 @@
 
 typedef NS_ENUM(NSUInteger, ACSActionType) {
     ACSActionTypeUnsupported,
+    ACSActionTypeExecute,
+    ACSActionTypeOpenUrl,
     ACSActionTypeShowCard,
     ACSActionTypeSubmit,
-    ACSActionTypeOpenUrl,
     ACSActionTypeToggleVisibility,
     ACSActionTypeCustom,
-    ACSActionTypeUnknownAction
+    ACSActionTypeUnknownAction,
+    ACSActionTypeOverflow
 };
 
 #endif

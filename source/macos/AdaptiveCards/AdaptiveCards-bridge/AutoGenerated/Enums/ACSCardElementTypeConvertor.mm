@@ -46,6 +46,12 @@
       return ACSCardElementType::ACSCardElementTypeNumberInput;
     case AdaptiveCards::CardElementType::RichTextBlock:
       return ACSCardElementType::ACSCardElementTypeRichTextBlock;
+    case AdaptiveCards::CardElementType::Table:
+      return ACSCardElementType::ACSCardElementTypeTable;
+    case AdaptiveCards::CardElementType::TableCell:
+      return ACSCardElementType::ACSCardElementTypeTableCell;
+    case AdaptiveCards::CardElementType::TableRow:
+      return ACSCardElementType::ACSCardElementTypeTableRow;
     case AdaptiveCards::CardElementType::TextBlock:
       return ACSCardElementType::ACSCardElementTypeTextBlock;
     case AdaptiveCards::CardElementType::TextInput:
@@ -96,6 +102,12 @@
       return AdaptiveCards::CardElementType::NumberInput;
     case ACSCardElementType::ACSCardElementTypeRichTextBlock:
       return AdaptiveCards::CardElementType::RichTextBlock;
+    case ACSCardElementType::ACSCardElementTypeTable:
+      return AdaptiveCards::CardElementType::Table;
+    case ACSCardElementType::ACSCardElementTypeTableCell:
+      return AdaptiveCards::CardElementType::TableCell;
+    case ACSCardElementType::ACSCardElementTypeTableRow:
+      return AdaptiveCards::CardElementType::TableRow;
     case ACSCardElementType::ACSCardElementTypeTextBlock:
       return AdaptiveCards::CardElementType::TextBlock;
     case ACSCardElementType::ACSCardElementTypeTextInput:
