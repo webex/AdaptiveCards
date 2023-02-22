@@ -44,8 +44,9 @@ ListView {
         height: inputTimeConstants.timePickerElementHeight
         radius: inputTimeConstants.timePickerElementRadius
         color: timePickerListView.currentIndex == index ? inputTimeConstants.timePickerElementColorOnFocus : timePickerListViewmouseArea.containsMouse ? inputTimeConstants.timePickerElementColorOnHover : inputTimeConstants.timePickerElementColorNormal
-        Accessible.name: listType + ' selector ' + timePickerDelegateText
+        Accessible.name: listType + ' selector ' + timePickerDelegateText.text
         Accessible.role: Accessible.StaticText
+        Accessible.ignored: true
 
         MouseArea {
             id: timePickerListViewmouseArea

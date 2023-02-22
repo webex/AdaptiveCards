@@ -176,7 +176,9 @@ void TextInputElement::addActions()
             }
             else if (action->GetElementTypeString() == "Action.Submit")
             {
+                const auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action);
                 mTextinputColElement->Property("paramStr", RendererQml::Formatter() << "String.raw`" << RendererQml::AdaptiveCardQmlRenderer::getActionData(context, action, selectActionId) << "`");
+                mTextinputColElement->Property("hasAssociatedInputs", RendererQml::Formatter() << (submitAction->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto ? "true" : "false"));
             }
             mTextinputColElement->Property("is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false");
             mTextinputColElement->Property("adaptiveCard", "adaptiveCard");
