@@ -11,7 +11,8 @@ typedef NS_ENUM(NSUInteger, ACSTextInputStyle) {
     ACSTextInputStyleText,
     ACSTextInputStyleTel,
     ACSTextInputStyleUrl,
-    ACSTextInputStyleEmail
+    ACSTextInputStyleEmail,
+    ACSTextInputStylePassword
 };
 
 #endif

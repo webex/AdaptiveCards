@@ -22,6 +22,8 @@
       return ACSTextInputStyle::ACSTextInputStyleUrl;
     case AdaptiveCards::TextInputStyle::Email:
       return ACSTextInputStyle::ACSTextInputStyleEmail;
+    case AdaptiveCards::TextInputStyle::Password:
+      return ACSTextInputStyle::ACSTextInputStylePassword;
   }
 }
 
@@ -38,6 +40,8 @@
       return AdaptiveCards::TextInputStyle::Url;
     case ACSTextInputStyle::ACSTextInputStyleEmail:
       return AdaptiveCards::TextInputStyle::Email;
+    case ACSTextInputStyle::ACSTextInputStylePassword:
+      return AdaptiveCards::TextInputStyle::Password;
   }
 }
 

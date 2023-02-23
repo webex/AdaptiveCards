@@ -18,6 +18,8 @@
       return ACSChoiceSetStyle::ACSChoiceSetStyleCompact;
     case AdaptiveCards::ChoiceSetStyle::Expanded:
       return ACSChoiceSetStyle::ACSChoiceSetStyleExpanded;
+    case AdaptiveCards::ChoiceSetStyle::Filtered:
+      return ACSChoiceSetStyle::ACSChoiceSetStyleFiltered;
   }
 }
 
@@ -30,6 +32,8 @@
       return AdaptiveCards::ChoiceSetStyle::Compact;
     case ACSChoiceSetStyle::ACSChoiceSetStyleExpanded:
       return AdaptiveCards::ChoiceSetStyle::Expanded;
+    case ACSChoiceSetStyle::ACSChoiceSetStyleFiltered:
+      return AdaptiveCards::ChoiceSetStyle::Filtered;
   }
 }
 
