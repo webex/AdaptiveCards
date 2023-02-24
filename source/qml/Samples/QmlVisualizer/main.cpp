@@ -11,6 +11,7 @@
 
 int main(int argc, char* argv[])
 {
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
     qmlRegisterType<SampleCardModel>("SampleCard", 1, 0, "SampleCardModel");
@@ -45,6 +46,7 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/TimeInputTextField.qml"), "AdaptiveCards", 1, 0, "TimeInputTextField");
     qmlRegisterType(QUrl("qrc:/TimeInputPopout.qml"), "AdaptiveCards", 1, 0, "TimeInputPopout");
     qmlRegisterType(QUrl("qrc:/TimePickerListView.qml"), "AdaptiveCards", 1, 0, "TimePickerListView");
+    qmlRegisterType(QUrl("qrc:/WCustomFocusItem.qml"), "AdaptiveCards", 1, 0, "WCustomFocusItem");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();

@@ -39,5 +39,6 @@
         <file alias="TimeInputTextField.qml">AdaptiveCardQml/TimeInputTextField.qml</file>
         <file alias="TimePickerListView.qml">AdaptiveCardQml/TimePickerListView.qml</file>
         <file alias="TimeInputRender.qml">AdaptiveCardQml/TimeInputRender.qml</file>
+        <file alias="WCustomFocusItem.qml">AdaptiveCardQml/WCustomFocusItem.qml</file>
     </qresource>
 </RCC>

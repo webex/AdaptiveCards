@@ -4,10 +4,12 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
 Rectangle {
+    id: singleLineTextElementRect
+
     property bool _showErrorMessage
     property alias inputtextTextField: _inputtextTextField
 
-    border.color: _inputtextTextField.outerShowErrorMessage ? CardConstants.inputFieldConstants.borderColorOnError : _inputtextTextField.activeFocus ? CardConstants.inputFieldConstants.borderColorOnFocus : CardConstants.inputFieldConstants.borderColorNormal
+    border.color: _inputtextTextField.outerShowErrorMessage ? CardConstants.inputFieldConstants.borderColorOnError : CardConstants.inputFieldConstants.borderColorNormal
     border.width: CardConstants.inputFieldConstants.borderWidth
     radius: CardConstants.inputFieldConstants.borderRadius
     color: CardConstants.inputFieldConstants.backgroundColorNormal
@@ -66,7 +68,7 @@ Rectangle {
         font.pixelSize: CardConstants.inputFieldConstants.pixelSize
         text: _mEscapedValueString
         placeholderText: activeFocus ? '' : _mEscapedPlaceHolderString
-        width: parent.width
+        width: parent.width - _inputtextTextFieldClearIcon.width - CardConstants.inputFieldConstants.clearIconHorizontalPadding
         onTextChanged: {
             if (_maxLength != 0)
                 remove(_maxLength, length);
@@ -96,7 +98,7 @@ Rectangle {
         verticalPadding: 0
         icon.width: CardConstants.inputFieldConstants.clearIconSize
         icon.height: CardConstants.inputFieldConstants.clearIconSize
-        icon.color: activeFocus ? CardConstants.inputFieldConstants.clearIconColorOnFocus : CardConstants.inputFieldConstants.clearIconColorNormal
+        icon.color: CardConstants.inputFieldConstants.clearIconColorNormal
         anchors.verticalCenter: parent.verticalCenter
         icon.source: CardConstants.clearIconImage
         Keys.onReturnPressed: onClicked()
@@ -110,8 +112,22 @@ Rectangle {
 
         background: Rectangle {
             color: 'transparent'
+            radius: CardConstants.inputFieldConstants.borderRadius
+
+            WCustomFocusItem {
+                isRectangle: true
+                visible: _inputtextTextFieldClearIcon.activeFocus
+                designatedParent: parent
+            }
+
         }
 
+    }
+
+   WCustomFocusItem {
+        isRectangle: true
+        visible: _inputtextTextField.activeFocus
+        designatedParent: parent
     }
 
 }

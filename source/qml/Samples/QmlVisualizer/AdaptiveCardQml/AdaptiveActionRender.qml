@@ -73,6 +73,11 @@ Button {
         return 2 * CardConstants.actionButtonConstants.horizotalPadding - 2;
     }
 
+    WCustomFocusItem {
+        designatedParent: actionButtonBg
+        visible: actionButton.activeFocus
+    }
+
     onReleased: handleMouseAreaClick()
     horizontalPadding: CardConstants.actionButtonConstants.horizotalPadding
     verticalPadding: CardConstants.actionButtonConstants.verticalPadding
@@ -255,16 +260,6 @@ Button {
                 sourceComponent: showcardComponent
             }
 
-        }
-
-        Rectangle {
-            width: actionButton.width
-            height: actionButton.height
-            x: -CardConstants.actionButtonConstants.horizotalPadding
-            y: -CardConstants.actionButtonConstants.verticalPadding
-            color: "transparent"
-            border.color: _buttonColors.focusRectangleColor
-            border.width: actionButton.activeFocus ? 1 : 0
         }
 
     }
