@@ -90,7 +90,29 @@ Rectangle {
             }
             font.pixelSize: CardConstants.inputFieldConstants.pixelSize
             text: _mEscapedValueString
-            placeholderText: activeFocus ? '' : _mEscapedPlaceHolderString
+            //placeholderText: activeFocus ? '' : _mEscapedPlaceHolderString
+
+                property alias customPlaceholderText: innerPlaceholderText.text
+                property alias customPlaceholderTextColor: innerPlaceholderText.color
+
+                customPlaceholderText: activeFocus || _inputtextTextField.text ? '' : _mEscapedPlaceHolderString
+                //customPlaceholderTextColor: "#aaa" //this property alias doesn't seem to work, can swap it out for a normal property maybe
+
+                Text{
+                    id: innerPlaceholderText
+                    visible: !_inputtextTextField.text
+                    font: _inputtextTextField.font
+                    anchors.leftMargin: _inputtextTextField.leftPadding
+                    anchors.rightMargin: _inputtextTextField.rightPadding
+                    anchors.topMargin: _inputtextTextField.topPadding
+                    anchors.bottomMargin: _inputtextTextField.bottomPadding
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignTop
+                    wrapMode: _inputtextTextField.wrapMode
+                    color: "#aaa"
+                }
+
 
             background: Rectangle {
                 id: _multilinetextidTextFieldBackground
