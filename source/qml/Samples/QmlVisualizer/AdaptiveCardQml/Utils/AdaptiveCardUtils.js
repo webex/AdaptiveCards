@@ -85,7 +85,7 @@ function handleSubmitAction(paramStr, adaptiveCard, hasAssociatedInputs = true) 
     }
     else {
         if (paramStr && paramStr != "null") {
-            paramJson["data"] = paramStr;
+            paramJson["data"] = JSON.parse( paramStr );
         }
     }
 
