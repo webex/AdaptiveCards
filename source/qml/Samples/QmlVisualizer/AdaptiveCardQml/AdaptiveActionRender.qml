@@ -74,8 +74,6 @@ Button {
     }
 
     WCustomFocusItem {
-        designatedParent: actionButtonBg
-        visible: actionButton.activeFocus
     }
 
     onReleased: handleMouseAreaClick()
