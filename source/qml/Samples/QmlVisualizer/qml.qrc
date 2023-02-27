@@ -40,5 +40,7 @@
         <file alias="TimePickerListView.qml">AdaptiveCardQml/TimePickerListView.qml</file>
         <file alias="TimeInputRender.qml">AdaptiveCardQml/TimeInputRender.qml</file>
         <file alias="WCustomFocusItem.qml">AdaptiveCardQml/WCustomFocusItem.qml</file>
+        <file alias="InputFieldClearIcon.qml">AdaptiveCardQml/InputFieldClearIcon.qml</file>
+        <file alias="DrawUtils.js">AdaptiveCardQml/Utils/DrawUtils.js</file>
     </qresource>
 </RCC>

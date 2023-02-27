@@ -88,40 +88,17 @@ Rectangle {
 
     }
 
-    Button {
+    InputFieldClearIcon {
         id: _inputtextTextFieldClearIcon
 
-        width: CardConstants.inputFieldConstants.clearIconSize
-        anchors.right: parent.right
-        anchors.margins: CardConstants.inputFieldConstants.clearIconHorizontalPadding
-        horizontalPadding: 0
-        verticalPadding: 0
-        icon.width: CardConstants.inputFieldConstants.clearIconSize
-        icon.height: CardConstants.inputFieldConstants.clearIconSize
-        icon.color: CardConstants.inputFieldConstants.clearIconColorNormal
-        anchors.verticalCenter: parent.verticalCenter
-        icon.source: CardConstants.clearIconImage
         Keys.onReturnPressed: onClicked()
         visible: _inputtextTextField.text.length != 0
         onClicked: {
             nextItemInFocusChain().forceActiveFocus();
             _inputtextTextField.clear();
         }
-        Accessible.name: "String.raw`" + (_mEscapedPlaceHolderString == "" ? "Text" : _mEscapedPlaceHolderString) + " clear`"
+        Accessible.name: (_mEscapedPlaceHolderString == "" ? "Text" : _mEscapedPlaceHolderString) + " clear"
         Accessible.role: Accessible.Button
-
-        background: Rectangle {
-            color: 'transparent'
-            radius: CardConstants.inputFieldConstants.borderRadius
-
-            WCustomFocusItem {
-                isRectangle: true
-                visible: _inputtextTextFieldClearIcon.activeFocus
-                designatedParent: parent
-            }
-
-        }
-
     }
 
    WCustomFocusItem {

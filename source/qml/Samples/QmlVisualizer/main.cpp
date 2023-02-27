@@ -47,6 +47,7 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/TimeInputPopout.qml"), "AdaptiveCards", 1, 0, "TimeInputPopout");
     qmlRegisterType(QUrl("qrc:/TimePickerListView.qml"), "AdaptiveCards", 1, 0, "TimePickerListView");
     qmlRegisterType(QUrl("qrc:/WCustomFocusItem.qml"), "AdaptiveCards", 1, 0, "WCustomFocusItem");
+    qmlRegisterType(QUrl("qrc:/InputFieldClearIcon.qml"), "AdaptiveCards", 1, 0, "InputFieldClearIcon");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();

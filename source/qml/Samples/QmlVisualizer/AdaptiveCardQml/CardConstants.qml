@@ -13,7 +13,9 @@ QtObject {
         readonly property int averageSpacing: 4
         readonly property color cardBorderColor: AdaptiveCardUtils.getColorSet("card-disabled-border", "normal", isDarkTheme)
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
-        readonly property color textHighlightBackground: AdaptiveCardUtils.getColorSet("text-highlight", "normal", isDarkTheme)
+        readonly property color focusOutlineMiddleColor: AdaptiveCardUtils.getColorSet("textinput-border", "focused", isDarkTheme)
+        readonly property color focusOutlineOuterColor: Qt.rgba(focusOutlineMiddleColor.r, focusOutlineMiddleColor.g, focusOutlineMiddleColor.b, 0.3)
+        readonly property color focusOutlineInnerColor: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
     }
 
     readonly property QtObject
