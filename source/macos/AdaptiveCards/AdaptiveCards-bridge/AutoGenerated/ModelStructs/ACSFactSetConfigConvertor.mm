@@ -5,7 +5,7 @@
 #import "HostConfig.h"
 
 #import "ACSFactSetConfigConvertor.h"
-#import "ACSTextConfigConvertor.h"
+#import "ACSFactSetTextConfigConvertor.h"
 #import "SwiftInterfaceHeader.h"
 // #import "ConversionUtils.h"
 
@@ -15,8 +15,8 @@
 { 
      @autoreleasepool { 
  
-        ACSFactSetConfig*  factSetConfigCocoa = [[ ACSFactSetConfig  alloc] initWithTitle: [ACSTextConfigConvertor convertCpp:factSetConfigCpp.title] 
-        value: [ACSTextConfigConvertor convertCpp:factSetConfigCpp.value]
+        ACSFactSetConfig*  factSetConfigCocoa = [[ ACSFactSetConfig  alloc] initWithTitle: [ACSFactSetTextConfigConvertor convertCpp:factSetConfigCpp.title] 
+        value: [ACSFactSetTextConfigConvertor convertCpp:factSetConfigCpp.value]
         spacing: [NSNumber numberWithUnsignedInt:factSetConfigCpp.spacing]];
         return  factSetConfigCocoa;
    }
@@ -24,8 +24,8 @@
 
 +(AdaptiveCards::FactSetConfig) convertObj:(ACSFactSetConfig *)factSetConfigObjc {
   AdaptiveCards::FactSetConfig factSetConfigCpp;
-  factSetConfigCpp.title = [ACSTextConfigConvertor convertObj:factSetConfigObjc.title];
-  factSetConfigCpp.value = [ACSTextConfigConvertor convertObj:factSetConfigObjc.value];
+  factSetConfigCpp.title = [ACSFactSetTextConfigConvertor convertObj:factSetConfigObjc.title];
+  factSetConfigCpp.value = [ACSFactSetTextConfigConvertor convertObj:factSetConfigObjc.value];
   factSetConfigCpp.spacing = [factSetConfigObjc.spacing unsignedIntValue];
   return  factSetConfigCpp;
 }
