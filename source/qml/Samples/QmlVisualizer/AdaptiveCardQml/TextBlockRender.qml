@@ -121,11 +121,8 @@ TextEdit {
         }
     }
 
-    Rectangle{
-        anchors.fill: parent
-        color: 'transparent'
-        border.width : parent.activeFocus ? 1 : 0
-        border.color : parent.activeFocus ? 'black' : 'transparent'
+    WCustomFocusItem {
+        isRectangle: true
     }
 
 }

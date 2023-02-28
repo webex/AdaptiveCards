@@ -4,10 +4,12 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
 Rectangle {
+    id: singleLineTextElementRect
+
     property bool _showErrorMessage
     property alias inputtextTextField: _inputtextTextField
 
-    border.color: _inputtextTextField.outerShowErrorMessage ? CardConstants.inputFieldConstants.borderColorOnError : _inputtextTextField.activeFocus ? CardConstants.inputFieldConstants.borderColorOnFocus : CardConstants.inputFieldConstants.borderColorNormal
+    border.color: _inputtextTextField.outerShowErrorMessage ? CardConstants.inputFieldConstants.borderColorOnError : CardConstants.inputFieldConstants.borderColorNormal
     border.width: CardConstants.inputFieldConstants.borderWidth
     radius: CardConstants.inputFieldConstants.borderRadius
     color: CardConstants.inputFieldConstants.backgroundColorNormal
@@ -66,7 +68,7 @@ Rectangle {
         font.pixelSize: CardConstants.inputFieldConstants.pixelSize
         text: _mEscapedValueString
         placeholderText: activeFocus ? '' : _mEscapedPlaceHolderString
-        width: parent.width
+        width: parent.width - _inputtextTextFieldClearIcon.width - CardConstants.inputFieldConstants.clearIconHorizontalPadding
         onTextChanged: {
             if (_maxLength != 0)
                 remove(_maxLength, length);
@@ -86,32 +88,23 @@ Rectangle {
 
     }
 
-    Button {
+    InputFieldClearIcon {
         id: _inputtextTextFieldClearIcon
 
-        width: CardConstants.inputFieldConstants.clearIconSize
-        anchors.right: parent.right
-        anchors.margins: CardConstants.inputFieldConstants.clearIconHorizontalPadding
-        horizontalPadding: 0
-        verticalPadding: 0
-        icon.width: CardConstants.inputFieldConstants.clearIconSize
-        icon.height: CardConstants.inputFieldConstants.clearIconSize
-        icon.color: activeFocus ? CardConstants.inputFieldConstants.clearIconColorOnFocus : CardConstants.inputFieldConstants.clearIconColorNormal
-        anchors.verticalCenter: parent.verticalCenter
-        icon.source: CardConstants.clearIconImage
         Keys.onReturnPressed: onClicked()
         visible: _inputtextTextField.text.length != 0
         onClicked: {
             nextItemInFocusChain().forceActiveFocus();
             _inputtextTextField.clear();
         }
-        Accessible.name: "String.raw`" + (_mEscapedPlaceHolderString == "" ? "Text" : _mEscapedPlaceHolderString) + " clear`"
+        Accessible.name: (_mEscapedPlaceHolderString == "" ? "Text" : _mEscapedPlaceHolderString) + " clear"
         Accessible.role: Accessible.Button
+    }
 
-        background: Rectangle {
-            color: 'transparent'
-        }
-
+   WCustomFocusItem {
+        isRectangle: true
+        visible: _inputtextTextField.activeFocus
+        designatedParent: parent
     }
 
 }
