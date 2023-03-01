@@ -36,6 +36,7 @@ Button {
     property var _buttonColors: getButtonConfig()
     property bool isButtonDisabled: false
     property bool _hasAssociatedInputs: false
+    property var submitData;
 
     signal handleShowCardToggleVisibility(var showcardLoaderElement, var currButtonElemID)
 
@@ -44,7 +45,7 @@ Button {
             AdaptiveCardUtils.handleToggleVisibilityAction((_toggleVisibilityTarget));
             return ;
         } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
-            AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _hasAssociatedInputs);
+            actionButton.submitData = AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _hasAssociatedInputs);
             return ;
         } else if (_isActionOpenUrl) {
             _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
