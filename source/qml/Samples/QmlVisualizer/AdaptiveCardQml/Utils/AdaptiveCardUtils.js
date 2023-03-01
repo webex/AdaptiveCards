@@ -90,7 +90,7 @@ function handleSubmitAction(paramStr, adaptiveCard, hasAssociatedInputs = true) 
     }
 
     var requiredElements = adaptiveCard.requiredElements;
-    var submitElements = adaptiveCard.submitElements;
+    var submitElements = hasAssociatedInputs ? adaptiveCard.submitElements : [];
     var firstElement = undefined;
     var isNotSubmittable = false;
 
@@ -117,6 +117,7 @@ function handleSubmitAction(paramStr, adaptiveCard, hasAssociatedInputs = true) 
         var elements = Object.assign(paramJson, submitElements)
         var paramslist = JSON.stringify(elements);
         adaptiveCard.buttonClicked("Submit action", "Action.Submit", paramslist);
+        return paramslist;
     }
     return;
 }
