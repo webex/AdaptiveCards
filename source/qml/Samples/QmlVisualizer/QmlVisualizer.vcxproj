@@ -134,6 +134,7 @@
     <None Include="AdaptiveCardQml\DateInputRender.qml" />
     <None Include="AdaptiveCardQml\DateInputTextField.qml" />
     <None Include="AdaptiveCardQml\ImageRender.qml" />
+    <None Include="AdaptiveCardQml\InputFieldClearIcon.qml" />
     <None Include="AdaptiveCardQml\MultiLineTextInputRender.qml" />
     <None Include="AdaptiveCardQml\InputErrorMessage.qml" />
     <None Include="AdaptiveCardQml\InputLabel.qml" />

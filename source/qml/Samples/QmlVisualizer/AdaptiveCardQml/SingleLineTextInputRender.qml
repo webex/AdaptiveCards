@@ -97,8 +97,6 @@ Rectangle {
             nextItemInFocusChain().forceActiveFocus();
             _inputtextTextField.clear();
         }
-        Accessible.name: (_mEscapedPlaceHolderString == "" ? "Text" : _mEscapedPlaceHolderString) + " clear"
-        Accessible.role: Accessible.Button
     }
 
    WCustomFocusItem {

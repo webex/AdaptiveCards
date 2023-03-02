@@ -18,7 +18,6 @@ Rectangle {
     property bool _anchorRight: false
     property int _imageWidth
     property string _paramStr: ""
-    property bool _is1_3Enabled: false
     property string _selectActionId: ""
     property bool _hoverEnabled: false
     property int aspectWidth: image.implicitWidth / image.implicitHeight * height

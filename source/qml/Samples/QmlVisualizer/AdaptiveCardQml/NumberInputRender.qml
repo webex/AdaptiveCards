@@ -45,6 +45,7 @@ Column {
             accessibleName += (_numberInputTextField.text);
         else
             accessibleName += _mEscapedPlaceholderString;
+        accessibleName += qsTr(", Type the number");
         return accessibleName;
     }
 
@@ -84,11 +85,16 @@ Column {
             }
 
             border.width: inputFieldConstants.borderWidth
-            border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : _numberInputTextField.activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+            border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
             radius: inputFieldConstants.borderRadius
             height: parent.height
             color: _numberInputSpinBox.pressed ? inputFieldConstants.backgroundColorOnPressed : _numberInputSpinBox.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal
             width: parent.width - _numberInputArrowRectangle.width
+
+             WCustomFocusItem {
+                isRectangle: true
+                visible: _numberInputSpinBox.focus
+            }
 
             SpinBox {
                 id: _numberInputSpinBox
@@ -106,7 +112,7 @@ Column {
                     _numberInputTextField.text = _numberInputSpinBox.value;
                 }
 
-                width: parent.width
+                width: parent.width - _numberInputClearIcon.width - CardConstants.inputFieldConstants.clearIconHorizontalPadding
                 padding: 0
                 editable: true
                 stepSize: 1
@@ -196,19 +202,9 @@ Column {
 
             }
 
-            Button {
+            InputFieldClearIcon {
                 id: _numberInputClearIcon
 
-                width: inputFieldConstants.clearIconSize
-                anchors.right: parent.right
-                anchors.margins: inputFieldConstants.clearIconHorizontalPadding
-                horizontalPadding: 0
-                verticalPadding: 0
-                icon.width: inputFieldConstants.clearIconSize
-                icon.height: inputFieldConstants.clearIconSize
-                icon.color: activeFocus ? inputFieldConstants.clearIconColorOnFocus : inputFieldConstants.clearIconColorNormal
-                anchors.verticalCenter: parent.verticalCenter
-                icon.source: CardConstants.clearIconImage
                 Keys.onReturnPressed: onClicked()
                 visible: _numberInputTextField.length !== 0
                 onClicked: {
@@ -216,13 +212,6 @@ Column {
                     _numberInputSpinBox.value = _numberInputSpinBox.from;
                     _numberInputTextField.clear();
                 }
-                Accessible.name: _mEscapedPlaceholderString + ", Clear "
-                Accessible.role: Accessible.Button
-
-                background: Rectangle {
-                    color: 'transparent'
-                }
-
             }
 
         }
@@ -230,7 +219,7 @@ Column {
         Rectangle {
             id: _numberInputArrowRectangle
 
-            property string accessiblityPrefix: ''
+            property string accessibilityPrefix: ''
 
             width: numberInputConstants.upDownButtonWidth
             radius: inputFieldConstants.borderRadius
@@ -241,16 +230,16 @@ Column {
             Keys.onPressed: {
                 if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
                     _numberInputSpinBox.changeValue(event.key);
-                    accessiblityPrefix = '';
+                    accessibilityPrefix = '';
                     event.accepted = true;
                 }
             }
             onActiveFocusChanged: {
                 if (activeFocus)
-                    accessiblityPrefix = _mEscapedPlaceholderString + ", stepper. " + (_numberInputTextField.text ? "Current number is " : "");
+                    accessibilityPrefix = qsTr("Use up arrow to increase the value and down arrow to decrease the value") + (_numberInputTextField.text ? ", Current number is " : "");
 
             }
-            Accessible.name: accessiblityPrefix + _numberInputTextField.displayText
+            Accessible.name: accessibilityPrefix + _numberInputTextField.displayText
             Accessible.role: Accessible.NoRole
 
             Button {
@@ -295,6 +284,10 @@ Column {
                     _numberInputSpinBox.changeValue(Qt.Key_Down);
                     _numberInputArrowRectangle.forceActiveFocus();
                 }
+            }
+
+            WCustomFocusItem {
+                isRectangle: true
             }
 
         }
