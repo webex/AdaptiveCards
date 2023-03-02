@@ -191,18 +191,16 @@ public struct InputFieldConfig {
     }
     
     public struct ErrorStateConfig {
-        public static let `default` = ErrorStateConfig(font: .systemFont(ofSize: 10), textColor: .systemRed, borderColor: .systemRed, backgroundColor: NSColor.systemRed.withAlphaComponent(0.1))
+        public static let `default` = ErrorStateConfig(font: .systemFont(ofSize: 10), textColor: .systemRed, borderColor: .systemRed)
 
         public let font: NSFont
         public let textColor: NSColor
         public let borderColor: NSColor
-        public let backgroundColor: NSColor
         
-        public init(font: NSFont, textColor: NSColor, borderColor: NSColor, backgroundColor: NSColor) {
+        public init(font: NSFont, textColor: NSColor, borderColor: NSColor) {
             self.font = font
             self.textColor = textColor
             self.borderColor = borderColor
-            self.backgroundColor = backgroundColor
         }
     }
 }

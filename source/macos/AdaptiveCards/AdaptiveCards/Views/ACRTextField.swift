@@ -255,7 +255,6 @@ class ACRTextField: NSTextField {
         let isActive = hasFocus && isSelectable
         if shouldShowError {
             layer?.borderColor = inputConfig.errorStateConfig.borderColor.cgColor
-            layer?.backgroundColor = inputConfig.errorStateConfig.backgroundColor.cgColor
         } else {
             layer?.borderColor = isActive ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
             layer?.backgroundColor = isMouseInView ? inputConfig.highlightedColor.cgColor : inputConfig.backgroundColor.cgColor

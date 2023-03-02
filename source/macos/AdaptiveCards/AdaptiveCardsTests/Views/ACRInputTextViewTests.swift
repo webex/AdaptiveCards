@@ -79,7 +79,6 @@ class ACRInputTextViewTests: XCTestCase {
     func testSetErrorColors() {
         textInputView.showError()
         XCTAssertEqual(textInputView.layer?.borderColor, config.inputFieldConfig.errorStateConfig.borderColor.cgColor)
-        XCTAssertEqual(textInputView.layer?.backgroundColor, config.inputFieldConfig.errorStateConfig.backgroundColor.cgColor)
     }
     
     func testSetAccessibilityFocusFunction() {

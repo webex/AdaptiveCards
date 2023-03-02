@@ -107,7 +107,6 @@ class ACRTextFieldTests: XCTestCase {
     func testSetErrorColors() {
         textField.showError()
         XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.errorStateConfig.borderColor.cgColor)
-        XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.errorStateConfig.backgroundColor.cgColor)
     }
     
     func testBorderAndbgColorSet() {
