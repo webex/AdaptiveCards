@@ -91,7 +91,7 @@ Column {
 
              WCustomFocusItem {
                 isRectangle: true
-                visible: _numberInputSpinBox.focus
+                visible: _numberInputTextField.activeFocus
             }
 
             SpinBox {
