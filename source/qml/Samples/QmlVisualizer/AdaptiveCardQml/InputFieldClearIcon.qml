@@ -8,14 +8,11 @@ Button {
     id: inputFieldClearIcon
 
     width: CardConstants.inputFieldConstants.clearIconSize
-    anchors.right: parent.right
-    anchors.margins: CardConstants.inputFieldConstants.clearIconHorizontalPadding
     horizontalPadding: 0
     verticalPadding: 0
     icon.width: CardConstants.inputFieldConstants.clearIconSize
     icon.height: CardConstants.inputFieldConstants.clearIconSize
     icon.color: CardConstants.inputFieldConstants.clearIconColorNormal
-    anchors.verticalCenter: parent.verticalCenter
     icon.source: CardConstants.clearIconImage
     Accessible.name: qsTr("Clear Input")
     Accessible.role: Accessible.Button

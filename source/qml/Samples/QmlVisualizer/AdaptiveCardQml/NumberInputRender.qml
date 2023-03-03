@@ -205,6 +205,9 @@ Column {
 
                 Keys.onReturnPressed: onClicked()
                 visible: _numberInputTextField.length !== 0
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.margins: CardConstants.inputFieldConstants.clearIconHorizontalPadding
                 onClicked: {
                     nextItemInFocusChain().forceActiveFocus();
                     _numberInputSpinBox.value = _numberInputSpinBox.from;
