@@ -237,7 +237,7 @@ namespace RendererQml
         uiCard->Property("property var requiredElements", "[]");
         auto requiredElementsList = context->getRequiredInputElementsIdList();
 
-        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && !requiredElementsList.empty())
+        if (!requiredElementsList.empty())
         {
             std::string requiredElements = "[";
             for (const auto& element : requiredElementsList)
@@ -634,7 +634,6 @@ namespace RendererQml
         uiTextBlock->Property("_horizontalAlignment", horizontalAlignment, true);
         uiTextBlock->Property("_visible", richTextBlock->GetIsVisible() ? "true" : "false");
         uiTextBlock->Property("_selectionColor ", Formatter() << context->GetHexColor(cardConfig.textHighlightBackground));
-        uiTextBlock->Property("_is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() ? "true" : "false");
 
         std::string textrun_all = "";
         std::ostringstream toggleVisibilityElements;
@@ -712,7 +711,7 @@ namespace RendererQml
 			uiTextRun.append(Formatter() << "font-style:" << std::string("italic") << ";");
 		}
 
-        if (textRun->GetUnderline() && context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+        if (textRun->GetUnderline())
         {
             uiTextRun.append(Formatter() << "text-decoration:" << std::string("underline") << ";");
         }
@@ -1548,7 +1547,6 @@ namespace RendererQml
                 buttonElement->Property("_hasAssociatedInputs", Formatter() << (submitAction->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto ? "true" : "false"));
                 buttonElement->Property("_paramStr", Formatter() << "String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`");
             }
-            buttonElement->Property("_is1_3Enabled", context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() == true ? "true" : "false");
             buttonElement->Property("_adaptiveCard", "adaptiveCard");
             buttonElement->Property("_selectActionId", Formatter() << "String.raw`" << selectActionId << "`");
 
@@ -1691,49 +1689,39 @@ namespace RendererQml
         }
 
 
-        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled())
+        if (action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
         {
-            if (action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
+            std::string requiredElements = "var requiredElements = [";
+            std::string lastElement = context->getRequiredInputElementsIdList().size() > 0 ? *(context->getRequiredInputElementsIdList().rbegin()) : "";
+
+            for (const auto& element : context->getRequiredInputElementsIdList())
             {
-                std::string requiredElements = "var requiredElements = [";
-                std::string lastElement = context->getRequiredInputElementsIdList().size() > 0 ? *(context->getRequiredInputElementsIdList().rbegin()) : "";
-
-                for (const auto& element : context->getRequiredInputElementsIdList())
+                requiredElements += element;
+                if (element != lastElement)
                 {
-                    requiredElements += element;
-                    if (element != lastElement)
-                    {
-                        requiredElements += ",";
-                    }
-                }
-
-                requiredElements += "];";
-
-                function << requiredElements << "var firstElement = undefined; var isNotSubmittable = false;";
-                function << "for(var i=0;i<requiredElements.length;i++){"
-                    "requiredElements[i].showErrorMessage = requiredElements[i].validate();"
-                    "isNotSubmittable |= requiredElements[i].showErrorMessage;"
-                    "if (firstElement === undefined && requiredElements[i].showErrorMessage  && requiredElements[i].visible){"
-                    "firstElement = requiredElements[i];"
-                    "}}";
-
-                function << "if(isNotSubmittable){"
-                    "if(firstElement !== undefined){"
-                    "if(firstElement.isButtonGroup !== undefined){"
-                        "firstElement.focusFirstButton();"
-                    "}else {"
-                        "firstElement.forceActiveFocus();"
-                    "}}"
-                    "}else{";
-
-                for (const auto& element : context->getInputElementList())
-                {
-                    function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
+                    requiredElements += ",";
                 }
             }
-        }
-        else
-        {
+
+            requiredElements += "];";
+
+            function << requiredElements << "var firstElement = undefined; var isNotSubmittable = false;";
+            function << "for(var i=0;i<requiredElements.length;i++){"
+                "requiredElements[i].showErrorMessage = requiredElements[i].validate();"
+                "isNotSubmittable |= requiredElements[i].showErrorMessage;"
+                "if (firstElement === undefined && requiredElements[i].showErrorMessage  && requiredElements[i].visible){"
+                "firstElement = requiredElements[i];"
+                "}}";
+
+            function << "if(isNotSubmittable){"
+                "if(firstElement !== undefined){"
+                "if(firstElement.isButtonGroup !== undefined){"
+                    "firstElement.focusFirstButton();"
+                "}else {"
+                    "firstElement.forceActiveFocus();"
+                "}}"
+                "}else{";
+
             for (const auto& element : context->getInputElementList())
             {
                 function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
@@ -1744,7 +1732,7 @@ namespace RendererQml
         function << context->getCardRootId() << ".buttonClicked(String.raw`" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "`, \"" << action->GetElementTypeString() << "\", paramslist);\n";
         function << (elementType == "Button" ? "isButtonDisabled = true;}" : "");
 
-        if (context->GetRenderConfig()->isAdaptiveCards1_3SchemaEnabled() && action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
+        if (action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
         {
             function << "}";
         }
