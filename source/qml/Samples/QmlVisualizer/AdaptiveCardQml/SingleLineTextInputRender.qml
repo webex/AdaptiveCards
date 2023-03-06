@@ -93,12 +93,13 @@ Rectangle {
 
         Keys.onReturnPressed: onClicked()
         visible: _inputtextTextField.text.length != 0
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.margins: CardConstants.inputFieldConstants.clearIconHorizontalPadding
         onClicked: {
             nextItemInFocusChain().forceActiveFocus();
             _inputtextTextField.clear();
         }
-        Accessible.name: (_mEscapedPlaceHolderString == "" ? "Text" : _mEscapedPlaceHolderString) + " clear"
-        Accessible.role: Accessible.Button
     }
 
    WCustomFocusItem {

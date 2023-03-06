@@ -67,6 +67,8 @@ Column {
             accessibleName += (_inputtextTextField.text + '. ');
         else
             accessibleName += _mEscapedPlaceHolderString;
+
+        accessibleName += qsTr(", Type the text");
         return accessibleName;
     }
 
@@ -158,7 +160,6 @@ Column {
                 _imgSource: imgSource
                 _toggleVisibilityTarget: toggleVisibilityTarget
                 _paramStr: paramStr
-                _is1_3Enabled: is1_3Enabled
                 _adaptiveCard: adaptiveCard
                 _selectActionId: selectActionId
                 _hasAssociatedInputs: hasAssociatedInputs

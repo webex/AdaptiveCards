@@ -17,7 +17,6 @@ Button {
     property string _escapedTitle
     property bool _isShowCardButton
     property var _adaptiveCard
-    property bool _is1_3Enabled
     property var _paramStr
     property var _toggleVisibilityTarget: null
     property bool _isActionSubmit: false
