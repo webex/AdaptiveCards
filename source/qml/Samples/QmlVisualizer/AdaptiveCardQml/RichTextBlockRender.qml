@@ -13,7 +13,6 @@ TextEdit {
     property string _link: ""
     property string _selectionColor: ""
     property string _paramStr: ""
-    property bool _is1_3Enabled: false
     property var _toggleVisibilityTarget: null
 
     function getSelectedRichText() {

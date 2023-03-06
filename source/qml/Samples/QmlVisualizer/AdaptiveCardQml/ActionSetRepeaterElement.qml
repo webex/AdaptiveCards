@@ -36,7 +36,6 @@ Repeater {
             _imgSource: actionModel.imgSource
             _toggleVisibilityTarget: actionModel.isActionToggleVisibility ? actionModel.toggleVisibilityTarget : null
             _paramStr: actionModel.isActionSubmit ? actionModel.paramStr : ""
-            _is1_3Enabled: actionModel.is1_3Enabled
             _adaptiveCard: defaultRepeaterId._adaptivecard
             _selectActionId: actionModel.selectActionId
             width: parentElement.width > implicitWidth ? implicitWidth : parentElement.width

@@ -12,6 +12,7 @@ Column {
     property string _mEscapedErrorString
     property color _color
     property bool isChecked: customCheckBox.checked
+    property var value: customCheckBox.value
     property bool showErrorMessage: false
     property int minWidth: customCheckBox.implicitWidth
     property alias checkBox: customCheckBox
