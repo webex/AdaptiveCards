@@ -88,45 +88,15 @@ Column {
         height: inputFieldConstants.height
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
-        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : dateInputTextField.activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
 
-        RowLayout {
-            id: dateInputRow
-
-            width: parent.width
-            height: parent.height
-            spacing: 0
-
-            Button {
-                id: dateInputIcon
-
-                width: inputDateConstants.dateIconButtonSize
-                height: inputDateConstants.dateIconButtonSize
-                horizontalPadding: 0
-                verticalPadding: 0
-                icon.width: inputDateConstants.dateIconSize
-                icon.height: inputDateConstants.dateIconSize
-                icon.color: showErrorMessage ? inputDateConstants.dateIconColorOnError : dateInputTextField.activeFocus ? inputDateConstants.dateIconColorOnFocus : inputDateConstants.dateIconColorNormal
-                icon.source: CardConstants.calendarIcon
-                Keys.onReturnPressed: onClicked()
-                Layout.leftMargin: inputDateConstants.dateIconHorizontalPadding
-                Layout.alignment: Qt.AlignVCenter
-                focusPolicy: Qt.NoFocus
-                onClicked: {
-                    dateInputPopout.open();
-                }
-
-                background: Rectangle {
-                    color: 'transparent'
-                }
-
-            }
 
             ComboBox {
                 id: dateInputCombobox
 
-                Layout.fillWidth: true
+                anchors.left: dateInputIcon.right
+                anchors.right: dateInputClearIcon.left
                 focusPolicy: Qt.NoFocus
                 onActiveFocusChanged: colorChange(false)
                 Accessible.ignored: true
@@ -155,32 +125,56 @@ Column {
             }
 
             Button {
-                id: dateInputClearIcon
+                id: dateInputIcon
 
-                width: inputFieldConstants.clearIconSize
+                width: inputDateConstants.dateIconButtonSize
+                height: inputDateConstants.dateIconButtonSize
                 horizontalPadding: 0
                 verticalPadding: 0
-                icon.width: inputFieldConstants.clearIconSize
-                icon.height: inputFieldConstants.clearIconSize
-                icon.color: activeFocus ? inputFieldConstants.clearIconColorOnFocus : inputFieldConstants.clearIconColorNormal
-                icon.source: CardConstants.clearIconImage
+                icon.width: inputDateConstants.dateIconSize
+                icon.height: inputDateConstants.dateIconSize
+                icon.color: showErrorMessage ? inputDateConstants.dateIconColorOnError : inputDateConstants.dateIconColorNormal
+                icon.source: CardConstants.calendarIcon
                 Keys.onReturnPressed: onClicked()
-                Layout.rightMargin: inputFieldConstants.clearIconHorizontalPadding
+                anchors.left: parent.left
+                anchors.leftMargin: inputDateConstants.dateIconHorizontalPadding
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    dateInputPopout.open();
+                }
+
+                background: Rectangle {
+                    color: 'transparent'
+                    radius: CardConstants.inputFieldConstants.borderRadius
+
+                    WCustomFocusItem {
+                        isRectangle: true
+                        visible: dateInputIcon.activeFocus
+                        designatedParent: parent
+                    }
+                }
+
+            }
+
+            InputFieldClearIcon {
+                id: dateInputClearIcon
+
+                anchors.right: parent.right
+                anchors.rightMargin: inputFieldConstants.clearIconHorizontalPadding
+                anchors.verticalCenter: parent.verticalCenter
+                Keys.onReturnPressed: onClicked()
                 visible: (!dateInputTextField.focus && dateInputTextField.text !== '') || (dateInputTextField.focus && dateInputTextField.text !== '\/\/')
                 onClicked: {
                     nextItemInFocusChain().forceActiveFocus();
                     dateInputTextField.clear();
                     _currentDate = null;
                 }
-                Accessible.name: 'Date Picker clear'
-                Accessible.role: Accessible.Button
-
-                background: Rectangle {
-                    color: 'transparent'
-                }
-
             }
 
+
+        WCustomFocusItem {
+            isRectangle: true
+            visible: dateInputTextField.activeFocus
         }
 
     }
