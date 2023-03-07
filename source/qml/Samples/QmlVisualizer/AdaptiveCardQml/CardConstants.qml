@@ -99,8 +99,8 @@ QtObject {
         readonly property int dateElementSize: 32
         readonly property int dateIconHorizontalPadding: 12
         readonly property int calendarBorderRadius: 12
-        readonly property int calendarWidth: 248
-        readonly property int calendarHeight: 293
+        readonly property int calendarWidth: 280
+        readonly property int calendarHeight: 317
         readonly property int calendarHeaderTextSize: 16
         readonly property int dateGridTopMargin: 14
         readonly property int calendarDayTextSize: 16
@@ -110,6 +110,7 @@ QtObject {
         readonly property int dateIconSize: 16
         readonly property int dateInputMinWidth: 300
         readonly property int monthButtonMargins: 6
+        readonly property int dateDelegateSpacing: 4
         readonly property color dateIconColorNormal: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color dateIconColorOnFocus: AdaptiveCardUtils.getColorSet("textinput-border", "focused", isDarkTheme)
         readonly property color dateIconColorOnError: AdaptiveCardUtils.getColorSet("textinput-error-border", "focused", isDarkTheme)

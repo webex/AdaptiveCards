@@ -216,6 +216,8 @@ Popup {
                     clip: true
                     columns: 7
                     rows: 7
+                    padding: inputDateConstants.dateDelegateSpacing
+                    spacing: inputDateConstants.dateDelegateSpacing
 
                     Repeater {
                         model: monthView.columns * monthView.rows
