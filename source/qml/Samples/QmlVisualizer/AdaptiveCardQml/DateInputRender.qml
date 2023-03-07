@@ -55,11 +55,10 @@ Column {
         return '';
     }
 
-    Component.onCompleted : {
+    Component.onCompleted: {
         _minDate.setDate(_minDate.getDate() - 1);
         _maxDate.setDate(_maxDate.getDate() + 1);
     }
-
     onActiveFocusChanged: {
         if (activeFocus)
             dateInputTextField.forceActiveFocus();
@@ -88,89 +87,90 @@ Column {
         height: inputFieldConstants.height
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
-        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
+        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : dateInputTextField.activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
 
+        ComboBox {
+            id: dateInputCombobox
 
-            ComboBox {
-                id: dateInputCombobox
+            anchors.left: dateInputIcon.right
+            anchors.right: dateInputClearIcon.left
+            focusPolicy: Qt.NoFocus
+            onActiveFocusChanged: colorChange(false)
+            Accessible.ignored: true
+            Keys.onReturnPressed: {
+                setFocusBackOnClose(dateInputCombobox);
+                this.popup.open();
+            }
 
-                anchors.left: dateInputIcon.right
-                anchors.right: dateInputClearIcon.left
-                focusPolicy: Qt.NoFocus
-                onActiveFocusChanged: colorChange(false)
-                Accessible.ignored: true
-                Keys.onReturnPressed: {
-                    setFocusBackOnClose(dateInputCombobox);
-                    this.popup.open();
-                }
+            indicator: Rectangle {
+            }
 
-                indicator: Rectangle {
-                }
+            popup: DateInputPopout {
+                id: dateInputPopout
 
-                popup: DateInputPopout {
-                    id: dateInputPopout
+                dateInputElement: dateInput
+                dateInputField: dateInputTextField
+            }
 
-                    dateInputElement: dateInput
-                    dateInputField: dateInputTextField
-                }
+            background: DateInputTextField {
+                id: dateInputTextField
 
-                background: DateInputTextField {
-                    id: dateInputTextField
+                dateInputElement: dateInput
+                dateInputPopout: dateInputPopout
+            }
 
-                    dateInputElement: dateInput
-                    dateInputPopout: dateInputPopout
+        }
+
+        Button {
+            id: dateInputIcon
+
+            width: inputDateConstants.dateIconButtonSize
+            height: inputDateConstants.dateIconButtonSize
+            horizontalPadding: 0
+            verticalPadding: 0
+            icon.width: inputDateConstants.dateIconSize
+            icon.height: inputDateConstants.dateIconSize
+            icon.color: showErrorMessage ? inputDateConstants.dateIconColorOnError : inputDateConstants.dateIconColorNormal
+            icon.source: CardConstants.calendarIcon
+            Keys.onReturnPressed: onClicked()
+            anchors.left: parent.left
+            anchors.leftMargin: inputDateConstants.dateIconHorizontalPadding
+            anchors.verticalCenter: parent.verticalCenter
+            onClicked: {
+                dateInputPopout.open();
+            }
+            Accessible.name: qsTr("Date picker")
+            Accessible.role: Accessible.Button
+
+            background: Rectangle {
+                color: 'transparent'
+                radius: CardConstants.inputFieldConstants.borderRadius
+
+                WCustomFocusItem {
+                    isRectangle: true
+                    visible: dateInputIcon.activeFocus
+                    designatedParent: parent
                 }
 
             }
 
-            Button {
-                id: dateInputIcon
+        }
 
-                width: inputDateConstants.dateIconButtonSize
-                height: inputDateConstants.dateIconButtonSize
-                horizontalPadding: 0
-                verticalPadding: 0
-                icon.width: inputDateConstants.dateIconSize
-                icon.height: inputDateConstants.dateIconSize
-                icon.color: showErrorMessage ? inputDateConstants.dateIconColorOnError : inputDateConstants.dateIconColorNormal
-                icon.source: CardConstants.calendarIcon
-                Keys.onReturnPressed: onClicked()
-                anchors.left: parent.left
-                anchors.leftMargin: inputDateConstants.dateIconHorizontalPadding
-                anchors.verticalCenter: parent.verticalCenter
-                onClicked: {
-                    dateInputPopout.open();
-                }
+        InputFieldClearIcon {
+            id: dateInputClearIcon
 
-                background: Rectangle {
-                    color: 'transparent'
-                    radius: CardConstants.inputFieldConstants.borderRadius
-
-                    WCustomFocusItem {
-                        isRectangle: true
-                        visible: dateInputIcon.activeFocus
-                        designatedParent: parent
-                    }
-                }
-
+            anchors.right: parent.right
+            anchors.rightMargin: inputFieldConstants.clearIconHorizontalPadding
+            anchors.verticalCenter: parent.verticalCenter
+            Keys.onReturnPressed: onClicked()
+            visible: (!dateInputTextField.focus && dateInputTextField.text !== '') || (dateInputTextField.focus && dateInputTextField.text !== '\/\/')
+            onClicked: {
+                nextItemInFocusChain().forceActiveFocus();
+                dateInputTextField.clear();
+                _currentDate = null;
             }
-
-            InputFieldClearIcon {
-                id: dateInputClearIcon
-
-                anchors.right: parent.right
-                anchors.rightMargin: inputFieldConstants.clearIconHorizontalPadding
-                anchors.verticalCenter: parent.verticalCenter
-                Keys.onReturnPressed: onClicked()
-                visible: (!dateInputTextField.focus && dateInputTextField.text !== '') || (dateInputTextField.focus && dateInputTextField.text !== '\/\/')
-                onClicked: {
-                    nextItemInFocusChain().forceActiveFocus();
-                    dateInputTextField.clear();
-                    _currentDate = null;
-                }
-            }
-
+        }
 
         WCustomFocusItem {
             isRectangle: true
