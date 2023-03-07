@@ -21,7 +21,7 @@ Popup {
     leftInset: 0
     onOpened: {
         calendarView.forceActiveFocus();
-        calendarView.selectedDate = dateInputElement._currentDate ? dateInputElement._currentDate : new Date();
+        calendarView.selectedDate = getSelectedDate();
         calendarView.setDate(calendarView.selectedDate);
     }
     onClosed: {
@@ -33,6 +33,17 @@ Popup {
             dateInputElement._currentDate = calendarView.selectedDate;
             dateInputField.setTextFromDate(calendarView.selectedDate);
         }
+    }
+
+    function getSelectedDate() {
+        let date = dateInputElement._currentDate ? dateInputElement._currentDate : AdaptiveCardUtils.getTodayDate();
+
+        if(date <= dateInputElement._minDate)
+            date = new Date(dateInputElement._minDate.getFullYear(), dateInputElement._minDate.getMonth(), dateInputElement._minDate.getDate() + 1)
+
+        if(date >= dateInputElement._maxDate)
+            date = new Date(dateInputElement._maxDate.getFullYear(), dateInputElement._maxDate.getMonth(), dateInputElement._maxDate.getDate() - 1)
+        return date;
     }
 
     Button {
@@ -127,7 +138,7 @@ Popup {
         ListView {
             id: calendarView
 
-            property date selectedDate: dateInputElement._currentDate ? dateInputElement._currentDate : new Date()
+            property date selectedDate: getSelectedDate()
             property string accessibilityPrefix: 'Date Picker. The current date is'
             property string dateForSR: ''
 
@@ -177,7 +188,7 @@ Popup {
                     prevMonthButton.forceActiveFocus();
                 else if (event.key === Qt.Key_Backtab)
                     nextMonthButton.forceActiveFocus();
-                if (date > dateInputElement._minDate && date < dateInputElement._maxDate) {
+                if ((date > dateInputElement._minDate) && (date < dateInputElement._maxDate)) {
                     selectedDate = new Date(date);
                     currentIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth();
                 }
@@ -232,7 +243,7 @@ Popup {
                             property variant dayArray: ['M', 'T', 'W', 'T', 'F', 'S', 'S']
                             property bool isCurrentSelectedDate: (dateInputElement._currentDate && cellDate.toDateString() === dateInputElement._currentDate.toDateString()) ? true: false
                             property bool isCurrentFocussedDate: (cellDate.toDateString() === calendarView.selectedDate.toDateString()) ? true: false
-                            property bool isToday: (new Date().toDateString() === cellDate.toDateString())
+                            property bool isToday: (AdaptiveCardUtils.getTodayDate().toDateString() === cellDate.toDateString())
                             property bool isFocussed: (calendarView.activeFocus && isCurrentFocussedDate && day > 0) ? true : false
 
                             onDatePickerFocusCheckChanged: {
@@ -248,7 +259,7 @@ Popup {
                             color: (isCurrentSelectedDate && monthViewDelegateMouseArea.enabled) ? inputDateConstants.dateElementColorOnFocus : (monthViewDelegateMouseArea.containsMouse || isFocussed) ? inputDateConstants.dateElementColorOnHover : "transparent"
                             radius: 0.5 * width
                             border.color: inputDateConstants.calendarBorderColor
-                            border.width: (new Date().toDateString() === cellDate.toDateString())
+                            border.width: isToday ? 1 : 0
 
                             WCustomFocusItem{
                                 visible: isCurrentFocussedDate && monthViewDelegateMouseArea.enabled
