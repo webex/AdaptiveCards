@@ -135,15 +135,13 @@ class ACRDateField: NSView {
     }
     
     override func keyDown(with event: NSEvent) {
-        let keyCode = Int(event.keyCode)
-        switch keyCode {
-        case kVK_Space:
+        if Int(event.keyCode) == kVK_Space {
             if !isPopoverVisible {
                 handleOpenPickerAction()
             }
-        default:
-            super.keyDown(with: event)
+            return
         }
+        super.keyDown(with: event)
     }
     
     override func accessibilityLabel() -> String? {
@@ -361,12 +359,10 @@ extension NSPopover {
     }
     
     override func keyDown(with event: NSEvent) {
-        let keyCode = Int(event.keyCode)
-        switch keyCode {
-        case kVK_Space:
+        if Int(event.keyCode) == kVK_Space {
             keyDownCall?(true)
-        default:
-            super.keyDown(with: event)
+            return
         }
+        super.keyDown(with: event)
     }
 }

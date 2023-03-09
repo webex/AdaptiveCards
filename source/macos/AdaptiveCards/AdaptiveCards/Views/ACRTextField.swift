@@ -100,6 +100,7 @@ class ACRTextField: NSTextField {
         view.wantsLayer = true
         view.isBordered = false
         view.setAccessibilityElement(true)
+        view.setAccessibilityRole(.button)
         view.setAccessibilityTitle(config.localisedStringConfig.clearButtonAccessibilityTitle)
         view.keyDownCall = { [weak self] _ in
             self?.handleClearAction()

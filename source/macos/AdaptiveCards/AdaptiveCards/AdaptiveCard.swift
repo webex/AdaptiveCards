@@ -206,7 +206,7 @@ public struct InputFieldConfig {
 }
 
 public struct LocalisedStringConfig {
-    public static let `default` = LocalisedStringConfig(choiceSetCompactAccessibilityRoleDescriptor: "Drop Down", inputNumberAccessibilityTitle: "Input Number", inputTextFieldAccessibilityTitle: "Text Field", choiceSetTickBoxTicked: "Ticked", choiceSetTickBoxUnticked: "Unticked", choiceSetRadioButtonSelected: "Selectd", datePickerFieldAccessibilityRoleDescription: "Date Picker", timePickerFieldAccessibilityRoleDescription: "Time Picker", clearButtonAccessibilityTitle: "Clear Input Button", errorMessagePrefixString: "Error")
+    public static let `default` = LocalisedStringConfig(choiceSetCompactAccessibilityRoleDescriptor: "Drop Down", inputNumberAccessibilityTitle: "Input Number", inputTextFieldAccessibilityTitle: "Text Field", choiceSetTickBoxTicked: "Ticked", choiceSetTickBoxUnticked: "Unticked", choiceSetRadioButtonSelected: "Selectd", datePickerFieldAccessibilityRoleDescription: "Date Picker", timePickerFieldAccessibilityRoleDescription: "Time Picker", clearButtonAccessibilityTitle: "Clear Input", errorMessagePrefixString: "Error")
 
     let choiceSetCompactAccessibilityRoleDescriptor: String
     let inputNumberAccessibilityTitle: String
