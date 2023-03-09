@@ -140,6 +140,8 @@ Popup {
     }
 
     contentItem: Rectangle {
+        id: datePopoutContentItem
+
         radius: inputDateConstants.calendarBorderRadius
         color: inputDateConstants.calendarBackgroundColor
 
@@ -238,6 +240,8 @@ Popup {
                     spacing: inputDateConstants.dateDelegateSpacing
 
                     Repeater {
+                        id: monthViewRepeater
+
                         model: monthView.columns * monthView.rows
 
                         delegate: Rectangle {
@@ -251,6 +255,7 @@ Popup {
                             property bool isCurrentSelectedDate: (cellDate.toDateString() === calendarView.selectedDate.toDateString()) ? true : false
                             property bool isToday: (AdaptiveCardUtils.getTodayDate().toDateString() === cellDate.toDateString())
                             property bool isFocussed: (isCurrentSelectedDate && calendarView.activeFocus && day > 0) ? true : false
+                            property bool isInThisMonth: cellDate.getMonth() === month
 
                             onDatePickerFocusCheckChanged: {
                                 if (datePickerFocusCheck)
