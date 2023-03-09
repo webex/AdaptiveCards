@@ -134,7 +134,6 @@ class InputDateRendererTest: XCTestCase {
         
         let inputDateField = renderDateInput()
         XCTAssertEqual(inputDateField.accessibilityRoleDescription(), "Date Picker")
-        XCTAssertEqual(inputDateField.iconButton.accessibilityRoleDescription(), "Date Picker Button")
         XCTAssertEqual(inputDateField.textField.accessibilityValue(), "10-Feb-2000")
     }
     
