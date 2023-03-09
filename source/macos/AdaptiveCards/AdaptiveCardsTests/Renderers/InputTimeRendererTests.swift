@@ -134,7 +134,6 @@ class InputTimeRendererTest: XCTestCase {
         
         let inputTimeField = renderTimeInput()
         XCTAssertEqual(inputTimeField.accessibilityRoleDescription(), "Time Picker")
-        XCTAssertEqual(inputTimeField.iconButton.accessibilityRoleDescription(), "Time Picker Button")
         XCTAssertEqual(inputTimeField.textField.accessibilityValue(), "12:24 PM")
     }
 

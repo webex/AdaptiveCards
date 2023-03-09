@@ -98,9 +98,13 @@ class ACRTextField: NSTextField {
         let view = NSButtonWithImageSpacing(image: clearImage ?? NSImage(), target: self, action: #selector(handleClearAction))
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor.clear.cgColor
         view.isBordered = false
+        view.setAccessibilityElement(true)
+        view.setAccessibilityRole(.button)
         view.setAccessibilityTitle(config.localisedStringConfig.clearButtonAccessibilityTitle)
+        view.keyDownCall = { [weak self] _ in
+            self?.handleClearAction()
+        }
         return view
     }()
     
