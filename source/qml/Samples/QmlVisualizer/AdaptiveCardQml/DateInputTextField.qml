@@ -21,6 +21,7 @@ TextField {
             accessibleName += (dateInputElement._currentDate.toLocaleDateString() + '. ');
         else
             accessibleName += placeholderText;
+        accessibleName += qsTr(". Type a date");
         return accessibleName;
     }
 
