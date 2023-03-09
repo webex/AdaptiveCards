@@ -206,7 +206,7 @@ public struct InputFieldConfig {
 }
 
 public struct LocalisedStringConfig {
-    public static let `default` = LocalisedStringConfig(choiceSetCompactAccessibilityRoleDescriptor: "Drop Down", inputNumberAccessibilityTitle: "Input Number", inputTextFieldAccessibilityTitle: "Text Field", choiceSetTickBoxTicked: "Ticked", choiceSetTickBoxUnticked: "Unticked", choiceSetRadioButtonSelected: "Selectd", datePickerFieldAccessibilityRoleDescription: "Date Picker", timePickerFieldAccessibilityRoleDescription: "Time Picker", datePickerButtonAccessibilityTitle: "Date Picker Button", timePickerButtonAccessibilityTitle: "Time Picker Button", clearButtonAccessibilityTitle: "Clear Button", errorMessagePrefixString: "Error")
+    public static let `default` = LocalisedStringConfig(choiceSetCompactAccessibilityRoleDescriptor: "Drop Down", inputNumberAccessibilityTitle: "Input Number", inputTextFieldAccessibilityTitle: "Text Field", choiceSetTickBoxTicked: "Ticked", choiceSetTickBoxUnticked: "Unticked", choiceSetRadioButtonSelected: "Selectd", datePickerFieldAccessibilityRoleDescription: "Date Picker", timePickerFieldAccessibilityRoleDescription: "Time Picker", clearButtonAccessibilityTitle: "Clear Input Button", errorMessagePrefixString: "Error")
 
     let choiceSetCompactAccessibilityRoleDescriptor: String
     let inputNumberAccessibilityTitle: String
@@ -216,12 +216,10 @@ public struct LocalisedStringConfig {
     let choiceSetRadioButtonSelected: String
     let datePickerFieldAccessibilityRoleDescription: String
     let timePickerFieldAccessibilityRoleDescription: String
-    let datePickerButtonAccessibilityTitle: String
-    let timePickerButtonAccessibilityTitle: String
     let clearButtonAccessibilityTitle: String
     let errorMessagePrefixString: String
 
-    public init(choiceSetCompactAccessibilityRoleDescriptor: String, inputNumberAccessibilityTitle: String, inputTextFieldAccessibilityTitle: String, choiceSetTickBoxTicked: String, choiceSetTickBoxUnticked: String, choiceSetRadioButtonSelected: String, datePickerFieldAccessibilityRoleDescription: String, timePickerFieldAccessibilityRoleDescription: String, datePickerButtonAccessibilityTitle: String, timePickerButtonAccessibilityTitle: String, clearButtonAccessibilityTitle: String, errorMessagePrefixString: String) {
+    public init(choiceSetCompactAccessibilityRoleDescriptor: String, inputNumberAccessibilityTitle: String, inputTextFieldAccessibilityTitle: String, choiceSetTickBoxTicked: String, choiceSetTickBoxUnticked: String, choiceSetRadioButtonSelected: String, datePickerFieldAccessibilityRoleDescription: String, timePickerFieldAccessibilityRoleDescription: String, clearButtonAccessibilityTitle: String, errorMessagePrefixString: String) {
         self.choiceSetCompactAccessibilityRoleDescriptor = choiceSetCompactAccessibilityRoleDescriptor
         self.inputNumberAccessibilityTitle = inputNumberAccessibilityTitle
         self.inputTextFieldAccessibilityTitle = inputTextFieldAccessibilityTitle
@@ -230,8 +228,6 @@ public struct LocalisedStringConfig {
         self.choiceSetRadioButtonSelected = choiceSetRadioButtonSelected
         self.datePickerFieldAccessibilityRoleDescription = datePickerFieldAccessibilityRoleDescription
         self.timePickerFieldAccessibilityRoleDescription = timePickerFieldAccessibilityRoleDescription
-        self.datePickerButtonAccessibilityTitle = datePickerButtonAccessibilityTitle
-        self.timePickerButtonAccessibilityTitle = timePickerButtonAccessibilityTitle
         self.clearButtonAccessibilityTitle = clearButtonAccessibilityTitle
         self.errorMessagePrefixString = errorMessagePrefixString
     }
