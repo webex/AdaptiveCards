@@ -17,8 +17,14 @@ class ACRInputErrorTextField: ACRInputLabelTextField {
     
     override func setAttributedString() {
         guard let errorMessage = inputElement.getErrorMessage(), !errorMessage.isEmpty else { return }
-        let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
         let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
+        
+        let attachment = NSTextAttachment()
+        attachment.image = BundleUtils.getImage("warning-badge-filled", ofType: "png")
+        attachment.setImageBounds(from: errorStateConfig.font)
+        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
+        attributedErrorMessageString.append(NSAttributedString(string: " \(errorMessage)"))
+        
         attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
         self.attributedStringValue = attributedErrorMessageString
     }

@@ -30,9 +30,18 @@ class ACRInputLabelTextFieldTests: XCTestCase {
     }
     
     func testErrorString() throws {
-        let attributedErrorMessageString = NSMutableAttributedString(string: "Error Message")
         let errorStateConfig = config.inputFieldConfig.errorStateConfig
+        
+        let attachment = NSTextAttachment()
+        attachment.image = BundleUtils.getImage("warning-badge-filled", ofType: "png")
+        attachment.setImageBounds(from: errorStateConfig.font)
+        
+        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
+        attributedErrorMessageString.append(NSAttributedString(string: " Error Message"))
+        
         attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
-        XCTAssertEqual(attributedErrorMessageString, errorTextField.attributedStringValue)
+        XCTAssertNotNil(attributedErrorMessageString.attribute(.attachment, at: 0, effectiveRange: nil))
+        XCTAssertNotNil(errorTextField.attributedStringValue.attribute(.attachment, at: 0, effectiveRange: nil))
+        XCTAssertEqual(attributedErrorMessageString.string, errorTextField.attributedStringValue.string)
     }
 }
