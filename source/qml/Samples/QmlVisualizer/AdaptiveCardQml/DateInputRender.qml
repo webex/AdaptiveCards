@@ -34,7 +34,7 @@ Column {
     function validate() {
         var isValid = true;
         if (_currentDate)
-            isValid = ((_currentDate > _minDate) && (_currentDate < _maxDate));
+            isValid = AdaptiveCardUtils.isDateinRange(_currentDate, _minDate, _maxDate);
         else if (_isRequired)
             isValid = false;
         if (showErrorMessage) {
@@ -55,10 +55,6 @@ Column {
         return '';
     }
 
-    Component.onCompleted: {
-        _minDate.setDate(_minDate.getDate() - 1);
-        _maxDate.setDate(_maxDate.getDate() + 1);
-    }
     onActiveFocusChanged: {
         if (activeFocus)
             dateInputTextField.forceActiveFocus();
@@ -87,7 +83,7 @@ Column {
         height: inputFieldConstants.height
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
-        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : dateInputTextField.activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
 
         ComboBox {

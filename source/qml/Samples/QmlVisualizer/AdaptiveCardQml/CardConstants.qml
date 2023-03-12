@@ -99,8 +99,8 @@ QtObject {
         readonly property int dateElementSize: 32
         readonly property int dateIconHorizontalPadding: 12
         readonly property int calendarBorderRadius: 12
-        readonly property int calendarWidth: 280
-        readonly property int calendarHeight: 317
+        readonly property int calendarWidth: 248
+        readonly property int calendarHeight: 293
         readonly property int calendarHeaderTextSize: 16
         readonly property int dateGridTopMargin: 14
         readonly property int calendarDayTextSize: 16

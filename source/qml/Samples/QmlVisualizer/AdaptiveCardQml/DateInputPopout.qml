@@ -1,4 +1,6 @@
 import "AdaptiveCardUtils.js" as AdaptiveCardUtils
+import Qt.labs.calendar 1.0
+import Qt.labs.qmlmodels 1.0
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
@@ -10,12 +12,23 @@ Popup {
     property var dateInputField
     property var inputFieldConstants: CardConstants.inputFieldConstants
     property var inputDateConstants: CardConstants.inputDateConstants
+    property date selectedDate: getSelectedDate()
 
-    function setGlobalDate() {
-        if (calendarView.selectedDate) {
-            dateInputElement._currentDate = calendarView.selectedDate;
-            dateInputField.setTextFromDate(calendarView.selectedDate);
+    function setGlobalDate(date) {
+        if (date) {
+            dateInputElement._currentDate = date;
+            dateInputField.setTextFromDate(date);
+            dateInputField.forceActiveFocus();
+            dateInputPopout.close();
         }
+    }
+
+    function getDateForSR() {
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var d = selectedDate.getDate();
+        var m = months[selectedDate.getMonth()];
+        var y = selectedDate.getFullYear();
+        monthBodyGridLayout.dateForSR = m + ' ' + d + ' ' + y;
     }
 
     function getSelectedDate() {
@@ -29,6 +42,9 @@ Popup {
         return date;
     }
 
+    onSelectedDateChanged: {
+        getDateForSR();
+    }
     y: dateInputField.height + 2
     x: (-inputFieldConstants.clearIconSize - inputDateConstants.dateIconHorizontalPadding)
     width: inputDateConstants.calendarWidth
@@ -38,99 +54,11 @@ Popup {
     rightInset: 0
     leftInset: 0
     onOpened: {
-        calendarView.forceActiveFocus();
-        calendarView.selectedDate = getSelectedDate();
-        calendarView.setDate(calendarView.selectedDate);
+        selectedDate = getSelectedDate();
+        monthBodyGridLayout.forceActiveFocus();
     }
     onClosed: {
         dateInputField.forceActiveFocus();
-    }
-
-    Rectangle {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        width: 2 * (inputDateConstants.arrowIconSize + inputDateConstants.monthButtonMargins)
-        height: inputDateConstants.arrowIconSize
-        color: inputDateConstants.calendarBackgroundColor
-
-        Button {
-            id: prevMonthButton
-
-            width: icon.width
-            anchors.right: nextMonthButton.left
-            anchors.rightMargin: inputDateConstants.monthButtonMargins
-            padding: 0
-            icon.width: inputDateConstants.arrowIconSize
-            icon.height: inputDateConstants.arrowIconSize
-            focusPolicy: Qt.NoFocus
-            icon.color: inputDateConstants.monthChangeButtonColor
-            height: icon.height
-            Keys.onReturnPressed: onReleased()
-            Accessible.role: Accessible.Button
-            icon.source: CardConstants.calendarLeftArrowIcon
-            Accessible.name: 'Previous Month'
-            Accessible.ignored: true
-            onReleased: {
-                let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() - 1, 1);
-                calendarView.setDate(tempDate);
-                calendarView.getDateForSR(tempDate);
-                prevMonthButton.forceActiveFocus();
-            }
-            KeyNavigation.tab: nextMonthButton
-            KeyNavigation.backtab: calendarView
-
-            background: Rectangle {
-                color: (prevMonthButton.hovered || prevMonthButton.activeFocus) ? inputDateConstants.dateElementColorOnHover : inputDateConstants.calendarBackgroundColor
-                radius: width / 2
-
-                WCustomFocusItem {
-                    visible: prevMonthButton.activeFocus
-                    designatedParent: parent
-                }
-
-            }
-
-        }
-
-        Button {
-            id: nextMonthButton
-
-            width: icon.width
-            anchors.right: parent.right
-            anchors.leftMargin: inputDateConstants.monthButtonMargins
-            padding: 0
-            icon.width: inputDateConstants.arrowIconSize
-            icon.height: inputDateConstants.arrowIconSize
-            focusPolicy: Qt.NoFocus
-            icon.color: inputDateConstants.monthChangeButtonColor
-            height: icon.height
-            Keys.onReturnPressed: onReleased()
-            Accessible.role: Accessible.Button
-            icon.source: CardConstants.calendarRightArrowIcon
-            Accessible.name: 'Next Month'
-            Accessible.ignored: true
-            onReleased: {
-                let tempDate = new Date(calendarView.selectedDate.getFullYear(), calendarView.selectedDate.getMonth() + 1, 1);
-                calendarView.setDate(tempDate);
-                calendarView.getDateForSR(tempDate);
-                nextMonthButton.forceActiveFocus();
-            }
-            KeyNavigation.tab: calendarView
-            KeyNavigation.backtab: prevMonthButton
-
-            background: Rectangle {
-                color: (nextMonthButton.hovered || nextMonthButton.activeFocus) ? inputDateConstants.dateElementColorOnHover : inputDateConstants.calendarBackgroundColor
-                radius: width / 2
-
-                WCustomFocusItem {
-                    visible: nextMonthButton.activeFocus
-                    designatedParent: parent
-                }
-
-            }
-
-        }
-
     }
 
     background: Rectangle {
@@ -145,175 +73,234 @@ Popup {
         radius: inputDateConstants.calendarBorderRadius
         color: inputDateConstants.calendarBackgroundColor
 
-        ListView {
-            id: calendarView
-
-            property date selectedDate: getSelectedDate()
-            property string accessibilityPrefix: 'Date Picker. The current date is'
-            property string dateForSR: ''
-
-            function setDate(clickedDate) {
-                selectedDate = clickedDate;
-                var curIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth();
-                currentIndex = curIndex;
-                positionViewAtIndex(curIndex, ListView.Center);
-                getDateForSR(clickedDate);
-            }
-
-            function getDateForSR(clickedDate) {
-                var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                var d = clickedDate.getDate();
-                var m = months[clickedDate.getMonth()];
-                var y = clickedDate.getFullYear();
-                calendarView.dateForSR = m + ' ' + d + ' ' + y;
-            }
+        ColumnLayout {
+            id: calendarColumnLayout
 
             anchors.fill: parent
-            Component.onCompleted: {
-                if (selectedDate < dateInputElement._minDate)
-                    selectedDate = dateInputElement._minDate;
-                else if (selectedDate > dateInputElement._maxDate)
-                    selectedDate = dateInputElement._maxDate;
-                setDate(selectedDate);
-            }
-            snapMode: ListView.SnapOneItem
-            orientation: Qt.Horizontal
-            clip: true
-            model: 36000
-            Keys.onPressed: {
-                var date = new Date(selectedDate);
-                if (event.key === Qt.Key_Right) {
-                    date.setDate(date.getDate() + 1);
-                } else if (event.key === Qt.Key_Left) {
-                    date.setDate(date.getDate() - 1);
-                } else if (event.key === Qt.Key_Up) {
-                    date.setDate(date.getDate() - 7);
-                } else if (event.key === Qt.Key_Down) {
-                    date.setDate(date.getDate() + 7);
-                } else if (event.key === Qt.Key_Return) {
-                    setGlobalDate();
-                    dateInputPopout.close();
-                } else if (event.key === Qt.Key_Tab)
-                    prevMonthButton.forceActiveFocus();
-                else if (event.key === Qt.Key_Backtab)
-                    nextMonthButton.forceActiveFocus();
-                if (date > dateInputElement._minDate && date < dateInputElement._maxDate) {
-                    selectedDate = new Date(date);
-                    currentIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth();
-                }
-                calendarView.accessibilityPrefix = '';
-                getDateForSR(selectedDate);
-                event.accepted = true;
-            }
 
-            delegate: Item {
-                id: calendarViewDelegate
+            Rectangle {
+                id: monthHeader
 
-                property int year: Math.floor(index / 12)
-                property int month: index % 12
-                property int firstDay: (new Date(year, month, 1).getDay() - 1 < 0 ? 6 : new Date(year, month, 1).getDay() - 1)
+                Layout.row: 0
+                Layout.column: 1
+                Layout.fillWidth: true
+                height: inputDateConstants.arrowIconSize
+                color: inputDateConstants.calendarBackgroundColor
 
-                width: calendarView.width
-                height: calendarView.height
+                RowLayout {
+                    id: monthHeaderRowLayout
 
-                Text {
-                    id: calendarViewHeader
+                    anchors.fill: parent
 
-                    anchors.left: parent.left
-                    color: inputFieldConstants.textColor
-                    text: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][calendarViewDelegate.month] + ' ' + calendarViewDelegate.year
-                    font.pixelSize: inputFieldConstants.pixelSize
-                }
+                    Text {
+                        id: calendarViewHeader
 
-                Grid {
-                    id: monthView
+                        color: inputFieldConstants.textColor
+                        text: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][monthBodyGridLayout.month] + ' ' + monthBodyGridLayout.year
+                        font.pixelSize: inputFieldConstants.pixelSize
+                    }
 
-                    anchors.top: calendarViewHeader.bottom
-                    anchors.right: parent.right
-                    anchors.left: parent.left
-                    anchors.bottom: parent.bottom
-                    anchors.topMargin: inputDateConstants.dateGridTopMargin
-                    clip: true
-                    columns: 7
-                    rows: 7
-                    padding: inputDateConstants.dateDelegateSpacing
-                    spacing: inputDateConstants.dateDelegateSpacing
+                    RowLayout {
+                        id: bottomSaveAndCancelComponentLayout
 
-                    Repeater {
-                        id: monthViewRepeater
+                        Layout.alignment: Qt.AlignRight
+                        spacing: 10
 
-                        model: monthView.columns * monthView.rows
+                        Button {
+                            id: prevMonthButton
 
-                        delegate: Rectangle {
-                            id: monthViewDelegate
+                            width: icon.width
+                            padding: 0
+                            icon.width: inputDateConstants.arrowIconSize
+                            icon.height: inputDateConstants.arrowIconSize
+                            focusPolicy: Qt.NoFocus
+                            icon.color: inputDateConstants.monthChangeButtonColor
+                            height: icon.height
+                            Keys.onReturnPressed: onReleased()
+                            Accessible.role: Accessible.Button
+                            icon.source: CardConstants.calendarLeftArrowIcon
+                            Accessible.name: 'Previous Month'
+                            Accessible.ignored: true
+                            enabled: (monthBodyGridLayout.year > dateInput._minDate.getFullYear() || (monthBodyGridLayout.year === dateInput._minDate.getFullYear() && monthBodyGridLayout.month > dateInput._minDate.getMonth()))
+                            onReleased: {
+                                prevMonthButton.forceActiveFocus();
+                                selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1);
+                            }
+                            KeyNavigation.tab: nextMonthButton
+                            KeyNavigation.backtab: monthBodyGridLayout
 
-                            property date cellDate: new Date(year, month, date)
-                            property bool datePickerFocusCheck: calendarView.activeFocus && cellDate.toDateString() === calendarView.selectedDate.toDateString()
-                            property int day: index - 7
-                            property int date: day - calendarViewDelegate.firstDay + 1
-                            property variant dayArray: ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-                            property bool isCurrentSelectedDate: (cellDate.toDateString() === calendarView.selectedDate.toDateString()) ? true : false
-                            property bool isToday: (AdaptiveCardUtils.getTodayDate().toDateString() === cellDate.toDateString())
-                            property bool isFocussed: (isCurrentSelectedDate && calendarView.activeFocus && day > 0) ? true : false
-                            property bool isInThisMonth: cellDate.getMonth() === month
+                            background: Rectangle {
+                                color: (prevMonthButton.hovered || prevMonthButton.activeFocus) ? inputDateConstants.dateElementColorOnHover : inputDateConstants.calendarBackgroundColor
+                                radius: width / 2
 
-                            onDatePickerFocusCheckChanged: {
-                                if (datePickerFocusCheck)
-                                    forceActiveFocus();
+                                WCustomFocusItem {
+                                    visible: prevMonthButton.activeFocus
+                                    designatedParent: parent
+                                }
 
                             }
-                            Accessible.name: calendarView.accessibilityPrefix + calendarView.dateForSR
-                            Accessible.role: Accessible.NoRole
-                            Accessible.ignored: !activeFocus
+
+                        }
+
+                        Button {
+                            id: nextMonthButton
+
+                            width: icon.width
+                            padding: 0
+                            icon.width: inputDateConstants.arrowIconSize
+                            icon.height: inputDateConstants.arrowIconSize
+                            focusPolicy: Qt.NoFocus
+                            icon.color: inputDateConstants.monthChangeButtonColor
+                            height: icon.height
+                            Keys.onReturnPressed: onReleased()
+                            Accessible.role: Accessible.Button
+                            icon.source: CardConstants.calendarRightArrowIcon
+                            Accessible.name: 'Next Month'
+                            Accessible.ignored: true
+                            enabled: (monthBodyGridLayout.year < dateInput._maxDate.getFullYear() || (monthBodyGridLayout.year === dateInput._maxDate.getFullYear() && monthBodyGridLayout.month < dateInput._maxDate.getMonth()))
+                            onReleased: {
+                                nextMonthButton.forceActiveFocus();
+                                selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1);
+                            }
+                            KeyNavigation.tab: monthBodyGridLayout
+                            KeyNavigation.backtab: prevMonthButton
+
+                            background: Rectangle {
+                                color: (nextMonthButton.hovered || nextMonthButton.activeFocus) ? inputDateConstants.dateElementColorOnHover : inputDateConstants.calendarBackgroundColor
+                                radius: width / 2
+
+                                WCustomFocusItem {
+                                    visible: nextMonthButton.activeFocus
+                                    designatedParent: parent
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            DayOfWeekRow {
+                id: weekHeader
+
+                Layout.row: 1
+                Layout.column: 1
+                Layout.fillWidth: true
+                implicitHeight: inputDateConstants.dateElementSize
+
+                delegate: Text {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    text: model.shortName
+                    font.weight: Font.Medium
+                    font.pixelSize: inputDateConstants.calendarDateTextSize
+                    color: inputDateConstants.dateElementTextColorNormal
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+            }
+
+            GridLayout {
+                Layout.preferredWidth: datePopoutContentItem.width
+                Layout.preferredHeight: datePopoutContentItem.width
+                Layout.alignment: Qt.AlignHCenter
+                columns: 1
+                rows: 1
+
+                MonthGrid {
+                    id: monthBodyGridLayout
+
+                    property string accessibilityPrefix: 'Date Picker. The current date is'
+                    property string dateForSR: ""
+
+                    year: selectedDate.getFullYear()
+                    month: selectedDate.getMonth()
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 1
+                    Keys.onPressed: {
+                        if (event.key === Qt.Key_Right) {
+                            let tempDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1);
+                            selectedDate = AdaptiveCardUtils.isDateinRange(tempDate, dateInput._minDate, dateInput._maxDate) ? tempDate : dateInput._maxDate;
+                        }
+                        if (event.key === Qt.Key_Left) {
+                            let tempDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - 1);
+                            selectedDate = AdaptiveCardUtils.isDateinRange(tempDate, dateInput._minDate, dateInput._maxDate) ? tempDate : dateInput._minDate;
+                        }
+                        if (event.key === Qt.Key_Up) {
+                            let tempDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - 7);
+                            selectedDate = AdaptiveCardUtils.isDateinRange(tempDate, dateInput._minDate, dateInput._maxDate) ? tempDate : dateInput._minDate;
+                        }
+                        if (event.key === Qt.Key_Down) {
+                            let tempDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 7);
+                            selectedDate = AdaptiveCardUtils.isDateinRange(tempDate, dateInput._minDate, dateInput._maxDate) ? tempDate : dateInput._maxDate;
+                        }
+                        monthBodyGridLayout.accessibilityPrefix = '';
+                        event.accepted = true;
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        onWheel: {
+                            if (wheel.angleDelta.y > 0 && prevMonthButton.enabled)
+                                selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1);
+                            else if (wheel.angleDelta.y < 0 && nextMonthButton.enabled)
+                                selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1);
+                            else
+                                wheel.accepted = false;
+                        }
+                    }
+
+                    delegate: Button {
+                        id: dateButton
+
+                        property bool isCurrentSelectedDate: AdaptiveCardUtils.datesAreEqual(model.date, selectedDate)
+                        property bool isInThisMonth: model.date.getMonth() === monthBodyGridLayout.month
+                        property int date: model.date.getDate()
+
+                        width: dateButtonBg.width
+                        height: dateButtonBg.height
+                        enabled: AdaptiveCardUtils.isDateinRange(model.date, dateInput._minDate, dateInput._maxDate)
+                        focus: isCurrentSelectedDate ? true : false
+                        focusPolicy: isCurrentSelectedDate ? Qt.StrongFocus : Qt.NoFocus
+                        KeyNavigation.tab: prevMonthButton
+                        KeyNavigation.backtab: nextMonthButton
+                        onReleased: setGlobalDate(model.date)
+                        Keys.onReturnPressed: setGlobalDate(model.date)
+                        Accessible.name: monthBodyGridLayout.accessibilityPrefix + monthBodyGridLayout.dateForSR
+                        Accessible.role: Accessible.NoRole
+                        Accessible.ignored: !activeFocus
+
+                        background: Rectangle {
+                            id: dateButtonBg
+
                             width: inputDateConstants.dateElementSize
                             height: inputDateConstants.dateElementSize
-                            color: (isCurrentSelectedDate && monthViewDelegateMouseArea.enabled) ? inputDateConstants.dateElementColorOnFocus : (monthViewDelegateMouseArea.containsMouse) ? inputDateConstants.dateElementColorOnHover : "transparent"
+                            color: isCurrentSelectedDate ? inputDateConstants.dateElementColorOnFocus : (dateButton.hovered) ? inputDateConstants.dateElementColorOnHover : "transparent"
                             radius: 0.5 * width
                             border.color: inputDateConstants.calendarBorderColor
-                            border.width: isToday ? 1 : 0
-
-                            WCustomFocusItem {
-                                visible: isFocussed
-                                designatedParent: parent
-                            }
+                            border.width: model.today
 
                             Text {
-                                id: monthViewDelegateText
+                                id: dateButtonText
 
                                 anchors.centerIn: parent
                                 font.pixelSize: inputDateConstants.calendarDateTextSize
-                                color: {
-                                    if (isCurrentSelectedDate && monthViewDelegateMouseArea.enabled)
-                                        'white';
-                                    else if ((monthViewDelegate.cellDate.getMonth() === calendarViewDelegate.month && monthViewDelegateMouseArea.enabled) || day < 0)
-                                        inputDateConstants.dateElementTextColorNormal;
-                                    else
-                                        inputDateConstants.notAvailabledateElementTextColor;
-                                }
-                                text: {
-                                    if (day < 0)
-                                        monthViewDelegate.dayArray[index];
-                                    else if (cellDate.getMonth() == month)
-                                        date;
-                                    else
-                                        cellDate.getDate();
-                                }
-                                font.weight: day < 0 ? Font.Medium : cellDate.getMonth() === month ? Font.Normal : Font.Light
+                                color: isCurrentSelectedDate ? "white" : dateButton.enabled ? inputDateConstants.dateElementTextColorNormal : inputDateConstants.notAvailabledateElementTextColor
+                                text: model.day
+                                font.weight: day < 0 ? Font.Medium : model.date.getMonth() === month ? Font.Normal : Font.Light
                             }
 
-                            MouseArea {
-                                id: monthViewDelegateMouseArea
-
-                                anchors.fill: parent
-                                enabled: monthViewDelegateText.text && day >= 0 && (cellDate > dateInputElement._minDate) && (cellDate < dateInputElement._maxDate)
-                                hoverEnabled: true
-                                onReleased: {
-                                    if (enabled) {
-                                        calendarView.selectedDate = monthViewDelegate.cellDate;
-                                        setGlobalDate();
-                                        dateInputPopout.close();
-                                    }
-                                }
+                            WCustomFocusItem {
+                                visible: monthBodyGridLayout.activeFocus && isCurrentSelectedDate
+                                designatedParent: dateButtonBg
+                                isRectangle: false
                             }
 
                         }
