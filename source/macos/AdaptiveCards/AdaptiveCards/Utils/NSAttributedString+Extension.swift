@@ -1,5 +1,5 @@
 //
-//  NSAttributedStringUtils+Extension.swift
+//  NSAttributedString+Extension.swift
 //  AdaptiveCards
 //
 //  Created by uchauhan on 09/03/23.

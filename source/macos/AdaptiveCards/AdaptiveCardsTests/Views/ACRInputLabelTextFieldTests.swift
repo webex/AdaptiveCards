@@ -33,7 +33,7 @@ class ACRInputLabelTextFieldTests: XCTestCase {
         let errorStateConfig = config.inputFieldConfig.errorStateConfig
         
         let attachment = NSTextAttachment()
-        attachment.image = BundleUtils.getImage("warning-badge-filled", ofType: "png")
+        attachment.image = BundleUtils.getImage("warning-badge-filled-light", ofType: "png")
         attachment.setImageBounds(from: errorStateConfig.font)
         
         let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)

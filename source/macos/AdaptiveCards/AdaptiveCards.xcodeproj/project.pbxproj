@@ -559,12 +559,13 @@
 		AA4B4D4A28CF532000734278 /* ACRInputToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */; };
 		AA4B4D4E28CF548800734278 /* ACRSingleLineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */; };
 		AA4D26A6289A679700CA502D /* ACRColumnSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */; };
-		AA70050F29B9E83300EEE369 /* warning-badge-filled.png in Resources */ = {isa = PBXBuildFile; fileRef = AA70050E29B9E83300EEE369 /* warning-badge-filled.png */; };
-		AA70051129B9ED5800EEE369 /* NSAttributedStringUtils+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70051029B9ED5800EEE369 /* NSAttributedStringUtils+Extension.swift */; };
+		AA70051129B9ED5800EEE369 /* NSAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70051029B9ED5800EEE369 /* NSAttributedString+Extension.swift */; };
 		AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */; };
 		AA7A97BD288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */; };
 		AAC42D9628C22937007C4367 /* ACSVisibilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */; };
 		AACC2B8E29504A6300A4AB7C /* ImageSetRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACC2B8D29504A6300A4AB7C /* ImageSetRendererTests.swift */; };
+		AAD0AC7729C0692100998C99 /* warning-badge-filled-light.png in Resources */ = {isa = PBXBuildFile; fileRef = AAD0AC7529C0692100998C99 /* warning-badge-filled-light.png */; };
+		AAD0AC7829C0692100998C99 /* warning-badge-filled-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = AAD0AC7629C0692100998C99 /* warning-badge-filled-dark.png */; };
 		AAE0E9182844D8260034FE2A /* ACRHyperLinkTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */; };
 /* End PBXBuildFile section */
 
@@ -1157,12 +1158,13 @@
 		AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputToggleView.swift; sourceTree = "<group>"; };
 		AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRSingleLineInputTextView.swift; sourceTree = "<group>"; };
 		AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRColumnSetView.swift; sourceTree = "<group>"; };
-		AA70050E29B9E83300EEE369 /* warning-badge-filled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-badge-filled.png"; sourceTree = "<group>"; };
-		AA70051029B9ED5800EEE369 /* NSAttributedStringUtils+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedStringUtils+Extension.swift"; sourceTree = "<group>"; };
+		AA70051029B9ED5800EEE369 /* NSAttributedString+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManager.swift; sourceTree = "<group>"; };
 		AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManagerTests.swift; sourceTree = "<group>"; };
 		AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACSVisibilityManager.swift; sourceTree = "<group>"; };
 		AACC2B8D29504A6300A4AB7C /* ImageSetRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSetRendererTests.swift; sourceTree = "<group>"; };
+		AAD0AC7529C0692100998C99 /* warning-badge-filled-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-badge-filled-light.png"; sourceTree = "<group>"; };
+		AAD0AC7629C0692100998C99 /* warning-badge-filled-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-badge-filled-dark.png"; sourceTree = "<group>"; };
 		AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRHyperLinkTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1212,7 +1214,7 @@
 				0876273E27734F9800F3347F /* ViewUtils.swift */,
 				AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */,
 				AA09229C2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift */,
-				AA70051029B9ED5800EEE369 /* NSAttributedStringUtils+Extension.swift */,
+				AA70051029B9ED5800EEE369 /* NSAttributedString+Extension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1925,10 +1927,11 @@
 			isa = PBXGroup;
 			children = (
 				080DD9272689F4430058914A /* recents_20_w.png */,
-				AA70050E29B9E83300EEE369 /* warning-badge-filled.png */,
 				080DD9262689F4430058914A /* recents_20.png */,
 				13BE7602261C5F4600FC9636 /* calendar-month-light.png */,
 				13BE7606261C7EDA00FC9636 /* calendar-month-dark.png */,
+				AAD0AC7629C0692100998C99 /* warning-badge-filled-dark.png */,
+				AAD0AC7529C0692100998C99 /* warning-badge-filled-light.png */,
 				81C037282604B1F700B33324 /* cisco.jpg */,
 				81A94A7825FF86E70018213A /* arrowup.png */,
 				28B4AE1F26E1F30600FEC27E /* clear_18.png */,
@@ -2340,7 +2343,8 @@
 				08299F9E25AF279E00799C66 /* AdaptiveCards.xcconfig in Resources */,
 				81A94A7A25FF86E70018213A /* arrowup.png in Resources */,
 				28B4AE2026E1F30600FEC27E /* clear_18_w.png in Resources */,
-				AA70050F29B9E83300EEE369 /* warning-badge-filled.png in Resources */,
+				AAD0AC7829C0692100998C99 /* warning-badge-filled-dark.png in Resources */,
+				AAD0AC7729C0692100998C99 /* warning-badge-filled-light.png in Resources */,
 				81A94A7925FF86E70018213A /* attachment.png in Resources */,
 				080DD9282689F4430058914A /* recents_20.png in Resources */,
 				080DD9292689F4430058914A /* recents_20_w.png in Resources */,
@@ -2458,7 +2462,7 @@
 				AA09229D2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift in Sources */,
 				13C465E525DD3C07006E4605 /* InputDateRenderer.swift in Sources */,
 				AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */,
-				AA70051129B9ED5800EEE369 /* NSAttributedStringUtils+Extension.swift in Sources */,
+				AA70051129B9ED5800EEE369 /* NSAttributedString+Extension.swift in Sources */,
 				2910CF012600A82A000910C8 /* ACRActionSetView.swift in Sources */,
 				0801D5EA25C2C3B500AABD6C /* AdaptiveCard.swift in Sources */,
 				29BA82D725E265F4000B7578 /* ChoiceSetInputRenderer.swift in Sources */,
