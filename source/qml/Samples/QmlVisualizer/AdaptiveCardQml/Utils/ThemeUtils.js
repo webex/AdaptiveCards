@@ -421,6 +421,14 @@ var colorsLight = {
             "b": 255,
             "a": 0.95
         }
+    },
+    "button-accent-fill-background": {
+        "normal": {
+            "r": 17,
+            "g": 112,
+            "b": 207,
+            "a": 1
+        }
     }
 }
 
@@ -839,6 +847,14 @@ var colorsDark = {
             "g": 255,
             "b": 255,
             "a": 0.95
+        }
+    },
+    "button-accent-fill-background": {
+        "normal": {
+            "r": 17,
+            "g": 112,
+            "b": 207,
+            "a": 1
         }
     }
 }

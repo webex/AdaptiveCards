@@ -75,6 +75,8 @@ QtObject {
         readonly property int timePickerHeight: 280
         readonly property int timePickerColumnSpacing: 16
         readonly property int timePickerHoursAndMinutesTagWidth: 43
+        readonly property int timePickerListViewWidth: 52
+        readonly property int timePickerListViewMargins: 5
         readonly property int timePickerElementHeight: 32
         readonly property int timePickerMargins: 16
         readonly property int timePickerSpacing: 4
@@ -89,7 +91,7 @@ QtObject {
         readonly property color timePickerBackgroundColor: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
         readonly property color timePickerElementColorNormal: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
         readonly property color timePickerElementColorOnHover: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
-        readonly property color timePickerElementColorOnFocus: AdaptiveCardUtils.getColorSet("checkbox-checked-border", "pressed", isDarkTheme)
+        readonly property color timePickerElementColorOnFocus: AdaptiveCardUtils.getColorSet("button-accent-fill-background", "normal", isDarkTheme)
         readonly property color timePickerElementTextColorNormal: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color timePickerElementTextColorHighlighted: AdaptiveCardUtils.getColorSet("textinput-text", "focused", isDarkTheme)
     }
