@@ -353,7 +353,7 @@ extension NSPopover {
 
     override public func drawFocusRingMask() {
         let path = NSBezierPath()
-        path.appendRoundedRect(self.bounds.offsetBy(dx: 1, dy: 0), xRadius: 4.0, yRadius: 4.0)
+        path.appendRoundedRect(self.bounds, xRadius: 4.0, yRadius: 4.0)
         path.fill()
         self.needsDisplay = true
     }
