@@ -506,25 +506,3 @@ function getTodayDate() {
     date.setHours(0, 0, 0, 0) // Setting Hours, Minutes, Seconds and MilliSeconds to ignore time comparison
     return date;
 }
-
-function datesAreEqual(date1, date2) {
-    return (date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate())
-}
-
-function dateIsLessThanEqualTo(currentDate, maxDate) {
-    const date1WithutTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-    const date2WithoutTime = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
-    
-    return date1WithutTime <= date2WithoutTime;
-}
-
-function dateIsGreaterThanEqualTo(currentDate, minDate) {
-    const date1WithutTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-    const date2WithoutTime = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
-    
-    return date1WithutTime >= date2WithoutTime;
-}
-
-function isDateinRange(currentDate, minDate, maxDate) {
-    return dateIsLessThanEqualTo(currentDate, maxDate) && dateIsGreaterThanEqualTo(currentDate, minDate);
-}

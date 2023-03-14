@@ -34,7 +34,7 @@ Column {
     function validate() {
         var isValid = true;
         if (_currentDate)
-            isValid = AdaptiveCardUtils.isDateinRange(_currentDate, _minDate, _maxDate);
+            isValid = ((_currentDate > _minDate) && (_currentDate < _maxDate));
         else if (_isRequired)
             isValid = false;
         if (showErrorMessage) {
@@ -55,6 +55,10 @@ Column {
         return '';
     }
 
+    Component.onCompleted: {
+        _minDate.setDate(_minDate.getDate() - 1);
+        _maxDate.setDate(_maxDate.getDate() + 1);
+    }
     onActiveFocusChanged: {
         if (activeFocus)
             dateInputTextField.forceActiveFocus();

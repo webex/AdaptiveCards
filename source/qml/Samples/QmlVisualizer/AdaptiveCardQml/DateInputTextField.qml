@@ -30,8 +30,7 @@ TextField {
         if (tempDate && Number(tempDate) && tempDate !== dateInputElement._currentDate)
             dateInputElement._currentDate = tempDate;
         else
-            dateInputElement._currentDate = null
-
+            dateInputElement._currentDate = null;
         Accessible.name = getAccessibleName();
     }
 
