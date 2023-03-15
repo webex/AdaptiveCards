@@ -500,3 +500,9 @@ function escapeHtml(str) {
         .replace(/'/g, "&#039;");
     return `<span>${escapedStr}</span>`
 }
+
+function getTodayDate() {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0) // Setting Hours, Minutes, Seconds and MilliSeconds to ignore time comparison
+    return date;
+}
