@@ -468,7 +468,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     private func setupErrorMessage(element: ACSBaseInputElement, view: NSView) {
-        guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol, element.getIsRequired() else { return }
+        guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol else { return }
         setCustomSpacing(spacing: 5, after: view)
         let errorField = ACRInputErrorTextField(inputElement: element, renderConfig: renderConfig, hostConfig: hostConfig, style: style)
         view.errorDelegate = self
