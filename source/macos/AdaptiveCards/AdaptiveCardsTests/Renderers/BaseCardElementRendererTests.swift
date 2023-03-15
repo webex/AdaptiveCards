@@ -90,11 +90,6 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputTextView) else { fatalError() }
         
-        let attachment = NSTextAttachment()
-        attachment.image = BundleUtils.getImage("warning-badge-filled-dark", ofType: "png")
-        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
-        
-        XCTAssertEqual(errorMessageTextField.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputTextView))
         inputTextView.errorDelegate?.inputHandlingViewShouldShowError(inputTextView)
         XCTAssertTrue(fakeRootView.isErrorVisible(inputTextView))
@@ -116,12 +111,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputTextView) else { fatalError() }
         
-        let attachment = NSTextAttachment()
-        attachment.image = BundleUtils.getImage("warning-badge-filled-light", ofType: "png")
-        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
-        attributedErrorMessageString.append(NSAttributedString(string: " Error"))
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error")
         
-        XCTAssertEqual(errorMessageTextField.stringValue, attributedErrorMessageString.string)
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputTextView))
         inputTextView.errorDelegate?.inputHandlingViewShouldShowError(inputTextView)
         XCTAssertTrue(fakeRootView.isErrorVisible(inputTextView))
@@ -143,12 +135,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        let attachment = NSTextAttachment()
-        attachment.image = BundleUtils.getImage("warning-badge-filled-light", ofType: "png")
-        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
-        attributedErrorMessageString.append(NSAttributedString(string: " Error"))
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error")
         
-        XCTAssertEqual(errorMessageTextField.stringValue, attributedErrorMessageString.string)
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         inputView.errorDelegate?.inputHandlingViewShouldShowError(inputView)
         XCTAssertTrue(fakeRootView.isErrorVisible(inputView))
@@ -170,12 +159,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        let attachment = NSTextAttachment()
-        attachment.image = BundleUtils.getImage("warning-badge-filled-light", ofType: "png")
-        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
-        attributedErrorMessageString.append(NSAttributedString(string: " Error"))
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error")
         
-        XCTAssertEqual(errorMessageTextField.stringValue, attributedErrorMessageString.string)
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         inputView.errorDelegate?.inputHandlingViewShouldShowError(inputView)
         XCTAssertTrue(fakeRootView.isErrorVisible(inputView))
@@ -197,12 +183,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        let attachment = NSTextAttachment()
-        attachment.image = BundleUtils.getImage("warning-badge-filled-light", ofType: "png")
-        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
-        attributedErrorMessageString.append(NSAttributedString(string: " Error"))
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error")
         
-        XCTAssertEqual(errorMessageTextField.stringValue, attributedErrorMessageString.string)
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         inputView.errorDelegate?.inputHandlingViewShouldShowError(inputView)
         XCTAssertTrue(fakeRootView.isErrorVisible(inputView))
@@ -225,12 +208,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        let attachment = NSTextAttachment()
-        attachment.image = BundleUtils.getImage("warning-badge-filled-light", ofType: "png")
-        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
-        attributedErrorMessageString.append(NSAttributedString(string: " Error Message"))
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error Message")
         
-        XCTAssertEqual(errorMessageTextField.stringValue, attributedErrorMessageString.string)
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         XCTAssertEqual(inputView.accessibilityValue() as? String, "Label Message, Title")
         
@@ -257,12 +237,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        let attachment = NSTextAttachment()
-        attachment.image = BundleUtils.getImage("warning-badge-filled-light", ofType: "png")
-        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
-        attributedErrorMessageString.append(NSAttributedString(string: " Error Message"))
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error Message")
         
-        XCTAssertEqual(errorMessageTextField.stringValue, attributedErrorMessageString.string)
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         XCTAssertEqual(inputView.accessibilityLabel(), "Label, Title")
         

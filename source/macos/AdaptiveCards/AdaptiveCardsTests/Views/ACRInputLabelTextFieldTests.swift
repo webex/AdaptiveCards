@@ -4,7 +4,7 @@ import XCTest
 
 class ACRInputLabelTextFieldTests: XCTestCase {
     private var labelTextField: ACRInputLabelTextField!
-    private var errorTextField: ACRInputErrorTextField!
+    private var errorView: ACRInputErrorView!
     private var config: RenderConfig!
     private var hostConfig: FakeHostConfig!
     private var inputElement: FakeInputText!
@@ -15,7 +15,7 @@ class ACRInputLabelTextFieldTests: XCTestCase {
         hostConfig = .make()
         inputElement = .make(isRequired: true, errorMessage: "Error Message", label: "This is label")
         labelTextField = ACRInputLabelTextField(inputElement: inputElement, renderConfig: config, hostConfig: FakeHostConfig(), style: .none)
-        errorTextField = ACRInputErrorTextField(inputElement: inputElement, renderConfig: config, hostConfig: FakeHostConfig(), style: .none)
+        errorView = ACRInputErrorView(inputElement: inputElement, renderConfig: config, hostConfig: FakeHostConfig(), style: .none)
     }
     
     func testLabelString() throws {
@@ -31,17 +31,9 @@ class ACRInputLabelTextFieldTests: XCTestCase {
     
     func testErrorString() throws {
         let errorStateConfig = config.inputFieldConfig.errorStateConfig
-        
-        let attachment = NSTextAttachment()
-        attachment.image = BundleUtils.getImage("warning-badge-filled-light", ofType: "png")
-        attachment.setImageBounds(from: errorStateConfig.font)
-        
-        let attributedErrorMessageString = NSMutableAttributedString(attachment: attachment)
-        attributedErrorMessageString.append(NSAttributedString(string: " Error Message"))
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error Message")
         
         attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
-        XCTAssertNotNil(attributedErrorMessageString.attribute(.attachment, at: 0, effectiveRange: nil))
-        XCTAssertNotNil(errorTextField.attributedStringValue.attribute(.attachment, at: 0, effectiveRange: nil))
-        XCTAssertEqual(attributedErrorMessageString.string, errorTextField.attributedStringValue.string)
+        XCTAssertEqual(attributedErrorMessageString.string, errorView.errorLabel.attributedStringValue.string)
     }
 }

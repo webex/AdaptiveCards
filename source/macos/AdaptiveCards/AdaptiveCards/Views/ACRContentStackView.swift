@@ -16,7 +16,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private var stackViewBottomConstraint: NSLayoutConstraint?
     
     // map table store errror message field
-    private let errorMessageFieldMap = NSMapTable<NSString, ACRInputErrorTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
+    private let errorMessageFieldMap = NSMapTable<NSString, ACRInputErrorView>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     // map table store input label field
     private let inputLabelFieldMap = NSMapTable<NSString, ACRInputLabelTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     
@@ -434,7 +434,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         setupErrorMessage(element: element, view: view)
     }
     
-    func getErrorTextField(for inputView: InputHandlingViewProtocol) -> ACRInputErrorTextField? {
+    func getErrorTextField(for inputView: InputHandlingViewProtocol) -> ACRInputErrorView? {
         guard !(self.errorMessageFieldMap.objectEnumerator()?.allObjects.isEmpty ?? true) else {
             logError("For show error message, MapTable is empty.")
             return nil
@@ -470,10 +470,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private func setupErrorMessage(element: ACSBaseInputElement, view: NSView) {
         guard renderConfig.supportsSchemeV1_3, let view = view as? InputHandlingViewProtocol else { return }
         setCustomSpacing(spacing: 5, after: view)
-        let errorField = ACRInputErrorTextField(inputElement: element, renderConfig: renderConfig, hostConfig: hostConfig, style: style)
+        let errorView = ACRInputErrorView(inputElement: element, renderConfig: renderConfig, hostConfig: hostConfig, style: style)
         view.errorDelegate = self
-        addArrangedSubview(errorField)
-        errorMessageFieldMap.setObject(errorField, forKey: view.key as NSString)
+        addArrangedSubview(errorView)
+        errorMessageFieldMap.setObject(errorView, forKey: view.key as NSString)
     }
     
     private func setInputLabel(isHidden hidden: Bool, for view: InputHandlingViewProtocol) {
@@ -516,7 +516,7 @@ extension ACRContentStackView: InputHandlingViewErrorDelegate {
         var labelString = ""
         if let errorMessageField = self.getErrorTextField(for: view) {
             if !view.isHidden {
-                errorMessageString = errorMessageField.stringValue + ". "
+                errorMessageString = errorMessageField.errorLabel.stringValue + ". "
             }
         }
         if let inputLabelField = self.getLabelTextField(for: view) {
