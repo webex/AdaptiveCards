@@ -19,7 +19,7 @@ class ACRInputErrorTextField: ACRInputLabelTextField {
         let errorMessage = inputElement.getErrorMessage() ?? ""
         let errorStateConfig = renderConfig.inputFieldConfig.errorStateConfig
         let warningResourceName = renderConfig.isDarkMode ? "warning-badge-filled-dark" : "warning-badge-filled-light"
-        let warningBadgeImage = renderConfig.inputFieldConfig.warningBadgeImage ?? BundleUtils.getImage(warningResourceName, ofType: "png")
+        let warningBadgeImage = renderConfig.inputFieldConfig.errorBadgeImage ?? BundleUtils.getImage(warningResourceName, ofType: "png")
         
         let attachment = NSTextAttachment()
         attachment.image = warningBadgeImage
