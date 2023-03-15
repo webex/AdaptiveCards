@@ -13,14 +13,16 @@ using namespace AdaptiveCards;
 #endif
 
 #import "ACSChoiceInput.h"
+#import "ACSChoicesData.h"
 #import "ACSChoiceSetStyle.h"
 
 
 
 #import "ACSBaseInputElement.h"
-  
+
 
 @class ACSChoiceInput;
+@class ACSChoicesData;
 
 enum ACSChoiceSetStyle: NSUInteger;
 
@@ -37,6 +39,8 @@ enum ACSChoiceSetStyle: NSUInteger;
 - (void)setChoiceSetStyle:(enum ACSChoiceSetStyle)choiceSetStyle;
 - (NSArray<ACSChoiceInput *> * _Nonnull)getChoices;
 - (NSArray<ACSChoiceInput *> * _Nonnull)getChoices;
+- (ACSChoicesData * _Nullable)getChoicesData;
+- (void)setChoicesData:(ACSChoicesData * _Nonnull);
 - (NSString * _Nullable)getValue;
 - (void)setValue:(NSString * _Nonnull)value;
 - (bool)getWrap;

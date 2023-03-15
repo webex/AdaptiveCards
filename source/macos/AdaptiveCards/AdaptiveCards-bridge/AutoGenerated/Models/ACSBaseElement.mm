@@ -16,7 +16,7 @@
 #import "Enums.h"
 #import "FeatureRegistration.h"
 #import "json.h"
-#import "ParseContext.h"
+#import "InternalId.h"
 #import "RemoteResourceInformation.h"
 
 
@@ -150,6 +150,18 @@
     
 }
 
+- (void)setTypeString:(NSString * _Nonnull)type
+{
+    auto typeCpp = std::string([type UTF8String]);
+ 
+    mCppObj->SetTypeString(typeCpp);
+}
+
+- (void)setCanFallbackToAncestor:(bool)value
+{
+    auto valueCpp = value;
+    mCppObj->SetCanFallbackToAncestor(valueCpp);
+}
 
 
 

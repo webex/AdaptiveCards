@@ -4,6 +4,7 @@
 
 #import "SwiftInterfaceHeader.h"
 
+#import "ACSAuthentication.h"
 #import "ACSBackgroundImage.h"
 #import "ACSBaseActionElement.h"
 #import "ACSCardElementTypeConvertor.h"
@@ -13,18 +14,25 @@
 #import "ACSInternalId.h"
 #import "ACSRemoteResourceInformationConvertor.h"
 #import "ACSVerticalContentAlignmentConvertor.h"
+#import "ACSRefresh.h"
 
 //cpp includes
+#import "Authentication.h"
 #import "BackgroundImage.h"
 #import "BaseActionElement.h"
 #import "BaseElement.h"
+#import "BaseCardElement.h"
 #import "Enums.h"
 #import "HostConfig.h"
+#import "InternalId.h"
+#import "ParseResult.h"
+#import "Refresh.h"
 #import "RemoteResourceInformation.h"
 
 
 #import "ACSAdaptiveCard.h"
 #import "SharedAdaptiveCard.h"
+
 
 
 @implementation  ACSAdaptiveCard {
@@ -89,6 +97,44 @@
     
 }
 
+- (ACSRefresh * _Nullable)getRefresh
+{
+ 
+    auto getRefreshCpp = mCppObj->GetRefresh();
+    if (getRefreshCpp)
+        return [[ACSRefresh alloc] initWithRefresh:getRefreshCpp];
+    return NULL;
+
+}
+
+- (void)setRefresh:(ACSRefresh * _Nonnull)value
+{
+		
+    // auto valueCpp =// NEED TO INSERT CODE // ;
+ 
+    // mCppObj->SetRefresh(valueCpp);
+    
+}
+
+- (ACSAuthentication * _Nullable)getAuthentication
+{
+ 
+    auto getAuthenticationCpp = mCppObj->GetAuthentication();
+    if (getAuthenticationCpp)
+        return [[ACSAuthentication alloc] initWithAuthentication:getAuthenticationCpp];
+    return NULL;
+
+}
+
+- (void)setAuthentication:(ACSAuthentication * _Nonnull)value
+{
+		
+    // auto valueCpp = // NEED TO INSERT CODE //;
+ 
+    // mCppObj->SetAuthentication(valueCpp);
+    
+}
+
 - (NSString * _Nullable)getSpeak
 {
  
@@ -131,6 +177,7 @@
 
 - (void)setLanguage:(NSString * _Nonnull)value
 {
+
     auto valueCpp = std::string([value UTF8String]);
  
     mCppObj->SetLanguage(valueCpp);
@@ -200,6 +247,23 @@
 //    mCppObj->SetFontTypes(valueCpp);
 //    
 //}
+
+- (bool _Nullable)getRtl
+{
+ 
+    auto getRtlCpp = mCppObj->GetRtl();
+    return getRtlCpp;
+
+}
+
+- (void)setRtl:(bool _Nullable)value
+{
+		
+    auto valueCpp = value;
+ 
+    mCppObj->SetRtl(valueCpp);
+    
+}
 
 - (ACSBaseActionElement * _Nullable)getSelectAction
 {
@@ -273,7 +337,7 @@
  
     auto getInternalIdCpp = mCppObj->GetInternalId();
     return [[ACSInternalId alloc] initWithInternalId:std::make_shared<InternalId>(getInternalIdCpp)];
-
+	
 }
 
 

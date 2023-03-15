@@ -113,7 +113,7 @@
     
 }
 
-- (ACSHorizontalAlignment)getHorizontalAlignment
+- (ACSHorizontalAlignment _Nullable)getHorizontalAlignment
 {
  
     auto getHorizontalAlignmentCpp = mCppObj->GetHorizontalAlignment();
@@ -121,7 +121,7 @@
 
 }
 
-- (void)setHorizontalAlignment:(enum ACSHorizontalAlignment)value
+- (void)setHorizontalAlignment:(enum ACSHorizontalAlignment _Nullable)value
 {
     auto valueCpp = [ACSHorizontalAlignmentConvertor convertObj:value];
  

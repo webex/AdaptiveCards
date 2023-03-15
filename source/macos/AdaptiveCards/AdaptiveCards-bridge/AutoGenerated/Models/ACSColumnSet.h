@@ -13,24 +13,17 @@ using namespace AdaptiveCards;
 #endif
 
 #import "ACSColumn.h"
-#import "ACSParseContext.h"
+#import "ACSRemoteResourceInformation.h"
 #import "ACSHorizontalAlignment.h"
-// #import "ACSRemoteResourceInformation.h"
-// #import "ACSValue.h"
 
-
-
-#import "ACSCollectionTypeElement.h"
-  
-
+#import "ACSStyledCollectionElement.h"
 @class ACSColumn;
-@class ACSParseContext;
 @class ACSRemoteResourceInformation;
 
 enum ACSHorizontalAlignment: NSUInteger;
 
-@interface ACSColumnSet : ACSCollectionTypeElement
 
+@interface ACSColumnSet : ACSStyledCollectionElement
 #ifdef __cplusplus
 - (instancetype _Nonnull)initWithColumnSet:(const std::shared_ptr<ColumnSet>)cppObj;
 #endif

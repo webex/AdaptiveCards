@@ -3,17 +3,16 @@
 // Generated with objc_viewmodel.j2
 
 #import "SwiftInterfaceHeader.h"
-
+	
 #import "ACSColumn.h"
 #import "ACSParseContext.h"
 #import "ACSRemoteResourceInformationConvertor.h"
 #import "ACSHorizontalAlignmentConvertor.h"
-// #import "ACSValue.h"
 
 //cpp includes
 #import "Column.h"
 #import "json.h"
-#import "ParseContext.h"
+#import "Enums.h"
 #import "RemoteResourceInformation.h"
 
 
@@ -27,7 +26,7 @@
 
 - (instancetype _Nonnull)initWithColumnSet:(const std::shared_ptr<ColumnSet>)cppObj
 {
-    if (self = [super initWithCollectionTypeElement: cppObj])
+    if (self = [super initWithStyledCollectionElement: cppObj])
     {
         mCppObj = cppObj;
     }
@@ -74,7 +73,7 @@
 - (void)setHorizontalAlignment:(enum ACSHorizontalAlignment)value
 {
     auto valueCpp = [ACSHorizontalAlignmentConvertor convertObj:value];
-
+ 
     mCppObj->SetHorizontalAlignment(valueCpp);
 
 }

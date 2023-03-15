@@ -18,7 +18,9 @@ using namespace AdaptiveCards;
 #import "ACSBaseCardElement.h"
 #import "ACSBaseActionElement.h"
 #import "ACSHorizontalAlignment.h"
-  
+
+
+@class ACSBaseActionElement;
 
 enum ACSHorizontalAlignment: NSUInteger;
 

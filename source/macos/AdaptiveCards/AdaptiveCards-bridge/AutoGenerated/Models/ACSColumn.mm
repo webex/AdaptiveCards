@@ -12,7 +12,7 @@
 //cpp includes
 #import "AdaptiveCardParseWarning.h"
 #import "json.h"
-#import "ParseContext.h"
+#import "BaseCardElement.h"
 #import "RemoteResourceInformation.h"
 
 
@@ -26,7 +26,7 @@
 
 - (instancetype _Nonnull)initWithColumn:(const std::shared_ptr<Column>)cppObj
 {
-    if (self = [super initWithCollectionTypeElement: cppObj])
+    if (self = [super initWithStyledCollectionElement: cppObj])
     {
         mCppObj = cppObj;
     }
@@ -92,6 +92,23 @@
     return objList;
 
 
+}
+
+- (bool _Nullable)getRtl
+{
+ 
+    auto getRtlCpp = mCppObj->GetRtl();
+    return getRtlCpp;
+
+}
+
+- (void)setRtl:(bool _Nullable)value
+{
+		
+    auto valueCpp = value;
+ 
+    mCppObj->SetRtl(valueCpp);
+    
 }
 
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceInfo

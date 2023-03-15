@@ -27,6 +27,16 @@
     return self;
 }
 
+- (NSNumber * _Nullable)getDefaultFontSize:(enum ACSTextSize)size
+{
+
+    auto sizeCpp = [ACSTextSizeConvertor convertObj:size];
+ 
+    auto getDefaultFontSizeCpp = mCppObj->GetDefaultFontSize(sizeCpp);
+    return [NSNumber numberWithUnsignedInt:getDefaultFontSizeCpp];
+
+}
+
 - (NSNumber * _Nullable)getFontSize:(enum ACSTextSize)size
 {
     auto sizeCpp = [ACSTextSizeConvertor convertObj:size];

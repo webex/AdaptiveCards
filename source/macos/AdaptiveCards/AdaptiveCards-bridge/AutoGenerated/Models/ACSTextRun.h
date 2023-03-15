@@ -22,7 +22,7 @@ using namespace AdaptiveCards;
 
 
 #import "ACSInline.h"
-  
+
 
 @class ACSBaseActionElement;
 @class ACSDateTimePreparser;
@@ -42,16 +42,16 @@ enum ACSTextWeight: NSUInteger;
 - (NSString * _Nullable)getText;
 - (void)setText:(NSString * _Nonnull)value;
 - (ACSDateTimePreparser * _Nullable)getTextForDateParsing;
-- (ACSTextSize)getTextSize;
-- (void)setTextSize:(enum ACSTextSize)value;
-- (ACSTextWeight)getTextWeight;
-- (void)setTextWeight:(enum ACSTextWeight)value;
-- (ACSFontType)getFontType;
-- (void)setFontType:(enum ACSFontType)value;
-- (ACSForegroundColor)getTextColor;
-- (void)setTextColor:(enum ACSForegroundColor)value;
-- (bool)getIsSubtle;
-- (void)setIsSubtle:(bool)value;
+- (ACSTextSize _Nullable)getTextSize;
+- (void)setTextSize:(enum ACSTextSize _Nullable)value;
+- (ACSTextWeight _Nullable)getTextWeight;
+- (void)setTextWeight:(enum ACSTextWeight _Nullable)value;
+- (ACSFontType _Nullable)getFontType;
+- (void)setFontType:(enum ACSFontType _Nullable)value;
+- (ACSForegroundColor _Nullable)getTextColor;
+- (void)setTextColor:(enum ACSForegroundColor _Nullable)value;
+- (bool _Nullable)getIsSubtle;
+- (void)setIsSubtle:(bool _Nullable)value;
 - (bool)getItalic;
 - (void)setItalic:(bool)value;
 - (bool)getStrikethrough;
