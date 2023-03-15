@@ -12,17 +12,18 @@
 using namespace AdaptiveCards;
 #endif
 
-#import "ACSCollectionTypeElement.h"
+
+#import "ACSStyledCollectionElement.h"
 #import "ACSContainerBleedDirection.h"
 #import "ACSContainerStyle.h"
 #import "ACSInternalId.h"
 
 
 
-  
 
-@class ACSCollectionTypeElement;
+
 @class ACSInternalId;
+@class ACSStyledCollectionElement;
 
 enum ACSContainerBleedDirection: NSUInteger;
 enum ACSContainerStyle: NSUInteger;
@@ -43,8 +44,8 @@ enum ACSContainerStyle: NSUInteger;
 - (ACSContainerStyle)getParentalContainerStyle;
 - (void)setParentalContainerStyle:(enum ACSContainerStyle)style;
 - (ACSInternalId * _Nullable)paddingParentInternalId;
-- (void)saveContextForCollectionTypeElement:(ACSCollectionTypeElement * _Nonnull)current;
-- (void)restoreContextForCollectionTypeElement:(ACSCollectionTypeElement * _Nonnull)current;
+- (void)saveContextForStyledCollectionElement:(ACSStyledCollectionElement * _Nonnull)current;
+- (void)restoreContextForStyledCollectionElement:(ACSStyledCollectionElement * _Nonnull)current;
 - (ACSContainerBleedDirection)getBleedDirection;
 - (void)pushBleedDirection:(enum ACSContainerBleedDirection)direction;
 - (void)popBleedDirection;

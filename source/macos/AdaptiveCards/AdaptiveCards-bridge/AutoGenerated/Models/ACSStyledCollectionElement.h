@@ -3,16 +3,14 @@
 // Generated with objc_viewmodel_header.j2
 
 
-#ifndef ACSCollectionTypeElement_IMPORTED
-#define ACSCollectionTypeElement_IMPORTED
+#ifndef ACSStyledCollectionElement_IMPORTED
+#define ACSStyledCollectionElement_IMPORTED
 #import <Foundation/Foundation.h>
 
 #ifdef __cplusplus
-#import "CollectionTypeElement.h"
+#import "StyledCollectionElement.h"
 using namespace AdaptiveCards;
 #endif
-
-#import "ACSBaseCardElement.h"
 
 #import "ACSBackgroundImage.h"
 #import "ACSBaseActionElement.h"
@@ -21,8 +19,8 @@ using namespace AdaptiveCards;
 #import "ACSInternalId.h"
 #import "ACSParseContext.h"
 #import "ACSVerticalContentAlignment.h"
-  
 
+#import "ACSCollectionCoreElement.h"
 @class ACSBackgroundImage;
 @class ACSBaseActionElement;
 @class ACSInternalId;
@@ -33,16 +31,15 @@ enum ACSContainerStyle: NSUInteger;
 enum ACSVerticalContentAlignment: NSUInteger;
 
 
-@interface ACSCollectionTypeElement : ACSBaseCardElement
-
+@interface ACSStyledCollectionElement : ACSCollectionCoreElement
 #ifdef __cplusplus
-- (instancetype _Nonnull)initWithCollectionTypeElement:(const std::shared_ptr<CollectionTypeElement>)cppObj;
+- (instancetype _Nonnull)initWithStyledCollectionElement:(const std::shared_ptr<StyledCollectionElement>)cppObj;
 #endif
 
 - (ACSContainerStyle)getStyle;
 - (void)setStyle:(enum ACSContainerStyle)value;
-- (ACSVerticalContentAlignment)getVerticalContentAlignment;
-- (void)setVerticalContentAlignment:(enum ACSVerticalContentAlignment)value;
+- (ACSVerticalContentAlignment _Nullable)getVerticalContentAlignment;
+- (void)setVerticalContentAlignment:(enum ACSVerticalContentAlignment _Nullable)value;
 - (bool)getPadding;
 - (void)setPadding:(bool)value;
 - (bool)getBleed;

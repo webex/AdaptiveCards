@@ -13,23 +13,17 @@ using namespace AdaptiveCards;
 #endif
 
 #import "ACSAdaptiveCardParseWarning.h"
-#import "ACSParseContext.h"
-// #import "ACSRemoteResourceInformation.h"
-// #import "ACSValue.h"
+#import "ACSBaseCardElement.h"
+#import "ACSRemoteResourceInformation.h"
 
-
-
-#import "ACSCollectionTypeElement.h"
-  
-
+#import "ACSStyledCollectionElement.h"
 @class ACSAdaptiveCardParseWarning;
-@class ACSParseContext;
+@class ACSBaseCardElement;
 @class ACSRemoteResourceInformation;
 
 
 
-@interface ACSColumn : ACSCollectionTypeElement
-
+@interface ACSColumn : ACSStyledCollectionElement
 #ifdef __cplusplus
 - (instancetype _Nonnull)initWithColumn:(const std::shared_ptr<Column>)cppObj;
 #endif
@@ -40,6 +34,8 @@ using namespace AdaptiveCards;
 - (NSNumber * _Nullable)getPixelWidth;
 - (void)setPixelWidth:(NSNumber * _Nonnull)value;
 - (NSArray<ACSBaseCardElement *> * _Nonnull)getItems;
+- (bool _Nullable)getRtl;
+- (void)setRtl:(bool _Nullable)value;
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceInfo;
 
 

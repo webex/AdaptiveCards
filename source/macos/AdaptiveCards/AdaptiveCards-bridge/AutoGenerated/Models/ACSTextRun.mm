@@ -59,7 +59,7 @@
 
 }
 
-- (ACSTextSize)getTextSize
+- (ACSTextSize _Nullable)getTextSize
 {
  
     auto getTextSizeCpp = mCppObj->GetTextSize();
@@ -67,7 +67,7 @@
 
 }
 
-- (void)setTextSize:(enum ACSTextSize)value
+- (void)setTextSize:(enum ACSTextSize _Nullable)value
 {
     auto valueCpp = [ACSTextSizeConvertor convertObj:value];
  
@@ -75,7 +75,7 @@
     
 }
 
-- (ACSTextWeight)getTextWeight
+- (ACSTextWeight _Nullable)getTextWeight
 {
  
     auto getTextWeightCpp = mCppObj->GetTextWeight();
@@ -83,7 +83,7 @@
 
 }
 
-- (void)setTextWeight:(enum ACSTextWeight)value
+- (void)setTextWeight:(enum ACSTextWeight _Nullable)value
 {
     auto valueCpp = [ACSTextWeightConvertor convertObj:value];
  
@@ -91,7 +91,7 @@
     
 }
 
-- (ACSFontType)getFontType
+- (ACSFontType _Nullable)getFontType
 {
  
     auto getFontTypeCpp = mCppObj->GetFontType();
@@ -99,7 +99,7 @@
 
 }
 
-- (void)setFontType:(enum ACSFontType)value
+- (void)setFontType:(enum ACSFontType _Nullable)value
 {
     auto valueCpp = [ACSFontTypeConvertor convertObj:value];
  
@@ -107,7 +107,7 @@
     
 }
 
-- (ACSForegroundColor)getTextColor
+- (ACSForegroundColor _Nullable)getTextColor
 {
  
     auto getTextColorCpp = mCppObj->GetTextColor();
@@ -115,7 +115,7 @@
 
 }
 
-- (void)setTextColor:(enum ACSForegroundColor)value
+- (void)setTextColor:(enum ACSForegroundColor _Nullable)value
 {
     auto valueCpp = [ACSForegroundColorConvertor convertObj:value];
  
@@ -123,7 +123,7 @@
     
 }
 
-- (bool)getIsSubtle
+- (bool _Nullable)getIsSubtle
 {
  
     auto getIsSubtleCpp = mCppObj->GetIsSubtle();
@@ -131,7 +131,7 @@
 
 }
 
-- (void)setIsSubtle:(bool)value
+- (void)setIsSubtle:(bool _Nullable)value
 {
     auto valueCpp = value;
  

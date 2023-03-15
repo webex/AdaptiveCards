@@ -28,6 +28,7 @@ enum ACSTextSize: NSUInteger;
 - (instancetype _Nonnull)initWithFontSizesConfig:(const std::shared_ptr<FontSizesConfig>)cppObj;
 #endif
 
+- (NSNumber * _Nullable)getDefaultFontSize:(enum ACSTextSize)size;
 - (NSNumber * _Nullable)getFontSize:(enum ACSTextSize)size;
 - (void)setFontSize:(enum ACSTextSize)size value:(NSNumber * _Nonnull)value;
 
