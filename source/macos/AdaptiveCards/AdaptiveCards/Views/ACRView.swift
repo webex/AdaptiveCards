@@ -178,7 +178,7 @@ class ACRView: ACRColumnView {
 }
 
 extension ACRView: ACRActionSetViewDelegate {
-    func actionSetView(_ view: ACRActionSetView, didOpenURLWith actionView: NSView, urlString: String) {
+    func actionSetView(_ view: ACRActionSetView, didOpenURLWith actionView: NSView?, urlString: String) {
         delegate?.adaptiveCard(self, didSelectOpenURL: urlString, actionView: actionView)
     }
     
@@ -214,7 +214,7 @@ extension ACRView: TargetHandlerDelegate {
         toggleVisibity(of: toggleTargets)
     }
     
-    func handleOpenURLAction(actionView: NSView, urlString: String) {
+    func handleOpenURLAction(actionView: NSView?, urlString: String) {
         delegate?.adaptiveCard(self, didSelectOpenURL: urlString, actionView: actionView)
     }
     

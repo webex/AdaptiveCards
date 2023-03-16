@@ -18,7 +18,7 @@ protocol TargetHandler: NSObject {
 }
 
 protocol TargetHandlerDelegate: AnyObject {
-    func handleOpenURLAction(actionView: NSView, urlString: String)
+    func handleOpenURLAction(actionView: NSView?, urlString: String)
     func handleSubmitAction(actionView: NSView, dataJson: String?, associatedInputs: Bool)
     func handleToggleVisibilityAction(actionView: NSView, toggleTargets: [ACSToggleVisibilityTarget])
 }

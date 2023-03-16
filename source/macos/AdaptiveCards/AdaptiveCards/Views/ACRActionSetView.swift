@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 protocol ACRActionSetViewDelegate: AnyObject {
-    func actionSetView(_ view: ACRActionSetView, didOpenURLWith actionView: NSView, urlString: String)
+    func actionSetView(_ view: ACRActionSetView, didOpenURLWith actionView: NSView?, urlString: String)
     func actionSetView(_ view: ACRActionSetView, didSubmitInputsWith actionView: NSView, dataJson: String?, associatedInputs: Bool)
     func actionSetView(_ view: ACRActionSetView, didToggleVisibilityActionWith actionView: NSView, toggleTargets: [ACSToggleVisibilityTarget])
     func actionSetView(_ view: ACRActionSetView, willShowCardWith button: NSButton)
@@ -227,7 +227,7 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
         delegate?.actionSetView(self, didShowCardWith: button)
     }
     
-    func handleOpenURLAction(actionView: NSView, urlString: String) {
+    func handleOpenURLAction(actionView: NSView?, urlString: String) {
         delegate?.actionSetView(self, didOpenURLWith: actionView, urlString: urlString)
     }
     

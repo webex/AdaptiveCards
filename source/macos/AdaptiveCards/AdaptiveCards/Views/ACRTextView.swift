@@ -1,18 +1,15 @@
 import AppKit
-
 import Carbon.HIToolbox
 
 class ACRTextViewHyperLinkData {
     var linkText: String
     var linkAddress: String
     var linkRange: NSRange
-    var linkRect: NSRect
     
-    init(text: String, address: String, range: NSRange, rect: NSRect = .zero) {
+    init(text: String, address: String, range: NSRange) {
         self.linkText    = text
         self.linkAddress = address
         self.linkRange   = range
-        self.linkRect    = rect
     }
 }
 
@@ -24,13 +21,12 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     var target: TargetHandler?
     var openLinkCallBack: ((String) -> Void)?
     
-    var selectLinkTextWhenBecomeFirstResponder = true
-    private var linkDataList: [ACRTextViewHyperLinkData] = []
+    private lazy var linkDataList: [ACRTextViewHyperLinkData] = []
     var hasLinks: Bool {
         return !linkDataList.isEmpty
     }
-    private var selectedLinkIndex: Int = -1
-    private var  keyTabEntry = false
+    private lazy var selectedLinkIndex: Int = -1
+    private lazy var keyTabEntry = false
     
     override public var acceptsFirstResponder: Bool {
         return hasLinks
@@ -105,9 +101,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     }
     
     override func keyDown(with event: NSEvent) {
-        var bHandled = false
         let keyCode = Int(event.keyCode)
-        
         switch keyCode {
         case kVK_Return, kVK_Space:
             let selectedRange = self.selectedRange()
@@ -115,39 +109,27 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
                 return selectedRange == data.linkRange
             }) {
                 if !data.linkAddress.isEmpty {
-                    bHandled = true
                     self.openLinkCallBack?(data.linkAddress)
+                    return
                 }
             }
         case kVK_Tab:
             if event.modifierFlags.contains(.shift) {
                 if keyTabEntry, let data = getPreviousTextViewHyperLinkDataClosestToSelectedRange() {
                     self.setSelectedRange(data.linkRange)
-                    bHandled = true
+                    return
                 }
             } else {
                 if let data = getNextTextViewHyperLinkDataClosestToSelectedRange() {
                     self.setSelectedRange(data.linkRange)
-                    bHandled = true
                     keyTabEntry = true
+                    return
                 }
             }
         default:
             break
         }
-        if !bHandled {
-            super.keyDown(with: event)
-        }
-    }
-    
-    override public var frame: NSRect {
-        didSet {
-            self.linkDataList.forEach { data in
-                let rect = boundingRectForRange(range: data.linkRange)
-                data.linkRect = rect
-            }
-            self.needsDisplay = true
-        }
+        super.keyDown(with: event)
     }
     
     override func hitTest(_ point: NSPoint) -> NSView? {
@@ -187,21 +169,6 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
             .underlineStyle: config.underlineStyle.rawValue,
             .cursor: NSCursor.pointingHand
         ]
-    }
-    
-    private func boundingRectForRange(range: NSRange) -> NSRect {
-        guard let textStorage = self.textStorage else { return .zero }
-        let layoutManager = NSLayoutManager()
-        textStorage.addLayoutManager(layoutManager)
-
-        let textContainer = NSTextContainer(size: bounds.size)
-        textContainer.lineFragmentPadding = 0
-        layoutManager.addTextContainer(textContainer)
-        
-        var actualRange = NSRange()
-        layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &actualRange)
-        let boundingRect = layoutManager.boundingRect(forGlyphRange: actualRange, in: textContainer)
-        return NSRect(x: boundingRect.minX, y: boundingRect.minY, width: boundingRect.width + 4, height: boundingRect.height)
     }
     
     private func updateHyperLinks() {
