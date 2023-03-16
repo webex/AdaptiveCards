@@ -74,7 +74,7 @@ extension NSImageView {
     func setConstraintSize(from font: NSFont) {
         guard let image = image else { return }
         let ratio = image.size.width / image.size.height
-        let pointHeight = font.pointSize + 2.0
+        let pointHeight = font.pointSize + (font.capHeight / 2).rounded(.down)
         heightAnchor.constraint(equalToConstant: pointHeight).isActive = true
         widthAnchor.constraint(equalToConstant: ratio * pointHeight).isActive = true
     }
