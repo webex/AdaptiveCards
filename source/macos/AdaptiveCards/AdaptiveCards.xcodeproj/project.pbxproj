@@ -559,7 +559,6 @@
 		AA4B4D4A28CF532000734278 /* ACRInputToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */; };
 		AA4B4D4E28CF548800734278 /* ACRSingleLineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */; };
 		AA4D26A6289A679700CA502D /* ACRColumnSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */; };
-		AA70051129B9ED5800EEE369 /* NSAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70051029B9ED5800EEE369 /* NSAttributedString+Extension.swift */; };
 		AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */; };
 		AA7A97BD288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */; };
 		AAC42D9628C22937007C4367 /* ACSVisibilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */; };
@@ -1158,7 +1157,6 @@
 		AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputToggleView.swift; sourceTree = "<group>"; };
 		AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRSingleLineInputTextView.swift; sourceTree = "<group>"; };
 		AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRColumnSetView.swift; sourceTree = "<group>"; };
-		AA70051029B9ED5800EEE369 /* NSAttributedString+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManager.swift; sourceTree = "<group>"; };
 		AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManagerTests.swift; sourceTree = "<group>"; };
 		AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACSVisibilityManager.swift; sourceTree = "<group>"; };
@@ -1214,7 +1212,6 @@
 				0876273E27734F9800F3347F /* ViewUtils.swift */,
 				AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */,
 				AA09229C2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift */,
-				AA70051029B9ED5800EEE369 /* NSAttributedString+Extension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2462,7 +2459,6 @@
 				AA09229D2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift in Sources */,
 				13C465E525DD3C07006E4605 /* InputDateRenderer.swift in Sources */,
 				AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */,
-				AA70051129B9ED5800EEE369 /* NSAttributedString+Extension.swift in Sources */,
 				2910CF012600A82A000910C8 /* ACRActionSetView.swift in Sources */,
 				0801D5EA25C2C3B500AABD6C /* AdaptiveCard.swift in Sources */,
 				29BA82D725E265F4000B7578 /* ChoiceSetInputRenderer.swift in Sources */,

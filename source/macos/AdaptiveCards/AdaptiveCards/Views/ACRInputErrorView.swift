@@ -14,7 +14,6 @@ class ACRInputErrorView: NSView {
     private (set) lazy var errorLabel: ACRInputLabelTextField = {
         let textLabel = ACRInputLabelTextField(inputElement: inputElement, renderConfig: renderConfig, hostConfig: hostConfig, style: style)
         textLabel.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.wantsLayer = true
         return textLabel
     }()
     
