@@ -271,7 +271,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     func applyVisibilityToSubviews() {
         for index in 0..<stackView.subviews.count {
             let subview = stackView.subviews[index]
-            if !(visibilityManager.fillerSpaceManager.isPadding(subview)) && !(subview is SpacingView) && !(subview is ACRInputLabelTextField) {
+            if !(visibilityManager.fillerSpaceManager.isPadding(subview)) && !(subview is SpacingView) && !(subview is ACRInputLabelTextField) && !(subview is ACRInputErrorView) {
                 visibilityManager.addVisibleView(index)
             }
         }
