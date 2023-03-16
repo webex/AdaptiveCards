@@ -53,8 +53,7 @@ class ACRInputErrorView: NSView {
     private func setupConstraints() {
         errorBadgeImage.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.padding).isActive = true
         errorBadgeImage.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        errorBadgeImage.setConstraintSize(from: renderConfig.inputFieldConfig.errorStateConfig.font)
-        
+        errorBadgeImage.setContentCompressionResistancePriority(.required, for: .horizontal)
         errorLabel.leadingAnchor.constraint(equalTo: errorBadgeImage.trailingAnchor, constant: Constants.padding).isActive = true
         errorLabel.topAnchor.constraint(equalTo: topAnchor).isActive = true
         errorLabel.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -67,15 +66,5 @@ class ACRInputErrorView: NSView {
         let attributedErrorMessageString = NSMutableAttributedString(string: errorMessage)
         attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
         errorLabel.attributedStringValue = attributedErrorMessageString
-    }
-}
-
-extension NSImageView {
-    func setConstraintSize(from font: NSFont) {
-        guard let image = image else { return }
-        let ratio = image.size.width / image.size.height
-        let pointHeight = font.pointSize + (font.capHeight / 2).rounded(.down)
-        heightAnchor.constraint(equalToConstant: pointHeight).isActive = true
-        widthAnchor.constraint(equalToConstant: ratio * pointHeight).isActive = true
     }
 }
