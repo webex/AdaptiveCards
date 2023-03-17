@@ -248,7 +248,7 @@ extension RootViewController: AdaptiveCardActionDelegate {
         print("LAYOUT CHANGE: Height changed from \(oldValue.height) to \(newValue.height)")
     }
     
-    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, actionView: NSView?) {
+    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String) {
         print("OPEN URL ACTION: \(urlString)")
         guard let url = URL(string: urlString) else { return }
         NSWorkspace.shared.open(url)

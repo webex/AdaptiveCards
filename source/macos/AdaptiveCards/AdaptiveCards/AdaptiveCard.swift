@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 public protocol AdaptiveCardActionDelegate: AnyObject {
-    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, actionView: NSView?)
+    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String)
     func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses dict: [String: Any], actionView: NSView)
     func adaptiveCard(_ adaptiveCard: NSView, didShowCardWith actionView: NSView, previousHeight: CGFloat, newHeight: CGFloat)
     func adaptiveCard(_ adaptiveCard: NSView, didUpdateBoundsFrom oldValue: NSRect, to newValue: NSRect)
