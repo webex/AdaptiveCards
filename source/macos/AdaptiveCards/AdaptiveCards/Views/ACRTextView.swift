@@ -101,33 +101,34 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     }
     
     override func keyDown(with event: NSEvent) {
-        let keyCode = Int(event.keyCode)
-        switch keyCode {
-        case kVK_Return, kVK_Space:
-            let selectedRange = self.selectedRange()
-            if let data = linkDataList.first(where: { data in
-                return selectedRange == data.linkRange
-            }) {
-                if !data.linkAddress.isEmpty {
-                    self.openLinkCallBack?(data.linkAddress)
-                    return
+        if !isEditable {
+            switch Int(event.keyCode) {
+            case kVK_Return, kVK_Space:
+                let selectedRange = self.selectedRange()
+                if let data = linkDataList.first(where: { data in
+                    return selectedRange == data.linkRange
+                }) {
+                    if !data.linkAddress.isEmpty {
+                        self.openLinkCallBack?(data.linkAddress)
+                        return
+                    }
                 }
+            case kVK_Tab:
+                if event.modifierFlags.contains(.shift) {
+                    if keyTabEntry, let data = getPreviousTextViewHyperLinkDataClosestToSelectedRange() {
+                        self.setSelectedRange(data.linkRange)
+                        return
+                    }
+                } else {
+                    if let data = getNextTextViewHyperLinkDataClosestToSelectedRange() {
+                        self.setSelectedRange(data.linkRange)
+                        keyTabEntry = true
+                        return
+                    }
+                }
+            default:
+                break
             }
-        case kVK_Tab:
-            if event.modifierFlags.contains(.shift) {
-                if keyTabEntry, let data = getPreviousTextViewHyperLinkDataClosestToSelectedRange() {
-                    self.setSelectedRange(data.linkRange)
-                    return
-                }
-            } else {
-                if let data = getNextTextViewHyperLinkDataClosestToSelectedRange() {
-                    self.setSelectedRange(data.linkRange)
-                    keyTabEntry = true
-                    return
-                }
-            }
-        default:
-            break
         }
         super.keyDown(with: event)
     }
