@@ -29,11 +29,11 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     private lazy var keyTabEntry = false
     
     override public var acceptsFirstResponder: Bool {
-        return hasLinks
+        return isEditable ? true : hasLinks
     }
     
     override public var canBecomeKeyView: Bool {
-        return hasLinks
+        return isEditable ? true : hasLinks
     }
     
     override public var focusRingMaskBounds: NSRect {
@@ -41,7 +41,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     }
     
     override public func drawFocusRingMask() {
-        if hasLinks {
+        if hasLinks || isEditable {
             self.bounds.fill()
             self.needsDisplay = true
         }
