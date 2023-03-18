@@ -4,7 +4,7 @@ import XCTest
 
 class ACRInputLabelTextFieldTests: XCTestCase {
     private var labelTextField: ACRInputLabelTextField!
-    private var errorTextField: ACRInputErrorTextField!
+    private var errorView: ACRInputErrorView!
     private var config: RenderConfig!
     private var hostConfig: FakeHostConfig!
     private var inputElement: FakeInputText!
@@ -15,7 +15,7 @@ class ACRInputLabelTextFieldTests: XCTestCase {
         hostConfig = .make()
         inputElement = .make(isRequired: true, errorMessage: "Error Message", label: "This is label")
         labelTextField = ACRInputLabelTextField(inputElement: inputElement, renderConfig: config, hostConfig: FakeHostConfig(), style: .none)
-        errorTextField = ACRInputErrorTextField(inputElement: inputElement, renderConfig: config, hostConfig: FakeHostConfig(), style: .none)
+        errorView = ACRInputErrorView(inputElement: inputElement, renderConfig: config, hostConfig: FakeHostConfig(), style: .none)
     }
     
     func testLabelString() throws {
@@ -30,9 +30,10 @@ class ACRInputLabelTextFieldTests: XCTestCase {
     }
     
     func testErrorString() throws {
-        let attributedErrorMessageString = NSMutableAttributedString(string: "Error Message")
         let errorStateConfig = config.inputFieldConfig.errorStateConfig
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error Message")
+        
         attributedErrorMessageString.addAttributes([.font: errorStateConfig.font, .foregroundColor: errorStateConfig.textColor], range: NSRange(location: 0, length: attributedErrorMessageString.length))
-        XCTAssertEqual(attributedErrorMessageString, errorTextField.attributedStringValue)
+        XCTAssertEqual(attributedErrorMessageString.string, errorView.errorLabel.attributedStringValue.string)
     }
 }

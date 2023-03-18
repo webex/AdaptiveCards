@@ -147,8 +147,8 @@ public struct ChoiceSetButtonConfig {
     }
 }
 public struct InputFieldConfig {
-    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .darkGray, activeBorderColor: .darkGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorStateConfig: .default)
-    public static let darkDefault = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .darkGray, backgroundColor: NSColor(white: 0.11, alpha: 1), borderColor: .lightGray, activeBorderColor: .lightGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorStateConfig: .default)
+    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .darkGray, activeBorderColor: .darkGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorStateConfig: .default, errorBadgeImage: nil)
+    public static let darkDefault = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .darkGray, backgroundColor: NSColor(white: 0.11, alpha: 1), borderColor: .lightGray, activeBorderColor: .lightGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorStateConfig: .default, errorBadgeImage: nil)
     
     public let height: CGFloat
     public let leftPadding: CGFloat
@@ -168,8 +168,9 @@ public struct InputFieldConfig {
     public let placeholderTextColor: NSColor
     public let multilineFieldInsets: NSEdgeInsets
     public let errorStateConfig: ErrorStateConfig
+    public let errorBadgeImage: NSImage?
     
-    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, clearButtonImage: NSImage?, calendarImage: NSImage?, clockImage: NSImage?, font: NSFont, highlightedColor: NSColor, backgroundColor: NSColor, borderColor: NSColor, activeBorderColor: NSColor, placeholderTextColor: NSColor, multilineFieldInsets: NSEdgeInsets, errorStateConfig: ErrorStateConfig) {
+    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, clearButtonImage: NSImage?, calendarImage: NSImage?, clockImage: NSImage?, font: NSFont, highlightedColor: NSColor, backgroundColor: NSColor, borderColor: NSColor, activeBorderColor: NSColor, placeholderTextColor: NSColor, multilineFieldInsets: NSEdgeInsets, errorStateConfig: ErrorStateConfig, errorBadgeImage: NSImage?) {
         self.height = height
         self.leftPadding = leftPadding
         self.rightPadding = rightPadding
@@ -188,6 +189,7 @@ public struct InputFieldConfig {
         self.placeholderTextColor = placeholderTextColor
         self.multilineFieldInsets = multilineFieldInsets
         self.errorStateConfig = errorStateConfig
+        self.errorBadgeImage = errorBadgeImage
     }
     
     public struct ErrorStateConfig {
