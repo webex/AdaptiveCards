@@ -60,8 +60,7 @@ class FakeTargetHandlerDelegate: ShowCardTargetHandlerDelegate {
     }
     
     var calledURL: String?
-    func handleOpenURLAction(actionView: NSView?, urlString: String) {
-        calledView = actionView
+    func handleOpenURLAction(urlString: String) {
         calledURL = urlString
     }
     
