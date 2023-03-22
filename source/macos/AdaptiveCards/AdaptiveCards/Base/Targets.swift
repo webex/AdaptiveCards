@@ -16,11 +16,11 @@ class ActionOpenURLTarget: NSObject, TargetHandler {
     }
     
     func handleSelectionAction(for actionView: NSView) {
-        delegate?.handleOpenURLAction(actionView: actionView, urlString: url)
+        delegate?.handleOpenURLAction(urlString: url)
     }
     
     @objc private func handleButtonAction(_ sender: NSButton) {
-        delegate?.handleOpenURLAction(actionView: sender, urlString: url)
+        delegate?.handleOpenURLAction(urlString: url)
     }
 }
     
