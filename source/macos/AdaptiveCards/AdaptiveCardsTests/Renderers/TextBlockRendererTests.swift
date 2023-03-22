@@ -134,6 +134,20 @@ class TextBlockRendererTests: XCTestCase {
         XCTAssertEqual(textView.string, "\t1\tOpen the Cisco AnyConnect Secure Mobility Client from your Applications folder.")
     }
     
+    func testHyperLinkTextInTextView() {
+        textBlock = .make(text: "This is the first inline. We **do** _support_ [makrdown](https://www.google.com/).")
+        var textView = renderTextView()
+        XCTAssertTrue(textView.hasLinks)
+        XCTAssertTrue(textView.acceptsFirstResponder)
+        XCTAssertTrue(textView.canBecomeKeyView)
+        
+        textBlock = .make(text: "This is the first inline. We **do** _support_.")
+        textView = renderTextView()
+        XCTAssertFalse(textView.hasLinks)
+        XCTAssertFalse(textView.acceptsFirstResponder)
+        XCTAssertFalse(textView.canBecomeKeyView)
+    }
+    
     private func renderTextView() -> ACRTextView {
         let rootView = FakeRootView()
         rootView.resolverDelegate = resourceResolver

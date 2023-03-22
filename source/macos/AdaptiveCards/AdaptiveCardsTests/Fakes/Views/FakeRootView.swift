@@ -34,7 +34,7 @@ class FakeResourceResolver: AdaptiveCardResourceResolver {
 
 class FakeAdaptiveCardActionDelegate: AdaptiveCardActionDelegate {
     var calledURL: String?
-    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, actionView: NSView) {
+    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String) {
         calledURL = urlString
     }
     
@@ -60,8 +60,7 @@ class FakeTargetHandlerDelegate: ShowCardTargetHandlerDelegate {
     }
     
     var calledURL: String?
-    func handleOpenURLAction(actionView: NSView, urlString: String) {
-        calledView = actionView
+    func handleOpenURLAction(urlString: String) {
         calledURL = urlString
     }
     
