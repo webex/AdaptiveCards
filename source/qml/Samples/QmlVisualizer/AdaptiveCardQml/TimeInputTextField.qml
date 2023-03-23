@@ -21,6 +21,8 @@ TextField {
             accessibleName += text;
         else
             accessibleName += placeholderText;
+
+        accessibleName += qsTr(". Type a time");
         return accessibleName;
     }
 

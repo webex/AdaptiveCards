@@ -146,6 +146,8 @@ Column {
             onClicked: {
                 timeInputPopout.open();
             }
+            Accessible.name: qsTr("Time picker")
+            Accessible.role: Accessible.Button
 
             background: Rectangle {
                 color: 'transparent'
