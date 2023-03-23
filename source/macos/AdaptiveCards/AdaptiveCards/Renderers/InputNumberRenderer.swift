@@ -144,6 +144,8 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         case kVK_DownArrow:
             stepper.integerValue -= 1
             value = stepper.stringValue
+        case kVK_Space:
+            break
         default:
             super.keyDown(with: event)
         }
