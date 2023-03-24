@@ -73,7 +73,28 @@ class BaseCardElementRendererrTests: XCTestCase {
         let container = FakeContainer.make(items: [invisibleInputNumber])
         let containerView = containerRenderer.render(element: container, with: hostConfig, style: .default, rootView: fakeRootView, parentView: fakeRootView, inputs: [], config: config)
         guard let containerView = containerView as? ACRContainerView else { fatalError() }
-        guard let inputNumberView = containerView.stackView.findView(withIdentifier: "1") as? ACRNumericTextField else { fatalError() }
+        XCTAssertNotNil(containerView.stackView.findView(withIdentifier: "1") as? ACRNumericTextField)
+    }
+    
+    func testInputTextEmptyErrorMessageHandler() {
+        let config = RenderConfig(isDarkMode: true, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        let fakeRootView = ACRView.init(style: .none, hostConfig: hostConfig, renderConfig: config)
+        
+        let inputText = FakeInputText.make(id: "1", isRequired: true)
+        let inputTextView = TextInputRenderer().render(element: inputText, with: hostConfig, style: .default, rootView: fakeRootView, parentView: fakeRootView, inputs: [], config: config)
+        
+        BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: inputTextView, element: inputText, parentView: fakeRootView, rootView: fakeRootView, style: .none, hostConfig: hostConfig, config: config, isfirstElement: true)
+        
+        XCTAssertTrue(inputTextView is ACRSingleLineInputTextView)
+        guard let inputTextView = inputTextView as? ACRSingleLineInputTextView else { fatalError() }
+        
+        guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputTextView) else { fatalError() }
+        
+        XCTAssertFalse(fakeRootView.isErrorVisible(inputTextView))
+        inputTextView.errorDelegate?.inputHandlingViewShouldShowError(inputTextView)
+        XCTAssertTrue(fakeRootView.isErrorVisible(inputTextView))
+        inputTextView.errorDelegate?.inputHandlingViewShouldHideError(inputTextView, currentFocussedView: nil)
+        XCTAssertFalse(fakeRootView.isErrorVisible(inputTextView))
     }
     
     func testInputTextErrorMessageHandler() {
@@ -90,7 +111,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputTextView) else { fatalError() }
         
-        XCTAssertEqual(errorMessageTextField.stringValue, "Error")
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error")
+        
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputTextView))
         inputTextView.errorDelegate?.inputHandlingViewShouldShowError(inputTextView)
         XCTAssertTrue(fakeRootView.isErrorVisible(inputTextView))
@@ -112,7 +135,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        XCTAssertEqual(errorMessageTextField.stringValue, "Error")
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error")
+        
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         inputView.errorDelegate?.inputHandlingViewShouldShowError(inputView)
         XCTAssertTrue(fakeRootView.isErrorVisible(inputView))
@@ -134,7 +159,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        XCTAssertEqual(errorMessageTextField.stringValue, "Error")
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error")
+        
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         inputView.errorDelegate?.inputHandlingViewShouldShowError(inputView)
         XCTAssertTrue(fakeRootView.isErrorVisible(inputView))
@@ -156,7 +183,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        XCTAssertEqual(errorMessageTextField.stringValue, "Error")
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error")
+        
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         inputView.errorDelegate?.inputHandlingViewShouldShowError(inputView)
         XCTAssertTrue(fakeRootView.isErrorVisible(inputView))
@@ -179,7 +208,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        XCTAssertEqual(errorMessageTextField.stringValue, "Error Message")
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error Message")
+        
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         XCTAssertEqual(inputView.accessibilityValue() as? String, "Label Message, Title")
         
@@ -206,7 +237,9 @@ class BaseCardElementRendererrTests: XCTestCase {
         
         guard let errorMessageTextField = fakeRootView.getErrorTextField(for: inputView) else { fatalError() }
         
-        XCTAssertEqual(errorMessageTextField.stringValue, "Error Message")
+        let attributedErrorMessageString = NSMutableAttributedString(string: "Error Message")
+        
+        XCTAssertEqual(errorMessageTextField.errorLabel.stringValue, attributedErrorMessageString.string)
         XCTAssertFalse(fakeRootView.isErrorVisible(inputView))
         XCTAssertEqual(inputView.accessibilityLabel(), "Label, Title")
         

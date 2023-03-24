@@ -1,4 +1,17 @@
 import AppKit
+import Carbon.HIToolbox
+
+class ACRTextViewHyperLinkData {
+    var linkText: String
+    var linkAddress: String
+    var linkRange: NSRange
+    
+    init(text: String, address: String, range: NSRange) {
+        self.linkText    = text
+        self.linkAddress = address
+        self.linkRange   = range
+    }
+}
 
 class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     weak var responderDelegate: ACRTextViewResponderDelegate?
@@ -6,6 +19,38 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     var placeholderLeftPadding: CGFloat?
     var placeholderTopPadding: CGFloat?
     var target: TargetHandler?
+    var openLinkCallBack: ((String) -> Void)?
+    
+    private lazy var linkDataList: [ACRTextViewHyperLinkData] = []
+    var hasLinks: Bool {
+        return !linkDataList.isEmpty
+    }
+    private lazy var selectedLinkIndex: Int = -1
+    private lazy var keyTabEntry = false
+    
+    override public var acceptsFirstResponder: Bool {
+        return isEditable ? true : hasLinks
+    }
+    
+    override public var canBecomeKeyView: Bool {
+        return isEditable ? true : hasLinks
+    }
+    
+    override public var focusRingMaskBounds: NSRect {
+        return self.bounds
+    }
+    
+    override public func drawFocusRingMask() {
+        if hasLinks || isEditable {
+            self.bounds.fill()
+            self.needsDisplay = true
+        }
+    }
+    
+    func setAttributedString(str: NSAttributedString) {
+        self.textStorage?.setAttributedString(str)
+        updateHyperLinks()
+    }
     
     override var intrinsicContentSize: NSSize {
         guard let layoutManager = layoutManager, let textContainer = textContainer else {
@@ -35,6 +80,8 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         self.needsDisplay = true
         clearSelectedRange()
         responderDelegate?.textViewDidResignFirstResponder()
+        selectedLinkIndex = -1
+        keyTabEntry = false
         return super.resignFirstResponder()
     }
     
@@ -51,6 +98,39 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
                 action.handleSelectionAction(for: self)
             }
         }
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        if !isEditable {
+            switch Int(event.keyCode) {
+            case kVK_Return, kVK_Space:
+                let selectedRange = self.selectedRange()
+                if let data = linkDataList.first(where: { data in
+                    return selectedRange == data.linkRange
+                }) {
+                    if !data.linkAddress.isEmpty {
+                        self.openLinkCallBack?(data.linkAddress)
+                        return
+                    }
+                }
+            case kVK_Tab:
+                if event.modifierFlags.contains(.shift) {
+                    if keyTabEntry, let data = getPreviousTextViewHyperLinkDataClosestToSelectedRange() {
+                        self.setSelectedRange(data.linkRange)
+                        return
+                    }
+                } else {
+                    if let data = getNextTextViewHyperLinkDataClosestToSelectedRange() {
+                        self.setSelectedRange(data.linkRange)
+                        keyTabEntry = true
+                        return
+                    }
+                }
+            default:
+                break
+            }
+        }
+        super.keyDown(with: event)
     }
     
     override func hitTest(_ point: NSPoint) -> NSView? {
@@ -92,8 +172,67 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         ]
     }
     
-    override var canBecomeKeyView: Bool {
-        return isEditable
+    private func updateHyperLinks() {
+        linkDataList = []
+        let attrString = self.attributedString()
+        let fullTextRange = NSRange(location: 0, length: attrString.length)
+        
+        attrString.enumerateAttribute(NSAttributedString.Key.link, in: fullTextRange, options: .longestEffectiveRangeNotRequired, using: {(value: Any?, range: NSRange, _ : UnsafeMutablePointer<ObjCBool>) -> Void in
+            if let linkStr = value as? String {
+                updateLinkTextAttributes(range: range, attrString: attrString, linkAddr: linkStr)
+            }
+            if let linkUrl = value as? NSURL, let linkStr = linkUrl.absoluteString {
+                updateLinkTextAttributes(range: range, attrString: attrString, linkAddr: linkStr)
+            }
+        })
+    }
+    
+    private func updateLinkTextAttributes(range: NSRange, attrString: NSAttributedString, linkAddr: String) {
+        if let rangeInString = Range(range, in: attrString.string) {
+            let textAtRange = String(self.string[rangeInString])
+            if !self.linkDataList.contains(where: { data in
+                return data.linkRange == range && data.linkText == textAtRange
+            }) {
+                self.linkDataList.append(ACRTextViewHyperLinkData(text: textAtRange, address: linkAddr, range: range))
+            }
+        }
+    }
+    
+    private func getNextTextViewHyperLinkDataClosestToSelectedRange() -> ACRTextViewHyperLinkData? {
+        if linkDataList.isEmpty { return nil }
+        setAccessibilityRole(NSAccessibility.Role.link)
+        let selectedRange = self.selectedRange()
+        if let index = linkDataList.firstIndex(where: { data in
+            return data.linkRange == selectedRange }) {
+            let nextIndex = index + 1
+            if linkDataList.count > nextIndex {
+                selectedLinkIndex = nextIndex
+                return linkDataList[nextIndex]
+            } else {
+                return nil
+            }
+        }
+        selectedLinkIndex = 0
+        return linkDataList[0]
+    }
+    
+    private func getPreviousTextViewHyperLinkDataClosestToSelectedRange() -> ACRTextViewHyperLinkData? {
+        if linkDataList.isEmpty { return nil }
+        setAccessibilityRole(NSAccessibility.Role.link)
+        let selectedRange = self.selectedRange()
+        if let index = linkDataList.firstIndex(where: { data in
+            return data.linkRange == selectedRange }) {
+            let previousIndex = index - 1
+            
+            if previousIndex >= 0 {
+                selectedLinkIndex = previousIndex
+                return linkDataList[previousIndex]
+            } else {
+                return nil
+            }
+        }
+        selectedLinkIndex = 0
+        return linkDataList[linkDataList.count - 1]
     }
 }
 

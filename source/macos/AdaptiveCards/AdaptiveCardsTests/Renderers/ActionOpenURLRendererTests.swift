@@ -47,7 +47,6 @@ class ActionOpenURLRendererTests: XCTestCase {
         button.performClick()
         
         XCTAssertEqual(targetHandlerDelegate.calledURL, "www.google.com")
-        XCTAssertEqual(targetHandlerDelegate.calledView, button)
     }
     
     func testViewCallsDelegateAction_forRootView() {
