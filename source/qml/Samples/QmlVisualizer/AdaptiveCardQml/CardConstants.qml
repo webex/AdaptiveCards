@@ -75,6 +75,8 @@ QtObject {
         readonly property int timePickerHeight: 280
         readonly property int timePickerColumnSpacing: 16
         readonly property int timePickerHoursAndMinutesTagWidth: 43
+        readonly property int timePickerListViewWidth: 52
+        readonly property int timePickerListViewMargins: 5
         readonly property int timePickerElementHeight: 32
         readonly property int timePickerMargins: 16
         readonly property int timePickerSpacing: 4
