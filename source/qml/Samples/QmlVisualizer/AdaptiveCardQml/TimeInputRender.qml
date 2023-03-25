@@ -94,100 +94,94 @@ Column {
         height: inputFieldConstants.height
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
-        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : timeInputTextField.activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
 
-        RowLayout {
-            id: timeInputRow
+        ComboBox {
+            id: timeInputCombobox
 
-            width: parent.width
-            height: parent.height
-            spacing: 0
+            anchors.left: timeInputIcon.right
+            focusPolicy: Qt.NoFocus
+            onActiveFocusChanged: colorChange(false)
+            Accessible.ignored: true
+            Keys.onReturnPressed: {
+                setFocusBackOnClose(timeInputCombobox);
+                this.popup.open();
+            }
 
-            Button {
-                id: timeInputIcon
+            indicator: Rectangle {
+            }
 
-                width: inputTimeConstants.timeIconButtonSize
-                height: inputTimeConstants.timeIconButtonSize
-                horizontalPadding: 0
-                verticalPadding: 0
-                icon.width: inputTimeConstants.timeIconSize
-                icon.height: inputTimeConstants.timeIconSize
-                icon.color: showErrorMessage ? inputTimeConstants.timeIconColorOnError : timeInputTextField.activeFocus ? inputTimeConstants.timeIconColorOnFocus : inputTimeConstants.timeIconColorNormal
-                icon.source: CardConstants.clockIcon
-                Keys.onReturnPressed: onClicked()
-                Layout.leftMargin: inputTimeConstants.timeIconHorizontalPadding
-                Layout.alignment: Qt.AlignVCenter
-                focusPolicy: Qt.NoFocus
-                onClicked: {
-                    timeInputPopout.open();
-                }
+            popup: TimeInputPopout {
+                id: timeInputPopout
 
-                background: Rectangle {
-                    color: 'transparent'
+                timeInputElement: timeInput
+                timeInputField: timeInputTextField
+            }
+
+            background: TimeInputTextField {
+                id: timeInputTextField
+
+                timeInputElement: timeInput
+                timeInputPopout: timeInputPopout
+            }
+
+        }
+
+        Button {
+            id: timeInputIcon
+
+            width: inputTimeConstants.timeIconButtonSize
+            height: inputTimeConstants.timeIconButtonSize
+            horizontalPadding: 0
+            verticalPadding: 0
+            icon.width: inputTimeConstants.timeIconSize
+            icon.height: inputTimeConstants.timeIconSize
+            icon.color: showErrorMessage ? inputTimeConstants.timeIconColorOnError : inputTimeConstants.timeIconColorNormal
+            icon.source: CardConstants.clockIcon
+            Keys.onReturnPressed: onClicked()
+            anchors.left: parent.left
+            anchors.leftMargin: inputTimeConstants.timeIconHorizontalPadding
+            anchors.verticalCenter: parent.verticalCenter
+            onClicked: {
+                timeInputPopout.open();
+            }
+            Accessible.name: qsTr("Time picker")
+            Accessible.role: Accessible.Button
+
+            background: Rectangle {
+                color: 'transparent'
+                radius: CardConstants.inputFieldConstants.borderRadius
+
+                WCustomFocusItem {
+                    isRectangle: true
+                    visible: timeInputIcon.activeFocus
+                    designatedParent: parent
                 }
 
             }
 
-            ComboBox {
-                id: timeInputCombobox
+        }
 
-                Layout.fillWidth: true
-                focusPolicy: Qt.NoFocus
-                onActiveFocusChanged: colorChange(false)
-                Accessible.ignored: true
-                Keys.onReturnPressed: {
-                    setFocusBackOnClose(timeInputCombobox);
-                    this.popup.open();
-                }
+        InputFieldClearIcon {
+            id: timeInputClearIcon
 
-                indicator: Rectangle {
-                }
-
-                popup: TimeInputPopout {
-                    id: timeInputPopout
-
-                    timeInputElement: timeInput
-                    timeInputField: timeInputTextField
-                }
-
-                background: TimeInputTextField {
-                    id: timeInputTextField
-
-                    timeInputElement: timeInput
-                    timeInputPopout: timeInputPopout
-                }
-
+            anchors.right: parent.right
+            anchors.rightMargin: inputFieldConstants.clearIconHorizontalPadding
+            anchors.verticalCenter: parent.verticalCenter
+            Keys.onReturnPressed: onClicked()
+            visible: (!timeInputTextField.focus && timeInputTextField.text !== "") || (timeInputTextField.focus && timeInputTextField.text !== _emptyField)
+            onClicked: {
+                nextItemInFocusChain().forceActiveFocus();
+                timeInputTextField.clear();
+                _currHour = -1;
+                _currMinute = -1;
             }
+        }
 
-            Button {
-                id: timeInputClearIcon
-
-                width: inputFieldConstants.clearIconSize
-                horizontalPadding: 0
-                verticalPadding: 0
-                icon.width: inputFieldConstants.clearIconSize
-                icon.height: inputFieldConstants.clearIconSize
-                icon.color: activeFocus ? inputFieldConstants.clearIconColorOnFocus : inputFieldConstants.clearIconColorNormal
-                icon.source: CardConstants.clearIconImage
-                Keys.onReturnPressed: onClicked()
-                Layout.rightMargin: inputFieldConstants.clearIconHorizontalPadding
-                visible: (!timeInputTextField.focus && timeInputTextField.text !== "") || (timeInputTextField.focus && timeInputTextField.text !== _emptyField)
-                onClicked: {
-                    nextItemInFocusChain().forceActiveFocus();
-                    timeInputTextField.clear();
-                    _currHour = -1;
-                    _currMinute = -1;
-                }
-                Accessible.name: 'Time Picker clear'
-                Accessible.role: Accessible.Button
-
-                background: Rectangle {
-                    color: 'transparent'
-                }
-
-            }
-
+        WCustomFocusItem {
+            isRectangle: true
+            visible: timeInputTextField.activeFocus
         }
 
     }
