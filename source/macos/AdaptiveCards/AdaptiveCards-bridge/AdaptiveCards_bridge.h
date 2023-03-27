@@ -111,6 +111,5 @@ FOUNDATION_EXPORT const unsigned char AdaptiveCards_bridgeVersionString[];
 #import <AdaptiveCards_bridge/ACSStyledCollectionElement.h>
 #import <AdaptiveCards_bridge/ACSCollectionCoreElement.h>
 #import <AdaptiveCards_bridge/ACSTextStyle.h>
-#import <AdaptiveCards_bridge/ACSExecuteAction.h>
 #import <AdaptiveCards_bridge/ACSCaptionSource.h>
 #import <AdaptiveCards_bridge/ACSContentSource.h>
