@@ -50,6 +50,8 @@
       return AdaptiveCards::ForegroundColor::Warning;
     case ACSForegroundColor::ACSForegroundColorAttention:
       return AdaptiveCards::ForegroundColor::Attention;
+    default:
+      return AdaptiveCards::ForegroundColor::Default;
   }
 }
 

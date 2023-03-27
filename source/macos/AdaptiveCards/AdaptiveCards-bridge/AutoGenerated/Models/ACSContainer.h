@@ -13,7 +13,7 @@ using namespace AdaptiveCards;
 #endif
 
 #import "ACSBaseCardElement.h"
-#import "ACSRemoteResourceInformation.h"
+//#import "ACSRemoteResourceInformation.h"
 #import "ACSStyledCollectionElement.h"
 
 @class ACSBaseCardElement;
@@ -29,8 +29,8 @@ using namespace AdaptiveCards;
 #endif
 
 - (NSArray<ACSBaseCardElement *> * _Nonnull)getItems;
-- (bool _Nullable)getRtl;
-- (void)setRtl:(bool _Nullable)value;
+- (bool)getRtl;
+- (void)setRtl:(bool)value;
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceInfo;
 
 

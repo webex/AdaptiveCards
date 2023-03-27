@@ -38,7 +38,7 @@
 
 }
 
-- (void)setAction:(ACSBaseActionElement * _Nonnull)
+- (void)setAction:(ACSBaseActionElement * _Nonnull)value
 {
     // auto Cpp = [ACSBaseActionElementConvertor convertObj:];
  
@@ -60,7 +60,7 @@
 
 }
 
-- (void)setUserIds:(NSArray<NSString *>* _Nonnull)
+- (void)setUserIds:(NSArray<NSString *>* _Nonnull)value
 {
     // std::vector<std::string> Vector;
     // for (id Obj in )

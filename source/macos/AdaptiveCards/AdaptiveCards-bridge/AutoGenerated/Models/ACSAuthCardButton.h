@@ -23,16 +23,16 @@ using namespace AdaptiveCards;
 
 - (NSString * _Nullable)getType;
 
-- (void)setType:(NSString * _Nonnull);
+- (void)setType:(NSString * _Nonnull)value;
 - (NSString * _Nullable)getTitle;
 
-- (void)setTitle:(NSString * _Nonnull);
+- (void)setTitle:(NSString * _Nonnull)value;
 - (NSString * _Nullable)getImage;
 
-- (void)setImage:(NSString * _Nonnull);
+- (void)setImage:(NSString * _Nonnull)value;
 - (NSString * _Nullable)getValue;
 
-- (void)setValue:(NSString * _Nonnull);
+- (void)setValue:(NSString * _Nonnull)value;
 
 
 @end

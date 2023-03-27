@@ -40,7 +40,7 @@ enum ACSChoiceSetStyle: NSUInteger;
 - (NSArray<ACSChoiceInput *> * _Nonnull)getChoices;
 - (NSArray<ACSChoiceInput *> * _Nonnull)getChoices;
 - (ACSChoicesData * _Nullable)getChoicesData;
-- (void)setChoicesData:(ACSChoicesData * _Nonnull);
+- (void)setChoicesData:(ACSChoicesData * _Nonnull)value;
 - (NSString * _Nullable)getValue;
 - (void)setValue:(NSString * _Nonnull)value;
 - (bool)getWrap;

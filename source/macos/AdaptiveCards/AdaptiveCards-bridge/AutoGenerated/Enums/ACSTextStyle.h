@@ -9,7 +9,8 @@
 
 typedef NS_ENUM(NSUInteger, ACSTextStyle) {
     ACSTextStyleDefault,
-    ACSTextStyleHeading
+    ACSTextStyleHeading,
+    ACSTextStyleNil
 };
 
 #endif

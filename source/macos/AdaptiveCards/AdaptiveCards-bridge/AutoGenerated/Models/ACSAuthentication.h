@@ -26,13 +26,13 @@ using namespace AdaptiveCards;
 #endif
 
 - (NSString * _Nullable)getText;
-- (void)setText:(NSString * _Nonnull);
+- (void)setText:(NSString * _Nonnull)value;
 - (NSString * _Nullable)getConnectionName;
-- (void)setConnectionName:(NSString * _Nonnull);
+- (void)setConnectionName:(NSString * _Nonnull)value;
 - (ACSTokenExchangeResource * _Nullable)getTokenExchangeResource;
-- (void)setTokenExchangeResource:(ACSTokenExchangeResource * _Nonnull);
+- (void)setTokenExchangeResource:(ACSTokenExchangeResource * _Nonnull)value;
 - (NSArray<ACSAuthCardButton *> * _Nonnull)getButtons;
-- (void)setButtons:(NSArray<ACSAuthCardButton *>* _Nonnull);
+- (void)setButtons:(NSArray<ACSAuthCardButton *>* _Nonnull)value;
 
 
 @end

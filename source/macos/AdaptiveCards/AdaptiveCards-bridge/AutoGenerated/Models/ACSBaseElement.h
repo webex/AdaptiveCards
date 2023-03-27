@@ -19,7 +19,7 @@ using namespace AdaptiveCards;
 
 
 
-#import "ACSRemoteResourceInformation.h"
+//#import "ACSRemoteResourceInformation.h"
 
 
 @class ACSBaseElement;

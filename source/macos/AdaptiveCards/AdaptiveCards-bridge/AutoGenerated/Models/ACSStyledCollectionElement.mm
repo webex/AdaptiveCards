@@ -56,15 +56,15 @@
     
 }
 
-- (ACSVerticalContentAlignment _Nullable)getVerticalContentAlignment
+- (ACSVerticalContentAlignment)getVerticalContentAlignment
 {
  
     auto getVerticalContentAlignmentCpp = mCppObj->GetVerticalContentAlignment();
-    return [ACSVerticalContentAlignmentConvertor convertCpp:getVerticalContentAlignmentCpp];
+    return getVerticalContentAlignmentCpp.has_value() ? [ACSVerticalContentAlignmentConvertor convertCpp:getVerticalContentAlignmentCpp.value_or(AdaptiveCards::VerticalContentAlignment::Top)] : ACSVerticalContentAlignmentNil;
 
 }
 
-- (void)setVerticalContentAlignment:(enum ACSVerticalContentAlignment _Nullable)value
+- (void)setVerticalContentAlignment:(enum ACSVerticalContentAlignment)value
 {
     auto valueCpp = [ACSVerticalContentAlignmentConvertor convertObj:value];
  

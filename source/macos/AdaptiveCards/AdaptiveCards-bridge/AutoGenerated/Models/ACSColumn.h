@@ -14,7 +14,7 @@ using namespace AdaptiveCards;
 
 #import "ACSAdaptiveCardParseWarning.h"
 #import "ACSBaseCardElement.h"
-#import "ACSRemoteResourceInformation.h"
+//#import "ACSRemoteResourceInformation.h"
 
 #import "ACSStyledCollectionElement.h"
 @class ACSAdaptiveCardParseWarning;
@@ -34,8 +34,8 @@ using namespace AdaptiveCards;
 - (NSNumber * _Nullable)getPixelWidth;
 - (void)setPixelWidth:(NSNumber * _Nonnull)value;
 - (NSArray<ACSBaseCardElement *> * _Nonnull)getItems;
-- (bool _Nullable)getRtl;
-- (void)setRtl:(bool _Nullable)value;
+- (bool)getRtl;
+- (void)setRtl:(bool)value;
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceInfo;
 
 

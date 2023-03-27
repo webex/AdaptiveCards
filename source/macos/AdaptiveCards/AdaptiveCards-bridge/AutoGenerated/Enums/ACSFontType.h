@@ -9,7 +9,8 @@
 
 typedef NS_ENUM(NSUInteger, ACSFontType) {
     ACSFontTypeDefault,
-    ACSFontTypeMonospace
+    ACSFontTypeMonospace,
+    ACSFontTypeNil
 };
 
 #endif

@@ -14,7 +14,8 @@ typedef NS_ENUM(NSUInteger, ACSForegroundColor) {
     ACSForegroundColorAccent,
     ACSForegroundColorGood,
     ACSForegroundColorWarning,
-    ACSForegroundColorAttention
+    ACSForegroundColorAttention,
+    ACSForegroundColorNil
 };
 
 #endif

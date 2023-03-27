@@ -13,7 +13,7 @@ using namespace AdaptiveCards;
 #endif
 
 #import "ACSColumn.h"
-#import "ACSRemoteResourceInformation.h"
+//#import "ACSRemoteResourceInformation.h"
 #import "ACSHorizontalAlignment.h"
 
 #import "ACSStyledCollectionElement.h"

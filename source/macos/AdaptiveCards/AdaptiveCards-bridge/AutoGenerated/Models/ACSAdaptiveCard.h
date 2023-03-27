@@ -16,14 +16,14 @@ using namespace AdaptiveCards;
 #import "ACSBackgroundImage.h"
 #import "ACSBaseActionElement.h"
 #import "ACSRefresh.h"
-#import "ACSRemoteResourceInformation.h"
+//#import "ACSRemoteResourceInformation.h"
 #import "ACSCardElementType.h"
 #import "ACSBaseCardElement.h"
 #import "ACSContainerStyle.h"
 #import "ACSHeightType.h"
 #import "ACSInternalId.h"
 #import "ACSVerticalContentAlignment.h"
-#import "ACSAdaptiveCardParseWarning"
+#import "ACSAdaptiveCardParseWarning.h"
 
 
 
@@ -73,8 +73,8 @@ enum ACSVerticalContentAlignment: NSUInteger;
 - (void)setHeight:(enum ACSHeightType)value;
 - (NSNumber * _Nullable)getMinHeight;
 - (void)setMinHeight:(NSNumber * _Nonnull)value;
-- (bool _Nullable)getRtl;
-- (void)setRtl:(bool _Nullable)value;
+- (bool)getRtl;
+- (void)setRtl:(bool)value;
 - (ACSBaseActionElement * _Nullable)getSelectAction;
 - (void)setSelectAction:(ACSBaseActionElement * _Nonnull)action;
 - (NSArray<ACSBaseCardElement *> * _Nonnull)getBody;

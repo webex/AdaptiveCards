@@ -38,9 +38,9 @@
 
 }
 
-- (void)setText:(NSString * _Nonnull)
+- (void)setText:(NSString * _Nonnull)value
 {
-    auto Cpp = std::string([ UTF8String]);
+    auto Cpp = std::string([value UTF8String]);
  
     mCppObj->SetText(Cpp);
     
@@ -54,9 +54,9 @@
 
 }
 
-- (void)setConnectionName:(NSString * _Nonnull)
+- (void)setConnectionName:(NSString * _Nonnull)value
 {
-    auto Cpp = std::string([ UTF8String]);
+    auto Cpp = std::string([value UTF8String]);
  
     mCppObj->SetConnectionName(Cpp);
     
@@ -72,7 +72,7 @@
 
 }
 
-- (void)setTokenExchangeResource:(ACSTokenExchangeResource * _Nonnull)
+- (void)setTokenExchangeResource:(ACSTokenExchangeResource * _Nonnull)value
 {
     // auto Cpp = [ACSTokenExchangeResourceConvertor convertObj:];
  
@@ -94,7 +94,7 @@
 
 }
 
-- (void)setButtons:(NSArray<ACSAuthCardButton *>* _Nonnull)
+- (void)setButtons:(NSArray<ACSAuthCardButton *>* _Nonnull)value
 {
 	// 	    std::vector<AdaptiveCards::AuthCardButton> Vector;
     // for (id Obj in )

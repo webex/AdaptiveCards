@@ -22,11 +22,11 @@ using namespace AdaptiveCards;
 #endif
 
 - (NSString * _Nullable)getId;
-- (void)setId:(NSString * _Nonnull);
+- (void)setId:(NSString * _Nonnull)value;
 - (NSString * _Nullable)getUri;
-- (void)setUri:(NSString * _Nonnull);
+- (void)setUri:(NSString * _Nonnull)value;
 - (NSString * _Nullable)getProviderId;
-- (void)setProviderId:(NSString * _Nonnull);
+- (void)setProviderId:(NSString * _Nonnull)value;
 
 
 @end

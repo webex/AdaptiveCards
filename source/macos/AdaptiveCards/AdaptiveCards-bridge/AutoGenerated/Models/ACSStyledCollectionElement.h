@@ -38,8 +38,8 @@ enum ACSVerticalContentAlignment: NSUInteger;
 
 - (ACSContainerStyle)getStyle;
 - (void)setStyle:(enum ACSContainerStyle)value;
-- (ACSVerticalContentAlignment _Nullable)getVerticalContentAlignment;
-- (void)setVerticalContentAlignment:(enum ACSVerticalContentAlignment _Nullable)value;
+- (ACSVerticalContentAlignment)getVerticalContentAlignment;
+- (void)setVerticalContentAlignment:(enum ACSVerticalContentAlignment)value;
 - (bool)getPadding;
 - (void)setPadding:(bool)value;
 - (bool)getBleed;

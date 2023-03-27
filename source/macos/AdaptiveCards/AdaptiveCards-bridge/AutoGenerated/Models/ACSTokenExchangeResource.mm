@@ -34,10 +34,10 @@
 
 }
 
-- (void)setId:(NSString * _Nonnull)
+- (void)setId:(NSString * _Nonnull)value
 {
 		
-    auto Cpp = std::string([ UTF8String]);
+    auto Cpp = std::string([value UTF8String]);
  
     mCppObj->SetId(Cpp);
     
@@ -51,10 +51,10 @@
 
 }
 
-- (void)setUri:(NSString * _Nonnull)
+- (void)setUri:(NSString * _Nonnull)value
 {
 		
-    auto Cpp = std::string([ UTF8String]);
+    auto Cpp = std::string([value UTF8String]);
  
     mCppObj->SetUri(Cpp);
     
@@ -68,10 +68,10 @@
 
 }
 
-- (void)setProviderId:(NSString * _Nonnull)
+- (void)setProviderId:(NSString * _Nonnull)value
 {
 		
-    auto Cpp = std::string([ UTF8String]);
+    auto Cpp = std::string([value UTF8String]);
  
     mCppObj->SetProviderId(Cpp);
     

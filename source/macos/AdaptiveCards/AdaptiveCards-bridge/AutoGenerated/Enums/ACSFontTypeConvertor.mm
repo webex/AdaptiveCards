@@ -30,6 +30,8 @@
       return AdaptiveCards::FontType::Default;
     case ACSFontType::ACSFontTypeMonospace:
       return AdaptiveCards::FontType::Monospace;
+    default:
+      return AdaptiveCards::FontType::Default;
   }
 }
 

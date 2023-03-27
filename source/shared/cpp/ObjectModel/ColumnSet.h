@@ -32,9 +32,6 @@ public:
 		HorizontalAlignment GetHorizontalAlignment() const;
         void SetHorizontalAlignment(const HorizontalAlignment value);
 
-		HorizontalAlignment GetHorizontalAlignment() const;
-        void SetHorizontalAlignment(const HorizontalAlignment value);
-
     private:
         void PopulateKnownPropertiesSet();
 

@@ -463,23 +463,4 @@
     
 }
 
-- (ACSContainerStyleDefinition * _Nullable)getContainerStyle:(enum ACSContainerStyle)style
-{
-    auto styleCpp = [ACSContainerStyleConvertor convertObj:style];
- 
-    auto getContainerStyleCpp = mCppObj->GetContainerStyle(styleCpp);
-    return [ACSContainerStyleDefinitionConvertor convertCpp:getContainerStyleCpp];
-
-}
-
-- (ACSColorConfig * _Nullable)getContainerColorConfig:(ACSColorsConfig * _Nonnull)colors color:(enum ACSForegroundColor)color
-{
-    auto colorsCpp = [ACSColorsConfigConvertor convertObj:colors];
-    auto colorCpp = [ACSForegroundColorConvertor convertObj:color];
- 
-    auto getContainerColorConfigCpp = mCppObj->GetContainerColorConfig(colorsCpp,colorCpp);
-    return [ACSColorConfigConvertor convertCpp:getContainerColorConfigCpp];
-
-}
-
 @end
