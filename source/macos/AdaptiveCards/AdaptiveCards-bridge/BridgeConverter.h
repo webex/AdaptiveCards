@@ -24,7 +24,7 @@ using namespace AdaptiveCards;
 + (ACSBaseCardElement *)convertFromBaseCardElement:(std::shared_ptr<BaseCardElement>)baseCardElementCpp;
 + (ACSBaseActionElement *)convertFromBaseActionElement:(std::shared_ptr<BaseActionElement>)baseActionElementCpp;
 + (ACSBaseInputElement *)convertFromBaseInputElement:(std::shared_ptr<BaseInputElement>)baseInputElementCpp;
-+ (ACSCollectionTypeElement *)covertFromCollectionTypeElement:(std::shared_ptr<CollectionTypeElement>)collectionTypeElementCpp;
++ (ACSStyledCollectionElement *)convertFromStyledCollectionElement:(std::shared_ptr<StyledCollectionElement>)styledCollectionElementCpp;
 + (ACSInline *)convertFromInline:(std::shared_ptr<Inline>)inlineCpp;
 #endif
 + (ACSParseResult *)parseAdaptiveCardFromJSON:(NSString *)jsonString;

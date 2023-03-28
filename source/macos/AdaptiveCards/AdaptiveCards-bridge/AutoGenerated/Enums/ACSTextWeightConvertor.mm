@@ -34,6 +34,8 @@
       return AdaptiveCards::TextWeight::Default;
     case ACSTextWeight::ACSTextWeightBolder:
       return AdaptiveCards::TextWeight::Bolder;
+    default:
+      return AdaptiveCards::TextWeight::Default;
   }
 }
 

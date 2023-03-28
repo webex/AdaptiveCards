@@ -46,15 +46,15 @@
 
 }
 
-- (bool _Nullable)getRtl
+- (bool)getRtl
 {
  
     auto getRtlCpp = mCppObj->GetRtl();
-    return getRtlCpp;
+    return getRtlCpp.value_or(false);
 
 }
 
-- (void)setRtl:(bool _Nullable)value
+- (void)setRtl:(bool)value
 {
     auto valueCpp = value;
  

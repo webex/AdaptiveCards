@@ -24,9 +24,9 @@ using namespace AdaptiveCards;
 #endif
 
 - (ACSBaseActionElement * _Nullable)getAction;
-- (void)setAction:(ACSBaseActionElement * _Nonnull);
+- (void)setAction:(ACSBaseActionElement * _Nonnull)value;
 - (NSArray<NSString *> * _Nonnull)getUserIds;
-- (void)setUserIds:(NSArray<NSString *>* _Nonnull);
+- (void)setUserIds:(NSArray<NSString *>* _Nonnull)value;
 
 
 @end

@@ -87,7 +87,7 @@
 
 }
 
-- (void)setChoicesData:(ACSChoicesData * _Nonnull)
+- (void)setChoicesData:(ACSChoicesData * _Nonnull)value
 {
 		
     // auto Cpp = [ACSChoicesDataConvertor convertObj:];

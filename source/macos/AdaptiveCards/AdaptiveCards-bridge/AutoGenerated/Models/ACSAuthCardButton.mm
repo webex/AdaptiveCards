@@ -34,9 +34,9 @@
 
 }
 
-- (void)setType:(NSString * _Nonnull)
+- (void)setType:(NSString * _Nonnull)value
 {
-    auto Cpp = std::string([ UTF8String]);
+    auto Cpp = std::string([value UTF8String]);
  
     mCppObj->SetType(Cpp);
     
@@ -50,9 +50,9 @@
 
 }
 
-- (void)setTitle:(NSString * _Nonnull)
+- (void)setTitle:(NSString * _Nonnull)value
 {
-    auto Cpp = std::string([ UTF8String]);
+    auto Cpp = std::string([value UTF8String]);
  
     mCppObj->SetTitle(Cpp);
     
@@ -66,9 +66,9 @@
 
 }
 
-- (void)setImage:(NSString * _Nonnull)
+- (void)setImage:(NSString * _Nonnull)value
 {
-    auto Cpp = std::string([ UTF8String]);
+    auto Cpp = std::string([value UTF8String]);
  
     mCppObj->SetImage(Cpp);
     
@@ -82,9 +82,9 @@
 
 }
 
-- (void)setValue:(NSString * _Nonnull)
+- (void)setValue:(NSString * _Nonnull)value
 {
-    auto Cpp = std::string([ UTF8String]);
+    auto Cpp = std::string([value UTF8String]);
  
     mCppObj->SetValue(Cpp);
     

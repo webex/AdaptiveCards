@@ -10,7 +10,8 @@
 typedef NS_ENUM(NSUInteger, ACSTextWeight) {
     ACSTextWeightLighter,
     ACSTextWeightDefault,
-    ACSTextWeightBolder
+    ACSTextWeightBolder,
+    ACSTextWeightNil
 };
 
 #endif

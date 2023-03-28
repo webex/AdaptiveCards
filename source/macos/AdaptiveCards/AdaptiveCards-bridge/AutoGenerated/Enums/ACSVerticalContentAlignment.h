@@ -10,7 +10,8 @@
 typedef NS_ENUM(NSUInteger, ACSVerticalContentAlignment) {
     ACSVerticalContentAlignmentTop,
     ACSVerticalContentAlignmentCenter,
-    ACSVerticalContentAlignmentBottom
+    ACSVerticalContentAlignmentBottom,
+    ACSVerticalContentAlignmentNil
 };
 
 #endif

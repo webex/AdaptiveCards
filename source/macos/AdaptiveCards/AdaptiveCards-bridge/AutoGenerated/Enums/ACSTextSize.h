@@ -12,7 +12,8 @@ typedef NS_ENUM(NSUInteger, ACSTextSize) {
     ACSTextSizeDefault,
     ACSTextSizeMedium,
     ACSTextSizeLarge,
-    ACSTextSizeExtraLarge
+    ACSTextSizeExtraLarge,
+    ACSTextSizeNil
 };
 
 #endif

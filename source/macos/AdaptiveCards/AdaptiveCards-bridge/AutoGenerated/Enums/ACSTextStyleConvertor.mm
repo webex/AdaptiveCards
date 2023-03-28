@@ -30,6 +30,8 @@
       return AdaptiveCards::TextStyle::Default;
     case ACSTextStyle::ACSTextStyleHeading:
       return AdaptiveCards::TextStyle::Heading;
+    default:
+      return AdaptiveCards::TextStyle::Default;
   }
 }
 

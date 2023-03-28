@@ -36,7 +36,6 @@ FOUNDATION_EXPORT const unsigned char AdaptiveCards_bridgeVersionString[];
 #import <AdaptiveCards_bridge/ACSChoiceInput.h>
 #import <AdaptiveCards_bridge/ACSChoiceSetInput.h>
 #import <AdaptiveCards_bridge/ACSChoiceSetStyle.h>
-#import <AdaptiveCards_bridge/ACSCollectionTypeElement.h>
 #import <AdaptiveCards_bridge/ACSColumn.h>
 #import <AdaptiveCards_bridge/ACSColumnSet.h>
 #import <AdaptiveCards_bridge/ACSContainer.h>
@@ -103,3 +102,14 @@ FOUNDATION_EXPORT const unsigned char AdaptiveCards_bridgeVersionString[];
 #import <AdaptiveCards_bridge/ACSHostConfigParseResult.h>
 #import <AdaptiveCards_bridge/BridgeConverter.h>
 #import <AdaptiveCards_bridge/BridgeTextUtils.h>
+#import <AdaptiveCards_bridge/ACSMode.h>
+#import <AdaptiveCards_bridge/ACSAuthentication.h>
+#import <AdaptiveCards_bridge/ACSAuthCardButton.h>
+#import <AdaptiveCards_bridge/ACSTokenExchangeResource.h>
+#import <AdaptiveCards_bridge/ACSRefresh.h>
+#import <AdaptiveCards_bridge/ACSChoicesData.h>
+#import <AdaptiveCards_bridge/ACSStyledCollectionElement.h>
+#import <AdaptiveCards_bridge/ACSCollectionCoreElement.h>
+#import <AdaptiveCards_bridge/ACSTextStyle.h>
+#import <AdaptiveCards_bridge/ACSCaptionSource.h>
+#import <AdaptiveCards_bridge/ACSContentSource.h>

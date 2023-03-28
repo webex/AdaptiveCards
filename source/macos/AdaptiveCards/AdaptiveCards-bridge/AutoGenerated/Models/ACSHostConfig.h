@@ -130,8 +130,6 @@ enum ACSTextWeight: NSUInteger;
 - (void)setTextBlock:(ACSTextBlockConfig * _Nonnull)value;
 - (ACSTableConfig * _Nullable)getTable;
 - (void)setTable:(ACSTableConfig * _Nonnull)value;
-- (ACSContainerStyleDefinition * _Nullable)getContainerStyle:(enum ACSContainerStyle)style;
-- (ACSColorConfig * _Nullable)getContainerColorConfig:(ACSColorsConfig * _Nonnull)colors color:(enum ACSForegroundColor)color;
 
 
 @end

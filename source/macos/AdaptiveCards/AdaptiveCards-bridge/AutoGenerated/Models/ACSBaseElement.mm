@@ -152,15 +152,15 @@
 
 - (void)setTypeString:(NSString * _Nonnull)type
 {
-    auto typeCpp = std::string([type UTF8String]);
- 
-    mCppObj->SetTypeString(typeCpp);
+//    auto typeCpp = std::string([type UTF8String]);
+// 
+//    mCppObj->SetTypeString(typeCpp);
 }
 
 - (void)setCanFallbackToAncestor:(bool)value
 {
-    auto valueCpp = value;
-    mCppObj->SetCanFallbackToAncestor(valueCpp);
+//    auto valueCpp = value;
+//    mCppObj->SetCanFallbackToAncestor(valueCpp);
 }
 
 

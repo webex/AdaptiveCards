@@ -113,15 +113,15 @@
     
 }
 
-- (ACSHorizontalAlignment _Nullable)getHorizontalAlignment
+- (ACSHorizontalAlignment)getHorizontalAlignment
 {
  
     auto getHorizontalAlignmentCpp = mCppObj->GetHorizontalAlignment();
-    return [ACSHorizontalAlignmentConvertor convertCpp:getHorizontalAlignmentCpp];
+    return getHorizontalAlignmentCpp.has_value() ? [ACSHorizontalAlignmentConvertor convertCpp:getHorizontalAlignmentCpp.value_or(AdaptiveCards::HorizontalAlignment::Left)] : ACSHorizontalAlignmentNil;
 
 }
 
-- (void)setHorizontalAlignment:(enum ACSHorizontalAlignment _Nullable)value
+- (void)setHorizontalAlignment:(enum ACSHorizontalAlignment)value
 {
     auto valueCpp = [ACSHorizontalAlignmentConvertor convertObj:value];
  

@@ -34,6 +34,8 @@
       return AdaptiveCards::HorizontalAlignment::Center;
     case ACSHorizontalAlignment::ACSHorizontalAlignmentRight:
       return AdaptiveCards::HorizontalAlignment::Right;
+    default:
+      return AdaptiveCards::HorizontalAlignment::Left;
   }
 }
 

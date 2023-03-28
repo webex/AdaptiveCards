@@ -12,7 +12,7 @@
 using namespace AdaptiveCards;
 #endif
 
-#import "ACSRemoteResourceInformation.h"
+//#import "ACSRemoteResourceInformation.h"
 
 @class ACSRemoteResourceInformation;
 
