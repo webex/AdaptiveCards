@@ -21,6 +21,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     var target: TargetHandler?
     var openLinkCallBack: ((String) -> Void)?
     
+    private var clickOnLink = false
     private lazy var linkDataList: [ACRTextViewHyperLinkData] = []
     var hasLinks: Bool {
         return !linkDataList.isEmpty
@@ -85,9 +86,26 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         return super.resignFirstResponder()
     }
     
+    // This method set boolen True When user click on the hyperlink in the text.
+    override func clicked(onLink link: Any, at charIndex: Int) {
+        super.clicked(onLink: link, at: charIndex)
+        if !isEditable && target == nil {
+            clickOnLink = true
+        }
+    }
+    
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
-        guard target != nil else { return }
+        guard target != nil else {
+            if !isEditable {
+                if !clickOnLink {
+                    superview?.mouseDown(with: event)
+                } else {
+                    clickOnLink = false
+                }
+            }
+            return
+        }
         
         // SelectAction exists
         let location = convert(event.locationInWindow, from: nil)
