@@ -105,7 +105,7 @@
 
 }
 
-- (void)saveContextForCollectionTypeElement:(ACSCollectionTypeElement * _Nonnull)current
+- (void)saveContextForStyledCollectionElement:(ACSStyledCollectionElement * _Nonnull)current
 {
 //    auto currentCpp = // NEED TO INSERT CODE //;
 //
