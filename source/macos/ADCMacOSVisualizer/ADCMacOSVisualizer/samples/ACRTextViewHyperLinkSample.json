@@ -1,0 +1,223 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "actions": [
+        {
+            "title": "OK",
+            "type": "Action.Submit"
+        }
+    ],
+    "body": [
+        {
+            "choices": [
+                {
+                    "title": "Red",
+                    "value": "1"
+                },
+                {
+                    "title": "Green",
+                    "value": "2"
+                },
+                {
+                    "title": "Blue",
+                    "value": "3"
+                }
+            ],
+            "id": "myColor",
+            "isMultiSelect": false,
+            "label": "What color do you want? (isMultiSelect:false, style:compact)",
+            "type": "Input.ChoiceSet",
+            "value": "1"
+        },
+        {
+            "choices": [
+                {
+                    "title": "Red [google](https://www.google.com)",
+                    "value": "1"
+                },
+                {
+                    "title": "Green",
+                    "value": "2"
+                },
+                {
+                    "title": "Blue",
+                    "value": "3"
+                }
+            ],
+            "id": "myColor2",
+            "isMultiSelect": false,
+            "label": "What color do you want? (isMultiSelect:false, style:expanded)",
+            "style": "expanded",
+            "type": "Input.ChoiceSet",
+            "value": "1"
+        },
+        {
+            "type": "Input.Text",
+            "placeholder": "Placeholder text",
+            "isMultiline": true,
+            "label": "Enter Text",
+            "id": "MultilineText"
+        },
+        {
+            "choices": [
+                {
+                    "title": "Red",
+                    "value": "1"
+                },
+                {
+                    "title": "Green [google](https://www.google.com)",
+                    "value": "2"
+                },
+                {
+                    "title": "Blue",
+                    "value": "3"
+                }
+            ],
+            "id": "myColor3",
+            "isMultiSelect": true,
+            "label": "What colors do you want? (isMultiSelect:true, style:compact)",
+            "type": "Input.ChoiceSet",
+            "value": "1,3"
+        },
+        {
+            "choices": [
+                {
+                    "title": "Red",
+                    "value": "1"
+                },
+                {
+                    "title": "Green",
+                    "value": "2"
+                },
+                {
+                    "title": "Blue [google](https://www.google.com)",
+                    "value": "3"
+                }
+            ],
+            "id": "myColor4",
+            "isMultiSelect": true,
+            "label": "What colors do you want? (isMultiSelect:true, style:expanded)",
+            "style": "expanded",
+            "type": "Input.ChoiceSet",
+            "value": "1"
+        },
+        {
+            "inlines": [
+                {
+                    "text": "This is the first inline. This is a ",
+                    "type": "TextRun"
+                },
+                {
+                    "color": "Good",
+                    "selectAction": {
+                        "data": {
+                            "info": "My submit action data"
+                        },
+                        "title": "Submit action, ",
+                        "type": "Action.Submit"
+                    },
+                    "text": "Submit Action,",
+                    "type": "TextRun"
+                },
+                {
+                    "text": "and a ",
+                    "type": "TextRun"
+                },
+                {
+                    "isSubtle": true,
+                    "selectAction": {
+                        "type": "Action.OpenUrl",
+                        "url": "https://msn.com"
+                    },
+                    "text": " Open URL action ",
+                    "type": "TextRun"
+                },
+                {
+                    "text": "and a ",
+                    "type": "TextRun"
+                },
+                {
+                    "isSubtle": true,
+                    "selectAction": {
+                        "targetElements": [
+                            "toggleText"
+                        ],
+                        "type": "Action.ToggleVisibility"
+                    },
+                    "text": " ToggleVisibility action. ",
+                    "type": "TextRun"
+                },
+                {
+                    "size": "Small",
+                    "text": "Text ",
+                    "type": "TextRun"
+                },
+                {
+                    "size": "Medium",
+                    "text": "of ",
+                    "type": "TextRun"
+                },
+                {
+                    "size": "Large",
+                    "text": "all ",
+                    "type": "TextRun"
+                },
+                {
+                    "size": "ExtraLarge",
+                    "text": "sizes! ",
+                    "type": "TextRun"
+                },
+                {
+                    "text": "Light weight text. ",
+                    "type": "TextRun",
+                    "weight": "Lighter"
+                },
+                {
+                    "text": "Bold weight text. ",
+                    "type": "TextRun",
+                    "weight": "Bolder"
+                },
+                {
+                    "highlight": true,
+                    "text": "Highlights. ",
+                    "type": "TextRun"
+                },
+                {
+                    "italic": true,
+                    "text": "Italics. ",
+                    "type": "TextRun"
+                },
+                {
+                    "strikethrough": true,
+                    "text": "Strikethrough. ",
+                    "type": "TextRun"
+                },
+                {
+                    "fontType": "Monospace",
+                    "text": "Monospace too!",
+                    "type": "TextRun"
+                }
+            ],
+            "type": "RichTextBlock"
+        },
+        {
+            "id": "acceptTerms",
+            "label": "Term & condition",
+            "title": "I accept the terms and agreements",
+            "type": "Input.Toggle",
+            "value": "false",
+            "valueOff": "false",
+            "valueOn": "true"
+        },
+        {
+            "id": "acceptTerms1",
+            "label": "Term & condition",
+            "title": "I accept the [terms](https://www.google.com) and [agreements](https://www.google.com)",
+            "type": "Input.Toggle",
+            "value": "true",
+            "valueOff": "false",
+            "valueOn": "true"
+        }
+    ],
+    "type": "AdaptiveCard",
+    "version": "1.3"
+}
