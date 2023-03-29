@@ -142,6 +142,7 @@ class ChoiceSetInputRendererTests: XCTestCase {
         guard let acrChoiceBtn = choiceSetView.getArrangedSubviews.first as? ACRChoiceButton else { fatalError() }
         XCTAssertEqual(acrChoiceBtn.labelAttributedString.string, markDownTestAns)
         XCTAssertNotNil(acrChoiceBtn.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+        XCTAssertTrue(acrChoiceBtn.buttonLabelField.hasLinks)
     }
     
     // This TestCase design for Multiple MarkDown title in Input.Choice element title text.
@@ -162,6 +163,7 @@ class ChoiceSetInputRendererTests: XCTestCase {
         let boldItalicfont = acrChoiceBtn.labelAttributedString.fontAttributes(in: NSRange.init(location: boldItalic, length: 3))[.font] as? NSFont
         XCTAssertTrue(boldItalicfont?.fontDescriptor.symbolicTraits.contains([.italic, .bold]) ?? false)
         XCTAssertNotNil(acrChoiceBtn.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+        XCTAssertTrue(acrChoiceBtn.buttonLabelField.hasLinks)
     }
     
     func testCompactChoiceSetTooltip() {
