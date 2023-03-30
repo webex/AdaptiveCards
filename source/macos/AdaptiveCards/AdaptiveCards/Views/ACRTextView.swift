@@ -1,6 +1,12 @@
 import AppKit
-import AdaptiveCards_bridge
 import Carbon.HIToolbox
+
+enum ACRTextViewElementType {
+    case choiceInput
+    case multilineTextView
+    case richTextBlock
+    case factset
+}
 
 class ACRTextViewHyperLinkData {
     var linkText: String
@@ -20,7 +26,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     var placeholderLeftPadding: CGFloat?
     var placeholderTopPadding: CGFloat?
     var target: TargetHandler?
-    var elementType: ACSCardElementType?
+    var elementType: ACRTextViewElementType?
     var openLinkCallBack: ((String) -> Void)?
     
     private var clickOnLink = false
@@ -30,10 +36,6 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     }
     private lazy var selectedLinkIndex: Int = -1
     private lazy var keyTabEntry = false
-    
-    override public var acceptsFirstResponder: Bool {
-        return isEditable ? true : hasLinks
-    }
     
     override public var canBecomeKeyView: Bool {
         return isEditable ? true : hasLinks
@@ -183,6 +185,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         alignment = .left
         isEditable = false
         backgroundColor = .clear
+        selectedTextAttributes = [.backgroundColor: NSColor.blue]
         linkTextAttributes = [
             .foregroundColor: config.foregroundColor,
             .underlineColor: config.underlineColor,

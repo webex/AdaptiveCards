@@ -130,6 +130,15 @@ class ChoiceSetInputRendererTests: XCTestCase {
         XCTAssertFalse(choiceSetView.isValid)
     }
     
+    func testInputElementStyleAtExpandedChoiceSet() {
+        let buttonHyperLinkTitle = "This is test"
+        
+        self.choiceSetInput = self.makeExpandedChoiceSetInput(title: buttonHyperLinkTitle, value: "Webex test")
+        let choiceSetView = renderChoiceSetView()
+        guard let acrChoiceBtn = choiceSetView.getArrangedSubviews.first as? ACRChoiceButton else { fatalError() }
+        XCTAssertEqual(acrChoiceBtn.buttonLabelField.elementType, .choiceInput)
+    }
+    
     // This TestCase design for HyperLink MarkDown in Input.Choice element title text.
     
     func testHyperLinkMarkdownInTitleForExpandedChoiceSet() {
