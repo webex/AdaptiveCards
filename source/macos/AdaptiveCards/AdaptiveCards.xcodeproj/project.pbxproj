@@ -565,7 +565,6 @@
 		AACC2B8E29504A6300A4AB7C /* ImageSetRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACC2B8D29504A6300A4AB7C /* ImageSetRendererTests.swift */; };
 		AAD0AC7729C0692100998C99 /* warning-badge-filled-light.png in Resources */ = {isa = PBXBuildFile; fileRef = AAD0AC7529C0692100998C99 /* warning-badge-filled-light.png */; };
 		AAD0AC7829C0692100998C99 /* warning-badge-filled-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = AAD0AC7629C0692100998C99 /* warning-badge-filled-dark.png */; };
-		AAE0E9182844D8260034FE2A /* ACRHyperLinkTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1163,7 +1162,6 @@
 		AACC2B8D29504A6300A4AB7C /* ImageSetRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSetRendererTests.swift; sourceTree = "<group>"; };
 		AAD0AC7529C0692100998C99 /* warning-badge-filled-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-badge-filled-light.png"; sourceTree = "<group>"; };
 		AAD0AC7629C0692100998C99 /* warning-badge-filled-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-badge-filled-dark.png"; sourceTree = "<group>"; };
-		AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRHyperLinkTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1876,7 +1874,6 @@
 				088C673B2615C2B00070186C /* ACRContentStackView.swift */,
 				088F716426A9925400C52C06 /* SpacingView.swift */,
 				8141136826F22F87009C4DB7 /* ACRFactSetView.swift */,
-				AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */,
 				AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */,
 			);
 			path = Views;
@@ -2434,7 +2431,6 @@
 				08E4044825B46ABA00C2092A /* AdaptiveCards.h in Sources */,
 				AA26969D28D050470095D396 /* ACRCompactChoiceSetView.swift in Sources */,
 				A032272525E93C7400E7172E /* ImageUtils.swift in Sources */,
-				AAE0E9182844D8260034FE2A /* ACRHyperLinkTextView.swift in Sources */,
 				2871B12A25DD27F10040AB27 /* ACRMultilineInputTextView.swift in Sources */,
 				8141136926F22F87009C4DB7 /* ACRFactSetView.swift in Sources */,
 				28F4E2142681DA77000B5131 /* ACRTextView.swift in Sources */,

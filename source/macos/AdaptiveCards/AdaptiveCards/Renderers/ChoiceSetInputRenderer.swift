@@ -41,6 +41,9 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
                 choiceButton.buttonValue = choice.getValue()
                 view.previousButton = choiceButton
             }
+            choiceButton.buttonLabelField.openLinkCallBack = { [weak rootView] urlAddress in
+                rootView?.handleOpenURLAction(urlString: urlAddress)
+            }
             view.addChoiceButton(choiceButton)
         }
         

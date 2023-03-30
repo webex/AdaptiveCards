@@ -20,6 +20,9 @@ class InputToggleRendererTests: XCTestCase {
         
         let inputToggleView = renderInputToggleView()
         XCTAssertEqual(inputToggleView.labelAttributedString.string, title)
+        XCTAssertFalse(inputToggleView.choiceButton.buttonLabelField.hasLinks)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.acceptsFirstResponder)
+        XCTAssertFalse(inputToggleView.choiceButton.buttonLabelField.canBecomeKeyView)
     }
     
     func testHeightProperty() {
@@ -125,6 +128,9 @@ class InputToggleRendererTests: XCTestCase {
         XCTAssertEqual(inputToggleView.labelAttributedString.string, "This is test Webex")
         XCTAssertEqual(inputToggleView.labelAttributedString.string, markDownTestAns)
         XCTAssertNotNil(inputToggleView.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.hasLinks)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.acceptsFirstResponder)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.canBecomeKeyView)
     }
     
     // This TestCase design for Multiple MarkDown title in Input.Choice element title text.
@@ -145,6 +151,9 @@ class InputToggleRendererTests: XCTestCase {
         let boldItalicfont = inputToggleView.labelAttributedString.fontAttributes(in: NSRange.init(location: boldItalic, length: 3))[.font] as? NSFont
         XCTAssertTrue(boldItalicfont?.fontDescriptor.symbolicTraits.contains([.italic, .bold]) ?? false)
         XCTAssertNotNil(inputToggleView.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.hasLinks)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.acceptsFirstResponder)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.canBecomeKeyView)
     }
     
     private func renderInputToggleView() -> ACRInputToggleView {
