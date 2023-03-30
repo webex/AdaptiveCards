@@ -66,6 +66,10 @@ ComboBox {
         selectionChanged();
     }
 
+    WCustomFocusItem {
+        isRectangle: true
+    }
+
     indicator: Button {
         id: comboboxArrowIcon
 
@@ -174,7 +178,7 @@ ComboBox {
     background: Rectangle {
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
-        border.color: (comboBox.activeFocus || comboBox.popup.visible) ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+        border.color: inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
     }
 
