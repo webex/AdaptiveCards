@@ -137,6 +137,9 @@ class ChoiceSetInputRendererTests: XCTestCase {
         let choiceSetView = renderChoiceSetView()
         guard let acrChoiceBtn = choiceSetView.getArrangedSubviews.first as? ACRChoiceButton else { fatalError() }
         XCTAssertEqual(acrChoiceBtn.buttonLabelField.elementType, .choiceInput)
+        XCTAssertFalse(acrChoiceBtn.buttonLabelField.hasLinks)
+        XCTAssertTrue(acrChoiceBtn.buttonLabelField.acceptsFirstResponder)
+        XCTAssertFalse(acrChoiceBtn.buttonLabelField.canBecomeKeyView)
     }
     
     // This TestCase design for HyperLink MarkDown in Input.Choice element title text.
