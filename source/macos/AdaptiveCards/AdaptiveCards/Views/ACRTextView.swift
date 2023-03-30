@@ -1,4 +1,5 @@
 import AppKit
+import AdaptiveCards_bridge
 import Carbon.HIToolbox
 
 class ACRTextViewHyperLinkData {
@@ -19,6 +20,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     var placeholderLeftPadding: CGFloat?
     var placeholderTopPadding: CGFloat?
     var target: TargetHandler?
+    var elementType: ACSCardElementType?
     var openLinkCallBack: ((String) -> Void)?
     
     private var clickOnLink = false
@@ -89,23 +91,22 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     // This method set boolen True When user click on the hyperlink in the text.
     override func clicked(onLink link: Any, at charIndex: Int) {
         super.clicked(onLink: link, at: charIndex)
-        if !isEditable && target == nil {
+        if elementType == .choiceInput {
             clickOnLink = true
         }
     }
     
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
-        guard target != nil else {
-            if !isEditable {
-                if !clickOnLink {
-                    superview?.mouseDown(with: event)
-                } else {
-                    clickOnLink = false
-                }
+        if elementType == .choiceInput {
+            if !clickOnLink {
+                superview?.mouseDown(with: event)
+            } else {
+                clickOnLink = false
             }
             return
         }
+        guard target != nil else { return }
         
         // SelectAction exists
         let location = convert(event.locationInWindow, from: nil)

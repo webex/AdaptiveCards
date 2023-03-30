@@ -93,6 +93,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
             .underlineStyle: renderConfig.hyperlinkColorConfig.underlineStyle.rawValue,
             .cursor: NSCursor.pointingHand
         ]
+        view.elementType = .choiceInput
         return view
     }()
     
