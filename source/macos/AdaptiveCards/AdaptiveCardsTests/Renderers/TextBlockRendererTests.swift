@@ -144,7 +144,7 @@ class TextBlockRendererTests: XCTestCase {
         textBlock = .make(text: "This is the first inline. We **do** _support_.")
         textView = renderTextView()
         XCTAssertFalse(textView.hasLinks)
-        XCTAssertFalse(textView.acceptsFirstResponder)
+        XCTAssertTrue(textView.acceptsFirstResponder)
         XCTAssertFalse(textView.canBecomeKeyView)
     }
     

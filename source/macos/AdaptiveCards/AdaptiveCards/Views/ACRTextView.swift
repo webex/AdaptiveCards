@@ -1,6 +1,13 @@
 import AppKit
 import Carbon.HIToolbox
 
+enum ACRTextViewElementType {
+    case choiceInput
+    case multilineTextView
+    case richTextBlock
+    case factset
+}
+
 class ACRTextViewHyperLinkData {
     var linkText: String
     var linkAddress: String
@@ -19,18 +26,16 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     var placeholderLeftPadding: CGFloat?
     var placeholderTopPadding: CGFloat?
     var target: TargetHandler?
+    var elementType: ACRTextViewElementType?
     var openLinkCallBack: ((String) -> Void)?
     
+    private var clickOnLink = false
     private lazy var linkDataList: [ACRTextViewHyperLinkData] = []
     var hasLinks: Bool {
         return !linkDataList.isEmpty
     }
     private lazy var selectedLinkIndex: Int = -1
     private lazy var keyTabEntry = false
-    
-    override public var acceptsFirstResponder: Bool {
-        return isEditable ? true : hasLinks
-    }
     
     override public var canBecomeKeyView: Bool {
         return isEditable ? true : hasLinks
@@ -85,8 +90,24 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         return super.resignFirstResponder()
     }
     
+    // This method set boolen True When user click on the hyperlink in the text.
+    override func clicked(onLink link: Any, at charIndex: Int) {
+        super.clicked(onLink: link, at: charIndex)
+        if elementType == .choiceInput {
+            clickOnLink = true
+        }
+    }
+    
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
+        if elementType == .choiceInput {
+            if !clickOnLink {
+                superview?.mouseDown(with: event)
+            } else {
+                clickOnLink = false
+            }
+            return
+        }
         guard target != nil else { return }
         
         // SelectAction exists
@@ -164,6 +185,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         alignment = .left
         isEditable = false
         backgroundColor = .clear
+        selectedTextAttributes = [.backgroundColor: NSColor.blue]
         linkTextAttributes = [
             .foregroundColor: config.foregroundColor,
             .underlineColor: config.underlineColor,

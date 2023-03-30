@@ -130,6 +130,18 @@ class ChoiceSetInputRendererTests: XCTestCase {
         XCTAssertFalse(choiceSetView.isValid)
     }
     
+    func testInputElementStyleAtExpandedChoiceSet() {
+        let buttonHyperLinkTitle = "This is test"
+        
+        self.choiceSetInput = self.makeExpandedChoiceSetInput(title: buttonHyperLinkTitle, value: "Webex test")
+        let choiceSetView = renderChoiceSetView()
+        guard let acrChoiceBtn = choiceSetView.getArrangedSubviews.first as? ACRChoiceButton else { fatalError() }
+        XCTAssertEqual(acrChoiceBtn.buttonLabelField.elementType, .choiceInput)
+        XCTAssertFalse(acrChoiceBtn.buttonLabelField.hasLinks)
+        XCTAssertTrue(acrChoiceBtn.buttonLabelField.acceptsFirstResponder)
+        XCTAssertFalse(acrChoiceBtn.buttonLabelField.canBecomeKeyView)
+    }
+    
     // This TestCase design for HyperLink MarkDown in Input.Choice element title text.
     
     func testHyperLinkMarkdownInTitleForExpandedChoiceSet() {
@@ -142,6 +154,7 @@ class ChoiceSetInputRendererTests: XCTestCase {
         guard let acrChoiceBtn = choiceSetView.getArrangedSubviews.first as? ACRChoiceButton else { fatalError() }
         XCTAssertEqual(acrChoiceBtn.labelAttributedString.string, markDownTestAns)
         XCTAssertNotNil(acrChoiceBtn.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+        XCTAssertTrue(acrChoiceBtn.buttonLabelField.hasLinks)
     }
     
     // This TestCase design for Multiple MarkDown title in Input.Choice element title text.
@@ -162,6 +175,7 @@ class ChoiceSetInputRendererTests: XCTestCase {
         let boldItalicfont = acrChoiceBtn.labelAttributedString.fontAttributes(in: NSRange.init(location: boldItalic, length: 3))[.font] as? NSFont
         XCTAssertTrue(boldItalicfont?.fontDescriptor.symbolicTraits.contains([.italic, .bold]) ?? false)
         XCTAssertNotNil(acrChoiceBtn.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+        XCTAssertTrue(acrChoiceBtn.buttonLabelField.hasLinks)
     }
     
     func testCompactChoiceSetTooltip() {
