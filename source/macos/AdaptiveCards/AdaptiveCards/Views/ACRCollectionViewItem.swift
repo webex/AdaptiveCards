@@ -16,7 +16,8 @@ class ACRCollectionViewItem: NSCollectionViewItem {
     func setupBounds(with imageView: ACRImageWrappingView) {
         imageWrapView = imageView
         guard let imageWrapView = imageWrapView else { return }
-        imageWrapView.frame = view.bounds
+        // Note: We've given 8px padding for the focus ring, so the centre must shift half the width.
+        imageView.frame = view.bounds.offsetBy(dx: 4, dy: 4)
         view.addSubview(imageWrapView)
     }
 }

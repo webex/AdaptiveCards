@@ -1,0 +1,141 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Enter your name",
+                            "id": "userName",
+                            "label": "Enter Name",
+                            "isRequired": true
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "50px",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://adaptivecards.io/content/airplane.png",
+                            "altText": "Cat",
+                            "selectAction": {
+                                "title": "Action Submit",
+                                "type": "Action.Submit"
+                            },
+                            "spacing": "None"
+                        }
+                    ],
+                    "spacing": "Small"
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "Toggle TextBlock",
+            "wrap": true,
+            "id": "tblk1"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "Container",
+                            "style": "good",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://adaptivecards.io/content/cats/1.png",
+                                    "altText": "Cat",
+                                    "size": "Medium",
+                                    "selectAction": {
+                                        "title": "Action Toggle",
+                                        "type": "Action.ToggleVisibility",
+                                        "targetElements": [
+                                            "tblk1"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "Input.Date",
+                            "id": "inputDate1"
+                        },
+                        {
+                            "type": "ImageSet",
+                            "images": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://adaptivecards.io/content/airplane.png",
+                                    "altText": "plan",
+                                    "selectAction": {
+                                        "title": "Action Submit",
+                                        "type": "Action.Submit"
+                                    },
+                                    "spacing": "None",
+                                    "backgroundColor": "#BF3F23",
+                                    "size": "Small"
+                                }
+                            ],
+                            "imageSize": "Small"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ImageSet",
+            "images": [
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Medium",
+                    "selectAction": {
+                        "type": "Action.OpenUrl",
+                        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    }
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Medium",
+                    "id": "img2"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cat",
+                    "size": "Medium",
+                    "selectAction": {
+                        "title": "Action Toggle",
+                        "type": "Action.ToggleVisibility",
+                        "targetElements": [
+                            "img2"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

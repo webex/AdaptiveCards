@@ -1,18 +1,52 @@
 import AdaptiveCards_bridge
 import AppKit
+import Carbon.HIToolbox
 
 class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
     private (set) var imageProperties: ACRImageProperties?
-    
+    private (set) weak var contentImageView: NSImageView?
     var target: TargetHandler?
     var isImageSet = false
     var isPersonStyle = false
+    private var previousBackgroundColor: CGColor?
+    private var cursorType = NSCursor.arrow
+    private var canAcceptFirstResponder: Bool {
+        return target != nil
+    }
+    
+    override var acceptsFirstResponder: Bool {
+        return canAcceptFirstResponder
+    }
+    
+    override var canBecomeKeyView: Bool {
+        return canAcceptFirstResponder
+    }
+    
+    override public var focusRingMaskBounds: NSRect {
+        return isImageSet ? self.contentImageView?.bounds ?? self.bounds : self.bounds
+    }
+    
+    override public func drawFocusRingMask() {
+        if target != nil {
+            if isImageSet, let contentView = self.contentImageView {
+                contentView.bounds.fill()
+            } else {
+                self.bounds.fill()
+            }
+            self.needsDisplay = true
+        }
+    }
+    
+    override func resetCursorRects() {
+        self.addCursorRect(self.bounds, cursor: cursorType)
+    }
     
     init(imageProperties: ACRImageProperties, imageView: NSImageView) {
         let frame = CGRect(x: 0, y: 0, width: imageProperties.contentSize.width, height: imageProperties.contentSize.height)
         super.init(frame: frame)
         needsLayout = true
         self.imageProperties = imageProperties
+        self.contentImageView = imageView
         self.addSubview(imageView)
         setupTrackingArea()
     }
@@ -64,6 +98,16 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
         self.invalidateIntrinsicContentSize()
     }
     
+    override func keyDown(with event: NSEvent) {
+        let keyCode = Int(event.keyCode)
+        switch keyCode {
+        case kVK_Space:
+            target?.handleSelectionAction(for: self)
+        default:
+            super.keyDown(with: event)
+        }
+    }
+    
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
         guard let target = target else { return }
@@ -80,15 +124,25 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
         addTrackingArea(trackingArea)
     }
     
-    private var previousBackgroundColor: CGColor?
+    /// set the cursor type while the image hovering and the select action is active
+    /// - Parameter cursor: accept cursor type
+    private func setCursorType(cursor: NSCursor) {
+        cursorType = cursor
+        resetCursorRects()
+    }
+    
     override func mouseEntered(with event: NSEvent) {
         guard let columnView = event.trackingArea?.owner as? ACRImageWrappingView, target != nil else { return }
         previousBackgroundColor = columnView.layer?.backgroundColor
         columnView.layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
+        // Added a pointing hand here
+        self.setCursorType(cursor: .pointingHand)
     }
     
     override func mouseExited(with event: NSEvent) {
         guard let columnView = event.trackingArea?.owner as? ACRImageWrappingView, target != nil else { return }
         columnView.layer?.backgroundColor = previousBackgroundColor ?? .clear
+        // Back to the system cursor
+        self.setCursorType(cursor: .current)
     }
 }
