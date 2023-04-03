@@ -37,6 +37,11 @@ ComboBox {
         return accessibleName;
     }
 
+    function openPopout() {
+        setFocusBackOnClose(comboBox);
+        comboBox.popup.open();
+    }
+
     textRole: 'text'
     valueRole: 'valueOn'
     width: parent.width
@@ -66,10 +71,8 @@ ComboBox {
         Accessible.name = displayText;
         selectionChanged();
     }
-    Keys.onReturnPressed: {
-        _adaptiveCard.setFocusBackOnClose(comboBox);
-        this.popup.open();
-    }
+    Keys.onReturnPressed: openPopout()
+    Keys.onSpacePressed: openPopout()
 
     WCustomFocusItem {
         isRectangle: true
