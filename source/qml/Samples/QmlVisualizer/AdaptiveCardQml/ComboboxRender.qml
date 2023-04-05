@@ -37,6 +37,11 @@ ComboBox {
         return accessibleName;
     }
 
+    function openPopout() {
+        setFocusBackOnClose(comboBox);
+        comboBox.popup.open();
+    }
+
     textRole: 'text'
     valueRole: 'valueOn'
     width: parent.width
@@ -58,12 +63,19 @@ ComboBox {
     }
     onHoveredChanged: {
         colorChange(false);
-        if(hovered)
+        if (hovered)
             _adaptiveCard.showToolTipOnElement(hovered, displayText, comboBox);
+
     }
     onCurrentValueChanged: {
         Accessible.name = displayText;
         selectionChanged();
+    }
+    Keys.onReturnPressed: openPopout()
+    Keys.onSpacePressed: openPopout()
+
+    WCustomFocusItem {
+        isRectangle: true
     }
 
     indicator: Button {
@@ -108,7 +120,7 @@ ComboBox {
     delegate: ItemDelegate {
         id: comboBoxItemDelegate
 
-        width: Math.max(comboBox.choiceWidth, comboBox.width)
+        width: Math.max(comboBox.choiceWidth, parent.width)
         height: comboBoxConstants.dropDownElementHeight
         verticalPadding: comboBoxConstants.dropDownElementVerticalPadding
         horizontalPadding: comboBoxConstants.dropDownElementHorizontalPadding
@@ -116,8 +128,19 @@ ComboBox {
         Accessible.name: modelData.text
 
         background: Rectangle {
+            x: parent.highlighted ? comboBoxConstants.popoutDelegateCordinates : 0
+            y: parent.highlighted ? comboBoxConstants.popoutDelegateCordinates : 0
+            width: parent.highlighted ? parent.width - comboBoxConstants.focusRingSize : parent.width
+            height: parent.highlighted ? parent.height - comboBoxConstants.focusRingSize : parent.height
             color: comboBoxItemDelegate.pressed ? comboBoxConstants.dropDownElementColorPressed : comboBoxItemDelegate.highlighted ? comboBoxConstants.dropDownElementColorHovered : comboBoxConstants.dropDownElementColorNormal
             radius: comboBoxConstants.dropDownElementRadius
+
+            WCustomFocusItem {
+                visible: highlighted
+                isRectangle: true
+                designatedParent: parent
+            }
+
         }
 
         contentItem: Text {
@@ -132,13 +155,6 @@ ComboBox {
             }
         }
 
-        HoverHandler {
-            onHoveredChanged: {
-                if(hovered)
-                    _adaptiveCard.showToolTipOnElement(hovered, modelData.text, comboBoxItemDelegate);
-            }
-        }
-
     }
 
     popup: Popup {
@@ -146,6 +162,15 @@ ComboBox {
         width: Math.max(comboBox.choiceWidth, comboBox.width)
         padding: comboBoxConstants.dropDownPadding
         height: comboBoxListView.contentHeight + (2 * padding) > comboBoxConstants.dropDownHeight ? comboBoxConstants.dropDownHeight : comboBoxListView.contentHeight + (2 * padding)
+        onOpened: {
+            comboBoxListView.forceActiveFocus();
+            if (comboBoxListView.currentIndex === -1)
+                comboBoxListView.currentIndex = 0;
+
+        }
+        onClosed: {
+            comboBox.forceActiveFocus();
+        }
 
         background: Rectangle {
             anchors.fill: parent
@@ -160,7 +185,10 @@ ComboBox {
             clip: true
             model: comboBox.delegateModel
             currentIndex: comboBox.highlightedIndex
-            Keys.onReturnPressed: comboBox.accepted()
+            Keys.onReturnPressed: {
+                comboBox.currentIndex = comboBoxListView.currentIndex;
+                popup.close();
+            }
 
             ScrollBar.vertical: ScrollBar {
                 width: comboBoxConstants.scrollbarWidth
@@ -174,7 +202,7 @@ ComboBox {
     background: Rectangle {
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
-        border.color: (comboBox.activeFocus || comboBox.popup.visible) ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+        border.color: inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
     }
 

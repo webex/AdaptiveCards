@@ -16,7 +16,6 @@ Column {
     property bool showErrorMessage: false
     property int minWidth: customCheckBox.implicitWidth
     property alias checkBox: customCheckBox
-    property var value: customCheckBox.value
 
     function validate() {
         if (showErrorMessage) {
