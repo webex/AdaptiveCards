@@ -99,11 +99,9 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
     }
     
     override func keyDown(with event: NSEvent) {
-        let keyCode = Int(event.keyCode)
-        switch keyCode {
-        case kVK_Space:
+        if Int(event.keyCode) == kVK_Space {
             target?.handleSelectionAction(for: self)
-        default:
+        } else {
             super.keyDown(with: event)
         }
     }

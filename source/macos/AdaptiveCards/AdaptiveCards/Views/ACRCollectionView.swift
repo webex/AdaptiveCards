@@ -75,19 +75,19 @@ class ACRCollectionView: NSScrollView {
             if let imgItemProperties = imageViews[index].imageProperties {
                 var explicitDimensions = NSSize.zero
                 if imgItemProperties.hasExplicitDimensions && imgItemProperties.pixelWidth.isNormal && imgItemProperties.pixelHeight.isNormal {
-                    explicitDimensions = NSSize(width: imgItemProperties.pixelWidth > self.bounds.width ? self.bounds.width : imgItemProperties.pixelWidth, height: imgItemProperties.pixelHeight).deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+                    explicitDimensions = NSSize(width: imgItemProperties.pixelWidth > self.bounds.width ? self.bounds.width : imgItemProperties.pixelWidth, height: imgItemProperties.pixelHeight).withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
                 } else if imgItemProperties.hasExplicitDimensions && (imgItemProperties.pixelWidth.isNormal || imgItemProperties.pixelHeight.isNormal) {
                     if let contentSize = imageViews[index].imageProperties?.contentSize {
-                        explicitDimensions = contentSize.deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+                        explicitDimensions = contentSize.withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
                     } else {
                         let maxValue = max(imgItemProperties.pixelWidth, imgItemProperties.pixelHeight)
-                        explicitDimensions = NSSize(width: maxValue, height: maxValue).deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+                        explicitDimensions = NSSize(width: maxValue, height: maxValue).withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
                     }
                 } else {
                     if let contentSize = imageViews[index].imageProperties?.contentSize {
-                        explicitDimensions = contentSize.deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+                        explicitDimensions = contentSize.withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
                     } else {
-                        explicitDimensions = itemSize.deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+                        explicitDimensions = itemSize.withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
                     }
                 }
                 let tempWidth = (rowWidth + explicitDimensions.width)
@@ -179,28 +179,28 @@ extension ACRCollectionView: ACSCollectionViewAlignLayoutDelegate {
         if itemProperties.hasExplicitDimensions {
             var size = NSSize.zero
             if !itemProperties.pixelWidth.isZero && !itemProperties.pixelHeight.isZero {
-                size = NSSize(width: itemProperties.pixelWidth > self.bounds.width ? self.bounds.width : itemProperties.pixelWidth, height: itemProperties.pixelHeight).deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+                size = NSSize(width: itemProperties.pixelWidth > self.bounds.width ? self.bounds.width : itemProperties.pixelWidth, height: itemProperties.pixelHeight).withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
                 return size
             } else if itemProperties.pixelWidth.isNormal || itemProperties.pixelHeight.isNormal {
                 if let contentSize = imageViews[indexPath.item].imageProperties?.contentSize {
-                    size = contentSize.deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+                    size = contentSize.withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
                     return size
                 }
                 let maxValue = max(itemProperties.pixelWidth, itemProperties.pixelHeight)
-                size = NSSize(width: maxValue, height: maxValue).deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+                size = NSSize(width: maxValue, height: maxValue).withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
                 return size
             }
         } else {
             if let contentSize = imageViews[indexPath.item].imageProperties?.contentSize {
-                return contentSize.deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+                return contentSize.withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
             }
         }
-        return itemSize.deltaBy(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
+        return itemSize.withPadding(dW: Constants.focusRingPadding, dH: Constants.focusRingPadding)
     }
 }
 
 extension NSSize {
-    func deltaBy(dW: Double, dH: Double) -> NSSize {
+    func withPadding(dW: Double, dH: Double) -> NSSize {
         return NSSize(width: self.width + dW, height: self.height + dH)
     }
 }
