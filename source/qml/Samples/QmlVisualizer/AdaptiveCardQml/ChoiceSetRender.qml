@@ -94,7 +94,6 @@ Column {
             height: radioButtonListView.height
             width: parent.width
             color: "transparent"
-            activeFocusOnTab: true
             onActiveFocusChanged: {
                 if (activeFocus)
                     radioButtonGroup.buttons[focusRadioIndex].forceActiveFocus();
@@ -127,15 +126,7 @@ Column {
                 height: contentItem.height
                 width: parent.width
                 model: _choiceSetModel
-                Keys.onPressed: {
-                    if (event.key === Qt.Key_Up) {
-                        focusRadioButtons((radioButtonRectangle.focusRadioIndex - 1 + radioButtonListView.count) % radioButtonListView.count);
-                        event.accepted = true;
-                    } else if (event.key === Qt.Key_Down) {
-                        focusRadioButtons((radioButtonRectangle.focusRadioIndex + 1) % radioButtonListView.count);
-                        event.accepted = true;
-                    }
-                }
+                keyNavigationEnabled: false
 
                 delegate: CustomRadioButton {
                     _adaptiveCard: choiceSet._adaptiveCard
