@@ -185,7 +185,6 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         alignment = .left
         isEditable = false
         backgroundColor = .clear
-        selectedTextAttributes = [.backgroundColor: NSColor.blue]
         linkTextAttributes = [
             .foregroundColor: config.foregroundColor,
             .underlineColor: config.underlineColor,

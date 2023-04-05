@@ -6,12 +6,28 @@ class InputToggleRendererTests: XCTestCase {
     private var hostConfig: FakeHostConfig!
     private var inputToggle: FakeInputToggle!
     private var inputToggleRenderer: InputToggleRenderer!
+    private var renderConfig: RenderConfig!
     
     override func setUpWithError() throws {
         try super.setUpWithError()
         hostConfig = .make()
         inputToggle = .make()
         inputToggleRenderer = InputToggleRenderer()
+        renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+    }
+    
+    func testErrorViewToggle() {
+        let title = "Hello world!"
+        inputToggle = .make(id: "id1", title: title, isRequired: true, visibility: false)
+        let fakeRoot = FakeRootView()
+        let container = FakeContainer.make(items: [inputToggle])
+        let containerView = ContainerRenderer.shared.render(element: container, with: hostConfig, style: .default, rootView: fakeRoot, parentView: fakeRoot, inputs: [], config: renderConfig)
+        guard let containerView = containerView as? ACRContainerView else { fatalError() }
+        guard let handlerView = fakeRoot.inputHandlers.first else { fatalError() }
+        XCTAssertEqual(handlerView.key, "id1")
+        XCTAssertTrue(handlerView.isHidden)
+        XCTAssertFalse(containerView.isErrorVisible(handlerView))
+        XCTAssertNotNil(containerView.getErrorTextField(for: handlerView))
     }
     
     func testRendererSetsTitle() {
