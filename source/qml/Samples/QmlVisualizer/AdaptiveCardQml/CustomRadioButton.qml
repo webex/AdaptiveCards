@@ -37,7 +37,6 @@ RadioButton {
     }
 
     checked: _rbIsChecked
-    activeFocusOnTab: false
     width: parent.width
     font.pixelSize: toggleButtonConstants.pixelSize
     Keys.onReturnPressed: onButtonClicked()
@@ -85,6 +84,12 @@ RadioButton {
                 color: customRadioButton.checked ? toggleButtonConstants.radioButtonInnerCircleColorOnChecked : 'transparent'
                 visible: customRadioButton.checked
             }
+
+            WCustomFocusItem {
+                visible: customRadioButton.activeFocus
+                designatedParent: parent
+            }
+
 
         }
 

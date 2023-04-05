@@ -93,6 +93,12 @@ CheckBox {
 
             }
 
+            WCustomFocusItem {
+                visible: customCheckBox.activeFocus
+                designatedParent: parent
+                isRectangle: true
+            }
+
         }
 
         CardGenericTextElement {
