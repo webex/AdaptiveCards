@@ -21,6 +21,8 @@ class ImageRendererTests: XCTestCase {
         image = .make(url: sampleURL)
         
         let contentView = renderImageView()
+        XCTAssertNotNil(contentView.contentImageView)
+        XCTAssertFalse(contentView.acceptsFirstResponder)
         XCTAssertTrue(contentView.subviews.first is NSImageView)
     }
     
@@ -129,6 +131,8 @@ class ImageRendererTests: XCTestCase {
         
         XCTAssertNotNil(imageView.target)
         XCTAssertTrue(imageView.target is ActionSubmitTarget)
+        XCTAssertTrue(imageView.acceptsFirstResponder)
+        XCTAssertTrue(imageView.canBecomeKeyView)
         
         image = .make(selectAction: FakeOpenURLAction.make())
         imageView = renderImageView()
