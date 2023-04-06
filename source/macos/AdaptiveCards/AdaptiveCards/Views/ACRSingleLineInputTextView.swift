@@ -14,7 +14,6 @@ class ACRSingleLineInputTextView: NSView {
     private let style: ACSContainerStyle
     private let hostConfig: ACSHostConfig
     private weak var rootview: ACRView?
-    weak var errorDelegate: InputHandlingViewErrorDelegate?
     
     private var contentView = NSView()
     private (set) lazy var contentStackView: NSStackView = {
@@ -156,6 +155,15 @@ class ACRSingleLineInputTextView: NSView {
     }
 }
 extension ACRSingleLineInputTextView: InputHandlingViewProtocol {
+    weak var errorDelegate: InputHandlingViewErrorDelegate? {
+        get {
+            return self.textView.errorDelegate
+        }
+        set {
+            self.textView.errorDelegate = newValue
+        }
+    }
+    
     var isErrorShown: Bool {
         return self.textView.isErrorShown
     }

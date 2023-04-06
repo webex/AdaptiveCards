@@ -49,7 +49,7 @@ class ACRCompactChoiceSetView: NSView {
         self.rootview = rootview
         self.setupView()
         self.setupContraints()
-        self.rootview?.addInputHandler(choiceSetPopup)
+        self.rootview?.addInputHandler(self)
     }
     
     required init?(coder: NSCoder) {
@@ -141,6 +141,7 @@ extension ACRCompactChoiceSetView: InputHandlingViewProtocol {
     
     func showError() {
         choiceSetPopup.showError()
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     func setAccessibilityFocus() {
