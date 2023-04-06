@@ -79,7 +79,7 @@ Column {
                 if (isPressed && !showErrorMessage)
                     color = inputFieldConstants.backgroundColorOnPressed;
                 else
-                    color = showErrorMessage ? inputFieldConstants.backgroundColorOnError : _numberInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : _numberInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
+                    color = _numberInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : _numberInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
             }
 
             border.width: inputFieldConstants.borderWidth
@@ -225,7 +225,7 @@ Column {
             width: numberInputConstants.upDownButtonWidth
             radius: inputFieldConstants.borderRadius
             height: parent.height
-            border.color: activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+            border.color: inputFieldConstants.borderColorNormal
             activeFocusOnTab: true
             color: (_numberInputArrowIcon.pressed || activeFocus) ? inputFieldConstants.backgroundColorOnPressed : _numberInputArrowIcon.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal
             Keys.onPressed: {
@@ -299,7 +299,7 @@ Column {
         id: _numberInputErrorMessage
 
         _errorMessage: _mEscapedErrorString
-        visible: showErrorMessage && _mEscapedErrorString
+        visible: showErrorMessage
     }
 
 }

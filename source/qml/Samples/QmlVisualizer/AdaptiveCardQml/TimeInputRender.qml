@@ -32,7 +32,7 @@ Column {
         if (isPressed && !showErrorMessage)
             timeWrapper.color = inputFieldConstants.backgroundColorOnPressed;
         else
-            timeWrapper.color = showErrorMessage ? inputFieldConstants.backgroundColorOnError : timeInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : timeInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
+            timeWrapper.color = timeInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : timeInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
     }
 
     function validate() {
@@ -101,6 +101,7 @@ Column {
             id: timeInputCombobox
 
             anchors.left: timeInputIcon.right
+            anchors.right: timeInputClearIcon.left
             focusPolicy: Qt.NoFocus
             onActiveFocusChanged: colorChange(false)
             Accessible.ignored: true
@@ -137,7 +138,7 @@ Column {
             verticalPadding: 0
             icon.width: inputTimeConstants.timeIconSize
             icon.height: inputTimeConstants.timeIconSize
-            icon.color: showErrorMessage ? inputTimeConstants.timeIconColorOnError : inputTimeConstants.timeIconColorNormal
+            icon.color: inputTimeConstants.timeIconColorNormal
             icon.source: CardConstants.clockIcon
             Keys.onReturnPressed: onClicked()
             anchors.left: parent.left
@@ -190,7 +191,7 @@ Column {
         id: inputTimeErrorMessage
 
         _errorMessage: _mEscapedErrorString
-        visible: showErrorMessage && _mEscapedErrorString.length
+        visible: showErrorMessage
     }
 
 }
