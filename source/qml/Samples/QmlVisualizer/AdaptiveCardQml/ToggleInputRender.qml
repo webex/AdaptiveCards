@@ -62,7 +62,7 @@ Column {
         id: _inputToggleErrorMessage
 
         _errorMessage: _mEscapedErrorString
-        visible: showErrorMessage && _mEscapedErrorString.length
+        visible: showErrorMessage
     }
 
 }
