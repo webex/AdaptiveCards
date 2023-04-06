@@ -173,7 +173,7 @@ Column {
         id: _inputtextErrorMessage
 
         _errorMessage: _mEscapedErrorString
-        visible: showErrorMessage && _mEscapedErrorString
+        visible: showErrorMessage
     }
 
 }

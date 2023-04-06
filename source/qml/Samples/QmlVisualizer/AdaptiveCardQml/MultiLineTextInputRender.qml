@@ -37,7 +37,7 @@ Rectangle {
                 if (isPressed && !focusItem.outerShowErrorMessage)
                     colorItem.color = CardConstants.inputFieldConstants.backgroundColorOnPressed;
                 else
-                    colorItem.color = focusItem.outerShowErrorMessage ? CardConstants.inputFieldConstants.backgroundColorOnError : focusItem.activeFocus ? CardConstants.inputFieldConstants.backgroundColorOnPressed : focusItem.hovered ? CardConstants.inputFieldConstants.backgroundColorOnHovered : CardConstants.inputFieldConstants.backgroundColorNormal;
+                    colorItem.color = focusItem.activeFocus ? CardConstants.inputFieldConstants.backgroundColorOnPressed : focusItem.hovered ? CardConstants.inputFieldConstants.backgroundColorOnHovered : CardConstants.inputFieldConstants.backgroundColorNormal;
             }
 
             wrapMode: Text.Wrap

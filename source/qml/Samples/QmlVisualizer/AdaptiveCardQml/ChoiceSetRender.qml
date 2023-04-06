@@ -207,7 +207,7 @@ Column {
         id: _choiceSetErrorMessage
 
         _errorMessage: _mEscapedErrorString
-        visible: showErrorMessage && _errorMessage.length
+        visible: showErrorMessage
     }
 
 }

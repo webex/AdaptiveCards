@@ -28,7 +28,7 @@ Column {
         if (isPressed && !showErrorMessage)
             dateWrapper.color = inputFieldConstants.backgroundColorOnPressed;
         else
-            dateWrapper.color = showErrorMessage ? inputFieldConstants.backgroundColorOnError : dateInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : dateInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
+            dateWrapper.color = dateInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : dateInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
     }
 
     function validate() {
@@ -131,7 +131,7 @@ Column {
             verticalPadding: 0
             icon.width: inputDateConstants.dateIconSize
             icon.height: inputDateConstants.dateIconSize
-            icon.color: showErrorMessage ? inputDateConstants.dateIconColorOnError : inputDateConstants.dateIconColorNormal
+            icon.color: inputDateConstants.dateIconColorNormal
             icon.source: CardConstants.calendarIcon
             Keys.onReturnPressed: onClicked()
             anchors.left: parent.left
@@ -183,7 +183,7 @@ Column {
         id: inputDateErrorMessage
 
         _errorMessage: _mEscapedErrorString
-        visible: showErrorMessage && _mEscapedErrorString.length
+        visible: showErrorMessage
     }
 
 }
