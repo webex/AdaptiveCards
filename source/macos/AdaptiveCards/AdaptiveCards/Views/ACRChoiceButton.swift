@@ -180,6 +180,10 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
+    func setShowError(_ value: Bool) {
+        self.shouldShowError = value
+    }
+    
     func setAccessibilityFocus() {
         button.setAccessibilityFocused(true)
         errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityLabel())
