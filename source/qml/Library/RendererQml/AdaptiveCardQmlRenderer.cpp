@@ -449,23 +449,19 @@ namespace RendererQml
             mouseArea->Property("hoverEnabled", "true");
             mouseArea->Property("id", mouseAreaId);
 
-            std::ostringstream onEntered;
-            onEntered << "{" << rectId << ".color = " << hoverColor << ";";
+            std::ostringstream handleBgColorFn;
+            handleBgColorFn << "function handleBgColor() {";
+            handleBgColorFn << rectId << ".color = (containsMouse || activeFocus) ? " << hoverColor << " : " << parentColor << ";";
             if (hasBackgroundImage)
             {
-                onEntered << rectId << ".opacity = 0.5;";
+                handleBgColorFn << rectId << ".opacity = containsMouse ? 0.5 : 1";
             }
-            onEntered << "}";
-            mouseArea->Property("onEntered", onEntered.str());
+            handleBgColorFn << "}";
 
-            std::ostringstream onExited;
-            onExited << "{" << rectId << ".color = " << parentColor << ";";
-            if (hasBackgroundImage)
-            {
-                onExited << rectId << ".opacity = 1;";
-            }
-            onExited << "}";
-            mouseArea->Property("onExited", onExited.str());
+            mouseArea->AddFunctions(handleBgColorFn.str());
+            mouseArea->Property("onContainsMouseChanged", "handleBgColor()");
+            mouseArea->Property("onActiveFocusChanged", "handleBgColor()");
+            mouseArea->Property("cursorShape", "Qt.PointingHandCursor");
 
             std::string onClickedFunction;
             if (selectAction->GetElementTypeString() == "Action.OpenUrl")
@@ -489,9 +485,12 @@ namespace RendererQml
             mouseArea->Property("Keys.onPressed", Formatter() << "{if (event.key === Qt.Key_Return || event.key === Qt.Key_Space){ " << mouseAreaId << ".clicked( " << mouseAreaId << ".mouseX)}}");
             mouseArea->Property("activeFocusOnTab", "true");
             mouseArea->Property("z", "1");
-            mouseArea->Property("onActiveFocusChanged", Formatter() << "{ if (activeFocus){ " << mouseAreaId << ".entered();}else{ " << mouseAreaId << ".exited();}}");
             mouseArea->Property("Accessible.name", Formatter() << parentName << selectAction->GetElementTypeString(), true);
 
+            auto customFocusItem = std::make_shared<QmlTag>("WCustomFocusItem");
+            customFocusItem->Property("isRectangle", "true");
+
+            mouseArea->AddChild(customFocusItem);
             parent->AddChild(mouseArea);
         }
     }

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "samplecardmodel.h"
 #include "samplecardlist.h"
-#include "SampleCardJson.h"
 
 #include <QApplication>
 #include <QQuickView>
@@ -55,7 +54,7 @@ int main(int argc, char* argv[])
     SampleCardModel model;
     model.setList(&cardList);
 
-    const QString qmlString = model.generateQml(QString::fromStdString(Samples::card_Empty));
+    const QString qmlString = model.generateQml(cardList.getJsonString("emptyCard"));
 
 	context->setContextProperty("_aQmlCard", qmlString);
     context->setContextProperty("_aModel", &model);

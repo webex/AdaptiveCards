@@ -15,6 +15,7 @@ class SampleCardList : public QObject
 public:
     explicit SampleCardList(QObject *parent = nullptr);
     QVector<Card> cardList() const;
+    QString getJsonString(std::string fileNameWithoutExtension);
 
 signals:
 

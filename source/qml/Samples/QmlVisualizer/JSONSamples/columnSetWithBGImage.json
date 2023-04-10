@@ -1,0 +1,24 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "minHeight": "50px",
+                    "backgroundImage": "https://adaptivecards.io/content/AlkiBeach.jpg",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Background Image"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
