@@ -49,9 +49,6 @@
     <ClInclude Include="samplecardlist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SampleCardJson.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="adaptivecard_light_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>

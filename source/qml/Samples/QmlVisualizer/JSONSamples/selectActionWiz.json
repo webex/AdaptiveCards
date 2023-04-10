@@ -1,0 +1,243 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Pick up where you left off?",
+            "weight": "Bolder"
+        },
+        {
+            "type": "ColumnSet",
+            "spacing": "Medium",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://adaptivecards.io/content/cats/1.png",
+                            "size": "Medium"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": 4,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Silver Star Mountain"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Maps",
+                            "isSubtle": true,
+                            "spacing": "None"
+                        }
+                    ]
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://www.msn.com"
+            }
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://adaptivecards.io/content/cats/1.png",
+                            "size": "Medium"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": 4,
+                    "style": "emphasis",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Kitchen Remodel"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "With EMPHASIS",
+                            "isSubtle": true,
+                            "spacing": "None"
+                        }
+                    ]
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://www.AdaptiveCards.io"
+            }
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://adaptivecards.io/content/cats/1.png",
+                            "size": "Medium"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": 4,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "The Witcher"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Netflix",
+                            "isSubtle": true,
+                            "spacing": "None"
+                        }
+                    ],
+                    "selectAction": {
+                        "type": "Action.OpenUrl",
+                        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    }
+                },
+                {
+                    "type": "Column",
+                    "width": 4,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "The Witcher"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Netflix",
+                            "isSubtle": true,
+                            "spacing": "None"
+                        }
+                    ],
+                    "selectAction": {
+                        "type": "Action.Submit"
+                    }
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://www.outlook.com"
+            }
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Cool link"
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            }
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "backgroundImage": {
+                "url": "https://adaptivecards.io/content/AlkiBeach.jpg"
+            },
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Emphasis link"
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "https://msn.com"
+            }
+        },
+        {
+            "type": "Container",
+            "style": "good",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Submit action"
+                }
+            ],
+            "selectAction": {
+                "type": "Action.Submit",
+                "title": "Submit action",
+                "data": {
+                    "info": "My submit action data"
+                }
+            }
+        },
+        {
+            "type": "TextBlock",
+            "text": "Container Inside Column Inside ColumnSet",
+            "wrap": true
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "style": "attention",
+                    "selectAction": {
+                        "type": "Action.OpenUrl",
+                        "url": "https://www.google.com"
+                    },
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "This is Column",
+                            "wrap": true
+                        },
+                        {
+                            "type": "Container",
+                            "style": "accent",
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "data": "This is Container"
+                            },
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "This is Container",
+                                    "wrap": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch"
+                }
+            ],
+            "style": "warning",
+            "bleed": true,
+            "selectAction": {
+                "type": "Action.Submit",
+                "data": "This is Column Set"
+            }
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+}
