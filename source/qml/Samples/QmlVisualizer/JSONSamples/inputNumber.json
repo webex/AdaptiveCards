@@ -1,0 +1,46 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Default text input"
+        },
+        {
+            "type": "Input.Text",
+            "id": "defaultInputId",
+            "placeholder": "enter comment",
+            "maxLength": 500
+        },
+        {
+            "type": "TextBlock",
+            "text": "Multiline text input"
+        },
+        {
+            "type": "Input.Text",
+            "id": "multilineInputId",
+            "placeholder": "enter comment",
+            "maxLength": 50,
+            "isMultiline": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "Input Number"
+        },
+        {
+            "type": "Input.Number",
+            "id": "number",
+            "placeholder": "Enter a number",
+            "min": 1,
+            "max": 10,
+            "value": 3
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "OK"
+        }
+    ]
+}
