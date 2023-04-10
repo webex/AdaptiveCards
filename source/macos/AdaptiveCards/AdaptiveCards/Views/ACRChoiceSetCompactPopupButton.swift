@@ -57,7 +57,6 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
     
     func showError() {
         shouldShowError = true
-        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     func setAccessibilityFocus() {

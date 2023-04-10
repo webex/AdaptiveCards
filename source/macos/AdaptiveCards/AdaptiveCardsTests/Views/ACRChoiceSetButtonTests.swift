@@ -22,6 +22,16 @@ class ACRChoiceSetButtontests: XCTestCase {
         XCTAssertNotNil(choiceButton)
     }
     
+    func testChoiceButtonSetShowError() {
+        //Test default initialsier
+        let choiceButton = ACRChoiceButton(renderConfig: renderConfig, buttonType: .switch, element: choiceSetInput, title: "Test")
+        XCTAssertNotNil(choiceButton)
+        choiceButton.setShowError(true)
+        XCTAssertTrue(choiceButton.isErrorShown)
+        choiceButton.setShowError(false)
+        XCTAssertFalse(choiceButton.isErrorShown)
+    }
+    
     func testCheckBoxButtonClick() {
         XCTAssertEqual(choiceCheckBoxButtonView.state, .off)
         choiceCheckBoxButtonView.button.performClick(nil)

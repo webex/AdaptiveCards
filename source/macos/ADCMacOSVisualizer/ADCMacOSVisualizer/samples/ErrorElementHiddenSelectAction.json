@@ -1,0 +1,58 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "body": [
+        {
+            "type": "Input.Toggle",
+            "title": "New Input.Toggle New Input.ToggleNew Input.Toggle New Input.ToggleNew Input.Toggle",
+            "id": "toggle",
+            "value": "valueOff",
+            "valueOn": "valueOn",
+            "valueOff": "valueOff",
+            "wrap": true,
+            "label": "Label",
+            "isRequired": true,
+            "errorMessage": "Error Message"
+        },
+        {
+            "errorMessage": "Please Enter Some Valid Input",
+            "id": "inputText",
+            "isRequired": true,
+            "label": "Input Text",
+            "placeholder": "Placeholder text",
+            "type": "Input.Text"
+        },
+        {
+            "actions": [
+                {
+                    "style": "destructive",
+                    "targetElements": [
+                        "inputText"
+                    ],
+                    "title": "Text",
+                    "type": "Action.ToggleVisibility"
+                },
+                {
+                    "style": "destructive",
+                    "targetElements": [
+                        "toggle"
+                    ],
+                    "title": "Toggle",
+                    "type": "Action.ToggleVisibility"
+                }
+            ],
+            "type": "ActionSet"
+        },
+        {
+            "actions": [
+                {
+                    "style": "positive",
+                    "title": "Action.Submit",
+                    "type": "Action.Submit"
+                }
+            ],
+            "type": "ActionSet"
+        }
+    ],
+    "type": "AdaptiveCard",
+    "version": "1.3"
+}

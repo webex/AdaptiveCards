@@ -89,7 +89,7 @@ class ACRSingleLineInputTextView: NSView {
         self.addSubview(contentStackView)
         self.contentStackView.addArrangedSubview(contentView)
         self.contentView.addSubview(textView)
-        self.rootview?.addInputHandler(textView)
+        self.rootview?.addInputHandler(self)
         if element.getInlineAction() != nil {
             self.contentView.addSubview(inlineButton)
             self.setupInlineButton()
@@ -155,6 +155,15 @@ class ACRSingleLineInputTextView: NSView {
     }
 }
 extension ACRSingleLineInputTextView: InputHandlingViewProtocol {
+    weak var errorDelegate: InputHandlingViewErrorDelegate? {
+        get {
+            return self.textView.errorDelegate
+        }
+        set {
+            self.textView.errorDelegate = newValue
+        }
+    }
+    
     var isErrorShown: Bool {
         return self.textView.isErrorShown
     }
@@ -175,17 +184,9 @@ extension ACRSingleLineInputTextView: InputHandlingViewProtocol {
         return self.textView.isRequired
     }
     
-    weak var errorDelegate: InputHandlingViewErrorDelegate? {
-        get {
-            return self.textView.errorDelegate
-        }
-        set {
-            self.textView.errorDelegate = newValue
-        }
-    }
-    
     func showError() {
         self.textView.showError()
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     func setAccessibilityFocus() {

@@ -64,6 +64,15 @@ class TextInputRendererTest: XCTestCase {
         XCTAssertEqual(inputTextField.textView.accessibilityValue(), "somevalue")
     }
     
+    func testSingleLineTextInputHandler() {
+        let valueString: String = "somevalue"
+        inputText = .make(value: valueString, isRequired: true)
+        let fakeRootView = FakeRootView()
+        let view = textInputRenderer.render(element: inputText, with: hostConfig, style: .default, rootView: fakeRootView, parentView: fakeRootView, inputs: [], config: .default)
+        guard let inputTextField = view as? ACRSingleLineInputTextView else { fatalError() }
+        XCTAssertEqual(fakeRootView.inputHandlers.first as? ACRSingleLineInputTextView, inputTextField)
+    }
+    
     private func renderTextInput() -> ACRSingleLineInputTextView {
         let view = textInputRenderer.render(element: inputText, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         
