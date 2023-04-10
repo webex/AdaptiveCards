@@ -1,0 +1,150 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.2",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Press the buttons to toggle the images!",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "Here are some images:",
+            "isVisible": false,
+            "id": "textToToggle"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "style": "person",
+                            "type": "Image",
+                            "url": "https://adaptivecards.io/content/cats/1.png",
+                            "isVisible": false,
+                            "id": "imageToToggle",
+                            "altText": "sample image 1",
+                            "size": "medium"
+                        }
+                    ],
+                    "width": "auto"
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://adaptivecards.io/content/cats/1.png",
+                            "isVisible": false,
+                            "id": "imageToToggle2",
+                            "altText": "sample image 2",
+                            "size": "medium"
+                        }
+                    ],
+                    "width": "auto"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.ToggleVisibility",
+            "title": "Toggle!",
+            "targetElements": [
+                "textToToggle",
+                "imageToToggle",
+                "imageToToggle2"
+            ]
+        },
+        {
+            "type": "Action.ToggleVisibility",
+            "title": "Also Toggle!",
+            "targetElements": [
+                {
+                    "elementId": "textToToggle"
+                },
+                {
+                    "elementId": "imageToToggle"
+                },
+                {
+                    "elementId": "imageToToggle2"
+                }
+            ]
+        },
+        {
+            "type": "Action.ToggleVisibility",
+            "title": "Show!",
+            "targetElements": [
+                {
+                    "elementId": "textToToggle",
+                    "isVisible": true
+                },
+                {
+                    "elementId": "imageToToggle",
+                    "isVisible": true
+                },
+                {
+                    "elementId": "imageToToggle2",
+                    "isVisible": true
+                }
+            ]
+        },
+        {
+            "type": "Action.ToggleVisibility",
+            "title": "Hide!",
+            "targetElements": [
+                {
+                    "elementId": "textToToggle",
+                    "isVisible": false
+                },
+                {
+                    "elementId": "imageToToggle",
+                    "isVisible": false
+                },
+                {
+                    "elementId": "imageToToggle2",
+                    "isVisible": false
+                }
+            ]
+        },
+        {
+            "type": "Action.ToggleVisibility",
+            "title": "Cat 1",
+            "targetElements": [
+                {
+                    "elementId": "textToToggle",
+                    "isVisible": true
+                },
+                {
+                    "elementId": "imageToToggle",
+                    "isVisible": true
+                },
+                {
+                    "elementId": "imageToToggle2",
+                    "isVisible": false
+                }
+            ]
+        },
+        {
+            "type": "Action.ToggleVisibility",
+            "title": "Water!",
+            "targetElements": [
+                {
+                    "elementId": "textToToggle",
+                    "isVisible": true
+                },
+                {
+                    "elementId": "imageToToggle",
+                    "isVisible": false
+                },
+                {
+                    "elementId": "imageToToggle2",
+                    "isVisible": true
+                }
+            ]
+        }
+    ]
+}

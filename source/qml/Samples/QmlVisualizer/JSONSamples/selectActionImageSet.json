@@ -1,0 +1,80 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "ImageSet",
+            "images": [
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "White beach panorama",
+                    "size": "Medium",
+                    "selectAction": {
+                        "type": "Action.Submit"
+                    }
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Cow on a grassy field",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Orange leaves on the sidewalk of a park",
+                    "size": "Medium",
+                    "selectAction": {
+                        "type": "Action.OpenUrl",
+                        "url": "https://www.google.com"
+                    }
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Green leaves",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Top of a sky scrapper",
+                    "size": "Medium",
+                    "selectAction": {
+                        "type": "Action.Submit"
+                    }
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Foggy forest",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Picure of the blue ocean",
+                    "size": "Medium",
+                    "selectAction": {
+                        "type": "Action.OpenUrl",
+                        "url": "https://www.google.com"
+                    }
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Crowded train station",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://adaptivecards.io/content/cats/1.png",
+                    "altText": "Sunset under a dock",
+                    "size": "Medium"
+                }
+            ]
+        }
+    ]
+}
