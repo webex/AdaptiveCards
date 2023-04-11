@@ -357,6 +357,8 @@ namespace RendererQml
             std::ostringstream actionElements;
             std::shared_ptr<QmlTag> uiRectangle;
 
+            uiButtonStrip->Property("id", Formatter() << uiContainer->GetId() << "_flow");
+
             for (unsigned int i = 0; i < maxActions; i++)
             {
                 // add actions buttons
@@ -369,6 +371,8 @@ namespace RendererQml
                     uiRectangle->Property("width", Formatter() << uiAction->GetId() << ".width");
                     uiRectangle->Property("color", "'transparent'");
                     uiAction->Property("width", "(parent.parent.width > implicitWidth) ? implicitWidth : parent.parent.width");
+                    uiAction->Property("onWidthChanged", Formatter() << uiButtonStrip->GetId() << ".horizontalAlign()");
+                    uiAction->Property("Component.onCompleted", Formatter() << uiButtonStrip->GetId() << ".horizontalAlign()");
 
                     rectangleElements << (i == 0 ? "[" : "") << uiRectangle->GetId() << (i == maxActions - 1 ? "]" : ",");
                     actionElements << (i == 0 ? "[" : "") << uiAction->GetId() << (i == maxActions - 1 ? "]" : ",");
@@ -415,9 +419,10 @@ namespace RendererQml
             {
                 uiButtonStrip->Property("property var rectangleElements", rectangleElements.str());
                 uiButtonStrip->Property("property var actionElements", actionElements.str());
-                uiButtonStrip->Property("onWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
-                uiButtonStrip->Property("onImplicitWidthChanged", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
-                uiButtonStrip->Property("Component.onCompleted", "AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)");
+                uiButtonStrip->Property("onWidthChanged", "horizontalAlign()");
+                uiButtonStrip->Property("onImplicitWidthChanged", "horizontalAlign()");
+                uiButtonStrip->Property("Component.onCompleted", "horizontalAlign()");
+                uiButtonStrip->AddFunctions("function horizontalAlign(){AdaptiveCardUtils.horizontalAlignActionSet(this, actionElements, rectangleElements)}");
             }
 
             // add show card click function
