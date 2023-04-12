@@ -529,6 +529,15 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         target.handleSelectionAction(for: self)
     }
     
+    override func keyDown(with event: NSEvent) {
+        if Int(event.keyCode) == kVK_Space {
+            guard let target = target else { return }
+            target.handleSelectionAction(for: self)
+            return
+        }
+        super.keyDown(with: event)
+    }
+    
     override func hitTest(_ point: NSPoint) -> NSView? {
         guard target != nil, frame.contains(point) else { return super.hitTest(point) }
         return self
