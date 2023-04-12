@@ -396,18 +396,26 @@ function horizontalAlignActionSet(actionSet, actionElements, rectangleElements) 
             continue;
         }
         itemNo += noElementsInCol[i];
+
         if (itemStart === itemEnd) {
             rectangleElements[itemStart].width = actionSet.width;
             actionElements[itemStart].anchors.horizontalCenter = rectangleElements[itemStart].horizontalCenter;
         }
         else {
-            var extraWidth = (actionSet.width - colWidths[i]) / 2;
+            for (let j = itemStart; j <= itemEnd; j++) {
+                if (j === itemStart || j === itemEnd) {
+                    var extraWidth = (actionSet.width - colWidths[i]) / 2;
 
-            rectangleElements[itemStart].width = actionElements[itemStart].width + extraWidth;
-            actionElements[itemStart].anchors.right = rectangleElements[itemStart].right;
+                    rectangleElements[itemStart].width = actionElements[itemStart].width + extraWidth;
+                    actionElements[itemStart].anchors.right = rectangleElements[itemStart].right;
 
-            rectangleElements[itemEnd].width = actionElements[itemEnd].width + extraWidth;
-            actionElements[itemEnd].anchors.left = rectangleElements[itemEnd].left;
+                    rectangleElements[itemEnd].width = actionElements[itemEnd].width + extraWidth;
+                    actionElements[itemEnd].anchors.left = rectangleElements[itemEnd].left;
+                }
+                else {
+                    actionElements[j].anchors.horizontalCenter = rectangleElements[j].horizontalCenter;
+                }
+            }
         }
     }
 }
