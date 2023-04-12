@@ -106,6 +106,7 @@ class RichTextBlockRendererTests: XCTestCase {
         XCTAssertNotNil(attributeValue(for: .selectAction, in: textView.attributedString()))
         XCTAssertTrue(attributeValue(for: .selectAction, in: textView.attributedString()) is ActionSubmitTarget)
         XCTAssertTrue(textView.target is ActionSubmitTarget)
+        XCTAssertTrue(textView.hasLinks)
         
         textRun = .make(text: sampleText, selectAction: FakeOpenURLAction.make())
         richTextBlock = .make(textRun: textRun)
@@ -114,6 +115,7 @@ class RichTextBlockRendererTests: XCTestCase {
         XCTAssertNotNil(attributeValue(for: .selectAction, in: textView.attributedString()))
         XCTAssertTrue(attributeValue(for: .selectAction, in: textView.attributedString()) is ActionOpenURLTarget)
         XCTAssertTrue(textView.target is ActionOpenURLTarget)
+        XCTAssertTrue(textView.hasLinks)
         
         textRun = .make(text: sampleText, selectAction: FakeToggleVisibilityAction.make())
         richTextBlock = .make(textRun: textRun)
@@ -122,6 +124,7 @@ class RichTextBlockRendererTests: XCTestCase {
         XCTAssertNotNil(attributeValue(for: .selectAction, in: textView.attributedString()))
         XCTAssertTrue(attributeValue(for: .selectAction, in: textView.attributedString()) is ActionToggleVisibilityTarget)
         XCTAssertTrue(textView.target is ActionToggleVisibilityTarget)
+        XCTAssertTrue(textView.hasLinks)
         
         // ShowCard Action is not available as a SelectAction
         textRun = .make(text: sampleText, selectAction: FakeShowCardAction.make())
@@ -130,6 +133,7 @@ class RichTextBlockRendererTests: XCTestCase {
         
         XCTAssertNil(attributeValue(for: .selectAction, in: textView.attributedString()))
         XCTAssertNil(textView.target)
+        XCTAssertFalse(textView.hasLinks)
     }
     
     private func isStringAttributePresent(attrString: NSAttributedString, attr: NSAttributedString.Key) -> Bool {
