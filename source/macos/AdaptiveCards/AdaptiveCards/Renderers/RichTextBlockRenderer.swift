@@ -85,7 +85,10 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         textView.textContainer?.lineBreakMode = .byTruncatingTail
-        textView.textStorage?.setAttributedString(content)
+        textView.setAttributedString(str: content)
+        textView.openLinkCallBack = { [weak rootView] urlAddress in
+            rootView?.handleOpenURLAction(urlString: urlAddress)
+        }
         textView.textContainer?.widthTracksTextView = true
         
         // Set compression priority higher value means that we don’t want the view to shrink smaller than the intrinsic content size.

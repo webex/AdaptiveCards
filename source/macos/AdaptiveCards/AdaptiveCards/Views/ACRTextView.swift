@@ -11,11 +11,13 @@ enum ACRTextViewElementType {
 class ACRTextViewHyperLinkData {
     var linkText: String
     var linkAddress: String
+    var target: TargetHandler?
     var linkRange: NSRange
     
-    init(text: String, address: String, range: NSRange) {
+    init(text: String, address: String, target: TargetHandler?, range: NSRange) {
         self.linkText    = text
         self.linkAddress = address
+        self.target      = target
         self.linkRange   = range
     }
 }
@@ -131,7 +133,8 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
                 }) {
                     if !data.linkAddress.isEmpty {
                         self.openLinkCallBack?(data.linkAddress)
-                        return
+                    } else if let action = data.target {
+                        action.handleSelectionAction(for: self)
                     }
                 }
             case kVK_Tab:
@@ -198,23 +201,26 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         let attrString = self.attributedString()
         let fullTextRange = NSRange(location: 0, length: attrString.length)
         
-        attrString.enumerateAttribute(NSAttributedString.Key.link, in: fullTextRange, options: .longestEffectiveRangeNotRequired, using: {(value: Any?, range: NSRange, _ : UnsafeMutablePointer<ObjCBool>) -> Void in
-            if let linkStr = value as? String {
-                updateLinkTextAttributes(range: range, attrString: attrString, linkAddr: linkStr)
+        attrString.enumerateAttributes(in: fullTextRange) {(keyValue, range: NSRange, _ : UnsafeMutablePointer<ObjCBool>) -> Void in
+            if let linkStr = keyValue[.link] as? String {
+                updateLinkTextAttributes(range: range, attrString: attrString, target: nil, linkAddr: linkStr)
             }
-            if let linkUrl = value as? NSURL, let linkStr = linkUrl.absoluteString {
-                updateLinkTextAttributes(range: range, attrString: attrString, linkAddr: linkStr)
+            if let linkUrl = keyValue[.link] as? NSURL, let linkStr = linkUrl.absoluteString {
+                updateLinkTextAttributes(range: range, attrString: attrString, target: nil, linkAddr: linkStr)
             }
-        })
+            if let target = keyValue[.selectAction] as? TargetHandler {
+                updateLinkTextAttributes(range: range, attrString: attrString, target: target, linkAddr: "")
+            }
+        }
     }
     
-    private func updateLinkTextAttributes(range: NSRange, attrString: NSAttributedString, linkAddr: String) {
+    private func updateLinkTextAttributes(range: NSRange, attrString: NSAttributedString, target: TargetHandler?, linkAddr: String) {
         if let rangeInString = Range(range, in: attrString.string) {
             let textAtRange = String(self.string[rangeInString])
             if !self.linkDataList.contains(where: { data in
                 return data.linkRange == range && data.linkText == textAtRange
             }) {
-                self.linkDataList.append(ACRTextViewHyperLinkData(text: textAtRange, address: linkAddr, range: range))
+                self.linkDataList.append(ACRTextViewHyperLinkData(text: textAtRange, address: linkAddr, target: target, range: range))
             }
         }
     }
