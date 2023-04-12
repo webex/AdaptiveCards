@@ -56,7 +56,7 @@ Rectangle {
             } else if (_selectActionId === 'Action.Submit') {
                 AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _hasAssociatedInputs);
                 return ;
-            } else if(_selectActionId === 'Action.OpenUrl'){
+            } else if(_selectActionId){
                 _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
                 return ;
             }
