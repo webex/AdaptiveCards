@@ -9,6 +9,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window?.title = "ADCMacOSVisualizer"
         window?.minSize = minWindowSize
         window?.center()
+        window?.collectionBehavior = [.fullScreenAllowsTiling]
         window?.contentViewController = RootViewController()
         window?.makeKeyAndOrderFront(nil)
     }
