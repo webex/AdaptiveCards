@@ -108,6 +108,10 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         renderCard(with: textView.string)
     }
     
+    @IBAction private func renderShortcut(_ sender: NSMenuItem) {
+        renderCard(with: textView.string)
+    }
+    
     private func setupButtonConfig() {
         let lightThemePositiveColor = NSColor.color(from: Constants.lightThemePositive) ?? .clear
         let lightThemePositiveHoverColor = NSColor.color(from: Constants.lightThemePositiveHover) ?? .clear
