@@ -1,5 +1,6 @@
 import AdaptiveCards_bridge
 import AppKit
+import Carbon.HIToolbox
 
 protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
@@ -35,6 +36,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
             }
         }
     }
+    private var cursorType = NSCursor.arrow
     private var paddings = [NSView]()
     private let invisibleViews = NSMutableSet()
     // Store the Intrinsic size of subviews
@@ -86,6 +88,29 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     // Use intrinsicContentSize, work with hugging priority and autolayout. won't work as expected resluts without it.
     override var intrinsicContentSize: NSSize {
         return self.combinedContentSize
+    }
+    
+    override var acceptsFirstResponder: Bool {
+        return self.target != nil
+    }
+    
+    override var canBecomeKeyView: Bool {
+        return self.target != nil
+    }
+    
+    override public var focusRingMaskBounds: NSRect {
+        return self.bounds
+    }
+    
+    override public func drawFocusRingMask() {
+        if self.target != nil {
+            self.bounds.fill()
+            self.needsDisplay = true
+        }
+    }
+    
+    override func resetCursorRects() {
+        self.addCursorRect(self.bounds, cursor: cursorType)
     }
     
     init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
@@ -423,6 +448,16 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         guard target != nil else { return }
         previousBackgroundColor = layer?.backgroundColor
         layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
+        // Added a pointing hand here
+        self.setCursorType(cursor: .pointingHand)
+    }
+    
+    /// set the cursor type while the image hovering and the select action is active
+    /// - Parameter cursor: accept cursor type
+    private func setCursorType(cursor: NSCursor) {
+        guard target != nil else { return }
+        cursorType = cursor
+        resetCursorRects()
     }
     
     func configureInputElements(element: ACSBaseInputElement, view: NSView) {
@@ -484,12 +519,23 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     override func mouseExited(with event: NSEvent) {
         guard target != nil else { return }
         layer?.backgroundColor = previousBackgroundColor ?? .clear
+        // Back to the system cursor
+        self.setCursorType(cursor: .current)
     }
     
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
         guard let target = target else { return }
         target.handleSelectionAction(for: self)
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        if Int(event.keyCode) == kVK_Space {
+            guard let target = target else { return }
+            target.handleSelectionAction(for: self)
+            return
+        }
+        super.keyDown(with: event)
     }
     
     override func hitTest(_ point: NSPoint) -> NSView? {

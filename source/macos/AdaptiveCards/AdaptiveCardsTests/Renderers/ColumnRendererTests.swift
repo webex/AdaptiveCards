@@ -73,24 +73,32 @@ class ColumnRendererTests: XCTestCase {
         
         XCTAssertNotNil(columnView.target)
         XCTAssertTrue(columnView.target is ActionSubmitTarget)
+        XCTAssertTrue(columnView.canBecomeKeyView)
+        XCTAssertTrue(columnView.acceptsFirstResponder)
         
         column = .make(selectAction: FakeOpenURLAction.make())
         columnView = renderColumnView()
         
         XCTAssertNotNil(columnView.target)
         XCTAssertTrue(columnView.target is ActionOpenURLTarget)
+        XCTAssertTrue(columnView.canBecomeKeyView)
+        XCTAssertTrue(columnView.acceptsFirstResponder)
         
         column = .make(selectAction: FakeToggleVisibilityAction.make())
         columnView = renderColumnView()
         
         XCTAssertNotNil(columnView.target)
         XCTAssertTrue(columnView.target is ActionToggleVisibilityTarget)
+        XCTAssertTrue(columnView.canBecomeKeyView)
+        XCTAssertTrue(columnView.acceptsFirstResponder)
         
         // ShowCard Action is not available as a SelectAction
         column = .make(selectAction: FakeShowCardAction.make())
         columnView = renderColumnView()
     
         XCTAssertNil(columnView.target)
+        XCTAssertFalse(columnView.canBecomeKeyView)
+        XCTAssertFalse(columnView.acceptsFirstResponder)
     }
     
     func testRendersItems() {

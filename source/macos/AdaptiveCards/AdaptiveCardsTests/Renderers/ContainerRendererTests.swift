@@ -71,24 +71,32 @@ class ContainerRendererTests: XCTestCase {
         
         XCTAssertNotNil(containerView.target)
         XCTAssertTrue(containerView.target is ActionSubmitTarget)
+        XCTAssertTrue(containerView.canBecomeKeyView)
+        XCTAssertTrue(containerView.acceptsFirstResponder)
         
         container = .make(selectAction: FakeOpenURLAction.make())
         containerView = renderContainerView(container)
         
         XCTAssertNotNil(containerView.target)
         XCTAssertTrue(containerView.target is ActionOpenURLTarget)
+        XCTAssertTrue(containerView.canBecomeKeyView)
+        XCTAssertTrue(containerView.acceptsFirstResponder)
         
         container = .make(selectAction: FakeToggleVisibilityAction.make())
         containerView = renderContainerView(container)
         
         XCTAssertNotNil(containerView.target)
         XCTAssertTrue(containerView.target is ActionToggleVisibilityTarget)
+        XCTAssertTrue(containerView.canBecomeKeyView)
+        XCTAssertTrue(containerView.acceptsFirstResponder)
         
         // ShowCard Action is not available as a SelectAction
         container = .make(selectAction: FakeShowCardAction.make())
         containerView = renderContainerView(container)
     
         XCTAssertNil(containerView.target)
+        XCTAssertFalse(containerView.canBecomeKeyView)
+        XCTAssertFalse(containerView.acceptsFirstResponder)
     }
     
     func testIntrinsicContentSizeWithHiddenInputElements() {
