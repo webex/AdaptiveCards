@@ -139,12 +139,16 @@ class ImageRendererTests: XCTestCase {
         
         XCTAssertNotNil(imageView.target)
         XCTAssertTrue(imageView.target is ActionOpenURLTarget)
+        XCTAssertTrue(imageView.acceptsFirstResponder)
+        XCTAssertTrue(imageView.canBecomeKeyView)
         
         image = .make(selectAction: FakeToggleVisibilityAction.make())
         imageView = renderImageView()
         
         XCTAssertNotNil(imageView.target)
         XCTAssertTrue(imageView.target is ActionToggleVisibilityTarget)
+        XCTAssertTrue(imageView.acceptsFirstResponder)
+        XCTAssertTrue(imageView.canBecomeKeyView)
         
         // ShowCard Action is not available as a SelectAction
         image = .make(selectAction: FakeShowCardAction.make())
