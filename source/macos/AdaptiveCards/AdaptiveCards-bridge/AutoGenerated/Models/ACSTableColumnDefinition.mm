@@ -29,15 +29,15 @@
     return self;
 }
 
-- (ACSHorizontalAlignment _Nullable)getHorizontalCellContentAlignment
+- (ACSHorizontalAlignment)getHorizontalCellContentAlignment
 {
  
     auto getHorizontalCellContentAlignmentCpp = mCppObj->GetHorizontalCellContentAlignment();
-    return [ACSHorizontalAlignmentConvertor convertCpp:getHorizontalCellContentAlignmentCpp];
+    return getHorizontalCellContentAlignmentCpp.has_value() ? [ACSHorizontalAlignmentConvertor convertCpp:getHorizontalCellContentAlignmentCpp.value_or(AdaptiveCards::HorizontalAlignment::Left)] : ACSHorizontalAlignmentNil;
 
 }
 
-- (void)setHorizontalCellContentAlignment:(enum ACSHorizontalAlignment _Nullable)value
+- (void)setHorizontalCellContentAlignment:(enum ACSHorizontalAlignment)value
 {
     auto valueCpp = [ACSHorizontalAlignmentConvertor convertObj:value];
  
@@ -45,15 +45,15 @@
     
 }
 
-- (ACSVerticalContentAlignment _Nullable)getVerticalCellContentAlignment
+- (ACSVerticalContentAlignment)getVerticalCellContentAlignment
 {
  
     auto getVerticalCellContentAlignmentCpp = mCppObj->GetVerticalCellContentAlignment();
-    return [ACSVerticalContentAlignmentConvertor convertCpp:getVerticalCellContentAlignmentCpp];
+    return getVerticalCellContentAlignmentCpp.has_value() ? [ACSVerticalContentAlignmentConvertor convertCpp:getVerticalCellContentAlignmentCpp.value_or(AdaptiveCards::VerticalContentAlignment::Top)] : ACSVerticalContentAlignmentNil;
 
 }
 
-- (void)setVerticalCellContentAlignment:(enum ACSVerticalContentAlignment _Nullable)value
+- (void)setVerticalCellContentAlignment:(enum ACSVerticalContentAlignment)value
 {
     auto valueCpp = [ACSVerticalContentAlignmentConvertor convertObj:value];
  
@@ -65,7 +65,7 @@
 {
  
     auto getWidthCpp = mCppObj->GetWidth();
-    return [NSNumber numberWithUnsignedInt:getWidthCpp];
+    return getWidthCpp.has_value() ? [NSNumber numberWithUnsignedInt:getWidthCpp.value_or(0)] : NULL;
 
 }
 
@@ -81,7 +81,7 @@
 {
  
     auto getPixelWidthCpp = mCppObj->GetPixelWidth();
-    return [NSNumber numberWithUnsignedInt:getPixelWidthCpp];
+    return getPixelWidthCpp.has_value() ? [NSNumber numberWithUnsignedInt:getPixelWidthCpp.value_or(0)] : NULL;
 
 }
 
