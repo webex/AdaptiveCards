@@ -176,6 +176,40 @@ class FactSetRendererTest: XCTestCase {
         }
     }
     
+    func testAccessibilityFocus() {
+        var factArray: [FakeFacts] = []
+        let fakeFact1 = FakeFacts()
+        fakeFact1.setTitle("Title1 Exists")
+        fakeFact1.setValue("Value1 [Exists](htttps://www.google.com)")
+        fakeFact1.setLanguage("")
+        factArray.append(fakeFact1)
+        let fakeFact2 = FakeFacts()
+        fakeFact2.setTitle("Title2 Exists")
+        fakeFact2.setValue("Value2 [Exists](htttps://www.google.com)")
+        fakeFact2.setLanguage("")
+        factArray.append(fakeFact2)
+        factSet = .make(factArray: factArray)
+        
+        let factView = renderFactSet()
+        let containerView = NSView()
+        containerView.addSubview(factView)
+        
+        let renderedFacts = factView.subviews
+        guard let titleStack = renderedFacts[0] as? NSStackView else { return XCTFail() }
+        guard let valueStack = renderedFacts[1] as? NSStackView else { return XCTFail() }
+        let dummyKeyView = NSView()
+        titleStack.subviews.first?.nextKeyView = dummyKeyView
+        containerView.layoutSubtreeIfNeeded()
+        XCTAssertEqual(titleStack.subviews.first?.nextKeyView, valueStack.subviews.first)
+        XCTAssertEqual(valueStack.subviews.first?.nextKeyView, titleStack.subviews.last)
+        XCTAssertEqual(titleStack.subviews.last?.nextKeyView, valueStack.subviews.last)
+        
+        guard let titleFact = titleStack.subviews.first else { return XCTFail() }
+        guard let valueFact = valueStack.subviews.first else { return XCTFail() }
+        XCTAssertFalse(titleFact.canBecomeKeyView)
+        XCTAssertTrue(valueFact.canBecomeKeyView)
+    }
+    
     private func renderFactSet() -> NSView {
         let rootView = FakeRootView()
         rootView.resolverDelegate = resourceResolver
