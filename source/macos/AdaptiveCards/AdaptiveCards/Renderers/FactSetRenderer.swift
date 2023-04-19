@@ -43,17 +43,25 @@ class FactSetRenderer: NSObject, BaseCardElementRendererProtocol {
             let titleView = ACRTextView(asFactSetFieldWith: config.hyperlinkColorConfig)
             let valueView = ACRTextView(asFactSetFieldWith: config.hyperlinkColorConfig)
             
+            titleView.openLinkCallBack = { [weak rootView] urlAddress in
+                rootView?.handleOpenURLAction(urlString: urlAddress)
+            }
+            
+            valueView.openLinkCallBack = { [weak rootView] urlAddress in
+                rootView?.handleOpenURLAction(urlString: urlAddress)
+            }
+            
             // If not markdown use plain text
             if !valueMarkdownParserResult.isHTML {
                 valueView.string = fact.getValue() ?? ""
             } else {
-                valueView.textStorage?.setAttributedString(valueAttributedContent)
+                valueView.setAttributedString(str: valueAttributedContent)
             }
             
             if !titleMarkdownParserResult.isHTML {
                 titleView.string = fact.getTitle() ?? ""
             } else {
-                titleView.textStorage?.setAttributedString(titleBoldContent)
+                titleView.setAttributedString(str: titleBoldContent)
             }
             
             if let colorHex = hostConfig.getForegroundColor(style, color: .default, isSubtle: false), let textColor = ColorUtils.color(from: colorHex) {

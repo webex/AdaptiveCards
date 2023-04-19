@@ -194,6 +194,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
             .underlineStyle: config.underlineStyle.rawValue,
             .cursor: NSCursor.pointingHand
         ]
+        self.elementType = .factset
     }
     
     private func updateHyperLinks() {
