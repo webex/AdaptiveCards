@@ -99,7 +99,12 @@ class ACRView: ACRColumnView {
             dict = dataJsonDict
         // data != "null\n" check is required as the objective String does not return nil if no data present
         } else if let data = dataJSON, data != "null\n" {
-            dict["data"] = data
+            let jsonStr = "{\"data\" : \(data)}"
+            if let data = jsonStr.data(using: String.Encoding.utf8), let jsonDataObj = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                dict = jsonDataObj
+            } else {
+                dict["data"] = data
+            }
         }
         
         // recursively fetch input handlers dictionary from the parent
