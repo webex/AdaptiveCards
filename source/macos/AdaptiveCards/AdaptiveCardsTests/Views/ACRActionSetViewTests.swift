@@ -127,6 +127,12 @@ class ACRActionSetViewTests: XCTestCase {
         XCTAssertEqual(actionButtons[1].state, .off)
     }
     
+    func testActionSubStackViewCount() {
+        actions = [FakeSubmitAction.make(associatedInputs: .none, title: "submit")]
+        renderActionSetView()
+        XCTAssertEqual(view.stackView.arrangedSubviews.count, 1)
+    }
+    
     private var actionButtons: [NSButton] {
         return view.actions as! [NSButton]
     }
