@@ -32,10 +32,10 @@ enum ACSVerticalContentAlignment: NSUInteger;
 
 - (NSArray<ACSTableCell *> * _Nonnull)getCells;
 - (void)setCells:(NSArray<ACSTableCell *>* _Nonnull)value;
-- (ACSVerticalContentAlignment _Nullable)getVerticalCellContentAlignment;
-- (void)setVerticalCellContentAlignment:(enum ACSVerticalContentAlignment _Nullable)value;
-- (ACSHorizontalAlignment _Nullable)getHorizontalCellContentAlignment;
-- (void)setHorizontalCellContentAlignment:(enum ACSHorizontalAlignment _Nullable)value;
+- (ACSVerticalContentAlignment)getVerticalCellContentAlignment;
+- (void)setVerticalCellContentAlignment:(enum ACSVerticalContentAlignment)value;
+- (ACSHorizontalAlignment)getHorizontalCellContentAlignment;
+- (void)setHorizontalCellContentAlignment:(enum ACSHorizontalAlignment)value;
 - (ACSContainerStyle)getStyle;
 - (void)setStyle:(enum ACSContainerStyle)value;
 

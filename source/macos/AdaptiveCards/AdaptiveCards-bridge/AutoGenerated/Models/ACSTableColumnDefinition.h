@@ -25,10 +25,10 @@ enum ACSVerticalContentAlignment: NSUInteger;
 - (instancetype _Nonnull)initWithTableColumnDefinition:(const std::shared_ptr<TableColumnDefinition>)cppObj;
 #endif
 
-- (ACSHorizontalAlignment _Nullable)getHorizontalCellContentAlignment;
-- (void)setHorizontalCellContentAlignment:(enum ACSHorizontalAlignment _Nullable)value;
-- (ACSVerticalContentAlignment _Nullable)getVerticalCellContentAlignment;
-- (void)setVerticalCellContentAlignment:(enum ACSVerticalContentAlignment _Nullable)value;
+- (ACSHorizontalAlignment)getHorizontalCellContentAlignment;
+- (void)setHorizontalCellContentAlignment:(enum ACSHorizontalAlignment)value;
+- (ACSVerticalContentAlignment)getVerticalCellContentAlignment;
+- (void)setVerticalCellContentAlignment:(enum ACSVerticalContentAlignment)value;
 - (NSNumber * _Nullable)getWidth;
 - (void)setWidth:(NSNumber * _Nullable)value;
 - (NSNumber * _Nullable)getPixelWidth;

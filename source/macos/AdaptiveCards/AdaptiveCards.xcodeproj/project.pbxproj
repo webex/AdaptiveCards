@@ -466,6 +466,17 @@
 		2806E8F62608886F00CF7A40 /* ActionSubmitRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E8F52608886F00CF7A40 /* ActionSubmitRendererTests.swift */; };
 		2806E94826122F0D00CF7A40 /* SelectActionHandlingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E94726122F0D00CF7A40 /* SelectActionHandlingProtocol.swift */; };
 		2806E986261AEE4A00CF7A40 /* UnknownElementRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */; };
+		281415E329EEF5890042F0FC /* ACSMarkDownBlockType.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415E029EEF5890042F0FC /* ACSMarkDownBlockType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		281415E429EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415E129EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h */; };
+		281415E529EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415E229EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm */; };
+		281415EE29EEF6200042F0FC /* ACSTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415E629EEF61F0042F0FC /* ACSTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		281415EF29EEF6200042F0FC /* ACSTableCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415E729EEF61F0042F0FC /* ACSTableCell.mm */; };
+		281415F029EEF6200042F0FC /* ACSTable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415E829EEF61F0042F0FC /* ACSTable.mm */; };
+		281415F129EEF6200042F0FC /* ACSTableRow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415E929EEF61F0042F0FC /* ACSTableRow.mm */; };
+		281415F229EEF6200042F0FC /* ACSTableColumnDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415EA29EEF61F0042F0FC /* ACSTableColumnDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		281415F329EEF6200042F0FC /* ACSTableColumnDefinition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415EB29EEF61F0042F0FC /* ACSTableColumnDefinition.mm */; };
+		281415F429EEF6200042F0FC /* ACSTableRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415EC29EEF61F0042F0FC /* ACSTableRow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		281415F529EEF6200042F0FC /* ACSTableCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415ED29EEF6200042F0FC /* ACSTableCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		281950432703141500B0D790 /* HostConfigUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281950422703141500B0D790 /* HostConfigUtilsTests.swift */; };
 		2871B11825DD20A30040AB27 /* FakeTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B11725DD20A30040AB27 /* FakeTextInput.swift */; };
 		2871B11D25DD225C0040AB27 /* ACRMultilineTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2871B11C25DD225C0040AB27 /* ACRMultilineTextView.xib */; };
@@ -547,7 +558,7 @@
 		288E3FFA29C83E5400CF3D93 /* TableRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FDE29C83E5400CF3D93 /* TableRow.cpp */; };
 		288E3FFB29C83E5400CF3D93 /* TableCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FDF29C83E5400CF3D93 /* TableCell.cpp */; };
 		288E3FFC29C83E5400CF3D93 /* TableCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FE029C83E5400CF3D93 /* TableCell.h */; };
-		288E3FFF29C852AE00CF3D93 /* ACSExecuteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FFD29C852AE00CF3D93 /* ACSExecuteAction.h */; };
+		288E3FFF29C852AE00CF3D93 /* ACSExecuteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FFD29C852AE00CF3D93 /* ACSExecuteAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		288E400029C852AE00CF3D93 /* ACSExecuteAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FFE29C852AE00CF3D93 /* ACSExecuteAction.mm */; };
 		2890094326D62B270045293A /* ACRTextFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2890094226D62B270045293A /* ACRTextFieldTests.swift */; };
 		28B4AE2026E1F30600FEC27E /* clear_18_w.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B4AE1E26E1F30600FEC27E /* clear_18_w.png */; };
@@ -1131,6 +1142,17 @@
 		2806E8F52608886F00CF7A40 /* ActionSubmitRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSubmitRendererTests.swift; sourceTree = "<group>"; };
 		2806E94726122F0D00CF7A40 /* SelectActionHandlingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectActionHandlingProtocol.swift; sourceTree = "<group>"; };
 		2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownElementRenderer.swift; sourceTree = "<group>"; };
+		281415E029EEF5890042F0FC /* ACSMarkDownBlockType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSMarkDownBlockType.h; sourceTree = "<group>"; };
+		281415E129EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSMarkDownBlockTypeConvertor.h; sourceTree = "<group>"; };
+		281415E229EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSMarkDownBlockTypeConvertor.mm; sourceTree = "<group>"; };
+		281415E629EEF61F0042F0FC /* ACSTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTable.h; sourceTree = "<group>"; };
+		281415E729EEF61F0042F0FC /* ACSTableCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTableCell.mm; sourceTree = "<group>"; };
+		281415E829EEF61F0042F0FC /* ACSTable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTable.mm; sourceTree = "<group>"; };
+		281415E929EEF61F0042F0FC /* ACSTableRow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTableRow.mm; sourceTree = "<group>"; };
+		281415EA29EEF61F0042F0FC /* ACSTableColumnDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTableColumnDefinition.h; sourceTree = "<group>"; };
+		281415EB29EEF61F0042F0FC /* ACSTableColumnDefinition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTableColumnDefinition.mm; sourceTree = "<group>"; };
+		281415EC29EEF61F0042F0FC /* ACSTableRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTableRow.h; sourceTree = "<group>"; };
+		281415ED29EEF6200042F0FC /* ACSTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTableCell.h; sourceTree = "<group>"; };
 		281950422703141500B0D790 /* HostConfigUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostConfigUtilsTests.swift; sourceTree = "<group>"; };
 		2871B11725DD20A30040AB27 /* FakeTextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeTextInput.swift; sourceTree = "<group>"; };
 		2871B11C25DD225C0040AB27 /* ACRMultilineTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ACRMultilineTextView.xib; sourceTree = "<group>"; };
@@ -1656,6 +1678,9 @@
 				288E3F6629C1C6F400CF3D93 /* ACSTextStyleConvertor.mm */,
 				288E3F6429C1C6EE00CF3D93 /* ACSTextStyleConvertor.h */,
 				288E3F6229C1C6E100CF3D93 /* ACSTextStyle.h */,
+				281415E029EEF5890042F0FC /* ACSMarkDownBlockType.h */,
+				281415E129EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h */,
+				281415E229EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm */,
 				288E3F3629C1BE9300CF3D93 /* ACSMode.h */,
 				288E3F3829C1BEC000CF3D93 /* ACSModeConvertor.h */,
 				288E3F3A29C1BECD00CF3D93 /* ACSModeConvertor.mm */,
@@ -1861,6 +1886,14 @@
 				288E3F6029C1C49D00CF3D93 /* ACSContentSource.h */,
 				288E3F5E29C1C48C00CF3D93 /* ACSContentSource.mm */,
 				288E3F5C29C1C47C00CF3D93 /* ACSCaptionSource.mm */,
+				281415E629EEF61F0042F0FC /* ACSTable.h */,
+				281415E829EEF61F0042F0FC /* ACSTable.mm */,
+				281415ED29EEF6200042F0FC /* ACSTableCell.h */,
+				281415E729EEF61F0042F0FC /* ACSTableCell.mm */,
+				281415EA29EEF61F0042F0FC /* ACSTableColumnDefinition.h */,
+				281415EB29EEF61F0042F0FC /* ACSTableColumnDefinition.mm */,
+				281415EC29EEF61F0042F0FC /* ACSTableRow.h */,
+				281415E929EEF61F0042F0FC /* ACSTableRow.mm */,
 				288E3F5A29C1C46C00CF3D93 /* ACSCaptionSource.h */,
 				288E3FFD29C852AE00CF3D93 /* ACSExecuteAction.h */,
 				288E3FFE29C852AE00CF3D93 /* ACSExecuteAction.mm */,
@@ -2269,13 +2302,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				08E4047025B46BDB00C2092A /* AdaptiveCards_bridge.h in Headers */,
+				281415F529EEF6200042F0FC /* ACSTableCell.h in Headers */,
+				281415F229EEF6200042F0FC /* ACSTableColumnDefinition.h in Headers */,
 				288E3F4329C1C03D00CF3D93 /* ACSAuthCardButton.h in Headers */,
 				083EA9FA25C19E1000DE2BF7 /* ACSActionSet.h in Headers */,
 				083EA9DC25C19E1000DE2BF7 /* ACSSemanticVersion.h in Headers */,
 				083EA9CC25C19E1000DE2BF7 /* ACSTextInput.h in Headers */,
 				083EA9C025C19E1000DE2BF7 /* ACSUnknownAction.h in Headers */,
 				083EA93A25C19E1000DE2BF7 /* ACSIconPlacement.h in Headers */,
-				288E3FFF29C852AE00CF3D93 /* ACSExecuteAction.h in Headers */,
 				083EA8EF25C19E1000DE2BF7 /* ACSHorizontalAlignment.h in Headers */,
 				288E3F4F29C1C37500CF3D93 /* ACSChoicesData.h in Headers */,
 				288E3F4B29C1C22D00CF3D93 /* ACSRefresh.h in Headers */,
@@ -2357,14 +2391,18 @@
 				083EA9C125C19E1000DE2BF7 /* ACSToggleVisibilityAction.h in Headers */,
 				083EA90A25C19E1000DE2BF7 /* ACSFontType.h in Headers */,
 				083EA9E725C19E1000DE2BF7 /* ACSFontSizesConfig.h in Headers */,
+				281415F429EEF6200042F0FC /* ACSTableRow.h in Headers */,
 				083EA9C325C19E1000DE2BF7 /* ACSRichTextBlock.h in Headers */,
 				083EA92925C19E1000DE2BF7 /* ACSContainerStyle.h in Headers */,
 				083EA8EB25C19E1000DE2BF7 /* ACSWarningStatusCode.h in Headers */,
 				083EA93725C19E1000DE2BF7 /* ACSAssociatedInputs.h in Headers */,
+				281415EE29EEF6200042F0FC /* ACSTable.h in Headers */,
 				083EAA0A25C19E1000DE2BF7 /* ACSAdaptiveCardParseException.h in Headers */,
+				288E3FFF29C852AE00CF3D93 /* ACSExecuteAction.h in Headers */,
 				083EAA1A25C19E1000DE2BF7 /* ACSTextBlock.h in Headers */,
 				083EA94825C19E1000DE2BF7 /* ACSEmphasisState.h in Headers */,
 				083EA8F925C19E1000DE2BF7 /* ACSContainerBleedDirection.h in Headers */,
+				281415E329EEF5890042F0FC /* ACSMarkDownBlockType.h in Headers */,
 				083EA9E125C19E1000DE2BF7 /* ACSUnknownElement.h in Headers */,
 				08E4052125B46C3B00C2092A /* SwiftInterfaceHeader.h in Headers */,
 				083EA90225C19E1000DE2BF7 /* ACSVerticalContentAlignmentConvertor.h in Headers */,
@@ -2424,6 +2462,7 @@
 				083EA97F25C19E1000DE2BF7 /* ACSFontTypeDefinitionConvertor.h in Headers */,
 				083EA99D25C19E1000DE2BF7 /* ACSFontTypesDefinitionConvertor.h in Headers */,
 				083EA90725C19E1000DE2BF7 /* ACSWarningStatusCodeConvertor.h in Headers */,
+				281415E429EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h in Headers */,
 				083EA90825C19E1000DE2BF7 /* ACSImageFillModeConvertor.h in Headers */,
 				288E3F7429C1C81700CF3D93 /* ACSTextStyleConfigConvertor.h in Headers */,
 				083EA98525C19E1000DE2BF7 /* ACSLabelConfigConvertor.h in Headers */,
@@ -2931,6 +2970,7 @@
 				083EA97425C19E1000DE2BF7 /* ACSContainerStylesDefinitionConvertor.mm in Sources */,
 				083EA96425C19E1000DE2BF7 /* ACSLabelConfigConvertor.mm in Sources */,
 				083EA97825C19E1000DE2BF7 /* ACSInputsConfig.swift in Sources */,
+				281415F129EEF6200042F0FC /* ACSTableRow.mm in Sources */,
 				083EA96C25C19E1000DE2BF7 /* ACSSpacingConfigConvertor.mm in Sources */,
 				083EA9C725C19E1000DE2BF7 /* ACSHostConfig.mm in Sources */,
 				083EAA1125C19E1000DE2BF7 /* ACSTimeInput.mm in Sources */,
@@ -2947,8 +2987,10 @@
 				083EA91425C19E1000DE2BF7 /* ACSTextInputStyleConvertor.mm in Sources */,
 				083EA94B25C19E1000DE2BF7 /* ACSCardElementTypeConvertor.mm in Sources */,
 				083E513725C2F87B007247A9 /* ACSHostConfigParseResult.m in Sources */,
+				281415F029EEF6200042F0FC /* ACSTable.mm in Sources */,
 				083EA9AE25C19E1000DE2BF7 /* ACSOpenUrlAction.mm in Sources */,
 				083EA9C525C19E1000DE2BF7 /* ACSColumnSet.mm in Sources */,
+				281415F329EEF6200042F0FC /* ACSTableColumnDefinition.mm in Sources */,
 				083EA9FB25C19E1000DE2BF7 /* ACSDateTimePreparser.mm in Sources */,
 				083EA97925C19E1000DE2BF7 /* ACSColorConfigConvertor.mm in Sources */,
 				083EA95C25C19E1000DE2BF7 /* ACSInputLabelConfigConvertor.mm in Sources */,
@@ -2960,6 +3002,7 @@
 				083EAA2025C19E1000DE2BF7 /* ACSUnknownElement.mm in Sources */,
 				083EA8E925C19E1000DE2BF7 /* ACSAdaptiveCardSchemaKeyConvertor.mm in Sources */,
 				083EA8FC25C19E1000DE2BF7 /* ACSActionTypeConvertor.mm in Sources */,
+				281415EF29EEF6200042F0FC /* ACSTableCell.mm in Sources */,
 				083EA99025C19E1000DE2BF7 /* ACSFontTypeDefinitionConvertor.mm in Sources */,
 				083EA9E425C19E1000DE2BF7 /* ACSTextInput.mm in Sources */,
 				083EA97C25C19E1000DE2BF7 /* ACSInputsConfigConvertor.mm in Sources */,
@@ -2969,6 +3012,7 @@
 				083EA8FE25C19E1000DE2BF7 /* ACSFallbackTypeConvertor.mm in Sources */,
 				083EA9AB25C19E1000DE2BF7 /* ACSAdaptiveCard.mm in Sources */,
 				083EA92A25C19E1000DE2BF7 /* ACSContainerBleedDirectionConvertor.mm in Sources */,
+				281415E529EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm in Sources */,
 				083EA9B225C19E1000DE2BF7 /* ACSBaseCardElement.mm in Sources */,
 				288E3F5F29C1C48C00CF3D93 /* ACSContentSource.mm in Sources */,
 				083EA9BD25C19E1000DE2BF7 /* ACSRichTextElementProperties.mm in Sources */,
