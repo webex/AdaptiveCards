@@ -1,0 +1,28 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Input.Date",
+            "id": "date",
+            "value": "2023-03-02",
+            "min": "2023-03-05",
+            "placeholder": "Enter a date",
+            "max": "2023-03-25"
+        },
+        {
+            "type": "Input.Time",
+            "id": "time4",
+            "min": "09:00",
+            "max": "17:00",
+            "value": "19:30"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "Action.Submit"
+        }
+    ]
+}

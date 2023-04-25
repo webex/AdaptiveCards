@@ -136,6 +136,32 @@ class InputTimeRendererTest: XCTestCase {
         XCTAssertEqual(inputTimeField.accessibilityRoleDescription(), "Time Picker")
         XCTAssertEqual(inputTimeField.textField.accessibilityValue(), "12:24 PM")
     }
+    
+    func testInvalidTimeRejected() {
+        let minVal = "10:15"
+        let maxVal = "16:45"
+        
+        //date less than min date
+        var val = "8:25"
+        inputTime = .make(value: val, max: maxVal, min: minVal)
+        var inputTimeField = renderTimeInput()
+        
+        XCTAssertFalse(inputTimeField.isValid)
+        
+        //date in right range
+        val = "12:00"
+        inputTime = .make(value: val, max: maxVal, min: minVal)
+        inputTimeField = renderTimeInput()
+        
+        XCTAssertTrue(inputTimeField.isValid)
+        
+        //date greater than max range
+        val = "20:45"
+        inputTime = .make(value: val, max: maxVal, min: minVal)
+        inputTimeField = renderTimeInput()
+        
+        XCTAssertFalse(inputTimeField.isValid)
+    }
 
     private func renderTimeInput() -> ACRDateField {
         let view = inputTimeRenderer.render(element: inputTime, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
