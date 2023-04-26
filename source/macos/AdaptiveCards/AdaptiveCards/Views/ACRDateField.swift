@@ -283,10 +283,9 @@ extension ACRDateField: NSPopoverDelegate {
 extension ACRDateField: ACRTextFieldDelegate {
     func acrTextFieldDidSelectClear(_ textField: ACRTextField) {
         selectedDate = nil
-        if isValid {
-            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: iconImage)
-            textField.hideError()
-        }
+        guard isValid else { return }
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: iconImage)
+        textField.hideError()
     }
 }
 

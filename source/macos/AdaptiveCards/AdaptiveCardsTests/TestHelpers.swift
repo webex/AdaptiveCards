@@ -54,11 +54,11 @@ class FakeErrorMessageHandlerDelegate: InputHandlingViewErrorDelegate {
     var isErrorVisible: Bool = false
     var isErrorMessageAnnounced: Bool = false
     func inputHandlingViewShouldShowError(_ view: InputHandlingViewProtocol) {
-        isErrorVisible = false
+        isErrorVisible = true
     }
     
     func inputHandlingViewShouldHideError(_ view: InputHandlingViewProtocol, currentFocussedView: NSView?) {
-        isErrorVisible = true
+        isErrorVisible = false
     }
     
     func inputHandlingViewShouldAnnounceErrorMessage(_ view: InputHandlingViewProtocol, message: String?) {

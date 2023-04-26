@@ -76,13 +76,18 @@ class InputTimeRendererTest: XCTestCase {
     
     func testClearsText() {
         let val: String = "16:23:30"
+        let fakeErrorDelegate = FakeErrorMessageHandlerDelegate()
         inputTime = .make(value: val)
 
         let inputTimeField = renderTimeInput()
+        inputTimeField.errorDelegate = fakeErrorDelegate
+        fakeErrorDelegate.isErrorVisible = true
         inputTimeField.textField.clearButton.performClick()
+        
         XCTAssertNil(inputTimeField.dateValue)
         XCTAssertEqual(inputTimeField.textField.stringValue, "")
         XCTAssertTrue(inputTimeField.textField.clearButton.isHidden)
+        XCTAssertFalse(fakeErrorDelegate.isErrorVisible)
     }
     
     func testClearButtonHiddenWithPlaceholder() {
@@ -161,6 +166,22 @@ class InputTimeRendererTest: XCTestCase {
         inputTimeField = renderTimeInput()
         
         XCTAssertFalse(inputTimeField.isValid)
+    }
+    
+    func testInvalidTimeOnClearRemovesError() {
+        let fakeErrorDelegate = FakeErrorMessageHandlerDelegate()
+        
+        inputTime = .make(value: "8:25", min: "10:15")
+        let inputTimeField = renderTimeInput()
+        inputTimeField.errorDelegate = fakeErrorDelegate
+        fakeErrorDelegate.isErrorVisible = true
+        
+        XCTAssertFalse(inputTimeField.isValid)
+        
+        inputTimeField.textField.clearButton.performClick()
+        
+        XCTAssertTrue(inputTimeField.isValid)
+        XCTAssertFalse(fakeErrorDelegate.isErrorVisible)
     }
 
     private func renderTimeInput() -> ACRDateField {

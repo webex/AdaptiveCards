@@ -76,13 +76,18 @@ class InputDateRendererTest: XCTestCase {
     
     func testClearsText() {
         let val: String = "2000-11-23"
+        let fakeErrorDelegate = FakeErrorMessageHandlerDelegate()
         inputDate = .make(value: val)
 
         let inputDateField = renderDateInput()
+        inputDateField.errorDelegate = fakeErrorDelegate
+        fakeErrorDelegate.isErrorVisible = true
         inputDateField.textField.clearButton.performClick()
+        
         XCTAssertEqual(inputDateField.textField.stringValue, "")
         XCTAssertNil(inputDateField.dateValue)
         XCTAssertTrue(inputDateField.textField.clearButton.isHidden)
+        XCTAssertFalse(fakeErrorDelegate.isErrorVisible)
     }
     
     func testClearButtonHiddenWithPlaceholder() {
@@ -161,6 +166,22 @@ class InputDateRendererTest: XCTestCase {
         inputDateField = renderDateInput()
         
         XCTAssertFalse(inputDateField.isValid)
+    }
+    
+    func testInvalidDateOnClearRemovesError() {
+        let fakeErrorDelegate = FakeErrorMessageHandlerDelegate()
+        
+        inputDate = .make(value: "2023-04-02", min: "2023-04-05")
+        let inputDateField = renderDateInput()
+        inputDateField.errorDelegate = fakeErrorDelegate
+        fakeErrorDelegate.isErrorVisible = true
+        
+        XCTAssertFalse(inputDateField.isValid)
+        
+        inputDateField.textField.clearButton.performClick()
+        
+        XCTAssertTrue(inputDateField.isValid)
+        XCTAssertFalse(fakeErrorDelegate.isErrorVisible)
     }
     
     func testAccessibilityLabelV1_3() {
