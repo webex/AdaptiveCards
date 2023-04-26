@@ -205,8 +205,6 @@ namespace RendererQml
             uiCard->Property("activeFocusOnTab", "true");
             clipRectangle->Property("activeFocusOnTab", "true");
             uiCard->Property("Keys.onBacktabPressed", "{event.accepted = true}");
-            clipRectangle->Property("Keys.onTabPressed", "{event.accepted = true}");
-            clipRectangle->Property("Accessible.name", "To go out of Adaptive Card press escape", true);
 
             const auto isChildCardString = isChildCard ? "true" : "false";
             bodyLayout->Property("onImplicitHeightChanged", Formatter() << "{"
@@ -214,6 +212,10 @@ namespace RendererQml
                 << "var cardHeight = AdaptiveCardUtils.getCardHeight(" << bodyLayout->GetId() << ".children);"
                 << context->getCardRootId() << ".sendCardHeight(cardHeight + 2 * " << context->getCardRootId() << ".margins);"
                 << "}");
+
+            auto customFocusItem = std::make_shared<QmlTag>("WCustomFocusItem");
+            customFocusItem->Property("isRectangle", "true");
+            uiCard->AddChild(customFocusItem);
         }
         else
         {
