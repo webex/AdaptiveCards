@@ -283,6 +283,9 @@ extension ACRDateField: NSPopoverDelegate {
 extension ACRDateField: ACRTextFieldDelegate {
     func acrTextFieldDidSelectClear(_ textField: ACRTextField) {
         selectedDate = nil
+        guard isValid else { return }
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: iconImage)
+        textField.hideError()
     }
 }
 
@@ -303,8 +306,16 @@ extension ACRDateField: InputHandlingViewProtocol {
     }
     
     var isValid: Bool {
-        // TODO: Add min and max date checks too
-        return isBasicValidationsSatisfied
+        guard isBasicValidationsSatisfied else { return false }
+        if let selectedDate = selectedDate {
+            if let minDateValue = minDateValue, let minDate = dateFormatter.date(from: minDateValue), selectedDate < minDate {
+                return false
+            }
+            if let maxDateValue = maxDateValue, let maxDate = dateFormatter.date(from: maxDateValue), selectedDate > maxDate {
+                return false
+            }
+        }
+        return true
     }
     
     var isErrorShown: Bool {

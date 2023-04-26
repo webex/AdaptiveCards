@@ -76,13 +76,18 @@ class InputTimeRendererTest: XCTestCase {
     
     func testClearsText() {
         let val: String = "16:23:30"
+        let fakeErrorDelegate = FakeErrorMessageHandlerDelegate()
         inputTime = .make(value: val)
 
         let inputTimeField = renderTimeInput()
+        inputTimeField.errorDelegate = fakeErrorDelegate
+        fakeErrorDelegate.isErrorVisible = true
         inputTimeField.textField.clearButton.performClick()
+        
         XCTAssertNil(inputTimeField.dateValue)
         XCTAssertEqual(inputTimeField.textField.stringValue, "")
         XCTAssertTrue(inputTimeField.textField.clearButton.isHidden)
+        XCTAssertFalse(fakeErrorDelegate.isErrorVisible)
     }
     
     func testClearButtonHiddenWithPlaceholder() {
@@ -135,6 +140,48 @@ class InputTimeRendererTest: XCTestCase {
         let inputTimeField = renderTimeInput()
         XCTAssertEqual(inputTimeField.accessibilityRoleDescription(), "Time Picker")
         XCTAssertEqual(inputTimeField.textField.accessibilityValue(), "12:24 PM")
+    }
+    
+    func testInvalidTimeRejected() {
+        let minVal = "10:15"
+        let maxVal = "16:45"
+        
+        //date less than min date
+        var val = "8:25"
+        inputTime = .make(value: val, max: maxVal, min: minVal)
+        var inputTimeField = renderTimeInput()
+        
+        XCTAssertFalse(inputTimeField.isValid)
+        
+        //date in right range
+        val = "12:00"
+        inputTime = .make(value: val, max: maxVal, min: minVal)
+        inputTimeField = renderTimeInput()
+        
+        XCTAssertTrue(inputTimeField.isValid)
+        
+        //date greater than max range
+        val = "20:45"
+        inputTime = .make(value: val, max: maxVal, min: minVal)
+        inputTimeField = renderTimeInput()
+        
+        XCTAssertFalse(inputTimeField.isValid)
+    }
+    
+    func testInvalidTimeOnClearRemovesError() {
+        let fakeErrorDelegate = FakeErrorMessageHandlerDelegate()
+        
+        inputTime = .make(value: "8:25", min: "10:15")
+        let inputTimeField = renderTimeInput()
+        inputTimeField.errorDelegate = fakeErrorDelegate
+        fakeErrorDelegate.isErrorVisible = true
+        
+        XCTAssertFalse(inputTimeField.isValid)
+        
+        inputTimeField.textField.clearButton.performClick()
+        
+        XCTAssertTrue(inputTimeField.isValid)
+        XCTAssertFalse(fakeErrorDelegate.isErrorVisible)
     }
 
     private func renderTimeInput() -> ACRDateField {
