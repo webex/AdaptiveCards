@@ -124,12 +124,12 @@ class ACRDateField: NSView {
     }
     
     override public var focusRingMaskBounds: NSRect {
-        return self.bounds
+        return self.textField.bounds.offsetBy(dx: 0, dy: self.contentView.frame.minY)
     }
     
     override public func drawFocusRingMask() {
         let path = NSBezierPath()
-        path.appendRoundedRect(self.bounds, xRadius: config.inputFieldConfig.focusRingCornerRadius, yRadius: config.inputFieldConfig.focusRingCornerRadius)
+        path.appendRoundedRect(self.textField.bounds.offsetBy(dx: 0, dy: self.contentView.frame.minY), xRadius: config.inputFieldConfig.focusRingCornerRadius, yRadius: config.inputFieldConfig.focusRingCornerRadius)
         path.fill()
         self.needsDisplay = true
     }
