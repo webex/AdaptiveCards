@@ -531,9 +531,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     override func keyDown(with event: NSEvent) {
         if Int(event.keyCode) == kVK_Space {
-            guard let target = target else { return }
-            target.handleSelectionAction(for: self)
-            return
+            if let target = target {
+                target.handleSelectionAction(for: self)
+                return
+            }
         }
         super.keyDown(with: event)
     }
