@@ -54,16 +54,21 @@ extension NSView {
         if view.subviews.isEmpty {
             return nil
         }
-        for subView in view.subviews {
-            if subView == self {
-                return nil
+        if let collectionView = view as? ACRCollectionView {
+            if let imageViewCell = collectionView.containImageViewCell(with: id) {
+                return imageViewCell
             }
-            
-            if subView.identifier?.rawValue == id {
-                return subView
-            }
-            if let inSubview = getSubView(with: id, in: subView) {
-                return inSubview
+        } else {
+            for subView in view.subviews {
+                if subView == self {
+                    return nil
+                }
+                if subView.identifier?.rawValue == id {
+                    return subView
+                }
+                if let inSubview = getSubView(with: id, in: subView) {
+                    return inSubview
+                }
             }
         }
         return nil

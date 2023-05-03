@@ -2,6 +2,7 @@ import AdaptiveCards_bridge
 
 class FakeImage: ACSImage {
     public var url: String?
+    public var id: String?
     public var backgroundColor: String?
     public var imageStyle: ACSImageStyle = .default
     public var imageSize: ACSImageSize = .auto
@@ -46,12 +47,21 @@ class FakeImage: ACSImage {
     override func getSelectAction() -> ACSBaseActionElement? {
         return selectAction
     }
+    
+    override func getId() -> String? {
+        return id
+    }
+    
+    override func setId(_ value: String) {
+        self.id = value
+    }
 }
 
 extension FakeImage {
-    static func make(url: String? = "sampleUrl", backgroundColor: String? = "#FFFFFF", imageStyle: ACSImageStyle = .default, imageSize: ACSImageSize = .auto, horizontalAlignment: ACSHorizontalAlignment = .left, pixelWidth: NSNumber = 0, pixelHeight: NSNumber = 0, isVisible: Bool = true, selectAction: ACSBaseActionElement? = nil) -> FakeImage {
+    static func make(url: String? = "sampleUrl", id: String? = "", backgroundColor: String? = "#FFFFFF", imageStyle: ACSImageStyle = .default, imageSize: ACSImageSize = .auto, horizontalAlignment: ACSHorizontalAlignment = .left, pixelWidth: NSNumber = 0, pixelHeight: NSNumber = 0, isVisible: Bool = true, selectAction: ACSBaseActionElement? = nil) -> FakeImage {
         let fakeImageView = FakeImage()
         fakeImageView.url = url
+        fakeImageView.id = id
         fakeImageView.backgroundColor = backgroundColor
         fakeImageView.imageStyle = imageStyle
         fakeImageView.imageSize = imageSize
