@@ -130,6 +130,17 @@ class ACRTextFieldTests: XCTestCase {
         XCTAssertEqual(textField.layer?.borderColor, config.inputFieldConfig.activeBorderColor.cgColor)
         XCTAssertEqual(textField.layer?.backgroundColor, config.inputFieldConfig.backgroundColor.cgColor)
     }
+    
+    func testTextFieldCellBounds() {
+        // textField with default padding
+        textField = ACRTextField(textFieldWith: .default, mode: .text, inputElement: inputElement)
+        XCTAssertEqual(textField.cell?.titleRect(forBounds: NSRect(x: 0, y: 0, width: 100, height: 100)), NSRect(x: 0, y: 42, width: 100, height: 100))
+        
+        //textfield With custom Padding
+        let inputConfig = InputFieldConfig(height: 40, leftPadding: 10, rightPadding: 10, yPadding: 5, focusRingCornerRadius: 0, borderWidth: 0, wantsClearButton: true, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .blue, backgroundColor: .black, borderColor: .red, activeBorderColor: .green, placeholderTextColor: .black, multilineFieldInsets: NSEdgeInsets(), errorStateConfig: .default, errorBadgeImage: nil)
+        textField = ACRTextField(textFieldWith: RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: false, hyperlinkColorConfig: .default, inputFieldConfig: inputConfig, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil), mode: .text, inputElement: inputElement)
+        XCTAssertEqual(textField.cell?.titleRect(forBounds: NSRect(x: 0, y: 0, width: 100, height: 100)), NSRect(x: 10, y: 37, width: 60, height: 100)) 
+    }
 }
 
 private class FakeACRTextFieldDelegate: ACRTextFieldDelegate {

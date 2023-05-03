@@ -3,7 +3,6 @@ import AppKit
 
 // MARK: Class required for Horizontal Stack View
 class ACRFactSetView: NSView {
-    
     init() {
         super.init(frame: .zero)
     }

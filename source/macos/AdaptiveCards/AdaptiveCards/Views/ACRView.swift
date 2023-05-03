@@ -122,7 +122,7 @@ class ACRView: ACRColumnView {
                 for handler in handlers {
                     guard !renderConfig.supportsSchemeV1_3 || handler.isValid else {
                         handler.showError()
-                        if isFirstErrorFieldInView {
+                        if isFirstErrorFieldInView && !handler.isHidden {
                             firstFieldWithError = handler
                             resetKeyboardFocus()
                             isFirstErrorFieldInView = false
