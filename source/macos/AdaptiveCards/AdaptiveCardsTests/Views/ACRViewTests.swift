@@ -479,6 +479,40 @@ class ACRViewTests: XCTestCase {
         XCTAssertFalse(handler1.isFocused)
         XCTAssertTrue(handler2.isFocused)
     }
+    
+    func testInputHandlerRefocusOnVisibleTextFieldOnError() {
+        let renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: .default)
+        let view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: renderConfig)
+        let handler1 = FakeInputHandlingView()
+        let handler2 = FakeInputHandlingView()
+        
+        // Case 1: First invalid view hidden so focus on second invalid view
+        handler1.isValid = false
+        handler1.isHidden = true
+        handler2.isValid = false
+        
+        view.addInputHandler(handler1)
+        view.addInputHandler(handler2)
+        
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
+        
+        XCTAssertFalse(handler1.isFocused)
+        XCTAssertTrue(handler2.isFocused)
+        
+        // Case 2: First invalid view visible so focus on that and not second invalid view
+        handler1.isFocused = false
+        handler1.isValid = false
+        handler1.isHidden = false
+        
+        handler2.isFocused = false
+        handler2.isValid = false
+        handler2.isHidden = false
+        
+        view.handleSubmitAction(actionView: NSButton(), dataJson: nil, associatedInputs: true)
+        
+        XCTAssertTrue(handler1.isFocused)
+        XCTAssertFalse(handler2.isFocused)
+    }
 }
 
 private class FakeInputHandlingView: NSView, InputHandlingViewProtocol {
