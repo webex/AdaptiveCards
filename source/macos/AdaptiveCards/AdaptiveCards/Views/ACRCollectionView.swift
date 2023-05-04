@@ -13,9 +13,12 @@ class ACRCollectionView: NSScrollView {
     private(set) var imageViews: [ACRImageWrappingView] = []
     var visibleImageViews: [ACRImageWrappingView] {
         get {
-            imageViews.filter({ $0.isHidden == false })
+            imageViews.filter({ !$0.isHidden })
         }
     }
+    
+    var pBoundsWidth: CGFloat?
+    var pContentSize: CGSize?
     
     private var itemSize: CGSize {
         switch imageSize {
@@ -32,10 +35,6 @@ class ACRCollectionView: NSScrollView {
         view.backgroundColors = [.clear]
         return view
     }()
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     // Need to be able to inject layout for testing purpose
     init(rootView: ACRView, parentView: NSView, imageSet: ACSImageSet, hostConfig: ACSHostConfig, collectionLayout: NSCollectionViewLayout = ACSCollectionViewAlignLayout(), frameRect: NSRect = .zero) {
@@ -66,21 +65,56 @@ class ACRCollectionView: NSScrollView {
         autohidesScrollers = true
     }
     
-    public func containImageViewCell(with id: String) -> NSView? {
-        if let imgView = imageViews.first(where: { $0.identifier?.rawValue == id }) {
-            return imgView
-        }
-        return nil
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    private func reloadData() {
-        invalidateIntrinsicContentSize()
-        collectionView.reloadData()
+    override func layout() {
+        super.layout()
+        guard window != nil, pBoundsWidth != bounds.width else { return }
+        pBoundsWidth = bounds.width
+        pContentSize = nil
     }
     
     override func invalidateIntrinsicContentSize() {
         pContentSize = nil
         super.invalidateIntrinsicContentSize()
+    }
+    
+    override var intrinsicContentSize: NSSize {
+        guard let contentSize = pContentSize else {
+            guard let calcSize = collectionViewContentSize() else {
+                return super.intrinsicContentSize
+            }
+            pContentSize = calcSize
+            return calcSize
+        }
+        return contentSize
+    }
+    
+    override func scrollWheel(with event: NSEvent) {
+        // to disable scroll always
+        nextResponder?.scrollWheel(with: event)
+    }
+    
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        guard let view = superview else { return }
+        widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+    }
+    
+    public func imageCell(with id: String) -> NSView? {
+        if let imgView = imageViews.first(where: { $0.identifier?.rawValue == id }) {
+            return imgView
+        }
+        return nil
+    }
+}
+
+extension ACRCollectionView {
+    private func reloadData() {
+        invalidateIntrinsicContentSize()
+        collectionView.reloadData()
     }
     
     // Calculate ContentSize for CollectionView
@@ -131,37 +165,6 @@ class ACRCollectionView: NSScrollView {
             }
         }
         return CGSize(width: frameWidth, height: totalHeight)
-    }
-    
-    var pBoundsWidth: CGFloat?
-    var pContentSize: CGSize?
-    override func layout() {
-        super.layout()
-        guard window != nil, pBoundsWidth != bounds.width else { return }
-        pBoundsWidth = bounds.width
-        pContentSize = nil
-    }
-    
-    override var intrinsicContentSize: NSSize {
-        guard let contentSize = pContentSize else {
-            guard let calcSize = collectionViewContentSize() else {
-                return super.intrinsicContentSize
-            }
-            pContentSize = calcSize
-            return calcSize
-        }
-        return contentSize
-    }
-    
-    override func scrollWheel(with event: NSEvent) {
-        // to disable scroll always
-        nextResponder?.scrollWheel(with: event)
-    }
-    
-    override func viewDidMoveToSuperview() {
-        super.viewDidMoveToSuperview()
-        guard let view = superview else { return }
-        widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
     }
 }
 

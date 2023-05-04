@@ -37,7 +37,7 @@ class ImageSetRendererTests: XCTestCase {
         XCTAssertEqual(renderImageSetView().contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
     }
     
-    func testToggleVisiblityProperty() {
+    func testToggleVisiblityProperty() throws {
         let target = FakeToggleVisibilityTarget.make(elementId: "toggle1")
         fakeImages = [.make(url: sampleURL), .make(url: sampleURL, id: "toggle1"), .make(url: sampleURL), .make(url: sampleURL, selectAction: FakeToggleVisibilityAction.make(targetElements: [target]))]
         let imageSetView = FakeImageSet.make(imageSize: .small, images: fakeImages, height: .auto)
@@ -46,16 +46,15 @@ class ImageSetRendererTests: XCTestCase {
         let fakeContext =  ACOVisibilityContext()
         let mainRootView = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default, visibilityContext: fakeContext)
         let containerView = ContainerRenderer().render(element: container, with: hostConfig, style: .default, rootView: mainRootView, parentView: mainRootView, inputs: [], config: .default)
-        XCTAssertTrue(containerView is ACRContainerView)
-        guard let containerView = containerView as? ACRContainerView else { fatalError() }
+        let fakeContainerView = try XCTUnwrap(containerView as? ACRContainerView)
         
-        BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: containerView, element: container, parentView: mainRootView, rootView: mainRootView, style: .none, hostConfig: hostConfig, config: .default, isfirstElement: true)
+        BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: fakeContainerView, element: container, parentView: mainRootView, rootView: mainRootView, style: .none, hostConfig: hostConfig, config: .default, isfirstElement: true)
         
-        guard let collectionView = containerView.arrangedSubviews[0] as? ACRCollectionView else { fatalError() }
-        XCTAssertFalse(collectionView.containImageViewCell(with: "toggle1")?.isHidden ?? true)
+        let collectionView = try XCTUnwrap(fakeContainerView.arrangedSubviews[0] as? ACRCollectionView)
+        XCTAssertFalse(collectionView.imageCell(with: "toggle1")?.isHidden ?? true)
         XCTAssertEqual(collectionView.visibleImageViews.count, 4)
         collectionView.imageViews[3].mouseDown(with: NSEvent())
-        XCTAssertTrue(collectionView.containImageViewCell(with: "toggle1")?.isHidden ?? false)
+        XCTAssertTrue(collectionView.imageCell(with: "toggle1")?.isHidden ?? false)
         XCTAssertEqual(collectionView.visibleImageViews.count, 3)
     }
     
