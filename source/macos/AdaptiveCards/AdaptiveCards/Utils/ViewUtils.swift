@@ -54,16 +54,22 @@ extension NSView {
         if view.subviews.isEmpty {
             return nil
         }
-        for subView in view.subviews {
-            if subView == self {
-                return nil
+        // This condition is used for finding the correct image cell using its ID within an ImageSet. It is an efficient method for easily finding the desired image element. However, when a collectionview is placed under a scrollview while using the subviews method, it may require more iterations to traverse deeper levels, making it difficult to find the correct image cell.
+        if let collectionView = view as? ACRCollectionView {
+            if let imageViewCell = collectionView.imageCell(with: id) {
+                return imageViewCell
             }
-            
-            if subView.identifier?.rawValue == id {
-                return subView
-            }
-            if let inSubview = getSubView(with: id, in: subView) {
-                return inSubview
+        } else {
+            for subView in view.subviews {
+                if subView == self {
+                    return nil
+                }
+                if subView.identifier?.rawValue == id {
+                    return subView
+                }
+                if let inSubview = getSubView(with: id, in: subView) {
+                    return inSubview
+                }
             }
         }
         return nil
