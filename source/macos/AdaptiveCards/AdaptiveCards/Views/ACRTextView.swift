@@ -158,7 +158,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     }
     
     override func hitTest(_ point: NSPoint) -> NSView? {
-        guard target != nil else {
+        guard target != nil, frame.contains(point) else {
             return super.hitTest(point)
         }
         
