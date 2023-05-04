@@ -24,7 +24,9 @@ class BaseCardElementRenderer {
             }
         }
         
-        view.identifier = NSUserInterfaceItemIdentifier(element.getId() ?? "")
+        if let id = element.getId(), !id.isEmpty {
+            view.identifier = NSUserInterfaceItemIdentifier(id)
+        }
         
         if let inputElement = element as? ACSBaseInputElement {
             parentView.configureInputElements(element: inputElement, view: view)
