@@ -7,7 +7,7 @@ Rectangle {
     id: multiLineTextElementRect
 
     property bool _showErrorMessage
-    property alias inputtextTextField: _inputtextTextField
+    property string textValue: _inputtextTextField.text
 
     width: parent.width
     height: CardConstants.inputTextConstants.multiLineTextHeight
@@ -54,10 +54,6 @@ Rectangle {
                 if (_maxLength != 0)
                     remove(_maxLength, length);
 
-                if (_isRequired || _regex != "")
-                    validate();
-
-                _submitValue = text;
             }
             Component.onCompleted: {
                 assignMaxLength();

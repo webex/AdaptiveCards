@@ -30,17 +30,17 @@ void NumberInputElement::initialize()
 
     createInputLabel();
 
-    if (mInput->GetValue() != std::nullopt)
+    if (mInput->GetValue().has_value())
     {
-        mNumberInputQmlElement->Property("_value", RendererQml::Formatter() << mInput->GetValue());
+        mNumberInputQmlElement->Property("_value", RendererQml::Formatter() << mInput->GetValue().value());
         mNumberInputQmlElement->Property("_hasDefaultValue", "true");
     }
 
-    mNumberInputQmlElement->Property("_minValue", RendererQml::Formatter() << (mInput->GetMin() != std::nullopt ? mInput->GetMin() : INT_MIN));
-    mNumberInputQmlElement->Property("_maxValue", RendererQml::Formatter() << (mInput->GetMax() != std::nullopt ? mInput->GetMax() : INT_MAX));
+    mNumberInputQmlElement->Property("_minValue", RendererQml::Formatter() << mInput->GetMin().value_or(-DBL_MAX));
+    mNumberInputQmlElement->Property("_maxValue", RendererQml::Formatter() << mInput->GetMax().value_or(DBL_MAX));
 
 
-    if (mInput->GetIsRequired() || mInput->GetMin() != std::nullopt || mInput->GetMax() != std::nullopt)
+    if (mInput->GetIsRequired() || mInput->GetMin().has_value() || mInput->GetMax().has_value())
     {
         mContext->addToRequiredInputElementsIdList(mNumberInputQmlElement->GetId());
         mNumberInputQmlElement->Property((mInput->GetIsRequired() ? "_isRequired" : "_validationRequired"), "true");

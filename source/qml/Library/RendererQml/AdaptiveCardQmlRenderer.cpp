@@ -566,10 +566,18 @@ namespace RendererQml
 	{
         // LIMITATION: Elide and maximumLineCount property do not work for textFormat:Text.RichText
         auto cardConfig = context->GetRenderConfig()->getCardConfig();
-        std::string fontFamily = context->GetConfig()->GetFontFamily(textBlock->GetFontType());
-        int fontSize = context->GetConfig()->GetFontSize(textBlock->GetFontType(), textBlock->GetTextSize());
-        std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(textBlock->GetHorizontalAlignment());
-        std::string color = context->GetColor(textBlock->GetTextColor(), textBlock->GetIsSubtle(), false);
+
+        const auto fontType = textBlock->GetFontType().value_or(AdaptiveCards::FontType::Default);
+        const auto textSize = textBlock->GetTextSize().value_or(AdaptiveCards::TextSize::Default);
+        const auto hAlignmentValue = textBlock->GetHorizontalAlignment().value_or(AdaptiveCards::HorizontalAlignment::Left);
+        const auto textColor = textBlock->GetTextColor().value_or(AdaptiveCards::ForegroundColor::Default);
+        const auto textIsSubtle = textBlock->GetIsSubtle().value_or(false);
+        const auto textWeight = textBlock->GetTextWeight().value_or(AdaptiveCards::TextWeight::Default);
+
+        std::string fontFamily = context->GetConfig()->GetFontFamily(fontType);
+        int fontSize = context->GetConfig()->GetFontSize(fontType, textSize);
+        std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(hAlignmentValue);
+        std::string color = context->GetColor(textColor, textIsSubtle, false);
 
         if (!textBlock->GetId().empty())
         {
@@ -587,7 +595,7 @@ namespace RendererQml
         uiTextBlock->Property("_horizontalAlignment", horizontalAlignment, true);
         uiTextBlock->Property("_color", color);
         uiTextBlock->Property("_pixelSize", std::to_string(fontSize));
-        uiTextBlock->Property("_fontWeight", Utils::GetWeightString(textBlock->GetTextWeight()), true);
+        uiTextBlock->Property("_fontWeight", Utils::GetWeightString(textWeight), true);
         uiTextBlock->Property("_visible", (textBlock->GetIsVisible() && !textBlock->GetText().empty()) ? "true" : "false");
         uiTextBlock->Property("_wrapMode", textBlock->GetWrap() ? "true" : "false");
         uiTextBlock->Property("_fontFamily", fontFamily, true);
@@ -619,9 +627,12 @@ namespace RendererQml
         {
             return NULL;
         }
+
+        const auto hAlignmentValue = richTextBlock->GetHorizontalAlignment().value_or(AdaptiveCards::HorizontalAlignment::Left);
+
         auto cardConfig = context->GetRenderConfig()->getCardConfig();
         std::string textType = richTextBlock->GetElementTypeString();
-        std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(richTextBlock->GetHorizontalAlignment());
+        std::string horizontalAlignment = AdaptiveCards::EnumHelpers::getHorizontalAlignmentEnum().toString(hAlignmentValue);
 
         if (!richTextBlock->GetId().empty())
         {
@@ -690,16 +701,22 @@ namespace RendererQml
 
 	std::string AdaptiveCardQmlRenderer::TextRunRender(const std::shared_ptr<AdaptiveCards::TextRun>& textRun, const std::shared_ptr<AdaptiveRenderContext>& context, const std::string& selectaction)
 	{
-		const std::string fontFamily = context->GetConfig()->GetFontFamily(textRun->GetFontType());
-		const int fontSize = context->GetConfig()->GetFontSize(textRun->GetFontType(), textRun->GetTextSize());
-		const int weight = context->GetConfig()->GetFontWeight(textRun->GetFontType(), textRun->GetTextWeight());
+        const auto fontType = textRun->GetFontType().value_or(AdaptiveCards::FontType::Default);
+        const auto textSize = textRun->GetTextSize().value_or(AdaptiveCards::TextSize::Default);
+        const auto textColor = textRun->GetTextColor().value_or(AdaptiveCards::ForegroundColor::Default);
+        const auto textIsSubtle = textRun->GetIsSubtle().value_or(false);
+        const auto textWeight = textRun->GetTextWeight().value_or(AdaptiveCards::TextWeight::Default);
+
+		const std::string fontFamily = context->GetConfig()->GetFontFamily(fontType);
+        const int fontSize = context->GetConfig()->GetFontSize(fontType, textSize);
+        const int weight = context->GetConfig()->GetFontWeight(fontType, textWeight);
 
 		std::string uiTextRun = "<span style='";
 		std::string textType = textRun->GetInlineTypeString();
 
 		uiTextRun.append(Formatter() << "font-family:" << std::string("\\\"") << fontFamily << std::string("\\\"") << ";");
 
-		std::string color = context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), false, false);
+		std::string color = context->GetColor(textColor, textIsSubtle, false, false);
 		uiTextRun.append(Formatter() << "color:" << color << ";");
 
 		uiTextRun.append(Formatter() << "font-size:" << std::to_string(fontSize) << "px" << ";");
@@ -708,7 +725,7 @@ namespace RendererQml
 
 		if (textRun->GetHighlight())
 		{
-			uiTextRun.append(Formatter() << "background-color:" << context->GetColor(textRun->GetTextColor(), textRun->GetIsSubtle(), true, false) << ";");
+			uiTextRun.append(Formatter() << "background-color:" << context->GetColor(textColor, textIsSubtle, true, false) << ";");
 		}
 
 		if (textRun->GetItalic())
@@ -948,7 +965,9 @@ namespace RendererQml
             uiImage->Property("_bgColorRect", context->GetRGBColor(image->GetBackgroundColor()));
         }
 
-        switch (image->GetHorizontalAlignment())
+        const auto imageHorizontalAlignment = image->GetHorizontalAlignment().value_or(AdaptiveCards::HorizontalAlignment::Left);
+
+        switch (imageHorizontalAlignment)
         {
         case AdaptiveCards::HorizontalAlignment::Center:
             uiImage->Property("_anchorCenter", "true");
@@ -2198,7 +2217,7 @@ namespace RendererQml
 
 		auto cardElementType = cardElement->GetElementType();
 
-		if (cardElementType == AdaptiveSharedNamespace::CardElementType::ActionSet)
+		if (cardElementType == AdaptiveCards::CardElementType::ActionSet)
 		{
 			auto ActionSetPtr = std::dynamic_pointer_cast<AdaptiveCards::ActionSet> (cardElement);
 			auto listOfActions = ActionSetPtr->GetActions();
@@ -2348,7 +2367,7 @@ namespace RendererQml
     {
         std::string parsedText = RendererQml::TextUtils::ApplyTextFunctions(text, context->GetLang());
 
-        auto markdownParser = std::make_shared<AdaptiveSharedNamespace::MarkDownParser>(parsedText);
+        auto markdownParser = std::make_shared<AdaptiveCards::MarkDownParser>(parsedText);
         parsedText = markdownParser->TransformToHtml();
         parsedText = RendererQml::Utils::HandleEscapeSequences(parsedText);
 
