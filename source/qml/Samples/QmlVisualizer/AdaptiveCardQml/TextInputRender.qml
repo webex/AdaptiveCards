@@ -18,7 +18,6 @@ Column {
     property bool _isInlineShowCardAction
     property string _regex: ""
     property int _maxLength
-    property string _submitValue
     property bool _isMultiLineText
     property bool _isheightStreched
     // Button Properties
@@ -37,18 +36,23 @@ Column {
     property var adaptiveCard
     property var selectActionId
     property int minWidth: 200
+    property bool hasAssociatedInputs: false
     property bool _isShowCardButton
-    property var _inputtextTextField: !_isMultiLineText ? singlineLoaderElement.item.inputtextTextField : multilineLoaderElement.item.inputtextTextField
+    property string _submitValue: !_isMultiLineText ? singlineLoaderElement.item.textValue : multilineLoaderElement.item.textValue
     property bool showErrorMessage: false
 
     function validate() {
         const regex = new RegExp(_regex);
-        var isValid = (_inputtextTextField.text !== '' && regex.test(_inputtextTextField.text));
-        if (showErrorMessage) {
-            if (isValid)
-                showErrorMessage = false;
+        let isValid = true;
 
-        }
+        if (_isRequired)
+            isValid = (_submitValue !== '' && regex.test(_submitValue));
+        else if (_submitValue !== '')
+            isValid = regex.test(_submitValue);
+
+        if (showErrorMessage && isValid)
+            showErrorMessage = false;
+
         return !isValid;
     }
 
@@ -58,10 +62,12 @@ Column {
             accessibleName += "Error" + _mEscapedErrorString;
 
         accessibleName += _mEscapedLabelString;
-        if (_inputtextTextField.text !== '')
-            accessibleName += (_inputtextTextField.text + '. ');
+        if (_submitValue !== '')
+            accessibleName += (_submitValue + '. ');
         else
             accessibleName += _mEscapedPlaceHolderString;
+
+        accessibleName += qsTr(", Type the text");
         return accessibleName;
     }
 
@@ -70,6 +76,11 @@ Column {
     onActiveFocusChanged: {
         if (activeFocus)
             nextItemInFocusChain().forceActiveFocus();
+
+    }
+    on_SubmitValueChanged: {
+        if (_isRequired || _regex != "")
+            validate();
 
     }
     onShowErrorMessageChanged: {
@@ -153,9 +164,9 @@ Column {
                 _imgSource: imgSource
                 _toggleVisibilityTarget: toggleVisibilityTarget
                 _paramStr: paramStr
-                _is1_3Enabled: is1_3Enabled
                 _adaptiveCard: adaptiveCard
                 _selectActionId: selectActionId
+                _hasAssociatedInputs: hasAssociatedInputs
             }
 
         }
@@ -166,7 +177,7 @@ Column {
         id: _inputtextErrorMessage
 
         _errorMessage: _mEscapedErrorString
-        visible: showErrorMessage && _mEscapedErrorString
+        visible: showErrorMessage
     }
 
 }

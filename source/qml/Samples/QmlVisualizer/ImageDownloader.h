@@ -1,6 +1,7 @@
 #pragma once
 #define CURL_STATICLIB
 #define _CRT_SECURE_NO_WARNINGS
+#define NOMINMAX
 
 #include <iostream>
 #include <fstream>

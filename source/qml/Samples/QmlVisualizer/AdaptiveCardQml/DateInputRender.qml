@@ -28,7 +28,7 @@ Column {
         if (isPressed && !showErrorMessage)
             dateWrapper.color = inputFieldConstants.backgroundColorOnPressed;
         else
-            dateWrapper.color = showErrorMessage ? inputFieldConstants.backgroundColorOnError : dateInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : dateInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
+            dateWrapper.color = dateInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : dateInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
     }
 
     function validate() {
@@ -55,11 +55,10 @@ Column {
         return '';
     }
 
-    Component.onCompleted : {
+    Component.onCompleted: {
         _minDate.setDate(_minDate.getDate() - 1);
         _maxDate.setDate(_maxDate.getDate() + 1);
     }
-
     onActiveFocusChanged: {
         if (activeFocus)
             dateInputTextField.forceActiveFocus();
@@ -88,99 +87,94 @@ Column {
         height: inputFieldConstants.height
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
-        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : dateInputTextField.activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
 
-        RowLayout {
-            id: dateInputRow
+        ComboBox {
+            id: dateInputCombobox
 
-            width: parent.width
-            height: parent.height
-            spacing: 0
+            anchors.left: dateInputIcon.right
+            anchors.right: dateInputClearIcon.left
+            focusPolicy: Qt.NoFocus
+            onActiveFocusChanged: colorChange(false)
+            Accessible.ignored: true
+            Keys.onReturnPressed: {
+                setFocusBackOnClose(dateInputCombobox);
+                this.popup.open();
+            }
 
-            Button {
-                id: dateInputIcon
+            indicator: Rectangle {
+            }
 
-                width: inputDateConstants.dateIconButtonSize
-                height: inputDateConstants.dateIconButtonSize
-                horizontalPadding: 0
-                verticalPadding: 0
-                icon.width: inputDateConstants.dateIconSize
-                icon.height: inputDateConstants.dateIconSize
-                icon.color: showErrorMessage ? inputDateConstants.dateIconColorOnError : dateInputTextField.activeFocus ? inputDateConstants.dateIconColorOnFocus : inputDateConstants.dateIconColorNormal
-                icon.source: CardConstants.calendarIcon
-                Keys.onReturnPressed: onClicked()
-                Layout.leftMargin: inputDateConstants.dateIconHorizontalPadding
-                Layout.alignment: Qt.AlignVCenter
-                focusPolicy: Qt.NoFocus
-                onClicked: {
-                    dateInputPopout.open();
-                }
+            popup: DateInputPopout {
+                id: dateInputPopout
 
-                background: Rectangle {
-                    color: 'transparent'
+                dateInputElement: dateInput
+                dateInputField: dateInputTextField
+            }
+
+            background: DateInputTextField {
+                id: dateInputTextField
+
+                dateInputElement: dateInput
+                dateInputPopout: dateInputPopout
+            }
+
+        }
+
+        Button {
+            id: dateInputIcon
+
+            width: inputDateConstants.dateIconButtonSize
+            height: inputDateConstants.dateIconButtonSize
+            horizontalPadding: 0
+            verticalPadding: 0
+            icon.width: inputDateConstants.dateIconSize
+            icon.height: inputDateConstants.dateIconSize
+            icon.color: inputDateConstants.dateIconColorNormal
+            icon.source: CardConstants.calendarIcon
+            Keys.onReturnPressed: onClicked()
+            anchors.left: parent.left
+            anchors.leftMargin: inputDateConstants.dateIconHorizontalPadding
+            anchors.verticalCenter: parent.verticalCenter
+            onClicked: {
+                dateInputPopout.open();
+            }
+            Accessible.name: qsTr("Date picker")
+            Accessible.role: Accessible.Button
+
+            background: Rectangle {
+                color: 'transparent'
+                radius: CardConstants.inputFieldConstants.borderRadius
+
+                WCustomFocusItem {
+                    isRectangle: true
+                    visible: dateInputIcon.activeFocus
+                    designatedParent: parent
                 }
 
             }
 
-            ComboBox {
-                id: dateInputCombobox
+        }
 
-                Layout.fillWidth: true
-                focusPolicy: Qt.NoFocus
-                onActiveFocusChanged: colorChange(false)
-                Accessible.ignored: true
-                Keys.onReturnPressed: {
-                    setFocusBackOnClose(dateInputCombobox);
-                    this.popup.open();
-                }
+        InputFieldClearIcon {
+            id: dateInputClearIcon
 
-                indicator: Rectangle {
-                }
-
-                popup: DateInputPopout {
-                    id: dateInputPopout
-
-                    dateInputElement: dateInput
-                    dateInputField: dateInputTextField
-                }
-
-                background: DateInputTextField {
-                    id: dateInputTextField
-
-                    dateInputElement: dateInput
-                    dateInputPopout: dateInputPopout
-                }
-
+            anchors.right: parent.right
+            anchors.rightMargin: inputFieldConstants.clearIconHorizontalPadding
+            anchors.verticalCenter: parent.verticalCenter
+            Keys.onReturnPressed: onClicked()
+            visible: (!dateInputTextField.focus && dateInputTextField.text !== '') || (dateInputTextField.focus && dateInputTextField.text !== '\/\/')
+            onClicked: {
+                nextItemInFocusChain().forceActiveFocus();
+                dateInputTextField.clear();
+                _currentDate = null;
             }
+        }
 
-            Button {
-                id: dateInputClearIcon
-
-                width: inputFieldConstants.clearIconSize
-                horizontalPadding: 0
-                verticalPadding: 0
-                icon.width: inputFieldConstants.clearIconSize
-                icon.height: inputFieldConstants.clearIconSize
-                icon.color: activeFocus ? inputFieldConstants.clearIconColorOnFocus : inputFieldConstants.clearIconColorNormal
-                icon.source: CardConstants.clearIconImage
-                Keys.onReturnPressed: onClicked()
-                Layout.rightMargin: inputFieldConstants.clearIconHorizontalPadding
-                visible: (!dateInputTextField.focus && dateInputTextField.text !== '') || (dateInputTextField.focus && dateInputTextField.text !== '\/\/')
-                onClicked: {
-                    nextItemInFocusChain().forceActiveFocus();
-                    dateInputTextField.clear();
-                    _currentDate = null;
-                }
-                Accessible.name: 'Date Picker clear'
-                Accessible.role: Accessible.Button
-
-                background: Rectangle {
-                    color: 'transparent'
-                }
-
-            }
-
+        WCustomFocusItem {
+            isRectangle: true
+            visible: dateInputTextField.activeFocus
         }
 
     }
@@ -189,7 +183,7 @@ Column {
         id: inputDateErrorMessage
 
         _errorMessage: _mEscapedErrorString
-        visible: showErrorMessage && _mEscapedErrorString.length
+        visible: showErrorMessage
     }
 
 }

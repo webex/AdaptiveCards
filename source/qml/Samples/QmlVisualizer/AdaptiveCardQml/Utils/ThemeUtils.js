@@ -47,13 +47,19 @@ var colorsLight = {
             "r": 0,
             "g": 0,
             "b": 0,
-            "a": 0.3
+            "a": 0.11
         },
         "hovered": {
             "r": 0,
             "g": 0,
             "b": 0,
             "a": 0.07
+        },
+        "checked": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.11
         }
     },
     "textinput-error-background": {
@@ -421,6 +427,14 @@ var colorsLight = {
             "b": 255,
             "a": 0.95
         }
+    },
+    "button-accent-fill-background": {
+        "normal": {
+            "r": 17,
+            "g": 112,
+            "b": 207,
+            "a": 1
+        }
     }
 }
 
@@ -466,13 +480,19 @@ var colorsDark = {
             "r": 255,
             "g": 255,
             "b": 255,
-            "a": 0.3
+            "a": 0.1
         },
         "hovered": {
             "r": 255,
             "g": 255,
             "b": 255,
             "a": 0.07
+        },
+        "checked": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 0.11
         }
     },
     "textinput-error-background": {
@@ -839,6 +859,14 @@ var colorsDark = {
             "g": 255,
             "b": 255,
             "a": 0.95
+        }
+    },
+    "button-accent-fill-background": {
+        "normal": {
+            "r": 17,
+            "g": 112,
+            "b": 207,
+            "a": 1
         }
     }
 }

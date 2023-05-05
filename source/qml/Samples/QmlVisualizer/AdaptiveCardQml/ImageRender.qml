@@ -6,7 +6,7 @@ Rectangle {
     id: imageRender
 
     property var _adaptiveCard
-    property string _bgColorRect
+    property color _bgColorRect : 'transparent'
     property bool _isImage: true
     property string _sourceImage
     property bool _stretchRect: false
@@ -18,12 +18,12 @@ Rectangle {
     property bool _anchorRight: false
     property int _imageWidth
     property string _paramStr: ""
-    property bool _is1_3Enabled: false
     property string _selectActionId: ""
     property bool _hoverEnabled: false
     property int aspectWidth: image.implicitWidth / image.implicitHeight * height
     property string _actionHoverColor: "transparent"
     property var _toggleVisibilityTarget: null
+    property bool _hasAssociatedInputs: false
 
     visible: _visibleRect
     width: (parent.width > 0 && parent.width < _imageWidth) ? parent.width : _imageWidth
@@ -54,9 +54,9 @@ Rectangle {
                 AdaptiveCardUtils.handleToggleVisibilityAction(_toggleVisibilityTarget);
                 return ;
             } else if (_selectActionId === 'Action.Submit') {
-                AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
+                AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _hasAssociatedInputs);
                 return ;
-            } else {
+            } else if(_selectActionId){
                 _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
                 return ;
             }
@@ -69,17 +69,18 @@ Rectangle {
             return accessibleName;
         }
 
+        function handleBgColor() {
+            imageRender.color = (hoverEnabled && (containsMouse || activeFocus)) ? _actionHoverColor : _bgColorRect
+        }
+
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton
         hoverEnabled: _hoverEnabled
         activeFocusOnTab: _hoverEnabled
         Accessible.name: getAccessibleName()
-        onEntered: {
-            imageRender.color = hoverEnabled ? _actionHoverColor : undefined;
-        }
-        onExited: {
-            imageRender.color = hoverEnabled ? 'transparent' : undefined;
-        }
+        onContainsMouseChanged: handleBgColor()
+        onActiveFocusChanged: handleBgColor()
+        cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: {
             handleMouseAreaClick();
         }
@@ -89,8 +90,9 @@ Rectangle {
                 event.accepted = true;
             }
         }
-        onActiveFocusChanged: {
-            activeFocus ? mouseArea.entered() : mouseArea.exited();
+
+        WCustomFocusItem{
+            isRectangle: true
         }
     }
 

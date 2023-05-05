@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "samplecardmodel.h"
 #include "samplecardlist.h"
-#include "SampleCardJson.h"
 
 #include <QApplication>
 #include <QQuickView>
@@ -45,6 +44,8 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/TimeInputTextField.qml"), "AdaptiveCards", 1, 0, "TimeInputTextField");
     qmlRegisterType(QUrl("qrc:/TimeInputPopout.qml"), "AdaptiveCards", 1, 0, "TimeInputPopout");
     qmlRegisterType(QUrl("qrc:/TimePickerListView.qml"), "AdaptiveCards", 1, 0, "TimePickerListView");
+    qmlRegisterType(QUrl("qrc:/WCustomFocusItem.qml"), "AdaptiveCards", 1, 0, "WCustomFocusItem");
+    qmlRegisterType(QUrl("qrc:/InputFieldClearIcon.qml"), "AdaptiveCards", 1, 0, "InputFieldClearIcon");
 
     QQuickView view;
     QQmlContext* context = view.engine()->rootContext();
@@ -53,7 +54,7 @@ int main(int argc, char* argv[])
     SampleCardModel model;
     model.setList(&cardList);
 
-    const QString qmlString = model.generateQml(QString::fromStdString(Samples::card_Empty));
+    const QString qmlString = model.generateQml(cardList.getJsonString("emptyCard"));
 
 	context->setContextProperty("_aQmlCard", qmlString);
     context->setContextProperty("_aModel", &model);

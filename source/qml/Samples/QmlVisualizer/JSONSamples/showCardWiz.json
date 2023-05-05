@@ -1,0 +1,203 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Please provide the following information:",
+            "wrap": true
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "actions": [
+        {
+            "type": "Action.ShowCard",
+            "title": "1. Name",
+            "card": {
+                "type": "AdaptiveCard",
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "body": [
+                    {
+                        "type": "Container",
+                        "id": "nameProperties",
+                        "items": [
+                            {
+                                "type": "TextBlock",
+                                "text": "First Name",
+                                "wrap": true
+                            },
+                            {
+                                "type": "Input.Text",
+                                "label": "First Name",
+                                "id": "FirstName",
+                                "isRequired": true,
+                                "errorMessage": "First Name is required"
+                            },
+                            {
+                                "type": "TextBlock",
+                                "text": "Middle Name",
+                                "wrap": true
+                            },
+                            {
+                                "type": "Input.Text",
+                                "label": "Middle Name",
+                                "id": "MiddleName"
+                            },
+                            {
+                                "type": "TextBlock",
+                                "text": "Last Name",
+                                "wrap": true
+                            },
+                            {
+                                "type": "Input.Text",
+                                "label": "Last Name",
+                                "id": "LastName",
+                                "isRequired": true,
+                                "errorMessage": "Last Name is required"
+                            }
+                        ]
+                    }
+                ],
+                "actions": [
+                    {
+                        "type": "Action.ShowCard",
+                        "title": "2. Address",
+                        "card": {
+                            "type": "AdaptiveCard",
+                            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                            "body": [
+                                {
+                                    "type": "Container",
+                                    "id": "addressProperties",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "text": "Address line 1",
+                                            "wrap": true
+                                        },
+                                        {
+                                            "type": "Input.Text",
+                                            "label": "Address line 1",
+                                            "id": "AddressLine1"
+                                        },
+                                        {
+                                            "type": "TextBlock",
+                                            "text": "Address line 2",
+                                            "wrap": true
+                                        },
+                                        {
+                                            "type": "Input.Text",
+                                            "label": "Address line 2",
+                                            "id": "AddressLine2"
+                                        },
+                                        {
+                                            "type": "ColumnSet",
+                                            "columns": [
+                                                {
+                                                    "type": "Column",
+                                                    "width": "stretch",
+                                                    "items": [
+                                                        {
+                                                            "type": "TextBlock",
+                                                            "text": "City",
+                                                            "wrap": true
+                                                        },
+                                                        {
+                                                            "type": "Input.Text",
+                                                            "label": "City",
+                                                            "id": "City"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "Column",
+                                                    "width": "stretch",
+                                                    "items": [
+                                                        {
+                                                            "type": "TextBlock",
+                                                            "text": "State",
+                                                            "wrap": true
+                                                        },
+                                                        {
+                                                            "type": "Input.Text",
+                                                            "label": "State",
+                                                            "id": "State1"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "Column",
+                                                    "width": "stretch",
+                                                    "items": [
+                                                        {
+                                                            "type": "TextBlock",
+                                                            "text": "Zip",
+                                                            "wrap": true
+                                                        },
+                                                        {
+                                                            "type": "Input.Text",
+                                                            "label": "Zip Code",
+                                                            "id": "Zip"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "actions": [
+                                {
+                                    "type": "Action.ShowCard",
+                                    "title": "3. Phone/Email",
+                                    "card": {
+                                        "type": "AdaptiveCard",
+                                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                                        "body": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Cell Number",
+                                                "wrap": true
+                                            },
+                                            {
+                                                "type": "Input.Text",
+                                                "label": "Cell Number",
+                                                "id": "CellPhone"
+                                            },
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Home Number",
+                                                "wrap": true
+                                            },
+                                            {
+                                                "type": "Input.Text",
+                                                "label": "Home Number",
+                                                "id": "HomePhone"
+                                            },
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Email Address",
+                                                "wrap": true
+                                            },
+                                            {
+                                                "type": "Input.Text",
+                                                "label": "Email Address",
+                                                "id": "Email"
+                                            }
+                                        ],
+                                        "actions": [
+                                            {
+                                                "type": "Action.Submit",
+                                                "title": "Submit"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

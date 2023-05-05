@@ -134,6 +134,7 @@
     <None Include="AdaptiveCardQml\DateInputRender.qml" />
     <None Include="AdaptiveCardQml\DateInputTextField.qml" />
     <None Include="AdaptiveCardQml\ImageRender.qml" />
+    <None Include="AdaptiveCardQml\InputFieldClearIcon.qml" />
     <None Include="AdaptiveCardQml\MultiLineTextInputRender.qml" />
     <None Include="AdaptiveCardQml\InputErrorMessage.qml" />
     <None Include="AdaptiveCardQml\InputLabel.qml" />
@@ -150,7 +151,9 @@
     <None Include="AdaptiveCardQml\TimePickerListView.qml" />
     <None Include="AdaptiveCardQml\ToggleInputRender.qml" />
     <None Include="AdaptiveCardQml\Utils\AdaptiveCardUtils.js" />
+    <None Include="AdaptiveCardQml\Utils\DrawUtils.js" />
     <None Include="AdaptiveCardQml\Utils\ThemeUtils.js" />
+    <None Include="AdaptiveCardQml\WCustomFocusItem.qml" />
     <None Include="CardOutput.qml" />
     <None Include="SampleCardListView.qml" />
     <QtRcc Include="qml.qrc" />
@@ -172,7 +175,6 @@
     <ClInclude Include="adaptivecard_dark_config.h" />
     <ClInclude Include="adaptivecard_light_config.h" />
     <ClInclude Include="ImageDownloader.h" />
-    <ClInclude Include="SampleCardJson.h" />
     <ClInclude Include="samplecardlist.h" />
     <QtMoc Include="samplecardmodel.h" />
     <ClInclude Include="stdafx.h" />

@@ -13,9 +13,11 @@ Column {
     property string _mEscapedErrorString
     property string _mEscapedPlaceholderString
     property bool showErrorMessage: false
-    property int _minValue
-    property int _maxValue
-    property int _value
+    property double _minValue
+    property double _maxValue
+    property double _value
+    property int _spinBoxMinVal : Math.max(-2147483648, _minValue)
+    property int _spinBoxMaxVal : Math.min(2147483647, _maxValue)
     property bool _hasDefaultValue: false
     property var numberInputConstants: CardConstants.inputNumberConstants
     property var inputFieldConstants: CardConstants.inputFieldConstants
@@ -23,10 +25,8 @@ Column {
     property string _submitValue: _numberInputTextField.text ? Number(_numberInputTextField.text).toString() : ''
 
     function validate() {
-        if (_numberInputTextField.text.length !== 0 && Number(_numberInputTextField.text) >= _numberInputSpinBox.from && Number(_numberInputTextField.text) <= _numberInputSpinBox.to) {
+        if (_numberInputTextField.text.length !== 0 && Number(_numberInputTextField.text) >= _minValue && Number(_numberInputTextField.text) <= _maxValue) {
             showErrorMessage = false;
-            return false;
-        } else if (_numberInputTextField.text.length === 0 && _validationRequired) {
             return false;
         } else {
             return true;
@@ -45,6 +45,7 @@ Column {
             accessibleName += (_numberInputTextField.text);
         else
             accessibleName += _mEscapedPlaceholderString;
+        accessibleName += qsTr(", Type the number");
         return accessibleName;
     }
 
@@ -80,15 +81,20 @@ Column {
                 if (isPressed && !showErrorMessage)
                     color = inputFieldConstants.backgroundColorOnPressed;
                 else
-                    color = showErrorMessage ? inputFieldConstants.backgroundColorOnError : _numberInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : _numberInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
+                    color = _numberInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : _numberInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
             }
 
             border.width: inputFieldConstants.borderWidth
-            border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : _numberInputTextField.activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+            border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
             radius: inputFieldConstants.borderRadius
             height: parent.height
             color: _numberInputSpinBox.pressed ? inputFieldConstants.backgroundColorOnPressed : _numberInputSpinBox.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal
             width: parent.width - _numberInputArrowRectangle.width
+
+             WCustomFocusItem {
+                isRectangle: true
+                visible: _numberInputTextField.activeFocus
+            }
 
             SpinBox {
                 id: _numberInputSpinBox
@@ -106,12 +112,12 @@ Column {
                     _numberInputTextField.text = _numberInputSpinBox.value;
                 }
 
-                width: parent.width
+                width: parent.width - _numberInputClearIcon.width - CardConstants.inputFieldConstants.clearIconHorizontalPadding
                 padding: 0
                 editable: true
                 stepSize: 1
-                to: _maxValue
-                from: _minValue
+                to: _spinBoxMaxVal
+                from: _spinBoxMinVal
                 Keys.onPressed: {
                     if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
                         _numberInputSpinBox.changeValue(event.key);
@@ -164,7 +170,6 @@ Column {
                     Component.onCompleted: {
                         if (_hasDefaultValue)
                             _numberInputTextField.text = _numberInputSpinBox.value;
-
                     }
 
                     background: Rectangle {
@@ -196,33 +201,19 @@ Column {
 
             }
 
-            Button {
+            InputFieldClearIcon {
                 id: _numberInputClearIcon
 
-                width: inputFieldConstants.clearIconSize
-                anchors.right: parent.right
-                anchors.margins: inputFieldConstants.clearIconHorizontalPadding
-                horizontalPadding: 0
-                verticalPadding: 0
-                icon.width: inputFieldConstants.clearIconSize
-                icon.height: inputFieldConstants.clearIconSize
-                icon.color: activeFocus ? inputFieldConstants.clearIconColorOnFocus : inputFieldConstants.clearIconColorNormal
-                anchors.verticalCenter: parent.verticalCenter
-                icon.source: CardConstants.clearIconImage
                 Keys.onReturnPressed: onClicked()
                 visible: _numberInputTextField.length !== 0
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.margins: CardConstants.inputFieldConstants.clearIconHorizontalPadding
                 onClicked: {
                     nextItemInFocusChain().forceActiveFocus();
                     _numberInputSpinBox.value = _numberInputSpinBox.from;
                     _numberInputTextField.clear();
                 }
-                Accessible.name: _mEscapedPlaceholderString + ", Clear "
-                Accessible.role: Accessible.Button
-
-                background: Rectangle {
-                    color: 'transparent'
-                }
-
             }
 
         }
@@ -230,27 +221,27 @@ Column {
         Rectangle {
             id: _numberInputArrowRectangle
 
-            property string accessiblityPrefix: ''
+            property string accessibilityPrefix: ''
 
             width: numberInputConstants.upDownButtonWidth
             radius: inputFieldConstants.borderRadius
             height: parent.height
-            border.color: activeFocus ? inputFieldConstants.borderColorOnFocus : inputFieldConstants.borderColorNormal
+            border.color: inputFieldConstants.borderColorNormal
             activeFocusOnTab: true
             color: (_numberInputArrowIcon.pressed || activeFocus) ? inputFieldConstants.backgroundColorOnPressed : _numberInputArrowIcon.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal
             Keys.onPressed: {
                 if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
                     _numberInputSpinBox.changeValue(event.key);
-                    accessiblityPrefix = '';
+                    accessibilityPrefix = '';
                     event.accepted = true;
                 }
             }
             onActiveFocusChanged: {
                 if (activeFocus)
-                    accessiblityPrefix = _mEscapedPlaceholderString + ", stepper. " + (_numberInputTextField.text ? "Current number is " : "");
+                    accessibilityPrefix = qsTr("Use up arrow to increase the value and down arrow to decrease the value") + (_numberInputTextField.text ? ", Current number is " : "");
 
             }
-            Accessible.name: accessiblityPrefix + _numberInputTextField.displayText
+            Accessible.name: accessibilityPrefix + _numberInputTextField.displayText
             Accessible.role: Accessible.NoRole
 
             Button {
@@ -297,6 +288,10 @@ Column {
                 }
             }
 
+            WCustomFocusItem {
+                isRectangle: true
+            }
+
         }
 
     }
@@ -305,7 +300,7 @@ Column {
         id: _numberInputErrorMessage
 
         _errorMessage: _mEscapedErrorString
-        visible: showErrorMessage && _mEscapedErrorString
+        visible: showErrorMessage
     }
 
 }

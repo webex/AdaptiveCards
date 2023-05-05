@@ -78,30 +78,32 @@ function selectLink(element, next) {
     return false;
 }
 
-function handleSubmitAction(paramStr, adaptiveCard, is1_3Enabled) {
+function handleSubmitAction(paramStr, adaptiveCard, hasAssociatedInputs = true) {
     var paramJson = {};
     if (paramStr.startsWith('{') && paramStr.endsWith('}')) {
         paramJson = JSON.parse(paramStr);
     }
     else {
         if (paramStr && paramStr != "null") {
-            paramJson["data"] = paramStr;
+            paramJson["data"] = JSON.parse( paramStr );
         }
     }
 
     var requiredElements = adaptiveCard.requiredElements;
-    var submitElements = adaptiveCard.submitElements;
+    var submitElements = hasAssociatedInputs ? adaptiveCard.submitElements : [];
     var firstElement = undefined;
     var isNotSubmittable = false;
 
-    for (var i = 0; i < requiredElements.length; i++) {
-        requiredElements[i].showErrorMessage = requiredElements[i].validate();
-        isNotSubmittable |= requiredElements[i].showErrorMessage;
-        if (firstElement === undefined && requiredElements[i].showErrorMessage && requiredElements[i].visible) {
-            firstElement = requiredElements[i];
+    if (hasAssociatedInputs) {
+        for (var i = 0; i < requiredElements.length; i++) {
+            requiredElements[i].showErrorMessage = requiredElements[i].validate();
+            isNotSubmittable |= requiredElements[i].showErrorMessage;
+            if (firstElement === undefined && requiredElements[i].showErrorMessage && requiredElements[i].visible) {
+                firstElement = requiredElements[i];
+            }
         }
     }
-    if (isNotSubmittable && is1_3Enabled) {
+    if (isNotSubmittable) {
         if (firstElement !== undefined) {
             if (firstElement.isButtonGroup !== undefined) {
                 firstElement.focusFirstButton();
@@ -115,6 +117,7 @@ function handleSubmitAction(paramStr, adaptiveCard, is1_3Enabled) {
         var elements = Object.assign(paramJson, submitElements)
         var paramslist = JSON.stringify(elements);
         adaptiveCard.buttonClicked("Submit action", "Action.Submit", paramslist);
+        return paramslist;
     }
     return;
 }
@@ -393,18 +396,26 @@ function horizontalAlignActionSet(actionSet, actionElements, rectangleElements) 
             continue;
         }
         itemNo += noElementsInCol[i];
+
         if (itemStart === itemEnd) {
             rectangleElements[itemStart].width = actionSet.width;
             actionElements[itemStart].anchors.horizontalCenter = rectangleElements[itemStart].horizontalCenter;
         }
         else {
-            var extraWidth = (actionSet.width - colWidths[i]) / 2;
+            for (let j = itemStart; j <= itemEnd; j++) {
+                if (j === itemStart || j === itemEnd) {
+                    var extraWidth = (actionSet.width - colWidths[i]) / 2;
 
-            rectangleElements[itemStart].width = actionElements[itemStart].width + extraWidth;
-            actionElements[itemStart].anchors.right = rectangleElements[itemStart].right;
+                    rectangleElements[itemStart].width = actionElements[itemStart].width + extraWidth;
+                    actionElements[itemStart].anchors.right = rectangleElements[itemStart].right;
 
-            rectangleElements[itemEnd].width = actionElements[itemEnd].width + extraWidth;
-            actionElements[itemEnd].anchors.left = rectangleElements[itemEnd].left;
+                    rectangleElements[itemEnd].width = actionElements[itemEnd].width + extraWidth;
+                    actionElements[itemEnd].anchors.left = rectangleElements[itemEnd].left;
+                }
+                else {
+                    actionElements[j].anchors.horizontalCenter = rectangleElements[j].horizontalCenter;
+                }
+            }
         }
     }
 }
@@ -496,4 +507,10 @@ function escapeHtml(str) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
     return `<span>${escapedStr}</span>`
+}
+
+function getTodayDate() {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0) // Setting Hours, Minutes, Seconds and MilliSeconds to ignore time comparison
+    return date;
 }

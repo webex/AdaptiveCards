@@ -21,7 +21,7 @@
 #include "ActionSet.h"
 #include "ChoiceSetInput.h"
 #include "ChoiceInput.h"
-#include "CollectionTypeElement.h"
+#include "StyledCollectionElement.h"
 #include "TextInput.h"
 #include "NumberInput.h"
 #include "DateInput.h"

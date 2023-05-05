@@ -14,6 +14,9 @@ QtObject {
         readonly property color cardBorderColor: AdaptiveCardUtils.getColorSet("card-disabled-border", "normal", isDarkTheme)
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
         readonly property color textHighlightBackground: AdaptiveCardUtils.getColorSet("text-highlight", "normal", isDarkTheme)
+        readonly property color focusOutlineMiddleColor: AdaptiveCardUtils.getColorSet("textinput-border", "focused", isDarkTheme)
+        readonly property color focusOutlineOuterColor: Qt.rgba(focusOutlineMiddleColor.r, focusOutlineMiddleColor.g, focusOutlineMiddleColor.b, 0.3)
+        readonly property color focusOutlineInnerColor: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
     }
 
     readonly property QtObject
@@ -30,10 +33,13 @@ QtObject {
         readonly property int textVerticalPadding: 4
         readonly property int iconPadding: 4
         readonly property int columnSpacing: 3
+        readonly property int errorIconWidth: 14
+        readonly property int errorIconHeight: 12
+        readonly property int errorIconTopMargin: 3
+        readonly property int errorIconLeftMargin: 10
         readonly property color backgroundColorNormal: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
         readonly property color backgroundColorOnHovered: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
         readonly property color backgroundColorOnPressed: AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)
-        readonly property color backgroundColorOnError: AdaptiveCardUtils.getColorSet("textinput-error-background", "normal", isDarkTheme)
         readonly property color borderColorNormal: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
         readonly property color borderColorOnFocus: AdaptiveCardUtils.getColorSet("textinput-border", "focused", isDarkTheme)
         readonly property color borderColorOnError: AdaptiveCardUtils.getColorSet("textinput-error-border", "normal", isDarkTheme)
@@ -68,6 +74,8 @@ QtObject {
         readonly property int timePickerHeight: 280
         readonly property int timePickerColumnSpacing: 16
         readonly property int timePickerHoursAndMinutesTagWidth: 43
+        readonly property int timePickerListViewWidth: 52
+        readonly property int timePickerListViewMargins: 5
         readonly property int timePickerElementHeight: 32
         readonly property int timePickerMargins: 16
         readonly property int timePickerSpacing: 4
@@ -77,12 +85,11 @@ QtObject {
         readonly property int timeInputMinWidth: 300
         readonly property color timeIconColorNormal: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color timeIconColorOnFocus: AdaptiveCardUtils.getColorSet("textinput-border", "focused", isDarkTheme)
-        readonly property color timeIconColorOnError: AdaptiveCardUtils.getColorSet("textinput-error-border", "focused", isDarkTheme)
         readonly property color timePickerBorderColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
         readonly property color timePickerBackgroundColor: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
         readonly property color timePickerElementColorNormal: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
         readonly property color timePickerElementColorOnHover: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
-        readonly property color timePickerElementColorOnFocus: AdaptiveCardUtils.getColorSet("checkbox-checked-border", "pressed", isDarkTheme)
+        readonly property color timePickerElementColorOnFocus: AdaptiveCardUtils.getColorSet("button-accent-fill-background", "normal", isDarkTheme)
         readonly property color timePickerElementTextColorNormal: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color timePickerElementTextColorHighlighted: AdaptiveCardUtils.getColorSet("textinput-text", "focused", isDarkTheme)
     }
@@ -92,8 +99,8 @@ QtObject {
         readonly property int dateElementSize: 32
         readonly property int dateIconHorizontalPadding: 12
         readonly property int calendarBorderRadius: 12
-        readonly property int calendarWidth: 248
-        readonly property int calendarHeight: 293
+        readonly property int calendarWidth: 280
+        readonly property int calendarHeight: 317
         readonly property int calendarHeaderTextSize: 16
         readonly property int dateGridTopMargin: 14
         readonly property int calendarDayTextSize: 16
@@ -102,14 +109,15 @@ QtObject {
         readonly property int dateIconButtonSize: 18
         readonly property int dateIconSize: 16
         readonly property int dateInputMinWidth: 300
+        readonly property int monthButtonMargins: 6
+        readonly property int dateDelegateSpacing: 4
         readonly property color dateIconColorNormal: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color dateIconColorOnFocus: AdaptiveCardUtils.getColorSet("textinput-border", "focused", isDarkTheme)
-        readonly property color dateIconColorOnError: AdaptiveCardUtils.getColorSet("textinput-error-border", "focused", isDarkTheme)
         readonly property color calendarBorderColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
         readonly property color calendarBackgroundColor: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
         readonly property color dateElementColorNormal: AdaptiveCardUtils.getColorSet("textinput-background", "normal", isDarkTheme)
-        readonly property color dateElementColorOnHover: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
-        readonly property color dateElementColorOnFocus: AdaptiveCardUtils.getColorSet("checkbox-checked-border", "pressed", isDarkTheme)
+        readonly property color dateElementColorOnHover: AdaptiveCardUtils.getColorSet("textinput-background", "checked", isDarkTheme)
+        readonly property color dateElementColorOnFocus: AdaptiveCardUtils.getColorSet("button-accent-fill-background", "normal", isDarkTheme)
         readonly property color dateElementTextColorNormal: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color notAvailabledateElementTextColor: AdaptiveCardUtils.getColorSet("textinput-placeholder-text", "normal", isDarkTheme)
         readonly property color monthChangeButtonColor: AdaptiveCardUtils.getColorSet("button-primary-background", "normal", isDarkTheme)
@@ -134,6 +142,8 @@ QtObject {
         readonly property int indicatorWidth: 35
         readonly property int scrollbarWidth: 10
         readonly property int choiceSetMinWidth: 200
+        readonly property int focusRingSize: 10
+        readonly property int popoutDelegateCordinates: 5
         readonly property color arrowIconColor: AdaptiveCardUtils.getColorSet("textinput-text", "normal", isDarkTheme)
         readonly property color dropDownElementColorPressed: AdaptiveCardUtils.getColorSet("textinput-background", "pressed", isDarkTheme)
         readonly property color dropDownElementColorHovered: AdaptiveCardUtils.getColorSet("textinput-background", "hovered", isDarkTheme)
@@ -255,6 +265,7 @@ QtObject {
         readonly property color focusRectangleColor: AdaptiveCardUtils.getColorSet("textinput-border", "normal", isDarkTheme)
     }
 
+    readonly property string errorIcon: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxNCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEzLjU4MSAxMC44NzUxTDguMDgyNTEgMS4zNzM2N0M3Ljk3Mjg1IDEuMTgzNjkgNy44MTUxMiAxLjAyNTkxIDcuNjI1MTcgMC45MTYyMDNDNy40MzUyMiAwLjgwNjQ5MiA3LjIxOTc0IDAuNzQ4NzA4IDcuMDAwMzggMC43NDg2NTdDNi43ODEwMiAwLjc0ODYwNyA2LjU2NTUxIDAuODA2MjkxIDYuMzc1NTEgMC45MTU5MTRDNi4xODU1MSAxLjAyNTU0IDYuMDI3NyAxLjE4MzI0IDUuOTE3OTYgMS4zNzMxN0wwLjQxNzk1NiAxMC44NzUxQzAuMzA4MjQ3IDExLjA2NTEgMC4yNTA0ODggMTEuMjgwNyAwLjI1MDQ4OCAxMS41MDAxQzAuMjUwNDg4IDExLjcxOTUgMC4zMDgyNDIgMTEuOTM1MSAwLjQxNzk0OSAxMi4xMjUxQzAuNTI3NjU1IDEyLjMxNTEgMC42ODU0NDggMTIuNDcyOSAwLjg3NTQ2OCAxMi41ODI2QzEuMDY1NDkgMTIuNjkyMyAxLjI4MTA0IDEyLjc1MDEgMS41MDA0NiAxMi43NTAxSDEyLjQ5OUMxMi43MTg0IDEyLjc1MDEgMTIuOTMzOSAxMi42OTIzIDEzLjEyMzkgMTIuNTgyNkMxMy4zMTM5IDEyLjQ3MjggMTMuNDcxNyAxMi4zMTUgMTMuNTgxMyAxMi4xMjVDMTMuNjkxIDExLjkzNSAxMy43NDg3IDExLjcxOTQgMTMuNzQ4NiAxMS41QzEzLjc0ODYgMTEuMjgwNiAxMy42OTA4IDExLjA2NTEgMTMuNTgxIDEwLjg3NTFaTTYuMDAwMTIgMi45OTk5N0M2LjAwMDEyIDIuNDQ3NjkgNi40NDc4NCAxLjk5OTk3IDcuMDAwMTIgMS45OTk5N0M3LjU1MjQxIDEuOTk5OTcgOC4wMDAxMiAyLjQ0NzY5IDguMDAwMTIgMi45OTk5N1Y3Ljk5OTk3QzguMDAwMTIgOC41NTIyNiA3LjU1MjQxIDguOTk5OTcgNy4wMDAxMiA4Ljk5OTk3QzYuNDQ3ODQgOC45OTk5NyA2LjAwMDEyIDguNTUyMjYgNi4wMDAxMiA3Ljk5OTk3VjIuOTk5OTdaTTcuMDAwMTIgMTJDNi40NDc4NCAxMiA2LjAwMDEyIDExLjU1MjMgNi4wMDAxMiAxMUM2LjAwMDEyIDEwLjQ0NzcgNi40NDc4NCA5Ljk5OTk3IDcuMDAwMTIgOS45OTk5N0M3LjU1MjQxIDkuOTk5OTcgOC4wMDAxMiAxMC40NDc3IDguMDAwMTIgMTFDOC4wMDAxMiAxMS41NTIzIDcuNTUyNDEgMTIgNy4wMDAxMiAxMloiIGZpbGw9IiNBQjBBMTUiLz4KPC9zdmc+Cg==";
     readonly property string showCardArrowDownImage: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+bmF2aWdhdGlvbi9hcnJvdy1kb3duXzEyPC90aXRsZT48cGF0aCBkPSJNMS4wMDA0MSAzLjQ5OTc0ODc2NGMwLS4xMzcuMDU2LS4yNzMuMTY1LS4zNzIuMjA2LS4xODUwMDAwMDAxLjUyMi0uMTY4MDAwMDAwMS43MDcuMDM3bDQuMTI4IDQuNTg2OTk5OTk2IDQuMTI4LTQuNTg2OTk5OTk2Yy4xODUtLjIwNTAwMDAwMDEuNTAxLS4yMjIwMDAwMDAxLjcwNy0uMDM3LjIwNC4xODUuMjIxLjUwMS4wMzcuNzA2bC00LjUgNC45OTk5OTk5OTZjLS4wOTYuMTA2LS4yMy4xNjYtLjM3Mi4xNjYtLjE0MiAwLS4yNzYtLjA2LS4zNzItLjE2NmwtNC41LTQuOTk5OTk5OTk2Yy0uMDg2LS4wOTUtLjEyOC0uMjE1LS4xMjgtLjMzNCIgZmlsbD0iIzAwMCIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+";
     readonly property string showCardArrowUpImage: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+bmF2aWdhdGlvbi9hcnJvdy11cF8xMjwvdGl0bGU+PHBhdGggZD0iTTEuMDAwNDEgOC41MDAyNTEyMzZjMCAuMTM3LjA1Ni4yNzMuMTY1LjM3Mi4yMDYuMTg1MDAwMDAwMS41MjIuMTY4MDAwMDAwMS43MDctLjAzN2w0LjEyOC00LjU4Njk5OTk5NiA0LjEyOCA0LjU4Njk5OTk5NmMuMTg1LjIwNTAwMDAwMDEuNTAxLjIyMjAwMDAwMDEuNzA3LjAzNy4yMDQtLjE4NS4yMjEtLjUwMS4wMzctLjcwNmwtNC41LTQuOTk5OTk5OTk2Yy0uMDk2LS4xMDYtLjIzLS4xNjYtLjM3Mi0uMTY2LS4xNDIgMC0uMjc2LjA2LS4zNzIuMTY2bC00LjUgNC45OTk5OTk5OTZjLS4wODYuMDk1LS4xMjguMjE1LS4xMjguMzM0IiBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=";
     readonly property string clearIconImage: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Y29tbW9uLWFjdGlvbnMvY2FuY2VsXzEwPC90aXRsZT48cGF0aCBkPSJNNS43MDcyNSA1LjAwMDI1bDIuNjQ2LTIuNjQ2Yy4xOTYtLjE5Ni4xOTYtLjUxMiAwLS43MDgtLjE5NS0uMTk1LS41MTEtLjE5NS0uNzA3IDBsLTIuNjQ2IDIuNjQ3LTIuNjQ3LTIuNjQ3Yy0uMTk1LS4xOTUtLjUxMS0uMTk1LS43MDcgMC0uMTk1LjE5Ni0uMTk1LjUxMiAwIC43MDhsMi42NDcgMi42NDYtMi42NDcgMi42NDZjLS4xOTUuMTk2LS4xOTUuNTEyIDAgLjcwOC4wOTguMDk3LjIyNi4xNDYuMzU0LjE0Ni4xMjggMCAuMjU2LS4wNDkuMzUzLS4xNDZsMi42NDctMi42NDcgMi42NDYgMi42NDdjLjA5OC4wOTcuMjI2LjE0Ni4zNTQuMTQ2LjEyOCAwIC4yNTYtLjA0OS4zNTMtLjE0Ni4xOTYtLjE5Ni4xOTYtLjUxMiAwLS43MDhsLTIuNjQ2LTIuNjQ2eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+"

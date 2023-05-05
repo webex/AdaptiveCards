@@ -17,7 +17,6 @@ Button {
     property string _escapedTitle
     property bool _isShowCardButton
     property var _adaptiveCard
-    property bool _is1_3Enabled
     property var _paramStr
     property var _toggleVisibilityTarget: null
     property bool _isActionSubmit: false
@@ -35,6 +34,8 @@ Button {
     property var _onReleased: ""
     property var _buttonColors: getButtonConfig()
     property bool isButtonDisabled: false
+    property bool _hasAssociatedInputs: false
+    property var submitData;
 
     signal handleShowCardToggleVisibility(var showcardLoaderElement, var currButtonElemID)
 
@@ -43,7 +44,7 @@ Button {
             AdaptiveCardUtils.handleToggleVisibilityAction((_toggleVisibilityTarget));
             return ;
         } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
-            AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
+            actionButton.submitData = AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _hasAssociatedInputs);
             return ;
         } else if (_isActionOpenUrl) {
             _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
@@ -70,6 +71,9 @@ Button {
             return CardConstants.actionButtonConstants.iconWidth + CardConstants.actionButtonConstants.iconTextSpacing;
 
         return 2 * CardConstants.actionButtonConstants.horizotalPadding - 2;
+    }
+
+    WCustomFocusItem {
     }
 
     onReleased: handleMouseAreaClick()
@@ -254,16 +258,6 @@ Button {
                 sourceComponent: showcardComponent
             }
 
-        }
-
-        Rectangle {
-            width: actionButton.width
-            height: actionButton.height
-            x: -CardConstants.actionButtonConstants.horizotalPadding
-            y: -CardConstants.actionButtonConstants.verticalPadding
-            color: "transparent"
-            border.color: _buttonColors.focusRectangleColor
-            border.width: actionButton.activeFocus ? 1 : 0
         }
 
     }

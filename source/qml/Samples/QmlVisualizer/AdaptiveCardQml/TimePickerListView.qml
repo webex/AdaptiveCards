@@ -9,8 +9,9 @@ ListView {
     property string listType
     property var inputFieldConstants: CardConstants.inputFieldConstants
     property var inputTimeConstants: CardConstants.inputTimeConstants
+    property var listViewItem: timePickerListView.view
 
-    width: inputTimeConstants.timePickerHoursAndMinutesTagWidth
+    width: inputTimeConstants.timePickerListViewWidth
     height: parent.height - inputTimeConstants.timePickerColumnSpacing
     spacing: inputTimeConstants.timePickerSpacing
     flickableDirection: Flickable.VerticalFlick
@@ -26,8 +27,14 @@ ListView {
         else if (event.key === Qt.Key_Tab)
             event.accepted = true;
     }
+    topMargin: inputTimeConstants.timePickerListViewMargins
+    bottomMargin: inputTimeConstants.timePickerListViewMargins
+    leftMargin: inputTimeConstants.timePickerListViewMargins
+    rightMargin: inputTimeConstants.timePickerListViewMargins
 
     delegate: Rectangle {
+        id: listViewDelegateRect
+
         function getText() {
             switch (listType) {
             case "hours":
@@ -44,8 +51,9 @@ ListView {
         height: inputTimeConstants.timePickerElementHeight
         radius: inputTimeConstants.timePickerElementRadius
         color: timePickerListView.currentIndex == index ? inputTimeConstants.timePickerElementColorOnFocus : timePickerListViewmouseArea.containsMouse ? inputTimeConstants.timePickerElementColorOnHover : inputTimeConstants.timePickerElementColorNormal
-        Accessible.name: listType + ' selector ' + timePickerDelegateText
+        Accessible.name: listType + ' selector ' + timePickerDelegateText.text
         Accessible.role: Accessible.StaticText
+        Accessible.ignored: true
 
         MouseArea {
             id: timePickerListViewmouseArea
@@ -69,6 +77,12 @@ ListView {
             verticalAlignment: Text.AlignVCenter
             font.pixelSize: inputFieldConstants.pixelSize
             color: index === timePickerListView.currentIndex ? inputTimeConstants.timePickerElementTextColorHighlighted : inputTimeConstants.timePickerElementTextColorNormal
+        }
+
+        WCustomFocusItem {
+            visible: listViewDelegateRect.activeFocus
+            designatedParent: parent
+            isRectangle: true
         }
 
     }

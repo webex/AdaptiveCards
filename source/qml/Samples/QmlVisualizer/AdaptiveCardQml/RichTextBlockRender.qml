@@ -13,7 +13,6 @@ TextEdit {
     property string _link: ""
     property string _selectionColor: ""
     property string _paramStr: ""
-    property bool _is1_3Enabled: false
     property var _toggleVisibilityTarget: null
 
     function getSelectedRichText() {
@@ -40,8 +39,9 @@ TextEdit {
         if (_link.startsWith('textRunToggleVisibility_')) {
             AdaptiveCardUtils.handleToggleVisibilityAction(_toggleVisibilityTarget[_link]);
             return ;
-        } else if (_link === 'Action.Submit') {
-            AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _is1_3Enabled);
+        } else if (_link.startsWith('Action.Submit')) {
+            const hasAssociatedInputs = _link.endsWith("auto");
+            AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, hasAssociatedInputs);
             return ;
         } else {
             _adaptiveCard.buttonClicked("", "Action.OpenUrl", _link);
@@ -118,7 +118,7 @@ TextEdit {
             _link = parent.linkAt(mouse.x, mouse.y);
             if (_link.startsWith('textRunToggleVisibility_'))
                 _adaptiveCard.showToolTipifNeeded('Action.ToggleVisibility', mouseGlobal);
-            else if (_link === 'Action.Submit')
+            else if (_link.startsWith('Action.Submit'))
                 _adaptiveCard.showToolTipifNeeded('Action.Submit', mouseGlobal);
             else
                 _adaptiveCard.showToolTipifNeeded(_link, mouseGlobal);
@@ -130,11 +130,8 @@ TextEdit {
         }
     }
 
-    Rectangle{
-        anchors.fill: parent
-        color: 'transparent'
-        border.width : parent.activeFocus ? 1 : 0
-        border.color : parent.activeFocus ? 'black' : 'transparent'
+    WCustomFocusItem {
+        isRectangle: true
     }
 
 }

@@ -92,8 +92,8 @@ void ToggleInputElement::addErrorMessage()
 
 void ToggleInputElement::addValidation()
 {
-    mContext->addToInputElementList(origionalElementId, mToggleInputColElement->GetId() + ".isChecked");
-    if (mToggleInput->GetIsVisible() && mToggleInput->GetIsRequired())
+    mContext->addToInputElementList(origionalElementId, mToggleInputColElement->GetId() + ".value");
+    if (mToggleInput->GetIsRequired())
     {
         mContext->addToRequiredInputElementsIdList(mToggleInputColElement->GetId());
     }
