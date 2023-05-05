@@ -136,6 +136,20 @@ class RichTextBlockRendererTests: XCTestCase {
         XCTAssertFalse(textView.hasLinks)
     }
     
+    func testHitTest() {
+        
+        let textRun = FakeTextRun.make(text: sampleText, selectAction: FakeSubmitAction.make())
+        richTextBlock = .make(textRun: textRun)
+        let textView = renderTextView()
+        textView.frame = NSRect(x: 0, y: 0, width: 50, height: 500)
+        
+        // return self if point inside textView and contains link
+        XCTAssertEqual(textView.hitTest(NSPoint(x: 10, y: 10)), textView)
+        
+        // pass over to super if point ouside textView
+        XCTAssertNotEqual(textView.hitTest(NSPoint(x: 100, y: 200)), textView)
+    }
+    
     private func isStringAttributePresent(attrString: NSAttributedString, attr: NSAttributedString.Key) -> Bool {
         return attributeValue(for: attr, in: attrString) != nil
     }
