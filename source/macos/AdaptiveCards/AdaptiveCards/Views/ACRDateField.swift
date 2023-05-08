@@ -199,7 +199,9 @@ class ACRDateField: NSView {
     }
     
     override func mouseDown(with event: NSEvent) {
-        handleOpenPickerAction()
+        if self.contentView.isMouseInView {
+            handleOpenPickerAction()
+        }
         super.mouseDown(with: event)
     }
     
