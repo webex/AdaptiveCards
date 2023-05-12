@@ -335,7 +335,7 @@ function getMinWidthActionSet(childrens,spacing){
     var min = 0
     for(var j =0;j<childrens.length;j++)
     {
-        min += Math.ceil(childrens[j].implicitWidth)
+        min += Math.ceil(childrens[j].minWidth)
     }
     min += ((childrens.length - 1)*spacing)
     return min
