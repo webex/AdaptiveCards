@@ -30,7 +30,7 @@ Button {
     property var _buttonColors: getButtonConfig()
     property bool isButtonDisabled: false
     property bool _hasAssociatedInputs: false
-    property var submitData
+    property var submitData: ""
     property var buttonConstants: CardConstants.actionButtonConstants
     property double minWidth: _textSpacing + textMetrics.width + buttonConstants.iconTextSpacing
 
@@ -42,6 +42,7 @@ Button {
             return ;
         } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
             actionButton.submitData = AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _hasAssociatedInputs);
+            isButtonDisabled = true
             return ;
         } else if (_isActionOpenUrl) {
             _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
