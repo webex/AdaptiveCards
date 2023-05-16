@@ -98,8 +98,8 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     public func controlTextDidChange(_ obj: Notification) {
         guard let textfield = obj.object as? ACRTextField else { return }
         var stringValue = textfield.stringValue
-        
-        let charSet = NSCharacterSet(charactersIn: "1234567890.-").inverted
+
+        let charSet = NSCharacterSet(charactersIn: "1234567890.-+e").inverted
         let chars = stringValue.components(separatedBy: charSet)
         stringValue = chars.joined()
 
@@ -112,10 +112,14 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         case 1:
             stringValue = "\(chuncks[0])"
         default:
-            stringValue = "\(chuncks[0]).\(chuncks[1])"
+            if chuncks[0].contains("e") {
+                stringValue = "\(chuncks[0])"
+            } else {
+                stringValue = "\(chuncks[0]).\(chuncks[1])"
+            }
         }
-        
-        // "-" should be at start if preset
+
+        // "-" should be at start or after e
         let minus = NSCharacterSet(charactersIn: "-")
         let minusSeparatedChuncks = stringValue.components(separatedBy: minus as CharacterSet)
         switch minusSeparatedChuncks.count {
@@ -123,11 +127,51 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
             stringValue = ""
         case 1:
             stringValue = "\(minusSeparatedChuncks[0])"
-        default:
+        case 2:
             if minusSeparatedChuncks[0].isEmpty {
                 stringValue = "-\(minusSeparatedChuncks[1])"
+            } else if minusSeparatedChuncks[0].last == "e" {
+                stringValue = "\(minusSeparatedChuncks[0])-\(minusSeparatedChuncks[1])"
             } else {
                 stringValue = "\(minusSeparatedChuncks[0])"
+            }
+        default:
+            if minusSeparatedChuncks[1].last == "e" {
+                stringValue = "-\(minusSeparatedChuncks[1])-\(minusSeparatedChuncks[2])"
+            } else {
+                stringValue = "-\(minusSeparatedChuncks[1])"
+            }
+        }
+        
+        // Only 1 "+" should be handled(right after e)
+        let plus = NSCharacterSet(charactersIn: "+")
+        let plusSeparatedChunk = stringValue.components(separatedBy: plus as CharacterSet)
+        switch plusSeparatedChunk.count {
+        case 0:
+            stringValue = ""
+        case 1:
+            stringValue = "\(plusSeparatedChunk[0])"
+        default:
+            if plusSeparatedChunk[0].last == "e" {
+                stringValue = "\(plusSeparatedChunk[0])+\(plusSeparatedChunk[1])"
+            } else {
+                stringValue = "\(plusSeparatedChunk[0])"
+            }
+        }
+
+        // Only 1 "e" should be handled
+        let exponential = NSCharacterSet(charactersIn: "e")
+        let exponentialSeparatedChunks = stringValue.components(separatedBy: exponential as CharacterSet)
+        switch exponentialSeparatedChunks.count {
+        case 0:
+            stringValue = ""
+        case 1:
+            stringValue = "\(exponentialSeparatedChunks[0])"
+        default:
+            if exponentialSeparatedChunks[0].isEmpty {
+                stringValue = ""
+            } else {
+                stringValue = "\(exponentialSeparatedChunks[0])e\(exponentialSeparatedChunks[1])"
             }
         }
 
@@ -242,8 +286,9 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
         get {
             if textField.stringValue.isEmpty {
                 return ""
-            } else if textField.doubleValue.truncatingRemainder(dividingBy: 1) == 0 {
-                return String(textField.integerValue)
+            } else if textField.doubleValue.truncatingRemainder(dividingBy: 1) == 0 && !textField.stringValue.contains("e") {
+                // Needed to check for e since for large numbers converting to integer loses precision
+                return String(format: "%.0lf", textField.doubleValue)
             }
             return String(textField.doubleValue)
         }
