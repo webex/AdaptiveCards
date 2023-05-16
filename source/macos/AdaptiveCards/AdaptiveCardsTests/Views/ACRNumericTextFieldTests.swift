@@ -101,6 +101,34 @@ class ACRNumericTestFieldTests: XCTestCase {
         XCTAssertTrue(numericView.isValid)
     }
     
+    func testExponentPointEntered() {
+        numericView.textField.stringValue = "2.50e20"
+        let object = Notification(name: NSNotification.Name.init("NSControlTextDidChangeNotification"), object: numericView.textField)
+        numericView.controlTextDidChange(object)
+        XCTAssertEqual(numericView.value, "2.5e+20")
+    }
+    
+    func testnegativeExponentPointEntered() {
+        numericView.textField.stringValue = "2.50e-20"
+        let object = Notification(name: NSNotification.Name.init("NSControlTextDidChangeNotification"), object: numericView.textField)
+        numericView.controlTextDidChange(object)
+        XCTAssertEqual(numericView.value, "2.5e-20")
+    }
+    
+    func testNegativeNumberExponentPointEntered() {
+        numericView.textField.stringValue = "-2.50e20"
+        let object = Notification(name: NSNotification.Name.init("NSControlTextDidChangeNotification"), object: numericView.textField)
+        numericView.controlTextDidChange(object)
+        XCTAssertEqual(numericView.value, "-2.5e+20")
+    }
+    
+    func testNegativeNumberNegativeExponentPointEntered() {
+        numericView.textField.stringValue = "-2e-20"
+        let object = Notification(name: NSNotification.Name.init("NSControlTextDidChangeNotification"), object: numericView.textField)
+        numericView.controlTextDidChange(object)
+        XCTAssertEqual(numericView.value, "-2e-20")
+    }
+    
     func testAccessibilityTitle1_2() {
         numericView.attributedPlaceholder = NSAttributedString(string: "Placeholder")
         XCTAssertNil(numericView.accessibilityTitle())
