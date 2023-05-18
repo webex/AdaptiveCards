@@ -155,6 +155,20 @@ class InputNumberRendererTest: XCTestCase {
         XCTAssertEqual(inputNumberField.value, "-12.3")
     }
     
+    func testMaxPossibleValue() {
+        inputNumber = .make(max:NSNumber(floatLiteral: Double.greatestFiniteMagnitude + 1))
+        
+        let inputNumberField = renderNumberInput()
+        XCTAssertEqual(inputNumberField.maxValue, Double.greatestFiniteMagnitude)
+    }
+    
+    func testMinPossibleValue() {
+        inputNumber = .make(max:NSNumber(floatLiteral: -(Double.greatestFiniteMagnitude + 1)))
+        
+        let inputNumberField = renderNumberInput()
+        XCTAssertEqual(inputNumberField.maxValue, -Double.greatestFiniteMagnitude)
+    }
+    
     func testAccessibilityValueSet() {
         let val: NSNumber = 20.00
         inputNumber = .make(value: val)

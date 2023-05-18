@@ -45,13 +45,13 @@
 {
  
     auto getValueCpp = mCppObj->GetValue();
-    return getValueCpp.has_value() ? [NSNumber numberWithInt:getValueCpp.value_or(0)] : NULL;
+    return getValueCpp.has_value() ? [NSNumber numberWithDouble:getValueCpp.value_or(0)] : NULL;
 
 }
 
 - (void)setValue:(NSNumber * _Nullable)value
 {
-    auto valueCpp = [value intValue];
+    auto valueCpp = [value doubleValue];
  
     mCppObj->SetValue(valueCpp);
     
@@ -61,13 +61,13 @@
 {
  
     auto getMaxCpp = mCppObj->GetMax();
-    return getMaxCpp.has_value() ? [NSNumber numberWithInt:getMaxCpp.value_or(0)] : NULL;
+    return getMaxCpp.has_value() ? [NSNumber numberWithDouble:getMaxCpp.value_or(0)] : NULL;
 
 }
 
 - (void)setMax:(NSNumber * _Nullable)value
 {
-    auto valueCpp = [value intValue];
+    auto valueCpp = [value doubleValue];
  
     mCppObj->SetMax(valueCpp);
     
@@ -77,13 +77,13 @@
 {
  
     auto getMinCpp = mCppObj->GetMin();
-    return getMinCpp.has_value() ? [NSNumber numberWithInt:getMinCpp.value_or(0)] : NULL;
+    return getMinCpp.has_value() ? [NSNumber numberWithDouble:getMinCpp.value_or(0)] : NULL;
 
 }
 
 - (void)setMin:(NSNumber * _Nullable)value
 {
-    auto valueCpp = [value intValue];
+    auto valueCpp = [value doubleValue];
  
     mCppObj->SetMin(valueCpp);
     
