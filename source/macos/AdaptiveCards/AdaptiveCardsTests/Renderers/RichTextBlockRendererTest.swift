@@ -87,6 +87,13 @@ class RichTextBlockRendererTests: XCTestCase {
         XCTAssert(isStringAttributePresent(attrString: textView.attributedString(), attr: .strikethroughStyle))
     }
     
+    func testRendererSetsEmptyRichTextBlock() {
+
+        richTextBlock = .make(inlines: [])
+        
+        XCTAssertNoThrow(renderTextView())
+    }
+    
     func testSelectActionTargetIsSet() {
         var textRun: FakeTextRun!
         var textView: ACRTextView!

@@ -112,6 +112,13 @@ class ColumnSetRendererTests: XCTestCase {
         XCTAssertNil(columnSetView.target)
     }
     
+    func testColumnSetNoColumn() {
+        let columns: [FakeColumn] = []
+        columnSet = .make(columns: columns)
+        
+        XCTAssertNoThrow(renderColumnSetView())
+    }
+    
     private func renderColumnSetView() -> ACRContentStackView {
         let view = columnSetRenderer.render(element: columnSet, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         

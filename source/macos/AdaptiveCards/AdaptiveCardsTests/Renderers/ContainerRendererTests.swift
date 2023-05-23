@@ -108,6 +108,11 @@ class ContainerRendererTests: XCTestCase {
         XCTAssertEqual(containerView.arrangedSubviews.count, 2)
     }
     
+    func testRendersWhenNoItems() {
+        container = .make(items: [])
+        XCTAssertNoThrow(renderContainerView(container))
+    }
+    
     private func renderContainerView(_ element: ACSContainer) -> ACRContainerView {
         let view = containerRenderer.render(element: element, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         
