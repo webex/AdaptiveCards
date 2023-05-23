@@ -1,0 +1,43 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2",
+    "body": [
+        {
+            "type": "Input.ChoiceSet",
+            "id": "test"
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "id": "test1",
+            "style": "expanded"
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "id": "test2",
+            "isMultiSelect": true
+        },
+        {
+            "type": "RichTextBlock",
+            "inlines": []
+        },
+        {
+            "type": "FactSet"
+        },
+        {
+            "type": "Container"
+        },
+        {
+            "type": "ColumnSet"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch"
+                }
+            ]
+        }
+    ]
+}

@@ -151,6 +151,13 @@ class FactSetRendererTest: XCTestCase {
         }
     }
     
+    func testEmptyFactsArray() {
+        let factArray: [FakeFacts] = []
+        factSet = .make(factArray: factArray)
+        
+        XCTAssertNoThrow(renderFactSet())
+    }
+    
     func testMarkdownInFact() {
         var factArray: [FakeFacts] = []
         let fakeFact = FakeFacts()
