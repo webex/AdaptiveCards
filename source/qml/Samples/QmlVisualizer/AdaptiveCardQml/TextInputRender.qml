@@ -145,6 +145,7 @@ Column {
 
             active: (_supportsInterActivity && !_isInlineShowCardAction)
             anchors.bottom: _isMultiLineText ? parent.bottom : parent.bottom
+            width: item ? Math.min(parent.width, item.minWidth) : 0
 
             sourceComponent: AdaptiveActionRender {
                 id: _inputtextTextFieldWrapper
