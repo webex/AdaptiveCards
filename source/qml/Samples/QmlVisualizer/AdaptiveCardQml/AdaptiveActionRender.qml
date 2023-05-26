@@ -42,7 +42,8 @@ Button {
             return ;
         } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
             actionButton.submitData = AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _hasAssociatedInputs);
-            isButtonDisabled = true
+            if(actionButton.submitData)
+                isButtonDisabled = true;
             return ;
         } else if (_isActionOpenUrl) {
             _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
