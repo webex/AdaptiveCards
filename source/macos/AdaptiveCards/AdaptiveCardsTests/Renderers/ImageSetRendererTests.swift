@@ -44,7 +44,7 @@ class ImageSetRendererTests: XCTestCase {
         let container = FakeContainer.make(elemType: .container, minHeight: 500, items: [imageSetView])
         
         let fakeContext =  ACOVisibilityContext()
-        let mainRootView = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default, visibilityContext: fakeContext)
+        let mainRootView = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default, visibilityContext: fakeContext, accessibilityContext: ACSAccessibilityFocusManager())
         let containerView = ContainerRenderer().render(element: container, with: hostConfig, style: .default, rootView: mainRootView, parentView: mainRootView, inputs: [], config: .default)
         let fakeContainerView = try XCTUnwrap(containerView as? ACRContainerView)
         

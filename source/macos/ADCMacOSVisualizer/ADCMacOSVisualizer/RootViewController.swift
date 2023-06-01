@@ -72,7 +72,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
                 renderedView.removeFromSuperview()
             }
             stackView.addArrangedSubview(cardView)
-            
+            AdaptiveCard.calculateKeyViewLoop(for: cardView)
         case .failure(let error):
             print("Failure: \(error.localizedDescription)")
         }
@@ -278,6 +278,7 @@ extension RootViewController: AdaptiveCardActionDelegate {
     
     func adaptiveCard(_ adaptiveCard: NSView, didShowCardWith actionView: NSView, previousHeight: CGFloat, newHeight: CGFloat) {
         print("SHOW CARD ACTION: Height changed from \(previousHeight) to \(newHeight)")
+        AdaptiveCard.calculateKeyViewLoop(for: adaptiveCard)
     }
 }
 

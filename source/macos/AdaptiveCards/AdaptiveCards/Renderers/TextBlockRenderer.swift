@@ -70,7 +70,9 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
             // Set Hugging priority Setting a lower value to this priority indicates that we want the view to grow larger than its content.
             textView.setContentHuggingPriority(.defaultLow, for: .vertical)
         }
-        
+        if textView.canBecomeKeyView {
+            rootView.accessibilityContext?.registerView(textView)
+        }
         return textView
     }
 }

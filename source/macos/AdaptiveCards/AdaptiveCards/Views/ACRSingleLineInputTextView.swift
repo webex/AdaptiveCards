@@ -14,6 +14,8 @@ class ACRSingleLineInputTextView: NSView {
     private let style: ACSContainerStyle
     private let hostConfig: ACSHostConfig
     private weak var rootview: ACRView?
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
     
     private var contentView = NSView()
     private (set) lazy var contentStackView: NSStackView = {
@@ -191,5 +193,22 @@ extension ACRSingleLineInputTextView: InputHandlingViewProtocol {
     
     func setAccessibilityFocus() {
         self.textView.setAccessibilityFocus()
+    }
+}
+
+extension ACRSingleLineInputTextView: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return self.textView
+    }
+    
+    func setupInternalKeyviews() {
+        if element.getInlineAction() != nil {
+            self.textView.exitView = self.inlineButton
+            self.textView.setupInternalKeyviews()
+            self.inlineButton.nextKeyView = exitView?.validKeyView
+        } else {
+            self.textView.exitView = exitView?.validKeyView
+            self.textView.setupInternalKeyviews()
+        }
     }
 }
