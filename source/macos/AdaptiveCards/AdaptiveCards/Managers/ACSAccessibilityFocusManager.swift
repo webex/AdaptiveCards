@@ -27,16 +27,16 @@ protocol AccessibleFocusView: AnyObject {
 // Manager class to handle nextKeyView navigation
 class ACSAccessibilityFocusManager {
     /// track accessible view for nextKeyView
-    private var accessibleViews: [NSValue]
+    @Weak private var accessibleViews: [NSView]
     
     /// get first accessible view for root view
     var entryView: NSView? {
-        return accessibleViews.first?.nonretainedAccessibleFocusView?.validKeyView
+        return accessibleViews.first?.toAccessibleFocusView?.validKeyView
     }
     
     /// get last accessible view for root view
     var exitView: NSView? {
-        return accessibleViews.last?.nonretainedAccessibleFocusView?.validKeyView
+        return accessibleViews.last?.toAccessibleFocusView?.validKeyView
     }
     
     init() {
@@ -44,11 +44,10 @@ class ACSAccessibilityFocusManager {
     }
     
     /// Register a view to be managed for accessibility focus
-    /// - Parameter view: The accessible `UIView` element to register with the accessibility context
+    /// - Parameter view: The accessible `NSView` element to register with the accessibility context
     func registerView(_ view: AccessibleFocusView) {
-        // Wrap the weak reference using NSValue and add it to the array
-        let weakViewValue = NSValue(nonretainedObject: view)
-        accessibleViews.append(weakViewValue)
+        guard let nsview = view as? NSView else { return }
+        accessibleViews.append(nsview)
     }
     
     /// Recalculate the key view loop and set exit views for each view
@@ -56,14 +55,14 @@ class ACSAccessibilityFocusManager {
         guard !accessibleViews.isEmpty else { return }
         
         for (index, view) in accessibleViews.enumerated() {
-            guard let accessibleView = view.nonretainedAccessibleFocusView else { continue }
+            guard let accessibleView = view.toAccessibleFocusView else { continue }
             
             // Set the exit view for the current accessible view
             if index == accessibleViews.count - 1 {
-                guard let firstAccessibleView = accessibleViews[0].nonretainedAccessibleFocusView else { continue }
+                guard let firstAccessibleView = accessibleViews[0].toAccessibleFocusView else { continue }
                 accessibleView.exitView = firstAccessibleView
             } else {
-                guard let nextAccessibleView = accessibleViews[index + 1].nonretainedAccessibleFocusView else { continue }
+                guard let nextAccessibleView = accessibleViews[index + 1].toAccessibleFocusView else { continue }
                 accessibleView.exitView = nextAccessibleView
             }
             
@@ -73,8 +72,26 @@ class ACSAccessibilityFocusManager {
     }
 }
 
-extension NSValue {
-    var nonretainedAccessibleFocusView: AccessibleFocusView? {
-        return nonretainedObjectValue as? AccessibleFocusView
+extension NSView {
+    var toAccessibleFocusView: AccessibleFocusView? {
+        return self as? AccessibleFocusView
+    }
+}
+
+/// Generic Weak Type Object
+final class WeakObject<T: AnyObject> {
+    private(set) weak var value: T?
+    init(_ value: T) { self.value = value }
+}
+
+@propertyWrapper
+struct Weak<Element> where Element: AnyObject {
+    private var storage = [WeakObject<Element>]()
+
+    var wrappedValue: [Element] {
+        get { storage.compactMap { $0.value } }
+        set {
+            storage = newValue.map { WeakObject($0) }
+        }
     }
 }
