@@ -27,6 +27,7 @@ open class InputDateRenderer: NSObject, BaseCardElementRendererProtocol {
         if dateElement.getHeight() == .stretch {
             inputField.setStretchableHeight()
         }
+        rootView.accessibilityContext?.registerView(inputField)
         return inputField
     }
 }

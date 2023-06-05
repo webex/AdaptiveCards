@@ -30,13 +30,17 @@ class AdaptiveCardRenderer {
     
     private func renderAdaptiveCard(_ card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, style: ACSContainerStyle, width: CGFloat? = nil, config: RenderConfig, actionDelegate: AdaptiveCardActionDelegate?, resourceResolver: AdaptiveCardResourceResolver?, parentRootView: ACRView? = nil) -> NSView {
         var visibilityContext: ACOVisibilityContext?
+        var accessibilityContext: ACSAccessibilityFocusManager?
         if parentRootView?.visibilityContext != nil {
             // This block invokes by the showcard function. We've passed the same visibility context to the current root view, so we can change visibility any element within the entire card.
             visibilityContext = parentRootView?.visibilityContext
+            accessibilityContext = parentRootView?.accessibilityContext
         } else {
             visibilityContext = ACOVisibilityContext()
+            accessibilityContext = ACSAccessibilityFocusManager()
         }
-        let rootView = ACRView(style: style, hostConfig: hostConfig, renderConfig: config, visibilityContext: visibilityContext)
+        let rootView = ACRView(style: style, hostConfig: hostConfig, renderConfig: config, visibilityContext: visibilityContext, accessibilityContext: accessibilityContext)
+        rootView.accessibilityContext?.registerView(rootView)
         rootView.translatesAutoresizingMaskIntoConstraints = false
         if let width = width {
             rootView.widthAnchor.constraint(equalToConstant: width).isActive = true

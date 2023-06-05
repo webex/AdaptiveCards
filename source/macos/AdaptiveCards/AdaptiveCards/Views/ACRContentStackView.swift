@@ -10,7 +10,7 @@ protocol ACRContentHoldingViewProtocol {
     func applyPadding(_ padding: CGFloat)
 }
 
-class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHandlingProtocol {
+class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHandlingProtocol, AccessibleFocusView {
     private var stackViewLeadingConstraint: NSLayoutConstraint?
     private var stackViewTrailingConstraint: NSLayoutConstraint?
     private var stackViewTopConstraint: NSLayoutConstraint?
@@ -20,6 +20,14 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     private let errorMessageFieldMap = NSMapTable<NSString, ACRInputErrorView>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     // map table store input label field
     private let inputLabelFieldMap = NSMapTable<NSString, ACRInputLabelTextField>(keyOptions: .strongMemory, valueOptions: .weakMemory)
+    
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
+    var validKeyView: NSView? {
+        get {
+            return self
+        }
+    }
     
     let style: ACSContainerStyle
     let hostConfig: ACSHostConfig
@@ -179,6 +187,11 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     func addView(_ view: NSView, in gravity: NSStackView.Gravity) {
         stackView.addView(view, in: gravity)
+    }
+    
+    // AccessibleFocusView property
+    func setupInternalKeyviews() {
+        // This Empty function design for override methods to setup nextKeyView Navigation
     }
     
     func applyPadding(_ padding: CGFloat) {

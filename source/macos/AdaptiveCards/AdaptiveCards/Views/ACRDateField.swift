@@ -79,6 +79,9 @@ class ACRDateField: NSView {
     weak var errorDelegate: InputHandlingViewErrorDelegate?
     var isRequired = false
     
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
+        
     var selectedDate: Date? {
         didSet {
             if let selectedDate = selectedDate {
@@ -332,6 +335,18 @@ extension ACRDateField: InputHandlingViewProtocol {
     func setAccessibilityFocus() {
         setAccessibilityFocused(true)
         errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityLabel())
+    }
+}
+
+extension ACRDateField: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return self
+    }
+    
+    func setupInternalKeyviews() {
+        self.textField.dateView = self
+        self.textField.exitView = exitView?.validKeyView
+        self.textField.setupInternalKeyviews()
     }
 }
 
