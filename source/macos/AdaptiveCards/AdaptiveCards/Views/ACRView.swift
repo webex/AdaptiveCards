@@ -16,14 +16,24 @@ class ACRView: ACRColumnView {
     private var focusedElementOnHideError: NSView?
     private var firstFieldWithError: InputHandlingViewProtocol?
     private (set) var visibilityContext: ACOVisibilityContext?
+    private (set) var accessibilityContext: ACSAccessibilityFocusManager?
+    
+    // AccessibleFocusView property
+    override var validKeyView: NSView? {
+        get {
+            return self
+        }
+        set { }
+    }
     
     override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         super.init(style: style, parentStyle: nil, hostConfig: hostConfig, renderConfig: renderConfig, superview: nil, needsPadding: true)
     }
     
-    convenience init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig, visibilityContext: ACOVisibilityContext?) {
+    convenience init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig, visibilityContext: ACOVisibilityContext?, accessibilityContext: ACSAccessibilityFocusManager?) {
         self.init(style: style, hostConfig: hostConfig, renderConfig: renderConfig)
         self.visibilityContext = visibilityContext
+        self.accessibilityContext = accessibilityContext
     }
     
     required init?(coder: NSCoder) {
@@ -49,6 +59,11 @@ class ACRView: ACRColumnView {
         isLayoutDoneOnShowCard = false
         focusedElementOnHideError = nil
         firstFieldWithError = nil
+    }
+    
+    // AccessibleFocusView property
+    override func setupInternalKeyviews() {
+        self.nextKeyView = exitView?.validKeyView
     }
     
     func addTarget(_ target: TargetHandler) {

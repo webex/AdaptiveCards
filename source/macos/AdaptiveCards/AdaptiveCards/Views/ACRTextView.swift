@@ -39,6 +39,9 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     private lazy var selectedLinkIndex: Int = -1
     private lazy var keyTabEntry = false
     
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
+    
     override public var canBecomeKeyView: Bool {
         return isEditable ? true : hasLinks
     }
@@ -261,6 +264,16 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         }
         selectedLinkIndex = 0
         return linkDataList[linkDataList.count - 1]
+    }
+}
+
+extension ACRTextView: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return self
+    }
+    
+    func setupInternalKeyviews() {
+        self.nextKeyView = exitView?.validKeyView
     }
 }
 

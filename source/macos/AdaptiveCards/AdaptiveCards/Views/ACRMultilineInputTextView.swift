@@ -6,6 +6,8 @@ class ACRMultilineInputTextView: NSView {
     private let element: ACSTextInput
     private let hostConfig: ACSHostConfig
     private weak var rootview: ACRView?
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
     
     private (set) lazy var multiLineTextView: ACRMultilineTextView = {
         let textView = ACRMultilineTextView(config: renderConfig, inputElement: element)
@@ -154,5 +156,20 @@ extension ACRMultilineInputTextView: InputHandlingViewProtocol {
     
     func setAccessibilityFocus() {
         self.multiLineTextView.setAccessibilityFocus()
+    }
+}
+
+extension ACRMultilineInputTextView: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return self.multiLineTextView.textView
+    }
+    
+    func setupInternalKeyviews() {
+        if element.getInlineAction() != nil {
+            self.multiLineTextView.textView.nextKeyView = self.inlineButton
+            self.inlineButton.nextKeyView = self.exitView?.validKeyView
+        } else {
+            self.multiLineTextView.textView.nextKeyView = self.exitView?.validKeyView
+        }
     }
 }

@@ -10,7 +10,7 @@ class ACRViewTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default, visibilityContext: ACOVisibilityContext())
+        view = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default, visibilityContext: ACOVisibilityContext(), accessibilityContext: ACSAccessibilityFocusManager())
         fakeResourceResolver = FakeResourceResolver()
         actionDelegate = FakeAdaptiveCardActionDelegate()
         
@@ -21,7 +21,7 @@ class ACRViewTests: XCTestCase {
     
     func testACRViewInitsWithoutError() {
         //Test default initialsier
-        let acrView = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default    )
+        let acrView = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default)
         XCTAssertNotNil(acrView)
     }
     
@@ -513,6 +513,61 @@ class ACRViewTests: XCTestCase {
         XCTAssertTrue(handler1.isFocused)
         XCTAssertFalse(handler2.isFocused)
     }
+    
+    func testAccessibilityFocus() throws {
+        // Input Text
+        let inputText = FakeInputText.make()
+        let textView = try XCTUnwrap(TextInputRenderer().render(element: inputText, with: FakeHostConfig(), style: .default, rootView: self.view, parentView: self.view, inputs: [], config: self.config) as? ACRSingleLineInputTextView)
+        view.addArrangedSubview(textView)
+        
+        // Input Text
+        let inputMultiText = FakeInputText.make(isMultiline: true)
+        let multiTextView = try XCTUnwrap(TextInputRenderer().render(element: inputMultiText, with: FakeHostConfig(), style: .default, rootView: self.view, parentView: self.view, inputs: [], config: self.config) as? ACRMultilineInputTextView)
+        view.addArrangedSubview(multiTextView)
+        
+        // Input Date
+        let inputDate = FakeInputDate.make()
+        let dateView = try XCTUnwrap(InputDateRenderer().render(element: inputDate, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRDateField)
+        view.addArrangedSubview(dateView)
+        
+        // Input Time
+        let inputTime = FakeInputTime.make()
+        let timeView = try XCTUnwrap(InputTimeRenderer().render(element: inputTime, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRDateField)
+        view.addArrangedSubview(timeView)
+        
+        // Input Number
+        let inputNumber = FakeInputNumber.make()
+        let numberView = try XCTUnwrap(InputNumberRenderer().render(element: inputNumber, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRNumericTextField)
+        view.addArrangedSubview(numberView)
+        
+        // Text Block
+        let textBlock = FakeTextBlock.make(text: "Hello [Swift](www.swift.org)")
+        let textBlockView = try XCTUnwrap(TextBlockRenderer().render(element: textBlock, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRTextView)
+        view.addArrangedSubview(textBlockView)
+        
+        // Rich Text Block
+        let richTextBlock = FakeRichTextBlock.make(textRun: FakeTextRun.make(text: "Hello Swift", selectAction: FakeOpenURLAction.make(url: "www.swift.org")))
+        let richTextBlockView = try XCTUnwrap(RichTextBlockRenderer().render(element: richTextBlock, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRTextView)
+        view.addArrangedSubview(richTextBlockView)
+        
+        // Fact Set
+        let factset = FakeFactSet.make(factArray: [FakeFacts.make(title: "Title", value: "[Swift 5](www.swift.org)")])
+        let factsetView = try XCTUnwrap(FactSetRenderer().render(element: factset, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRFactSetView)
+        view.addArrangedSubview(factsetView)
+        
+        XCTAssertEqual(view.accessibilityContext?.entryView, textView.validKeyView)
+        
+        view.accessibilityContext?.recalculateKeyViewLoop()
+        
+        XCTAssertEqual(textView.exitView?.validKeyView, multiTextView.validKeyView)
+        XCTAssertEqual(multiTextView.exitView?.validKeyView, dateView.validKeyView)
+        XCTAssertEqual(dateView.exitView?.validKeyView, timeView.validKeyView)
+        XCTAssertEqual(timeView.exitView?.validKeyView, numberView.validKeyView)
+        XCTAssertEqual(numberView.exitView?.validKeyView, textBlockView.validKeyView)
+        XCTAssertEqual(textBlockView.exitView?.validKeyView, richTextBlockView.validKeyView)
+        XCTAssertEqual(richTextBlockView.exitView?.validKeyView, factsetView.validKeyView)
+    }
+    
 }
 
 private class FakeInputHandlingView: NSView, InputHandlingViewProtocol {

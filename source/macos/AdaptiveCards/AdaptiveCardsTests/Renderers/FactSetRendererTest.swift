@@ -17,7 +17,7 @@ class FactSetRendererTest: XCTestCase {
     
     func testACRFactSetViewInitsWithoutError() {
         //Test default initialsier
-        let factSetView = ACRFactSetView()
+        let factSetView = ACRFactSetView.init(config: .default, inputElement: factSet, hostConfig: hostConfig, style: .default, rootView: FakeRootView())
         XCTAssertNotNil(factSetView)
     }
     
@@ -176,7 +176,7 @@ class FactSetRendererTest: XCTestCase {
         }
     }
     
-    func testAccessibilityFocus() {
+    func testAccessibilityFocus() throws {
         var factArray: [FakeFacts] = []
         let fakeFact1 = FakeFacts()
         fakeFact1.setTitle("Title1 Exists")
@@ -190,22 +190,14 @@ class FactSetRendererTest: XCTestCase {
         factArray.append(fakeFact2)
         factSet = .make(factArray: factArray)
         
-        let factView = renderFactSet()
-        let containerView = NSView()
-        containerView.addSubview(factView)
+        let factView = try XCTUnwrap(renderFactSet() as? ACRFactSetView)
+        factView.setupInternalKeyviews()
+        XCTAssertEqual(factView.titleStackView.arrangedSubviews.first?.nextKeyView, factView.valueStackView.arrangedSubviews.first)
+        XCTAssertEqual(factView.valueStackView.arrangedSubviews.first?.nextKeyView, factView.titleStackView.arrangedSubviews.last)
+        XCTAssertEqual(factView.titleStackView.arrangedSubviews.last?.nextKeyView, factView.valueStackView.arrangedSubviews.last)
         
-        let renderedFacts = factView.subviews
-        guard let titleStack = renderedFacts[0] as? NSStackView else { return XCTFail() }
-        guard let valueStack = renderedFacts[1] as? NSStackView else { return XCTFail() }
-        let dummyKeyView = NSView()
-        titleStack.subviews.first?.nextKeyView = dummyKeyView
-        containerView.layoutSubtreeIfNeeded()
-        XCTAssertEqual(titleStack.subviews.first?.nextKeyView, valueStack.subviews.first)
-        XCTAssertEqual(valueStack.subviews.first?.nextKeyView, titleStack.subviews.last)
-        XCTAssertEqual(titleStack.subviews.last?.nextKeyView, valueStack.subviews.last)
-        
-        guard let titleFact = titleStack.subviews.first else { return XCTFail() }
-        guard let valueFact = valueStack.subviews.first else { return XCTFail() }
+        guard let titleFact = factView.titleStackView.arrangedSubviews.first else { return XCTFail() }
+        guard let valueFact = factView.valueStackView.arrangedSubviews.first else { return XCTFail() }
         XCTAssertFalse(titleFact.canBecomeKeyView)
         XCTAssertTrue(valueFact.canBecomeKeyView)
     }

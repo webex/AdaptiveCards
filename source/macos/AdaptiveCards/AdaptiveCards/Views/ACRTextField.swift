@@ -21,6 +21,8 @@ class ACRTextField: NSTextField {
     private var shouldShowError = false
     private var errorMessage: String?
     private var labelString: String?
+    weak var exitView: NSView?
+    weak var dateView: ACRDateField?
     
     init(textFieldWith config: RenderConfig, mode: Mode, inputElement: ACSBaseInputElement) {
         self.config = config
@@ -180,6 +182,7 @@ class ACRTextField: NSTextField {
     
     private func updateClearButton() {
         clearButton.isHidden = isEmpty
+        self.setupInternalKeyviews()
     }
     
     private var wantsClearButton: Bool {
@@ -262,6 +265,31 @@ class ACRTextField: NSTextField {
         } else {
             layer?.borderColor = isActive ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
             layer?.backgroundColor = isMouseInView ? inputConfig.highlightedColor.cgColor : inputConfig.backgroundColor.cgColor
+        }
+    }
+}
+
+extension ACRTextField {
+    func setupInternalKeyviews() {
+        if textFieldMode == .dateTime {
+            // NOTE: We require a date view ref to set the next keyview. We make acrdateview to the keyview in dateinput.
+            dateView?.nextKeyView = nil
+            clearButton.nextKeyView = nil
+            if !clearButton.isHidden {
+                dateView?.nextKeyView = clearButton
+                clearButton.nextKeyView = exitView
+                return
+            }
+            dateView?.nextKeyView = exitView
+        } else {
+            self.nextKeyView = nil
+            self.clearButton.nextKeyView = nil
+            if self.wantsClearButton && !clearButton.isHidden {
+                self.nextKeyView = self.clearButton
+                self.clearButton.nextKeyView = exitView
+                return
+            }
+            self.nextKeyView = exitView
         }
     }
 }
