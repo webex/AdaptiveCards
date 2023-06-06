@@ -6,16 +6,41 @@
 | -------- | ---- | -------- | ----------- | ------- |
 | **type** | `"AdaptiveCard"` | Yes | Must be `"AdaptiveCard"`. | 1.0 |
 | **version** | `string` | Yes | Schema version that this card requires. If a client is **lower** than this version, the `fallbackText` will be rendered. NOTE: Version is not required for cards within an `Action.ShowCard`. However, it *is* required for the top-level card. | 1.0 |
+| **refresh** | `Refresh` | No | Defines how the card can be refreshed by making a request to the target Bot. | 1.4 |
+| **authentication** | `Authentication` | No | Defines authentication information to enable on-behalf-of single sign on or just-in-time OAuth. | 1.4 |
 | **body** | `Element[]` | No | The card elements to show in the primary card region. | 1.0 |
 | **actions** | `Action[]` | No | The Actions to show in the card's action bar. | 1.0 |
 | **selectAction** | `ISelectAction` | No | An Action that will be invoked when the card is tapped or selected. `Action.ShowCard` is not supported. | 1.1 |
 | **fallbackText** | `string` | No | Text shown when the client doesn't support the version specified (may contain markdown). | 1.0 |
 | **backgroundImage** | `BackgroundImage`, `uri` | No | Specifies the background image of the card. | 1.2, 1.0 |
 | **minHeight** | `string` | No | Specifies the minimum height of the card. | 1.2 |
+| **rtl** | `boolean?` | No | When `true` content in this Adaptive Card should be presented right to left. When 'false' content in this Adaptive Card should be presented left to right. If unset, the default platform behavior will apply. | 1.5 |
 | **speak** | `string` | No | Specifies what should be spoken for this entire card. This is simple text or SSML fragment. | 1.0 |
 | **lang** | `string` | No | The 2-letter ISO-639-1 language used in the card. Used to localize any date/time functions. | 1.0 |
 | **verticalContentAlignment** | `VerticalContentAlignment` | No | Defines how the content should be aligned vertically within the container. Only relevant for fixed-height cards, or cards with a `minHeight` specified. | 1.1 |
 | **$schema** | `uri` | No | The Adaptive Card schema. | 1.0 |
+
+
+## refresh
+
+Defines how the card can be refreshed by making a request to the target Bot.
+
+* **Type**: `Refresh`
+* **Version** : 1.4
+* **Required**: No
+* **Allowed values**:
+  * `Refresh`
+
+
+## authentication
+
+Defines authentication information to enable on-behalf-of single sign on or just-in-time OAuth.
+
+* **Type**: `Authentication`
+* **Version** : 1.4
+* **Required**: No
+* **Allowed values**:
+  * `Authentication`
 
 
 ## body
@@ -39,6 +64,7 @@ The card elements to show in the primary card region.
   * `Input.Toggle`
   * `Media`
   * `RichTextBlock`
+  * `Table`
   * `TextBlock`
 
 
@@ -49,6 +75,7 @@ The Actions to show in the card's action bar.
 * **Type**: `Action[]`
 * **Required**: No
 * **Allowed values**:
+  * `Action.Execute`
   * `Action.OpenUrl`
   * `Action.ShowCard`
   * `Action.Submit`
@@ -63,6 +90,7 @@ An Action that will be invoked when the card is tapped or selected. `Action.Show
 * **Version** : 1.1
 * **Required**: No
 * **Allowed values**:
+  * `Action.Execute`
   * `Action.OpenUrl`
   * `Action.Submit`
   * `Action.ToggleVisibility`

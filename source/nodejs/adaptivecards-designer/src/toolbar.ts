@@ -59,16 +59,27 @@ export class ToolbarButton extends ToolbarElement {
     private _isEnabled: boolean = true;
     private _allowToggle: boolean = false;
     private _isToggled: boolean = false;
+    private _isLink: boolean = false;
 
     protected clicked() {
-        if (this.onClick) {
+        if (this.isEnabled && this.onClick) {
             this.onClick(this);
         }
     }
 
     protected internalUpdateLayout() {
         this.renderedElement.className = "acd-toolbar-button";
-        (this.renderedElement as HTMLButtonElement).disabled = !this.isEnabled;
+
+        if(!this.isEnabled) {
+            this.renderedElement.classList.add("acd-toolbar-button-disabled");
+            this.renderedElement.setAttribute("aria-disabled", "true");
+            this.renderedElement.tabIndex = -1;
+        }
+        else {
+            this.renderedElement.classList.remove("acd-toolbar-button-disabled");
+            this.renderedElement.removeAttribute("aria-disabled");
+            this.renderedElement.tabIndex = 0;
+        }
 
         if (this.isToggled) {
             this.renderedElement.classList.add("acd-toolbar-button-toggled");
@@ -77,7 +88,9 @@ export class ToolbarButton extends ToolbarElement {
             this.renderedElement.classList.remove("acd-toolbar-button-toggled");
         }
 
-        this.renderedElement.setAttribute("aria-pressed", this.isToggled.toString());
+        if (this.allowToggle) {
+            this.renderedElement.setAttribute("aria-pressed", this.isToggled.toString());
+        }
 
         if (this.iconClass) {
             this.renderedElement.classList.add(this.iconClass);
@@ -86,12 +99,17 @@ export class ToolbarButton extends ToolbarElement {
         if (!this.displayCaption) {
             this.renderedElement.classList.add("acd-toolbar-button-iconOnly");
             this.renderedElement.innerText = "";
+            this.renderedElement.ariaLabel = this.caption;
         }
         else {
             this.renderedElement.innerText = this.caption;
         }
 
         this.renderedElement.title = this.toolTip ? this.toolTip : "";
+        
+        if (this._isLink) {
+            this.renderedElement.setAttribute("role", "link");
+        }
     }
 
     protected internalRender(): HTMLElement {
@@ -102,7 +120,7 @@ export class ToolbarButton extends ToolbarElement {
             if (this.allowToggle) {
                 this.isToggled = !this.isToggled;
             }
-            
+
             this.clicked();
         }
 
@@ -115,12 +133,14 @@ export class ToolbarButton extends ToolbarElement {
         id: string,
         caption: string,
         iconClass: string,
-        onClick: (sender: ToolbarButton) => void = null) {
+        onClick: (sender: ToolbarButton) => void = null,
+        isLink: boolean = false) {
         super(id);
 
         this.caption = caption;
         this.iconClass = iconClass;
         this.onClick = onClick;
+        this._isLink = isLink;
     }
 
     get allowToggle(): boolean {
@@ -204,6 +224,8 @@ export interface IChoicePickerItem {
 export class ToolbarChoicePicker extends ToolbarElement {
     private _dropDown: DropDown;
     private _labelledById: string; // id to use for our label element
+    private _isEnabled: boolean = true;
+    private _isHidden: boolean = false;
 
     protected internalRender(): HTMLElement {
         this._dropDown = new DropDown();
@@ -237,11 +259,9 @@ export class ToolbarChoicePicker extends ToolbarElement {
 
         let pickerContainerElement = document.createElement("div");
         pickerContainerElement.className = "acd-toolbar-choicePicker";
-        pickerContainerElement.style.display = "flex";
-        pickerContainerElement.style.alignItems = "center";
 
         if (this.label) {
-            let labelElement = document.createElement("span");
+            let labelElement = document.createElement("div");
             labelElement.className = "acd-toolbar-label";
             labelElement.innerText = this.label;
             labelElement.id = this._labelledById;
@@ -252,6 +272,26 @@ export class ToolbarChoicePicker extends ToolbarElement {
         pickerContainerElement.appendChild(pickerElement);
 
         return pickerContainerElement;
+    }
+
+    protected internalUpdateLayout() {
+        if (!this.isEnabled) {
+            this.renderedElement.classList.add("acd-toolbar-picker-disabled");
+            this.renderedElement.setAttribute("aria-disabled", "true");
+            this._dropDown.isEnabled = false;
+        } else {
+            this.renderedElement.classList.remove("acd-toolbar-picker-disabled");
+            this.renderedElement.removeAttribute("aria-disabled");
+            this._dropDown.isEnabled = true;
+        }
+
+        if (this.isHidden) {
+            this.renderedElement.classList.add("acd-toolbar-picker-hidden");
+            this.renderedElement.setAttribute("aria-disabled", "true");
+        } else {
+            this.renderedElement.classList.remove("acd-toolbar-picker-hidden");
+            this.renderedElement.removeAttribute("aria-disabled");
+        }
     }
 
     onChanged: (sender: ToolbarChoicePicker) => void;
@@ -270,6 +310,24 @@ export class ToolbarChoicePicker extends ToolbarElement {
 
     set selectedIndex(value: number) {
         this._dropDown.selectedIndex = value;
+    }
+
+    get isEnabled(): boolean {
+        return this._isEnabled;
+    }
+
+    set isEnabled(value: boolean) {
+        this._isEnabled = value;
+        this.updateLayout();
+    }
+
+    get isHidden(): boolean {
+        return this._isHidden;
+    }
+
+    set isHidden(value: boolean) {
+        this._isHidden = value;
+        this.updateLayout();
     }
 }
 
@@ -304,8 +362,6 @@ export class Toolbar {
     attachTo(element: HTMLElement) {
         this._attachedTo = element;
         this._attachedTo.className = "acd-toolbar";
-        this._attachedTo.style.display = "flex";
-        this._attachedTo.style.justifyContent = "space-between";
         this._attachedTo.innerHTML = "";
 
         let leftElements: Array<ToolbarElement> = [];
@@ -323,12 +379,10 @@ export class Toolbar {
         }
 
         let leftContainer = document.createElement("div");
-        leftContainer.style.display = "flex";
-        leftContainer.style.alignItems = "center";
+        leftContainer.className = "acd-toolbar-content";
 
         let rightContainer = document.createElement("div");
-        rightContainer.style.display = "flex";
-        rightContainer.style.alignItems = "center";
+        rightContainer.className = "acd-toolbar-content";
 
         this.renderElementsInto(
             leftContainer,

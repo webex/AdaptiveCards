@@ -11,6 +11,12 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+struct ACRAspectRatio {
+    CGFloat widthToHeight;
+    CGFloat heightToWidth;
+};
+typedef struct ACRAspectRatio ACRAspectRatio;
+
 @interface ACRImageProperties : NSObject
 
 @property BOOL hasExplicitDimensions;
@@ -18,6 +24,7 @@
 @property CGSize contentSize;
 @property ACRImageSize acrImageSize;
 @property ACRHorizontalAlignment acrHorizontalAlignment;
+@property ACRHeightType height;
 @property CGFloat pixelWidth;
 @property CGFloat pixelHeight;
 
@@ -25,4 +32,5 @@
 
 - (void)updateContentSize:(CGSize)size;
 
++ (ACRAspectRatio)convertToAspectRatio:(CGSize)cgsize;
 @end

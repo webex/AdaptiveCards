@@ -6,7 +6,7 @@
 #include "Image.h"
 #include "Util.h"
 
-using namespace AdaptiveSharedNamespace;
+using namespace AdaptiveCards;
 
 ImageSet::ImageSet() : BaseCardElement(CardElementType::ImageSet), m_imageSize(ImageSize::None)
 {
@@ -80,8 +80,9 @@ std::shared_ptr<BaseCardElement> ImageSetParser::DeserializeFromString(ParseCont
 
 void ImageSet::PopulateKnownPropertiesSet()
 {
-    m_knownProperties.insert({AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Images),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::ImageSize)});
+    m_knownProperties.insert(
+        {AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Images),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::ImageSize)});
 }
 
 void ImageSet::GetResourceInformation(std::vector<RemoteResourceInformation>& resourceInfo)

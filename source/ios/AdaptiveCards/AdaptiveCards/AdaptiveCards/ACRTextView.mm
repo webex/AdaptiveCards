@@ -9,14 +9,23 @@
 #import "ACOBaseCardElementPrivate.h"
 #import "ACRInputLabelView.h"
 #import "TextInput.h"
+#import "UtiliOS.h"
 
-@implementation ACRTextView
+@implementation ACRTextView {
+    BOOL _isShowingPlaceholder;
+}
 
 - (instancetype)initWithFrame:(CGRect)frame element:(ACOBaseCardElement *)element
 {
     self = [super initWithFrame:frame];
     if (self) {
         self.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+        if (@available(iOS 13.0, *)) {
+            _placeholderColor = [UIColor placeholderTextColor];
+        } else {
+            // Fallback on earlier versions
+            _placeholderColor = [UIColor lightGrayColor];
+        }
         [self configWithSharedModel:element];
     }
     return self;
@@ -30,13 +39,11 @@
     _placeholderText = [[NSString alloc] initWithCString:inputBlck->GetPlaceholder().c_str() encoding:NSUTF8StringEncoding];
     if (inputBlck->GetValue().size()) {
         self.text = [[NSString alloc] initWithCString:inputBlck->GetValue().c_str() encoding:NSUTF8StringEncoding];
+        _isShowingPlaceholder = NO;
     } else if ([_placeholderText length]) {
         self.text = _placeholderText;
-        if (@available(iOS 13.0, *)) {
-            self.textColor = [UIColor placeholderTextColor];
-        } else {
-            self.textColor = [UIColor lightGrayColor];
-        }
+        self.textColor = _placeholderColor;
+        _isShowingPlaceholder = YES;
     }
 
     self.isRequired = inputBlck->GetIsRequired();
@@ -45,18 +52,7 @@
                                  encoding:NSUTF8StringEncoding];
     [self registerForKeyboardNotifications];
 
-    BOOL bRemove = NO;
-    if (![self.text length]) {
-        self.text = @"placeholder text";
-        bRemove = YES;
-    }
-    CGRect boundingrect = [self.layoutManager lineFragmentRectForGlyphAtIndex:0 effectiveRange:nil];
-    boundingrect.size.height *= 4;
-    self.frame = boundingrect;
-
-    if (bRemove) {
-        self.text = @"";
-    }
+    self.frame = [self computeBoundingRect];
 
     CGRect frame = CGRectMake(0, 0, self.frame.size.width, 30);
     UIToolbar *toolBar = [[UIToolbar alloc] initWithFrame:frame];
@@ -98,16 +94,17 @@
 }
 
 - (BOOL)validate:(NSError **)error
-{    
+{
     return [ACRInputLabelView commonTextUIValidate:self.isRequired hasText:self.hasText predicate:self.regexPredicate text:self.text error:error];
 }
 
 - (void)getInput:(NSMutableDictionary *)dictionary
 {
-    dictionary[self.id] = ([_placeholderText isEqualToString:self.text]) ? @"" : self.text;
+    dictionary[self.id] = _isShowingPlaceholder ? @"" : self.text;
 }
 
-- (void)setFocus:(BOOL)shouldBecomeFirstResponder view:(UIView * _Nullable)view {
+- (void)setFocus:(BOOL)shouldBecomeFirstResponder view:(UIView *_Nullable)view
+{
     [ACRInputLabelView commonSetFocus:shouldBecomeFirstResponder view:view];
 }
 
@@ -124,7 +121,7 @@
 
 - (CGSize)intrinsicContentSize
 {
-    return self.frame.size;
+    return [self computeBoundingRect].size;
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
@@ -132,18 +129,18 @@
     if (!_maxLength) {
         return YES;
     }
-    
+
     if (range.length + range.location > textView.text.length) {
         return NO;
     }
-    
+
     NSUInteger newLength = [textView.text length] + [text length] - range.length;
     return newLength <= _maxLength;
 }
 
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
-    if (_placeholderText && [textView.text isEqualToString:_placeholderText]) {
+    if (_isShowingPlaceholder) {
         textView.text = @"";
         if (@available(iOS 13.0, *)) {
             textView.textColor = [UIColor labelColor];
@@ -151,6 +148,7 @@
             // Fallback on earlier versions
             textView.textColor = [UIColor blackColor];
         }
+        _isShowingPlaceholder = NO;
     }
     [textView becomeFirstResponder];
 }
@@ -158,14 +156,36 @@
 {
     if (![textView.text length]) {
         textView.text = _placeholderText;
-        if (@available(iOS 13.0, *)) {
-            textView.textColor = [UIColor placeholderTextColor];
-        } else {
-            // Fallback on earlier versions
-            textView.textColor = [UIColor lightGrayColor];
-        }
+        textView.textColor = _placeholderColor;
+        _isShowingPlaceholder = YES;
     }
     [textView resignFirstResponder];
+}
+
+- (CGRect)computeBoundingRect
+{
+    BOOL bRemove = NO;
+
+    if (![self.text length]) {
+        self.text = @"placeholder text";
+        bRemove = YES;
+    }
+    CGRect boundingrect = [self.layoutManager lineFragmentRectForGlyphAtIndex:0 effectiveRange:nil];
+    boundingrect.size.height *= 4;
+    self.frame = boundingrect;
+
+    if (bRemove) {
+        self.text = @"";
+    }
+    return boundingrect;
+}
+
+- (void)setPlaceholderColor:(UIColor *)placeholderColor
+{
+    _placeholderColor = placeholderColor;
+    if (_isShowingPlaceholder) {
+        self.textColor = placeholderColor;
+    }
 }
 
 @synthesize hasValidationProperties;

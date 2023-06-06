@@ -13,6 +13,15 @@ export abstract class BaseTreeItem extends DraggableElement {
     private _expandCollapseElement: HTMLElement;
     private _childContainerElement: HTMLElement;
 
+    private needsToBeScrolled() {
+        // detect the case where the treeViewHost's parent isn't currently
+        // overflowed. if it *is* overflowed (has scrollbar), then scrolling is
+        // appropriate. otherwise, we might be in a small-screen situation
+        // (single column rendering) where scrolling is undesireable
+        const treeViewHostParent = this._rootElement.closest(".acd-treeView-host").parentElement;
+        return (treeViewHostParent && treeViewHostParent.scrollHeight > treeViewHostParent.clientHeight);
+    }
+
     private setIsSelected(value: boolean, scrollIntoView: boolean) {
         if (this._isSelected !== value) {
             this._isSelected = value;
@@ -24,7 +33,7 @@ export abstract class BaseTreeItem extends DraggableElement {
                 this._treeItemElement.classList.remove("selected");
             }
 
-            this._rootElement.setAttribute("aria-selected", this._isSelected.toString());
+            this._rootElement.setAttribute("aria-current", this._isSelected.toString());
 
             this.selectedChanged(scrollIntoView);
         }
@@ -59,7 +68,7 @@ export abstract class BaseTreeItem extends DraggableElement {
     }
 
     protected selectedChanged(scrollIntoView: boolean) {
-        if (this.isSelected && scrollIntoView) {
+        if (this.isSelected && scrollIntoView && this.needsToBeScrolled()) {
             this._rootElement.scrollIntoView();
         }
 
@@ -82,7 +91,7 @@ export abstract class BaseTreeItem extends DraggableElement {
         this._rootElement.style.listStyleType = "none";
         this._rootElement.setAttribute("aria-labelledby", labelId);
         this._rootElement.setAttribute("aria-level", this._level.toString());
-        this._rootElement.setAttribute("aria-selected", this._isSelected.toString());
+        this._rootElement.setAttribute("aria-current", this._isSelected.toString());
         this._rootElement.tabIndex = 0;
 
         if (hasChildren) {
@@ -105,6 +114,10 @@ export abstract class BaseTreeItem extends DraggableElement {
         this._treeItemElement.style.display = "flex";
         this._treeItemElement.style.alignItems = "center";
         this._treeItemElement.style.paddingLeft = this.getIndentationLevelIncrement() * (1 + this.level) + "px";
+
+        if (this._isSelected) {
+            this._treeItemElement.classList.add("selected");
+        }
 
         if (hasChildren) {
             this._treeItemElement.setAttribute("role", "treeitem");
@@ -206,8 +219,10 @@ export abstract class BaseTreeItem extends DraggableElement {
 
     onSelectedChange: (sender: BaseTreeItem) => void;
 
-    constructor() {
+    constructor(isExpanded: boolean = true) {
         super();
+
+        this._isExpanded = isExpanded;
     }
 
     abstract getChildCount(): number;
@@ -217,6 +232,7 @@ export abstract class BaseTreeItem extends DraggableElement {
         if (this.getChildCount() > 0) {
             this._rootElement.setAttribute("aria-expanded", this._isExpanded.toString());
             this._expandCollapseElement.setAttribute("aria-label", this.getExpandCollapseAriaText());
+
             if (this._isExpanded) {
                 this._childContainerElement?.classList.remove("acd-hidden");
                 this._expandCollapseElement.classList.remove(BaseTreeItem.collapsedIconClass);
@@ -231,9 +247,19 @@ export abstract class BaseTreeItem extends DraggableElement {
     }
 
     expand() {
-        this._isExpanded = true;
+        if (!this._isExpanded) {
+            this._isExpanded = true;
 
-        this.updateLayout();
+            this.updateLayout();
+        }
+    }
+
+    collpase() {
+        if (this._isExpanded) {
+            this._isExpanded = false;
+
+            this.updateLayout();
+        }
     }
 
     isDraggable(): boolean {

@@ -19,7 +19,7 @@
     <PackageCertificateKeyFile>AdaptiveCardTestApp_TemporaryKey.pfx</PackageCertificateKeyFile>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>5AAC4DBBB80B76184FC2B4B0A77FB3DFD67B44D5</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>25308A582CE6FA6626267D2804FD7058935B3252</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -156,11 +156,8 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Content Include="..\..\..\samples\v1.0\Scenarios\*.json">
-      <Link>LinkedCards\v1.0\Scenarios\%(FileName)</Link>
-    </Content>
-    <Content Include="..\..\..\samples\v1.1\Scenarios\*.json">
-      <Link>LinkedCards\v1.1\Scenarios\%(FileName)</Link>
+    <Content Include="..\..\..\samples\v1.5\Scenarios\*.json">
+      <Link>LinkedCards\v1.5\Scenarios\%(FileName)</Link>
     </Content>
     <Content Include="..\..\..\samples\v1.0\Elements\*.json">
       <Link>LinkedCards\v1.0\Elements\%(FileName)</Link>

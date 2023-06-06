@@ -7,6 +7,7 @@
 
 #import "ACRInputNumberRenderer.h"
 #import "ACOBaseCardElementPrivate.h"
+#import "ACOBundle.h"
 #import "ACOHostConfigPrivate.h"
 #import "ACRContentHoldingUIView.h"
 #import "ACRInputLabelViewPrivate.h"
@@ -37,8 +38,8 @@
     std::shared_ptr<HostConfig> config = [acoConfig getHostConfig];
     std::shared_ptr<BaseCardElement> elem = [acoElem element];
     std::shared_ptr<NumberInput> numInputBlck = std::dynamic_pointer_cast<NumberInput>(elem);
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"MSFT.AdaptiveCards"];
-    ACRNumericTextField *numInput = [bundle loadNibNamed:@"ACRTextNumberField" owner:rootView options:nil][0];
+
+    ACRNumericTextField *numInput = [[[ACOBundle getInstance] getBundle] loadNibNamed:@"ACRTextNumberField" owner:rootView options:nil][0];
     numInput.placeholder = [NSString stringWithCString:numInputBlck->GetPlaceholder().c_str() encoding:NSUTF8StringEncoding];
 
     ACRNumberInputHandler *numberInputHandler = [[ACRNumberInputHandler alloc] init:acoElem];
@@ -46,24 +47,11 @@
     numInput.delegate = numberInputHandler;
     numInput.text = numberInputHandler.text;
 
-    ACRInputLabelView *inputLabelView = [[ACRInputLabelView alloc] initInputLabelView:rootView acoConfig:acoConfig adptiveInputElement:numInputBlck inputView:numInput accessibilityItem:numInput viewGroup:viewGroup dataSource:numberInputHandler];
+    ACRInputLabelView *inputLabelView = [[ACRInputLabelView alloc] initInputLabelView:rootView acoConfig:acoConfig adaptiveInputElement:numInputBlck inputView:numInput accessibilityItem:numInput viewGroup:viewGroup dataSource:numberInputHandler];
 
-    if (elem->GetHeight() == HeightType::Stretch) {
-        ACRColumnView *inputContainer = [[ACRColumnView alloc] init];
-        [inputContainer addArrangedSubview:inputLabelView];
-        // Add a blank view so the input field doesnt grow as large as it can and so it keeps the same behavior as Android and UWP
-        UIView *blankTrailingSpace = [[UIView alloc] init];
-        [inputContainer addArrangedSubview:blankTrailingSpace];
-        [inputContainer adjustHuggingForLastElement];
-
-        [viewGroup addArrangedSubview:inputContainer];
-    } else {
-        [viewGroup addArrangedSubview:inputLabelView];
-    }
+    [viewGroup addArrangedSubview:inputLabelView];
 
     [inputs addObject:inputLabelView];
-
-    configVisibility(inputLabelView, elem);
 
     return inputLabelView;
 }

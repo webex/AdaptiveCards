@@ -6,14 +6,12 @@
 //
 
 #import "ACRIBaseInputHandler.h"
-#import "ChoiceInput.h"
-#import "ChoiceSetInput.h"
-#import "HostConfig.h"
 #import <UIKit/UIKit.h>
 
 @interface ACRInputTableView : UITableView
 
 @property IBInspectable CGFloat inputTableViewSpacing;
+@property NSString *adaptiveAccessibilityLabel;
 
 - (instancetype)initWithSuperview:(UIView *)view;
 

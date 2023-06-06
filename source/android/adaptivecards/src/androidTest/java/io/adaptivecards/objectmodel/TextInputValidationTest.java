@@ -1,14 +1,13 @@
 package io.adaptivecards.objectmodel;
 
-import android.support.test.InstrumentationRegistry;
-import android.support.v4.app.FragmentManager;
+import androidx.test.InstrumentationRegistry;
+
 import android.widget.EditText;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 
-import io.adaptivecards.renderer.inputhandler.NumberInputHandler;
 import io.adaptivecards.renderer.inputhandler.TextInputHandler;
 
 public class TextInputValidationTest
@@ -40,6 +39,21 @@ public class TextInputValidationTest
     private TextInput createTextInputWithValidationProperties(String regex, int maxLength, boolean isRequired)
     {
         TextInput textInput = TestUtil.createMockTextInput();
+        textInput.SetRegex(regex);
+        textInput.SetMaxLength(maxLength);
+        textInput.SetIsRequired(isRequired);
+        return  textInput;
+    }
+
+    private TextInput createPasswordInputWithValidationProperties(String regex, int maxLength)
+    {
+        return createPasswordInputWithValidationProperties(regex, maxLength, false);
+    }
+
+    private TextInput createPasswordInputWithValidationProperties(String regex, int maxLength, boolean isRequired)
+    {
+        TextInput textInput = TestUtil.createMockTextInput();
+        textInput.SetTextInputStyle(TextInputStyle.Password);
         textInput.SetRegex(regex);
         textInput.SetMaxLength(maxLength);
         textInput.SetIsRequired(isRequired);
@@ -614,6 +628,118 @@ public class TextInputValidationTest
 
         TestUtil.GeneralValidationExecutor validationExecutor = new TestUtil.GeneralValidationExecutor(textInputHandler);
         TestUtil.runValidationTests(invalidHexColors, false, validationExecutor);
+    }
+
+    /**
+     * VerifyPasswordValidationSucceedsWithNoSetValue
+     * @testDescription Verifies that a not required input will succeed when no value has been set
+     */
+    @Test
+    public void VerifyPasswordValidationSucceedsWithNoSetValue()
+    {
+        TextInput textInput = createPasswordInputWithValidationProperties("", 0);
+        TextInputHandler textInputHandler = createTextInputHandler(textInput);
+
+        Assert.assertTrue(textInputHandler.isValid());
+    }
+
+    /**
+     * VerifyPasswordValidationSucceedsWithSetValue
+     * @testDescription Verifies that a not required input will succeed with any value set
+     */
+    @Test
+    public void VerifyPasswordValidationSucceedsWithSetValue()
+    {
+        TextInput textInput = createPasswordInputWithValidationProperties("", 0, true);
+        TextInputHandler textInputHandler = createTextInputHandler(textInput);
+
+        TestUtil.GeneralValidationExecutor validationExecutor = new TestUtil.GeneralValidationExecutor(textInputHandler);
+        TestUtil.runValidationTests(TestUtil.concat(String.class, c_regexValidValues, c_regexInvalidValues, c_shortStrings, c_longStrings), true, validationExecutor);
+    }
+
+    /**
+     * VerifyIsRequiredValidationFailsWithNoSetValue
+     * @testDescription Verifies that a required input will fail when no value has been set
+     */
+    @Test
+    public void VerifyIsRequiredPasswordValidationFailsWithNoSetValue()
+    {
+        TextInput textInput = createPasswordInputWithValidationProperties("", 0, true);
+        TextInputHandler textInputHandler = createTextInputHandler(textInput);
+
+        Assert.assertFalse(textInputHandler.isValid());
+    }
+
+    /**
+     * VerifyIsRequiredPasswordValidationSucceedsWithSetValue
+     * @testDescription Verifies that a required input will succeed with any value set
+     */
+    @Test
+    public void VerifyIsRequiredPasswordValidationSucceedsWithSetValue()
+    {
+        TextInput textInput = createPasswordInputWithValidationProperties("", 0, true);
+        TextInputHandler textInputHandler = createTextInputHandler(textInput);
+
+        TestUtil.GeneralValidationExecutor validationExecutor = new TestUtil.GeneralValidationExecutor(textInputHandler);
+        TestUtil.runValidationTests(TestUtil.concat(String.class, c_regexValidValues, c_regexInvalidValues, c_shortStrings, c_longStrings), true, validationExecutor);
+    }
+
+    /**
+     * VerifySpecificRegexPasswordValidationFailsWithNonCompliantValues
+     * @testDescription Verifies that the regex validation (isValidOnSpecifics) fails when a value doesn't
+     * comply with the regex
+     */
+    @Test
+    public void VerifySpecificRegexPasswordValidationFailsWithNonCompliantValues()
+    {
+        TextInput textInput = createPasswordInputWithValidationProperties(testRegexHexColor, 0);
+        TextInputHandler textInputHandler = createTextInputHandler(textInput);
+
+        TestUtil.SpecificsValidationExecutor regexValidationExecutor = new TestUtil.SpecificsValidationExecutor(textInputHandler);
+        TestUtil.runValidationTests(c_regexInvalidValues, false, regexValidationExecutor);
+    }
+
+    /**
+     * VerifySpecificRegexPasswordValidationSucceedsWithCompliantValues
+     * @testDescription Verifies that the min validation (isValidOnSpecifics) succeeds when a value
+     * complies with the regex
+     */
+    @Test
+    public void VerifySpecificRegexPasswordValidationSucceedsWithCompliantValues()
+    {
+        TextInput textInput = createPasswordInputWithValidationProperties(testRegexHexColor, 0);
+        TextInputHandler textInputHandler = createTextInputHandler(textInput);
+
+        TestUtil.SpecificsValidationExecutor regexValidationExecutor = new TestUtil.SpecificsValidationExecutor(textInputHandler);
+        TestUtil.runValidationTests(c_regexValidValues, true, regexValidationExecutor);
+    }
+
+    /**
+     * VerifySpecificMaxLengthPasswordValidationSucceedsWithShortValues
+     * @testDescription Verifies that the maxLength validation (isValidOnSpecifics) succeeds when a short value has been set
+     */
+    @Test
+    public void VerifySpecificMaxLengthPasswordValidationSucceedsWithShortValues()
+    {
+        TextInput textInput = createPasswordInputWithValidationProperties("", testMaxLength);
+        TextInputHandler textInputHandler = createTextInputHandler(textInput);
+
+        TestUtil.SpecificsValidationExecutor maxValidationExecutor = new TestUtil.SpecificsValidationExecutor(textInputHandler);
+        TestUtil.runValidationTests(c_shortStrings, true, maxValidationExecutor);
+    }
+
+    /**
+     * VerifySpecificMaxLengthPasswordValidationFailsWithLongValues
+     * @testDescription Verifies that the maxLength validation (isValidOnSpecifics) fails when a long value has been set
+     */
+    @Test
+    public void VerifySpecificMaxLengthPasswordValidationFailsWithLongValues()
+    {
+        TextInput textInput = createPasswordInputWithValidationProperties("", testMaxLength);
+        TextInputHandler textInputHandler = createTextInputHandler(textInput);
+
+        TestUtil.SpecificsValidationExecutor maxValidationExecutor = new TestUtil.SpecificsValidationExecutor(textInputHandler);
+        TestUtil.runValidationTests(c_longStrings, false, maxValidationExecutor);
     }
 
 }

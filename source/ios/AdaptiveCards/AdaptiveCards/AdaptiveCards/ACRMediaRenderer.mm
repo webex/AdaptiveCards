@@ -11,8 +11,9 @@
 #import "ACOMediaEventPrivate.h"
 #import "ACRAggregateTarget.h"
 #import "ACRContentHoldingUIView.h"
-#import "ACRLongPressGestureRecognizerFactory.h"
+#import "ACRImageProperties.h"
 #import "ACRMediaTarget.h"
+#import "ACRTapGestureRecognizerFactory.h"
 #import "ACRUIImageView.h"
 #import "ACRView.h"
 #import "SharedAdaptiveCard.h"
@@ -48,7 +49,7 @@
     // we list all the parts that are needed in building the key.
     NSString *urlString = [NSString stringWithCString:mediaElem->GetPoster().c_str() encoding:[NSString defaultCStringEncoding]];
     NSString *numberString = [[NSNumber numberWithUnsignedLongLong:(unsigned long long)(elem.get())] stringValue];
-    NSString *piikey = [NSString stringWithCString:[acoConfig getHostConfig] -> GetMedia().playButton.c_str() encoding:[NSString defaultCStringEncoding]];
+    NSString *piikey = [NSString stringWithCString:[acoConfig getHostConfig]->GetMedia().playButton.c_str() encoding:[NSString defaultCStringEncoding]];
     NSString *piikeyViewIF = [NSString stringWithFormat:@"%llu_playIcon", (unsigned long long)elem.get()];
 
     NSDictionary *pieces = @{
@@ -74,8 +75,7 @@
             [contentholdingview addSubview:view];
         }
         // if we already have UIImageView and UIImage, configures the constraints and turn off the notification
-        [self configUpdateForUIImageView:acoElem config:acoConfig image:img imageView:view];
-        [rootView removeObserverOnImageView:@"image" onObject:view keyToImageView:mediaKey];
+        [self configUpdateForUIImageView:rootView acoElem:acoElem config:acoConfig image:img imageView:view];
     } else {
         contentholdingview = (ACRContentHoldingUIView *)[rootView getImageView:mediaKey];
         if (contentholdingview) {
@@ -89,7 +89,7 @@
         view.backgroundColor = UIColor.blackColor;
         contentholdingview = [[ACRContentHoldingUIView alloc] init];
         [contentholdingview addSubview:view];
-        [self configUpdateForUIImageView:acoElem config:acoConfig image:nil imageView:view];
+        [self configUpdateForUIImageView:nil acoElem:acoElem config:acoConfig image:nil imageView:view];
     }
 
     view.translatesAutoresizingMaskIntoConstraints = NO;
@@ -120,15 +120,15 @@
     if (hideDefaultPlayIcon) {
         [contentholdingview setNeedsLayout];
         [view addSubview:playIconImageView];
-        [NSLayoutConstraint constraintWithItem:playIconImageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0].active = YES;
-        [NSLayoutConstraint constraintWithItem:playIconImageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0].active = YES;
+        [playIconImageView.centerXAnchor constraintEqualToAnchor:view.centerXAnchor].active = YES;
+        [playIconImageView.centerYAnchor constraintEqualToAnchor:view.centerYAnchor].active = YES;
     }
 
     contentholdingview.hidePlayIcon = hideDefaultPlayIcon;
 
     [viewGroup addArrangedSubview:contentholdingview];
 
-    if ([acoConfig getHostConfig] -> GetSupportsInteractivity()) {
+    if ([acoConfig getHostConfig]->GetSupportsInteractivity()) {
         ACRMediaTarget *mediaTarget = nil;
         ACOMediaEvent *mediaEvent = [[ACOMediaEvent alloc] initWithMedia:mediaElem];
         if (!mediaEvent.isValid) {
@@ -136,76 +136,56 @@
             return nil;
         }
         // create target for gesture recongnizer;
-        if (![acoConfig getHostConfig] -> GetMedia().allowInlinePlayback) {
+        if (![acoConfig getHostConfig]->GetMedia().allowInlinePlayback) {
             mediaTarget = [[ACRMediaTarget alloc] initWithMediaEvent:mediaEvent rootView:rootView config:acoConfig];
         } else {
             mediaTarget = [[ACRMediaTarget alloc] initWithMediaEvent:mediaEvent rootView:rootView config:acoConfig containingview:contentholdingview];
         }
         // config gesture recognizer and embed it to the poster.
-        UILongPressGestureRecognizer *recognizer = [ACRLongPressGestureRecognizerFactory getGestureRecognizer:viewGroup target:mediaTarget];
+        UITapGestureRecognizer *recognizer = [ACRTapGestureRecognizerFactory getGestureRecognizer:viewGroup target:mediaTarget];
         [view addGestureRecognizer:recognizer];
         view.userInteractionEnabled = YES;
 
-        contentholdingview.isAccessibilityElement = NO;
-        view.isAccessibilityElement = YES;
-        view.accessibilityTraits = UIAccessibilityTraitStartsMediaSession | UIAccessibilityTraitButton;
+        contentholdingview.isAccessibilityElement = YES;
+        view.isAccessibilityElement = NO;
+        contentholdingview.accessibilityTraits = UIAccessibilityTraitStartsMediaSession | UIAccessibilityTraitButton;
         NSString *stringForAccessibilityLabel = [NSString stringWithCString:mediaElem->GetAltText().c_str() encoding:NSUTF8StringEncoding];
         if (stringForAccessibilityLabel.length) {
-            view.accessibilityLabel = stringForAccessibilityLabel;
+            contentholdingview.accessibilityLabel = stringForAccessibilityLabel;
         }
     }
 
-    configVisibility(contentholdingview, elem);
+    if (mediaElem->GetHeight() == HeightType::Stretch) {
+        [viewGroup addArrangedSubview:[viewGroup addPaddingFor:contentholdingview]];
+    }
 
-    return view;
+    return contentholdingview;
 }
 
-- (void)configUpdateForUIImageView:(ACOBaseCardElement *)acoElem config:(ACOHostConfig *)acoConfig image:(UIImage *)image imageView:(UIImageView *)imageView
+- (void)configUpdateForUIImageView:(ACRView *)rootView acoElem:(ACOBaseCardElement *)acoElem config:(ACOHostConfig *)acoConfig image:(UIImage *)image imageView:(UIImageView *)imageView
 {
     ACRContentHoldingUIView *contentholdingview = (ACRContentHoldingUIView *)imageView.superview;
-    CGFloat heightToWidthRatio = 0.0f;
+    CGFloat heightToWidthRatio = 0.75f;
 
-    if (!image) {
-        heightToWidthRatio = .75;
-    } else {
+    if (image) {
         imageView.frame = CGRectMake(0, 0, image.size.width, image.size.height);
         if (image.size.width > 0) {
-            heightToWidthRatio = image.size.height / image.size.width;
+            heightToWidthRatio = [ACRImageProperties convertToAspectRatio:image.size].heightToWidth;
         }
     }
 
     contentholdingview.frame = imageView.frame;
 
-    [NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:contentholdingview attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0].active = YES;
-    [NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:contentholdingview attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0].active = YES;
+    [imageView.centerXAnchor constraintEqualToAnchor:contentholdingview.centerXAnchor].active = YES;
+    [imageView.centerYAnchor constraintEqualToAnchor:contentholdingview.centerYAnchor].active = YES;
 
-    [NSLayoutConstraint constraintWithItem:imageView
-                                 attribute:NSLayoutAttributeWidth
-                                 relatedBy:NSLayoutRelationEqual
-                                    toItem:contentholdingview
-                                 attribute:NSLayoutAttributeWidth
-                                multiplier:1.0
-                                  constant:0]
-        .active = YES;
+    [imageView.widthAnchor constraintLessThanOrEqualToAnchor:contentholdingview.widthAnchor].active = YES;
+    [imageView.heightAnchor constraintLessThanOrEqualToAnchor:contentholdingview.heightAnchor].active = YES;
 
-    [NSLayoutConstraint constraintWithItem:contentholdingview
-                                 attribute:NSLayoutAttributeHeight
-                                 relatedBy:NSLayoutRelationEqual
-                                    toItem:imageView
-                                 attribute:NSLayoutAttributeHeight
-                                multiplier:1.0
-                                  constant:0]
-        .active = YES;
+    [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:heightToWidthRatio].active = YES;
 
-    [NSLayoutConstraint constraintWithItem:imageView
-                                 attribute:NSLayoutAttributeHeight
-                                 relatedBy:NSLayoutRelationEqual
-                                    toItem:imageView
-                                 attribute:NSLayoutAttributeWidth
-                                multiplier:heightToWidthRatio
-                                  constant:0]
-        .active = YES;
     [contentholdingview setNeedsLayout];
+    [rootView removeObserver:rootView forKeyPath:@"image" onObject:imageView];
 }
 
 @end

@@ -6,6 +6,7 @@
 //
 #import "ACRFactSetRenderer.h"
 #import "ACOBaseCardElementPrivate.h"
+#import "ACOFillerSpaceManager.h"
 #import "ACOHostConfigPrivate.h"
 #import "ACRColumnSetView.h"
 #import "ACRContentHoldingUIView.h"
@@ -33,7 +34,7 @@
 + (ACRUILabel *)buildLabel:(NSString *)text
                  superview:(UIView<ACRIContentHoldingView> *)superview
                 hostConfig:(ACOHostConfig *)acoConfig
-                textConfig:(TextConfig const &)textConfig
+                textConfig:(FactSetTextConfig const &)textConfig
             containerStyle:(ACRContainerStyle)style
                  elementId:(NSString *)elementId
                   rootView:(ACRView *)rootView
@@ -65,11 +66,9 @@
             content = [[NSMutableAttributedString alloc] initWithData:htmlData options:options documentAttributes:nil error:nil];
             // Drop newline char
             [content deleteCharactersInRange:NSMakeRange([content length] - 1, 1)];
+            UpdateFontWithDynamicType(content);
         } else {
-            // if html rendering is skipped, remove p tags from both ends (<p>, </p>)
             content = [[NSMutableAttributedString alloc] initWithString:text attributes:descriptor];
-            [content deleteCharactersInRange:NSMakeRange(0, 3)];
-            [content deleteCharactersInRange:NSMakeRange([content length] - 4, 4)];
         }
         // Set paragraph style such as line break mode and alignment
         lab.textContainer.lineBreakMode = textConfig.wrap ? NSLineBreakByWordWrapping : NSLineBreakByTruncatingTail;
@@ -121,6 +120,11 @@
     valueStack.axis = UILayoutConstraintAxisVertical;
     FactSetConfig factSetConfig = config->GetFactSet();
     ACRColumnSetView *factSetWrapperView = [[ACRColumnSetView alloc] init];
+
+    configRtl(titleStack, rootView.context);
+    configRtl(valueStack, rootView.context);
+    factSetWrapperView.rtl = rootView.rtl;
+
     [factSetWrapperView addArrangedSubview:titleStack];
     [ACRSeparator renderSeparationWithFrame:CGRectMake(0, 0, factSetConfig.spacing, factSetConfig.spacing) superview:factSetWrapperView axis:UILayoutConstraintAxisHorizontal];
     [factSetWrapperView addArrangedSubview:valueStack];
@@ -128,6 +132,8 @@
 
     NSMutableDictionary *textMap = [rootView getTextMap];
     NSInteger nValidFacts = 0;
+
+    NSMutableArray *accessibilityElements = [[NSMutableArray alloc] init];
 
     for (auto fact : factSet->GetFacts()) {
         NSString *title = [NSString stringWithCString:fact->GetTitle().c_str() encoding:NSUTF8StringEncoding];
@@ -149,8 +155,6 @@
         [titleLab setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
         [titleLab setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
         [titleLab setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
-
-        titleLab.isAccessibilityElement = YES;
 
         if (factSetConfig.title.maxWidth) {
             NSLayoutConstraint *constraintForTitleLab = [NSLayoutConstraint constraintWithItem:titleLab attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:factSetConfig.title.maxWidth];
@@ -175,37 +179,36 @@
 
 
         [valueLab setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-        valueLab.isAccessibilityElement = YES;
 
         if (title.length || value.length) {
             [titleStack addArrangedSubview:titleLab];
             [valueStack addArrangedSubview:valueLab];
             [NSLayoutConstraint constraintWithItem:valueLab attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:titleLab attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0].active = YES;
+            [accessibilityElements addObject:titleLab];
+            [accessibilityElements addObject:valueLab];
             nValidFacts++;
         }
+        configRtl(titleLab, rootView.context);
+        configRtl(valueLab, rootView.context);
     }
+
+    if (elem->GetHeight() == HeightType::Stretch) {
+        if (titleStack.arrangedSubviews.count) {
+            [ACOFillerSpaceManager configureHugging:titleStack.arrangedSubviews.lastObject];
+        }
+
+        if (valueStack.arrangedSubviews.count) {
+            [ACOFillerSpaceManager configureHugging:valueStack.arrangedSubviews.lastObject];
+        }
+    }
+
+    factSetWrapperView.accessibilityElements = accessibilityElements;
 
     if (!nValidFacts) {
         return nil;
     }
 
     [viewGroup addArrangedSubview:factSetWrapperView];
-
-    if (factSet->GetHeight() == HeightType::Stretch) {
-        UIView *blankTrailingSpace0 = [[UIView alloc] init];
-        blankTrailingSpace0.translatesAutoresizingMaskIntoConstraints = NO;
-        [titleStack addArrangedSubview:blankTrailingSpace0];
-        [blankTrailingSpace0 setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
-        [blankTrailingSpace0 setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisVertical];
-        
-        UIView *blankTrailingSpace1 = [[UIView alloc] init];
-        blankTrailingSpace1.translatesAutoresizingMaskIntoConstraints = NO;
-        [valueStack addArrangedSubview:blankTrailingSpace1];
-        [blankTrailingSpace1 setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
-        [blankTrailingSpace1 setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisVertical];
-    }
-
-    configVisibility(factSetWrapperView, elem);
 
     return factSetWrapperView;
 }

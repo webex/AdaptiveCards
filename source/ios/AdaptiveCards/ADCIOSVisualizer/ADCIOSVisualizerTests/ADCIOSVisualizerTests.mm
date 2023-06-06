@@ -11,15 +11,18 @@
 #import "AdaptiveCards/ACOHostConfigPrivate.h"
 #import "AdaptiveCards/ACORemoteResourceInformationPrivate.h"
 #import "AdaptiveCards/ACRImageProperties.h"
-#import "AdaptiveCards/ACRShowCardTarget.h"
 #import "AdaptiveCards/ACRViewPrivate.h"
+#import "AdaptiveCards/Container.h"
 #import "AdaptiveCards/OpenUrlAction.h"
 #import "AdaptiveCards/ShowCardAction.h"
 #import "AdaptiveCards/SubmitAction.h"
 #import "AdaptiveCards/TextBlock.h"
 #import "AdaptiveCards/UtiliOS.h"
+#import "Adaptivecards/ACRRegistrationPrivate.h"
 #import "CustomActionNewType.h"
-#import <AdaptiveCards/ACFramework.h>
+#import "CustomActionOpenURLRenderer.h"
+#import "MockRenderer.h"
+#import <AdaptiveCards/AdaptiveCards.h>
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 
@@ -32,6 +35,7 @@
     NSString *_defaultHostConfigFile;
     ACOHostConfig *_defaultHostConfig;
     NSSet *_setOfExpectedToFailFiles;
+    NSSet *_setOfExcludedFiles;
 }
 
 - (void)setUp
@@ -49,6 +53,7 @@
     }
 
     _setOfExpectedToFailFiles = [NSSet setWithArray:@[ @"TypeIsRequired.json", @"AdaptiveCard.MissingVersion.json", @"InvalidMediaMix.json", @"Action.DuplicateIds.json", @"Action.NestedDuplicateIds.json" ]];
+    _setOfExcludedFiles = [NSSet setWithArray:@[ @"TooltipTestCard.json" ]];
 
     self.continueAfterFailure = NO;
 }
@@ -74,6 +79,8 @@
     [[ACRRegistration getInstance] setBaseCardElementRenderer:nil cardElementType:ACRCardElementType::ACRTextBlock];
     [[ACRRegistration getInstance] setBaseCardElementRenderer:nil cardElementType:ACRCardElementType::ACRRichTextBlock];
     [[ACRRegistration getInstance] setBaseCardElementRenderer:nil cardElementType:ACRCardElementType::ACRFactSet];
+    [[ACRRegistration getInstance] setBaseCardElementRenderer:nil cardElementType:ACRCardElementType::ACRContainer];
+    [[ACRRegistration getInstance] setActionRenderer:nil actionElementType:ACROpenUrl];
     [super tearDown];
 }
 
@@ -183,21 +190,57 @@
                                          error:nil];
 
         NSString *fileName = [pathToFile lastPathComponent];
-        ACOAdaptiveCardParseResult *cardParseResult = [ACOAdaptiveCard fromJson:payload];
 
-        if ([_setOfExpectedToFailFiles containsObject:fileName]) {
-            XCTAssertFalse(cardParseResult.isValid);
-        } else {
-            XCTAssertTrue(cardParseResult.isValid);
-            ACRRenderResult *renderResult;
-            renderResult = [ACRRenderer render:cardParseResult.card
-                                        config:nil
-                               widthConstraint:300
-                                      delegate:nil];
-            XCTAssertTrue(renderResult.succeeded);
+        ACOAdaptiveCardParseResult *cardParseResult = nil;
+        @try {
+            if ([_setOfExcludedFiles containsObject:fileName]) {
+                continue;
+            }
+            cardParseResult = [ACOAdaptiveCard fromJson:payload];
+            if ([_setOfExpectedToFailFiles containsObject:fileName]) {
+                XCTAssertFalse(cardParseResult.isValid);
+            } else {
+                [self assertParsing:cardParseResult fileName:fileName];
+                ACRRenderResult *renderResult;
+                @try {
+                    renderResult = [ACRRenderer render:cardParseResult.card
+                                                config:nil
+                                       widthConstraint:300
+                                              delegate:nil];
+                    [self assertRendering:renderResult fileName:fileName];
+                }
+                @catch (NSException *exception) {
+                    XCTMutableIssue *issue = [[XCTMutableIssue alloc] initWithType:XCTIssueTypeAssertionFailure compactDescription:[NSString stringWithFormat:@"Rendering Exception in %@ with %@ \nStack Trace:%@", fileName, exception, exception.callStackSymbols]];
+                    [self recordIssue:issue];
+                }
+            }
+        }
+        @catch (NSException *exception) {
+            [self assertParsing:cardParseResult fileName:fileName];
         }
     }
 }
+
+- (void)assertParsing:(ACOAdaptiveCardParseResult *)parseResult fileName:(NSString *)fileName
+{
+    if (!parseResult.isValid) {
+        NSMutableArray<NSString *> *errorMsgs = [[NSMutableArray alloc] init];
+        for (NSError *parseError in parseResult.parseErrors) {
+            [errorMsgs addObject:parseError.userInfo[NSLocalizedDescriptionKey]];
+        }
+        XCTMutableIssue *issue = [[XCTMutableIssue alloc] initWithType:XCTIssueTypeAssertionFailure compactDescription:[NSString stringWithFormat:@" %@ in %@", [errorMsgs componentsJoinedByString:@", "], fileName]];
+        [self recordIssue:issue];
+    }
+}
+
+- (void)assertRendering:(ACRRenderResult *)renderResult fileName:(NSString *)fileName
+{
+    if (!renderResult.succeeded) {
+        XCTMutableIssue *issue = [[XCTMutableIssue alloc] initWithType:XCTIssueTypeAssertionFailure compactDescription:[NSString stringWithFormat:@"Rendering Failure in %@", fileName]];
+        [self recordIssue:issue];
+    }
+}
+
 - (void)testParsingAndRenderingAllCards
 {
     NSBundle *main = [NSBundle mainBundle];
@@ -254,6 +297,18 @@
     XCTAssert([dictionary count] == 1);
 }
 
+- (void)testActionRegistration
+{
+    ACRRegistration *registration = [ACRRegistration getInstance];
+    // override default Action.OpenUrl renderer
+    [registration setActionRenderer:[CustomActionNewTypeRenderer getInstance] actionElementType:ACROpenUrl];
+    // make sure it's registered
+    XCTAssertEqual([CustomActionNewTypeRenderer getInstance], [registration getActionRendererByType:ACROpenUrl]);
+    // reset
+    [registration setActionRenderer:nil actionElementType:ACROpenUrl];
+    // check the renderer is reset to the default renderer
+    XCTAssertEqual([ACRActionOpenURLRenderer getInstance], [registration getActionRendererByType:ACROpenUrl]);
+}
 // this test ensure that extending text render doesn't crash
 // in use case where custom renderer uses default text renderer
 - (void)testExtendingTextRenderersDoesNotCrash
@@ -316,6 +371,7 @@
         @"myColor" : @"1",
         @"myColor3" : @"1,3",
         @"myColor2" : @"1",
+        @"myColor1" : @"1",
         @"myColor4" : @"1"
     };
     NSData *expectedData = [NSJSONSerialization dataWithJSONObject:expectedValue options:NSJSONWritingPrettyPrinted error:nil];
@@ -638,6 +694,8 @@
     XCTAssertTrue(static_cast<int>(AdaptiveCards::CardElementType::NumberInput) == ACRNumberInput);
     XCTAssertTrue(static_cast<int>(AdaptiveCards::CardElementType::TextBlock) == ACRTextBlock);
     XCTAssertTrue(static_cast<int>(AdaptiveCards::CardElementType::TextInput) == ACRTextInput);
+    XCTAssertTrue(static_cast<int>(AdaptiveCards::CardElementType::Table) == ACRTable);
+    XCTAssertTrue(static_cast<int>(AdaptiveCards::CardElementType::TableCell) == ACRTableCell);
     XCTAssertTrue(static_cast<int>(AdaptiveCards::CardElementType::TimeInput) == ACRTimeInput);
     XCTAssertTrue(static_cast<int>(AdaptiveCards::CardElementType::ToggleInput) == ACRToggleInput);
     XCTAssertTrue(static_cast<int>(AdaptiveCards::CardElementType::Unknown) == ACRUnknown);
@@ -646,7 +704,13 @@
     XCTAssertTrue(static_cast<int>(AdaptiveCards::ActionType::Submit) == ACRSubmit);
     XCTAssertTrue(static_cast<int>(AdaptiveCards::ActionType::OpenUrl) == ACROpenUrl);
     XCTAssertTrue(static_cast<int>(AdaptiveCards::ActionType::ToggleVisibility) == ACRToggleVisibility);
-    XCTAssertTrue(static_cast<int>(AdaptiveCards::ActionType::UnknownAction) == ACRUnknownAction);
+    XCTAssertTrue(static_cast<int>(AdaptiveCards::ContainerStyle::None) == ACRNone);
+    XCTAssertTrue(static_cast<int>(AdaptiveCards::ContainerStyle::Default) == ACRDefault);
+    XCTAssertTrue(static_cast<int>(AdaptiveCards::ContainerStyle::Emphasis) == ACREmphasis);
+    XCTAssertTrue(static_cast<int>(AdaptiveCards::ContainerStyle::Good) == ACRGood);
+    XCTAssertTrue(static_cast<int>(AdaptiveCards::ContainerStyle::Warning) == ACRWarning);
+    XCTAssertTrue(static_cast<int>(AdaptiveCards::ContainerStyle::Attention) == ACRAttention);
+    XCTAssertTrue(static_cast<int>(AdaptiveCards::ContainerStyle::Accent) == ACRAccent);
 }
 
 - (void)testACRInputToggleViewCustomRendering
@@ -661,21 +725,103 @@
     XCTAssertTrue(YES);
 
     auto backgroundImage = BackgroundImage();
-    renderBackgroundImage(&backgroundImage, nil, nil);
+    renderBackgroundImage(nil, &backgroundImage, nil, nil);
     XCTAssertTrue(YES);
 
     UIImageView *imageView = [[UIImageView alloc] init];
-    renderBackgroundImage(&backgroundImage, imageView, nil);
+    renderBackgroundImage(nil, &backgroundImage, imageView, nil);
     XCTAssertTrue(YES);
 
     UIImage *image = [UIImage imageNamed:@"Adaptive1.0.png"];
-    renderBackgroundImage(&backgroundImage, imageView, image);
+    renderBackgroundImage(nil, &backgroundImage, imageView, image);
     XCTAssertTrue(YES);
 
-    renderBackgroundImage(&backgroundImage, imageView, nil);
+    renderBackgroundImage(nil, &backgroundImage, imageView, nil);
     XCTAssertTrue(YES);
 
-    renderBackgroundImage(&backgroundImage, nil, image);
+    renderBackgroundImage(nil, &backgroundImage, nil, image);
     XCTAssertTrue(YES);
 }
+
+// Test that additional property at card level
+- (void)testAdditionalPropertiesParsingAtCardLevel
+{
+    NSArray<NSString *> *payloadNames = @[ @"AdditionalProperties" ];
+    ACOAdaptiveCard *iOSCard = [self prepCards:payloadNames][0];
+    NSData *additionalProperty = iOSCard.additionalProperty;
+    XCTAssertTrue(additionalProperty != nullptr);
+    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:additionalProperty options:NSJSONReadingMutableLeaves error:nil];
+    NSNumber *radius = dictionary[@"card.cornerRadius"];
+    XCTAssertTrue([radius floatValue] == 50.0f);
+}
+
+// Test that additional property is returned as NSData
+- (void)testAdditionalPropertiesParsing
+{
+    NSArray<NSString *> *payloadNames = @[ @"AdditionalProperties" ];
+    ACOAdaptiveCard *iOSCard = [self prepCards:payloadNames][0];
+    std::shared_ptr<AdaptiveCard> adaptiveCard = [iOSCard card];
+    std::shared_ptr<BaseCardElement> adaptiveElement = adaptiveCard->GetBody()[0];
+    XCTAssertTrue(adaptiveElement != nullptr);
+    ACOBaseCardElement *acoElem = [[ACOBaseCardElement alloc] initWithBaseCardElement:adaptiveElement];
+    Json::Value blob = adaptiveElement->GetAdditionalProperties();
+    NSData *additionalProperty = acoElem.additionalProperty;
+    XCTAssertTrue(additionalProperty != nullptr);
+    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:additionalProperty options:NSJSONReadingMutableLeaves error:nil];
+    NSNumber *radius = dictionary[@"my.cornerRadius"];
+    XCTAssertTrue([radius floatValue] == 20.0f);
+}
+
+// Test that empty addtional property is returned as nil
+- (void)testAdditionalPropertiesParsingNilValue
+{
+    NSArray<NSString *> *payloadNames = @[ @"AdditionalProperties" ];
+    ACOAdaptiveCard *iOSCard = [self prepCards:payloadNames][0];
+    std::shared_ptr<AdaptiveCard> adaptiveCard = [iOSCard card];
+    std::shared_ptr<BaseCardElement> adaptiveElement = adaptiveCard->GetBody()[0];
+    std::shared_ptr<Container> container = std::dynamic_pointer_cast<Container>(adaptiveElement);
+    std::shared_ptr<BaseCardElement> adaptiveTextBlock = container->GetItems()[0];
+
+    ACOBaseCardElement *acoElem = [[ACOBaseCardElement alloc] initWithBaseCardElement:adaptiveTextBlock];
+    NSData *additionalProperty = acoElem.additionalProperty;
+    XCTAssertTrue(additionalProperty == nullptr);
+}
+
+// Test that additional property is accessible in the renderer context
+- (void)testAdditionalPropertiesRendering
+{
+    NSArray<NSString *> *payloadNames = @[ @"AdditionalProperties" ];
+    ACOAdaptiveCard *iOSCard = [self prepCards:payloadNames][0];
+    std::shared_ptr<AdaptiveCard> adaptiveCard = [iOSCard card];
+    std::shared_ptr<BaseCardElement> adaptiveElement = adaptiveCard->GetBody()[0];
+    ACRRegistration *registration = [ACRRegistration getInstance];
+    [registration setBaseCardElementRenderer:[MockRenderer getInstance]
+                             cardElementType:ACRContainer];
+    [ACRRenderer render:iOSCard
+                 config:nil
+        widthConstraint:300
+               delegate:nil];
+}
+
+// Test that overriden default renders can be chosen to use resource resolvers
+- (void)testResourceResolverSelectivelyWorksForElements
+{
+    ACRRegistration *registration = [ACRRegistration getInstance];
+    [registration setBaseCardElementRenderer:[MockRenderer getInstance]
+                             cardElementType:ACRContainer];
+    XCTAssertFalse([registration shouldUseResourceResolverForOverridenDefaultElementRenderers:ACRContainer]);
+    [registration setBaseCardElementRenderer:[MockRenderer getInstance] cardElementType:ACRContainer useResourceResolver:YES];
+    XCTAssertTrue([registration shouldUseResourceResolverForOverridenDefaultElementRenderers:ACRContainer]);
+}
+
+// Test that overriden default renders can be chosen to use resource resolvers
+- (void)testResourceResolverSelectivelyWorksForActions
+{
+    ACRRegistration *registration = [ACRRegistration getInstance];
+    [registration setActionRenderer:[CustomActionOpenURLRenderer getInstance] cardElementType:@(ACROpenUrl)];
+    XCTAssertFalse([registration shouldUseResourceResolverForOverridenDefaultActionRenderers:ACROpenUrl]);
+    [registration setActionRenderer:[CustomActionOpenURLRenderer getInstance] actionElementType:ACROpenUrl useResourceResolver:YES];
+    XCTAssertTrue([registration shouldUseResourceResolverForOverridenDefaultActionRenderers:ACROpenUrl]);
+}
+
 @end

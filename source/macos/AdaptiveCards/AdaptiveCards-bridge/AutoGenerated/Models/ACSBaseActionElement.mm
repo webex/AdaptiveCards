@@ -6,8 +6,10 @@
 
 #import "ACSActionTypeConvertor.h"
 #import "ACSRemoteResourceInformationConvertor.h"
+#import "ACSModeConvertor.h"
 
 //cpp includes
+#import "BaseElement.h"
 #import "Enums.h"
 #import "RemoteResourceInformation.h"
 
@@ -77,6 +79,22 @@
     
 }
 
+- (NSString * _Nullable)getTooltip
+{
+ 
+    auto getTooltipCpp = mCppObj->GetTooltip();
+    return [NSString stringWithUTF8String:getTooltipCpp.c_str()];
+
+}
+
+- (void)setTooltip:(NSString * _Nonnull)value
+{
+    auto valueCpp = std::string([value UTF8String]);
+ 
+    mCppObj->SetTooltip(valueCpp);
+    
+}
+
 - (ACSActionType)getElementType
 {
  
@@ -85,9 +103,41 @@
 
 }
 
+- (ACSMode)getMode
+{
+ 
+    auto getModeCpp = mCppObj->GetMode();
+    return [ACSModeConvertor convertCpp:getModeCpp];
+
+}
+
+- (void)setMode:(enum ACSMode)mode
+{
+    auto modeCpp = [ACSModeConvertor convertObj:mode];
+ 
+    mCppObj->SetMode(modeCpp);
+    
+}
+
+- (bool)getIsEnabled
+{
+ 
+    auto getIsEnabledCpp = mCppObj->GetIsEnabled();
+    return getIsEnabledCpp;
+
+}
+
+- (void)setIsEnabled:(bool)isEnabled
+{
+    auto isEnabledCpp = isEnabled;
+ 
+    mCppObj->SetIsEnabled(isEnabledCpp);
+    
+}
+
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceUris
 {
-    std::vector<AdaptiveCards::RemoteResourceInformation> resourceUrisVector;
+	std::vector<AdaptiveCards::RemoteResourceInformation> resourceUrisVector;
     for (id resourceUrisObj in resourceUris)
     {
         resourceUrisVector.push_back([ACSRemoteResourceInformationConvertor convertObj:resourceUrisObj]);

@@ -5,9 +5,9 @@
 //  Copyright © 2018 Microsoft. All rights reserved.
 //
 
-#import "ACRIContentHoldingView.h"
-#import "ACRLongPressGestureRecognizerEventHandler.h"
 #import "ACOInputResults.h"
+#import "ACRBaseTarget.h"
+#import "ACRIContentHoldingView.h"
 #import "ACRView.h"
 #import <UIKit/UIKit.h>
 
@@ -23,7 +23,7 @@ extern NSString *const ACRAggregateTargetFirstResponder;
 
 // AggregateTraget is used to relay the signal back to host
 // It's associated with Action.Submit
-@interface ACRAggregateTarget : NSObject <ACRSelectActionDelegate>
+@interface ACRAggregateTarget : ACRBaseTarget
 @property ACOBaseActionElement *actionElement;
 @property (weak) ACRView *view;
 @property (weak) ACRColumnView *currentShowcard;

@@ -37,26 +37,13 @@
     std::shared_ptr<BaseInputElement> dateInput = std::dynamic_pointer_cast<BaseInputElement>(elem);
     ACRDateTextField *dateField = [[ACRDateTextField alloc] initWithTimeDateInput:dateInput dateStyle:NSDateFormatterShortStyle];
 
-    ACRInputLabelView *inputLabelView = [[ACRInputLabelView alloc] initInputLabelView:rootView acoConfig:acoConfig adptiveInputElement:dateInput inputView:dateField accessibilityItem:dateField.inputView viewGroup:viewGroup dataSource:nil];
+    ACRInputLabelView *inputLabelView = [[ACRInputLabelView alloc] initInputLabelView:rootView acoConfig:acoConfig adaptiveInputElement:dateInput inputView:dateField accessibilityItem:dateField.inputView viewGroup:viewGroup dataSource:nil];
     dateField.accessibilityTraits = UIAccessibilityTraitButton | UIAccessibilityTraitStaticText;
-    
-    if (elem->GetHeight() == HeightType::Stretch) {
-        ACRColumnView *inputContainer = [[ACRColumnView alloc] init];
-        [inputContainer addArrangedSubview:inputLabelView];
+    dateField.accessibilityHint = NSLocalizedString(@"opens the date picker", nil);
 
-        // Add a blank view so the input field doesnt grow as large as it can and so it keeps the same behavior as Android and UWP
-        UIView *blankTrailingSpace = [[UIView alloc] init];
-        [inputContainer addArrangedSubview:blankTrailingSpace];
-        [inputContainer adjustHuggingForLastElement];
-
-        [viewGroup addArrangedSubview:inputContainer];
-    } else {
-        [viewGroup addArrangedSubview:inputLabelView];
-    }
+    [viewGroup addArrangedSubview:inputLabelView];
 
     [inputs addObject:inputLabelView];
-
-    configVisibility(inputLabelView, elem);
 
     return inputLabelView;
 }

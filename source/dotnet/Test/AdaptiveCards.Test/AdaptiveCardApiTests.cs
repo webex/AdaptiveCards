@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace AdaptiveCards.Test
 {
@@ -78,6 +79,40 @@ namespace AdaptiveCards.Test
             var result = AdaptiveCard.FromJson(json);
             Assert.IsNotNull(result.Card);
             Assert.AreEqual(1, result.Card.Body.Count);
+        }
+
+        [TestMethod]
+        public void TestParsingCardWithRefreshOption()
+        {
+            string json =
+@"{
+  ""type"": ""AdaptiveCard"",
+  ""version"": ""1.4"",
+  ""body"": [
+    {
+      ""type"": ""TextBlock"",
+      ""size"": ""medium"",
+      ""weight"": ""bolder"",
+      ""text"": ""AdaptiveRefreshSerializeBug"",
+      ""wrap"": true,
+      ""style"": ""heading""
+    }
+  ],
+  ""refresh"": {
+    ""action"": {
+      ""type"": ""Action.Execute"",
+      ""verb"": ""refresh"",
+      ""title"": ""Refresh""
+    },
+    ""userIds"": [
+      ""testUser""
+    ]
+  }
+}";
+
+            AdaptiveCardParseResult adaptiveCardParseResult = AdaptiveCard.FromJson(json);
+            Assert.IsNotNull(adaptiveCardParseResult.Card);
+            Assert.AreEqual(json, adaptiveCardParseResult.Card.ToJson());
         }
 
         [TestMethod]
@@ -1264,6 +1299,19 @@ namespace AdaptiveCards.Test
             });
 
             StringAssert.Contains(ex.Message, "The value \"AdaptiveCards.AdaptiveUnknownElement\" is not of type \"AdaptiveCards.AdaptiveImage\" and cannot be used in this generic collection.");
+        }
+
+        [TestMethod]
+        public void TestParsingTextBlockWithStyle()
+        {
+            var testCard = Utilities.BuildASimpleTestCard();
+            var invalidCardJSON = Utilities.SerializeAfterManuallyWritingTestValueToAdaptiveElementWithTheGivenId(testCard, "textBlock", new SerializableDictionary<string, object>{ ["style"] = "randomText" });
+            var parseResult = AdaptiveCard.FromJson(invalidCardJSON);
+            Assert.IsTrue(parseResult.Warnings.Count > 0);
+            var invalidCard = parseResult.Card;
+            var textBlock = Utilities.GetAdaptiveElementWithId(invalidCard, "textBlock") as AdaptiveTextBlock;
+            Assert.IsNotNull(textBlock);
+            Assert.AreEqual(textBlock.Style, AdaptiveTextBlockStyle.Paragraph); 
         }
 
         [TestMethod]

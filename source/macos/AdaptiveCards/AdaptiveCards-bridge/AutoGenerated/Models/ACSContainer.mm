@@ -3,14 +3,14 @@
 // Generated with objc_viewmodel.j2
 
 #import "SwiftInterfaceHeader.h"
-
+	
 #import "ACSParseContext.h"
 #import "ACSRemoteResourceInformationConvertor.h"
 // #import "ACSValue.h"
 
 //cpp includes
 #import "json.h"
-#import "ParseContext.h"
+#import "BaseCardElement.h"
 #import "RemoteResourceInformation.h"
 
 
@@ -24,7 +24,7 @@
 
 - (instancetype _Nonnull)initWithContainer:(const std::shared_ptr<Container>)cppObj
 {
-    if (self = [super initWithCollectionTypeElement: cppObj])
+    if (self = [super initWithStyledCollectionElement: cppObj])
     {
         mCppObj = cppObj;
     }
@@ -46,6 +46,21 @@
 
 }
 
+- (bool)getRtl
+{
+ 
+    auto getRtlCpp = mCppObj->GetRtl();
+    return getRtlCpp.value_or(false);
+
+}
+
+- (void)setRtl:(bool)value
+{
+    auto valueCpp = value;
+ 
+    mCppObj->SetRtl(valueCpp);
+    
+}
 
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceInfo
 {

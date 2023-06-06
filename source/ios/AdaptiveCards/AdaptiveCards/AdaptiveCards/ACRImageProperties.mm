@@ -27,6 +27,7 @@
         if (!acoElem or !acoConfig) {
             self.contentSize = CGSizeZero;
             self.acrImageSize = ACRImageSizeAuto;
+            self.height = ACRHeightAuto;
             self.acrHorizontalAlignment = ACRLeft;
         } else {
             std::shared_ptr<BaseCardElement> elem = [acoElem element];
@@ -44,10 +45,13 @@
 
             self.acrImageSize = acrImageSize;
             self.contentSize = [acoConfig getImageSizeAsCGSize:acrImageSize width:self.pixelWidth height:self.pixelHeight];
+
             if (image) {
                 [self updateContentSize:image.size];
             }
-            self.acrHorizontalAlignment = getACRHorizontalAlignment(imgElem->GetHorizontalAlignment());
+
+            self.acrHorizontalAlignment = getACRHorizontalAlignment(imgElem->GetHorizontalAlignment().value_or(HorizontalAlignment::Left));
+            self.height = GetACRHeight(imgElem->GetHeight());
         }
     }
     return self;
@@ -55,10 +59,10 @@
 
 - (void)updateContentSize:(CGSize)size
 {
-    CGSize ratios = getAspectRatio(size);
+    ACRAspectRatio ratios = [ACRImageProperties convertToAspectRatio:size];
 
-    CGFloat heightToWidthRatio = ratios.height;
-    CGFloat widthToHeightRatio = ratios.width;
+    CGFloat heightToWidthRatio = ratios.heightToWidth;
+    CGFloat widthToHeightRatio = ratios.widthToHeight;
     CGSize newSize = self.contentSize;
 
     CGFloat (^newHeight)(CGFloat) = ^(CGFloat width) {
@@ -92,6 +96,22 @@
         newSize.height = newHeight(self.contentSize.width);
         self.contentSize = newSize;
     }
+}
+
++ (ACRAspectRatio)convertToAspectRatio:(CGSize)cgsize
+{
+    if (cgsize.width == 0) {
+        return {.widthToHeight = 1.0f, .heightToWidth = 1.0f};
+    }
+    // keeping all precisions are not necessary, and 744W X 84H and its multiples cause a crash.
+    // rounding off to 100th points.
+    // To make the constraints work, the rounded value has to become 1 when the two ratios are multiplied
+    const CGFloat precision = 100;
+    // MAX is necessary to prevent heightByWidth becoming zero.
+    ACRAspectRatio aspectRatio;
+    aspectRatio.heightToWidth = MAX(round(precision * (cgsize.height / cgsize.width)) / precision, 1 / precision);
+    aspectRatio.widthToHeight = 1 / aspectRatio.heightToWidth;
+    return aspectRatio;
 }
 
 @end

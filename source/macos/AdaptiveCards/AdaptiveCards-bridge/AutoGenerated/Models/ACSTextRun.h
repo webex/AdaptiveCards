@@ -22,7 +22,7 @@ using namespace AdaptiveCards;
 
 
 #import "ACSInline.h"
-  
+
 
 @class ACSBaseActionElement;
 @class ACSDateTimePreparser;

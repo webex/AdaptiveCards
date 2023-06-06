@@ -431,6 +431,12 @@ namespace AdaptiveCardsSharedModelUnitTest
             Assert::AreEqual<bool>(true, parser.HasHtmlTags());
         }
 
+        TEST_METHOD(LinkBasicValidationTest_ValidLinkTestWithEscapedDelimiters)
+        {
+            MarkDownParser parser("[[cool link!]](https://contoso.com/New%20Document%20(1\\).docx)");
+            Assert::AreEqual<std::string>("<p><a href=\"https://contoso.com/New%20Document%20(1).docx\">[cool link!]</a></p>", parser.TransformToHtml());
+        }
+
         TEST_METHOD(LinkBasicValidationTest_LinkTextWithNumberAndPunchuations)
         {
             MarkDownParser parser("[1234.5](www.naver.com)");
@@ -480,6 +486,48 @@ namespace AdaptiveCardsSharedModelUnitTest
         {
             MarkDownParser parser("*Hello* *[*hello*](*www.naver.com*)** Hello, [second](www.microsoft.com)");
             Assert::AreEqual<std::string>("<p><em>Hello</em> <em><a href=\"*www.naver.com*\"><em>hello</em></a></em>* Hello, <a href=\"www.microsoft.com\">second</a></p>", parser.TransformToHtml());
+        }
+
+        TEST_METHOD(LinkNestedParenthesisTest_1)
+        {
+            MarkDownParser parser("[empty destination]()");
+            Assert::AreEqual<std::string>("<p><a href=\"\">empty destination</a></p>", parser.TransformToHtml());
+        }
+
+        TEST_METHOD(LinkNestedParenthesisTest_2)
+        {
+            MarkDownParser parser("[Stay tuned to Know [aaa] m (aa)ore](https://aaa.bbb.com/(a)sites(Test).doc?somegar)bageValue*afterstar()");
+            Assert::AreEqual<std::string>("<p><a href=\"https://aaa.bbb.com/(a)sites(Test).doc?somegar\">Stay tuned to Know [aaa] m (aa)ore</a>bageValue*afterstar()</p>", parser.TransformToHtml());
+        }
+
+        TEST_METHOD(LinkNestedParenthesisTest_3)
+        {
+            MarkDownParser parser("[Stay tuned to Know more](https://aaa.bbb.com/(a)sites(Test).doc?somegarbageValue)*afterstar()");
+            Assert::AreEqual<std::string>("<p><a href=\"https://aaa.bbb.com/(a)sites(Test).doc?somegarbageValue\">Stay tuned to Know more</a>*afterstar()</p>", parser.TransformToHtml());
+        }
+
+        TEST_METHOD(LinkNestedParenthesisTest_4)
+        {
+            MarkDownParser parser("[Stay tuned to Know more](https://aaa.bbb.com/(a)sit(es(Test).doc?somegarbageValue)*afafafafafafa)*");
+            Assert::AreEqual<std::string>("<p><a href=\"https://aaa.bbb.com/(a)sit(es(Test).doc?somegarbageValue)*afafafafafafa\">Stay tuned to Know more</a>*</p>", parser.TransformToHtml());
+        }
+
+        TEST_METHOD(LinkNestedParenthesisTest_5)
+        {
+            MarkDownParser parser("[Stay tuned to Know more](https://aaa.bbb.com/(a)sit(es(Test).doc?somegarbageValue)*afafafafafafa)");
+            Assert::AreEqual<std::string>("<p><a href=\"https://aaa.bbb.com/(a)sit(es(Test).doc?somegarbageValue)*afafafafafafa\">Stay tuned to Know more</a></p>", parser.TransformToHtml());
+        }
+
+        TEST_METHOD(LinkNestedParenthesisTest_6)
+        {
+            MarkDownParser parser("[Stay tuned to Know)]()afafafa()");
+            Assert::AreEqual<std::string>("<p><a href=\"\">Stay tuned to Know)</a>afafafa()</p>", parser.TransformToHtml());
+        }
+
+        TEST_METHOD(LinkNestedParenthesisTest_7)
+        {
+            MarkDownParser parser("[](()");
+            Assert::AreEqual<std::string>("<p>[](()</p>", parser.TransformToHtml());
         }
 
         TEST_METHOD(ListTest_SimpleValidListTest)
@@ -754,5 +802,12 @@ namespace AdaptiveCardsSharedModelUnitTest
             (void) parser3.TransformToHtml();
             Assert::AreEqual<bool>(true, parser3.IsEscaped());
         }
+
+        TEST_METHOD(Rule9Test_MultipleOf3Test)
+        {
+            Assert::AreEqual<std::string>("<p>Hello***World***</p>", MarkDownParser("Hello***World***").TransformToHtml());
+        }
+
+
     };
 }

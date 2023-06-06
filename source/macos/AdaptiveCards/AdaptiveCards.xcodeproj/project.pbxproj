@@ -153,14 +153,12 @@
 		083EA96325C19E1000DE2BF7 /* ACSHighlightColorConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA82525C19E0F00DE2BF7 /* ACSHighlightColorConfigConvertor.h */; };
 		083EA96425C19E1000DE2BF7 /* ACSLabelConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA82625C19E0F00DE2BF7 /* ACSLabelConfigConvertor.mm */; };
 		083EA96525C19E1000DE2BF7 /* ACSRemoteResourceInformationConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA82725C19E0F00DE2BF7 /* ACSRemoteResourceInformationConvertor.h */; };
-		083EA96625C19E1000DE2BF7 /* ACSTextConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA82825C19E0F00DE2BF7 /* ACSTextConfigConvertor.mm */; };
 		083EA96925C19E1000DE2BF7 /* ACSInputLabelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083EA82B25C19E0F00DE2BF7 /* ACSInputLabelConfig.swift */; };
 		083EA96A25C19E1000DE2BF7 /* ACSAdaptiveCardConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA82C25C19E0F00DE2BF7 /* ACSAdaptiveCardConfigConvertor.mm */; };
 		083EA96B25C19E1000DE2BF7 /* ACSFontTypesDefinitionConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA82D25C19E0F00DE2BF7 /* ACSFontTypesDefinitionConvertor.mm */; };
 		083EA96C25C19E1000DE2BF7 /* ACSSpacingConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA82E25C19E0F00DE2BF7 /* ACSSpacingConfigConvertor.mm */; };
 		083EA96D25C19E1000DE2BF7 /* ACSHighlightColorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083EA82F25C19E0F00DE2BF7 /* ACSHighlightColorConfig.swift */; };
 		083EA96E25C19E1000DE2BF7 /* ACSActionsConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA83025C19E0F00DE2BF7 /* ACSActionsConfigConvertor.h */; };
-		083EA96F25C19E1000DE2BF7 /* ACSTextConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA83125C19E0F00DE2BF7 /* ACSTextConfigConvertor.h */; };
 		083EA97125C19E1000DE2BF7 /* ACSAdaptiveCardConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA83325C19E0F00DE2BF7 /* ACSAdaptiveCardConfigConvertor.h */; };
 		083EA97325C19E1000DE2BF7 /* ACSContainerStyleDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083EA83525C19E0F00DE2BF7 /* ACSContainerStyleDefinition.swift */; };
 		083EA97425C19E1000DE2BF7 /* ACSContainerStylesDefinitionConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA83625C19E0F00DE2BF7 /* ACSContainerStylesDefinitionConvertor.mm */; };
@@ -179,7 +177,6 @@
 		083EA98125C19E1000DE2BF7 /* ACSColorsConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA84325C19E0F00DE2BF7 /* ACSColorsConfigConvertor.h */; };
 		083EA98225C19E1000DE2BF7 /* ACSFactSetConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA84425C19E0F00DE2BF7 /* ACSFactSetConfigConvertor.mm */; };
 		083EA98325C19E1000DE2BF7 /* ACSInputLabelConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA84525C19E0F00DE2BF7 /* ACSInputLabelConfigConvertor.h */; };
-		083EA98425C19E1000DE2BF7 /* ACSTextConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083EA84625C19E0F00DE2BF7 /* ACSTextConfig.swift */; };
 		083EA98525C19E1000DE2BF7 /* ACSLabelConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA84725C19E0F00DE2BF7 /* ACSLabelConfigConvertor.h */; };
 		083EA98825C19E1000DE2BF7 /* ACSLabelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083EA84A25C19E0F00DE2BF7 /* ACSLabelConfig.swift */; };
 		083EA98B25C19E1000DE2BF7 /* ACSContainerStyleDefinitionConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA84D25C19E0F00DE2BF7 /* ACSContainerStyleDefinitionConvertor.h */; };
@@ -265,7 +262,6 @@
 		083EA9F325C19E1000DE2BF7 /* ACSInline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8B625C19E1000DE2BF7 /* ACSInline.mm */; };
 		083EA9F525C19E1000DE2BF7 /* ACSBaseCardElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA8B825C19E1000DE2BF7 /* ACSBaseCardElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		083EA9F625C19E1000DE2BF7 /* ACSParseContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8B925C19E1000DE2BF7 /* ACSParseContext.mm */; };
-		083EA9F725C19E1000DE2BF7 /* ACSCollectionTypeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA8BA25C19E1000DE2BF7 /* ACSCollectionTypeElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		083EA9F825C19E1000DE2BF7 /* ACSToggleVisibilityTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8BB25C19E1000DE2BF7 /* ACSToggleVisibilityTarget.mm */; };
 		083EA9F925C19E1000DE2BF7 /* ACSChoiceInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8BC25C19E1000DE2BF7 /* ACSChoiceInput.mm */; };
 		083EA9FA25C19E1000DE2BF7 /* ACSActionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA8BD25C19E1000DE2BF7 /* ACSActionSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -304,7 +300,6 @@
 		083EAA1E25C19E1000DE2BF7 /* ACSInternalId.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8E125C19E1000DE2BF7 /* ACSInternalId.mm */; };
 		083EAA2025C19E1000DE2BF7 /* ACSUnknownElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8E325C19E1000DE2BF7 /* ACSUnknownElement.mm */; };
 		083EAA2125C19E1000DE2BF7 /* ACSImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8E425C19E1000DE2BF7 /* ACSImage.mm */; };
-		083EAA2225C19E1000DE2BF7 /* ACSCollectionTypeElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 083EA8E525C19E1000DE2BF7 /* ACSCollectionTypeElement.mm */; };
 		083EAA2325C19E1000DE2BF7 /* ACSToggleVisibilityTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 083EA8E625C19E1000DE2BF7 /* ACSToggleVisibilityTarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0846FDA6269D774800090F1A /* FakeActionsConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0846FDA5269D774800090F1A /* FakeActionsConfig.swift */; };
 		086D82DB26AA9E0800CD2D0D /* ActionToggleVisibilityRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 086D82DA26AA9E0800CD2D0D /* ActionToggleVisibilityRendererTests.swift */; };
@@ -357,8 +352,6 @@
 		08E403D225B46A7600C2092A /* ChoiceInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 08299ECB25AF26C600799C66 /* ChoiceInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		08E403D325B46A7600C2092A /* ChoiceSetInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08299EBB25AF26C500799C66 /* ChoiceSetInput.cpp */; };
 		08E403D425B46A7600C2092A /* ChoiceSetInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 08299EC125AF26C500799C66 /* ChoiceSetInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		08E403D525B46A7600C2092A /* CollectionTypeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08299EEA25AF26C700799C66 /* CollectionTypeElement.cpp */; };
-		08E403D625B46A7600C2092A /* CollectionTypeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08299EE125AF26C600799C66 /* CollectionTypeElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		08E403D725B46A7600C2092A /* Column.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08299F1B25AF26C800799C66 /* Column.cpp */; };
 		08E403D825B46A7600C2092A /* Column.h in Headers */ = {isa = PBXBuildFile; fileRef = 08299EC725AF26C600799C66 /* Column.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		08E403D925B46A7600C2092A /* ColumnSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08299EB525AF26C500799C66 /* ColumnSet.cpp */; };
@@ -473,6 +466,17 @@
 		2806E8F62608886F00CF7A40 /* ActionSubmitRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E8F52608886F00CF7A40 /* ActionSubmitRendererTests.swift */; };
 		2806E94826122F0D00CF7A40 /* SelectActionHandlingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E94726122F0D00CF7A40 /* SelectActionHandlingProtocol.swift */; };
 		2806E986261AEE4A00CF7A40 /* UnknownElementRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */; };
+		281415E329EEF5890042F0FC /* ACSMarkDownBlockType.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415E029EEF5890042F0FC /* ACSMarkDownBlockType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		281415E429EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415E129EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h */; };
+		281415E529EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415E229EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm */; };
+		281415EE29EEF6200042F0FC /* ACSTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415E629EEF61F0042F0FC /* ACSTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		281415EF29EEF6200042F0FC /* ACSTableCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415E729EEF61F0042F0FC /* ACSTableCell.mm */; };
+		281415F029EEF6200042F0FC /* ACSTable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415E829EEF61F0042F0FC /* ACSTable.mm */; };
+		281415F129EEF6200042F0FC /* ACSTableRow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415E929EEF61F0042F0FC /* ACSTableRow.mm */; };
+		281415F229EEF6200042F0FC /* ACSTableColumnDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415EA29EEF61F0042F0FC /* ACSTableColumnDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		281415F329EEF6200042F0FC /* ACSTableColumnDefinition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415EB29EEF61F0042F0FC /* ACSTableColumnDefinition.mm */; };
+		281415F429EEF6200042F0FC /* ACSTableRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415EC29EEF61F0042F0FC /* ACSTableRow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		281415F529EEF6200042F0FC /* ACSTableCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415ED29EEF6200042F0FC /* ACSTableCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		281950432703141500B0D790 /* HostConfigUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281950422703141500B0D790 /* HostConfigUtilsTests.swift */; };
 		2871B11825DD20A30040AB27 /* FakeTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B11725DD20A30040AB27 /* FakeTextInput.swift */; };
 		2871B11D25DD225C0040AB27 /* ACRMultilineTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2871B11C25DD225C0040AB27 /* ACRMultilineTextView.xib */; };
@@ -485,6 +489,77 @@
 		28808C7F293F917000DBF620 /* ACRCollectionViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28808C7E293F916F00DBF620 /* ACRCollectionViewTests.swift */; };
 		28808C81293F91AB00DBF620 /* FakeImageset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28808C80293F91AB00DBF620 /* FakeImageset.swift */; };
 		2887215B26CE2D17007F7910 /* ACRTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2887215A26CE2D17007F7910 /* ACRTextField.swift */; };
+		288E3F3729C1BE9300CF3D93 /* ACSMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F3629C1BE9300CF3D93 /* ACSMode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F3929C1BEC000CF3D93 /* ACSModeConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F3829C1BEC000CF3D93 /* ACSModeConvertor.h */; };
+		288E3F3B29C1BECD00CF3D93 /* ACSModeConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F3A29C1BECD00CF3D93 /* ACSModeConvertor.mm */; };
+		288E3F3F29C1BFB600CF3D93 /* ACSAuthentication.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F3E29C1BFB600CF3D93 /* ACSAuthentication.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F4129C1BFC900CF3D93 /* ACSAuthentication.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F4029C1BFC900CF3D93 /* ACSAuthentication.mm */; };
+		288E3F4329C1C03D00CF3D93 /* ACSAuthCardButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F4229C1C03D00CF3D93 /* ACSAuthCardButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F4529C1C04A00CF3D93 /* ACSAuthCardButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F4429C1C04A00CF3D93 /* ACSAuthCardButton.mm */; };
+		288E3F4729C1C14000CF3D93 /* ACSTokenExchangeResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F4629C1C14000CF3D93 /* ACSTokenExchangeResource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F4929C1C14A00CF3D93 /* ACSTokenExchangeResource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F4829C1C14900CF3D93 /* ACSTokenExchangeResource.mm */; };
+		288E3F4B29C1C22D00CF3D93 /* ACSRefresh.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F4A29C1C22D00CF3D93 /* ACSRefresh.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F4D29C1C23700CF3D93 /* ACSRefresh.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F4C29C1C23700CF3D93 /* ACSRefresh.mm */; };
+		288E3F4F29C1C37500CF3D93 /* ACSChoicesData.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F4E29C1C37500CF3D93 /* ACSChoicesData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F5129C1C38100CF3D93 /* ACSChoicesData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F5029C1C38100CF3D93 /* ACSChoicesData.mm */; };
+		288E3F5329C1C3FA00CF3D93 /* ACSStyledCollectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F5229C1C3FA00CF3D93 /* ACSStyledCollectionElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F5529C1C40200CF3D93 /* ACSStyledCollectionElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F5429C1C40200CF3D93 /* ACSStyledCollectionElement.mm */; };
+		288E3F5729C1C41300CF3D93 /* ACSCollectionCoreElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F5629C1C41300CF3D93 /* ACSCollectionCoreElement.mm */; };
+		288E3F5929C1C42000CF3D93 /* ACSCollectionCoreElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F5829C1C42000CF3D93 /* ACSCollectionCoreElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F5B29C1C46C00CF3D93 /* ACSCaptionSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F5A29C1C46C00CF3D93 /* ACSCaptionSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F5D29C1C47C00CF3D93 /* ACSCaptionSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F5C29C1C47C00CF3D93 /* ACSCaptionSource.mm */; };
+		288E3F5F29C1C48C00CF3D93 /* ACSContentSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F5E29C1C48C00CF3D93 /* ACSContentSource.mm */; };
+		288E3F6129C1C49D00CF3D93 /* ACSContentSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F6029C1C49D00CF3D93 /* ACSContentSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F6329C1C6E100CF3D93 /* ACSTextStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F6229C1C6E100CF3D93 /* ACSTextStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E3F6529C1C6EE00CF3D93 /* ACSTextStyleConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F6429C1C6EE00CF3D93 /* ACSTextStyleConvertor.h */; };
+		288E3F6729C1C6F400CF3D93 /* ACSTextStyleConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F6629C1C6F400CF3D93 /* ACSTextStyleConvertor.mm */; };
+		288E3F6A29C1C7CB00CF3D93 /* ACSFactSetTextConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F6929C1C7CB00CF3D93 /* ACSFactSetTextConfig.swift */; };
+		288E3F6C29C1C7E000CF3D93 /* ACSFactSetTextConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F6B29C1C7E000CF3D93 /* ACSFactSetTextConfigConvertor.h */; };
+		288E3F6E29C1C7E900CF3D93 /* ACSFactSetTextConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F6D29C1C7E900CF3D93 /* ACSFactSetTextConfigConvertor.mm */; };
+		288E3F7029C1C80700CF3D93 /* ACSTextStyleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F6F29C1C80700CF3D93 /* ACSTextStyleConfig.swift */; };
+		288E3F7229C1C80F00CF3D93 /* ACSTextStyleConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F7129C1C80E00CF3D93 /* ACSTextStyleConfigConvertor.mm */; };
+		288E3F7429C1C81700CF3D93 /* ACSTextStyleConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F7329C1C81700CF3D93 /* ACSTextStyleConfigConvertor.h */; };
+		288E3F9C29C1F8A400CF3D93 /* ACSTableConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F9B29C1F8A400CF3D93 /* ACSTableConfigConvertor.mm */; };
+		288E3F9E29C1F8B000CF3D93 /* ACSTableConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288E3F9D29C1F8B000CF3D93 /* ACSTableConfig.swift */; };
+		288E3FA029C1F8B700CF3D93 /* ACSTableConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3F9F29C1F8B700CF3D93 /* ACSTableConfigConvertor.h */; };
+		288E3FA229C1F9BF00CF3D93 /* ACSTextBlockConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FA129C1F9BF00CF3D93 /* ACSTextBlockConfig.swift */; };
+		288E3FA429C1F9CF00CF3D93 /* ACSTextBlockConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FA329C1F9CF00CF3D93 /* ACSTextBlockConfigConvertor.mm */; };
+		288E3FA629C1F9DD00CF3D93 /* ACSTextBlockConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FA529C1F9DD00CF3D93 /* ACSTextBlockConfigConvertor.h */; };
+		288E3FA929C1FA3A00CF3D93 /* ACSTextStylesConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FA829C1FA3900CF3D93 /* ACSTextStylesConfig.swift */; };
+		288E3FAB29C1FA4200CF3D93 /* ACSTextStylesConfigConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FAA29C1FA4200CF3D93 /* ACSTextStylesConfigConvertor.mm */; };
+		288E3FAD29C1FA4A00CF3D93 /* ACSTextStylesConfigConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FAC29C1FA4A00CF3D93 /* ACSTextStylesConfigConvertor.h */; };
+		288E3FC229C3189A00CF3D93 /* ACSTextStyleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FA729C1FA0100CF3D93 /* ACSTextStyleConfig.swift */; };
+		288E3FC429C83DAE00CF3D93 /* InternalId.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FC329C83DAE00CF3D93 /* InternalId.h */; };
+		288E3FE129C83E5400CF3D93 /* CaptionSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FC529C83E5200CF3D93 /* CaptionSource.cpp */; };
+		288E3FE229C83E5400CF3D93 /* ChoicesData.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FC629C83E5200CF3D93 /* ChoicesData.h */; };
+		288E3FE329C83E5400CF3D93 /* ContentSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FC729C83E5200CF3D93 /* ContentSource.h */; };
+		288E3FE429C83E5400CF3D93 /* Authentication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FC829C83E5200CF3D93 /* Authentication.cpp */; };
+		288E3FE529C83E5400CF3D93 /* TableColumnDefinition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FC929C83E5200CF3D93 /* TableColumnDefinition.cpp */; };
+		288E3FE629C83E5400CF3D93 /* AuthCardButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FCA29C83E5200CF3D93 /* AuthCardButton.cpp */; };
+		288E3FE729C83E5400CF3D93 /* CollectionCoreElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FCB29C83E5200CF3D93 /* CollectionCoreElement.cpp */; };
+		288E3FE829C83E5400CF3D93 /* ExecuteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FCC29C83E5200CF3D93 /* ExecuteAction.h */; };
+		288E3FE929C83E5400CF3D93 /* CollectionCoreElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FCD29C83E5300CF3D93 /* CollectionCoreElement.h */; };
+		288E3FEA29C83E5400CF3D93 /* ContentSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FCE29C83E5300CF3D93 /* ContentSource.cpp */; };
+		288E3FEB29C83E5400CF3D93 /* CaptionSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FCF29C83E5300CF3D93 /* CaptionSource.h */; };
+		288E3FEC29C83E5400CF3D93 /* Table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FD029C83E5300CF3D93 /* Table.cpp */; };
+		288E3FED29C83E5400CF3D93 /* Authentication.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FD129C83E5300CF3D93 /* Authentication.h */; };
+		288E3FEE29C83E5400CF3D93 /* TableRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FD229C83E5300CF3D93 /* TableRow.h */; };
+		288E3FEF29C83E5400CF3D93 /* TokenExchangeResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FD329C83E5300CF3D93 /* TokenExchangeResource.cpp */; };
+		288E3FF029C83E5400CF3D93 /* ChoicesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FD429C83E5300CF3D93 /* ChoicesData.cpp */; };
+		288E3FF129C83E5400CF3D93 /* ExecuteAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FD529C83E5300CF3D93 /* ExecuteAction.cpp */; };
+		288E3FF229C83E5400CF3D93 /* StyledCollectionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FD629C83E5300CF3D93 /* StyledCollectionElement.cpp */; };
+		288E3FF329C83E5400CF3D93 /* TokenExchangeResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FD729C83E5300CF3D93 /* TokenExchangeResource.h */; };
+		288E3FF429C83E5400CF3D93 /* Table.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FD829C83E5300CF3D93 /* Table.h */; };
+		288E3FF529C83E5400CF3D93 /* AuthCardButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FD929C83E5300CF3D93 /* AuthCardButton.h */; };
+		288E3FF629C83E5400CF3D93 /* Refresh.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FDA29C83E5400CF3D93 /* Refresh.h */; };
+		288E3FF729C83E5400CF3D93 /* StyledCollectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FDB29C83E5400CF3D93 /* StyledCollectionElement.h */; };
+		288E3FF829C83E5400CF3D93 /* TableColumnDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FDC29C83E5400CF3D93 /* TableColumnDefinition.h */; };
+		288E3FF929C83E5400CF3D93 /* Refresh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FDD29C83E5400CF3D93 /* Refresh.cpp */; };
+		288E3FFA29C83E5400CF3D93 /* TableRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FDE29C83E5400CF3D93 /* TableRow.cpp */; };
+		288E3FFB29C83E5400CF3D93 /* TableCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FDF29C83E5400CF3D93 /* TableCell.cpp */; };
+		288E3FFC29C83E5400CF3D93 /* TableCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FE029C83E5400CF3D93 /* TableCell.h */; };
+		288E3FFF29C852AE00CF3D93 /* ACSExecuteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E3FFD29C852AE00CF3D93 /* ACSExecuteAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		288E400029C852AE00CF3D93 /* ACSExecuteAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 288E3FFE29C852AE00CF3D93 /* ACSExecuteAction.mm */; };
 		2890094326D62B270045293A /* ACRTextFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2890094226D62B270045293A /* ACRTextFieldTests.swift */; };
 		28B4AE2026E1F30600FEC27E /* clear_18_w.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B4AE1E26E1F30600FEC27E /* clear_18_w.png */; };
 		28B4AE2126E1F30600FEC27E /* clear_18.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B4AE1F26E1F30600FEC27E /* clear_18.png */; };
@@ -674,7 +749,6 @@
 		08299EDE25AF26C600799C66 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Util.h; path = ../../../../shared/cpp/ObjectModel/Util.h; sourceTree = "<group>"; };
 		08299EDF25AF26C600799C66 /* pch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pch.cpp; path = ../../../../shared/cpp/ObjectModel/pch.cpp; sourceTree = "<group>"; };
 		08299EE025AF26C600799C66 /* Media.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Media.h; path = ../../../../shared/cpp/ObjectModel/Media.h; sourceTree = "<group>"; };
-		08299EE125AF26C600799C66 /* CollectionTypeElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionTypeElement.h; path = ../../../../shared/cpp/ObjectModel/CollectionTypeElement.h; sourceTree = "<group>"; };
 		08299EE225AF26C600799C66 /* ToggleInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ToggleInput.cpp; path = ../../../../shared/cpp/ObjectModel/ToggleInput.cpp; sourceTree = "<group>"; };
 		08299EE325AF26C600799C66 /* ImageSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageSet.h; path = ../../../../shared/cpp/ObjectModel/ImageSet.h; sourceTree = "<group>"; };
 		08299EE425AF26C600799C66 /* SemanticVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SemanticVersion.h; path = ../../../../shared/cpp/ObjectModel/SemanticVersion.h; sourceTree = "<group>"; };
@@ -683,7 +757,6 @@
 		08299EE725AF26C600799C66 /* ToggleVisibilityAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ToggleVisibilityAction.cpp; path = ../../../../shared/cpp/ObjectModel/ToggleVisibilityAction.cpp; sourceTree = "<group>"; };
 		08299EE825AF26C600799C66 /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Util.cpp; path = ../../../../shared/cpp/ObjectModel/Util.cpp; sourceTree = "<group>"; };
 		08299EE925AF26C700799C66 /* MediaSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaSource.cpp; path = ../../../../shared/cpp/ObjectModel/MediaSource.cpp; sourceTree = "<group>"; };
-		08299EEA25AF26C700799C66 /* CollectionTypeElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CollectionTypeElement.cpp; path = ../../../../shared/cpp/ObjectModel/CollectionTypeElement.cpp; sourceTree = "<group>"; };
 		08299EEB25AF26C700799C66 /* BaseInputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseInputElement.cpp; path = ../../../../shared/cpp/ObjectModel/BaseInputElement.cpp; sourceTree = "<group>"; };
 		08299EEC25AF26C700799C66 /* DateInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DateInput.cpp; path = ../../../../shared/cpp/ObjectModel/DateInput.cpp; sourceTree = "<group>"; };
 		08299EED25AF26C700799C66 /* Inline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Inline.cpp; path = ../../../../shared/cpp/ObjectModel/Inline.cpp; sourceTree = "<group>"; };
@@ -1071,6 +1144,17 @@
 		2806E8F52608886F00CF7A40 /* ActionSubmitRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSubmitRendererTests.swift; sourceTree = "<group>"; };
 		2806E94726122F0D00CF7A40 /* SelectActionHandlingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectActionHandlingProtocol.swift; sourceTree = "<group>"; };
 		2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownElementRenderer.swift; sourceTree = "<group>"; };
+		281415E029EEF5890042F0FC /* ACSMarkDownBlockType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSMarkDownBlockType.h; sourceTree = "<group>"; };
+		281415E129EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSMarkDownBlockTypeConvertor.h; sourceTree = "<group>"; };
+		281415E229EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSMarkDownBlockTypeConvertor.mm; sourceTree = "<group>"; };
+		281415E629EEF61F0042F0FC /* ACSTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTable.h; sourceTree = "<group>"; };
+		281415E729EEF61F0042F0FC /* ACSTableCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTableCell.mm; sourceTree = "<group>"; };
+		281415E829EEF61F0042F0FC /* ACSTable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTable.mm; sourceTree = "<group>"; };
+		281415E929EEF61F0042F0FC /* ACSTableRow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTableRow.mm; sourceTree = "<group>"; };
+		281415EA29EEF61F0042F0FC /* ACSTableColumnDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTableColumnDefinition.h; sourceTree = "<group>"; };
+		281415EB29EEF61F0042F0FC /* ACSTableColumnDefinition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTableColumnDefinition.mm; sourceTree = "<group>"; };
+		281415EC29EEF61F0042F0FC /* ACSTableRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTableRow.h; sourceTree = "<group>"; };
+		281415ED29EEF6200042F0FC /* ACSTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTableCell.h; sourceTree = "<group>"; };
 		281950422703141500B0D790 /* HostConfigUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostConfigUtilsTests.swift; sourceTree = "<group>"; };
 		2871B11725DD20A30040AB27 /* FakeTextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeTextInput.swift; sourceTree = "<group>"; };
 		2871B11C25DD225C0040AB27 /* ACRMultilineTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ACRMultilineTextView.xib; sourceTree = "<group>"; };
@@ -1083,6 +1167,78 @@
 		28808C7E293F916F00DBF620 /* ACRCollectionViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRCollectionViewTests.swift; sourceTree = "<group>"; };
 		28808C80293F91AB00DBF620 /* FakeImageset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeImageset.swift; sourceTree = "<group>"; };
 		2887215A26CE2D17007F7910 /* ACRTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTextField.swift; sourceTree = "<group>"; };
+		288E3F3629C1BE9300CF3D93 /* ACSMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSMode.h; sourceTree = "<group>"; };
+		288E3F3829C1BEC000CF3D93 /* ACSModeConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSModeConvertor.h; sourceTree = "<group>"; };
+		288E3F3A29C1BECD00CF3D93 /* ACSModeConvertor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSModeConvertor.mm; sourceTree = "<group>"; };
+		288E3F3E29C1BFB600CF3D93 /* ACSAuthentication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSAuthentication.h; sourceTree = "<group>"; };
+		288E3F4029C1BFC900CF3D93 /* ACSAuthentication.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSAuthentication.mm; sourceTree = "<group>"; };
+		288E3F4229C1C03D00CF3D93 /* ACSAuthCardButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSAuthCardButton.h; sourceTree = "<group>"; };
+		288E3F4429C1C04A00CF3D93 /* ACSAuthCardButton.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSAuthCardButton.mm; sourceTree = "<group>"; };
+		288E3F4629C1C14000CF3D93 /* ACSTokenExchangeResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSTokenExchangeResource.h; sourceTree = "<group>"; };
+		288E3F4829C1C14900CF3D93 /* ACSTokenExchangeResource.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTokenExchangeResource.mm; sourceTree = "<group>"; };
+		288E3F4A29C1C22D00CF3D93 /* ACSRefresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSRefresh.h; sourceTree = "<group>"; };
+		288E3F4C29C1C23700CF3D93 /* ACSRefresh.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSRefresh.mm; sourceTree = "<group>"; };
+		288E3F4E29C1C37500CF3D93 /* ACSChoicesData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSChoicesData.h; sourceTree = "<group>"; };
+		288E3F5029C1C38100CF3D93 /* ACSChoicesData.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSChoicesData.mm; sourceTree = "<group>"; };
+		288E3F5229C1C3FA00CF3D93 /* ACSStyledCollectionElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSStyledCollectionElement.h; sourceTree = "<group>"; };
+		288E3F5429C1C40200CF3D93 /* ACSStyledCollectionElement.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSStyledCollectionElement.mm; sourceTree = "<group>"; };
+		288E3F5629C1C41300CF3D93 /* ACSCollectionCoreElement.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSCollectionCoreElement.mm; sourceTree = "<group>"; };
+		288E3F5829C1C42000CF3D93 /* ACSCollectionCoreElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSCollectionCoreElement.h; sourceTree = "<group>"; };
+		288E3F5A29C1C46C00CF3D93 /* ACSCaptionSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSCaptionSource.h; sourceTree = "<group>"; };
+		288E3F5C29C1C47C00CF3D93 /* ACSCaptionSource.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSCaptionSource.mm; sourceTree = "<group>"; };
+		288E3F5E29C1C48C00CF3D93 /* ACSContentSource.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSContentSource.mm; sourceTree = "<group>"; };
+		288E3F6029C1C49D00CF3D93 /* ACSContentSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSContentSource.h; sourceTree = "<group>"; };
+		288E3F6229C1C6E100CF3D93 /* ACSTextStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSTextStyle.h; sourceTree = "<group>"; };
+		288E3F6429C1C6EE00CF3D93 /* ACSTextStyleConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSTextStyleConvertor.h; sourceTree = "<group>"; };
+		288E3F6629C1C6F400CF3D93 /* ACSTextStyleConvertor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTextStyleConvertor.mm; sourceTree = "<group>"; };
+		288E3F6829C1C7AA00CF3D93 /* ACSFactSetConfigConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSFactSetConfigConvertor.h; sourceTree = "<group>"; };
+		288E3F6929C1C7CB00CF3D93 /* ACSFactSetTextConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFactSetTextConfig.swift; sourceTree = "<group>"; };
+		288E3F6B29C1C7E000CF3D93 /* ACSFactSetTextConfigConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSFactSetTextConfigConvertor.h; sourceTree = "<group>"; };
+		288E3F6D29C1C7E900CF3D93 /* ACSFactSetTextConfigConvertor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSFactSetTextConfigConvertor.mm; sourceTree = "<group>"; };
+		288E3F6F29C1C80700CF3D93 /* ACSTextStyleConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSTextStyleConfig.swift; sourceTree = "<group>"; };
+		288E3F7129C1C80E00CF3D93 /* ACSTextStyleConfigConvertor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTextStyleConfigConvertor.mm; sourceTree = "<group>"; };
+		288E3F7329C1C81700CF3D93 /* ACSTextStyleConfigConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSTextStyleConfigConvertor.h; sourceTree = "<group>"; };
+		288E3F9B29C1F8A400CF3D93 /* ACSTableConfigConvertor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTableConfigConvertor.mm; sourceTree = "<group>"; };
+		288E3F9D29C1F8B000CF3D93 /* ACSTableConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSTableConfig.swift; sourceTree = "<group>"; };
+		288E3F9F29C1F8B700CF3D93 /* ACSTableConfigConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSTableConfigConvertor.h; sourceTree = "<group>"; };
+		288E3FA129C1F9BF00CF3D93 /* ACSTextBlockConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSTextBlockConfig.swift; sourceTree = "<group>"; };
+		288E3FA329C1F9CF00CF3D93 /* ACSTextBlockConfigConvertor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTextBlockConfigConvertor.mm; sourceTree = "<group>"; };
+		288E3FA529C1F9DD00CF3D93 /* ACSTextBlockConfigConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSTextBlockConfigConvertor.h; sourceTree = "<group>"; };
+		288E3FA729C1FA0100CF3D93 /* ACSTextStyleConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSTextStyleConfig.swift; sourceTree = "<group>"; };
+		288E3FA829C1FA3900CF3D93 /* ACSTextStylesConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSTextStylesConfig.swift; sourceTree = "<group>"; };
+		288E3FAA29C1FA4200CF3D93 /* ACSTextStylesConfigConvertor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSTextStylesConfigConvertor.mm; sourceTree = "<group>"; };
+		288E3FAC29C1FA4A00CF3D93 /* ACSTextStylesConfigConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACSTextStylesConfigConvertor.h; sourceTree = "<group>"; };
+		288E3FC329C83DAE00CF3D93 /* InternalId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalId.h; path = ../../../../shared/cpp/ObjectModel/InternalId.h; sourceTree = "<group>"; };
+		288E3FC529C83E5200CF3D93 /* CaptionSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaptionSource.cpp; path = ../../../../shared/cpp/ObjectModel/CaptionSource.cpp; sourceTree = "<group>"; };
+		288E3FC629C83E5200CF3D93 /* ChoicesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChoicesData.h; path = ../../../../shared/cpp/ObjectModel/ChoicesData.h; sourceTree = "<group>"; };
+		288E3FC729C83E5200CF3D93 /* ContentSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSource.h; path = ../../../../shared/cpp/ObjectModel/ContentSource.h; sourceTree = "<group>"; };
+		288E3FC829C83E5200CF3D93 /* Authentication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Authentication.cpp; path = ../../../../shared/cpp/ObjectModel/Authentication.cpp; sourceTree = "<group>"; };
+		288E3FC929C83E5200CF3D93 /* TableColumnDefinition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TableColumnDefinition.cpp; path = ../../../../shared/cpp/ObjectModel/TableColumnDefinition.cpp; sourceTree = "<group>"; };
+		288E3FCA29C83E5200CF3D93 /* AuthCardButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuthCardButton.cpp; path = ../../../../shared/cpp/ObjectModel/AuthCardButton.cpp; sourceTree = "<group>"; };
+		288E3FCB29C83E5200CF3D93 /* CollectionCoreElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CollectionCoreElement.cpp; path = ../../../../shared/cpp/ObjectModel/CollectionCoreElement.cpp; sourceTree = "<group>"; };
+		288E3FCC29C83E5200CF3D93 /* ExecuteAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecuteAction.h; path = ../../../../shared/cpp/ObjectModel/ExecuteAction.h; sourceTree = "<group>"; };
+		288E3FCD29C83E5300CF3D93 /* CollectionCoreElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionCoreElement.h; path = ../../../../shared/cpp/ObjectModel/CollectionCoreElement.h; sourceTree = "<group>"; };
+		288E3FCE29C83E5300CF3D93 /* ContentSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSource.cpp; path = ../../../../shared/cpp/ObjectModel/ContentSource.cpp; sourceTree = "<group>"; };
+		288E3FCF29C83E5300CF3D93 /* CaptionSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaptionSource.h; path = ../../../../shared/cpp/ObjectModel/CaptionSource.h; sourceTree = "<group>"; };
+		288E3FD029C83E5300CF3D93 /* Table.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Table.cpp; path = ../../../../shared/cpp/ObjectModel/Table.cpp; sourceTree = "<group>"; };
+		288E3FD129C83E5300CF3D93 /* Authentication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Authentication.h; path = ../../../../shared/cpp/ObjectModel/Authentication.h; sourceTree = "<group>"; };
+		288E3FD229C83E5300CF3D93 /* TableRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableRow.h; path = ../../../../shared/cpp/ObjectModel/TableRow.h; sourceTree = "<group>"; };
+		288E3FD329C83E5300CF3D93 /* TokenExchangeResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TokenExchangeResource.cpp; path = ../../../../shared/cpp/ObjectModel/TokenExchangeResource.cpp; sourceTree = "<group>"; };
+		288E3FD429C83E5300CF3D93 /* ChoicesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChoicesData.cpp; path = ../../../../shared/cpp/ObjectModel/ChoicesData.cpp; sourceTree = "<group>"; };
+		288E3FD529C83E5300CF3D93 /* ExecuteAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExecuteAction.cpp; path = ../../../../shared/cpp/ObjectModel/ExecuteAction.cpp; sourceTree = "<group>"; };
+		288E3FD629C83E5300CF3D93 /* StyledCollectionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyledCollectionElement.cpp; path = ../../../../shared/cpp/ObjectModel/StyledCollectionElement.cpp; sourceTree = "<group>"; };
+		288E3FD729C83E5300CF3D93 /* TokenExchangeResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TokenExchangeResource.h; path = ../../../../shared/cpp/ObjectModel/TokenExchangeResource.h; sourceTree = "<group>"; };
+		288E3FD829C83E5300CF3D93 /* Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Table.h; path = ../../../../shared/cpp/ObjectModel/Table.h; sourceTree = "<group>"; };
+		288E3FD929C83E5300CF3D93 /* AuthCardButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuthCardButton.h; path = ../../../../shared/cpp/ObjectModel/AuthCardButton.h; sourceTree = "<group>"; };
+		288E3FDA29C83E5400CF3D93 /* Refresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Refresh.h; path = ../../../../shared/cpp/ObjectModel/Refresh.h; sourceTree = "<group>"; };
+		288E3FDB29C83E5400CF3D93 /* StyledCollectionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyledCollectionElement.h; path = ../../../../shared/cpp/ObjectModel/StyledCollectionElement.h; sourceTree = "<group>"; };
+		288E3FDC29C83E5400CF3D93 /* TableColumnDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableColumnDefinition.h; path = ../../../../shared/cpp/ObjectModel/TableColumnDefinition.h; sourceTree = "<group>"; };
+		288E3FDD29C83E5400CF3D93 /* Refresh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Refresh.cpp; path = ../../../../shared/cpp/ObjectModel/Refresh.cpp; sourceTree = "<group>"; };
+		288E3FDE29C83E5400CF3D93 /* TableRow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TableRow.cpp; path = ../../../../shared/cpp/ObjectModel/TableRow.cpp; sourceTree = "<group>"; };
+		288E3FDF29C83E5400CF3D93 /* TableCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TableCell.cpp; path = ../../../../shared/cpp/ObjectModel/TableCell.cpp; sourceTree = "<group>"; };
+		288E3FE029C83E5400CF3D93 /* TableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableCell.h; path = ../../../../shared/cpp/ObjectModel/TableCell.h; sourceTree = "<group>"; };
+		288E3FFD29C852AE00CF3D93 /* ACSExecuteAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSExecuteAction.h; sourceTree = "<group>"; };
+		288E3FFE29C852AE00CF3D93 /* ACSExecuteAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSExecuteAction.mm; sourceTree = "<group>"; };
 		2890094226D62B270045293A /* ACRTextFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTextFieldTests.swift; sourceTree = "<group>"; };
 		28B4AE1E26E1F30600FEC27E /* clear_18_w.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clear_18_w.png; sourceTree = "<group>"; };
 		28B4AE1F26E1F30600FEC27E /* clear_18.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clear_18.png; sourceTree = "<group>"; };
@@ -1282,9 +1438,38 @@
 				08299EAF25AF26C500799C66 /* AdaptiveCardParseException.cpp */,
 				08299ED525AF26C600799C66 /* AdaptiveCardParseException.h */,
 				08299F0425AF26C700799C66 /* AdaptiveCardParseWarning.cpp */,
+				288E3FC329C83DAE00CF3D93 /* InternalId.h */,
 				08299EBE25AF26C500799C66 /* AdaptiveCardParseWarning.h */,
 				08299F0625AF26C700799C66 /* BackgroundImage.cpp */,
 				08299ED425AF26C600799C66 /* BackgroundImage.h */,
+				288E3FCA29C83E5200CF3D93 /* AuthCardButton.cpp */,
+				288E3FD929C83E5300CF3D93 /* AuthCardButton.h */,
+				288E3FC829C83E5200CF3D93 /* Authentication.cpp */,
+				288E3FD129C83E5300CF3D93 /* Authentication.h */,
+				288E3FC529C83E5200CF3D93 /* CaptionSource.cpp */,
+				288E3FCF29C83E5300CF3D93 /* CaptionSource.h */,
+				288E3FD429C83E5300CF3D93 /* ChoicesData.cpp */,
+				288E3FC629C83E5200CF3D93 /* ChoicesData.h */,
+				288E3FCB29C83E5200CF3D93 /* CollectionCoreElement.cpp */,
+				288E3FCD29C83E5300CF3D93 /* CollectionCoreElement.h */,
+				288E3FCE29C83E5300CF3D93 /* ContentSource.cpp */,
+				288E3FC729C83E5200CF3D93 /* ContentSource.h */,
+				288E3FD529C83E5300CF3D93 /* ExecuteAction.cpp */,
+				288E3FCC29C83E5200CF3D93 /* ExecuteAction.h */,
+				288E3FDD29C83E5400CF3D93 /* Refresh.cpp */,
+				288E3FDA29C83E5400CF3D93 /* Refresh.h */,
+				288E3FD629C83E5300CF3D93 /* StyledCollectionElement.cpp */,
+				288E3FDB29C83E5400CF3D93 /* StyledCollectionElement.h */,
+				288E3FD029C83E5300CF3D93 /* Table.cpp */,
+				288E3FD829C83E5300CF3D93 /* Table.h */,
+				288E3FDF29C83E5400CF3D93 /* TableCell.cpp */,
+				288E3FE029C83E5400CF3D93 /* TableCell.h */,
+				288E3FC929C83E5200CF3D93 /* TableColumnDefinition.cpp */,
+				288E3FDC29C83E5400CF3D93 /* TableColumnDefinition.h */,
+				288E3FDE29C83E5400CF3D93 /* TableRow.cpp */,
+				288E3FD229C83E5300CF3D93 /* TableRow.h */,
+				288E3FD329C83E5300CF3D93 /* TokenExchangeResource.cpp */,
+				288E3FD729C83E5300CF3D93 /* TokenExchangeResource.h */,
 				08299F1A25AF26C800799C66 /* BaseActionElement.cpp */,
 				08299F0E25AF26C700799C66 /* BaseActionElement.h */,
 				08299EC825AF26C600799C66 /* BaseCardElement.cpp */,
@@ -1297,8 +1482,6 @@
 				08299ECB25AF26C600799C66 /* ChoiceInput.h */,
 				08299EBB25AF26C500799C66 /* ChoiceSetInput.cpp */,
 				08299EC125AF26C500799C66 /* ChoiceSetInput.h */,
-				08299EEA25AF26C700799C66 /* CollectionTypeElement.cpp */,
-				08299EE125AF26C600799C66 /* CollectionTypeElement.h */,
 				08299F1B25AF26C800799C66 /* Column.cpp */,
 				08299EC725AF26C600799C66 /* Column.h */,
 				08299EB525AF26C500799C66 /* ColumnSet.cpp */,
@@ -1496,6 +1679,15 @@
 		083EA7A725C19E0F00DE2BF7 /* Enums */ = {
 			isa = PBXGroup;
 			children = (
+				288E3F6629C1C6F400CF3D93 /* ACSTextStyleConvertor.mm */,
+				288E3F6429C1C6EE00CF3D93 /* ACSTextStyleConvertor.h */,
+				288E3F6229C1C6E100CF3D93 /* ACSTextStyle.h */,
+				281415E029EEF5890042F0FC /* ACSMarkDownBlockType.h */,
+				281415E129EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h */,
+				281415E229EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm */,
+				288E3F3629C1BE9300CF3D93 /* ACSMode.h */,
+				288E3F3829C1BEC000CF3D93 /* ACSModeConvertor.h */,
+				288E3F3A29C1BECD00CF3D93 /* ACSModeConvertor.mm */,
 				083EA7A825C19E0F00DE2BF7 /* ACSDelimiterTypeConvertor.mm */,
 				083EA7A925C19E0F00DE2BF7 /* ACSChoiceSetStyleConvertor.mm */,
 				083EA7AA25C19E0F00DE2BF7 /* ACSAdaptiveCardSchemaKeyConvertor.mm */,
@@ -1602,6 +1794,23 @@
 		083EA81425C19E0F00DE2BF7 /* ModelStructs */ = {
 			isa = PBXGroup;
 			children = (
+				288E3FAC29C1FA4A00CF3D93 /* ACSTextStylesConfigConvertor.h */,
+				288E3FAA29C1FA4200CF3D93 /* ACSTextStylesConfigConvertor.mm */,
+				288E3FA829C1FA3900CF3D93 /* ACSTextStylesConfig.swift */,
+				288E3FA729C1FA0100CF3D93 /* ACSTextStyleConfig.swift */,
+				288E3FA529C1F9DD00CF3D93 /* ACSTextBlockConfigConvertor.h */,
+				288E3FA329C1F9CF00CF3D93 /* ACSTextBlockConfigConvertor.mm */,
+				288E3FA129C1F9BF00CF3D93 /* ACSTextBlockConfig.swift */,
+				288E3F9F29C1F8B700CF3D93 /* ACSTableConfigConvertor.h */,
+				288E3F9D29C1F8B000CF3D93 /* ACSTableConfig.swift */,
+				288E3F9B29C1F8A400CF3D93 /* ACSTableConfigConvertor.mm */,
+				288E3F7129C1C80E00CF3D93 /* ACSTextStyleConfigConvertor.mm */,
+				288E3F7329C1C81700CF3D93 /* ACSTextStyleConfigConvertor.h */,
+				288E3F6F29C1C80700CF3D93 /* ACSTextStyleConfig.swift */,
+				288E3F6B29C1C7E000CF3D93 /* ACSFactSetTextConfigConvertor.h */,
+				288E3F6D29C1C7E900CF3D93 /* ACSFactSetTextConfigConvertor.mm */,
+				288E3F6829C1C7AA00CF3D93 /* ACSFactSetConfigConvertor.h */,
+				288E3F6929C1C7CB00CF3D93 /* ACSFactSetTextConfig.swift */,
 				083EA81525C19E0F00DE2BF7 /* ACSImageSetConfigConvertor.h */,
 				083EA81625C19E0F00DE2BF7 /* ACSFontTypeDefinition.swift */,
 				083EA81725C19E0F00DE2BF7 /* ACSSeparatorConfig.swift */,
@@ -1678,6 +1887,34 @@
 		083EA86C25C19E0F00DE2BF7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				288E3F6029C1C49D00CF3D93 /* ACSContentSource.h */,
+				288E3F5E29C1C48C00CF3D93 /* ACSContentSource.mm */,
+				288E3F5C29C1C47C00CF3D93 /* ACSCaptionSource.mm */,
+				281415E629EEF61F0042F0FC /* ACSTable.h */,
+				281415E829EEF61F0042F0FC /* ACSTable.mm */,
+				281415ED29EEF6200042F0FC /* ACSTableCell.h */,
+				281415E729EEF61F0042F0FC /* ACSTableCell.mm */,
+				281415EA29EEF61F0042F0FC /* ACSTableColumnDefinition.h */,
+				281415EB29EEF61F0042F0FC /* ACSTableColumnDefinition.mm */,
+				281415EC29EEF61F0042F0FC /* ACSTableRow.h */,
+				281415E929EEF61F0042F0FC /* ACSTableRow.mm */,
+				288E3F5A29C1C46C00CF3D93 /* ACSCaptionSource.h */,
+				288E3FFD29C852AE00CF3D93 /* ACSExecuteAction.h */,
+				288E3FFE29C852AE00CF3D93 /* ACSExecuteAction.mm */,
+				288E3F5829C1C42000CF3D93 /* ACSCollectionCoreElement.h */,
+				288E3F5629C1C41300CF3D93 /* ACSCollectionCoreElement.mm */,
+				288E3F5429C1C40200CF3D93 /* ACSStyledCollectionElement.mm */,
+				288E3F5229C1C3FA00CF3D93 /* ACSStyledCollectionElement.h */,
+				288E3F5029C1C38100CF3D93 /* ACSChoicesData.mm */,
+				288E3F4E29C1C37500CF3D93 /* ACSChoicesData.h */,
+				288E3F4C29C1C23700CF3D93 /* ACSRefresh.mm */,
+				288E3F4A29C1C22D00CF3D93 /* ACSRefresh.h */,
+				288E3F4829C1C14900CF3D93 /* ACSTokenExchangeResource.mm */,
+				288E3F4629C1C14000CF3D93 /* ACSTokenExchangeResource.h */,
+				288E3F4429C1C04A00CF3D93 /* ACSAuthCardButton.mm */,
+				288E3F4229C1C03D00CF3D93 /* ACSAuthCardButton.h */,
+				288E3F4029C1BFC900CF3D93 /* ACSAuthentication.mm */,
+				288E3F3E29C1BFB600CF3D93 /* ACSAuthentication.h */,
 				083EA86E25C19E0F00DE2BF7 /* ACSAdaptiveCard.mm */,
 				083EA86F25C19E0F00DE2BF7 /* ACSSeparator.mm */,
 				083EA87025C19E0F00DE2BF7 /* ACSTextRun.h */,
@@ -1991,39 +2228,52 @@
 				08E403C225B46A7600C2092A /* AdaptiveBase64Util.h in Headers */,
 				08E403C425B46A7600C2092A /* AdaptiveCardParseException.h in Headers */,
 				08E403C625B46A7600C2092A /* AdaptiveCardParseWarning.h in Headers */,
+				288E3FF429C83E5400CF3D93 /* Table.h in Headers */,
+				288E3FF329C83E5400CF3D93 /* TokenExchangeResource.h in Headers */,
+				288E3FF629C83E5400CF3D93 /* Refresh.h in Headers */,
 				08E403C825B46A7600C2092A /* BackgroundImage.h in Headers */,
 				08E403CA25B46A7600C2092A /* BaseActionElement.h in Headers */,
 				08E403CC25B46A7600C2092A /* BaseCardElement.h in Headers */,
 				08E403CE25B46A7600C2092A /* BaseElement.h in Headers */,
+				288E3FE829C83E5400CF3D93 /* ExecuteAction.h in Headers */,
 				08E403D025B46A7600C2092A /* BaseInputElement.h in Headers */,
 				08E403D225B46A7600C2092A /* ChoiceInput.h in Headers */,
 				08E403D425B46A7600C2092A /* ChoiceSetInput.h in Headers */,
-				08E403D625B46A7600C2092A /* CollectionTypeElement.h in Headers */,
 				08E403D825B46A7600C2092A /* Column.h in Headers */,
 				08E403DA25B46A7600C2092A /* ColumnSet.h in Headers */,
 				08E403DC25B46A7600C2092A /* Container.h in Headers */,
 				08E403DE25B46A7600C2092A /* DateInput.h in Headers */,
 				08E403E025B46A7600C2092A /* DateTimePreparsedToken.h in Headers */,
 				08E403E225B46A7600C2092A /* DateTimePreparser.h in Headers */,
+				288E3FEB29C83E5400CF3D93 /* CaptionSource.h in Headers */,
 				08E403E425B46A7600C2092A /* ElementParserRegistration.h in Headers */,
 				08E403E525B46A7600C2092A /* EnumMagic.h in Headers */,
+				288E3FC429C83DAE00CF3D93 /* InternalId.h in Headers */,
 				08E403E725B46A7600C2092A /* Enums.h in Headers */,
 				08E403E925B46A7600C2092A /* Fact.h in Headers */,
+				288E3FF729C83E5400CF3D93 /* StyledCollectionElement.h in Headers */,
 				08E403EB25B46A7600C2092A /* FactSet.h in Headers */,
 				08E403ED25B46A7600C2092A /* FeatureRegistration.h in Headers */,
 				08E403EF25B46A7600C2092A /* HostConfig.h in Headers */,
+				288E3FF529C83E5400CF3D93 /* AuthCardButton.h in Headers */,
 				08E403F125B46A7600C2092A /* Image.h in Headers */,
 				08E403F325B46A7600C2092A /* ImageSet.h in Headers */,
+				288E3FED29C83E5400CF3D93 /* Authentication.h in Headers */,
 				08E403F525B46A7600C2092A /* Inline.h in Headers */,
 				08E403F625B46A7600C2092A /* json-forwards.h in Headers */,
 				08E403F725B46A7600C2092A /* json.h in Headers */,
 				08E403FA25B46A7600C2092A /* MarkDownBlockParser.h in Headers */,
 				08E403FC25B46A7600C2092A /* MarkDownHtmlGenerator.h in Headers */,
+				288E3FFC29C83E5400CF3D93 /* TableCell.h in Headers */,
+				288E3FEE29C83E5400CF3D93 /* TableRow.h in Headers */,
 				08E403FE25B46A7600C2092A /* MarkDownParsedResult.h in Headers */,
 				08E4040025B46A7600C2092A /* MarkDownParser.h in Headers */,
 				08E4040225B46A7600C2092A /* Media.h in Headers */,
 				08E4040425B46A7600C2092A /* MediaSource.h in Headers */,
+				288E3FE229C83E5400CF3D93 /* ChoicesData.h in Headers */,
 				08E4040625B46A7600C2092A /* NumberInput.h in Headers */,
+				288E3FF829C83E5400CF3D93 /* TableColumnDefinition.h in Headers */,
+				288E3FE929C83E5400CF3D93 /* CollectionCoreElement.h in Headers */,
 				08E4040825B46A7600C2092A /* OpenUrlAction.h in Headers */,
 				08E4040A25B46A7600C2092A /* ParseContext.h in Headers */,
 				08E4040C25B46A7600C2092A /* ParseResult.h in Headers */,
@@ -2034,6 +2284,7 @@
 				08E4041525B46A7600C2092A /* RichTextElementProperties.h in Headers */,
 				08E4041725B46A7600C2092A /* SemanticVersion.h in Headers */,
 				08E4041925B46A7600C2092A /* Separator.h in Headers */,
+				288E3FE329C83E5400CF3D93 /* ContentSource.h in Headers */,
 				08E4041B25B46A7600C2092A /* SharedAdaptiveCard.h in Headers */,
 				08E4041D25B46A7600C2092A /* ShowCardAction.h in Headers */,
 				08E4041F25B46A7600C2092A /* SubmitAction.h in Headers */,
@@ -2057,22 +2308,35 @@
 			buildActionMask = 2147483647;
 			files = (
 				08E4047025B46BDB00C2092A /* AdaptiveCards_bridge.h in Headers */,
+				281415F529EEF6200042F0FC /* ACSTableCell.h in Headers */,
+				281415F229EEF6200042F0FC /* ACSTableColumnDefinition.h in Headers */,
+				288E3F4329C1C03D00CF3D93 /* ACSAuthCardButton.h in Headers */,
 				083EA9FA25C19E1000DE2BF7 /* ACSActionSet.h in Headers */,
 				083EA9DC25C19E1000DE2BF7 /* ACSSemanticVersion.h in Headers */,
 				083EA9CC25C19E1000DE2BF7 /* ACSTextInput.h in Headers */,
 				083EA9C025C19E1000DE2BF7 /* ACSUnknownAction.h in Headers */,
 				083EA93A25C19E1000DE2BF7 /* ACSIconPlacement.h in Headers */,
 				083EA8EF25C19E1000DE2BF7 /* ACSHorizontalAlignment.h in Headers */,
+				288E3F4F29C1C37500CF3D93 /* ACSChoicesData.h in Headers */,
+				288E3F4B29C1C22D00CF3D93 /* ACSRefresh.h in Headers */,
 				083EA9BF25C19E1000DE2BF7 /* ACSColumn.h in Headers */,
 				083EA9DB25C19E1000DE2BF7 /* ACSAdaptiveCard.h in Headers */,
 				083EA8F525C19E1000DE2BF7 /* ACSHeightType.h in Headers */,
+				288E3F6129C1C49D00CF3D93 /* ACSContentSource.h in Headers */,
 				083EA90325C19E1000DE2BF7 /* ACSVerticalContentAlignment.h in Headers */,
+				288E3F4729C1C14000CF3D93 /* ACSTokenExchangeResource.h in Headers */,
+				288E3F6329C1C6E100CF3D93 /* ACSTextStyle.h in Headers */,
 				083EA93425C19E1000DE2BF7 /* ACSErrorStatusCode.h in Headers */,
+				288E3F3F29C1BFB600CF3D93 /* ACSAuthentication.h in Headers */,
+				288E3F5B29C1C46C00CF3D93 /* ACSCaptionSource.h in Headers */,
 				0801D5DD25C27E3100AABD6C /* BridgeConverter.h in Headers */,
+				288E3F5329C1C3FA00CF3D93 /* ACSStyledCollectionElement.h in Headers */,
+				288E3F5929C1C42000CF3D93 /* ACSCollectionCoreElement.h in Headers */,
 				083EAA1225C19E1000DE2BF7 /* ACSParseResult.h in Headers */,
 				083EA92F25C19E1000DE2BF7 /* ACSImageSize.h in Headers */,
 				083EA92525C19E1000DE2BF7 /* ACSSpacing.h in Headers */,
 				083EA91525C19E1000DE2BF7 /* ACSSeparatorThickness.h in Headers */,
+				288E3F3729C1BE9300CF3D93 /* ACSMode.h in Headers */,
 				083EA9D825C19E1000DE2BF7 /* ACSOpenUrlAction.h in Headers */,
 				083EA9D225C19E1000DE2BF7 /* ACSToggleInput.h in Headers */,
 				083EA94425C19E1000DE2BF7 /* ACSCardElementType.h in Headers */,
@@ -2133,23 +2397,28 @@
 				083EA9C125C19E1000DE2BF7 /* ACSToggleVisibilityAction.h in Headers */,
 				083EA90A25C19E1000DE2BF7 /* ACSFontType.h in Headers */,
 				083EA9E725C19E1000DE2BF7 /* ACSFontSizesConfig.h in Headers */,
+				281415F429EEF6200042F0FC /* ACSTableRow.h in Headers */,
 				083EA9C325C19E1000DE2BF7 /* ACSRichTextBlock.h in Headers */,
 				083EA92925C19E1000DE2BF7 /* ACSContainerStyle.h in Headers */,
 				083EA8EB25C19E1000DE2BF7 /* ACSWarningStatusCode.h in Headers */,
 				083EA93725C19E1000DE2BF7 /* ACSAssociatedInputs.h in Headers */,
+				281415EE29EEF6200042F0FC /* ACSTable.h in Headers */,
 				083EAA0A25C19E1000DE2BF7 /* ACSAdaptiveCardParseException.h in Headers */,
+				288E3FFF29C852AE00CF3D93 /* ACSExecuteAction.h in Headers */,
 				083EAA1A25C19E1000DE2BF7 /* ACSTextBlock.h in Headers */,
 				083EA94825C19E1000DE2BF7 /* ACSEmphasisState.h in Headers */,
 				083EA8F925C19E1000DE2BF7 /* ACSContainerBleedDirection.h in Headers */,
+				281415E329EEF5890042F0FC /* ACSMarkDownBlockType.h in Headers */,
 				083EA9E125C19E1000DE2BF7 /* ACSUnknownElement.h in Headers */,
-				083EA9F725C19E1000DE2BF7 /* ACSCollectionTypeElement.h in Headers */,
 				08E4052125B46C3B00C2092A /* SwiftInterfaceHeader.h in Headers */,
 				083EA90225C19E1000DE2BF7 /* ACSVerticalContentAlignmentConvertor.h in Headers */,
 				083EA95325C19E1000DE2BF7 /* ACSImageSetConfigConvertor.h in Headers */,
+				288E3F3929C1BEC000CF3D93 /* ACSModeConvertor.h in Headers */,
+				288E3F6C29C1C7E000CF3D93 /* ACSFactSetTextConfigConvertor.h in Headers */,
+				083EA99F25C19E1000DE2BF7 /* ACSFactSetConfigConvertor.h in Headers */,
 				083EA94925C19E1000DE2BF7 /* ACSSpacingConvertor.h in Headers */,
 				083EA92C25C19E1000DE2BF7 /* ACSImageStyleConvertor.h in Headers */,
 				083EA97625C19E1000DE2BF7 /* ACSErrorMessageConfigConvertor.h in Headers */,
-				083EA96F25C19E1000DE2BF7 /* ACSTextConfigConvertor.h in Headers */,
 				083EA96325C19E1000DE2BF7 /* ACSHighlightColorConfigConvertor.h in Headers */,
 				083EA94A25C19E1000DE2BF7 /* ACSAdaptiveCardSchemaKeyConvertor.h in Headers */,
 				083EA98B25C19E1000DE2BF7 /* ACSContainerStyleDefinitionConvertor.h in Headers */,
@@ -2164,9 +2433,9 @@
 				083EA91F25C19E1000DE2BF7 /* ACSEmphasisStateConvertor.h in Headers */,
 				083EA95F25C19E1000DE2BF7 /* ACSImageSizesConfigConvertor.h in Headers */,
 				083EA90D25C19E1000DE2BF7 /* ACSChoiceSetStyleConvertor.h in Headers */,
-				083EA99F25C19E1000DE2BF7 /* ACSFactSetConfigConvertor.h in Headers */,
 				083EA93F25C19E1000DE2BF7 /* ACSDelimiterTypeConvertor.h in Headers */,
 				083EA93925C19E1000DE2BF7 /* ACSContainerStyleConvertor.h in Headers */,
+				288E3F6529C1C6EE00CF3D93 /* ACSTextStyleConvertor.h in Headers */,
 				083EA9A225C19E1000DE2BF7 /* ACSMediaConfigConvertor.h in Headers */,
 				083EA93025C19E1000DE2BF7 /* ACSActionModeConvertor.h in Headers */,
 				083EA91325C19E1000DE2BF7 /* ACSForegroundColorConvertor.h in Headers */,
@@ -2199,8 +2468,13 @@
 				083EA97F25C19E1000DE2BF7 /* ACSFontTypeDefinitionConvertor.h in Headers */,
 				083EA99D25C19E1000DE2BF7 /* ACSFontTypesDefinitionConvertor.h in Headers */,
 				083EA90725C19E1000DE2BF7 /* ACSWarningStatusCodeConvertor.h in Headers */,
+				281415E429EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h in Headers */,
 				083EA90825C19E1000DE2BF7 /* ACSImageFillModeConvertor.h in Headers */,
+				288E3F7429C1C81700CF3D93 /* ACSTextStyleConfigConvertor.h in Headers */,
 				083EA98525C19E1000DE2BF7 /* ACSLabelConfigConvertor.h in Headers */,
+				288E3FA629C1F9DD00CF3D93 /* ACSTextBlockConfigConvertor.h in Headers */,
+				288E3FAD29C1FA4A00CF3D93 /* ACSTextStylesConfigConvertor.h in Headers */,
+				288E3FA029C1F8B700CF3D93 /* ACSTableConfigConvertor.h in Headers */,
 				083EA90525C19E1000DE2BF7 /* ACSActionAlignmentConvertor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2555,52 +2829,65 @@
 				08E403CF25B46A7600C2092A /* BaseInputElement.cpp in Sources */,
 				08E403D125B46A7600C2092A /* ChoiceInput.cpp in Sources */,
 				08E403D325B46A7600C2092A /* ChoiceSetInput.cpp in Sources */,
-				08E403D525B46A7600C2092A /* CollectionTypeElement.cpp in Sources */,
 				08E403D725B46A7600C2092A /* Column.cpp in Sources */,
 				08E403D925B46A7600C2092A /* ColumnSet.cpp in Sources */,
 				08E403DB25B46A7600C2092A /* Container.cpp in Sources */,
 				08E403DD25B46A7600C2092A /* DateInput.cpp in Sources */,
 				08E403DF25B46A7600C2092A /* DateTimePreparsedToken.cpp in Sources */,
+				288E3FF129C83E5400CF3D93 /* ExecuteAction.cpp in Sources */,
 				08E403E125B46A7600C2092A /* DateTimePreparser.cpp in Sources */,
+				288E3FEC29C83E5400CF3D93 /* Table.cpp in Sources */,
 				08E403E325B46A7600C2092A /* ElementParserRegistration.cpp in Sources */,
 				08E403E625B46A7600C2092A /* Enums.cpp in Sources */,
 				08E403E825B46A7600C2092A /* Fact.cpp in Sources */,
 				08E403EA25B46A7600C2092A /* FactSet.cpp in Sources */,
 				08E403EC25B46A7600C2092A /* FeatureRegistration.cpp in Sources */,
+				288E3FF029C83E5400CF3D93 /* ChoicesData.cpp in Sources */,
 				08E403EE25B46A7600C2092A /* HostConfig.cpp in Sources */,
 				08E403F025B46A7600C2092A /* Image.cpp in Sources */,
+				288E3FE129C83E5400CF3D93 /* CaptionSource.cpp in Sources */,
 				08E403F225B46A7600C2092A /* ImageSet.cpp in Sources */,
 				08E403F425B46A7600C2092A /* Inline.cpp in Sources */,
 				08E403F825B46A7600C2092A /* jsoncpp.cpp in Sources */,
 				08E403F925B46A7600C2092A /* MarkDownBlockParser.cpp in Sources */,
 				08E403FB25B46A7600C2092A /* MarkDownHtmlGenerator.cpp in Sources */,
 				08E403FD25B46A7600C2092A /* MarkDownParsedResult.cpp in Sources */,
+				288E3FFB29C83E5400CF3D93 /* TableCell.cpp in Sources */,
+				288E3FE629C83E5400CF3D93 /* AuthCardButton.cpp in Sources */,
 				08E403FF25B46A7600C2092A /* MarkDownParser.cpp in Sources */,
 				08E4040125B46A7600C2092A /* Media.cpp in Sources */,
 				08E4040325B46A7600C2092A /* MediaSource.cpp in Sources */,
 				08E4040525B46A7600C2092A /* NumberInput.cpp in Sources */,
+				288E3FF929C83E5400CF3D93 /* Refresh.cpp in Sources */,
 				08E4040725B46A7600C2092A /* OpenUrlAction.cpp in Sources */,
 				08E4040925B46A7600C2092A /* ParseContext.cpp in Sources */,
 				08E4040B25B46A7600C2092A /* ParseResult.cpp in Sources */,
+				288E3FF229C83E5400CF3D93 /* StyledCollectionElement.cpp in Sources */,
 				08E4040D25B46A7600C2092A /* ParseUtil.cpp in Sources */,
+				288E3FE729C83E5400CF3D93 /* CollectionCoreElement.cpp in Sources */,
 				08E4040F25B46A7600C2092A /* pch.cpp in Sources */,
 				08E4041225B46A7600C2092A /* RichTextBlock.cpp in Sources */,
 				08E4041425B46A7600C2092A /* RichTextElementProperties.cpp in Sources */,
 				08E4041625B46A7600C2092A /* SemanticVersion.cpp in Sources */,
+				288E3FEA29C83E5400CF3D93 /* ContentSource.cpp in Sources */,
 				08E4041825B46A7600C2092A /* Separator.cpp in Sources */,
+				288E3FFA29C83E5400CF3D93 /* TableRow.cpp in Sources */,
 				08E4041A25B46A7600C2092A /* SharedAdaptiveCard.cpp in Sources */,
 				08E4041C25B46A7600C2092A /* ShowCardAction.cpp in Sources */,
 				08E4041E25B46A7600C2092A /* SubmitAction.cpp in Sources */,
 				08E4042025B46A7600C2092A /* TextBlock.cpp in Sources */,
 				08E4042225B46A7600C2092A /* TextElementProperties.cpp in Sources */,
 				08E4042425B46A7600C2092A /* TextInput.cpp in Sources */,
+				288E3FE429C83E5400CF3D93 /* Authentication.cpp in Sources */,
 				08E4042625B46A7600C2092A /* TextRun.cpp in Sources */,
 				08E4042825B46A7600C2092A /* TimeInput.cpp in Sources */,
 				08E4042A25B46A7600C2092A /* ToggleInput.cpp in Sources */,
 				08E4042C25B46A7600C2092A /* ToggleVisibilityAction.cpp in Sources */,
 				08E4042E25B46A7600C2092A /* ToggleVisibilityTarget.cpp in Sources */,
+				288E3FEF29C83E5400CF3D93 /* TokenExchangeResource.cpp in Sources */,
 				08E4043025B46A7600C2092A /* UnknownAction.cpp in Sources */,
 				08E4043225B46A7600C2092A /* UnknownElement.cpp in Sources */,
+				288E3FE529C83E5400CF3D93 /* TableColumnDefinition.cpp in Sources */,
 				08E4043425B46A7600C2092A /* Util.cpp in Sources */,
 				08E403B625B46A2600C2092A /* AdaptiveCards_shared.m in Sources */,
 			);
@@ -2611,21 +2898,35 @@
 			buildActionMask = 2147483647;
 			files = (
 				083EA9BE25C19E1000DE2BF7 /* ACSUnknownAction.mm in Sources */,
+				288E3F9E29C1F8B000CF3D93 /* ACSTableConfig.swift in Sources */,
+				288E3FA929C1FA3A00CF3D93 /* ACSTextStylesConfig.swift in Sources */,
+				288E3FAB29C1FA4200CF3D93 /* ACSTextStylesConfigConvertor.mm in Sources */,
+				288E3F4529C1C04A00CF3D93 /* ACSAuthCardButton.mm in Sources */,
+				288E3F9C29C1F8A400CF3D93 /* ACSTableConfigConvertor.mm in Sources */,
+				288E3F6A29C1C7CB00CF3D93 /* ACSFactSetTextConfig.swift in Sources */,
 				083EA96125C19E1000DE2BF7 /* ACSImageConfigConvertor.mm in Sources */,
 				083EA9F825C19E1000DE2BF7 /* ACSToggleVisibilityTarget.mm in Sources */,
 				083EA8FD25C19E1000DE2BF7 /* ACSTextWeightConvertor.mm in Sources */,
 				083EA98825C19E1000DE2BF7 /* ACSLabelConfig.swift in Sources */,
+				288E3F7029C1C80700CF3D93 /* ACSTextStyleConfig.swift in Sources */,
 				083EA8EE25C19E1000DE2BF7 /* ACSImageFillModeConvertor.mm in Sources */,
+				288E3F6E29C1C7E900CF3D93 /* ACSFactSetTextConfigConvertor.mm in Sources */,
+				288E3FA429C1F9CF00CF3D93 /* ACSTextBlockConfigConvertor.mm in Sources */,
+				288E3FA229C1F9BF00CF3D93 /* ACSTextBlockConfig.swift in Sources */,
 				083EA9A125C19E1000DE2BF7 /* ACSMediaConfigConvertor.mm in Sources */,
 				083EAA1E25C19E1000DE2BF7 /* ACSInternalId.mm in Sources */,
 				083EA92825C19E1000DE2BF7 /* ACSContainerStyleConvertor.mm in Sources */,
 				083EA92B25C19E1000DE2BF7 /* ACSFontTypeConvertor.mm in Sources */,
+				288E3F3B29C1BECD00CF3D93 /* ACSModeConvertor.mm in Sources */,
+				288E3F4D29C1C23700CF3D93 /* ACSRefresh.mm in Sources */,
+				288E3F7229C1C80F00CF3D93 /* ACSTextStyleConfigConvertor.mm in Sources */,
 				083EA99E25C19E1000DE2BF7 /* ACSAdaptiveCardConfig.swift in Sources */,
 				083EA94F25C19E1000DE2BF7 /* ACSVerticalAlignmentConvertor.mm in Sources */,
 				083EAA1925C19E1000DE2BF7 /* ACSAdaptiveBase64Util.mm in Sources */,
 				083EA8F425C19E1000DE2BF7 /* ACSDateTimePreparsedTokenFormatConvertor.mm in Sources */,
 				083EA9F325C19E1000DE2BF7 /* ACSInline.mm in Sources */,
 				083EA96925C19E1000DE2BF7 /* ACSInputLabelConfig.swift in Sources */,
+				288E3FC229C3189A00CF3D93 /* ACSTextStyleConfig.swift in Sources */,
 				083EA8F025C19E1000DE2BF7 /* ACSAssociatedInputsConvertor.mm in Sources */,
 				083EA93B25C19E1000DE2BF7 /* ACSHorizontalAlignmentConvertor.mm in Sources */,
 				083EA9B025C19E1000DE2BF7 /* ACSMedia.mm in Sources */,
@@ -2634,12 +2935,14 @@
 				083EA8FB25C19E1000DE2BF7 /* ACSImageStyleConvertor.mm in Sources */,
 				083EA9D625C19E1000DE2BF7 /* ACSToggleVisibilityAction.mm in Sources */,
 				083EA9F225C19E1000DE2BF7 /* ACSColumn.mm in Sources */,
-				083EA98425C19E1000DE2BF7 /* ACSTextConfig.swift in Sources */,
 				083EAA1025C19E1000DE2BF7 /* ACSToggleInput.mm in Sources */,
 				083EAA0D25C19E1000DE2BF7 /* ACSTextRun.mm in Sources */,
 				083EA9D325C19E1000DE2BF7 /* ACSFontSizesConfig.mm in Sources */,
+				288E3F5729C1C41300CF3D93 /* ACSCollectionCoreElement.mm in Sources */,
+				288E3F6729C1C6F400CF3D93 /* ACSTextStyleConvertor.mm in Sources */,
 				083EA97725C19E1000DE2BF7 /* ACSImageSetConfig.swift in Sources */,
 				083EA9D525C19E1000DE2BF7 /* ACSNumberInput.mm in Sources */,
+				288E3F5529C1C40200CF3D93 /* ACSStyledCollectionElement.mm in Sources */,
 				083EA95525C19E1000DE2BF7 /* ACSSeparatorConfig.swift in Sources */,
 				083EA97E25C19E1000DE2BF7 /* ACSErrorMessageConfigConvertor.mm in Sources */,
 				083EA96A25C19E1000DE2BF7 /* ACSAdaptiveCardConfigConvertor.mm in Sources */,
@@ -2675,6 +2978,7 @@
 				083EA97425C19E1000DE2BF7 /* ACSContainerStylesDefinitionConvertor.mm in Sources */,
 				083EA96425C19E1000DE2BF7 /* ACSLabelConfigConvertor.mm in Sources */,
 				083EA97825C19E1000DE2BF7 /* ACSInputsConfig.swift in Sources */,
+				281415F129EEF6200042F0FC /* ACSTableRow.mm in Sources */,
 				083EA96C25C19E1000DE2BF7 /* ACSSpacingConfigConvertor.mm in Sources */,
 				083EA9C725C19E1000DE2BF7 /* ACSHostConfig.mm in Sources */,
 				083EAA1125C19E1000DE2BF7 /* ACSTimeInput.mm in Sources */,
@@ -2687,11 +2991,14 @@
 				083EA95625C19E1000DE2BF7 /* ACSImageSizesConfig.swift in Sources */,
 				083EA99125C19E1000DE2BF7 /* ACSContainerStylesDefinition.swift in Sources */,
 				083EA91025C19E1000DE2BF7 /* ACSVerticalContentAlignmentConvertor.mm in Sources */,
+				288E400029C852AE00CF3D93 /* ACSExecuteAction.mm in Sources */,
 				083EA91425C19E1000DE2BF7 /* ACSTextInputStyleConvertor.mm in Sources */,
 				083EA94B25C19E1000DE2BF7 /* ACSCardElementTypeConvertor.mm in Sources */,
 				083E513725C2F87B007247A9 /* ACSHostConfigParseResult.m in Sources */,
+				281415F029EEF6200042F0FC /* ACSTable.mm in Sources */,
 				083EA9AE25C19E1000DE2BF7 /* ACSOpenUrlAction.mm in Sources */,
 				083EA9C525C19E1000DE2BF7 /* ACSColumnSet.mm in Sources */,
+				281415F329EEF6200042F0FC /* ACSTableColumnDefinition.mm in Sources */,
 				083EA9FB25C19E1000DE2BF7 /* ACSDateTimePreparser.mm in Sources */,
 				083EA97925C19E1000DE2BF7 /* ACSColorConfigConvertor.mm in Sources */,
 				083EA95C25C19E1000DE2BF7 /* ACSInputLabelConfigConvertor.mm in Sources */,
@@ -2703,19 +3010,22 @@
 				083EAA2025C19E1000DE2BF7 /* ACSUnknownElement.mm in Sources */,
 				083EA8E925C19E1000DE2BF7 /* ACSAdaptiveCardSchemaKeyConvertor.mm in Sources */,
 				083EA8FC25C19E1000DE2BF7 /* ACSActionTypeConvertor.mm in Sources */,
-				083EAA2225C19E1000DE2BF7 /* ACSCollectionTypeElement.mm in Sources */,
+				281415EF29EEF6200042F0FC /* ACSTableCell.mm in Sources */,
 				083EA99025C19E1000DE2BF7 /* ACSFontTypeDefinitionConvertor.mm in Sources */,
 				083EA9E425C19E1000DE2BF7 /* ACSTextInput.mm in Sources */,
 				083EA97C25C19E1000DE2BF7 /* ACSInputsConfigConvertor.mm in Sources */,
 				083EA9D125C19E1000DE2BF7 /* ACSAdaptiveCardParseWarning.mm in Sources */,
+				288E3F4929C1C14A00CF3D93 /* ACSTokenExchangeResource.mm in Sources */,
 				083EA9FE25C19E1000DE2BF7 /* ACSMediaSource.mm in Sources */,
 				083EA8FE25C19E1000DE2BF7 /* ACSFallbackTypeConvertor.mm in Sources */,
 				083EA9AB25C19E1000DE2BF7 /* ACSAdaptiveCard.mm in Sources */,
 				083EA92A25C19E1000DE2BF7 /* ACSContainerBleedDirectionConvertor.mm in Sources */,
+				281415E529EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm in Sources */,
 				083EA9B225C19E1000DE2BF7 /* ACSBaseCardElement.mm in Sources */,
-				083EA96625C19E1000DE2BF7 /* ACSTextConfigConvertor.mm in Sources */,
+				288E3F5F29C1C48C00CF3D93 /* ACSContentSource.mm in Sources */,
 				083EA9BD25C19E1000DE2BF7 /* ACSRichTextElementProperties.mm in Sources */,
 				083EA9AC25C19E1000DE2BF7 /* ACSSeparator.mm in Sources */,
+				288E3F5D29C1C47C00CF3D93 /* ACSCaptionSource.mm in Sources */,
 				083EA9C425C19E1000DE2BF7 /* ACSFontWeightsConfig.mm in Sources */,
 				083EA9A825C19E1000DE2BF7 /* ACSSpacingConfig.swift in Sources */,
 				083EA92225C19E1000DE2BF7 /* ACSSpacingConvertor.mm in Sources */,
@@ -2735,7 +3045,9 @@
 				083EA9A925C19E1000DE2BF7 /* ACSImageSizesConfigConvertor.mm in Sources */,
 				083EA9CA25C19E1000DE2BF7 /* ACSDateTimePreparsedToken.mm in Sources */,
 				08B5F95D25C9764D00A7D37A /* ACSMarkdownParserResult.swift in Sources */,
+				288E3F5129C1C38100CF3D93 /* ACSChoicesData.mm in Sources */,
 				083EA95725C19E1000DE2BF7 /* ACSHighlightColorConfigConvertor.mm in Sources */,
+				288E3F4129C1BFC900CF3D93 /* ACSAuthentication.mm in Sources */,
 				083EAA0625C19E1000DE2BF7 /* ACSBackgroundImage.mm in Sources */,
 				083EA99325C19E1000DE2BF7 /* ACSFactSetConfig.swift in Sources */,
 				083EA90B25C19E1000DE2BF7 /* ACSIconPlacementConvertor.mm in Sources */,

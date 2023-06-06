@@ -8,7 +8,7 @@
 
 package io.adaptivecards.objectmodel;
 
-public class Column extends CollectionTypeElement {
+public class Column extends StyledCollectionElement {
   private transient long swigCPtr;
   private transient boolean swigCMemOwnDerived;
 
@@ -81,6 +81,18 @@ public class Column extends CollectionTypeElement {
 
   public BaseCardElementVector GetItems() {
     return new BaseCardElementVector(AdaptiveCardObjectModelJNI.Column_GetItems__SWIG_0(swigCPtr, this), false);
+  }
+
+  public @androidx.annotation.Nullable Boolean GetRtl() {
+    StdOptionalBool optvalue = new StdOptionalBool(AdaptiveCardObjectModelJNI.Column_GetRtl(swigCPtr, this), false);
+    return optvalue.has_value() ? optvalue.value() : null;
+  }
+
+  public void SetRtl(@androidx.annotation.Nullable Boolean value) {
+    StdOptionalBool optvalue = (value == null) ? new StdOptionalBool() : new StdOptionalBool(value);
+    {
+      AdaptiveCardObjectModelJNI.Column_SetRtl(swigCPtr, this, StdOptionalBool.getCPtr(optvalue), optvalue);
+    }
   }
 
   public void GetResourceInformation(RemoteResourceInformationVector resourceInfo) {

@@ -11,8 +11,8 @@
 #import "ACOHostConfigPrivate.h"
 #import "ACRAggregateTarget.h"
 #import "ACRContentHoldingUIView.h"
-#import "ACRLongPressGestureRecognizerFactory.h"
 #import "ACRRegistration.h"
+#import "ACRTapGestureRecognizerFactory.h"
 #import "ACRUILabel.h"
 #import "ACRView.h"
 #import "DateTimePreparsedToken.h"
@@ -49,7 +49,10 @@
         [[ACRUILabel alloc] initWithFrame:CGRectMake(0, 0, viewGroup.frame.size.width, 0)];
     lab.backgroundColor = [UIColor clearColor];
     lab.style = [viewGroup style];
-    lab.editable = NO;
+    // Apple Bug: without setting editable to YES, VO link navigation in iOS 12 and above
+    // doesn't work.
+    lab.editable = YES;
+    lab.delegate = lab;
     lab.textContainer.lineFragmentPadding = 0;
     lab.textContainerInset = UIEdgeInsetsZero;
     lab.layoutManager.usesFontLeading = false;
@@ -58,6 +61,8 @@
     if (rootView) {
         NSMutableDictionary *textMap = [rootView getTextMap];
 
+        BOOL hasGestureRecognizerAdded = NO;
+        BOOL hasLongPressGestureRecognizerAdded = NO;
         for (const auto &inlineText : rTxtBlck->GetInlines()) {
             std::shared_ptr<TextRun> textRun = std::static_pointer_cast<TextRun>(inlineText);
             if (textRun) {
@@ -90,63 +95,75 @@
                                                                              options:options
                                                                   documentAttributes:nil
                                                                                error:nil];
+                    UpdateFontWithDynamicType(textRunContent);
+
                     lab.selectable = YES;
                     lab.dataDetectorTypes = UIDataDetectorTypeLink | UIDataDetectorTypePhoneNumber;
                     lab.userInteractionEnabled = YES;
                 } else {
                     textRunContent = [[NSMutableAttributedString alloc] initWithString:text
                                                                             attributes:descriptor];
-                    // text is preprocessed by markdown parser, and will wrapped by <p></P>
-                    // lines below remove the p tags
-                    [textRunContent deleteCharactersInRange:NSMakeRange(0, 3)];
-                    [textRunContent
-                        deleteCharactersInRange:NSMakeRange([textRunContent length] - 4, 4)];
                 }
                 // Set paragraph style such as line break mode and alignment
                 NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
                 paragraphStyle.alignment =
-                    [ACOHostConfig getTextBlockAlignment:rTxtBlck->GetHorizontalAlignment()];
+                    [ACOHostConfig getTextBlockAlignment:rTxtBlck->GetHorizontalAlignment().value_or(HorizontalAlignment::Left)
+                                                 context:rootView.context];
 
                 // Obtain text color to apply to the attributed string
                 ACRContainerStyle style = lab.style;
+                auto textColor = textRun->GetTextColor().value_or(ForegroundColor::Default);
                 auto foregroundColor = [acoConfig getTextBlockColor:style
-                                                          textColor:textRun->GetTextColor()
-                                                       subtleOption:textRun->GetIsSubtle()];
+                                                          textColor:textColor
+                                                       subtleOption:textRun->GetIsSubtle().value_or(false)];
 
                 // Config and add Select Action
                 std::shared_ptr<BaseActionElement> baseAction = textRun->GetSelectAction();
                 ACOBaseActionElement *acoAction = [[ACOBaseActionElement alloc] initWithBaseActionElement:baseAction];
-                if (baseAction) {
+                if (baseAction && [acoAction isEnabled]) {
                     NSObject *target;
                     if (ACRRenderingStatus::ACROk ==
                         buildTarget([rootView getSelectActionsTargetBuilderDirector], acoAction,
                                     &target)) {
-                        NSRange selectActionRange = NSMakeRange(0, textRunContent.length - 1);
+                        NSRange selectActionRange = NSMakeRange(0, textRunContent.length);
 
-                        [textRunContent addAttribute:@"SelectAction"
+                        [textRunContent addAttribute:NSLinkAttributeName
                                                value:target
                                                range:selectActionRange];
-                        [ACRLongPressGestureRecognizerFactory
-                            addTapGestureRecognizerToUITextView:lab
-                                                         target:(NSObject<ACRSelectActionDelegate>
-                                                                     *)target
-                                                       rootView:rootView
-                                                     hostConfig:acoConfig];
 
-                        [textRunContent addAttribute:NSUnderlineStyleAttributeName
-                                               value:[NSNumber numberWithInt:NSUnderlineStyleSingle]
-                                               range:selectActionRange];
-                        [textRunContent addAttribute:NSUnderlineColorAttributeName
-                                               value:foregroundColor
-                                               range:selectActionRange];
+                        if (!hasGestureRecognizerAdded) {
+                            [ACRTapGestureRecognizerFactory
+                                addTapGestureRecognizerToUITextView:lab
+                                                             target:(NSObject<ACRSelectActionDelegate>
+                                                                         *)target
+                                                           rootView:rootView
+                                                         hostConfig:acoConfig];
+                            hasGestureRecognizerAdded = YES;
+                        }
+
+                        if (acoAction.inlineTooltip && [acoAction.inlineTooltip length]) {
+                            [((ACRBaseTarget *)target) setTooltip:lab toolTipText:acoAction.inlineTooltip];
+                            if (!hasLongPressGestureRecognizerAdded) {
+                                UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:lab action:@selector(handleInlineAction:)];
+                                [lab addGestureRecognizer:recognizer];
+                                hasLongPressGestureRecognizerAdded = YES;
+                            }
+                        }
+
+                        if (@available(iOS 13.0, *)) {
+                            foregroundColor = UIColor.linkColor;
+                        } else {
+                            // Fallback on earlier versions
+                            foregroundColor = [ACOHostConfig convertHexColorCodeToUIColor:"#007affff"];
+                        }
                     }
                 }
 
                 // apply hightlight to textrun
                 if (textRun->GetHighlight()) {
                     UIColor *highlightColor = [acoConfig getHighlightColor:style
-                                                           foregroundColor:textRun->GetTextColor()
-                                                              subtleOption:textRun->GetIsSubtle()];
+                                                           foregroundColor:textRun->GetTextColor().value_or(ForegroundColor::Default)
+                                                              subtleOption:textRun->GetIsSubtle().value_or(false)];
                     [textRunContent addAttribute:NSBackgroundColorAttributeName
                                            value:highlightColor
                                            range:NSMakeRange(0, textRunContent.length)];
@@ -187,9 +204,7 @@
 
     lab.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [viewGroup addArrangedSubview:lab];
-
-    HorizontalAlignment adaptiveAlignment = rTxtBlck->GetHorizontalAlignment();
+    HorizontalAlignment adaptiveAlignment = rTxtBlck->GetHorizontalAlignment().value_or(HorizontalAlignment::Left);
 
     if (adaptiveAlignment == HorizontalAlignment::Left) {
         lab.textAlignment = NSTextAlignmentLeft;
@@ -219,7 +234,11 @@
                                          forAxis:UILayoutConstraintAxisHorizontal];
 
     [lab setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-    configVisibility(lab, elem);
+
+    configRtl(lab, rootView.context);
+
+    [viewGroup addArrangedSubview:lab];
+
     return lab;
 }
 

@@ -3,7 +3,7 @@
 #include "pch.h"
 #include "MarkDownParsedResult.h"
 
-using namespace AdaptiveSharedNamespace;
+using namespace AdaptiveCards;
 
 void MarkDownParsedResult::Translate()
 {
@@ -151,7 +151,7 @@ void MarkDownParsedResult::MatchLeftAndRightEmphasises()
             if ((*currentEmphasis)->IsLeftAndRightEmphasis() && (*currentEmphasis)->IsRightEmphasis())
             {
                 // Reverse Direction Type; right empahsis to left emphasis
-                (*currentEmphasis)->ReverseDirectionType();
+                (*currentEmphasis)->ChangeDirectionToLeft();
             }
 
             leftEmphasisToExplore.push_back(currentEmphasis);
@@ -224,7 +224,7 @@ void MarkDownParsedResult::MatchLeftAndRightEmphasises()
                     {
                         // right emphasis becomes left emphasis
                         /// create new left empahsis html generator from right
-                        (*currentEmphasis)->ReverseDirectionType();
+                        (*currentEmphasis)->ChangeDirectionToLeft();
                     }
                     else
                     {

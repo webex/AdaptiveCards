@@ -8,9 +8,11 @@ using Antlr4.Runtime.Tree;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AdaptiveCards.Templating
 {
@@ -22,6 +24,7 @@ namespace AdaptiveCards.Templating
         private Stack<DataContext> dataContext = new Stack<DataContext>();
         private readonly JToken root;
         private readonly Options options;
+        private ArrayList templateVisitorWarnings;
 
         /// <summary>
         /// maintains data context
@@ -29,7 +32,7 @@ namespace AdaptiveCards.Templating
         private sealed class DataContext
         {
             public JToken token;
-            public SimpleObjectMemory AELMemory;
+            public AdaptiveCardsTemplateSimpleObjectMemory AELMemory;
             public bool IsArrayType = false;
 
             public JToken RootDataContext;
@@ -68,7 +71,7 @@ namespace AdaptiveCards.Templating
             /// <param name="rootDataContext">root data context</param>
             private void Init(JToken jtoken, JToken rootDataContext)
             {
-                AELMemory = (jtoken is JObject) ? new SimpleObjectMemory(jtoken) : new SimpleObjectMemory(new JObject());
+                AELMemory = (jtoken is JObject) ? new AdaptiveCardsTemplateSimpleObjectMemory(jtoken) : new AdaptiveCardsTemplateSimpleObjectMemory(new JObject());
 
                 token = jtoken;
                 RootDataContext = rootDataContext;
@@ -125,6 +128,8 @@ namespace AdaptiveCards.Templating
             {
                 NullSubstitution = nullSubstitutionOption != null? nullSubstitutionOption : (path) => $"${{{path}}}"
             };
+
+            templateVisitorWarnings = new ArrayList();
         }
 
         /// <summary>
@@ -167,11 +172,19 @@ namespace AdaptiveCards.Templating
                 throw new ArgumentNullException("Parent data context or selection path is null");
             }
 
-            var (value, error) = new ValueExpression("=" + jpath).TryGetValue(parentDataContext.AELMemory);
+            var (value, error) = new ValueExpression("=" + Regex.Unescape(jpath)).TryGetValue(parentDataContext.AELMemory);
             if (error == null)
             {
-                var serializedValue = JsonConvert.SerializeObject(value);
-                dataContext.Push(new DataContext(serializedValue, parentDataContext.RootDataContext));
+                if (value is JToken jvalue)
+                {
+                    dataContext.Push(new DataContext(jvalue, parentDataContext.RootDataContext));
+
+                }
+                else
+                {
+                    var serializedValue = JsonConvert.SerializeObject(value);
+                    dataContext.Push(new DataContext(serializedValue, parentDataContext.RootDataContext));
+                }
             }
             else
             {
@@ -195,6 +208,15 @@ namespace AdaptiveCards.Templating
         private bool HasDataContext()
         {
             return dataContext.Count != 0;
+        }
+
+        /// <summary>
+        /// Getter for templateVisitorWarnings
+        /// </summary>
+        /// <returns>ArrayList</returns>
+        public ArrayList getTemplateVisitorWarnings()
+        {
+            return templateVisitorWarnings;
         }
 
         /// <summary>
@@ -335,8 +357,20 @@ namespace AdaptiveCards.Templating
                 return result;
             }
 
+            bool isTrue = false;
+
+            try
+            {
+                isTrue = IsTrue(result.Predicate, dataContext.token);
+            }
+            catch (System.FormatException)
+            {
+                templateVisitorWarnings.Add($"WARN: Could not evaluate {result.Predicate} because it could not be found in the provided data. " +
+                                    "The condition has been set to false by default.");
+            }
+
             // evaluate $when
-            result.WhenEvaluationResult = IsTrue(result.Predicate, dataContext.token) ?
+            result.WhenEvaluationResult = isTrue ?
                 AdaptiveCardsTemplateResult.EvaluationResult.EvaluatedToTrue :
                 AdaptiveCardsTemplateResult.EvaluationResult.EvaluatedToFalse;
 
@@ -439,6 +473,7 @@ namespace AdaptiveCards.Templating
             }
 
             int repeatsCounts = 1;
+            bool isObjAdded = false;
             var dataContext = GetCurrentDataContext();
 
             if (isArrayType && hasDataContext)
@@ -451,7 +486,7 @@ namespace AdaptiveCards.Templating
             // indicates the number of removed json object(s)
             int removedCounts = 0;
             var comma = context.COMMA();
-            string jsonPairDelimieter = (comma != null && comma.Length > 0) ? comma[0].GetText() : "";
+            string jsonPairDelimiter = (comma != null && comma.Length > 0) ? comma[0].GetText() : "";
 
             // loop for repeating obj parsed in the inner loop
             for (int iObj = 0; iObj < repeatsCounts; iObj++)
@@ -486,14 +521,26 @@ namespace AdaptiveCards.Templating
                         // a pair after first pair is added
                         if (isPairAdded && !returnedResult.IsWhen)
                         {
-                            result.Append(jsonPairDelimieter);
+                            result.Append(jsonPairDelimiter);
                         }
 
                         result.Append(returnedResult);
 
                         if (returnedResult.IsWhen)
                         {
-                            whenEvaluationResult = returnedResult.WhenEvaluationResult;
+                            if (returnedResult.WhenEvaluationResult == AdaptiveCardsTemplateResult.EvaluationResult.NotEvaluated)
+                            {
+                                // The when expression could not be evaluated, so we are defaulting the value to false
+                                whenEvaluationResult = AdaptiveCardsTemplateResult.EvaluationResult.EvaluatedToFalse;
+
+                                templateVisitorWarnings.Add($"WARN: Could not evaluate {returnedResult} because it is not an expression or the " +
+                                    $"expression is invalid. The $when condition has been set to false by default.");
+                                
+                            }
+                            else
+                            {
+                                whenEvaluationResult = returnedResult.WhenEvaluationResult;
+                            }
                         }
                         else
                         {
@@ -507,11 +554,14 @@ namespace AdaptiveCards.Templating
 
                 if (whenEvaluationResult != AdaptiveCardsTemplateResult.EvaluationResult.EvaluatedToFalse)
                 {
-                    if (iObj != repeatsCounts - 1)
+                    if (isObjAdded)
                     {
-                        result.Append(jsonPairDelimieter);
+                        // add a delimiter, e.g ',' before appending
+                        // another object after first object is added
+                        combinedResult.Append(jsonPairDelimiter);
                     }
                     combinedResult.Append(result);
+                    isObjAdded = true;
                 }
                 else
                 {
@@ -575,8 +625,7 @@ namespace AdaptiveCards.Templating
             if (HasDataContext())
             {
                 DataContext currentDataContext = GetCurrentDataContext();
-                string templateString = node.GetText();
-                return new AdaptiveCardsTemplateResult(Expand(templateString, currentDataContext.AELMemory, isExpanded));
+                return new AdaptiveCardsTemplateResult(Expand(Regex.Unescape(node.GetText()), currentDataContext.AELMemory, isExpanded, options));
             }
 
             return new AdaptiveCardsTemplateResult(node.GetText());
@@ -588,8 +637,9 @@ namespace AdaptiveCards.Templating
         /// <param name="unboundString"></param>
         /// <param name="data"></param>
         /// <param name="isTemplatedString"></param>
+        /// <param name="options"></param>
         /// <returns><c>string</c></returns>
-        public static string Expand(string unboundString, SimpleObjectMemory data, bool isTemplatedString = false)
+        public static string Expand(string unboundString, IMemory data, bool isTemplatedString = false, Options options = null)
         {
             if (unboundString == null)
             {
@@ -611,26 +661,26 @@ namespace AdaptiveCards.Templating
                 return unboundString;
             }
 
-            var options = new Options
+            if (options == null)
             {
-                NullSubstitution = (path) => $"${{{path}}}"
-            };
+                options = new Options
+                {
+                    NullSubstitution = (path) => $"${{{path}}}"
+                };
+            }
 
             StringBuilder result = new StringBuilder();
             var (value, error) = exp.TryEvaluate(data, options);
             if (error == null)
             {
-                // this can be little counterintuitive, but template expand() is
-                // modifying serialized json string, so we serialize what's deserialized
-                var serializedValue = JsonConvert.SerializeObject(value);
-                if (!isTemplatedString && value is string)
+                string s = JsonConvert.SerializeObject(value);
+                // after serialization, the double quotes should be removed
+                if (value is string && !isTemplatedString)
                 {
-                    // length can not be less than 2 because template string will 
-                    // always have start and end token
-                    serializedValue = serializedValue.Substring(1, serializedValue.Length - 2);
+                    s = s.Substring(1, s.Length - 2);
                 }
 
-                result.Append(serializedValue);
+                result.Append(s);
             }
             else
             {
@@ -655,6 +705,15 @@ namespace AdaptiveCards.Templating
             // this node is visited only when parsing was correctly done
             // [ '{', '$when', ':', ',', 'expression'] 
             var result = Visit(context.templateExpression());
+
+            if (!result.IsWhen)
+            {
+                // We know that this result was supposed to be IsWhen since it is called from VisitTemplateWhen
+                // We create a result with `IsWhen = false` if the expression is invalid
+                // Result will now correctly follow the rest of the IsWhen logic
+                result.IsWhen = true;
+            }
+
             return result;
         }
 
@@ -678,17 +737,25 @@ namespace AdaptiveCards.Templating
             AdaptiveCardsTemplateResult result = new AdaptiveCardsTemplateResult(context.LSB().GetText());
             var values = context.value();
             var arrayDelimiters = context.COMMA();
+            bool isValueAdded = false;
 
             // visit each json value in json array and integrate parsed result
             for (int i = 0; i < values.Length; i++)
             {
                 var value = context.value(i);
                 var parsedResult = Visit(value);
-                result.Append(parsedResult);
-                // only add delimiter when parsedResult has not been dropped, and delimiter is needed
-                if (!parsedResult.HasItBeenDropped && i != values.Length - 1 && arrayDelimiters.Length > 0)
+
+                // only add delimiter when parsedResult has not been dropped,
+                // and a value has already been added to the array
+                if (isValueAdded && !parsedResult.HasItBeenDropped && arrayDelimiters.Length > 0)
                 {
                     result.Append(arrayDelimiters[0].GetText());
+                }
+
+                if (!parsedResult.HasItBeenDropped)
+                {
+                    result.Append(parsedResult);
+                    isValueAdded = true;
                 }
             }
 
@@ -705,7 +772,7 @@ namespace AdaptiveCards.Templating
         /// <returns><c>true</c> if predicate is evaluated to <c>true</c></returns>
         public static bool IsTrue(string predicate, JToken data)
         {
-            var (value, error) = new ValueExpression(predicate).TryGetValue(data);
+            var (value, error) = new ValueExpression(Regex.Unescape(predicate)).TryGetValue(data);
             if (error == null)
             {
                 return bool.Parse(value as string);

@@ -27,9 +27,13 @@ class FakeRichTextBlock: ACSRichTextBlock {
 }
 
 extension FakeRichTextBlock {
-    static func make(textRun: FakeTextRun = FakeTextRun.make(), horizontalAlignment: ACSHorizontalAlignment = ACSHorizontalAlignment.left, heightType: ACSHeightType = .auto) -> FakeRichTextBlock {
+    static func make(textRun: FakeTextRun = FakeTextRun.make(), horizontalAlignment: ACSHorizontalAlignment = ACSHorizontalAlignment.left, heightType: ACSHeightType = .auto, inlines: [ACSInline]? = nil) -> FakeRichTextBlock {
         let fakeRichTextBlock = FakeRichTextBlock()
-        fakeRichTextBlock.inlines = [textRun as ACSInline]
+        if let inlines = inlines {
+            fakeRichTextBlock.inlines = inlines
+        } else {
+            fakeRichTextBlock.inlines = [textRun as ACSInline]
+        }
         fakeRichTextBlock.horizontalAlignment = horizontalAlignment
         fakeRichTextBlock.height = heightType
         return fakeRichTextBlock

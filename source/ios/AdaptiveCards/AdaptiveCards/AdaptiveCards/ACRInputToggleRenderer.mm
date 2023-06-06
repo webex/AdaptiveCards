@@ -41,11 +41,6 @@
     std::shared_ptr<BaseCardElement> elem = [acoElem element];
     std::shared_ptr<ToggleInput> adaptiveToggleInput = std::dynamic_pointer_cast<ToggleInput>(elem);
 
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"MSFT.AdaptiveCards"];
-    if (!bundle) { // https://github.com/Microsoft/AdaptiveCards/issues/1834
-        return nil;
-    }
-
     ACRToggleInputView *toggleView = [[ACRToggleInputView alloc] initWithFrame:CGRectMake(0, 0, viewGroup.frame.size.width, viewGroup.frame.size.height)];
 
     toggleView.title.text = [NSString stringWithCString:adaptiveToggleInput->GetTitle().c_str() encoding:NSUTF8StringEncoding];
@@ -65,8 +60,8 @@
     ACRToggleInputDataSource *dataSource = [[ACRToggleInputDataSource alloc] initWithInputToggle:adaptiveToggleInput WithHostConfig:config];
     dataSource.toggleSwitch = toggleView.toggle;
 
-    ACRInputLabelView *inputLabelView = [[ACRInputLabelView alloc] initInputLabelView:rootView acoConfig:acoConfig adptiveInputElement:adaptiveToggleInput inputView:toggleView accessibilityItem:toggleView.toggle viewGroup:viewGroup dataSource:dataSource];
-    
+    ACRInputLabelView *inputLabelView = [[ACRInputLabelView alloc] initInputLabelView:rootView acoConfig:acoConfig adaptiveInputElement:adaptiveToggleInput inputView:toggleView accessibilityItem:toggleView.toggle viewGroup:viewGroup dataSource:dataSource];
+
     toggleView.isAccessibilityElement = NO;
     if (toggleView.title.text) {
         toggleView.toggle.accessibilityLabel = [NSString stringWithFormat:@"%@, %@,", toggleView.toggle.accessibilityLabel, toggleView.title.text];
@@ -74,20 +69,7 @@
 
     [inputs addObject:inputLabelView];
 
-    if (elem->GetHeight() == HeightType::Stretch) {
-        ACRColumnView *textInputContainer = [[ACRColumnView alloc] init];
-        [textInputContainer addArrangedSubview:inputLabelView];
-        // Add a blank view so the input field doesnt grow as large as it can and so it keeps the same behavior as Android and UWP
-        UIView *blankTrailingSpace = [[UIView alloc] init];
-        [textInputContainer addArrangedSubview:blankTrailingSpace];
-        [textInputContainer adjustHuggingForLastElement];
-
-        [viewGroup addArrangedSubview:textInputContainer];
-    } else {
-        [viewGroup addArrangedSubview:inputLabelView];
-    }
-
-    configVisibility(inputLabelView, elem);
+    [viewGroup addArrangedSubview:inputLabelView];
 
     return inputLabelView;
 }

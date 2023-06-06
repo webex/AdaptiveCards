@@ -8,9 +8,9 @@
 #include "TextBlock.h"
 #include "Util.h"
 
-using namespace AdaptiveSharedNamespace;
+using namespace AdaptiveCards;
 
-ColumnSet::ColumnSet() : CollectionTypeElement(CardElementType::ColumnSet)
+ColumnSet::ColumnSet() : StyledCollectionElement(CardElementType::ColumnSet)
 {
     PopulateKnownPropertiesSet();
 }
@@ -37,7 +37,7 @@ void ColumnSet::SetHorizontalAlignment(const HorizontalAlignment value)
 
 Json::Value ColumnSet::SerializeToJsonValue() const
 {
-    Json::Value root = CollectionTypeElement::SerializeToJsonValue();
+    Json::Value root = StyledCollectionElement::SerializeToJsonValue();
 
     std::string const& propertyName = AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Columns);
     root[propertyName] = Json::Value(Json::arrayValue);
@@ -51,26 +51,28 @@ Json::Value ColumnSet::SerializeToJsonValue() const
 
 void ColumnSet::DeserializeChildren(ParseContext& context, const Json::Value& value)
 {
-    m_columns = ParseUtil::GetElementCollection<Column>(false, // isTopToBottomContainer
-                                                        context,
-                                                        value,
-                                                        AdaptiveCardSchemaKey::Columns,
-                                                        false,     // isRequired
-                                                        CardElementTypeToString(CardElementType::Column)); // impliedType
+    m_columns = ParseUtil::GetElementCollection<Column>(
+        false, // isTopToBottomContainer
+        context,
+        value,
+        AdaptiveCardSchemaKey::Columns,
+        false,                                             // isRequired
+        CardElementTypeToString(CardElementType::Column)); // impliedType
 }
 
 void ColumnSet::PopulateKnownPropertiesSet()
 {
-    m_knownProperties.insert({AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Bleed),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Columns),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::SelectAction),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Style)});
+    m_knownProperties.insert(
+        {AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Bleed),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Columns),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::SelectAction),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Style)});
 }
 
 void ColumnSet::GetResourceInformation(std::vector<RemoteResourceInformation>& resourceInfo)
 {
     auto columns = GetColumns();
-    CollectionTypeElement::GetResourceInformation<Column>(resourceInfo, columns);
+    StyledCollectionElement::GetResourceInformation<Column>(resourceInfo, columns);
     return;
 }
 
@@ -78,7 +80,10 @@ std::shared_ptr<BaseCardElement> ColumnSetParser::Deserialize(ParseContext& cont
 {
     ParseUtil::ExpectTypeString(value, CardElementType::ColumnSet);
 
-    auto container = CollectionTypeElement::Deserialize<ColumnSet>(context, value);
+    auto container = StyledCollectionElement::Deserialize<ColumnSet>(context, value);
+
+	 container->SetHorizontalAlignment(ParseUtil::GetEnumValue<HorizontalAlignment>(
+        value, AdaptiveCardSchemaKey::HorizontalAlignment, HorizontalAlignment::Left, HorizontalAlignmentFromString));
 
 	 container->SetHorizontalAlignment(ParseUtil::GetEnumValue<HorizontalAlignment>(
         value, AdaptiveCardSchemaKey::HorizontalAlignment, HorizontalAlignment::Left, HorizontalAlignmentFromString));

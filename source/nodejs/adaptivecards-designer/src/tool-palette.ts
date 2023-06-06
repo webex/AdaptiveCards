@@ -15,7 +15,7 @@ export abstract class BasePaletteItem extends DraggableElement {
         element.className = "acd-palette-item";
         element.style.display = "flex";
         element.setAttribute("role", "button");
-        element.tabIndex = 0
+        element.tabIndex = 0;
 
         let iconElement = document.createElement("div");
         iconElement.classList.add("acd-icon", "acd-toolPalette-icon", this.getIconClass());
@@ -59,10 +59,7 @@ export class ElementPaletteItem extends BasePaletteItem {
     }
 
     createPeer(context: DesignContext, designer: CardDesignerSurface): CardElementPeer {
-        let peer = CardDesignerSurface.cardElementPeerRegistry.createPeerInstance(designer, null, new this.typeRegistration.objectType());
-        peer.initializeCardElement();
-
-        return peer;
+        return CardDesignerSurface.cardElementPeerRegistry.createPeerInstance(designer, null, new this.typeRegistration.objectType(), true);
     }
 }
 
@@ -93,10 +90,7 @@ export class DataPaletteItem extends BasePaletteItem {
             element = textBlock;
         }
 
-        let peer = CardDesignerSurface.cardElementPeerRegistry.createPeerInstance(designer, null, element);
-        peer.initializeCardElement();
-
-        return peer;
+        return CardDesignerSurface.cardElementPeerRegistry.createPeerInstance(designer, null, element, true);
     }
 }
 
@@ -138,10 +132,7 @@ export class SnippetPaletteItem extends CustomPaletteItem {
                 if (adaptiveElement) {
                     adaptiveElement.parse(this.snippet);
 
-                    let peer = CardDesignerSurface.cardElementPeerRegistry.createPeerInstance(designer, null, adaptiveElement);
-                    peer.initializeCardElement();
-
-                    return peer;
+                    return CardDesignerSurface.cardElementPeerRegistry.createPeerInstance(designer, null, adaptiveElement, true);
                 }
             }
         }

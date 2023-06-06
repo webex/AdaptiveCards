@@ -4,10 +4,12 @@
 
 #import "SwiftInterfaceHeader.h"
 
+#import "ACSCaptionSource.h"
 #import "ACSMediaSource.h"
 #import "ACSRemoteResourceInformationConvertor.h"
 
 //cpp includes
+#import "CaptionSource.h"
 #import "MediaSource.h"
 #import "RemoteResourceInformation.h"
 
@@ -72,6 +74,19 @@
     }
     return objList;
 
+
+}
+
+- (NSArray<ACSCaptionSource *> * _Nonnull)getCaptionSources
+{
+ 
+    auto getCaptionSourcesCpp = mCppObj->GetCaptionSources();
+    NSMutableArray*  objList = [NSMutableArray new];
+    for (const auto& item: getCaptionSourcesCpp)
+    {
+        [objList addObject: [[ACSCaptionSource alloc] initWithCaptionSource:item]];
+    }
+    return objList;
 
 }
 

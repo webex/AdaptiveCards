@@ -147,7 +147,7 @@ export class Calendar extends InputControl {
 
     private initializeSelection() {
         if (this._date) {
-            for (var i = 0; i < this._days.length; i++) {
+            for (let i = 0; i < this._days.length; i++) {
                 if (Utils.areDatesEqual(this._days[i].date, this.date)) {
                     this.selectedDayCell = this._days[i];
 
@@ -162,7 +162,7 @@ export class Calendar extends InputControl {
 
         var month = newDate.getMonth();
 
-        this._miniCalendarElement.innerHTML = "";
+        Utils.clearElement(this._miniCalendarElement);
 
         this._miniCalendarElement.classList.remove(
             "ms-ctrl-slide",
@@ -173,7 +173,7 @@ export class Calendar extends InputControl {
 
         var dayIndex = <number>Utils.CalendarSettings.firstDayOfWeek;
 
-        for (var i = 0; i < Utils.CalendarSettings.daysInWeek; i++) {
+        for (let i = 0; i < Utils.CalendarSettings.daysInWeek; i++) {
             var cell = document.createElement("td");
             cell.className = "ms-ctrl ms-ctrl-calendarDayHeader";
             cell.innerText = Utils.CalendarSettings.getInitialDayName(dayIndex);
@@ -189,7 +189,7 @@ export class Calendar extends InputControl {
 
         this._miniCalendarElement.appendChild(row);
 
-        for (var i = 0; i < this._days.length; i++) {
+        for (let i = 0; i < this._days.length; i++) {
             if (i % 7 == 0) {
                 row = document.createElement("tr");
                 this._miniCalendarElement.appendChild(row);
@@ -282,7 +282,7 @@ export class Calendar extends InputControl {
     attach(rootElement: HTMLElement) {
         super.attach(rootElement);
 
-        rootElement.innerHTML = "";
+        Utils.clearElement(rootElement);
         rootElement.appendChild(this._rootContainerElement);
     }
 

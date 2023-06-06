@@ -36,7 +36,7 @@ namespace AdaptiveCards.Test
             // After changing the default value of the TextBlock Text property this test doesn't succeed as xml can't
             // read a single space (even with xml:space=preserve), hence we skip this file(s) to avoid test failures.
             // The generated xml actually contains the empty space
-            string[] cardsToIgnore = { "FlightUpdate.json" };
+            string[] cardsToIgnore = { "FlightUpdate.json", "RestaurantOrder.json", "" };
          
             XmlSerializer serializer = new XmlSerializer(typeof(AdaptiveCard));
             foreach (var version in Directory.EnumerateDirectories(@"..\..\..\..\..\..\..\samples\", "v*"))

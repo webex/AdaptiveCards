@@ -1,47 +1,145 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 import * as Enums from "./enums";
-import { PaddingDefinition, GlobalSettings, SizeAndUnit,SpacingDefinition,
-    Dictionary, StringWithSubstitutions, ContentTypes, IInput, IResourceInformation } from "./shared";
+import { CarouselEvent } from "./carousel";
+import {
+    PaddingDefinition,
+    GlobalSettings,
+    SizeAndUnit,
+    SpacingDefinition,
+    ISeparationDefinition,
+    Dictionary,
+    StringWithSubstitutions,
+    ContentTypes,
+    IInput,
+    IResourceInformation
+} from "./shared";
 import * as Utils from "./utils";
-import { HostConfig, defaultHostConfig, BaseTextDefinition, FontTypeDefinition, ColorSetDefinition, TextColorDefinition, ContainerStyleDefinition } from "./host-config";
+import {
+    HostConfig,
+    defaultHostConfig,
+    BaseTextDefinition,
+    FontTypeDefinition,
+    ColorSetDefinition,
+    TextColorDefinition,
+    ContainerStyleDefinition,
+    TextStyleDefinition
+} from "./host-config";
 import * as TextFormatters from "./text-formatters";
 import { CardObject, ValidationResults } from "./card-object";
-import { Versions, Version, property, BaseSerializationContext, SerializableObject, SerializableObjectSchema, StringProperty,
-    BoolProperty, ValueSetProperty, EnumProperty, SerializableObjectCollectionProperty, SerializableObjectProperty, PixelSizeProperty,
-    NumProperty, PropertyBag, CustomProperty, PropertyDefinition } from "./serialization";
-import { CardObjectRegistry } from "./registry";
+import {
+    Versions,
+    Version,
+    property,
+    BaseSerializationContext,
+    SerializableObject,
+    SerializableObjectSchema,
+    StringProperty,
+    BoolProperty,
+    ValueSetProperty,
+    EnumProperty,
+    SerializableObjectCollectionProperty,
+    SerializableObjectProperty,
+    PixelSizeProperty,
+    NumProperty,
+    PropertyBag,
+    CustomProperty,
+    PropertyDefinition,
+    StringArrayProperty
+} from "./serialization";
+import { CardObjectRegistry, GlobalRegistry } from "./registry";
 import { Strings } from "./strings";
+import { MenuItem, PopupMenu } from "./controls";
+
+
+function clearElement(element: HTMLElement) : void {
+    const trustedHtml = (typeof window === 'undefined') ? "" : (window.trustedTypes?.emptyHTML ?? "");
+    element.innerHTML = trustedHtml as string;
+}
+
+export function renderSeparation(
+    hostConfig: HostConfig,
+    separationDefinition: ISeparationDefinition,
+    orientation: Enums.Orientation
+): HTMLElement | undefined {
+    if (
+        separationDefinition.spacing > 0 ||
+        (separationDefinition.lineThickness && separationDefinition.lineThickness > 0)
+    ) {
+        const separator = document.createElement("div");
+        separator.className = hostConfig.makeCssClassName(
+            "ac-" +
+                (orientation === Enums.Orientation.Horizontal ? "horizontal" : "vertical") +
+                "-separator"
+        );
+        separator.setAttribute("aria-hidden", "true");
+
+        const color = separationDefinition.lineColor
+            ? Utils.stringToCssColor(separationDefinition.lineColor)
+            : "";
+
+        if (orientation === Enums.Orientation.Horizontal) {
+            if (separationDefinition.lineThickness) {
+                separator.style.paddingTop = separationDefinition.spacing / 2 + "px";
+                separator.style.marginBottom = separationDefinition.spacing / 2 + "px";
+                separator.style.borderBottom =
+                    separationDefinition.lineThickness + "px solid " + color;
+            } else {
+                separator.style.height = separationDefinition.spacing + "px";
+            }
+        } else {
+            if (separationDefinition.lineThickness) {
+                separator.style.paddingLeft = separationDefinition.spacing / 2 + "px";
+                separator.style.marginRight = separationDefinition.spacing / 2 + "px";
+                separator.style.borderRight =
+                    separationDefinition.lineThickness + "px solid " + color;
+            } else {
+                separator.style.width = separationDefinition.spacing + "px";
+            }
+        }
+
+        separator.style.overflow = "hidden";
+        separator.style.flex = "0 0 auto";
+
+        return separator;
+    } else {
+        return undefined;
+    }
+}
 
 export type CardElementHeight = "auto" | "stretch";
 
 export abstract class CardElement extends CardObject {
     //#region Schema
 
-    static readonly langProperty = new StringProperty(Versions.v1_1, "lang", true, /^[a-z]{2,3}$/ig);
+    static readonly langProperty = new StringProperty(
+        Versions.v1_1,
+        "lang",
+        true,
+        /^[a-z]{2,3}$/gi
+    );
     static readonly isVisibleProperty = new BoolProperty(Versions.v1_2, "isVisible", true);
     static readonly separatorProperty = new BoolProperty(Versions.v1_0, "separator", false);
     static readonly heightProperty = new ValueSetProperty(
         Versions.v1_1,
         "height",
-        [
-            { value: "auto" },
-            { value: "stretch" }
-        ],
-        "auto");
+        [{ value: "auto" }, { value: "stretch" }],
+        "auto"
+    );
     static readonly horizontalAlignmentProperty = new EnumProperty(
         Versions.v1_0,
         "horizontalAlignment",
-        Enums.HorizontalAlignment,
-        Enums.HorizontalAlignment.Left);
+        Enums.HorizontalAlignment
+    );
     static readonly spacingProperty = new EnumProperty(
         Versions.v1_0,
         "spacing",
         Enums.Spacing,
-        Enums.Spacing.Default);
+        Enums.Spacing.Default
+    );
 
     @property(CardElement.horizontalAlignmentProperty)
-    horizontalAlignment: Enums.HorizontalAlignment;
+    horizontalAlignment?: Enums.HorizontalAlignment;
 
     @property(CardElement.spacingProperty)
     spacing: Enums.Spacing;
@@ -54,16 +152,14 @@ export abstract class CardElement extends CardObject {
 
     @property(CardElement.langProperty)
     get lang(): string | undefined {
-        let lang = this.getValue(CardElement.langProperty);
+        const lang = this.getValue(CardElement.langProperty);
 
         if (lang) {
             return lang;
-        }
-        else {
+        } else {
             if (this.parent) {
                 return this.parent.lang;
-            }
-            else {
+            } else {
                 return undefined;
             }
         }
@@ -110,38 +206,47 @@ export abstract class CardElement extends CardObject {
     private _padding?: PaddingDefinition;
 
     private internalRenderSeparator(): HTMLElement | undefined {
-        let renderedSeparator = Utils.renderSeparation(
+        const renderedSeparator = renderSeparation(
             this.hostConfig,
             {
                 spacing: this.hostConfig.getEffectiveSpacing(this.spacing),
                 lineThickness: this.separator ? this.hostConfig.separator.lineThickness : undefined,
                 lineColor: this.separator ? this.hostConfig.separator.lineColor : undefined
             },
-            this.separatorOrientation);
+            this.separatorOrientation
+        );
 
-            if (GlobalSettings.alwaysBleedSeparators && renderedSeparator && this.separatorOrientation == Enums.Orientation.Horizontal) {
-                // Adjust separator's margins if the option to always bleed separators is turned on
-                let parentContainer = this.getParentContainer();
+        if (
+            GlobalSettings.alwaysBleedSeparators &&
+            renderedSeparator &&
+            this.separatorOrientation === Enums.Orientation.Horizontal
+        ) {
+            // Adjust separator's margins if the option to always bleed separators is turned on
+            const parentContainer = this.getParentContainer();
 
-                if (parentContainer && parentContainer.getEffectivePadding()) {
-                    let parentPhysicalPadding = this.hostConfig.paddingDefinitionToSpacingDefinition(parentContainer.getEffectivePadding());
+            if (parentContainer && parentContainer.getEffectivePadding()) {
+                const parentPhysicalPadding = this.hostConfig.paddingDefinitionToSpacingDefinition(
+                    parentContainer.getEffectivePadding()
+                );
 
-                    renderedSeparator.style.marginLeft = "-" + parentPhysicalPadding.left + "px";
-                    renderedSeparator.style.marginRight = "-" + parentPhysicalPadding.right + "px";
-                }
+                renderedSeparator.style.marginLeft = "-" + parentPhysicalPadding.left + "px";
+                renderedSeparator.style.marginRight = "-" + parentPhysicalPadding.right + "px";
             }
+        }
 
-            return renderedSeparator;
+        return renderedSeparator;
     }
 
     private updateRenderedElementVisibility() {
-        let displayMode = this.isDesignMode() || this.isVisible ? this._defaultRenderedElementDisplayMode : "none";
+        const displayMode =
+            this.isDesignMode() || this.isVisible
+                ? this._defaultRenderedElementDisplayMode
+                : "none";
 
         if (this._renderedElement) {
             if (displayMode) {
                 this._renderedElement.style.display = displayMode;
-            }
-            else {
+            } else {
                 this._renderedElement.style.removeProperty("display");
             }
         }
@@ -149,12 +254,10 @@ export abstract class CardElement extends CardObject {
         if (this._separatorElement) {
             if (this.parent && this.parent.isFirstElement(this)) {
                 this._separatorElement.style.display = "none";
-            }
-            else {
+            } else {
                 if (displayMode) {
                     this._separatorElement.style.display = displayMode;
-                }
-                else {
+                } else {
                     this._separatorElement.style.removeProperty("display");
                 }
             }
@@ -182,7 +285,7 @@ export abstract class CardElement extends CardObject {
     // Marked private to emulate internal access
     private handleOverflow(maxHeight: number) {
         if (this.isVisible || this.isHiddenDueToOverflow()) {
-            let handled = this.truncateOverflow(maxHeight);
+            const handled = this.truncateOverflow(maxHeight);
 
             // Even if we were unable to truncate the element to fit this time,
             // it still could have been previously truncated
@@ -190,8 +293,7 @@ export abstract class CardElement extends CardObject {
 
             if (!handled) {
                 this.hideElementDueToOverflow();
-            }
-            else if (handled && !this.isVisible) {
+            } else if (handled && !this.isVisible) {
                 this.showElementHiddenDueToOverflow();
             }
         }
@@ -219,15 +321,21 @@ export abstract class CardElement extends CardObject {
     }
 
     protected createPlaceholderElement(): HTMLElement {
-        let styleDefinition = this.getEffectiveStyleDefinition();
-        let foregroundCssColor = Utils.stringToCssColor(styleDefinition.foregroundColors.default.subtle);
+        const styleDefinition = this.getEffectiveStyleDefinition();
+        const foregroundCssColor = Utils.stringToCssColor(
+            styleDefinition.foregroundColors.default.subtle
+        );
 
-        let element = document.createElement("div");
+        const element = document.createElement("div");
         element.style.border = "1px dashed " + foregroundCssColor;
         element.style.padding = "4px";
         element.style.minHeight = "32px";
         element.style.fontSize = "10px";
-        element.style.color = <string>foregroundCssColor;
+
+        if (foregroundCssColor) {
+            element.style.color = foregroundCssColor;
+        }
+
         element.innerText = "Empty " + this.getJsonTypeName();
 
         return element;
@@ -236,14 +344,29 @@ export abstract class CardElement extends CardObject {
     protected adjustRenderedElementSize(renderedElement: HTMLElement) {
         if (this.height === "auto") {
             renderedElement.style.flex = "0 0 auto";
-        }
-        else {
+        } else {
             renderedElement.style.flex = "1 1 auto";
         }
     }
 
+    /*
+     * Called when mouse enters or leaves the card.
+     * Inputs elements need to update their visual state in such events like showing or hiding borders etc.
+     * It calls Input.updateVisualState(eventType) for all inputs.
+     * This method on input (updateVisualState) is supposed to be called from card level on mouse events.
+     */
+    protected updateInputsVisualState(hover: boolean) {
+        const allInputs: Input[] = this.getAllInputs();
+        const inputEventType = !!hover ? InputEventType.MouseEnterOnCard : InputEventType.MouseLeaveOnCard;
+        allInputs.forEach((input) => input.updateVisualState(inputEventType));
+    }
+
     protected isDisplayed(): boolean {
-        return this._renderedElement !== undefined && this.isVisible && this._renderedElement.offsetHeight > 0;
+        return (
+            this._renderedElement !== undefined &&
+            this.isVisible &&
+            this._renderedElement.offsetHeight > 0
+        );
     }
 
     protected abstract internalRender(): HTMLElement | undefined;
@@ -253,18 +376,18 @@ export abstract class CardElement extends CardObject {
     }
 
     protected applyPadding() {
-        if (this.separatorElement) {
-            if (GlobalSettings.alwaysBleedSeparators && this.separatorOrientation == Enums.Orientation.Horizontal && !this.isBleeding()) {
-                let padding = new PaddingDefinition();
+        if (this.separatorElement && this.separatorOrientation === Enums.Orientation.Horizontal) {
+            if (GlobalSettings.alwaysBleedSeparators && !this.isBleeding()) {
+                const padding = new PaddingDefinition();
 
                 this.getImmediateSurroundingPadding(padding);
 
-                let physicalPadding = this.hostConfig.paddingDefinitionToSpacingDefinition(padding);
+                const physicalPadding =
+                    this.hostConfig.paddingDefinitionToSpacingDefinition(padding);
 
                 this.separatorElement.style.marginLeft = "-" + physicalPadding.left + "px";
                 this.separatorElement.style.marginRight = "-" + physicalPadding.right + "px";
-            }
-            else {
+            } else {
                 this.separatorElement.style.marginRight = "0";
                 this.separatorElement.style.marginLeft = "0";
             }
@@ -276,7 +399,7 @@ export abstract class CardElement extends CardObject {
      * maxHeight will be the amount of space still available on the card (0 if
      * the element is fully off the card).
      */
-    protected truncateOverflow(maxHeight: number): boolean {
+    protected truncateOverflow(_maxHeight: number): boolean {
         // Child implementations should return true if the element handled
         // the truncation request such that its content fits within maxHeight,
         // false if the element should fall back to being hidden
@@ -286,13 +409,19 @@ export abstract class CardElement extends CardObject {
     /*
      * This should reverse any changes performed in truncateOverflow().
      */
-    protected undoOverflowTruncation() { }
+    protected undoOverflowTruncation() {
+        return;
+    }
 
     protected getDefaultPadding(): PaddingDefinition {
         return new PaddingDefinition();
     }
 
-    protected getHasBackground(): boolean {
+    protected getHasBackground(ignoreBackgroundImages: boolean = false): boolean {
+        return false;
+    }
+
+    protected getHasBorder(): boolean {
         return false;
     }
 
@@ -309,10 +438,6 @@ export abstract class CardElement extends CardObject {
     }
 
     protected get useDefaultSizing(): boolean {
-        return true;
-    }
-
-    protected get allowCustomPadding(): boolean {
         return true;
     }
 
@@ -350,6 +475,14 @@ export abstract class CardElement extends CardObject {
         return this.hostConfig.containerStyles.getStyleByName(this.getEffectiveStyle());
     }
 
+    getEffectiveTextStyleDefinition(): TextStyleDefinition {
+        if (this.parent) {
+            return this.parent.getEffectiveTextStyleDefinition();
+        }
+
+        return this.hostConfig.textStyles.default;
+    }
+
     getForbiddenActionTypes(): ActionType[] {
         return [];
     }
@@ -359,35 +492,36 @@ export abstract class CardElement extends CardObject {
         processTop: boolean = true,
         processRight: boolean = true,
         processBottom: boolean = true,
-        processLeft: boolean = true) {
+        processLeft: boolean = true
+    ) {
         if (this.parent) {
             let doProcessTop = processTop && this.parent.isTopElement(this);
             let doProcessRight = processRight && this.parent.isRightMostElement(this);
             let doProcessBottom = processBottom && this.parent.isBottomElement(this);
             let doProcessLeft = processLeft && this.parent.isLeftMostElement(this);
 
-            let effectivePadding = this.parent.getEffectivePadding();
+            const effectivePadding = this.parent.getEffectivePadding();
 
             if (effectivePadding) {
-                if (doProcessTop && effectivePadding.top != Enums.Spacing.None) {
+                if (doProcessTop && effectivePadding.top !== Enums.Spacing.None) {
                     result.top = effectivePadding.top;
 
                     doProcessTop = false;
                 }
 
-                if (doProcessRight && effectivePadding.right != Enums.Spacing.None) {
+                if (doProcessRight && effectivePadding.right !== Enums.Spacing.None) {
                     result.right = effectivePadding.right;
 
                     doProcessRight = false;
                 }
 
-                if (doProcessBottom && effectivePadding.bottom != Enums.Spacing.None) {
+                if (doProcessBottom && effectivePadding.bottom !== Enums.Spacing.None) {
                     result.bottom = effectivePadding.bottom;
 
                     doProcessBottom = false;
                 }
 
-                if (doProcessLeft && effectivePadding.left != Enums.Spacing.None) {
+                if (doProcessLeft && effectivePadding.left !== Enums.Spacing.None) {
                     result.left = effectivePadding.left;
 
                     doProcessLeft = false;
@@ -400,7 +534,8 @@ export abstract class CardElement extends CardObject {
                     doProcessTop,
                     doProcessRight,
                     doProcessBottom,
-                    doProcessLeft);
+                    doProcessLeft
+                );
             }
         }
     }
@@ -411,6 +546,16 @@ export abstract class CardElement extends CardObject {
 
     getActionAt(index: number): Action | undefined {
         throw new Error(Strings.errors.indexOutOfRange(index));
+    }
+
+    indexOfAction(action: Action): number {
+        for (let i = 0; i < this.getActionCount(); i++) {
+            if (this.getActionAt(i) === action) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     remove(): boolean {
@@ -435,55 +580,72 @@ export abstract class CardElement extends CardObject {
             }
 
             this._renderedElement.style.boxSizing = "border-box";
-            this._defaultRenderedElementDisplayMode = this._renderedElement.style.display ? this._renderedElement.style.display : undefined;
+            this._defaultRenderedElementDisplayMode = this._renderedElement.style.display
+                ? this._renderedElement.style.display
+                : undefined;
 
             this.adjustRenderedElementSize(this._renderedElement);
             this.updateLayout(false);
-        }
-        else if (this.isDesignMode()) {
+        } else if (this.isDesignMode()) {
             this._renderedElement = this.createPlaceholderElement();
         }
 
         return this._renderedElement;
     }
 
-    updateLayout(processChildren: boolean = true) {
+    updateLayout(_processChildren: boolean = true) {
         this.updateRenderedElementVisibility();
         this.applyPadding();
     }
 
-    indexOf(cardElement: CardElement): number {
+    updateActionsEnabledState() {
+        const allActions = this.getRootElement().getAllActions();
+
+        for (let action of allActions) {
+            action.updateEnabledState();
+        }
+    }
+
+    indexOf(_cardElement: CardElement): number {
         return -1;
     }
 
     isDesignMode(): boolean {
-        let rootElement = this.getRootElement();
+        const rootElement = this.getRootElement();
 
         return rootElement instanceof AdaptiveCard && rootElement.designMode;
     }
 
-    isFirstElement(element: CardElement): boolean {
+    isFirstElement(_element: CardElement): boolean {
         return true;
     }
 
-    isLastElement(element: CardElement): boolean {
+    isLastElement(_element: CardElement): boolean {
         return true;
     }
 
     isAtTheVeryLeft(): boolean {
-        return this.parent ? this.parent.isLeftMostElement(this) && this.parent.isAtTheVeryLeft() : true;
+        return this.parent
+            ? this.parent.isLeftMostElement(this) && this.parent.isAtTheVeryLeft()
+            : true;
     }
 
     isAtTheVeryRight(): boolean {
-        return this.parent ? this.parent.isRightMostElement(this) && this.parent.isAtTheVeryRight() : true;
+        return this.parent
+            ? this.parent.isRightMostElement(this) && this.parent.isAtTheVeryRight()
+            : true;
     }
 
     isAtTheVeryTop(): boolean {
-        return this.parent ? this.parent.isFirstElement(this) && this.parent.isAtTheVeryTop() : true;
+        return this.parent
+            ? this.parent.isFirstElement(this) && this.parent.isAtTheVeryTop()
+            : true;
     }
 
     isAtTheVeryBottom(): boolean {
-        return this.parent ? this.parent.isLastElement(this) && this.parent.isAtTheVeryBottom() : true;
+        return this.parent
+            ? this.parent.isLastElement(this) && this.parent.isAtTheVeryBottom()
+            : true;
     }
 
     isBleedingAtTop(): boolean {
@@ -494,11 +656,11 @@ export abstract class CardElement extends CardObject {
         return false;
     }
 
-    isLeftMostElement(element: CardElement): boolean {
+    isLeftMostElement(_element: CardElement): boolean {
         return true;
     }
 
-    isRightMostElement(element: CardElement): boolean {
+    isRightMostElement(_element: CardElement): boolean {
         return true;
     }
 
@@ -511,7 +673,10 @@ export abstract class CardElement extends CardObject {
     }
 
     isHiddenDueToOverflow(): boolean {
-        return this._renderedElement !== undefined && this._renderedElement.style.visibility == 'hidden';
+        return (
+            this._renderedElement !== undefined &&
+            this._renderedElement.style.visibility === "hidden"
+        );
     }
 
     getRootElement(): CardElement {
@@ -523,7 +688,7 @@ export abstract class CardElement extends CardObject {
 
         while (currentElement) {
             if (currentElement instanceof Container) {
-                return <Container>currentElement;
+                return currentElement;
             }
 
             currentElement = currentElement.parent;
@@ -536,6 +701,20 @@ export abstract class CardElement extends CardObject {
         return [];
     }
 
+    getAllActions(): Action[] {
+        const result: Action[] = [];
+
+        for (let i = 0; i < this.getActionCount(); i++) {
+            let action = this.getActionAt(i);
+
+            if (action) {
+                result.push(action);
+            }
+        }
+
+        return result;
+    }
+
     getResourceInformation(): IResourceInformation[] {
         return [];
     }
@@ -544,25 +723,51 @@ export abstract class CardElement extends CardObject {
         return this.id === id ? this : undefined;
     }
 
-    getActionById(id: string): Action | undefined {
+    getActionById(_id: string): Action | undefined {
         return undefined;
+    }
+    
+    getElementByIdFromAction(id: string): CardElement | undefined {
+        let result = undefined;
+        for (let i = 0; i < this.getActionCount(); i++) {
+            const action = this.getActionAt(i);
+
+            if (action instanceof ShowCardAction) {
+                result = action.card.getElementById(id);
+
+                if (result) {
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     getEffectivePadding(): PaddingDefinition {
-        let padding = this.getPadding();
+        const padding = this.getPadding();
 
-        return (padding && this.allowCustomPadding) ? padding : this.getDefaultPadding();
+        return padding ? padding : this.getDefaultPadding();
+    }
+
+    getEffectiveHorizontalAlignment(): Enums.HorizontalAlignment {
+        if (this.horizontalAlignment !== undefined) {
+            return this.horizontalAlignment;
+        }
+
+        if (this.parent) {
+            return this.parent.getEffectiveHorizontalAlignment();
+        }
+
+        return Enums.HorizontalAlignment.Left;
     }
 
     get hostConfig(): HostConfig {
         if (this._hostConfig) {
             return this._hostConfig;
-        }
-        else {
+        } else {
             if (this.parent) {
                 return this.parent.hostConfig;
-            }
-            else {
+            } else {
                 return defaultHostConfig;
             }
         }
@@ -575,8 +780,7 @@ export abstract class CardElement extends CardObject {
     get index(): number {
         if (this.parent) {
             return this.parent.indexOf(this);
-        }
-        else {
+        } else {
             return 0;
         }
     }
@@ -596,8 +800,7 @@ export abstract class CardElement extends CardObject {
     get hasVisibleSeparator(): boolean {
         if (this.parent && this.separatorElement) {
             return !this.parent.isFirstElement(this) && (this.isVisible || this.isDesignMode());
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -612,24 +815,41 @@ export abstract class CardElement extends CardObject {
 }
 
 export class ActionProperty extends PropertyDefinition {
-    parse(sender: SerializableObject, source: PropertyBag, context: SerializationContext): Action | undefined {
-        let parent = <CardElement>sender;
+    parse(
+        sender: SerializableObject,
+        source: PropertyBag,
+        context: SerializationContext
+    ): Action | undefined {
+        const parent = <CardElement>sender;
 
         return context.parseAction(
             parent,
             source[this.name],
             this.forbiddenActionTypes,
-            parent.isDesignMode());
+            parent.isDesignMode()
+        );
     }
 
-    toJSON(sender: SerializableObject, target: PropertyBag, value: Action | undefined, context: SerializationContext) {
-        context.serializeValue(target, this.name, value ? value.toJSON(context) : undefined);
+    toJSON(
+        sender: SerializableObject,
+        target: PropertyBag,
+        value: Action | undefined,
+        context: SerializationContext
+    ) {
+        context.serializeValue(
+            target,
+            this.name,
+            value ? value.toJSON(context) : undefined,
+            undefined,
+            true
+        );
     }
 
     constructor(
         readonly targetVersion: Version,
         readonly name: string,
-        readonly forbiddenActionTypes: string[] = []) {
+        readonly forbiddenActionTypes: string[] = []
+    ) {
         super(targetVersion, name, undefined);
     }
 }
@@ -637,34 +857,15 @@ export class ActionProperty extends PropertyDefinition {
 export abstract class BaseTextBlock extends CardElement {
     //#region Schema
 
-    static readonly textProperty = new StringProperty(
-        Versions.v1_0,
-        "text",
-        true);
-    static readonly sizeProperty = new EnumProperty(
-        Versions.v1_0,
-        "size",
-        Enums.TextSize,
-        Enums.TextSize.Default);
-    static readonly weightProperty = new EnumProperty(
-        Versions.v1_0,
-        "weight",
-        Enums.TextWeight,
-        Enums.TextWeight.Default);
-    static readonly colorProperty = new EnumProperty(
-        Versions.v1_0,
-        "color",
-        Enums.TextColor,
-        Enums.TextColor.Default);
-    static readonly isSubtleProperty = new BoolProperty(
-        Versions.v1_0,
-        "isSubtle",
-        false);
-    static readonly fontTypeProperty = new EnumProperty(
-        Versions.v1_2,
-        "fontType",
-        Enums.FontType);
-    static readonly selectActionProperty = new ActionProperty(Versions.v1_1, "selectAction", [ "Action.ShowCard" ]);
+    static readonly textProperty = new StringProperty(Versions.v1_0, "text", true);
+    static readonly sizeProperty = new EnumProperty(Versions.v1_0, "size", Enums.TextSize);
+    static readonly weightProperty = new EnumProperty(Versions.v1_0, "weight", Enums.TextWeight);
+    static readonly colorProperty = new EnumProperty(Versions.v1_0, "color", Enums.TextColor);
+    static readonly isSubtleProperty = new BoolProperty(Versions.v1_0, "isSubtle");
+    static readonly fontTypeProperty = new EnumProperty(Versions.v1_2, "fontType", Enums.FontType);
+    static readonly selectActionProperty = new ActionProperty(Versions.v1_1, "selectAction", [
+        "Action.ShowCard"
+    ]);
 
     protected populateSchema(schema: SerializableObjectSchema) {
         super.populateSchema(schema);
@@ -675,19 +876,19 @@ export abstract class BaseTextBlock extends CardElement {
     }
 
     @property(BaseTextBlock.sizeProperty)
-    size: Enums.TextSize = Enums.TextSize.Default;
+    size?: Enums.TextSize;
 
     @property(BaseTextBlock.weightProperty)
-    weight: Enums.TextWeight = Enums.TextWeight.Default;
+    weight?: Enums.TextWeight;
 
     @property(BaseTextBlock.colorProperty)
-    color: Enums.TextColor = Enums.TextColor.Default;
+    color?: Enums.TextColor;
 
     @property(BaseTextBlock.fontTypeProperty)
     fontType?: Enums.FontType;
 
     @property(BaseTextBlock.isSubtleProperty)
-    isSubtle: boolean = false;
+    isSubtle?: boolean;
 
     @property(BaseTextBlock.textProperty)
     get text(): string | undefined {
@@ -704,7 +905,7 @@ export abstract class BaseTextBlock extends CardElement {
     //#endregion
 
     protected getFontSize(fontType: FontTypeDefinition): number {
-        switch (this.size) {
+        switch (this.effectiveSize) {
             case Enums.TextSize.Small:
                 return fontType.fontSizes.small;
             case Enums.TextSize.Medium:
@@ -718,7 +919,10 @@ export abstract class BaseTextBlock extends CardElement {
         }
     }
 
-    protected getColorDefinition(colorSet: ColorSetDefinition, color: Enums.TextColor): TextColorDefinition {
+    protected getColorDefinition(
+        colorSet: ColorSetDefinition,
+        color: Enums.TextColor
+    ): TextColorDefinition {
         switch (color) {
             case Enums.TextColor.Accent:
                 return colorSet.accent;
@@ -763,7 +967,7 @@ export abstract class BaseTextBlock extends CardElement {
     }
 
     applyStylesTo(targetElement: HTMLElement) {
-        let fontType = this.hostConfig.getFontTypeDefinition(this.fontType);
+        const fontType = this.hostConfig.getFontTypeDefinition(this.effectiveFontType);
 
         if (fontType.fontFamily) {
             targetElement.style.fontFamily = fontType.fontFamily;
@@ -771,7 +975,7 @@ export abstract class BaseTextBlock extends CardElement {
 
         let fontSize: number;
 
-        switch (this.size) {
+        switch (this.effectiveSize) {
             case Enums.TextSize.Small:
                 fontSize = fontType.fontSizes.small;
                 break;
@@ -791,13 +995,21 @@ export abstract class BaseTextBlock extends CardElement {
 
         targetElement.style.fontSize = fontSize + "px";
 
-        let colorDefinition = this.getColorDefinition(this.getEffectiveStyleDefinition().foregroundColors, this.effectiveColor);
+        const colorDefinition = this.getColorDefinition(
+            this.getEffectiveStyleDefinition().foregroundColors,
+            this.effectiveColor
+        );
 
-        targetElement.style.color = <string>Utils.stringToCssColor(this.isSubtle ? colorDefinition.subtle : colorDefinition.default);
+        const targetColor = Utils.stringToCssColor(
+            this.effectiveIsSubtle ? colorDefinition.subtle : colorDefinition.default
+        );
+        if (targetColor) {
+            targetElement.style.color = targetColor;
+        }
 
         let fontWeight: number;
 
-        switch (this.weight) {
+        switch (this.effectiveWeight) {
             case Enums.TextWeight.Lighter:
                 fontWeight = fontType.fontWeights.lighter;
                 break;
@@ -816,22 +1028,64 @@ export abstract class BaseTextBlock extends CardElement {
         }
     }
 
+    getAllActions(): Action[] {
+        const result = super.getAllActions();
+
+        if (this.selectAction) {
+            result.push(this.selectAction);
+        }
+
+        return result;
+    }
+
     get effectiveColor(): Enums.TextColor {
-        return this.color ? this.color : Enums.TextColor.Default;
+        return this.color !== undefined ? this.color : this.getEffectiveTextStyleDefinition().color;
+    }
+
+    get effectiveFontType(): Enums.FontType {
+        return this.fontType !== undefined
+            ? this.fontType
+            : this.getEffectiveTextStyleDefinition().fontType;
+    }
+
+    get effectiveIsSubtle(): boolean {
+        return this.isSubtle !== undefined
+            ? this.isSubtle
+            : this.getEffectiveTextStyleDefinition().isSubtle;
+    }
+
+    get effectiveSize(): Enums.TextSize {
+        return this.size !== undefined ? this.size : this.getEffectiveTextStyleDefinition().size;
+    }
+
+    get effectiveWeight(): Enums.TextWeight {
+        return this.weight !== undefined
+            ? this.weight
+            : this.getEffectiveTextStyleDefinition().weight;
     }
 }
+
+export type TextBlockStyle = "default" | "heading" | "columnHeader";
 
 export class TextBlock extends BaseTextBlock {
     //#region Schema
 
     static readonly wrapProperty = new BoolProperty(Versions.v1_0, "wrap", false);
     static readonly maxLinesProperty = new NumProperty(Versions.v1_0, "maxLines");
+    static readonly styleProperty = new ValueSetProperty(Versions.v1_5, "style", [
+        { value: "default" },
+        { value: "columnHeader" },
+        { value: "heading" }
+    ]);
 
     @property(TextBlock.wrapProperty)
     wrap: boolean = false;
 
     @property(TextBlock.maxLinesProperty)
     maxLines?: number;
+
+    @property(TextBlock.styleProperty)
+    style?: TextBlockStyle;
 
     //#endregion
 
@@ -843,10 +1097,12 @@ export class TextBlock extends BaseTextBlock {
     private restoreOriginalContent() {
         if (this.renderedElement !== undefined) {
             if (this.maxLines && this.maxLines > 0) {
-                this.renderedElement.style.maxHeight = this._computedLineHeight * this.maxLines + "px";
+                this.renderedElement.style.maxHeight =
+                    this._computedLineHeight * this.maxLines + "px";
             }
 
-            this.renderedElement.innerHTML = this._originalInnerHtml;
+            const originalHtml = TextBlock._ttRoundtripPolicy?.createHTML(this._originalInnerHtml) ?? this._originalInnerHtml;
+            this.renderedElement.innerHTML = originalHtml as string;
         }
     }
 
@@ -855,14 +1111,16 @@ export class TextBlock extends BaseTextBlock {
             // For now, only truncate TextBlocks that contain just a single
             // paragraph -- since the maxLines calculation doesn't take into
             // account Markdown lists
-            let children = this.renderedElement.children;
-            let isTextOnly = !children.length;
-            let truncationSupported = isTextOnly || children.length == 1 && (<HTMLElement>children[0]).tagName.toLowerCase() == 'p';
+            const children = this.renderedElement.children;
+            const isTextOnly = !children.length;
+            const truncationSupported =
+                isTextOnly ||
+                (children.length === 1 && (<HTMLElement>children[0]).tagName.toLowerCase() === "p" && !(<HTMLElement>children[0]).children.length);
 
             if (truncationSupported) {
-                let element = isTextOnly ? this.renderedElement : <HTMLElement>children[0];
+                const element = isTextOnly ? this.renderedElement : <HTMLElement>children[0];
 
-                Utils.truncate(element, maxHeight, this._computedLineHeight);
+                Utils.truncateText(element, maxHeight, this._computedLineHeight);
 
                 return true;
             }
@@ -870,6 +1128,22 @@ export class TextBlock extends BaseTextBlock {
 
         return false;
     }
+
+    // Markdown processing is handled outside of Adaptive Cards. It's up to the host to ensure that markdown is safely
+    // processed.
+    private static readonly _ttMarkdownPolicy = (typeof window === 'undefined') ? undefined : window.trustedTypes?.createPolicy(
+        "adaptivecards#markdownPassthroughPolicy",
+        { createHTML: (value) => value }
+    );
+
+    // When "advanced" truncation is enabled (see GlobalSettings.useAdvancedCardBottomTruncation and
+    // GlobalSettings.useAdvancedTextBlockTruncation), we store the original pre-truncation content in
+    // _originalInnerHtml so that we can restore/recalculate truncation later if space availability has changed (see
+    // TextBlock.restoreOriginalContent())
+    private static readonly _ttRoundtripPolicy = (typeof window === 'undefined') ? undefined : window.trustedTypes?.createPolicy(
+        "adaptivecards#restoreContentsPolicy",
+        { createHTML: (value) => value }
+    );
 
     protected setText(value: string) {
         super.setText(value);
@@ -881,18 +1155,17 @@ export class TextBlock extends BaseTextBlock {
         this._processedText = undefined;
 
         if (this.text) {
-            let preProcessedText = this.preProcessPropertyValue(BaseTextBlock.textProperty);
-            let hostConfig = this.hostConfig;
+            const preProcessedText = this.preProcessPropertyValue(BaseTextBlock.textProperty);
+            const hostConfig = this.hostConfig;
 
             let element: HTMLElement;
 
             if (this.forElementId) {
-                let labelElement = document.createElement("label");
+                const labelElement = document.createElement("label");
                 labelElement.htmlFor = this.forElementId;
 
                 element = labelElement;
-            }
-            else {
+            } else {
                 element = document.createElement("div");
             }
 
@@ -901,25 +1174,29 @@ export class TextBlock extends BaseTextBlock {
 
             this.applyStylesTo(element);
 
-            if (this.selectAction) {
-                element.onclick = (e) => {
-                    e.preventDefault();
-                    e.cancelBubble = true;
+            if (this.style === "heading") {
+                element.setAttribute("role", "heading");
 
-                    if (this.selectAction) {
+                const headingLevel = this.hostConfig.textBlock.headingLevel;
+
+                if (headingLevel !== undefined && headingLevel > 0) {
+                    element.setAttribute("aria-level", headingLevel.toString());
+                }
+            }
+
+            if (this.selectAction && hostConfig.supportsInteractivity) {
+                element.onclick = (e) => {
+                    if (this.selectAction && this.selectAction.isEffectivelyEnabled()) {
+                        e.preventDefault();
+                        e.cancelBubble = true;
+
                         this.selectAction.execute();
                     }
-                }
+                };
 
-                if (hostConfig.supportsInteractivity) {
-                    element.tabIndex = 0
-                    element.setAttribute("role", this.selectAction.getAriaRole());
+                this.selectAction.setupElementForAccessibility(element);
 
-                    if (this.selectAction.title) {
-                        element.setAttribute("aria-label", this.selectAction.title);
-                        element.title = this.selectAction.title;
-                    }
-
+                if (this.selectAction.isEffectivelyEnabled()) {
                     element.classList.add(hostConfig.makeCssClassName("ac-selectable"));
                 }
             }
@@ -931,12 +1208,17 @@ export class TextBlock extends BaseTextBlock {
 
                 if (this.useMarkdown && formattedText) {
                     if (GlobalSettings.allowMarkForTextHighlighting) {
-                        formattedText = formattedText.replace(/<mark>/g, "===").replace(/<\/mark>/g, "/==/");
+                        formattedText = formattedText
+                            .replace(/<mark>/g, "===")
+                            .replace(/<\/mark>/g, "/==/");
                     }
 
-                    let markdownProcessingResult = AdaptiveCard.applyMarkdown(formattedText);
+                    const markdownProcessingResult = AdaptiveCard.applyMarkdown(formattedText);
 
-                    if (markdownProcessingResult.didProcess && markdownProcessingResult.outputHtml) {
+                    if (
+                        markdownProcessingResult.didProcess &&
+                        markdownProcessingResult.outputHtml
+                    ) {
                         this._processedText = markdownProcessingResult.outputHtml;
                         this._treatAsPlainText = false;
 
@@ -944,28 +1226,33 @@ export class TextBlock extends BaseTextBlock {
                         // markdown processing is also responsible for sanitizing the input string
                         if (GlobalSettings.allowMarkForTextHighlighting && this._processedText) {
                             let markStyle: string = "";
-                            let effectiveStyle = this.getEffectiveStyleDefinition();
+                            const effectiveStyle = this.getEffectiveStyleDefinition();
 
                             if (effectiveStyle.highlightBackgroundColor) {
-                                markStyle += "background-color: " + effectiveStyle.highlightBackgroundColor + ";";
+                                markStyle +=
+                                    "background-color: " +
+                                    effectiveStyle.highlightBackgroundColor +
+                                    ";";
                             }
 
                             if (effectiveStyle.highlightForegroundColor) {
-                                markStyle += "color: " + effectiveStyle.highlightForegroundColor + ";";
+                                markStyle +=
+                                    "color: " + effectiveStyle.highlightForegroundColor + ";";
                             }
 
                             if (markStyle) {
                                 markStyle = 'style="' + markStyle + '"';
                             }
 
-                            this._processedText = this._processedText.replace(/===/g, "<mark " + markStyle + ">").replace(/\/==\//g, "</mark>");
+                            this._processedText = this._processedText
+                                .replace(/===/g, "<mark " + markStyle + ">")
+                                .replace(/\/==\//g, "</mark>");
                         }
                     } else {
                         this._processedText = formattedText;
                         this._treatAsPlainText = true;
                     }
-                }
-                else {
+                } else {
                     this._processedText = formattedText;
                     this._treatAsPlainText = true;
                 }
@@ -977,13 +1264,15 @@ export class TextBlock extends BaseTextBlock {
 
             if (this._treatAsPlainText) {
                 element.innerText = this._processedText;
-            }
-            else {
-                element.innerHTML = this._processedText;
+            } else {
+                const processedHtml =
+                    TextBlock._ttMarkdownPolicy?.createHTML(this._processedText) ??
+                    this._processedText;
+                element.innerHTML = processedHtml as string;
             }
 
             if (element.firstElementChild instanceof HTMLElement) {
-                let firstElementChild = <HTMLElement>element.firstElementChild;
+                const firstElementChild = element.firstElementChild;
                 firstElementChild.style.marginTop = "0px";
                 firstElementChild.style.width = "100%";
 
@@ -994,21 +1283,30 @@ export class TextBlock extends BaseTextBlock {
             }
 
             if (element.lastElementChild instanceof HTMLElement) {
-                (<HTMLElement>element.lastElementChild).style.marginBottom = "0px";
+                element.lastElementChild.style.marginBottom = "0px";
             }
 
-            let anchors = element.getElementsByTagName("a");
+            const anchors = element.getElementsByTagName("a");
 
-            for (let i = 0; i < anchors.length; i++) {
-                let anchor = <HTMLAnchorElement>anchors[i];
+            for (const anchor of Array.from(anchors)) {
                 anchor.classList.add(hostConfig.makeCssClassName("ac-anchor"));
                 anchor.target = "_blank";
-                anchor.onclick = (e) => {
-                    if (raiseAnchorClickedEvent(this, e.target as HTMLAnchorElement)) {
+                anchor.onclick = (e: MouseEvent) => {
+                    if (raiseAnchorClickedEvent(this, anchor, e)) {
                         e.preventDefault();
                         e.cancelBubble = true;
                     }
-                }
+                };
+                anchor.oncontextmenu = (e: MouseEvent) => {
+                    if (raiseAnchorClickedEvent(this, anchor, e)) {
+                        e.preventDefault();
+                        e.cancelBubble = true;
+
+                        return false;
+                    }
+
+                    return true;
+                };
             }
 
             if (this.wrap) {
@@ -1018,9 +1316,8 @@ export class TextBlock extends BaseTextBlock {
                     element.style.overflow = "hidden";
 
                     if (Utils.isInternetExplorer() || !GlobalSettings.useWebkitLineClamp) {
-                        element.style.maxHeight = (this._computedLineHeight * this.maxLines) + "px";
-                    }
-                    else {
+                        element.style.maxHeight = this._computedLineHeight * this.maxLines + "px";
+                    } else {
                         // While non standard, --webkit-line-clamp works in every browser (except IE)
                         // and is a great solution to support the maxLines feature with ellipsis
                         // truncation. With --webkit-line-clamp there is need to use explicit line heights
@@ -1030,19 +1327,20 @@ export class TextBlock extends BaseTextBlock {
                         element.style.webkitLineClamp = this.maxLines.toString();
                     }
                 }
-            }
-            else {
+            } else {
                 element.style.whiteSpace = "nowrap";
                 element.style.textOverflow = "ellipsis";
             }
 
-            if (GlobalSettings.useAdvancedTextBlockTruncation || GlobalSettings.useAdvancedCardBottomTruncation) {
+            if (
+                GlobalSettings.useAdvancedTextBlockTruncation ||
+                GlobalSettings.useAdvancedCardBottomTruncation
+            ) {
                 this._originalInnerHtml = element.innerHTML;
             }
 
             return element;
-        }
-        else {
+        } else {
             return undefined;
         }
     }
@@ -1059,7 +1357,7 @@ export class TextBlock extends BaseTextBlock {
         this.restoreOriginalContent();
 
         if (GlobalSettings.useAdvancedTextBlockTruncation && this.maxLines) {
-            let maxHeight = this._computedLineHeight * this.maxLines;
+            const maxHeight = this._computedLineHeight * this.maxLines;
 
             this.truncateIfSupported(maxHeight);
         }
@@ -1071,25 +1369,22 @@ export class TextBlock extends BaseTextBlock {
     applyStylesTo(targetElement: HTMLElement) {
         super.applyStylesTo(targetElement);
 
-        let parentContainer = this.getParentContainer();
-        let isRtl = parentContainer ? parentContainer.isRtl() : false;
-
-        switch (this.horizontalAlignment) {
+        switch (this.getEffectiveHorizontalAlignment()) {
             case Enums.HorizontalAlignment.Center:
                 targetElement.style.textAlign = "center";
                 break;
             case Enums.HorizontalAlignment.Right:
-                targetElement.style.textAlign = isRtl ? "left" : "right";
+                targetElement.style.textAlign = "end";
                 break;
             default:
-                targetElement.style.textAlign = isRtl ? "right" : "left";
+                targetElement.style.textAlign = "start";
                 break;
         }
 
-        let lineHeights = this.hostConfig.lineHeights;
+        const lineHeights = this.hostConfig.lineHeights;
 
         if (lineHeights) {
-            switch (this.size) {
+            switch (this.effectiveSize) {
                 case Enums.TextSize.Small:
                     this._computedLineHeight = lineHeights.small;
                     break;
@@ -1106,11 +1401,12 @@ export class TextBlock extends BaseTextBlock {
                     this._computedLineHeight = lineHeights.default;
                     break;
             }
-        }
-        else {
+        } else {
             // Looks like 1.33 is the magic number to compute line-height
             // from font size.
-            this._computedLineHeight = this.getFontSize(this.hostConfig.getFontTypeDefinition(this.fontType)) * 1.33;
+            this._computedLineHeight =
+                this.getFontSize(this.hostConfig.getFontTypeDefinition(this.effectiveFontType)) *
+                1.33;
         }
 
         targetElement.style.lineHeight = this._computedLineHeight + "px";
@@ -1118,6 +1414,14 @@ export class TextBlock extends BaseTextBlock {
 
     getJsonTypeName(): string {
         return "TextBlock";
+    }
+
+    getEffectiveTextStyleDefinition(): TextStyleDefinition {
+        if (this.style) {
+            return this.hostConfig.textStyles.getStyleByName(this.style);
+        }
+
+        return super.getEffectiveTextStyleDefinition();
     }
 
     updateLayout(processChildren: boolean = false) {
@@ -1162,8 +1466,8 @@ export class TextRun extends BaseTextBlock {
 
     protected internalRender(): HTMLElement | undefined {
         if (this.text) {
-            let preProcessedText = this.preProcessPropertyValue(BaseTextBlock.textProperty);
-            let hostConfig = this.hostConfig;
+            const preProcessedText = this.preProcessPropertyValue(BaseTextBlock.textProperty);
+            const hostConfig = this.hostConfig;
 
             let formattedText = TextFormatters.formatText(this.lang, preProcessedText);
 
@@ -1171,44 +1475,39 @@ export class TextRun extends BaseTextBlock {
                 formattedText = "";
             }
 
-            let element = document.createElement("span");
+            const element = document.createElement("span");
             element.classList.add(hostConfig.makeCssClassName("ac-textRun"));
 
             this.applyStylesTo(element);
 
             if (this.selectAction && hostConfig.supportsInteractivity) {
-                let anchor = document.createElement("a");
+                const anchor = document.createElement("a");
                 anchor.classList.add(hostConfig.makeCssClassName("ac-anchor"));
 
-                let href = this.selectAction.getHref();
+                const href = this.selectAction.getHref();
 
                 anchor.href = href ? href : "";
                 anchor.target = "_blank";
                 anchor.onclick = (e) => {
-                    e.preventDefault();
-                    e.cancelBubble = true;
+                    if (this.selectAction && this.selectAction.isEffectivelyEnabled()) {
+                        e.preventDefault();
+                        e.cancelBubble = true;
 
-                    if (this.selectAction) {
                         this.selectAction.execute();
                     }
-                }
+                };
 
-                if (this.selectAction.title) {
-                    anchor.setAttribute("aria-label", this.selectAction.title);
-                    anchor.title = this.selectAction.title;
-                }
+                this.selectAction.setupElementForAccessibility(anchor);
 
                 anchor.innerText = formattedText;
 
                 element.appendChild(anchor);
-            }
-            else {
+            } else {
                 element.innerText = formattedText;
             }
 
             return element;
-        }
-        else {
+        } else {
             return undefined;
         }
     }
@@ -1225,9 +1524,19 @@ export class TextRun extends BaseTextBlock {
         }
 
         if (this.highlight) {
-            let colorDefinition = this.getColorDefinition(this.getEffectiveStyleDefinition().foregroundColors, this.effectiveColor);
+            const colorDefinition = this.getColorDefinition(
+                this.getEffectiveStyleDefinition().foregroundColors,
+                this.effectiveColor
+            );
 
-            targetElement.style.backgroundColor = <string>Utils.stringToCssColor(this.isSubtle ? colorDefinition.highlightColors.subtle : colorDefinition.highlightColors.default);
+            const backgroundColor = Utils.stringToCssColor(
+                this.effectiveIsSubtle
+                    ? colorDefinition.highlightColors.subtle
+                    : colorDefinition.highlightColors.default
+            );
+            if (backgroundColor) {
+                targetElement.style.backgroundColor = backgroundColor;
+            }
         }
 
         if (this.underline) {
@@ -1256,12 +1565,11 @@ export class RichTextBlock extends CardElement {
             throw new Error(Strings.errors.elementCannotBeUsedAsInline());
         }
 
-        let doAdd: boolean = inline.parent === undefined || forceAdd;
+        const doAdd: boolean = inline.parent === undefined || forceAdd;
 
-        if (!doAdd && inline.parent != this) {
+        if (!doAdd && inline.parent !== this) {
             throw new Error(Strings.errors.inlineAlreadyParented());
-        }
-        else {
+        } else {
             inline.setParent(this);
 
             this._inlines.push(inline);
@@ -1274,18 +1582,17 @@ export class RichTextBlock extends CardElement {
         this._inlines = [];
 
         if (Array.isArray(source["inlines"])) {
-            for (let jsonInline of source["inlines"]) {
+            for (const jsonInline of source["inlines"]) {
                 let inline: CardElement | undefined;
 
                 if (typeof jsonInline === "string") {
-                    let textRun = new TextRun();
+                    const textRun = new TextRun();
                     textRun.text = jsonInline;
 
                     inline = textRun;
-                }
-                else {
+                } else {
                     // No fallback for inlines in 1.2
-                    inline = context.parseElement(this, jsonInline, false);
+                    inline = context.parseElement(this, jsonInline, [], false);
                 }
 
                 if (inline) {
@@ -1299,9 +1606,9 @@ export class RichTextBlock extends CardElement {
         super.internalToJSON(target, context);
 
         if (this._inlines.length > 0) {
-            let jsonInlines: any[] = [];
+            const jsonInlines: any[] = [];
 
-            for (let inline of this._inlines) {
+            for (const inline of this._inlines) {
                 jsonInlines.push(inline.toJSON(context));
             }
 
@@ -1314,36 +1621,32 @@ export class RichTextBlock extends CardElement {
             let element: HTMLElement;
 
             if (this.forElementId) {
-                let labelElement = document.createElement("label");
+                const labelElement = document.createElement("label");
                 labelElement.htmlFor = this.forElementId;
 
                 element = labelElement;
-            }
-            else {
+            } else {
                 element = document.createElement("div");
             }
 
             element.className = this.hostConfig.makeCssClassName("ac-richTextBlock");
 
-            let parentContainer = this.getParentContainer();
-            let isRtl = parentContainer ? parentContainer.isRtl() : false;
-
-            switch (this.horizontalAlignment) {
+            switch (this.getEffectiveHorizontalAlignment()) {
                 case Enums.HorizontalAlignment.Center:
                     element.style.textAlign = "center";
                     break;
                 case Enums.HorizontalAlignment.Right:
-                    element.style.textAlign = isRtl ? "left" : "right";
+                    element.style.textAlign = "end";
                     break;
                 default:
-                    element.style.textAlign = isRtl ? "right" : "left";
+                    element.style.textAlign = "start";
                     break;
             }
 
             let renderedInlines: number = 0;
 
-            for (let inline of this._inlines) {
-                let renderedInline = inline.render();
+            for (const inline of this._inlines) {
+                const renderedInline = inline.render();
 
                 if (renderedInline) {
                     element.appendChild(renderedInline);
@@ -1365,7 +1668,7 @@ export class RichTextBlock extends CardElement {
     asString(): string | undefined {
         let result = "";
 
-        for (let inline of this._inlines) {
+        for (const inline of this._inlines) {
             result += inline.asString();
         }
 
@@ -1383,8 +1686,7 @@ export class RichTextBlock extends CardElement {
     getInlineAt(index: number): CardElement {
         if (index >= 0 && index < this._inlines.length) {
             return this._inlines[index];
-        }
-        else {
+        } else {
             throw new Error(Strings.errors.indexOutOfRange(index));
         }
     }
@@ -1392,14 +1694,13 @@ export class RichTextBlock extends CardElement {
     addInline(inline: CardElement | string) {
         if (typeof inline === "string") {
             this.internalAddInline(new TextRun(inline));
-        }
-        else {
+        } else {
             this.internalAddInline(inline);
         }
     }
 
     removeInline(inline: CardElement): boolean {
-        let index = this._inlines.indexOf(inline);
+        const index = this._inlines.indexOf(inline);
 
         if (index >= 0) {
             this._inlines[index].setParent(undefined);
@@ -1442,7 +1743,11 @@ export class Fact extends SerializableObject {
 export class FactSet extends CardElement {
     //#region Schema
 
-    static readonly factsProperty = new SerializableObjectCollectionProperty(Versions.v1_0, "facts", Fact);
+    static readonly factsProperty = new SerializableObjectCollectionProperty(
+        Versions.v1_0,
+        "facts",
+        Fact
+    );
 
     @property(FactSet.factsProperty)
     facts: Fact[];
@@ -1455,7 +1760,7 @@ export class FactSet extends CardElement {
 
     protected internalRender(): HTMLElement | undefined {
         let element: HTMLElement | undefined = undefined;
-        let hostConfig = this.hostConfig;
+        const hostConfig = this.hostConfig;
 
         if (this.facts.length > 0) {
             element = document.createElement("table");
@@ -1469,7 +1774,7 @@ export class FactSet extends CardElement {
             element.setAttribute("role", "presentation");
 
             for (let i = 0; i < this.facts.length; i++) {
-                let trElement = document.createElement("tr");
+                const trElement = document.createElement("tr");
 
                 if (i > 0) {
                     trElement.style.marginTop = hostConfig.factSet.spacing + "px";
@@ -1488,7 +1793,8 @@ export class FactSet extends CardElement {
 
                 let textBlock = new TextBlock();
                 textBlock.setParent(this);
-                textBlock.text = (!this.facts[i].name && this.isDesignMode()) ? "Title" : this.facts[i].name;
+                textBlock.text =
+                    !this.facts[i].name && this.isDesignMode() ? "Title" : this.facts[i].name;
                 textBlock.size = hostConfig.factSet.title.size;
                 textBlock.color = hostConfig.factSet.title.color;
                 textBlock.isSubtle = hostConfig.factSet.title.isSubtle;
@@ -1540,9 +1846,13 @@ class ImageDimensionProperty extends PropertyDefinition {
         return this.internalName;
     }
 
-    parse(sender: SerializableObject, source: PropertyBag, context: BaseSerializationContext): number | undefined {
+    parse(
+        sender: SerializableObject,
+        source: PropertyBag,
+        context: BaseSerializationContext
+    ): number | undefined {
         let result: number | undefined = undefined;
-        let sourceValue = source[this.name];
+        const sourceValue = source[this.name];
 
         if (sourceValue === undefined) {
             return this.defaultValue;
@@ -1552,15 +1862,14 @@ class ImageDimensionProperty extends PropertyDefinition {
 
         if (typeof sourceValue === "string") {
             try {
-                let size = SizeAndUnit.parse(sourceValue, true);
+                const size = SizeAndUnit.parse(sourceValue, true);
 
-                if (size.unit == Enums.SizeUnit.Pixel) {
+                if (size.unit === Enums.SizeUnit.Pixel) {
                     result = size.physicalSize;
 
                     isValid = true;
                 }
-            }
-            catch {
+            } catch {
                 // Swallow the exception
             }
 
@@ -1575,24 +1884,32 @@ class ImageDimensionProperty extends PropertyDefinition {
             context.logParseEvent(
                 sender,
                 Enums.ValidationEvent.InvalidPropertyValue,
-                Strings.errors.invalidPropertyValue(sourceValue, this.name));
+                Strings.errors.invalidPropertyValue(sourceValue, this.name)
+            );
         }
 
         return result;
     }
 
-    toJSON(sender: SerializableObject, target: PropertyBag, value: number | undefined, context: BaseSerializationContext) {
+    toJSON(
+        sender: SerializableObject,
+        target: PropertyBag,
+        value: number | undefined,
+        context: BaseSerializationContext
+    ) {
         context.serializeValue(
             target,
             this.name,
-            typeof value === "number" && !isNaN(value) ? value + "px" : undefined);
+            typeof value === "number" && !isNaN(value) ? value + "px" : undefined
+        );
     }
 
     constructor(
         readonly targetVersion: Version,
         readonly name: string,
         readonly internalName: string,
-        readonly fallbackProperty?: ValueSetProperty) {
+        readonly fallbackProperty?: ValueSetProperty
+    ) {
         super(targetVersion, name);
     }
 }
@@ -1607,21 +1924,37 @@ export class Image extends CardElement {
         Versions.v1_0,
         "style",
         Enums.ImageStyle,
-        Enums.ImageStyle.Default);
+        Enums.ImageStyle.Default
+    );
     static readonly sizeProperty = new EnumProperty(
         Versions.v1_0,
         "size",
         Enums.Size,
-        Enums.Size.Auto);
-    static readonly pixelWidthProperty = new ImageDimensionProperty(Versions.v1_1, "width", "pixelWidth");
-    static readonly pixelHeightProperty = new ImageDimensionProperty(Versions.v1_1, "height", "pixelHeight", CardElement.heightProperty);
-    static readonly selectActionProperty = new ActionProperty(Versions.v1_1, "selectAction", [ "Action.ShowCard" ]);
+        Enums.Size.Auto
+    );
+    static readonly pixelWidthProperty = new ImageDimensionProperty(
+        Versions.v1_1,
+        "width",
+        "pixelWidth"
+    );
+    static readonly pixelHeightProperty = new ImageDimensionProperty(
+        Versions.v1_1,
+        "height",
+        "pixelHeight",
+        CardElement.heightProperty
+    );
+    static readonly selectActionProperty = new ActionProperty(Versions.v1_1, "selectAction", [
+        "Action.ShowCard"
+    ]);
+    static readonly shouldForceLoadProperty = new BoolProperty(Versions.v1_6, "forceLoad", false);
 
     protected populateSchema(schema: SerializableObjectSchema) {
         super.populateSchema(schema);
 
         schema.remove(CardElement.heightProperty);
     }
+
+    public renderedImageElement?: HTMLElement;
 
     @property(Image.urlProperty)
     url?: string;
@@ -1647,6 +1980,9 @@ export class Image extends CardElement {
     @property(Image.selectActionProperty)
     selectAction?: Action;
 
+    @property(Image.shouldForceLoadProperty)
+    forceLoad: boolean;
+
     //#endregion
 
     private applySize(element: HTMLElement) {
@@ -1658,8 +1994,7 @@ export class Image extends CardElement {
             if (this.pixelHeight) {
                 element.style.height = this.pixelHeight + "px";
             }
-        }
-        else {
+        } else {
             if (this.maxHeight) {
                 // If the image is constrained in height, we set its height property and
                 // auto and stretch are ignored (default to medium). THis is necessary for
@@ -1678,8 +2013,7 @@ export class Image extends CardElement {
                 }
 
                 element.style.maxHeight = this.maxHeight + "px";
-            }
-            else {
+            } else {
                 switch (this.size) {
                     case Enums.Size.Stretch:
                         element.style.width = "100%";
@@ -1715,25 +2049,10 @@ export class Image extends CardElement {
             element.style.display = "flex";
             element.style.alignItems = "flex-start";
 
-            element.onkeypress = (e) => {
-                if (this.selectAction && (e.keyCode == 13 || e.keyCode == 32)) { // enter or space pressed
-                    e.preventDefault();
-                    e.cancelBubble = true;
+            // Cache hostConfig to avoid walking the parent hierarchy multiple times
+            const hostConfig = this.hostConfig;
 
-                    this.selectAction.execute();
-                }
-            }
-
-            element.onclick = (e) => {
-                if (this.selectAction) {
-                    e.preventDefault();
-                    e.cancelBubble = true;
-
-                    this.selectAction.execute();
-                }
-            }
-
-            switch (this.horizontalAlignment) {
+            switch (this.getEffectiveHorizontalAlignment()) {
                 case Enums.HorizontalAlignment.Center:
                     element.style.justifyContent = "center";
                     break;
@@ -1745,21 +2064,21 @@ export class Image extends CardElement {
                     break;
             }
 
-            // Cache hostConfig to avoid walking the parent hierarchy multiple times
-            let hostConfig = this.hostConfig;
+            const imageElement = document.createElement("img");
 
-            let imageElement = document.createElement("img");
-            imageElement.onload = (e: Event) => {
+            this.renderedImageElement = imageElement;
+
+            imageElement.onload = (_e: Event) => {
                 raiseImageLoadedEvent(this);
-            }
-            imageElement.onerror = (e: Event) => {
+            };
+            imageElement.onerror = (_e: Event) => {
                 if (this.renderedElement) {
-                    let card = this.getRootElement() as AdaptiveCard;
+                    const card = this.getRootElement() as AdaptiveCard;
 
-                    this.renderedElement.innerHTML = "";
+                    clearElement(this.renderedElement);
 
                     if (card && card.designMode) {
-                        let errorElement = document.createElement("div");
+                        const errorElement = document.createElement("div");
                         errorElement.style.display = "flex";
                         errorElement.style.alignItems = "center";
                         errorElement.style.justifyContent = "center";
@@ -1775,20 +2094,39 @@ export class Image extends CardElement {
                 }
 
                 raiseImageLoadedEvent(this);
-            }
+            };
             imageElement.style.minWidth = "0";
             imageElement.classList.add(hostConfig.makeCssClassName("ac-image"));
 
-            if (this.selectAction !== undefined && hostConfig.supportsInteractivity) {
-                imageElement.tabIndex = 0
-                imageElement.setAttribute("role", this.selectAction.getAriaRole());
+            if (this.selectAction && hostConfig.supportsInteractivity) {
+                imageElement.onkeypress = (e) => {
+                    if (
+                        this.selectAction &&
+                        this.selectAction.isEffectivelyEnabled() &&
+                        (e.code === "Enter" || e.code === "Space")
+                    ) {
+                        // enter or space pressed
+                        e.preventDefault();
+                        e.cancelBubble = true;
 
-                if (this.selectAction.title) {
-                    imageElement.setAttribute("aria-label", <string>this.selectAction.title);
-                    imageElement.title = this.selectAction.title;
+                        this.selectAction.execute();
+                    }
+                };
+
+                imageElement.onclick = (e) => {
+                    if (this.selectAction && this.selectAction.isEffectivelyEnabled()) {
+                        e.preventDefault();
+                        e.cancelBubble = true;
+
+                        this.selectAction.execute();
+                    }
+                };
+
+                this.selectAction.setupElementForAccessibility(imageElement);
+
+                if (this.selectAction.isEffectivelyEnabled()) {
+                    imageElement.classList.add(hostConfig.makeCssClassName("ac-selectable"));
                 }
-
-                imageElement.classList.add(hostConfig.makeCssClassName("ac-selectable"));
             }
 
             this.applySize(imageElement);
@@ -1799,8 +2137,12 @@ export class Image extends CardElement {
                 imageElement.style.backgroundRepeat = "no-repeat";
             }
 
-            imageElement.style.backgroundColor = <string>Utils.stringToCssColor(this.backgroundColor);
-            imageElement.src = <string>this.preProcessPropertyValue(Image.urlProperty);
+            const backgroundColor = Utils.stringToCssColor(this.backgroundColor);
+            if (backgroundColor) {
+                imageElement.style.backgroundColor = backgroundColor;
+            }
+
+            this.setImageSource(imageElement);    
 
             const altTextProperty = this.preProcessPropertyValue(Image.altTextProperty);
             if (altTextProperty) {
@@ -1819,6 +2161,16 @@ export class Image extends CardElement {
         return "Image";
     }
 
+    getAllActions(): Action[] {
+        const result = super.getAllActions();
+
+        if (this.selectAction) {
+            result.push(this.selectAction);
+        }
+
+        return result;
+    }
+
     getActionById(id: string) {
         let result = super.getActionById(id);
 
@@ -1832,12 +2184,53 @@ export class Image extends CardElement {
     getResourceInformation(): IResourceInformation[] {
         return this.url ? [{ url: this.url, mimeType: "image" }] : [];
     }
+
+    private setImageSource(imageElement: HTMLImageElement): void {
+        const imageForceLoader: ImageForceLoader = new ImageForceLoader(this.forceLoad, this.url);
+        imageForceLoader.configureImage(this);
+        imageElement.src = <string>this.preProcessPropertyValue(Image.urlProperty);
+        imageForceLoader.resetImage(this);
+    } 
+}
+
+// configures Image element to fetch a new image data from url source instead of relying on cache
+// currently rudimentary refreshing scheme is used
+// by attaching unique query string to url, we bypass the cache usage
+class ImageForceLoader{
+    private uniqueHash : string;
+    public readonly urlWithForceLoadOption : string;
+    constructor(
+        readonly doForceLoad: boolean,
+        readonly url : string | undefined,
+    )
+    {
+        if (url && url.length && doForceLoad) {
+            // we can do better by appending unique key such as uuid instead of epoch
+            // however the current usage is for front-end ui and networking,  
+            // since ui is running in single main thread, this is sufficient mechanism
+            // without needing to depend on external library for our small use cases.
+            this.uniqueHash = '?' + Date.now();
+            this.urlWithForceLoadOption = url + this.uniqueHash;
+        }
+    }
+
+    public configureImage(image: Image): void {
+        if (this.urlWithForceLoadOption && this.urlWithForceLoadOption.length) {
+            image.url = this.urlWithForceLoadOption;
+        }
+    }
+
+    public resetImage(image: Image): void {
+        image.url = this.url;
+    }
 }
 
 export abstract class CardElementContainer extends CardElement {
     //#region Schema
 
-    static readonly selectActionProperty = new ActionProperty(Versions.v1_1, "selectAction", [ "Action.ShowCard" ]);
+    static readonly selectActionProperty = new ActionProperty(Versions.v1_1, "selectAction", [
+        "Action.ShowCard"
+    ]);
 
     protected populateSchema(schema: SerializableObjectSchema) {
         super.populateSchema(schema);
@@ -1866,7 +2259,9 @@ export abstract class CardElementContainer extends CardElement {
         let physicalPadding = new SpacingDefinition();
 
         if (this.getEffectivePadding()) {
-            physicalPadding = this.hostConfig.paddingDefinitionToSpacingDefinition(this.getEffectivePadding());
+            physicalPadding = this.hostConfig.paddingDefinitionToSpacingDefinition(
+                this.getEffectivePadding()
+            );
         }
 
         this.renderedElement.style.paddingTop = physicalPadding.top + "px";
@@ -1882,6 +2277,10 @@ export abstract class CardElementContainer extends CardElement {
         return false;
     }
 
+    protected forbiddenChildElements(): string[] {
+        return [];
+    }
+
     abstract getItemCount(): number;
     abstract getItemAt(index: number): CardElement;
     abstract getFirstVisibleRenderedItem(): CardElement | undefined;
@@ -1890,24 +2289,34 @@ export abstract class CardElementContainer extends CardElement {
 
     allowVerticalOverflow: boolean = false;
 
+    releaseDOMResources() {
+        super.releaseDOMResources();
+
+        for (let i = 0; i < this.getItemCount(); i++) {
+            this.getItemAt(i).releaseDOMResources();
+        }
+    }
+
     internalValidateProperties(context: ValidationResults) {
         super.internalValidateProperties(context);
 
         for (let i = 0; i < this.getItemCount(); i++) {
-            let item = this.getItemAt(i);
+            const item = this.getItemAt(i);
 
             if (!this.hostConfig.supportsInteractivity && item.isInteractive) {
                 context.addFailure(
                     this,
                     Enums.ValidationEvent.InteractivityNotAllowed,
-                    Strings.errors.interactivityNotAllowed());
+                    Strings.errors.interactivityNotAllowed()
+                );
             }
 
             if (!this.isElementAllowed(item)) {
                 context.addFailure(
                     this,
                     Enums.ValidationEvent.InteractivityNotAllowed,
-                    Strings.errors.elementTypeNotAllowed(item.getJsonTypeName()));
+                    Strings.errors.elementTypeNotAllowed(item.getJsonTypeName())
+                );
             }
 
             item.internalValidateProperties(context);
@@ -1919,43 +2328,49 @@ export abstract class CardElementContainer extends CardElement {
     }
 
     render(): HTMLElement | undefined {
-        let element = super.render();
+        const element = super.render();
 
         if (element) {
-            let hostConfig = this.hostConfig;
+            const hostConfig = this.hostConfig;
 
             if (this.allowVerticalOverflow) {
                 element.style.overflowX = "hidden";
                 element.style.overflowY = "auto";
             }
 
-            if (element && this.isSelectable && this._selectAction && hostConfig.supportsInteractivity) {
-                element.classList.add(hostConfig.makeCssClassName("ac-selectable"));
-                element.tabIndex = 0;
-                element.setAttribute("role", this._selectAction.getAriaRole());
-
-                if (this._selectAction.title) {
-                    element.setAttribute("aria-label", this._selectAction.title);
-                    element.title = this._selectAction.title;
-                }
-
+            if (
+                element &&
+                this.isSelectable &&
+                this._selectAction &&
+                hostConfig.supportsInteractivity
+            ) {
                 element.onclick = (e) => {
-                    if (this._selectAction !== undefined) {
+                    if (this._selectAction && this._selectAction.isEffectivelyEnabled()) {
                         e.preventDefault();
                         e.cancelBubble = true;
 
                         this._selectAction.execute();
                     }
-                }
+                };
 
                 element.onkeypress = (e) => {
-                    if (this._selectAction !== undefined && (e.keyCode == 13 || e.keyCode == 32)) {
+                    if (
+                        this._selectAction &&
+                        this._selectAction.isEffectivelyEnabled() &&
+                        (e.code === "Enter" || e.code === "Space")
+                    ) {
                         // Enter or space pressed
                         e.preventDefault();
                         e.cancelBubble = true;
 
                         this._selectAction.execute();
                     }
+                };
+
+                this._selectAction.setupElementForAccessibility(element);
+
+                if (this._selectAction.isEffectivelyEnabled()) {
+                    element.classList.add(hostConfig.makeCssClassName("ac-selectable"));
                 }
             }
         }
@@ -1977,7 +2392,21 @@ export abstract class CardElementContainer extends CardElement {
         let result: Input[] = [];
 
         for (let i = 0; i < this.getItemCount(); i++) {
-            result = result.concat(this.getItemAt(i).getAllInputs(processActions));
+            result.push(...this.getItemAt(i).getAllInputs(processActions));
+        }
+
+        return result;
+    }
+
+    getAllActions(): Action[] {
+        const result = super.getAllActions();
+
+        for (let i = 0; i < this.getItemCount(); i++) {
+            result.push(...this.getItemAt(i).getAllActions());
+        }
+
+        if (this._selectAction) {
+            result.push(this._selectAction);
         }
 
         return result;
@@ -1987,7 +2416,7 @@ export abstract class CardElementContainer extends CardElement {
         let result: IResourceInformation[] = [];
 
         for (let i = 0; i < this.getItemCount(); i++) {
-            result = result.concat(this.getItemAt(i).getResourceInformation());
+            result.push(...this.getItemAt(i).getResourceInformation());
         }
 
         return result;
@@ -2008,6 +2437,34 @@ export abstract class CardElementContainer extends CardElement {
 
         return result;
     }
+
+    /**
+     * @inheritdoc
+     */
+    findDOMNodeOwner(node: Node): CardObject | undefined {
+        let target: CardObject | undefined = undefined;
+
+        for (let i = 0; i < this.getItemCount(); i++) {
+            // recur through child elements
+            target = this.getItemAt(i).findDOMNodeOwner(node);
+
+            if (target) {
+                return target;
+            }
+        }
+
+        // If not found in children, check the actions
+        for (let i = 0; i < this.getActionCount(); i++) {
+            target = this.getActionAt(i)?.findDOMNodeOwner(node);
+
+            if (target) {
+                return target;
+            }
+        }
+
+        // if not found in children or actions, defer to parent implementation
+        return super.findDOMNodeOwner(node);
+    }
 }
 
 export class ImageSet extends CardElementContainer {
@@ -2017,18 +2474,43 @@ export class ImageSet extends CardElementContainer {
         Versions.v1_0,
         "images",
         Image,
-        (sender: SerializableObject, item: Image) => { item.setParent(<CardElement>sender); });
+        (sender: SerializableObject, item: Image) => {
+            item.setParent(<CardElement>sender);
+        }
+    );
+
     static readonly imageSizeProperty = new EnumProperty(
         Versions.v1_0,
         "imageSize",
         Enums.ImageSize,
-        Enums.ImageSize.Medium);
+        Enums.ImageSize.Medium
+    );
+
+    static readonly imagePresentationStyle = new EnumProperty(
+        Versions.v1_6,
+        "style",
+        Enums.ImageSetPresentationStyle,
+        Enums.ImageSetPresentationStyle.Default
+    );
+
+    static readonly pixelOffset = new NumProperty(
+        Versions.v1_6,
+        "offset",
+        0,
+        undefined
+    );
 
     @property(ImageSet.imagesProperty)
     private _images: Image[] = [];
 
     @property(ImageSet.imageSizeProperty)
     imageSize: Enums.ImageSize = Enums.ImageSize.Medium;
+
+    @property(ImageSet.imagePresentationStyle)
+    presentationStyle: Enums.ImageSetPresentationStyle = Enums.ImageSetPresentationStyle.Default;
+
+    @property(ImageSet.pixelOffset)
+    pixelOffset: number = 0;
 
     //#endregion
 
@@ -2040,7 +2522,7 @@ export class ImageSet extends CardElementContainer {
             element.style.display = "flex";
             element.style.flexWrap = "wrap";
 
-            for (let image of this._images) {
+            for (const image of this._images) {
                 switch (this.imageSize) {
                     case Enums.ImageSize.Small:
                         image.size = Enums.Size.Small;
@@ -2055,19 +2537,49 @@ export class ImageSet extends CardElementContainer {
 
                 image.maxHeight = this.hostConfig.imageSet.maxImageHeight;
 
-                let renderedImage = image.render();
+                const renderedImage = image.render();
 
                 if (renderedImage) {
                     renderedImage.style.display = "inline-flex";
                     renderedImage.style.margin = "0px";
-                    renderedImage.style.marginRight = "10px";
+                    if (this.presentationStyle == Enums.ImageSetPresentationStyle.Default) {
+                        renderedImage.style.marginRight = "10px";
+                    }
 
                     Utils.appendChild(element, renderedImage);
                 }
             }
+            if (this.presentationStyle == Enums.ImageSetPresentationStyle.Stacked) {
+                this.applyStackedPresentationStyle();
+            }
         }
+        
 
         return element;
+    }
+
+    applyStackedPresentationStyle() {
+        if (this._images[0].renderedImageElement) {
+            let dimension = StackedImageConfigurator.parseNumericPixelDimension(this._images[0].renderedImageElement.style.height);
+            let bgColor = this.getEffectiveBackgroundColor();
+            if (dimension) {
+                let stackedImageConfigurator = new StackedImageConfigurator(this.pixelOffset, 
+                    dimension, bgColor);
+                stackedImageConfigurator.configureImagesArrayAsStackedLayout(this._images);
+            }
+        }
+    }
+
+    getEffectiveBackgroundColor() : string | undefined {
+        let parentContainer = this.getParentContainer();
+        let style = parentContainer?.getEffectiveStyle();
+
+        const styleDefinition = this.hostConfig.containerStyles.getStyleByName(
+            style,
+            this.hostConfig.containerStyles.getStyleByName(this.defaultStyle)
+        );
+
+        return Utils.stringToCssColor(styleDefinition.backgroundColor);
     }
 
     getItemCount(): number {
@@ -2083,12 +2595,14 @@ export class ImageSet extends CardElementContainer {
     }
 
     getLastVisibleRenderedItem(): CardElement | undefined {
-        return this._images && this._images.length > 0 ? this._images[this._images.length - 1] : undefined;
+        return this._images && this._images.length > 0
+            ? this._images[this._images.length - 1]
+            : undefined;
     }
 
     removeItem(item: CardElement): boolean {
         if (item instanceof Image) {
-            let itemIndex = this._images.indexOf(item);
+            const itemIndex = this._images.indexOf(item);
 
             if (itemIndex >= 0) {
                 this._images.splice(itemIndex, 1);
@@ -2113,8 +2627,7 @@ export class ImageSet extends CardElementContainer {
             this._images.push(image);
 
             image.setParent(this);
-        }
-        else {
+        } else {
             throw new Error("This image already belongs to another ImageSet");
         }
     }
@@ -2124,23 +2637,105 @@ export class ImageSet extends CardElementContainer {
     }
 }
 
-export class MediaSource extends SerializableObject {
+class StackedImageConfigurator {
+    private sign45 = 0.7071;
+    private maxImageCounts: number = 2;
+    private offset: number = 0;
+    private normalizationConstant: number = 0;
+    private border: number = 5;
+    private dimension: number = 0;
+    private style: string;
+
+    constructor(offset: number, dimension: number, style: string | undefined) {
+        this.dimension = dimension;
+        this.normalizationConstant = (dimension * this.sign45 - 0.5 * dimension) * 2;
+        // offset determines how far images are placed from each other
+        // at zero, images are separated only by the border
+        // there is no restriction on how far they are apart in positive values, their actual
+        // positioning is limited by maximum size imposed by Image renderer
+        // a negative value can decrease upto the diameter of the image since a value less than the diameter
+        // put the images past each other, and the use of such value is not reasonable request
+        // users should change image positions in such case.
+        this.offset = this.sign45 * (Math.max(offset, -dimension) - this.normalizationConstant);
+        this.style = style ? style : "";
+    }
+
+    private moveImageRight(element: HTMLElement) {
+        element.style.marginLeft = this.offset + "px";
+    }
+
+    private moveImageUp(element: HTMLElement) {
+        element.style.marginBottom = this.offset + this.dimension+ "px";
+    }
+
+    private moveImageDown(element: HTMLElement) {
+        element.style.marginTop = this.offset + this.dimension + "px";
+    }
+
+    private makeImageRound(element: HTMLElement) {
+        element.style.borderRadius = "50%";
+        element.style.backgroundPosition = "50% 50%";
+        element.style.backgroundRepeat = "no-repeat";
+    }
+
+    private applyBorder(element: HTMLElement) {
+        element.style.height = (this.dimension + this.border * 2) + "px";
+        element.style.border = this.border + "px" + " solid " + this.style;
+    }
+
+    private configureImageForBottomLeft(element: HTMLElement) {
+        this.moveImageDown(element);
+        this.makeImageRound(element); 
+        this.applyBorder(element);
+        element.style.zIndex = "2";
+    }
+
+    private configureImageForTopRight(element: HTMLElement) {
+        this.moveImageUp(element);
+        this.moveImageRight(element);
+        this.makeImageRound(element); 
+        element.style.zIndex = "1";
+    }
+
+    // stacked layout is applied when there are two images in ImageSet,
+    // first image in the ImageSet is put bottom left of ImageSet,
+    // second image is placed top right diagonally to the first image at 45 angle
+    // first image is placed over the second image should the overlap to occur.
+    public configureImagesArrayAsStackedLayout(elements: Array<Image>) {
+        if (elements.length == 1) {
+            if (elements[0].renderedImageElement) {
+                this.makeImageRound(elements[0].renderedImageElement); 
+            }
+        }
+        else if (elements.length <= this.maxImageCounts) {
+            if (elements[0].renderedImageElement && elements[1].renderedImageElement) {
+                this.configureImageForBottomLeft(elements[0].renderedImageElement);
+                this.configureImageForTopRight(elements[1].renderedImageElement);
+            }
+        }
+    }
+
+    public static parseNumericPixelDimension(dimension: string): number | undefined  {
+        if (dimension?.substring(dimension.length - 2) == 'px') {
+            return parseInt(dimension.substring(0, dimension.length - 2));
+        }
+        return undefined;
+    }
+}
+
+export abstract class ContentSource extends SerializableObject {
     //#region Schema
 
     static readonly mimeTypeProperty = new StringProperty(Versions.v1_1, "mimeType");
     static readonly urlProperty = new StringProperty(Versions.v1_1, "url");
 
-    @property(MediaSource.mimeTypeProperty)
+    @property(ContentSource.mimeTypeProperty)
     mimeType?: string;
 
-    @property(MediaSource.urlProperty)
+    @property(ContentSource.urlProperty)
     url?: string;
 
     //#endregion
-
-    protected getSchemaKey(): string {
-        return "MediaSource";
-    }
 
     constructor(url?: string, mimeType?: string) {
         super();
@@ -2152,29 +2747,354 @@ export class MediaSource extends SerializableObject {
     isValid(): boolean {
         return this.mimeType && this.url ? true : false;
     }
+}
+
+export class CaptionSource extends ContentSource {
+    //#region Schema
+
+    static readonly labelProperty = new StringProperty(Versions.v1_6, "label");
+
+    @property(CaptionSource.labelProperty)
+    label?: string;
+
+    //#endregion
+
+    constructor(url?: string, mimeType?: string, label?: string) {
+        super(url, mimeType);
+
+        this.label = label;
+    }
+
+    protected getSchemaKey(): string {
+        return "CaptionSource";
+    }
 
     render(): HTMLElement | undefined {
-        let result: HTMLSourceElement | undefined = undefined;
+        let result: HTMLTrackElement | undefined = undefined;
 
         if (this.isValid()) {
-            result = document.createElement("source");
-            result.src = <string>this.url;
-            result.type = <string>this.mimeType;
+            result = document.createElement("track");
+            result.src = this.url!;
+            result.kind = "captions";
+            result.label = this.label!;
         }
 
         return result;
     }
 }
 
+export class MediaSource extends ContentSource {
+    protected getSchemaKey(): string {
+        return "MediaSource";
+    }
+
+    render(): HTMLElement | undefined {
+        let result: HTMLSourceElement | undefined = undefined;
+
+        if (this.isValid()) {
+            result = document.createElement("source");
+            result.src = this.url!;
+            result.type = this.mimeType!;
+        }
+
+        return result;
+    }
+}
+
+export abstract class MediaPlayer {
+    private _posterUrl?: string;
+
+    abstract canPlay(): boolean;
+    abstract render(): HTMLElement;
+    abstract fetchVideoDetails(): Promise<void>;
+
+    play() {
+        // Do nothing in base implementation
+    }
+
+    get posterUrl(): string | undefined {
+        return this._posterUrl;
+    }
+
+    protected set posterUrl(value: string | undefined) {
+        this._posterUrl = value;
+    }
+
+    get selectedMediaType(): string | undefined {
+        return undefined;
+    }
+}
+
+export class HTML5MediaPlayer extends MediaPlayer {
+    private _selectedMediaType?: string;
+    private _selectedSources: MediaSource[] = [];
+    private _captionSources: CaptionSource[] = [];
+    private _mediaElement?: HTMLMediaElement;
+
+    private processSources() {
+        this._selectedSources = [];
+        this._captionSources = [];
+        this._selectedMediaType = undefined;
+
+        for (const source of this.owner.sources) {
+            const mimeComponents = source.mimeType ? source.mimeType.split("/") : [];
+
+            if (mimeComponents.length === 2) {
+                if (!this._selectedMediaType) {
+                    const index = HTML5MediaPlayer.supportedMediaTypes.indexOf(mimeComponents[0]);
+
+                    if (index >= 0) {
+                        this._selectedMediaType = HTML5MediaPlayer.supportedMediaTypes[index];
+                    }
+                }
+                if (mimeComponents[0] === this._selectedMediaType) {
+                    this._selectedSources.push(source);
+                }
+            }
+        }
+
+        this._captionSources.push(...this.owner.captionSources);
+    }
+
+    static readonly supportedMediaTypes = ["audio", "video"];
+
+    constructor(readonly owner: Media) {
+        super();
+
+        this.processSources();
+    }
+
+    canPlay(): boolean {
+        return this._selectedSources.length > 0;
+    }
+
+    async fetchVideoDetails() {
+        // Nothing to fetch for the HTML5 media player
+    }
+
+    render(): HTMLElement {
+        if (this._selectedMediaType === "video") {
+            this._mediaElement = document.createElement("video");
+        } else {
+            this._mediaElement = document.createElement("audio");
+        }
+
+        this._mediaElement.setAttribute(
+            "aria-label",
+            this.owner.altText ? this.owner.altText : Strings.defaults.mediaPlayerAriaLabel()
+        );
+        this._mediaElement.setAttribute("webkit-playsinline", "");
+        this._mediaElement.setAttribute("playsinline", "");
+        // We enable crossorigin for cases where the caption file has a different domain than
+        // the video file. If the caption file lives in a different domain than the video file
+        // and crossorigin is not set, then the caption file will fail to load.
+        this._mediaElement.setAttribute("crossorigin", "");
+        this._mediaElement.autoplay = true;
+        this._mediaElement.controls = true;
+
+        if (Utils.isMobileOS()) {
+            this._mediaElement.muted = true;
+        }
+
+        this._mediaElement.preload = "none";
+        this._mediaElement.style.width = "100%";
+
+        for (const source of this.owner.sources) {
+            const renderedSource = source.render();
+
+            Utils.appendChild(this._mediaElement, renderedSource);
+        }
+
+        for (const captionSource of this.owner.captionSources) {
+            if (captionSource.mimeType == "vtt") {
+                const renderedCaptionSource = captionSource.render();
+
+                Utils.appendChild(this._mediaElement, renderedCaptionSource);
+            }
+        }
+
+        return this._mediaElement;
+    }
+
+    play() {
+        if (this._mediaElement) {
+            this._mediaElement.play();
+        }
+    }
+
+    get selectedMediaType(): string | undefined {
+        return this._selectedMediaType;
+    }
+}
+
+export abstract class CustomMediaPlayer extends MediaPlayer {
+    constructor(matches: RegExpExecArray) {
+        super();
+    }
+}
+
+export abstract class IFrameMediaMediaPlayer extends CustomMediaPlayer {
+    private _videoId?: string;
+
+    constructor(matches: RegExpExecArray, readonly iFrameTitle?: string) {
+        super(matches);
+
+        if (matches.length >= 2) {
+            this._videoId = matches[1];
+        }
+    }
+
+    abstract getEmbedVideoUrl(): string;
+
+    canPlay(): boolean {
+        return this._videoId !== undefined;
+    }
+
+    render(): HTMLElement {
+        let container = document.createElement("div");
+        container.style.position = "relative";
+        container.style.width = "100%";
+        container.style.height = "0";
+        container.style.paddingBottom = "56.25%";
+
+        let iFrame = document.createElement("iframe");
+        iFrame.style.position = "absolute";
+        iFrame.style.top = "0";
+        iFrame.style.left = "0";
+        iFrame.style.width = "100%";
+        iFrame.style.height = "100%";
+        iFrame.src = this.getEmbedVideoUrl();
+        iFrame.frameBorder = "0";
+
+        if (this.iFrameTitle) {
+            iFrame.title = this.iFrameTitle;
+        }
+
+        iFrame.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        iFrame.allowFullscreen = true;
+
+        container.appendChild(iFrame);
+
+        return container;
+    }
+
+    get videoId(): string | undefined {
+        return this._videoId;
+    }
+}
+
+export class VimeoPlayer extends IFrameMediaMediaPlayer {
+    async fetchVideoDetails(): Promise<void> {
+        const oEmbedUrl = `https://vimeo.com/api/oembed.json?url=${this.getEmbedVideoUrl()}`;
+
+        let response = await fetch(oEmbedUrl);
+
+        if (response.ok) {
+            let json = await response.json();
+
+            this.posterUrl = json["thumbnail_url"];
+        }
+    }
+
+    getEmbedVideoUrl(): string {
+        return `https://player.vimeo.com/video/${this.videoId}?autoplay=1`;
+    }
+}
+
+export class DailymotionPlayer extends IFrameMediaMediaPlayer {
+    async fetchVideoDetails(): Promise<void> {
+        const apiUrl = `https://api.dailymotion.com/video/${this.videoId}?fields=thumbnail_720_url`;
+
+        let response = await fetch(apiUrl);
+
+        if (response.ok) {
+            let json = await response.json();
+
+            this.posterUrl = json["thumbnail_720_url"];
+        }
+    }
+
+    getEmbedVideoUrl(): string {
+        return `https://www.dailymotion.com/embed/video/${this.videoId}?autoplay=1`;
+    }
+}
+
+export class YouTubePlayer extends IFrameMediaMediaPlayer {
+    private _startTimeIndex?: number;
+
+    constructor(matches: RegExpExecArray, readonly iFrameTitle?: string) {
+        super(matches, iFrameTitle);
+
+        if (matches.length >= 3 && matches[2] !== undefined) {
+            this._startTimeIndex = parseInt(matches[2]);
+        }
+    }
+
+    async fetchVideoDetails(): Promise<void> {
+        this.posterUrl = this.videoId
+            ? `https://img.youtube.com/vi/${this.videoId}/maxresdefault.jpg`
+            : undefined;
+    }
+
+    getEmbedVideoUrl(): string {
+        let url = `https://www.youtube.com/embed/${this.videoId}?autoplay=1`;
+
+        if (this._startTimeIndex !== undefined) {
+            url += `&start=${this._startTimeIndex}`;
+        }
+
+        return url;
+    }
+}
+
+export interface ICustomMediaPlayer {
+    urlPatterns: RegExp[];
+    createMediaPlayer: (matches: RegExpExecArray) => CustomMediaPlayer;
+}
+
 export class Media extends CardElement {
+    static customMediaPlayers: ICustomMediaPlayer[] = [
+        {
+            urlPatterns: [
+                /^(?:https?:\/\/)?(?:www.)?youtube.com\/watch\?(?=.*v=([\w\d-_]+))(?=(?:.*t=(\d+))?).*/gi,
+                /^(?:https?:\/\/)?youtu.be\/([\w\d-_]+)(?:\?t=(\d+))?/gi
+            ],
+            createMediaPlayer: (matches) =>
+                new YouTubePlayer(matches, Strings.defaults.youTubeVideoPlayer())
+        },
+        {
+            urlPatterns: [/^(?:https?:\/\/)?vimeo.com\/([\w\d-_]+).*/gi],
+            createMediaPlayer: (matches) =>
+                new VimeoPlayer(matches, Strings.defaults.vimeoVideoPlayer())
+        },
+        {
+            urlPatterns: [/^(?:https?:\/\/)?(?:www.)?dailymotion.com\/video\/([\w\d-_]+).*/gi],
+            createMediaPlayer: (matches) =>
+                new DailymotionPlayer(matches, Strings.defaults.dailymotionVideoPlayer())
+        }
+    ];
+
     //#region Schema
 
-    static readonly sourcesProperty = new SerializableObjectCollectionProperty(Versions.v1_1, "sources", MediaSource);
+    static readonly sourcesProperty = new SerializableObjectCollectionProperty(
+        Versions.v1_1,
+        "sources",
+        MediaSource
+    );
+    static readonly captionSourcesProperty = new SerializableObjectCollectionProperty(
+        Versions.v1_6,
+        "captionSources",
+        CaptionSource
+    );
     static readonly posterProperty = new StringProperty(Versions.v1_1, "poster");
     static readonly altTextProperty = new StringProperty(Versions.v1_1, "altText");
 
     @property(Media.sourcesProperty)
     sources: MediaSource[] = [];
+
+    @property(Media.captionSourcesProperty)
+    captionSources: CaptionSource[] = [];
 
     @property(Media.posterProperty)
     poster?: string;
@@ -2184,54 +3104,41 @@ export class Media extends CardElement {
 
     //#endregion
 
-    static readonly supportedMediaTypes = ["audio", "video"];
+    private _mediaPlayer: MediaPlayer;
 
-    private _selectedMediaType?: string;
-    private _selectedSources: MediaSource[];
+    private createMediaPlayer(): MediaPlayer {
+        for (let provider of Media.customMediaPlayers) {
+            for (let source of this.sources) {
+                if (source.url) {
+                    for (let pattern of provider.urlPatterns) {
+                        let matches = pattern.exec(source.url);
 
-    private getPosterUrl(): string | undefined {
-        return this.poster ? this.poster : this.hostConfig.media.defaultPoster;
-    }
-
-    private processSources() {
-        this._selectedSources = [];
-        this._selectedMediaType = undefined;
-
-        for (let source of this.sources) {
-            let mimeComponents = source.mimeType ? source.mimeType.split('/') : [];
-
-            if (mimeComponents.length == 2) {
-                if (!this._selectedMediaType) {
-                    let index = Media.supportedMediaTypes.indexOf(mimeComponents[0]);
-
-                    if (index >= 0) {
-                        this._selectedMediaType = Media.supportedMediaTypes[index];
+                        if (matches !== null) {
+                            return provider.createMediaPlayer(matches);
+                        }
                     }
-                }
-                if (mimeComponents[0] == this._selectedMediaType) {
-                    this._selectedSources.push(source);
                 }
             }
         }
+
+        return new HTML5MediaPlayer(this);
     }
 
-    private handlePlayButtonInvoke(event: UIEvent) : void
-    {
+    private handlePlayButtonInvoke(event: UIEvent): void {
         if (this.hostConfig.media.allowInlinePlayback) {
             event.preventDefault();
             event.cancelBubble = true;
 
             if (this.renderedElement) {
-                let mediaPlayerElement = this.renderMediaPlayer();
-
-                this.renderedElement.innerHTML = "";
+                const mediaPlayerElement = this._mediaPlayer.render();
+                clearElement(this.renderedElement);
                 this.renderedElement.appendChild(mediaPlayerElement);
 
-                mediaPlayerElement.play();
+                this._mediaPlayer.play();
+
                 mediaPlayerElement.focus();
             }
-        }
-        else {
+        } else {
             if (Media.onPlay) {
                 event.preventDefault();
                 event.cancelBubble = true;
@@ -2241,168 +3148,173 @@ export class Media extends CardElement {
         }
     }
 
-    private renderPoster(): HTMLElement {
-        const playButtonArrowWidth = 12;
-        const playButtonArrowHeight = 15;
+    private async displayPoster() {
+        if (this.renderedElement) {
+            const playButtonArrowWidth = 12;
+            const playButtonArrowHeight = 15;
 
-        let posterRootElement = document.createElement("div");
-        posterRootElement.className = this.hostConfig.makeCssClassName("ac-media-poster");
-        posterRootElement.setAttribute("role", "contentinfo");
-        posterRootElement.setAttribute("aria-label", this.altText ? this.altText : "Media content");
-        posterRootElement.style.position = "relative";
-        posterRootElement.style.display = "flex";
+            const posterRootElement = document.createElement("div");
+            posterRootElement.className = this.hostConfig.makeCssClassName("ac-media-poster");
+            posterRootElement.setAttribute("role", "contentinfo");
+            posterRootElement.setAttribute(
+                "aria-label",
+                this.altText ? this.altText : Strings.defaults.mediaPlayerAriaLabel()
+            );
+            posterRootElement.style.position = "relative";
+            posterRootElement.style.display = "flex";
 
-        let posterUrl = this.getPosterUrl();
+            let posterUrl = this.poster ? this.poster : this._mediaPlayer.posterUrl;
 
-        if (posterUrl) {
-            let posterImageElement = document.createElement("img");
-            posterImageElement.style.width = "100%";
-            posterImageElement.style.height = "100%";
-            posterImageElement.setAttribute("role", "presentation");
+            if (!posterUrl) {
+                posterUrl = this.hostConfig.media.defaultPoster;
+            }
 
-            posterImageElement.onerror = (e: Event) => {
-                if (posterImageElement.parentNode) {
-                    posterImageElement.parentNode.removeChild(posterImageElement);
-                }
+            if (posterUrl) {
+                const posterImageElement = document.createElement("img");
+                posterImageElement.style.width = "100%";
+                posterImageElement.style.height = "100%";
+                posterImageElement.setAttribute("role", "presentation");
 
+                posterImageElement.onerror = (_e: Event) => {
+                    if (posterImageElement.parentNode) {
+                        posterImageElement.parentNode.removeChild(posterImageElement);
+                    }
+
+                    posterRootElement.classList.add("empty");
+                    posterRootElement.style.minHeight = "150px";
+                };
+
+                posterImageElement.src = posterUrl;
+
+                posterRootElement.appendChild(posterImageElement);
+            } else {
                 posterRootElement.classList.add("empty");
                 posterRootElement.style.minHeight = "150px";
             }
 
-            posterImageElement.src = posterUrl;
-
-            posterRootElement.appendChild(posterImageElement);
-        }
-        else {
-            posterRootElement.classList.add("empty");
-            posterRootElement.style.minHeight = "150px";
-        }
-
-        if (this.hostConfig.supportsInteractivity && this._selectedSources.length > 0) {
-            let playButtonOuterElement = document.createElement("div");
-            playButtonOuterElement.tabIndex = 0;
-            playButtonOuterElement.setAttribute("role", "button");
-            playButtonOuterElement.setAttribute("aria-label", "Play media");
-            playButtonOuterElement.className = this.hostConfig.makeCssClassName("ac-media-playButton");
-            playButtonOuterElement.style.display = "flex";
-            playButtonOuterElement.style.alignItems = "center";
-            playButtonOuterElement.style.justifyContent = "center";
-            playButtonOuterElement.onclick = (e) => {
-                this.handlePlayButtonInvoke(e);
-            }
-
-            playButtonOuterElement.onkeypress = (e: KeyboardEvent) => {
-                if (e.keyCode == 13 || e.keyCode == 32) { // space or enter
+            if (this.hostConfig.supportsInteractivity && this._mediaPlayer.canPlay()) {
+                const playButtonOuterElement = document.createElement("div");
+                playButtonOuterElement.tabIndex = 0;
+                playButtonOuterElement.setAttribute("role", "button");
+                playButtonOuterElement.setAttribute(
+                    "aria-label",
+                    Strings.defaults.mediaPlayerPlayMedia()
+                );
+                playButtonOuterElement.className =
+                    this.hostConfig.makeCssClassName("ac-media-playButton");
+                playButtonOuterElement.style.display = "flex";
+                playButtonOuterElement.style.alignItems = "center";
+                playButtonOuterElement.style.justifyContent = "center";
+                playButtonOuterElement.onclick = (e) => {
                     this.handlePlayButtonInvoke(e);
-                }
+                };
+
+                playButtonOuterElement.onkeypress = (e: KeyboardEvent) => {
+                    if (e.code === "Enter" || e.code === "Space") {
+                        // space or enter
+                        this.handlePlayButtonInvoke(e);
+                    }
+                };
+
+                const playButtonInnerElement = document.createElement("div");
+                playButtonInnerElement.className = this.hostConfig.makeCssClassName(
+                    "ac-media-playButton-arrow"
+                );
+                playButtonInnerElement.style.width = playButtonArrowWidth + "px";
+                playButtonInnerElement.style.height = playButtonArrowHeight + "px";
+                playButtonInnerElement.style.borderTopWidth = playButtonArrowHeight / 2 + "px";
+                playButtonInnerElement.style.borderBottomWidth = playButtonArrowHeight / 2 + "px";
+                playButtonInnerElement.style.borderLeftWidth = playButtonArrowWidth + "px";
+                playButtonInnerElement.style.borderRightWidth = "0";
+                playButtonInnerElement.style.borderStyle = "solid";
+                playButtonInnerElement.style.borderTopColor = "transparent";
+                playButtonInnerElement.style.borderRightColor = "transparent";
+                playButtonInnerElement.style.borderBottomColor = "transparent";
+                playButtonInnerElement.style.transform =
+                    "translate(" + playButtonArrowWidth / 10 + "px,0px)";
+
+                playButtonOuterElement.appendChild(playButtonInnerElement);
+
+                const playButtonContainer = document.createElement("div");
+                playButtonContainer.style.position = "absolute";
+                playButtonContainer.style.left = "0";
+                playButtonContainer.style.top = "0";
+                playButtonContainer.style.width = "100%";
+                playButtonContainer.style.height = "100%";
+                playButtonContainer.style.display = "flex";
+                playButtonContainer.style.justifyContent = "center";
+                playButtonContainer.style.alignItems = "center";
+
+                playButtonContainer.appendChild(playButtonOuterElement);
+                posterRootElement.appendChild(playButtonContainer);
             }
 
-            let playButtonInnerElement = document.createElement("div");
-            playButtonInnerElement.className = this.hostConfig.makeCssClassName("ac-media-playButton-arrow");
-            playButtonInnerElement.style.width = playButtonArrowWidth + "px";
-            playButtonInnerElement.style.height = playButtonArrowHeight + "px";
-            playButtonInnerElement.style.borderTopWidth = (playButtonArrowHeight / 2) + "px";
-            playButtonInnerElement.style.borderBottomWidth = (playButtonArrowHeight / 2) + "px";
-            playButtonInnerElement.style.borderLeftWidth = playButtonArrowWidth + "px";
-            playButtonInnerElement.style.borderRightWidth = "0";
-            playButtonInnerElement.style.borderStyle = "solid";
-            playButtonInnerElement.style.borderTopColor = "transparent";
-            playButtonInnerElement.style.borderRightColor = "transparent";
-            playButtonInnerElement.style.borderBottomColor = "transparent";
-            playButtonInnerElement.style.transform = "translate(" + (playButtonArrowWidth / 10) + "px,0px)";
-
-            playButtonOuterElement.appendChild(playButtonInnerElement);
-
-            let playButtonContainer = document.createElement("div");
-            playButtonContainer.style.position = "absolute";
-            playButtonContainer.style.left = "0";
-            playButtonContainer.style.top = "0";
-            playButtonContainer.style.width = "100%";
-            playButtonContainer.style.height = "100%";
-            playButtonContainer.style.display = "flex";
-            playButtonContainer.style.justifyContent = "center";
-            playButtonContainer.style.alignItems = "center";
-
-            playButtonContainer.appendChild(playButtonOuterElement);
-            posterRootElement.appendChild(playButtonContainer);
+            clearElement(this.renderedElement);
+            this.renderedElement.appendChild(posterRootElement);
         }
-
-        return posterRootElement;
-    }
-
-    private renderMediaPlayer(): HTMLMediaElement {
-        let mediaElement: HTMLMediaElement;
-
-        if (this._selectedMediaType == "video") {
-            let videoPlayer = document.createElement("video");
-
-            let posterUrl = this.getPosterUrl();
-
-            if (posterUrl) {
-                videoPlayer.poster = posterUrl;
-            }
-
-            mediaElement = videoPlayer;
-        }
-        else {
-            mediaElement = document.createElement("audio");
-        }
-
-        mediaElement.setAttribute("webkit-playsinline", "");
-        mediaElement.setAttribute("playsinline", "");
-        mediaElement.autoplay = true;
-        mediaElement.controls = true;
-
-        if (Utils.isMobileOS()) {
-            mediaElement.muted = true;
-        }
-
-        mediaElement.preload = "none";
-        mediaElement.style.width = "100%";
-
-        for (let source of this.sources) {
-            let renderedSource = source.render();
-
-            Utils.appendChild(mediaElement, renderedSource);
-        }
-
-        return mediaElement;
     }
 
     protected internalRender(): HTMLElement | undefined {
-        let element = <HTMLElement>document.createElement("div");
+        const element = <HTMLElement>document.createElement("div");
         element.className = this.hostConfig.makeCssClassName("ac-media");
-
-        this.processSources();
-
-        element.appendChild(this.renderPoster());
 
         return element;
     }
 
     static onPlay?: (sender: Media) => void;
 
+    render(): HTMLElement | undefined {
+        let result = super.render();
+
+        if (result) {
+            this._mediaPlayer = this.createMediaPlayer();
+
+            this._mediaPlayer.fetchVideoDetails().then(() => this.displayPoster());
+        }
+
+        return result;
+    }
+
+    releaseDOMResources() {
+        super.releaseDOMResources();
+
+        this.displayPoster();
+    }
+
     getJsonTypeName(): string {
         return "Media";
     }
 
     getResourceInformation(): IResourceInformation[] {
-        let result: IResourceInformation[] = [];
+        const result: IResourceInformation[] = [];
 
-        let posterUrl = this.getPosterUrl();
+        if (this._mediaPlayer) {
+            const posterUrl = this.poster ? this.poster : this.hostConfig.media.defaultPoster;
 
-        if (posterUrl) {
-            result.push({ url: posterUrl, mimeType: "image" });
+            if (posterUrl) {
+                result.push({ url: posterUrl, mimeType: "image" });
+            }
         }
 
-        for (let mediaSource of this.sources) {
+        for (const mediaSource of this.sources) {
             if (mediaSource.isValid()) {
-                result.push(
-                    {
-                        url: <string>mediaSource.url,
-                        mimeType: <string>mediaSource.mimeType
-                    }
-                );
+                result.push({
+                    /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion -- `mediaSource.url` is of type `string | undefined`, but is validated by `isValid()` call */
+                    url: mediaSource.url!,
+                    mimeType: mediaSource.mimeType!
+                    /* eslint-enable @typescript-eslint/no-unnecessary-type-assertion */
+                });
+            }
+        }
+
+        for (const captionSource of this.captionSources) {
+            if (captionSource.isValid()) {
+                result.push({
+                    /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion -- `captionSource.url` is of type `string | undefined`, but is validated by `isValid()` call */
+                    url: captionSource.url!,
+                    mimeType: captionSource.mimeType!
+                    /* eslint-enable @typescript-eslint/no-unnecessary-type-assertion */
+                });
             }
         }
 
@@ -2410,16 +3322,101 @@ export class Media extends CardElement {
     }
 
     get selectedMediaType(): string | undefined {
-        return this._selectedMediaType;
+        return this._mediaPlayer.selectedMediaType;
     }
 }
 
-export abstract class Input extends CardElement implements IInput {
-    //#region Schema
+enum InputEventType {
+    InitialRender,
+    MouseEnterOnCard,
+    MouseLeaveOnCard,
+    FocusLeave
+}
 
+export abstract class Input extends CardElement implements IInput {
+    
+    //#region Schema
     static readonly labelProperty = new StringProperty(Versions.v1_3, "label", true);
     static readonly isRequiredProperty = new BoolProperty(Versions.v1_3, "isRequired", false);
     static readonly errorMessageProperty = new StringProperty(Versions.v1_3, "errorMessage", true);
+    static readonly inputStyleProperty = new EnumProperty(
+        Versions.v1_6,
+        "inputStyle",
+        Enums.InputStyle,
+        Enums.InputStyle.Default,
+        [
+            { value: Enums.InputStyle.RevealOnHover },
+            { value: Enums.InputStyle.Default }
+        ]
+    );
+    static readonly labelWidthProperty = new CustomProperty<SizeAndUnit | undefined>(
+        Versions.v1_6,
+        "labelWidth",
+        (
+            sender: SerializableObject,
+            prop: PropertyDefinition,
+            source: PropertyBag,
+            context: BaseSerializationContext
+        ) => {
+            let result: SizeAndUnit | undefined = prop.defaultValue;
+            const value = source[prop.name];
+            let invalidLabelWidth = false;
+            
+            if (typeof value === "number" && !isNaN(value)) {
+                result = new SizeAndUnit(value, Enums.SizeUnit.Weight);
+                if (result.physicalSize < 0 || result.physicalSize > 100) {
+                    invalidLabelWidth = true;
+                }
+            }
+            else if (typeof value === "string") {
+                try {
+                    result = SizeAndUnit.parse(value);
+                } catch (e) {
+                    invalidLabelWidth = true;
+                }
+            } else {
+                invalidLabelWidth = true;
+            }
+
+            if (invalidLabelWidth) {
+                context.logParseEvent(
+                    sender,
+                    Enums.ValidationEvent.InvalidPropertyValue,
+                    Strings.errors.invalidInputLabelWidth()
+                );
+                result = undefined;
+            }
+
+            return result;
+        },
+        (
+            sender: SerializableObject,
+            property: PropertyDefinition,
+            target: PropertyBag,
+            value: SizeAndUnit | undefined,
+            context: BaseSerializationContext
+        ) => {
+            if (value instanceof SizeAndUnit) {
+                if (value.unit === Enums.SizeUnit.Pixel) {
+                    context.serializeValue(target, "labelWidth", value.physicalSize + "px");
+                } else {
+                    context.serializeNumber(target, "labelWidth", value.physicalSize);
+                }
+            }
+        },
+        undefined
+    );
+
+    static readonly labelPositionProperty = new EnumProperty(
+        Versions.v1_6,
+        "labelPosition",
+        Enums.InputLabelPosition,
+        Enums.InputLabelPosition.Above,
+        [
+            { value: Enums.InputLabelPosition.Inline },
+            { value: Enums.InputLabelPosition.Above }
+        ]
+    );
 
     @property(Input.labelProperty)
     label?: string;
@@ -2430,6 +3427,15 @@ export abstract class Input extends CardElement implements IInput {
     @property(Input.errorMessageProperty)
     errorMessage?: string;
 
+    @property(Input.inputStyleProperty)
+    inputStyle: Enums.InputStyle = Enums.InputStyle.Default;
+    
+    @property(Input.labelWidthProperty)
+    labelWidth?: SizeAndUnit;
+
+    @property(Input.labelPositionProperty)
+    labelPosition?: Enums.InputLabelPosition;
+
     //#endregion
 
     private _outerContainerElement: HTMLElement;
@@ -2437,9 +3443,14 @@ export abstract class Input extends CardElement implements IInput {
     private _renderedErrorMessageElement?: HTMLElement;
     private _renderedLabelElement?: HTMLElement;
     private _renderedInputControlElement?: HTMLElement;
+    private _oldValue: any;
 
     protected getAllLabelIds(): string[] {
-        let labelIds: string[] = [];
+        const labelIds: string[] = [];
+
+        if (this.labelledBy) {
+            labelIds.push(this.labelledBy);
+        }
 
         if (this._renderedLabelElement) {
             labelIds.push(this._renderedLabelElement.id);
@@ -2454,20 +3465,14 @@ export abstract class Input extends CardElement implements IInput {
 
     protected updateInputControlAriaLabelledBy() {
         if (this._renderedInputControlElement) {
-            let labelIds: string[] = this.getAllLabelIds();
-
-            if (this._renderedLabelElement) {
-                labelIds.push(this._renderedLabelElement.id);
-            }
-
-            if (this._renderedErrorMessageElement) {
-                labelIds.push(this._renderedErrorMessageElement.id);
-            }
+            const labelIds: string[] = this.getAllLabelIds();
 
             if (labelIds.length > 0) {
-                this._renderedInputControlElement.setAttribute("aria-labelledby", labelIds.join(" "));
-            }
-            else {
+                this._renderedInputControlElement.setAttribute(
+                    "aria-labelledby",
+                    labelIds.join(" ")
+                );
+            } else {
                 this._renderedInputControlElement.removeAttribute("aria-labelledby");
             }
         }
@@ -2486,32 +3491,37 @@ export abstract class Input extends CardElement implements IInput {
     }
 
     protected overrideInternalRender(): HTMLElement | undefined {
-        let hostConfig = this.hostConfig;
+        const hostConfig = this.hostConfig;
 
         this._outerContainerElement = document.createElement("div");
         this._outerContainerElement.style.display = "flex";
-        this._outerContainerElement.style.flexDirection = "column";
+        if (this.labelPosition === Enums.InputLabelPosition.Inline) {
+            this._outerContainerElement.style.flexDirection = "row";
+        } else {
+            this._outerContainerElement.style.flexDirection = "column";
+        }
 
-        let renderedInputControlId = Utils.generateUniqueId();
+        const renderedInputControlId = Utils.generateUniqueId();
 
         if (this.label) {
-            let labelRichTextBlock = new RichTextBlock();
+            const labelRichTextBlock = new RichTextBlock();
             labelRichTextBlock.setParent(this);
             labelRichTextBlock.forElementId = renderedInputControlId;
 
-            let labelInline = new TextRun(this.label);
+            const labelInline = new TextRun(this.label);
             labelRichTextBlock.addInline(labelInline);
 
             if (this.isRequired) {
                 labelInline.init(hostConfig.inputs.label.requiredInputs);
 
-                let isRequiredCueInline = new TextRun(hostConfig.inputs.label.requiredInputs.suffix);
+                const isRequiredCueInline = new TextRun(
+                    hostConfig.inputs.label.requiredInputs.suffix
+                );
                 isRequiredCueInline.color = hostConfig.inputs.label.requiredInputs.suffixColor;
                 isRequiredCueInline.ariaHidden = true;
 
                 labelRichTextBlock.addInline(isRequiredCueInline);
-            }
-            else {
+            } else {
                 labelInline.init(hostConfig.inputs.label.optionalInputs);
             }
 
@@ -2519,15 +3529,26 @@ export abstract class Input extends CardElement implements IInput {
 
             if (this._renderedLabelElement) {
                 this._renderedLabelElement.id = Utils.generateUniqueId();
-                this._renderedLabelElement.style.marginBottom = hostConfig.getEffectiveSpacing(hostConfig.inputs.label.inputSpacing) + "px";
-
+                if (this.labelPosition === Enums.InputLabelPosition.Inline) {
+                    // For inline label position: label should be in center of the div and no extra spacing needed
+                    this._renderedLabelElement.style.alignSelf = "center";
+                } else {
+                    this._renderedLabelElement.style.marginBottom =
+                        hostConfig.getEffectiveSpacing(hostConfig.inputs.label.inputSpacing) + "px";
+                }
                 this._outerContainerElement.appendChild(this._renderedLabelElement);
             }
         }
 
         this._inputControlContainerElement = document.createElement("div");
-        this._inputControlContainerElement.className = hostConfig.makeCssClassName("ac-input-container");
+        this._inputControlContainerElement.className =
+            hostConfig.makeCssClassName("ac-input-container");
         this._inputControlContainerElement.style.display = "flex";
+
+        if (this.height === "stretch") {
+            this._inputControlContainerElement.style.alignItems = "stretch";
+            this._inputControlContainerElement.style.flex = "1 1 auto";
+        }
 
         this._renderedInputControlElement = this.internalRender();
 
@@ -2537,21 +3558,50 @@ export abstract class Input extends CardElement implements IInput {
 
             if (this.isNullable && this.isRequired) {
                 this._renderedInputControlElement.setAttribute("aria-required", "true");
-                this._renderedInputControlElement.classList.add(hostConfig.makeCssClassName("ac-input-required"));
+                this._renderedInputControlElement.classList.add(
+                    hostConfig.makeCssClassName("ac-input-required")
+                );
             }
 
             this._inputControlContainerElement.appendChild(this._renderedInputControlElement);
             this._outerContainerElement.appendChild(this._inputControlContainerElement);
 
+            if (this._renderedLabelElement && this.labelPosition === Enums.InputLabelPosition.Inline) {
+                if (!this.labelWidth) {
+                    const defaultLabelWidth = hostConfig.inputs.label.width;
+                    this._renderedLabelElement.style.width = defaultLabelWidth.toString() + "%";
+                    this._inputControlContainerElement.style.width = (100 - defaultLabelWidth) + "%";
+                }
+                else if (this.labelWidth.unit == Enums.SizeUnit.Weight) {
+                    const labelWidthInPercent = this.labelWidth.physicalSize;
+                    this._renderedLabelElement.style.width = labelWidthInPercent.toString() + "%";
+                    this._inputControlContainerElement.style.width = (100 - labelWidthInPercent).toString() + "%";
+                }
+                else if (this.labelWidth.unit == Enums.SizeUnit.Pixel) {
+                    const labelWidthInPixel = this.labelWidth.physicalSize;
+                    this._renderedLabelElement.style.width = labelWidthInPixel.toString() + "px";
+                }
+            }
+
+            this.updateVisualState(InputEventType.InitialRender);
+            if (this._renderedInputControlElement) {
+                this._renderedInputControlElement.onblur = (ev: MouseEvent) => {
+                    this.updateVisualState(InputEventType.FocusLeave);
+                };
+            }
             this.updateInputControlAriaLabelledBy();
 
             return this._outerContainerElement;
         }
 
+        this.resetDirtyState();
+
         return undefined;
     }
 
     protected valueChanged() {
+        this.getRootElement().updateActionsEnabledState();
+
         if (this.isValid()) {
             this.resetValidationFailureCue();
         }
@@ -2565,7 +3615,9 @@ export abstract class Input extends CardElement implements IInput {
 
     protected resetValidationFailureCue() {
         if (this.renderedInputControlElement) {
-            this.renderedInputControlElement.classList.remove(this.hostConfig.makeCssClassName("ac-input-validation-failed"));
+            this.renderedInputControlElement.classList.remove(
+                this.hostConfig.makeCssClassName("ac-input-validation-failed")
+            );
 
             this.updateInputControlAriaLabelledBy();
 
@@ -2578,8 +3630,12 @@ export abstract class Input extends CardElement implements IInput {
     }
 
     protected showValidationErrorMessage() {
-        if (this.renderedElement && this.errorMessage && GlobalSettings.displayInputValidationErrors) {
-            let errorMessageTextBlock = new TextBlock();
+        if (
+            this.renderedElement &&
+            this.errorMessage &&
+            GlobalSettings.displayInputValidationErrors
+        ) {
+            const errorMessageTextBlock = new TextBlock();
             errorMessageTextBlock.setParent(this);
             errorMessageTextBlock.text = this.errorMessage;
             errorMessageTextBlock.wrap = true;
@@ -2596,7 +3652,26 @@ export abstract class Input extends CardElement implements IInput {
         }
     }
 
+    updateVisualState(eventType: InputEventType): void {
+        if (!this._renderedInputControlElement || this.inputStyle !== Enums.InputStyle.RevealOnHover) {
+            return;
+        }
+        if (eventType === InputEventType.InitialRender) {
+            // on initial render, we will show input fields as read only view
+            this._renderedInputControlElement.classList.add(this.hostConfig.makeCssClassName("ac-inputStyle-revealOnHover-onrender"));
+        }
+        else if (eventType === InputEventType.MouseEnterOnCard) {
+            // on hover on the card, we will reveal the inputs by showing borders etc
+            // ac-inputStyle-revealOnHover-onhover class is also used to identify if mouse is hovering on the card
+            this._renderedInputControlElement.classList.add(this.hostConfig.makeCssClassName("ac-inputStyle-revealOnHover-onhover"));
+        } else if (eventType === InputEventType.MouseLeaveOnCard) {
+            this._renderedInputControlElement.classList.remove(this.hostConfig.makeCssClassName("ac-inputStyle-revealOnHover-onhover"));
+        }
+    }
+
     onValueChanged: (sender: Input) => void;
+
+    labelledBy?: string;
 
     abstract isSet(): boolean;
 
@@ -2610,6 +3685,14 @@ export abstract class Input extends CardElement implements IInput {
         return true;
     }
 
+    isDirty(): boolean {
+        return this.value !== this._oldValue;
+    }
+
+    resetDirtyState() {
+        this._oldValue = this.value;
+    }
+
     internalValidateProperties(context: ValidationResults) {
         super.internalValidateProperties(context);
 
@@ -2617,7 +3700,8 @@ export abstract class Input extends CardElement implements IInput {
             context.addFailure(
                 this,
                 Enums.ValidationEvent.PropertyCantBeNull,
-                Strings.errors.inputsMustHaveUniqueId());
+                Strings.errors.inputsMustHaveUniqueId()
+            );
         }
 
         if (this.isRequired) {
@@ -2625,14 +3709,16 @@ export abstract class Input extends CardElement implements IInput {
                 context.addFailure(
                     this,
                     Enums.ValidationEvent.RequiredInputsShouldHaveLabel,
-                    "Required inputs should have a label");
+                    "Required inputs should have a label"
+                );
             }
 
             if (!this.errorMessage) {
                 context.addFailure(
                     this,
                     Enums.ValidationEvent.RequiredInputsShouldHaveErrorMessage,
-                    "Required inputs should have an error message");
+                    "Required inputs should have an error message"
+                );
             }
         }
     }
@@ -2640,10 +3726,12 @@ export abstract class Input extends CardElement implements IInput {
     validateValue(): boolean {
         this.resetValidationFailureCue();
 
-        let result = this.isRequired ? this.isSet() && this.isValid() : this.isValid();
+        const result = this.isRequired ? this.isSet() && this.isValid() : this.isValid();
 
         if (!result && this.renderedInputControlElement) {
-            this.renderedInputControlElement.classList.add(this.hostConfig.makeCssClassName("ac-input-validation-failed"));
+            this.renderedInputControlElement.classList.add(
+                this.hostConfig.makeCssClassName("ac-input-validation-failed")
+            );
 
             this.showValidationErrorMessage();
         }
@@ -2652,7 +3740,15 @@ export abstract class Input extends CardElement implements IInput {
     }
 
     getAllInputs(processActions: boolean = true): Input[] {
-        return [ this ];
+        return [this];
+    }
+
+    render(): HTMLElement | undefined {
+        let result = super.render();
+
+        this.resetDirtyState();
+
+        return result;
     }
 
     abstract get value(): any;
@@ -2669,8 +3765,22 @@ export class TextInput extends Input {
     static readonly maxLengthProperty = new NumProperty(Versions.v1_0, "maxLength");
     static readonly isMultilineProperty = new BoolProperty(Versions.v1_0, "isMultiline", false);
     static readonly placeholderProperty = new StringProperty(Versions.v1_0, "placeholder");
-    static readonly styleProperty = new EnumProperty(Versions.v1_0, "style", Enums.InputTextStyle, Enums.InputTextStyle.Text);
-    static readonly inlineActionProperty = new ActionProperty(Versions.v1_0, "inlineAction", [ "Action.ShowCard" ]);
+    static readonly styleProperty = new EnumProperty(
+        Versions.v1_0,
+        "style",
+        Enums.InputTextStyle,
+        Enums.InputTextStyle.Text,
+        [
+            { value: Enums.InputTextStyle.Text },
+            { value: Enums.InputTextStyle.Tel },
+            { value: Enums.InputTextStyle.Url },
+            { value: Enums.InputTextStyle.Email },
+            { value: Enums.InputTextStyle.Password, targetVersion: Versions.v1_5 }
+        ]
+    );
+    static readonly inlineActionProperty = new ActionProperty(Versions.v1_0, "inlineAction", [
+        "Action.ShowCard"
+    ]);
     static readonly regexProperty = new StringProperty(Versions.v1_3, "regex", true);
 
     @property(TextInput.valueProperty)
@@ -2698,11 +3808,12 @@ export class TextInput extends Input {
 
     private setupInput(input: HTMLInputElement | HTMLTextAreaElement) {
         input.style.flex = "1 1 auto";
-        input.tabIndex = 0;
+
+        input.tabIndex = this.isDesignMode() ? -1 : 0;
 
         if (this.placeholder) {
             input.placeholder = this.placeholder;
-            input.setAttribute("aria-label", this.placeholder)
+            input.setAttribute("aria-label", this.placeholder);
         }
 
         if (this.defaultValue) {
@@ -2713,23 +3824,37 @@ export class TextInput extends Input {
             input.maxLength = this.maxLength;
         }
 
-        input.oninput = () => { this.valueChanged(); }
+        input.oninput = () => {
+            this.valueChanged();
+        };
         input.onkeypress = (e: KeyboardEvent) => {
             // Ctrl+Enter pressed
-            if (e.ctrlKey && e.code === "Enter" && this.inlineAction) {
+            if (
+                e.ctrlKey &&
+                e.code === "Enter" &&
+                this.inlineAction &&
+                this.inlineAction.isEffectivelyEnabled()
+            ) {
                 this.inlineAction.execute();
             }
-        }
+        };
     }
 
     protected internalRender(): HTMLElement | undefined {
         let result: HTMLInputElement | HTMLTextAreaElement;
 
-        if (this.isMultiline) {
+        if (this.isMultiline && this.style !== Enums.InputTextStyle.Password) {
             result = document.createElement("textarea");
-            result.className = this.hostConfig.makeCssClassName("ac-input", "ac-textInput", "ac-multiline");
-        }
-        else {
+            result.className = this.hostConfig.makeCssClassName(
+                "ac-input",
+                "ac-textInput",
+                "ac-multiline"
+            );
+
+            if (this.height === "stretch") {
+                result.style.height = "initial";
+            }
+        } else {
             result = document.createElement("input");
             result.className = this.hostConfig.makeCssClassName("ac-input", "ac-textInput");
             result.type = Enums.InputTextStyle[this.style].toLowerCase();
@@ -2741,16 +3866,21 @@ export class TextInput extends Input {
     }
 
     protected overrideInternalRender(): HTMLElement | undefined {
-        let renderedInputControl = super.overrideInternalRender();
+        const renderedInputControl = super.overrideInternalRender();
 
         if (this.inlineAction) {
-            let button = document.createElement("button");
-            button.className = this.hostConfig.makeCssClassName("ac-inlineActionButton");
-            button.onclick = (e) => {
-                e.preventDefault();
-                e.cancelBubble = true;
+            const button = document.createElement("button");
+            button.className = this.hostConfig.makeCssClassName(
+                this.inlineAction.isEffectivelyEnabled()
+                    ? "ac-inlineActionButton"
+                    : "ac-inlineActionButton-disabled"
+            );
 
-                if (this.inlineAction) {
+            button.onclick = (e) => {
+                if (this.inlineAction && this.inlineAction.isEffectivelyEnabled()) {
+                    e.preventDefault();
+                    e.cancelBubble = true;
+
                     this.inlineAction.execute();
                 }
             };
@@ -2758,7 +3888,7 @@ export class TextInput extends Input {
             if (this.inlineAction.iconUrl) {
                 button.classList.add("iconOnly");
 
-                let icon = document.createElement("img");
+                const icon = document.createElement("img");
                 icon.style.height = "100%";
                 icon.setAttribute("role", "presentation");
 
@@ -2774,18 +3904,26 @@ export class TextInput extends Input {
                     button.removeChild(icon);
                     button.classList.remove("iconOnly");
                     button.classList.add("textOnly");
-                    button.textContent = this.inlineAction && this.inlineAction.title ? this.inlineAction.title : Strings.defaults.inlineActionTitle();
-                }
+                    button.textContent =
+                        this.inlineAction && this.inlineAction.title
+                            ? this.inlineAction.title
+                            : Strings.defaults.inlineActionTitle();
+                };
 
                 icon.src = this.inlineAction.iconUrl;
 
                 button.appendChild(icon);
-                button.title = this.inlineAction.title ? this.inlineAction.title : Strings.defaults.inlineActionTitle();
-            }
-            else {
+                button.title = this.inlineAction.title
+                    ? this.inlineAction.title
+                    : Strings.defaults.inlineActionTitle();
+            } else {
                 button.classList.add("textOnly");
-                button.textContent = this.inlineAction.title ? this.inlineAction.title : Strings.defaults.inlineActionTitle();
+                button.textContent = this.inlineAction.title
+                    ? this.inlineAction.title
+                    : Strings.defaults.inlineActionTitle();
             }
+
+            this.inlineAction.setupElementForAccessibility(button, true);
 
             button.style.marginLeft = "8px";
 
@@ -2795,8 +3933,24 @@ export class TextInput extends Input {
         return renderedInputControl;
     }
 
+    updateVisualState(eventType: InputEventType): void {
+        if (!(this.inlineAction || this.isMultiline)) {
+            super.updateVisualState(eventType);
+        }
+    }
+
     getJsonTypeName(): string {
         return "Input.Text";
+    }
+
+    getAllActions(): Action[] {
+        const result = super.getAllActions();
+
+        if (this.inlineAction) {
+            result.push(this.inlineAction);
+        }
+
+        return result;
     }
 
     getActionById(id: string) {
@@ -2829,12 +3983,10 @@ export class TextInput extends Input {
         if (this.renderedInputControlElement) {
             if (this.isMultiline) {
                 return (<HTMLTextAreaElement>this.renderedInputControlElement).value;
-            }
-            else {
+            } else {
                 return (<HTMLInputElement>this.renderedInputControlElement).value;
             }
-        }
-        else {
+        } else {
             return undefined;
         }
     }
@@ -2845,8 +3997,26 @@ export class ToggleInput extends Input {
 
     static readonly valueProperty = new StringProperty(Versions.v1_0, "value");
     static readonly titleProperty = new StringProperty(Versions.v1_0, "title");
-    static readonly valueOnProperty = new StringProperty(Versions.v1_0, "valueOn", true, undefined, "true", (sender: SerializableObject) => { return "true"; });
-    static readonly valueOffProperty = new StringProperty(Versions.v1_0, "valueOff", true, undefined, "false", (sender: SerializableObject) => { return "false"; });
+    static readonly valueOnProperty = new StringProperty(
+        Versions.v1_0,
+        "valueOn",
+        true,
+        undefined,
+        "true",
+        (sender: SerializableObject) => {
+            return "true";
+        }
+    );
+    static readonly valueOffProperty = new StringProperty(
+        Versions.v1_0,
+        "valueOff",
+        true,
+        undefined,
+        "false",
+        (sender: SerializableObject) => {
+            return "false";
+        }
+    );
     static readonly wrapProperty = new BoolProperty(Versions.v1_2, "wrap", false);
 
     @property(ToggleInput.valueProperty)
@@ -2868,6 +4038,7 @@ export class ToggleInput extends Input {
 
     private _checkboxInputElement: HTMLInputElement;
     private _checkboxInputLabelElement: HTMLElement | undefined;
+    private _oldCheckboxValue: boolean;
 
     protected updateInputControlAriaLabelledBy() {
         if (this._checkboxInputElement) {
@@ -2879,15 +4050,14 @@ export class ToggleInput extends Input {
 
             if (joinedLabelIds) {
                 this._checkboxInputElement.setAttribute("aria-labelledby", joinedLabelIds);
-            }
-            else {
+            } else {
                 this._checkboxInputElement.removeAttribute("aria-labelledby");
             }
         }
     }
 
     protected internalRender(): HTMLElement | undefined {
-        let element = document.createElement("div");
+        const element = document.createElement("div");
         element.className = this.hostConfig.makeCssClassName("ac-input", "ac-toggleInput");
         element.style.width = "100%";
         element.style.display = "flex";
@@ -2909,18 +4079,22 @@ export class ToggleInput extends Input {
             this._checkboxInputElement.setAttribute("aria-required", "true");
         }
 
-        this._checkboxInputElement.tabIndex = 0;
+        this._checkboxInputElement.tabIndex = this.isDesignMode() ? -1 : 0;
 
-        if (this.defaultValue == this.valueOn) {
+        if (this.defaultValue === this.valueOn) {
             this._checkboxInputElement.checked = true;
         }
 
-        this._checkboxInputElement.onchange = () => { this.valueChanged(); }
+        this._oldCheckboxValue = this._checkboxInputElement.checked;
+
+        this._checkboxInputElement.onchange = () => {
+            this.valueChanged();
+        };
 
         Utils.appendChild(element, this._checkboxInputElement);
 
         if (this.title || this.isDesignMode()) {
-            let label = new TextBlock();
+            const label = new TextBlock();
             label.setParent(this);
             label.forElementId = this._checkboxInputElement.id;
             label.hostConfig = this.hostConfig;
@@ -2937,7 +4111,7 @@ export class ToggleInput extends Input {
                 this._checkboxInputLabelElement.style.marginLeft = "6px";
                 this._checkboxInputLabelElement.style.verticalAlign = "middle";
 
-                let spacerElement = document.createElement("div");
+                const spacerElement = document.createElement("div");
                 spacerElement.style.width = "6px";
 
                 Utils.appendChild(element, spacerElement);
@@ -2950,6 +4124,9 @@ export class ToggleInput extends Input {
 
     protected get isNullable(): boolean {
         return false;
+    }
+
+    updateVisualState(eventType: InputEventType): void {
     }
 
     getJsonTypeName(): string {
@@ -2970,11 +4147,16 @@ export class ToggleInput extends Input {
         return this.value ? true : false;
     }
 
+    isDirty(): boolean {
+        return this._checkboxInputElement
+            ? this._checkboxInputElement.checked !== this._oldCheckboxValue
+            : false;
+    }
+
     get value(): string | undefined {
         if (this._checkboxInputElement) {
             return this._checkboxInputElement.checked ? this.valueOn : this.valueOff;
-        }
-        else {
+        } else {
             return undefined;
         }
     }
@@ -3010,15 +4192,21 @@ export class ChoiceSetInput extends Input {
     //#region Schema
 
     static readonly valueProperty = new StringProperty(Versions.v1_0, "value");
-    static readonly choicesProperty = new SerializableObjectCollectionProperty(Versions.v1_0, "choices", Choice);
+    static readonly choicesProperty = new SerializableObjectCollectionProperty(
+        Versions.v1_0,
+        "choices",
+        Choice
+    );
     static readonly styleProperty = new ValueSetProperty(
         Versions.v1_0,
         "style",
         [
             { value: "compact" },
-            { value: "expanded" }
+            { value: "expanded" },
+            { value: "filtered", targetVersion: Versions.v1_5 }
         ],
-        "compact");
+        "compact"
+    );
     static readonly isMultiSelectProperty = new BoolProperty(Versions.v1_0, "isMultiSelect", false);
     static readonly placeholderProperty = new StringProperty(Versions.v1_0, "placeholder");
     static readonly wrapProperty = new BoolProperty(Versions.v1_2, "wrap", false);
@@ -3027,10 +4215,10 @@ export class ChoiceSetInput extends Input {
     defaultValue?: string;
 
     @property(ChoiceSetInput.styleProperty)
-    style?: "compact" | "expanded";
+    style?: "compact" | "expanded" | "filtered";
 
     get isCompact(): boolean {
-        return this.style !== "expanded";
+        return !this.style || this.style === "compact";
     }
 
     set isCompact(value: boolean) {
@@ -3051,47 +4239,71 @@ export class ChoiceSetInput extends Input {
 
     //#endregion
 
-    private static uniqueCategoryCounter = 0;
+    private static _uniqueCategoryCounter = 0;
 
     private static getUniqueCategoryName(): string {
-        let uniqueCategoryName = "__ac-category" + ChoiceSetInput.uniqueCategoryCounter;
+        const uniqueCategoryName = "__ac-category" + ChoiceSetInput._uniqueCategoryCounter;
 
-        ChoiceSetInput.uniqueCategoryCounter++;
+        ChoiceSetInput._uniqueCategoryCounter++;
 
         return uniqueCategoryName;
     }
 
     private _uniqueCategoryName: string;
-    private _selectElement: HTMLSelectElement;
+    private _selectElement: HTMLSelectElement | undefined;
+    private _textInput: HTMLInputElement | undefined;
     private _toggleInputs: HTMLInputElement[] | undefined;
     private _labels: Array<HTMLElement | undefined>;
 
+    private createPlaceholderOptionWhenValueDoesNotExist(): HTMLElement | undefined {
+        if (!this.value) {
+            const placeholderOption = document.createElement("option");
+            placeholderOption.selected = true;
+            placeholderOption.disabled = true;
+            placeholderOption.hidden = true;
+            placeholderOption.value = "";
+
+            if (this.placeholder) {
+                placeholderOption.text = this.placeholder;
+            }
+            return placeholderOption;
+        }
+        return undefined;
+    }
+
     // Make sure `aria-current` is applied to the currently-selected item
     private internalApplyAriaCurrent(): void {
-        const options = this._selectElement.options;
+        if (this._selectElement) {
+            const options = this._selectElement.options;
 
-        if (options) {
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].selected) {
-                    options[i].setAttribute("aria-current", "true");
-                }
-                else {
-                    options[i].removeAttribute("aria-current");
+            if (options) {
+                for (const option of Array.from(options)) {
+                    if (option.selected) {
+                        option.setAttribute("aria-current", "true");
+                    } else {
+                        option.removeAttribute("aria-current");
+                    }
                 }
             }
         }
     }
 
-    private renderCompoundInput(cssClassName: string, type: "checkbox" | "radio", defaultValues: string[] | undefined): HTMLElement {
-        let element = document.createElement("div");
+    private renderCompoundInput(
+        cssClassName: string,
+        type: "checkbox" | "radio",
+        defaultValues: string[] | undefined
+    ): HTMLElement {
+        const element = document.createElement("div");
         element.className = this.hostConfig.makeCssClassName("ac-input", cssClassName);
         element.style.width = "100%";
+
+        element.tabIndex = this.isDesignMode() ? -1 : 0;
 
         this._toggleInputs = [];
         this._labels = [];
 
-        for (let choice of this.choices) {
-            let input = document.createElement("input");
+        for (const choice of this.choices) {
+            const input = document.createElement("input");
             input.id = Utils.generateUniqueId();
             input.type = type;
             input.style.margin = "0";
@@ -3103,6 +4315,8 @@ export class ChoiceSetInput extends Input {
             if (this.isRequired) {
                 input.setAttribute("aria-required", "true");
             }
+
+            input.tabIndex = this.isDesignMode() ? -1 : 0;
 
             if (choice.value) {
                 input.value = choice.value;
@@ -3118,17 +4332,19 @@ export class ChoiceSetInput extends Input {
                 }
             }
 
-            input.onchange = () => { this.valueChanged(); }
+            input.onchange = () => {
+                this.valueChanged();
+            };
 
             this._toggleInputs.push(input);
 
-            let compoundInput = document.createElement("div");
+            const compoundInput = document.createElement("div");
             compoundInput.style.display = "flex";
             compoundInput.style.alignItems = "center";
 
             Utils.appendChild(compoundInput, input);
 
-            let label = new TextBlock();
+            const label = new TextBlock();
             label.setParent(this);
             label.forElementId = input.id;
             label.hostConfig = this.hostConfig;
@@ -3136,7 +4352,7 @@ export class ChoiceSetInput extends Input {
             label.useMarkdown = GlobalSettings.useMarkdownInRadioButtonAndCheckbox;
             label.wrap = this.wrap;
 
-            let labelElement = label.render();
+            const labelElement = label.render();
 
             this._labels.push(labelElement);
 
@@ -3147,7 +4363,7 @@ export class ChoiceSetInput extends Input {
                 labelElement.style.marginLeft = "6px";
                 labelElement.style.verticalAlign = "middle";
 
-                let spacerElement = document.createElement("div");
+                const spacerElement = document.createElement("div");
                 spacerElement.style.width = "6px";
 
                 Utils.appendChild(compoundInput, spacerElement);
@@ -3161,12 +4377,16 @@ export class ChoiceSetInput extends Input {
     }
 
     protected updateInputControlAriaLabelledBy() {
-        if ((this.isMultiSelect || this.style === "expanded") && this._toggleInputs && this._labels) {
-            let labelIds: string[] = this.getAllLabelIds();
+        if (
+            (this.isMultiSelect || this.style === "expanded") &&
+            this._toggleInputs &&
+            this._labels
+        ) {
+            const labelIds: string[] = this.getAllLabelIds();
 
             for (let i = 0; i < this._toggleInputs.length; i++) {
                 let joinedLabelIds = labelIds.join(" ");
-                let label = this._labels[i];
+                const label = this._labels[i];
 
                 if (label && label.id) {
                     joinedLabelIds += " " + label.id;
@@ -3174,13 +4394,11 @@ export class ChoiceSetInput extends Input {
 
                 if (joinedLabelIds) {
                     this._toggleInputs[i].setAttribute("aria-labelledby", joinedLabelIds);
-                }
-                else {
+                } else {
                     this._toggleInputs[i].removeAttribute("aria-labelledby");
                 }
             }
-        }
-        else {
+        } else {
             super.updateInputControlAriaLabelledBy();
         }
     }
@@ -3193,41 +4411,108 @@ export class ChoiceSetInput extends Input {
             return this.renderCompoundInput(
                 "ac-choiceSetInput-multiSelect",
                 "checkbox",
-                this.defaultValue ? this.defaultValue.split(this.hostConfig.choiceSetInputValueSeparator) : undefined);
-        }
-        else {
+                this.defaultValue
+                    ? this.defaultValue.split(this.hostConfig.choiceSetInputValueSeparator)
+                    : undefined
+            );
+        } else {
             if (this.style === "expanded") {
                 // Render as a series of radio buttons
                 return this.renderCompoundInput(
                     "ac-choiceSetInput-expanded",
                     "radio",
-                    this.defaultValue ? [ this.defaultValue ] : undefined);
-            }
-            else {
-                // Render as a combo box
-                this._selectElement = document.createElement("select");
-                this._selectElement.className = this.hostConfig.makeCssClassName("ac-input", "ac-multichoiceInput", "ac-choiceSetInput-compact");
-                this._selectElement.style.width = "100%";
+                    this.defaultValue ? [this.defaultValue] : undefined
+                );
+            } else if (this.style === "filtered") {
+                // Render as a text input coupled with a datalist
+                const inputContainer = document.createElement("div");
+                inputContainer.style.width = "100%";
 
-                let option = document.createElement("option");
-                option.selected = true;
-                option.disabled = true;
-                option.hidden = true;
-                option.value = "";
+                this._textInput = document.createElement("input");
+                this._textInput.className = this.hostConfig.makeCssClassName(
+                    "ac-input",
+                    "ac-multichoiceInput",
+                    "ac-choiceSetInput-filtered"
+                );
+                this._textInput.type = "text";
+                this._textInput.style.width = "100%";
+                this._textInput.oninput = () => {
+                    this.valueChanged();
 
-                if (this.placeholder) {
-                    option.text = this.placeholder;
+                    if (this._textInput) {
+                        // Remove aria-label when value is not empty so narration software doesn't
+                        // read the placeholder
+                        if (this.value) {
+                            this._textInput.removeAttribute("placeholder");
+                            this._textInput.removeAttribute("aria-label");
+                        } else if (this.placeholder) {
+                            this._textInput.placeholder = this.placeholder;
+                            this._textInput.setAttribute("aria-label", this.placeholder);
+                        }
+                    }
+                };
+
+                if (this.defaultValue) {
+                    this._textInput.value = this.defaultValue;
                 }
 
-                Utils.appendChild(this._selectElement, option);
+                if (this.placeholder && !this._textInput.value) {
+                    this._textInput.placeholder = this.placeholder;
+                    this._textInput.setAttribute("aria-label", this.placeholder);
+                }
 
-                for (let choice of this.choices) {
-                    let option = document.createElement("option");
-                    option.value = <string>choice.value;
-                    option.text = <string>choice.title;
-                    option.setAttribute("aria-label", <string>choice.title);
+                this._textInput.tabIndex = this.isDesignMode() ? -1 : 0;
 
-                    if (choice.value == this.defaultValue) {
+                const dataList = document.createElement("datalist");
+                dataList.id = Utils.generateUniqueId();
+
+                for (const choice of this.choices) {
+                    const option = document.createElement("option");
+                    // To fix https://stackoverflow.com/questions/29882361/show-datalist-labels-but-submit-the-actual-value
+                    // value is mapped to choice.title other than choice.value
+                    if (choice.title) {
+                        option.value = choice.title;
+                        option.setAttribute("aria-label", choice.title);
+                    }
+
+                    option.tabIndex = this.isDesignMode() ? -1 : 0;
+
+                    dataList.appendChild(option);
+                }
+
+                this._textInput.setAttribute("list", dataList.id);
+
+                inputContainer.append(this._textInput, dataList);
+
+                return inputContainer;
+            } else {
+                // Render as a combo box
+                this._selectElement = document.createElement("select");
+                this._selectElement.className = this.hostConfig.makeCssClassName(
+                    "ac-input",
+                    "ac-multichoiceInput",
+                    "ac-choiceSetInput-compact"
+                );
+                this._selectElement.style.width = "100%";
+
+                this._selectElement.tabIndex = this.isDesignMode() ? -1 : 0;
+
+                const placeholderOption = this.createPlaceholderOptionWhenValueDoesNotExist();
+
+                Utils.appendChild(this._selectElement, placeholderOption);
+
+                for (const choice of this.choices) {
+                    const option = document.createElement("option");
+                    option.value = choice.value!;
+
+                    if (choice.title) {
+                        option.text = choice.title;
+                        option.setAttribute("aria-label", choice.title);
+                    }
+
+                    option.tabIndex = this.isDesignMode() ? -1 : 0;
+
+                    if (choice.value === this.defaultValue) {
                         option.selected = true;
                     }
 
@@ -3237,11 +4522,29 @@ export class ChoiceSetInput extends Input {
                 this._selectElement.onchange = () => {
                     this.internalApplyAriaCurrent();
                     this.valueChanged();
-                }
+                };
 
                 this.internalApplyAriaCurrent();
 
                 return this._selectElement;
+            }
+        }
+    }
+
+    updateVisualState(eventType: InputEventType): void {
+        if (!this.isMultiSelect && this.isCompact) {
+            super.updateVisualState(eventType);
+
+            if (this._selectElement && this.inputStyle === Enums.InputStyle.RevealOnHover) {
+                const hideDropDownPicker = shouldHideInputAdornersForRevealOnHover(this._selectElement, eventType);
+                
+                if (hideDropDownPicker) {
+                    this._selectElement.style.appearance = "none";
+                    this._selectElement.classList.remove(this.hostConfig.makeCssClassName("ac-inputStyle-revealOnHover-onfocus"));
+                } else {
+                    this._selectElement.style.appearance = "auto";
+                    this._selectElement.classList.add(this.hostConfig.makeCssClassName("ac-inputStyle-revealOnHover-onfocus"));
+                }
             }
         }
     }
@@ -3255,8 +4558,9 @@ export class ChoiceSetInput extends Input {
             if (this._toggleInputs.length > 0) {
                 this._toggleInputs[0].focus();
             }
-        }
-        else {
+        } else if (this._textInput) {
+            this._textInput.focus();
+        } else {
             super.focus();
         }
     }
@@ -3264,19 +4568,21 @@ export class ChoiceSetInput extends Input {
     internalValidateProperties(context: ValidationResults) {
         super.internalValidateProperties(context);
 
-        if (this.choices.length == 0) {
+        if (this.choices.length === 0) {
             context.addFailure(
                 this,
                 Enums.ValidationEvent.CollectionCantBeEmpty,
-                Strings.errors.choiceSetMustHaveAtLeastOneChoice());
+                Strings.errors.choiceSetMustHaveAtLeastOneChoice()
+            );
         }
 
-        for (let choice of this.choices) {
+        for (const choice of this.choices) {
             if (!choice.title || !choice.value) {
                 context.addFailure(
                     this,
                     Enums.ValidationEvent.PropertyCantBeNull,
-                    Strings.errors.choiceSetChoicesMustHaveTitleAndValue());
+                    Strings.errors.choiceSetChoicesMustHaveTitleAndValue()
+                );
             }
         }
     }
@@ -3285,39 +4591,55 @@ export class ChoiceSetInput extends Input {
         return this.value ? true : false;
     }
 
+    isValid(): boolean {
+        if (this._textInput) {
+            if (this.value === "" || this.value === this.placeholder) {
+                return true;
+            }
+            for (const choice of this.choices) {
+                if (this.value === choice.value) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return super.isValid();
+    }
+
     get value(): string | undefined {
         if (!this.isMultiSelect) {
-            if (this.isCompact) {
-                if (this._selectElement) {
-                    return this._selectElement.selectedIndex > 0 ? this._selectElement.value : undefined;
+            if (this._selectElement) {
+                return this._selectElement.selectedIndex > 0
+                    ? this._selectElement.value
+                    : undefined;
+            } else if (this._textInput) {
+                for (const choice of this.choices) {
+                    if (choice.title && this._textInput.value === choice.title) {
+                        return choice.value;
+                    }
                 }
-
-                return undefined;
-            }
-            else {
-                if (!this._toggleInputs || this._toggleInputs.length == 0) {
-                    return undefined;
-                }
-
-                for (let toggleInput of this._toggleInputs) {
+                return this._textInput.value;
+            } else if (this._toggleInputs && this._toggleInputs.length > 0) {
+                for (const toggleInput of this._toggleInputs) {
                     if (toggleInput.checked) {
                         return toggleInput.value;
                     }
                 }
-
-                return undefined;
             }
-        }
-        else {
-            if (!this._toggleInputs || this._toggleInputs.length == 0) {
+
+            return undefined;
+        } else {
+            if (!this._toggleInputs || this._toggleInputs.length === 0) {
                 return undefined;
             }
 
             let result: string = "";
 
-            for (let toggleInput of this._toggleInputs) {
+            for (const toggleInput of this._toggleInputs) {
                 if (toggleInput.checked) {
-                    if (result != "") {
+                    if (result !== "") {
                         result += this.hostConfig.choiceSetInputValueSeparator;
                     }
 
@@ -3366,9 +4688,13 @@ export class NumberInput extends Input {
             this._numberInputElement.setAttribute("max", this.max.toString());
         }
 
-        this._numberInputElement.className = this.hostConfig.makeCssClassName("ac-input", "ac-numberInput");
+        this._numberInputElement.className = this.hostConfig.makeCssClassName(
+            "ac-input",
+            "ac-numberInput"
+        );
         this._numberInputElement.style.width = "100%";
-        this._numberInputElement.tabIndex = 0;
+
+        this._numberInputElement.tabIndex = this.isDesignMode() ? -1 : 0;
 
         if (this.defaultValue !== undefined) {
             this._numberInputElement.valueAsNumber = this.defaultValue;
@@ -3379,7 +4705,9 @@ export class NumberInput extends Input {
             this._numberInputElement.setAttribute("aria-label", this.placeholder);
         }
 
-        this._numberInputElement.oninput = () => { this.valueChanged(); }
+        this._numberInputElement.oninput = () => {
+            this.valueChanged();
+        };
 
         return this._numberInputElement;
     }
@@ -3400,11 +4728,11 @@ export class NumberInput extends Input {
         let result = true;
 
         if (this.min !== undefined) {
-            result = result && (this.value >= this.min);
+            result = result && this.value >= this.min;
         }
 
         if (this.max !== undefined) {
-            result = result && (this.value <= this.max);
+            result = result && this.value <= this.max;
         }
 
         return result;
@@ -3412,6 +4740,12 @@ export class NumberInput extends Input {
 
     get value(): number | undefined {
         return this._numberInputElement ? this._numberInputElement.valueAsNumber : undefined;
+    }
+
+    set value(value: number | undefined) {
+        if (value && this._numberInputElement) {
+            this._numberInputElement.value = value.toString();
+        }
     }
 }
 
@@ -3456,16 +4790,32 @@ export class DateInput extends Input {
             this._dateInputElement.setAttribute("aria-label", this.placeholder);
         }
 
-        this._dateInputElement.className = this.hostConfig.makeCssClassName("ac-input", "ac-dateInput");
+        this._dateInputElement.tabIndex = this.isDesignMode() ? -1 : 0;
+
+        this._dateInputElement.className = this.hostConfig.makeCssClassName(
+            "ac-input",
+            "ac-dateInput"
+        );
         this._dateInputElement.style.width = "100%";
 
-        this._dateInputElement.oninput = () => { this.valueChanged(); }
+        this._dateInputElement.oninput = () => {
+            this.valueChanged();
+        };
 
         if (this.defaultValue) {
             this._dateInputElement.value = this.defaultValue;
         }
 
         return this._dateInputElement;
+    }
+
+    updateVisualState(eventType: InputEventType): void {
+        super.updateVisualState(eventType);
+
+        if (this._dateInputElement && this.inputStyle === Enums.InputStyle.RevealOnHover) {
+            const hideDatePicker = shouldHideInputAdornersForRevealOnHover(this._dateInputElement, eventType);
+            updateInputAdornersVisibility(this._dateInputElement, hideDatePicker  /*hide*/);
+        }
     }
 
     getJsonTypeName(): string {
@@ -3481,20 +4831,20 @@ export class DateInput extends Input {
             return !this.isRequired;
         }
 
-        let valueAsDate = new Date(this.value);
+        const valueAsDate = new Date(this.value);
 
         let result = true;
 
         if (this.min) {
-            let minDate = new Date(this.min);
+            const minDate = new Date(this.min);
 
-            result = result && (valueAsDate >= minDate);
+            result = result && valueAsDate >= minDate;
         }
 
         if (this.max) {
-            let maxDate = new Date(this.max);
+            const maxDate = new Date(this.max);
 
-            result = result && (valueAsDate <= maxDate);
+            result = result && valueAsDate <= maxDate;
         }
 
         return result;
@@ -3510,8 +4860,13 @@ export class TimeProperty extends CustomProperty<string | undefined> {
         super(
             targetVersion,
             name,
-            (sender: SerializableObject, property: PropertyDefinition, source: PropertyBag, context: BaseSerializationContext) => {
-                let value = source[property.name];
+            (
+                sender: SerializableObject,
+                prop: PropertyDefinition,
+                source: PropertyBag,
+                context: BaseSerializationContext
+            ) => {
+                const value = source[prop.name];
 
                 if (typeof value === "string" && value && /^[0-9]{2}:[0-9]{2}$/.test(value)) {
                     return value;
@@ -3519,9 +4874,16 @@ export class TimeProperty extends CustomProperty<string | undefined> {
 
                 return undefined;
             },
-            (sender: SerializableObject, property: PropertyDefinition, target: PropertyBag, value: string | undefined, context: BaseSerializationContext) => {
-                context.serializeValue(target, property.name, value);
-            });
+            (
+                sender: SerializableObject,
+                prop: PropertyDefinition,
+                target: PropertyBag,
+                value: string | undefined,
+                context: BaseSerializationContext
+            ) => {
+                context.serializeValue(target, prop.name, value);
+            }
+        );
     }
 }
 
@@ -3556,22 +4918,45 @@ export class TimeInput extends Input {
     protected internalRender(): HTMLElement | undefined {
         this._timeInputElement = document.createElement("input");
         this._timeInputElement.setAttribute("type", "time");
-        this._timeInputElement.setAttribute("min", <string>this.min);
-        this._timeInputElement.setAttribute("max", <string>this.max);
-        this._timeInputElement.className = this.hostConfig.makeCssClassName("ac-input", "ac-timeInput");
+
+        if (this.min) {
+            this._timeInputElement.setAttribute("min", this.min);
+        }
+
+        if (this.max) {
+            this._timeInputElement.setAttribute("max", this.max);
+        }
+
+        this._timeInputElement.className = this.hostConfig.makeCssClassName(
+            "ac-input",
+            "ac-timeInput"
+        );
         this._timeInputElement.style.width = "100%";
-        this._timeInputElement.oninput = () => { this.valueChanged(); }
+        this._timeInputElement.oninput = () => {
+            this.valueChanged();
+        };
 
         if (this.placeholder) {
             this._timeInputElement.placeholder = this.placeholder;
             this._timeInputElement.setAttribute("aria-label", this.placeholder);
         }
 
+        this._timeInputElement.tabIndex = this.isDesignMode() ? -1 : 0;
+
         if (this.defaultValue) {
             this._timeInputElement.value = this.defaultValue;
         }
 
         return this._timeInputElement;
+    }
+
+    updateVisualState(eventType: InputEventType): void {
+        super.updateVisualState(eventType);
+
+        if (this._timeInputElement && this.inputStyle === Enums.InputStyle.RevealOnHover) {
+            const hideTimePicker = shouldHideInputAdornersForRevealOnHover(this._timeInputElement, eventType);
+            updateInputAdornersVisibility(this._timeInputElement, hideTimePicker /*hide*/);
+        }
     }
 
     getJsonTypeName(): string {
@@ -3587,20 +4972,20 @@ export class TimeInput extends Input {
             return !this.isRequired;
         }
 
-        let valueAsDate = TimeInput.convertTimeStringToDate(this.value);
+        const valueAsDate = TimeInput.convertTimeStringToDate(this.value);
 
         let result = true;
 
         if (this.min) {
-            let minDate = TimeInput.convertTimeStringToDate(this.min);
+            const minDate = TimeInput.convertTimeStringToDate(this.min);
 
-            result = result && (valueAsDate >= minDate);
+            result = result && valueAsDate >= minDate;
         }
 
         if (this.max) {
-            let maxDate = TimeInput.convertTimeStringToDate(this.max);
+            const maxDate = TimeInput.convertTimeStringToDate(this.max);
 
-            result = result && (valueAsDate <= maxDate);
+            result = result && valueAsDate <= maxDate;
         }
 
         return result;
@@ -3611,93 +4996,13 @@ export class TimeInput extends Input {
     }
 }
 
-const enum ActionButtonState {
+export const enum ActionButtonState {
     Normal,
     Expanded,
     Subdued
 }
 
-class ActionButton {
-    private _parentContainerStyle: string;
-    private _state: ActionButtonState = ActionButtonState.Normal;
-
-    private updateCssStyle() {
-        if (this.action.parent && this.action.renderedElement) {
-            let hostConfig = this.action.parent.hostConfig;
-
-            this.action.renderedElement.className = hostConfig.makeCssClassName("ac-pushButton");
-
-            if (this._parentContainerStyle) {
-                this.action.renderedElement.classList.add("style-" + this._parentContainerStyle);
-            }
-
-            this.action.updateActionButtonCssStyle(this.action.renderedElement, this._state);
-
-            this.action.renderedElement.classList.remove(hostConfig.makeCssClassName("expanded"));
-            this.action.renderedElement.classList.remove(hostConfig.makeCssClassName("subdued"));
-
-            switch (this._state) {
-                case ActionButtonState.Expanded:
-                    this.action.renderedElement.classList.add(hostConfig.makeCssClassName("expanded"));
-                    break;
-                case ActionButtonState.Subdued:
-                    this.action.renderedElement.classList.add(hostConfig.makeCssClassName("subdued"));
-                    break;
-            }
-
-            if (this.action.style) {
-                if (this.action.style === Enums.ActionStyle.Positive) {
-                    this.action.renderedElement.classList.add(...hostConfig.makeCssClassNames("primary", "style-positive"));
-                }
-                else {
-                    this.action.renderedElement.classList.add(...hostConfig.makeCssClassNames("style-" + this.action.style.toLowerCase()));
-                }
-            }
-        }
-    }
-
-    readonly action: Action;
-
-    constructor(action: Action, parentContainerStyle: string) {
-        this.action = action;
-        this._parentContainerStyle = parentContainerStyle;
-    }
-
-    onClick?: (actionButton: ActionButton) => void;
-
-    render() {
-        this.action.render();
-
-        if (this.action.renderedElement) {
-            this.action.renderedElement.onclick = (e) => {
-                e.preventDefault();
-                e.cancelBubble = true;
-
-                this.click();
-            };
-
-            this.updateCssStyle();
-        }
-    }
-
-    click() {
-        if (this.onClick !== undefined) {
-            this.onClick(this);
-        }
-    }
-
-    get state(): ActionButtonState {
-        return this._state;
-    }
-
-    set state(value: ActionButtonState) {
-        this._state = value;
-
-        this.updateCssStyle();
-    }
-}
-
-export type ActionType = { new(): Action };
+export type ActionType = { new (): Action };
 
 export abstract class Action extends CardObject {
     //#region Schema
@@ -3712,7 +5017,16 @@ export abstract class Action extends CardObject {
             { value: Enums.ActionStyle.Positive },
             { value: Enums.ActionStyle.Destructive }
         ],
-        Enums.ActionStyle.Default);
+        Enums.ActionStyle.Default
+    );
+    static readonly modeProperty = new ValueSetProperty(
+        Versions.v1_5,
+        "mode",
+        [{ value: Enums.ActionMode.Primary }, { value: Enums.ActionMode.Secondary }],
+        Enums.ActionMode.Primary
+    );
+    static readonly tooltipProperty = new StringProperty(Versions.v1_5, "tooltip");
+    static readonly isEnabledProperty = new BoolProperty(Versions.v1_5, "isEnabled", true);
 
     @property(Action.titleProperty)
     title?: string;
@@ -3723,32 +5037,155 @@ export abstract class Action extends CardObject {
     @property(Action.styleProperty)
     style: string = Enums.ActionStyle.Default;
 
+    @property(Action.modeProperty)
+    mode: string = Enums.ActionMode.Primary;
+
+    @property(Action.tooltipProperty)
+    tooltip?: string;
+
+    @property(Action.isEnabledProperty)
+    isEnabled: boolean;
+
     //#endregion
 
+    private renderButtonContent() {
+        if (this.renderedElement) {
+            // Cache hostConfig for perf
+            const hostConfig = this.hostConfig;
+
+            const titleElement = document.createElement("div");
+            titleElement.style.overflow = "hidden";
+            titleElement.style.textOverflow = "ellipsis";
+
+            if (
+                !(
+                    hostConfig.actions.iconPlacement === Enums.ActionIconPlacement.AboveTitle ||
+                    hostConfig.actions.allowTitleToWrap
+                )
+            ) {
+                titleElement.style.whiteSpace = "nowrap";
+            }
+
+            if (this.title) {
+                titleElement.innerText = this.title;
+            }
+
+            if (!this.iconUrl) {
+                this.renderedElement.classList.add("noIcon");
+                this.renderedElement.appendChild(titleElement);
+            } else {
+                const iconElement = document.createElement("img");
+                iconElement.src = this.iconUrl;
+                iconElement.style.width = hostConfig.actions.iconSize + "px";
+                iconElement.style.height = hostConfig.actions.iconSize + "px";
+                iconElement.style.flex = "0 0 auto";
+
+                if (hostConfig.actions.iconPlacement === Enums.ActionIconPlacement.AboveTitle) {
+                    this.renderedElement.classList.add("iconAbove");
+                    this.renderedElement.style.flexDirection = "column";
+
+                    if (this.title) {
+                        iconElement.style.marginBottom = "6px";
+                    }
+                } else {
+                    this.renderedElement.classList.add("iconLeft");
+
+                    iconElement.style.maxHeight = "100%";
+
+                    if (this.title) {
+                        iconElement.style.marginRight = "6px";
+                    }
+                }
+
+                this.renderedElement.appendChild(iconElement);
+                this.renderedElement.appendChild(titleElement);
+            }
+        }
+    }
+
+    private getParentContainer(): Container | undefined {
+        if (this.parent instanceof Container) {
+            return this.parent;
+        }
+
+        return this.parent ? this.parent.getParentContainer() : undefined;
+    }
+
+    private _state: ActionButtonState = ActionButtonState.Normal;
     private _actionCollection?: ActionCollection; // hold the reference to its action collection
+    private _isFocusable: boolean = true;
+
+    isDesignMode(): boolean {
+        const rootElement = this.getRootObject();
+
+        return rootElement instanceof CardElement && rootElement.isDesignMode();
+    }
+
+    protected updateCssClasses() {
+        if (this.parent && this.renderedElement) {
+            const hostConfig = this.parent.hostConfig;
+
+            this.renderedElement.className = hostConfig.makeCssClassName(
+                this.isEffectivelyEnabled() ? "ac-pushButton" : "ac-pushButton-disabled"
+            );
+
+            const parentContainer = this.getParentContainer();
+
+            if (parentContainer) {
+                const parentContainerStyle = parentContainer.getEffectiveStyle();
+
+                if (parentContainerStyle) {
+                    this.renderedElement.classList.add("style-" + parentContainerStyle);
+                }
+            }
+
+            this.renderedElement.tabIndex = !this.isDesignMode() && this.isFocusable ? 0 : -1;
+
+            switch (this._state) {
+                case ActionButtonState.Normal:
+                    // No additional classes needed
+                    break;
+
+                case ActionButtonState.Expanded:
+                    this.renderedElement.classList.add(hostConfig.makeCssClassName("expanded"));
+                    break;
+                case ActionButtonState.Subdued:
+                    this.renderedElement.classList.add(hostConfig.makeCssClassName("subdued"));
+                    break;
+            }
+
+            if (this.style && this.isEffectivelyEnabled()) {
+                if (this.style === Enums.ActionStyle.Positive) {
+                    this.renderedElement.classList.add(
+                        ...hostConfig.makeCssClassNames("primary", "style-positive")
+                    );
+                } else {
+                    this.renderedElement.classList.add(
+                        ...hostConfig.makeCssClassNames("style-" + this.style.toLowerCase())
+                    );
+                }
+            }
+        }
+    }
 
     protected getDefaultSerializationContext(): BaseSerializationContext {
         return new SerializationContext();
-    }
-
-    protected addCssClasses(element: HTMLElement) {
-        // Do nothing in base implementation
     }
 
     protected internalGetReferencedInputs(): Dictionary<Input> {
         return {};
     }
 
-    protected internalPrepareForExecution(inputs: Dictionary<Input> | undefined) {
+    protected internalPrepareForExecution(_inputs: Dictionary<Input> | undefined) {
         // Do nothing in base implementation
     }
 
     protected internalValidateInputs(referencedInputs: Dictionary<Input> | undefined): Input[] {
-        let result: Input[] = [];
+        const result: Input[] = [];
 
         if (referencedInputs) {
-            for (let key of Object.keys(referencedInputs)) {
-                let input = referencedInputs[key];
+            for (const key of Object.keys(referencedInputs)) {
+                const input = referencedInputs[key];
 
                 if (!input.validateValue()) {
                     result.push(input);
@@ -3771,6 +5208,14 @@ export abstract class Action extends CardObject {
         raiseExecuteActionEvent(this);
     }
 
+    protected internalAfterExecute() {
+        let rootObject = this.getRootObject();
+
+        if (rootObject instanceof CardElement) {
+            rootObject.updateActionsEnabledState();
+        }
+    }
+
     onExecute: (sender: Action) => void;
 
     getHref(): string | undefined {
@@ -3781,80 +5226,62 @@ export abstract class Action extends CardObject {
         return "button";
     }
 
-    updateActionButtonCssStyle(actionButtonElement: HTMLElement, buttonState: ActionButtonState = ActionButtonState.Normal): void {
-        // Do nothing in base implementation
+    setupElementForAccessibility(element: HTMLElement, promoteTooltipToLabel: boolean = false) {
+        element.tabIndex = this.isEffectivelyEnabled() && !this.isDesignMode() ? 0 : -1;
+
+        element.setAttribute("role", this.getAriaRole());
+
+        if (element instanceof HTMLButtonElement) {
+            element.disabled = !this.isEffectivelyEnabled();
+        }
+
+        if (!this.isEffectivelyEnabled()) {
+            element.setAttribute("aria-disabled", "true");
+        } else {
+            element.removeAttribute("aria-disabled");
+            element.classList.add(this.hostConfig.makeCssClassName("ac-selectable"));
+        }
+
+        if (this.title) {
+            element.setAttribute("aria-label", this.title);
+            element.title = this.title;
+        } else {
+            element.removeAttribute("aria-label");
+            element.removeAttribute("title");
+        }
+
+        if (this.tooltip) {			
+            if (promoteTooltipToLabel && !this.title) {
+                element.setAttribute("aria-label", this.tooltip);
+            }
+            element.title = this.tooltip;
+        }
     }
 
     parse(source: any, context?: SerializationContext) {
         return super.parse(source, context ? context : new SerializationContext());
     }
 
-    render(baseCssClass: string = "ac-pushButton") {
-        // Cache hostConfig for perf
-        let hostConfig = this.hostConfig;
-
-        let buttonElement = document.createElement("button");
-
-        this.addCssClasses(buttonElement);
-
-        if (this.title) {
-            buttonElement.setAttribute("aria-label", this.title);
-        }
-
+    render() {
+        const buttonElement = document.createElement("button");
         buttonElement.type = "button";
         buttonElement.style.display = "flex";
         buttonElement.style.alignItems = "center";
         buttonElement.style.justifyContent = "center";
+        buttonElement.onclick = (e) => {
+            if (this.isEffectivelyEnabled()) {
+                e.preventDefault();
+                e.cancelBubble = true;
 
-        buttonElement.setAttribute("role", this.getAriaRole());
-
-        let titleElement = document.createElement("div");
-        titleElement.style.overflow = "hidden";
-        titleElement.style.textOverflow = "ellipsis";
-
-        if (!(hostConfig.actions.iconPlacement == Enums.ActionIconPlacement.AboveTitle || hostConfig.actions.allowTitleToWrap)) {
-            titleElement.style.whiteSpace = "nowrap";
-        }
-
-        if (this.title) {
-            titleElement.innerText = this.title;
-        }
-
-        if (!this.iconUrl) {
-            buttonElement.classList.add("noIcon");
-
-            buttonElement.appendChild(titleElement);
-        }
-        else {
-            let iconElement = document.createElement("img");
-            iconElement.src = this.iconUrl;
-            iconElement.style.width = hostConfig.actions.iconSize + "px";
-            iconElement.style.height = hostConfig.actions.iconSize + "px";
-            iconElement.style.flex = "0 0 auto";
-
-            if (hostConfig.actions.iconPlacement == Enums.ActionIconPlacement.AboveTitle) {
-                buttonElement.classList.add("iconAbove");
-                buttonElement.style.flexDirection = "column";
-
-                if (this.title) {
-                    iconElement.style.marginBottom = "6px";
-                }
+                this.execute();
             }
-            else {
-                buttonElement.classList.add("iconLeft");
-
-                iconElement.style.maxHeight = "100%";
-
-                if (this.title) {
-                    iconElement.style.marginRight = "6px";
-                }
-            }
-
-            buttonElement.appendChild(iconElement);
-            buttonElement.appendChild(titleElement);
-        }
+        };
 
         this._renderedElement = buttonElement;
+
+        this.renderButtonContent();
+        this.updateCssClasses();
+        this.setupElementForAccessibility(buttonElement);
     }
 
     execute() {
@@ -3863,11 +5290,12 @@ export abstract class Action extends CardObject {
         }
 
         this.raiseExecuteActionEvent();
+        this.internalAfterExecute();
     }
 
     prepareForExecution(): boolean {
-        let referencedInputs = this.getReferencedInputs();
-        let invalidInputs = this.internalValidateInputs(referencedInputs);
+        const referencedInputs = this.getReferencedInputs();
+        const invalidInputs = this.internalValidateInputs(referencedInputs);
 
         if (invalidInputs.length > 0) {
             invalidInputs[0].focus();
@@ -3878,7 +5306,7 @@ export abstract class Action extends CardObject {
         this.internalPrepareForExecution(referencedInputs);
 
         return true;
-    };
+    }
 
     remove(): boolean {
         if (this._actionCollection) {
@@ -3890,6 +5318,10 @@ export abstract class Action extends CardObject {
 
     getAllInputs(processActions: boolean = true): Input[] {
         return [];
+    }
+
+    getAllActions(): Action[] {
+        return [this];
     }
 
     getResourceInformation(): IResourceInformation[] {
@@ -3913,16 +5345,23 @@ export abstract class Action extends CardObject {
         return this.internalValidateInputs(this.getReferencedInputs());
     }
 
+    updateEnabledState() {
+        // Do nothing in base implementation
+    }
+
+    isEffectivelyEnabled(): boolean {
+        return this.isEnabled;
+    }
+
     get isPrimary(): boolean {
-        return this.style == Enums.ActionStyle.Positive;
+        return this.style === Enums.ActionStyle.Positive;
     }
 
     set isPrimary(value: boolean) {
         if (value) {
             this.style = Enums.ActionStyle.Positive;
-        }
-        else {
-            if (this.style == Enums.ActionStyle.Positive) {
+        } else {
+            if (this.style === Enums.ActionStyle.Positive) {
                 this.style = Enums.ActionStyle.Default;
             }
         }
@@ -3935,57 +5374,98 @@ export abstract class Action extends CardObject {
     get parent(): CardElement | undefined {
         return <CardElement>this._parent;
     }
+
+    get state(): ActionButtonState {
+        return this._state;
+    }
+
+    set state(value: ActionButtonState) {
+        if (this._state !== value) {
+            this._state = value;
+
+            this.updateCssClasses();
+        }
+    }
+
+    get isFocusable(): boolean {
+        return this._isFocusable;
+    }
+
+    set isFocusable(value: boolean) {
+        if (this._isFocusable !== value) {
+            this._isFocusable = value;
+
+            this.updateCssClasses();
+        }
+    }
 }
 
-export class SubmitAction extends Action {
+export abstract class SubmitActionBase extends Action {
     //#region Schema
 
     static readonly dataProperty = new PropertyDefinition(Versions.v1_0, "data");
     static readonly associatedInputsProperty = new CustomProperty(
         Versions.v1_3,
         "associatedInputs",
-        (sender: SerializableObject, property: PropertyDefinition, source: PropertyBag, context: BaseSerializationContext) => {
-            let value = source[property.name];
+        (
+            sender: SerializableObject,
+            prop: PropertyDefinition,
+            source: PropertyBag,
+            context: BaseSerializationContext
+        ) => {
+            const value = source[prop.name];
 
             if (value !== undefined && typeof value === "string") {
                 return value.toLowerCase() === "none" ? "none" : "auto";
             }
-            
+
             return undefined;
         },
-        (sender: SerializableObject, property: PropertyDefinition, target: PropertyBag, value: string | undefined, context: BaseSerializationContext) => {
-            context.serializeValue(target, property.name, value);
-        });
+        (
+            sender: SerializableObject,
+            prop: PropertyDefinition,
+            target: PropertyBag,
+            value: string | undefined,
+            context: BaseSerializationContext
+        ) => {
+            context.serializeValue(target, prop.name, value);
+        }
+    );
+    static readonly disabledUnlessAssociatedInputsChangeProperty = new BoolProperty(
+        Versions.v1_6,
+        "disabledUnlessAssociatedInputsChange",
+        false
+    );
 
-    @property(SubmitAction.dataProperty)
+    @property(SubmitActionBase.dataProperty)
     private _originalData?: PropertyBag;
 
-    @property(SubmitAction.associatedInputsProperty)
+    @property(SubmitActionBase.associatedInputsProperty)
     associatedInputs?: "auto" | "none";
+
+    @property(SubmitActionBase.disabledUnlessAssociatedInputsChangeProperty)
+    disabledUnlessAssociatedInputsChange: boolean = false;
 
     //#endregion
 
-    // Note the "weird" way this field is declared is to work around a breaking
-    // change introduced in TS 3.1 wrt d.ts generation. DO NOT CHANGE
-    static readonly JsonTypeName: "Action.Submit" = "Action.Submit";
-
     private _isPrepared: boolean = false;
     private _processedData?: PropertyBag;
+    private _areReferencedInputsDirty: boolean = false;
 
     protected internalGetReferencedInputs(): Dictionary<Input> {
-        let result: Dictionary<Input> = {};
+        const result: Dictionary<Input> = {};
 
         if (this.associatedInputs !== "none") {
             let current: CardElement | undefined = this.parent;
             let inputs: Input[] = [];
 
             while (current) {
-                inputs = inputs.concat(current.getAllInputs(false));
+                inputs.push(...current.getAllInputs(false));
 
                 current = current.parent;
             }
 
-            for (let input of inputs) {
+            for (const input of inputs) {
                 if (input.id) {
                     result[input.id] = input;
                 }
@@ -3998,17 +5478,17 @@ export class SubmitAction extends Action {
     protected internalPrepareForExecution(inputs: Dictionary<Input> | undefined) {
         if (this._originalData) {
             this._processedData = JSON.parse(JSON.stringify(this._originalData));
-        }
-        else {
+        } else {
             this._processedData = {};
         }
 
         if (this._processedData && inputs) {
-            for (let key of Object.keys(inputs)) {
-                let input = inputs[key];
+            for (const key of Object.keys(inputs)) {
+                const input = inputs[key];
 
                 if (input.id && input.isSet()) {
-                    this._processedData[input.id] = typeof input.value === "string" ? input.value : input.value.toString();
+                    this._processedData[input.id] =
+                        typeof input.value === "string" ? input.value : input.value.toString();
                 }
             }
         }
@@ -4016,8 +5496,56 @@ export class SubmitAction extends Action {
         this._isPrepared = true;
     }
 
-    getJsonTypeName(): string {
-        return SubmitAction.JsonTypeName;
+    protected internalAfterExecute() {
+        if (GlobalSettings.resetInputsDirtyStateAfterActionExecution) {
+            this.resetReferencedInputsDirtyState();
+        }
+    }
+
+    resetReferencedInputsDirtyState() {
+        let referencedInputs = this.getReferencedInputs();
+
+        this._areReferencedInputsDirty = false;
+
+        if (referencedInputs) {
+            for (const key of Object.keys(referencedInputs)) {
+                const input = referencedInputs[key];
+
+                input.resetDirtyState();
+            }
+        }
+    }
+
+    updateEnabledState() {
+        this._areReferencedInputsDirty = false;
+
+        let referencedInputs = this.getReferencedInputs();
+
+        if (referencedInputs) {
+            for (const key of Object.keys(referencedInputs)) {
+                const input = referencedInputs[key];
+
+                if (input.isDirty()) {
+                    this._areReferencedInputsDirty = true;
+
+                    break;
+                }
+            }
+        }
+
+        this.updateCssClasses();
+
+        if (this._renderedElement) {
+            this.setupElementForAccessibility(this._renderedElement);
+        }
+    }
+
+    isEffectivelyEnabled(): boolean {
+        let result = super.isEffectivelyEnabled();
+
+        return this.disabledUnlessAssociatedInputsChange
+            ? result && this._areReferencedInputsDirty
+            : result;
     }
 
     get data(): object | undefined {
@@ -4027,6 +5555,35 @@ export class SubmitAction extends Action {
     set data(value: object | undefined) {
         this._originalData = value;
         this._isPrepared = false;
+    }
+}
+
+export class SubmitAction extends SubmitActionBase {
+    // Note the "weird" way this field is declared is to work around a breaking
+    // change introduced in TS 3.1 wrt d.ts generation. DO NOT CHANGE
+    static readonly JsonTypeName: "Action.Submit" = "Action.Submit";
+
+    getJsonTypeName(): string {
+        return SubmitAction.JsonTypeName;
+    }
+}
+
+export class ExecuteAction extends SubmitActionBase {
+    // Note the "weird" way this field is declared is to work around a breaking
+    // change introduced in TS 3.1 wrt d.ts generation. DO NOT CHANGE
+    static readonly JsonTypeName: "Action.Execute" = "Action.Execute";
+
+    //#region Schema
+
+    static readonly verbProperty = new StringProperty(Versions.v1_4, "verb");
+
+    @property(ExecuteAction.verbProperty)
+    verb: string;
+
+    //#endregion
+
+    getJsonTypeName(): string {
+        return ExecuteAction.JsonTypeName;
     }
 }
 
@@ -4048,7 +5605,7 @@ export class OpenUrlAction extends Action {
         return OpenUrlAction.JsonTypeName;
     }
 
-    getAriaRole() : string {
+    getAriaRole(): string {
         return "link";
     }
 
@@ -4059,7 +5616,8 @@ export class OpenUrlAction extends Action {
             context.addFailure(
                 this,
                 Enums.ValidationEvent.PropertyCantBeNull,
-                Strings.errors.propertyMustBeSet("url"));
+                Strings.errors.propertyMustBeSet("url")
+            );
         }
     }
 
@@ -4074,16 +5632,20 @@ export class ToggleVisibilityAction extends Action {
     static readonly targetElementsProperty = new CustomProperty<PropertyBag>(
         Versions.v1_2,
         "targetElements",
-        (sender: SerializableObject, property: PropertyDefinition, source: PropertyBag, context: BaseSerializationContext) => {
-            let result: PropertyBag = {}
+        (
+            sender: SerializableObject,
+            prop: PropertyDefinition,
+            source: PropertyBag,
+            context: BaseSerializationContext
+        ) => {
+            const result: PropertyBag = {};
 
-            if (Array.isArray(source[property.name])) {
-                for (let item of source[property.name]) {
+            if (Array.isArray(source[prop.name])) {
+                for (const item of source[prop.name]) {
                     if (typeof item === "string") {
                         result[item] = undefined;
-                    }
-                    else if (typeof item === "object") {
-                        let elementId = item["elementId"];
+                    } else if (typeof item === "object") {
+                        const elementId = item["elementId"];
 
                         if (typeof elementId === "string") {
                             result[elementId] = Utils.parseBool(item["isVisible"]);
@@ -4094,27 +5656,33 @@ export class ToggleVisibilityAction extends Action {
 
             return result;
         },
-        (sender: SerializableObject, property: PropertyDefinition, target: PropertyBag, value: PropertyBag, context: BaseSerializationContext) => {
-            let targetElements: any[] = [];
+        (
+            sender: SerializableObject,
+            prop: PropertyDefinition,
+            target: PropertyBag,
+            value: PropertyBag,
+            context: BaseSerializationContext
+        ) => {
+            const targetElements: any[] = [];
 
-            for (let id of Object.keys(value)) {
+            for (const id of Object.keys(value)) {
                 if (typeof value[id] === "boolean") {
-                    targetElements.push(
-                        {
-                            elementId: id,
-                            isVisible: value[id]
-                        }
-                    );
-                }
-                else {
+                    targetElements.push({
+                        elementId: id,
+                        isVisible: value[id]
+                    });
+                } else {
                     targetElements.push(id);
                 }
             }
 
-            context.serializeArray(target, property.name, targetElements);
+            context.serializeArray(target, prop.name, targetElements);
         },
         {},
-        (sender: SerializableObject) => { return {}; });
+        (sender: SerializableObject) => {
+            return {};
+        }
+    );
 
     @property(ToggleVisibilityAction.targetElementsProperty)
     targetElements: { [key: string]: any } = {};
@@ -4133,11 +5701,22 @@ export class ToggleVisibilityAction extends Action {
             if (this._renderedElement) {
                 if (elementIds.length > 0) {
                     this._renderedElement.setAttribute("aria-controls", elementIds.join(" "));
-                }
-                else {
+                } else {
                     this._renderedElement.removeAttribute("aria-controls");
                 }
             }
+        }
+    }
+
+    internalValidateProperties(context: ValidationResults) {
+        super.internalValidateProperties(context);
+
+        if (!this.targetElements) {
+            context.addFailure(
+                this,
+                Enums.ValidationEvent.PropertyCantBeNull,
+                Strings.errors.propertyMustBeSet("targetElements")
+            );
         }
     }
 
@@ -4145,21 +5724,22 @@ export class ToggleVisibilityAction extends Action {
         return ToggleVisibilityAction.JsonTypeName;
     }
 
-    render(baseCssClass: string = "ac-pushButton") {
-        super.render(baseCssClass);
+    render() {
+        super.render();
+
         this.updateAriaControlsAttribute();
     }
 
     execute() {
+        super.execute();
         if (this.parent) {
-            for (let elementId of Object.keys(this.targetElements)) {
-                let targetElement = this.parent.getRootElement().getElementById(elementId);
+            for (const elementId of Object.keys(this.targetElements)) {
+                const targetElement = this.parent.getRootElement().getElementById(elementId);
 
                 if (targetElement) {
                     if (typeof this.targetElements[elementId] === "boolean") {
                         targetElement.isVisible = this.targetElements[elementId];
-                    }
-                    else {
+                    } else {
                         targetElement.isVisible = !targetElement.isVisible;
                     }
                 }
@@ -4178,22 +5758,31 @@ export class ToggleVisibilityAction extends Action {
     }
 }
 
-class StringWithSubstitutionProperty extends PropertyDefinition  {
-    parse(sender: SerializableObject, source: PropertyBag, context: BaseSerializationContext): StringWithSubstitutions {
-        let result = new StringWithSubstitutions();
+class StringWithSubstitutionProperty extends PropertyDefinition {
+    parse(
+        sender: SerializableObject,
+        source: PropertyBag,
+        context: BaseSerializationContext
+    ): StringWithSubstitutions {
+        const result = new StringWithSubstitutions();
         result.set(Utils.parseString(source[this.name]));
 
         return result;
     }
 
-    toJSON(sender: SerializableObject, target: PropertyBag, value: StringWithSubstitutions, context: BaseSerializationContext): void {
+    toJSON(
+        sender: SerializableObject,
+        target: PropertyBag,
+        value: StringWithSubstitutions,
+        context: BaseSerializationContext
+    ): void {
         context.serializeValue(target, this.name, value.getOriginal());
     }
 
-    constructor(
-        readonly targetVersion: Version,
-        readonly name: string) {
-        super(targetVersion, name, undefined, () => { return new StringWithSubstitutions(); });
+    constructor(readonly targetVersion: Version, readonly name: string) {
+        super(targetVersion, name, undefined, () => {
+            return new StringWithSubstitutions();
+        });
     }
 }
 
@@ -4245,8 +5834,16 @@ export class HttpAction extends Action {
     static readonly urlProperty = new StringWithSubstitutionProperty(Versions.v1_0, "url");
     static readonly bodyProperty = new StringWithSubstitutionProperty(Versions.v1_0, "body");
     static readonly methodProperty = new StringProperty(Versions.v1_0, "method");
-    static readonly headersProperty = new SerializableObjectCollectionProperty(Versions.v1_0, "headers", HttpHeader);
-    static readonly ignoreInputValidationProperty = new BoolProperty(Versions.v1_3, "ignoreInputValidation", false);
+    static readonly headersProperty = new SerializableObjectCollectionProperty(
+        Versions.v1_0,
+        "headers",
+        HttpHeader
+    );
+    static readonly ignoreInputValidationProperty = new BoolProperty(
+        Versions.v1_3,
+        "ignoreInputValidation",
+        false
+    );
 
     @property(HttpAction.urlProperty)
     private _url: StringWithSubstitutions;
@@ -4270,12 +5867,12 @@ export class HttpAction extends Action {
     static readonly JsonTypeName: "Action.Http" = "Action.Http";
 
     protected internalGetReferencedInputs(): Dictionary<Input> {
-        let allInputs = this.parent ? this.parent.getRootElement().getAllInputs() : [];
-        let result: Dictionary<Input> = {};
+        const allInputs = this.parent ? this.parent.getRootElement().getAllInputs() : [];
+        const result: Dictionary<Input> = {};
 
         this._url.getReferencedInputs(allInputs, result);
 
-        for (let header of this.headers) {
+        for (const header of this.headers) {
             header.getReferencedInputs(allInputs, result);
         }
 
@@ -4290,17 +5887,17 @@ export class HttpAction extends Action {
 
             let contentType = ContentTypes.applicationJson;
 
-            for (let header of this.headers) {
+            for (const header of this.headers) {
                 header.prepareForExecution(inputs);
 
-                if (header.name && header.name.toLowerCase() == "content-type") {
-                    contentType = <string>header.value;
+                if (header.name && header.name.toLowerCase() === "content-type") {
+                    contentType = header.value!;
                 }
             }
 
             this._body.substituteInputValues(inputs, contentType);
         }
-    };
+    }
 
     getJsonTypeName(): string {
         return HttpAction.JsonTypeName;
@@ -4313,16 +5910,18 @@ export class HttpAction extends Action {
             context.addFailure(
                 this,
                 Enums.ValidationEvent.PropertyCantBeNull,
-                Strings.errors.propertyMustBeSet("url"));
+                Strings.errors.propertyMustBeSet("url")
+            );
         }
 
         if (this.headers.length > 0) {
-            for (let header of this.headers) {
+            for (const header of this.headers) {
                 if (!header.name) {
                     context.addFailure(
                         this,
                         Enums.ValidationEvent.PropertyCantBeNull,
-                        Strings.errors.actionHttpHeadersMustHaveNameAndValue());
+                        Strings.errors.actionHttpHeadersMustHaveNameAndValue()
+                    );
                 }
             }
         }
@@ -4358,19 +5957,33 @@ export class ShowCardAction extends Action {
     // change introduced in TS 3.1 wrt d.ts generation. DO NOT CHANGE
     static readonly JsonTypeName: "Action.ShowCard" = "Action.ShowCard";
 
+    protected updateCssClasses() {
+        super.updateCssClasses();
+
+        if (this.renderedElement) {
+            const effectiveHostConfig = this.parent ? this.parent.hostConfig : defaultHostConfig;
+
+            this.renderedElement.classList.add(effectiveHostConfig.makeCssClassName("expandable"));
+            this.renderedElement.setAttribute(
+                "aria-expanded",
+                (this.state === ActionButtonState.Expanded).toString()
+            );
+        }
+    }
+
     protected internalParse(source: any, context: SerializationContext) {
         super.internalParse(source, context);
 
-        let jsonCard = source["card"];
+        const jsonCard = source["card"];
 
         if (jsonCard) {
             this.card.parse(jsonCard, context);
-        }
-        else {
+        } else {
             context.logParseEvent(
                 this,
                 Enums.ValidationEvent.PropertyCantBeNull,
-                Strings.errors.showCardMustHaveCard());
+                Strings.errors.showCardMustHaveCard()
+            );
         }
     }
 
@@ -4379,14 +5992,6 @@ export class ShowCardAction extends Action {
 
         if (this.card) {
             context.serializeValue(target, "card", this.card.toJSON(context));
-        }
-    }
-
-    protected addCssClasses(element: HTMLElement) {
-        super.addCssClasses(element);
-
-        if (this.parent) {
-            element.classList.add(this.parent.hostConfig.makeCssClassName("expandable"));
         }
     }
 
@@ -4399,6 +6004,12 @@ export class ShowCardAction extends Action {
 
     readonly card: AdaptiveCard = new InlineAdaptiveCard();
 
+    releaseDOMResources() {
+        super.releaseDOMResources();
+
+        this.card.releaseDOMResources();
+    }
+
     getJsonTypeName(): string {
         return ShowCardAction.JsonTypeName;
     }
@@ -4407,15 +6018,6 @@ export class ShowCardAction extends Action {
         super.internalValidateProperties(context);
 
         this.card.internalValidateProperties(context);
-    }
-
-    updateActionButtonCssStyle(actionButtonElement: HTMLElement, buttonState: ActionButtonState = ActionButtonState.Normal): void {
-        super.updateActionButtonCssStyle(actionButtonElement);
-
-        if (this.parent) {
-            actionButtonElement.classList.add(this.parent.hostConfig.makeCssClassName("expandable"));
-            actionButtonElement.setAttribute("aria-expanded", (buttonState === ActionButtonState.Expanded).toString());
-        }
     }
 
     setParent(value: CardElement) {
@@ -4428,8 +6030,20 @@ export class ShowCardAction extends Action {
         return this.card.getAllInputs(processActions);
     }
 
+    getAllActions(): Action[] {
+        const result = super.getAllActions();
+
+        result.push(...this.card.getAllActions());
+
+        return result;
+    }
+
     getResourceInformation(): IResourceInformation[] {
-        return super.getResourceInformation().concat(this.card.getResourceInformation());
+        let result = super.getResourceInformation();
+
+        result.push(...this.card.getResourceInformation());
+
+        return result;
     }
 
     getActionById(id: string): Action | undefined {
@@ -4443,18 +6057,88 @@ export class ShowCardAction extends Action {
     }
 }
 
+class OverflowAction extends Action {
+    static readonly JsonTypeName: "Action.Overflow" = "Action.Overflow";
+    private _actions: Action[];
+
+    constructor(actions: Action[]) {
+        super();
+        this._actions = actions;
+
+        this.title = Strings.defaults.overflowButtonText();
+        this.tooltip = Strings.defaults.overflowButtonTooltip();
+    }
+
+    getActions(): readonly Action[] {
+        return this._actions;
+    }
+
+    getAllActions(): Action[] {
+        const result = super.getAllActions();
+
+        result.push(...this._actions);
+
+        return result;
+    }
+
+    getJsonTypeName(): string {
+        return ShowCardAction.JsonTypeName;
+    }
+
+    execute() {
+        const shouldDisplayPopupMenu = !raiseDisplayOverflowActionMenuEvent(
+            this,
+            this.renderedElement
+        );
+
+        if (shouldDisplayPopupMenu && this.renderedElement) {
+            const contextMenu = new PopupMenu();
+            contextMenu.hostConfig = this.hostConfig;
+
+            for (let i = 0; i < this._actions.length; i++) {
+                const menuItem = new MenuItem(i.toString(), this._actions[i].title ?? "");
+                menuItem.isEnabled = this._actions[i].isEnabled;
+                menuItem.onClick = () => {
+                    const actionToExecute = this._actions[i];
+
+                    contextMenu.closePopup(false);
+
+                    if (actionToExecute.isEnabled) {
+                        actionToExecute.execute();
+                    }
+                };
+
+                contextMenu.items.add(menuItem);
+            }
+
+            contextMenu.onClose = () => {
+                this.renderedElement?.setAttribute("aria-expanded", "false");
+            }
+
+            this.renderedElement.setAttribute("aria-expanded", "true");
+            contextMenu.popup(this.renderedElement);
+        }
+    }
+    
+    setupElementForAccessibility(element: HTMLElement, promoteTooltipToLabel: boolean = false) {
+        super.setupElementForAccessibility(element, promoteTooltipToLabel);
+
+        element.setAttribute("aria-label", Strings.defaults.overflowButtonTooltip());
+        element.setAttribute("aria-expanded", "false");
+    }
+}
+
 class ActionCollection {
     private _owner: CardElement;
     private _actionCardContainer: HTMLDivElement;
     private _expandedAction?: ShowCardAction;
-    private _renderedActionCount: number = 0;
     private _actionCard?: HTMLElement;
 
     private isActionAllowed(action: Action): boolean {
-        let forbiddenTypes = this._owner.getForbiddenActionTypes();
+        const forbiddenTypes = this._owner.getForbiddenActionTypes();
 
         if (forbiddenTypes) {
-            for (let forbiddenType of forbiddenTypes) {
+            for (const forbiddenType of forbiddenTypes) {
                 if (action.constructor === forbiddenType) {
                     return false;
                 }
@@ -4465,7 +6149,7 @@ class ActionCollection {
     }
 
     private refreshContainer() {
-        this._actionCardContainer.innerHTML = "";
+        clearElement(this._actionCardContainer);
 
         if (!this._actionCard) {
             this._actionCardContainer.style.marginTop = "0px";
@@ -4473,13 +6157,17 @@ class ActionCollection {
             return;
         }
 
-        this._actionCardContainer.style.marginTop = this._renderedActionCount > 0 ? this._owner.hostConfig.actions.showCard.inlineTopMargin + "px" : "0px";
+        this._actionCardContainer.style.marginTop =
+            this.renderedActionCount > 0
+                ? this._owner.hostConfig.actions.showCard.inlineTopMargin + "px"
+                : "0px";
 
-        let padding = this._owner.getEffectivePadding();
+        const padding = this._owner.getEffectivePadding();
 
         this._owner.getImmediateSurroundingPadding(padding);
 
-        let physicalPadding = this._owner.hostConfig.paddingDefinitionToSpacingDefinition(padding);
+        const physicalPadding =
+            this._owner.hostConfig.paddingDefinitionToSpacingDefinition(padding);
 
         if (this._actionCard) {
             this._actionCard.style.paddingLeft = physicalPadding.left + "px";
@@ -4488,7 +6176,7 @@ class ActionCollection {
             this._actionCard.style.marginLeft = "-" + physicalPadding.left + "px";
             this._actionCard.style.marginRight = "-" + physicalPadding.right + "px";
 
-            if (physicalPadding.bottom != 0 && !this._owner.isDesignMode()) {
+            if (physicalPadding.bottom !== 0 && !this._owner.isDesignMode()) {
                 this._actionCard.style.paddingBottom = physicalPadding.bottom + "px";
                 this._actionCard.style.marginBottom = "-" + physicalPadding.bottom + "px";
             }
@@ -4501,11 +6189,18 @@ class ActionCollection {
         this._owner.getRootElement().updateLayout();
     }
 
-    private showActionCard(action: ShowCardAction, suppressStyle: boolean = false, raiseEvent: boolean = true) {
+    private showActionCard(
+        action: ShowCardAction,
+        suppressStyle: boolean = false,
+        raiseEvent: boolean = true
+    ) {
         (<InlineAdaptiveCard>action.card).suppressStyle = suppressStyle;
 
         // Always re-render a ShowCard action in design mode; reuse already rendered ShowCard (if available) otherwise
-        let renderedCard = action.card.renderedElement && !this._owner.isDesignMode() ? action.card.renderedElement : action.card.render();
+        const renderedCard =
+            action.card.renderedElement && !this._owner.isDesignMode()
+                ? action.card.renderedElement
+                : action.card.render();
 
         this._actionCard = renderedCard;
         this._expandedAction = action;
@@ -4520,11 +6215,11 @@ class ActionCollection {
     }
 
     private collapseExpandedAction() {
-        for (let button of this.buttons) {
-            button.state = ActionButtonState.Normal;
+        for (const action of this._renderedActions) {
+            action.state = ActionButtonState.Normal;
         }
 
-        let previouslyExpandedAction = this._expandedAction;
+        const previouslyExpandedAction = this._expandedAction;
 
         this._expandedAction = undefined;
         this._actionCard = undefined;
@@ -4539,56 +6234,65 @@ class ActionCollection {
     }
 
     private expandShowCardAction(action: ShowCardAction, raiseEvent: boolean) {
-        for (let button of this.buttons) {
-            if (button.action !== action) {
-                button.state = ActionButtonState.Subdued;
+        let afterSelectedAction = false;
+
+        for (const renderedAction of this._renderedActions) {
+            // Remove actions after selected action from tabOrder if the actions are oriented horizontally, to skip focus directly to expanded card
+            if (
+                this._owner.hostConfig.actions.actionsOrientation == Enums.Orientation.Horizontal &&
+                afterSelectedAction
+            ) {
+                renderedAction.isFocusable = false;
             }
-            else {
-                button.state = ActionButtonState.Expanded;
+
+            if (renderedAction !== action) {
+                renderedAction.state = ActionButtonState.Subdued;
+            } else {
+                renderedAction.state = ActionButtonState.Expanded;
+
+                afterSelectedAction = true;
+
+                if (renderedAction.renderedElement) {
+                    renderedAction.renderedElement.onblur = (_e) => {
+                        for (const ra of this._renderedActions) {
+                            ra.isFocusable = true;
+                        }
+                    };
+                }
             }
         }
 
         this.showActionCard(
             action,
             !(this._owner.isAtTheVeryLeft() && this._owner.isAtTheVeryRight()),
-            raiseEvent);
+            raiseEvent
+        );
     }
 
-    private getParentContainer(): Container | undefined {
-        if (this._owner instanceof Container) {
-            return this._owner;
-        }
-        else {
-            return this._owner.getParentContainer();
-        }
-    }
-
-    private findActionButton(action: Action): ActionButton | undefined {
-        for (let actionButton of this.buttons) {
-            if (actionButton.action == action) {
-                return actionButton;
-            }
-        }
-
-        return undefined;
-    }
-
-    items: Action[] = [];
-    buttons: ActionButton[] = [];
+    private _items: Action[] = [];
+    private _overflowAction?: OverflowAction;
+    private _renderedActions: Action[] = [];
 
     constructor(owner: CardElement) {
         this._owner = owner;
     }
 
+    releaseDOMResources() {
+        for (let action of this._renderedActions) {
+            action.releaseDOMResources();
+        }
+    }
+
     actionExecuted(action: Action) {
         if (!(action instanceof ShowCardAction)) {
             this.collapseExpandedAction();
-        }
-        else {
+        } else {
             if (action === this._expandedAction) {
                 this.collapseExpandedAction();
-            }
-            else {
+            } else if (
+                this._owner.hostConfig.actions.showCard.actionMode ===
+                Enums.ShowCardActionMode.Inline
+            ) {
                 this.expandShowCardAction(action, true);
             }
         }
@@ -4598,12 +6302,20 @@ class ActionCollection {
         this.clear();
 
         if (Array.isArray(source)) {
-            for (let jsonAction of source) {
-                let action = context.parseAction(
+            for (const jsonAction of source) {
+                let forbiddenActions: string[] = [];
+
+                // If the action owner is a ContainerWithActions, we should check for forbidden actions
+                if (this._owner instanceof ContainerWithActions) {
+                    forbiddenActions = this._owner.getForbiddenActionNames();
+                }
+
+                const action = context.parseAction(
                     this._owner,
                     jsonAction,
-                    [],
-                    !this._owner.isDesignMode());
+                    forbiddenActions,
+                    !this._owner.isDesignMode()
+                );
 
                 if (action) {
                     this.addAction(action);
@@ -4613,13 +6325,21 @@ class ActionCollection {
     }
 
     toJSON(target: PropertyBag, propertyName: string, context: SerializationContext): any {
-        context.serializeArray(target, propertyName, this.items);
+        context.serializeArray(target, propertyName, this._items);
+    }
+
+    getActionAt(id: number): Action | undefined {
+        return this._items[id];
+    }
+
+    getActionCount(): number {
+        return this._items.length;
     }
 
     getActionById(id: string): Action | undefined {
         let result: Action | undefined = undefined;
 
-        for (let item of this.items) {
+        for (const item of this._items) {
             result = item.getActionById(id);
 
             if (result) {
@@ -4631,60 +6351,74 @@ class ActionCollection {
     }
 
     validateProperties(context: ValidationResults) {
-        if (this._owner.hostConfig.actions.maxActions && this.items.length > this._owner.hostConfig.actions.maxActions) {
+        if (
+            this._owner.hostConfig.actions.maxActions &&
+            this._items.length > this._owner.hostConfig.actions.maxActions
+        ) {
             context.addFailure(
                 this._owner,
                 Enums.ValidationEvent.TooManyActions,
-                Strings.errors.tooManyActions(this._owner.hostConfig.actions.maxActions));
+                Strings.errors.tooManyActions(this._owner.hostConfig.actions.maxActions)
+            );
         }
 
-        if (this.items.length > 0 && !this._owner.hostConfig.supportsInteractivity) {
+        if (this._items.length > 0 && !this._owner.hostConfig.supportsInteractivity) {
             context.addFailure(
                 this._owner,
                 Enums.ValidationEvent.InteractivityNotAllowed,
-                Strings.errors.interactivityNotAllowed());
+                Strings.errors.interactivityNotAllowed()
+            );
         }
 
-        for (let item of this.items) {
+        for (const item of this._items) {
             if (!this.isActionAllowed(item)) {
                 context.addFailure(
                     this._owner,
                     Enums.ValidationEvent.ActionTypeNotAllowed,
-                    Strings.errors.actionTypeNotAllowed(item.getJsonTypeName()));
+                    Strings.errors.actionTypeNotAllowed(item.getJsonTypeName())
+                );
             }
 
             item.internalValidateProperties(context);
         }
     }
 
-    render(orientation: Enums.Orientation, isDesignMode: boolean): HTMLElement | undefined {
+    render(orientation: Enums.Orientation): HTMLElement | undefined {
         // Cache hostConfig for better perf
-        let hostConfig = this._owner.hostConfig;
+        const hostConfig = this._owner.hostConfig;
 
         if (!hostConfig.supportsInteractivity) {
             return undefined;
         }
 
-        let element = document.createElement("div");
-        let maxActions = hostConfig.actions.maxActions ? Math.min(hostConfig.actions.maxActions, this.items.length) : this.items.length;
+        const element = document.createElement("div");
+        const maxActions = hostConfig.actions.maxActions
+            ? Math.min(hostConfig.actions.maxActions, this._items.length)
+            : this._items.length;
 
         this._actionCardContainer = document.createElement("div");
-        this._renderedActionCount = 0;
+        this._renderedActions = [];
 
-        if (hostConfig.actions.preExpandSingleShowCardAction && maxActions == 1 && this.items[0] instanceof ShowCardAction && this.isActionAllowed(this.items[0])) {
-            this.showActionCard(<ShowCardAction>this.items[0], true);
-            this._renderedActionCount = 1;
-        }
-        else {
-            let buttonStrip = document.createElement("div");
+        if (
+            hostConfig.actions.preExpandSingleShowCardAction &&
+            maxActions === 1 &&
+            this._items[0] instanceof ShowCardAction &&
+            this.isActionAllowed(this._items[0])
+        ) {
+            this.showActionCard(this._items[0], true);
+            this._renderedActions.push(this._items[0]);
+        } else {
+            const buttonStrip = document.createElement("div");
             buttonStrip.className = hostConfig.makeCssClassName("ac-actionSet");
             buttonStrip.style.display = "flex";
-            buttonStrip.setAttribute("role", "menubar");
 
-            if (orientation == Enums.Orientation.Horizontal) {
+            if (orientation === Enums.Orientation.Horizontal) {
                 buttonStrip.style.flexDirection = "row";
 
-                if (this._owner.horizontalAlignment && hostConfig.actions.actionAlignment != Enums.ActionAlignment.Stretch) {
+                if (
+                    this._owner.horizontalAlignment &&
+                    hostConfig.actions.actionAlignment !== Enums.ActionAlignment.Stretch
+                ) {
                     switch (this._owner.horizontalAlignment) {
                         case Enums.HorizontalAlignment.Center:
                             buttonStrip.style.justifyContent = "center";
@@ -4696,8 +6430,7 @@ class ActionCollection {
                             buttonStrip.style.justifyContent = "flex-start";
                             break;
                     }
-                }
-                else {
+                } else {
                     switch (hostConfig.actions.actionAlignment) {
                         case Enums.ActionAlignment.Center:
                             buttonStrip.style.justifyContent = "center";
@@ -4710,11 +6443,13 @@ class ActionCollection {
                             break;
                     }
                 }
-            }
-            else {
+            } else {
                 buttonStrip.style.flexDirection = "column";
 
-                if (this._owner.horizontalAlignment && hostConfig.actions.actionAlignment != Enums.ActionAlignment.Stretch) {
+                if (
+                    this._owner.horizontalAlignment &&
+                    hostConfig.actions.actionAlignment !== Enums.ActionAlignment.Stretch
+                ) {
                     switch (this._owner.horizontalAlignment) {
                         case Enums.HorizontalAlignment.Center:
                             buttonStrip.style.alignItems = "center";
@@ -4726,8 +6461,7 @@ class ActionCollection {
                             buttonStrip.style.alignItems = "flex-start";
                             break;
                     }
-                }
-                else {
+                } else {
                     switch (hostConfig.actions.actionAlignment) {
                         case Enums.ActionAlignment.Center:
                             buttonStrip.style.alignItems = "center";
@@ -4745,62 +6479,82 @@ class ActionCollection {
                 }
             }
 
-            let parentContainer = this.getParentContainer();
+            const allowedActions = this._items.filter(this.isActionAllowed.bind(this));
 
-            if (parentContainer) {
-                let parentContainerStyle = parentContainer.getEffectiveStyle();
+            let primaryActions: Action[] = [];
+            const secondaryActions: Action[] = [];
 
-                const allowedActions = this.items.filter(this.isActionAllowed.bind(this));
+            if (!this._owner.isDesignMode()) {
+                allowedActions.forEach((action) =>
+                    action.mode === Enums.ActionMode.Secondary
+                        ? secondaryActions.push(action)
+                        : primaryActions.push(action)
+                );
 
-                for (let i = 0; i < allowedActions.length; i++) {
-                    let actionButton = this.findActionButton(allowedActions[i]);
+                // If primaryActions.length > maxActions, extra actions are moved to overflow
+                const overflowPrimaryActions = primaryActions.splice(hostConfig.actions.maxActions);
 
-                    if (!actionButton) {
-                        actionButton = new ActionButton(allowedActions[i], parentContainerStyle);
-                        actionButton.onClick = (ab) => { ab.action.execute(); };
+                if (GlobalSettings.allowMoreThanMaxActionsInOverflowMenu) {
+                    secondaryActions.push(...overflowPrimaryActions);
+                }
 
-                        this.buttons.push(actionButton);
+                let shouldRenderOverflowActionButton = true;
+
+                if (secondaryActions.length > 0) {
+                    if (!this._overflowAction) {
+                        this._overflowAction = new OverflowAction(secondaryActions);
+                        this._overflowAction.setParent(this._owner);
+                        this._overflowAction["_actionCollection"] = this;
                     }
 
-                    actionButton.render();
+                    const isRootAction = this._owner instanceof AdaptiveCard && !this._owner.parent;
+                    shouldRenderOverflowActionButton = !raiseRenderOverflowActionsEvent(
+                        this._overflowAction,
+                        isRootAction
+                    );
+                }
 
-                    if (actionButton.action.renderedElement) {
-                        actionButton.action.renderedElement.setAttribute("aria-posinset", (i + 1).toString());
-                        actionButton.action.renderedElement.setAttribute("aria-setsize", allowedActions.length.toString());
-                        actionButton.action.renderedElement.setAttribute("role", "menuitem");
+                if (this._overflowAction && shouldRenderOverflowActionButton) {
+                    primaryActions.push(this._overflowAction);
+                }
+            } else {
+                primaryActions = allowedActions;
+            }
 
-                        if (hostConfig.actions.actionsOrientation == Enums.Orientation.Horizontal && hostConfig.actions.actionAlignment == Enums.ActionAlignment.Stretch) {
-                            actionButton.action.renderedElement.style.flex = "0 1 100%";
+            for (let i = 0; i < primaryActions.length; i++) {
+                const action = primaryActions[i];
+                action.render();
+
+                if (action.renderedElement) {
+                    if (
+                        hostConfig.actions.actionsOrientation === Enums.Orientation.Horizontal &&
+                        hostConfig.actions.actionAlignment === Enums.ActionAlignment.Stretch
+                    ) {
+                        action.renderedElement.style.flex = "0 1 100%";
+                    } else {
+                        action.renderedElement.style.flex = "0 1 auto";
+                    }
+
+                    buttonStrip.appendChild(action.renderedElement);
+
+                    this._renderedActions.push(action);
+
+                    if (i < primaryActions.length - 1 && hostConfig.actions.buttonSpacing > 0) {
+                        const spacer = document.createElement("div");
+
+                        if (orientation === Enums.Orientation.Horizontal) {
+                            spacer.style.flex = "0 0 auto";
+                            spacer.style.width = hostConfig.actions.buttonSpacing + "px";
+                        } else {
+                            spacer.style.height = hostConfig.actions.buttonSpacing + "px";
                         }
-                        else {
-                            actionButton.action.renderedElement.style.flex = "0 1 auto";
-                        }
 
-                        buttonStrip.appendChild(actionButton.action.renderedElement);
-
-                        this._renderedActionCount++;
-
-                        if (this._renderedActionCount >= hostConfig.actions.maxActions || i == this.items.length - 1) {
-                            break;
-                        }
-                        else if (hostConfig.actions.buttonSpacing > 0) {
-                            let spacer = document.createElement("div");
-
-                            if (orientation === Enums.Orientation.Horizontal) {
-                                spacer.style.flex = "0 0 auto";
-                                spacer.style.width = hostConfig.actions.buttonSpacing + "px";
-                            }
-                            else {
-                                spacer.style.height = hostConfig.actions.buttonSpacing + "px";
-                            }
-
-                            Utils.appendChild(buttonStrip, spacer);
-                        }
+                        Utils.appendChild(buttonStrip, spacer);
                     }
                 }
             }
 
-            let buttonStripContainer = document.createElement("div");
+            const buttonStripContainer = document.createElement("div");
             buttonStripContainer.style.overflow = "hidden";
             buttonStripContainer.appendChild(buttonStrip);
 
@@ -4809,15 +6563,15 @@ class ActionCollection {
 
         Utils.appendChild(element, this._actionCardContainer);
 
-        for (let button of this.buttons) {
-            if (button.state == ActionButtonState.Expanded) {
-                this.expandShowCardAction(<ShowCardAction>button.action, false);
+        for (const renderedAction of this._renderedActions) {
+            if (renderedAction.state === ActionButtonState.Expanded) {
+                this.expandShowCardAction(<ShowCardAction>renderedAction, false);
 
                 break;
             }
         }
 
-        return this._renderedActionCount > 0 ? element : undefined;
+        return this._renderedActions.length > 0 ? element : undefined;
     }
 
     addAction(action: Action) {
@@ -4825,37 +6579,36 @@ class ActionCollection {
             throw new Error("The action parameter cannot be null.");
         }
 
-        if ((!action.parent || action.parent === this._owner) && this.items.indexOf(action) < 0) {
-            this.items.push(action);
+        if ((!action.parent || action.parent === this._owner) && this._items.indexOf(action) < 0) {
+            this._items.push(action);
 
             if (!action.parent) {
                 action.setParent(this._owner);
             }
 
             action["_actionCollection"] = this;
-        }
-        else {
+        } else {
             throw new Error(Strings.errors.actionAlreadyParented());
         }
     }
 
     removeAction(action: Action): boolean {
-        if (this.expandedAction && this._expandedAction == action) {
+        if (this.expandedAction && this._expandedAction === action) {
             this.collapseExpandedAction();
         }
 
-        let actionIndex = this.items.indexOf(action);
+        const actionIndex = this._items.indexOf(action);
 
         if (actionIndex >= 0) {
-            this.items.splice(actionIndex, 1);
+            this._items.splice(actionIndex, 1);
 
             action.setParent(undefined);
 
             action["_actionCollection"] = undefined;
 
-            for (let i = 0; i < this.buttons.length; i++) {
-                if (this.buttons[i].action == action) {
-                    this.buttons.splice(i, 1);
+            for (let i = 0; i < this._renderedActions.length; i++) {
+                if (this._renderedActions[i] === action) {
+                    this._renderedActions.splice(i, 1);
 
                     break;
                 }
@@ -4868,19 +6621,17 @@ class ActionCollection {
     }
 
     clear() {
-        this.items = [];
-        this.buttons = [];
-
+        this._items = [];
+        this._renderedActions = [];
         this._expandedAction = undefined;
-        this._renderedActionCount = 0;
     }
 
     getAllInputs(processActions: boolean = true): Input[] {
         let result: Input[] = [];
 
         if (processActions) {
-            for (let action of this.items) {
-                result = result.concat(action.getAllInputs());
+            for (const action of this._items) {
+                result.push(...action.getAllInputs());
             }
         }
 
@@ -4890,15 +6641,15 @@ class ActionCollection {
     getResourceInformation(): IResourceInformation[] {
         let result: IResourceInformation[] = [];
 
-        for (let action of this.items) {
-            result = result.concat(action.getResourceInformation());
+        for (const action of this._items) {
+            result.push(...action.getResourceInformation());
         }
 
         return result;
     }
 
     get renderedActionCount(): number {
-        return this._renderedActionCount;
+        return this._renderedActions.length;
     }
 
     get expandedAction(): ShowCardAction | undefined {
@@ -4909,7 +6660,11 @@ class ActionCollection {
 export class ActionSet extends CardElement {
     //#region Schema
 
-    static readonly orientationProperty = new EnumProperty(Versions.v1_1, "orientation", Enums.Orientation);
+    static readonly orientationProperty = new EnumProperty(
+        Versions.v1_1,
+        "orientation",
+        Enums.Orientation
+    );
 
     @property(ActionSet.orientationProperty)
     orientation?: Enums.Orientation;
@@ -4931,7 +6686,11 @@ export class ActionSet extends CardElement {
     }
 
     protected internalRender(): HTMLElement | undefined {
-        return this._actionCollection.render(this.orientation !== undefined ? this.orientation : this.hostConfig.actions.actionsOrientation, this.isDesignMode());
+        return this._actionCollection.render(
+            this.orientation !== undefined
+                ? this.orientation
+                : this.hostConfig.actions.actionsOrientation
+        );
     }
 
     constructor() {
@@ -4940,15 +6699,22 @@ export class ActionSet extends CardElement {
         this._actionCollection = new ActionCollection(this);
     }
 
+    releaseDOMResources() {
+        super.releaseDOMResources();
+
+        this._actionCollection.releaseDOMResources();
+    }
+
     isBleedingAtBottom(): boolean {
-        if (this._actionCollection.renderedActionCount == 0) {
+        if (this._actionCollection.renderedActionCount === 0) {
             return super.isBleedingAtBottom();
-        }
-        else {
-            if (this._actionCollection.items.length == 1) {
-                return this._actionCollection.expandedAction !== undefined && !this.hostConfig.actions.preExpandSingleShowCardAction;
-            }
-            else {
+        } else {
+            if (this._actionCollection.getActionCount() === 1) {
+                return (
+                    this._actionCollection.expandedAction !== undefined &&
+                    !this.hostConfig.actions.preExpandSingleShowCardAction
+                );
+            } else {
                 return this._actionCollection.expandedAction !== undefined;
             }
         }
@@ -4959,22 +6725,35 @@ export class ActionSet extends CardElement {
     }
 
     getActionCount(): number {
-        return this._actionCollection.items.length;
+        return this._actionCollection.getActionCount();
     }
 
     getActionAt(index: number): Action | undefined {
         if (index >= 0 && index < this.getActionCount()) {
-            return this._actionCollection.items[index];
-        }
-        else {
+            return this._actionCollection.getActionAt(index);
+        } else {
             return super.getActionAt(index);
         }
     }
 
     getActionById(id: string): Action | undefined {
-        let result: Action | undefined = this._actionCollection.getActionById(id);
+        const result: Action | undefined = this._actionCollection.getActionById(id);
 
         return result ? result : super.getActionById(id);
+    }
+
+    getAllActions(): Action[] {
+        const result = super.getAllActions();
+
+        for (let i = 0; i < this.getActionCount(); i++) {
+            let action = this.getActionAt(i);
+
+            if (action) {
+                result.push(action);
+            }
+        }
+
+        return result;
     }
 
     internalValidateProperties(context: ValidationResults) {
@@ -4995,32 +6774,77 @@ export class ActionSet extends CardElement {
         return this._actionCollection.getResourceInformation();
     }
 
+    /**
+     * @inheritdoc
+     */
+    findDOMNodeOwner(node: Node): CardObject | undefined {
+        let target: CardObject | undefined = undefined;
+
+        for (let i = 0; i < this.getActionCount(); i++) {
+            const action = this.getActionAt(i);
+
+            if (action) {
+                // recur through each Action
+                target = action.findDOMNodeOwner(node);
+
+                if (target) {
+                    return target;
+                }
+            }
+        }
+
+        // if not found in any Action, defer to parent implementation
+        return super.findDOMNodeOwner(node);
+    }
+
+    getElementById(id: string): CardElement | undefined {
+        let result = super.getElementById(id);
+
+        if (!result) {
+            result = this.getElementByIdFromAction(id);
+        }
+
+        return result;
+    }
+
     get isInteractive(): boolean {
         return true;
+    }
+}
+
+export class ContainerStyleProperty extends ValueSetProperty {
+    constructor(
+        readonly targetVersion: Version,
+        readonly name: string,
+        readonly defaultValue?: string,
+        readonly onGetInitialValue?: (sender: SerializableObject) => string
+    ) {
+        super(
+            targetVersion,
+            name,
+            [
+                { value: Enums.ContainerStyle.Default },
+                { value: Enums.ContainerStyle.Emphasis },
+                { targetVersion: Versions.v1_2, value: Enums.ContainerStyle.Accent },
+                { targetVersion: Versions.v1_2, value: Enums.ContainerStyle.Good },
+                { targetVersion: Versions.v1_2, value: Enums.ContainerStyle.Attention },
+                { targetVersion: Versions.v1_2, value: Enums.ContainerStyle.Warning }
+            ],
+            defaultValue,
+            onGetInitialValue
+        );
     }
 }
 
 export abstract class StylableCardElementContainer extends CardElementContainer {
     //#region Schema
 
-    static readonly styleProperty = new ValueSetProperty(
-        Versions.v1_0,
-        "style",
-        [
-            { value: Enums.ContainerStyle.Default },
-            { value: Enums.ContainerStyle.Emphasis },
-            { targetVersion: Versions.v1_2, value: Enums.ContainerStyle.Accent },
-            { targetVersion: Versions.v1_2, value: Enums.ContainerStyle.Good },
-            { targetVersion: Versions.v1_2, value: Enums.ContainerStyle.Attention },
-            { targetVersion: Versions.v1_2, value: Enums.ContainerStyle.Warning }
-        ]);
-    static readonly bleedProperty = new BoolProperty(Versions.v1_2, "bleed", false);
-    static readonly minHeightProperty = new PixelSizeProperty(Versions.v1_2, "minHeight");
+    static readonly styleProperty = new ContainerStyleProperty(Versions.v1_0, "style");
 
     @property(StylableCardElementContainer.styleProperty)
     get style(): string | undefined {
         if (this.allowCustomStyle) {
-            let style = this.getValue(StylableCardElementContainer.styleProperty);
+            const style = this.getValue(StylableCardElementContainer.styleProperty);
 
             if (style && this.hostConfig.containerStyles.getStyleByName(style)) {
                 return style;
@@ -5034,30 +6858,32 @@ export abstract class StylableCardElementContainer extends CardElementContainer 
         this.setValue(StylableCardElementContainer.styleProperty, value);
     }
 
-    @property(StylableCardElementContainer.bleedProperty)
-    private _bleed: boolean = false;
-
-    @property(StylableCardElementContainer.minHeightProperty)
-    minPixelHeight?: number;
-
     //#endregion
 
-    protected adjustRenderedElementSize(renderedElement: HTMLElement) {
-        super.adjustRenderedElementSize(renderedElement);
+    protected get allowCustomStyle(): boolean {
+        return true;
+    }
 
-        if (this.minPixelHeight) {
-            renderedElement.style.minHeight = this.minPixelHeight + "px";
-        }
+    protected get hasExplicitStyle(): boolean {
+        return this.getValue(StylableCardElementContainer.styleProperty) !== undefined;
+    }
+
+    protected applyBorder() {
+        // No border in base implementation
     }
 
     protected applyBackground() {
         if (this.renderedElement) {
-            let styleDefinition = this.hostConfig.containerStyles.getStyleByName(this.style, this.hostConfig.containerStyles.getStyleByName(this.defaultStyle));
+            const styleDefinition = this.hostConfig.containerStyles.getStyleByName(
+                this.style,
+                this.hostConfig.containerStyles.getStyleByName(this.defaultStyle)
+            );
 
             if (styleDefinition.backgroundColor) {
-                const bgColor = <string>Utils.stringToCssColor(styleDefinition.backgroundColor);
-                this.renderedElement.style.backgroundColor = bgColor;
-                this.renderedElement.style.border = "1px solid " + bgColor;
+                const bgColor = Utils.stringToCssColor(styleDefinition.backgroundColor);
+                if (bgColor) {
+                    this.renderedElement.style.backgroundColor = bgColor;
+                }
             }
         }
     }
@@ -5072,7 +6898,9 @@ export abstract class StylableCardElementContainer extends CardElementContainer 
         let physicalPadding = new SpacingDefinition();
 
         if (this.getEffectivePadding()) {
-            physicalPadding = this.hostConfig.paddingDefinitionToSpacingDefinition(this.getEffectivePadding());
+            physicalPadding = this.hostConfig.paddingDefinitionToSpacingDefinition(
+                this.getEffectivePadding()
+            );
         }
 
         this.renderedElement.style.paddingTop = physicalPadding.top + "px";
@@ -5082,11 +6910,12 @@ export abstract class StylableCardElementContainer extends CardElementContainer 
 
         if (this.isBleeding()) {
             // Bleed into the first parent that does have padding
-            let padding = new PaddingDefinition();
+            const padding = new PaddingDefinition();
 
             this.getImmediateSurroundingPadding(padding);
 
-            let surroundingPadding = this.hostConfig.paddingDefinitionToSpacingDefinition(padding);
+            const surroundingPadding =
+                this.hostConfig.paddingDefinitionToSpacingDefinition(padding);
 
             this.renderedElement.style.marginRight = "-" + surroundingPadding.right + "px";
             this.renderedElement.style.marginLeft = "-" + surroundingPadding.left + "px";
@@ -5096,32 +6925,50 @@ export abstract class StylableCardElementContainer extends CardElementContainer 
                 this.renderedElement.style.marginBottom = "-" + surroundingPadding.bottom + "px";
             }
 
-            if (this.separatorElement && this.separatorOrientation == Enums.Orientation.Horizontal) {
+            if (
+                this.separatorElement &&
+                this.separatorOrientation === Enums.Orientation.Horizontal
+            ) {
                 this.separatorElement.style.marginLeft = "-" + surroundingPadding.left + "px";
                 this.separatorElement.style.marginRight = "-" + surroundingPadding.right + "px";
             }
-        }
-        else {
+        } else {
             this.renderedElement.style.marginRight = "0";
             this.renderedElement.style.marginLeft = "0";
             this.renderedElement.style.marginTop = "0";
             this.renderedElement.style.marginBottom = "0";
 
-            if (this.separatorElement) {
+            if (
+                this.separatorElement &&
+                this.separatorOrientation === Enums.Orientation.Horizontal
+            ) {
                 this.separatorElement.style.marginRight = "0";
                 this.separatorElement.style.marginLeft = "0";
             }
         }
     }
 
-    protected getHasBackground(): boolean {
+    protected getHasBackground(ignoreBackgroundImages: boolean = false): boolean {
         let currentElement: CardElement | undefined = this.parent;
 
         while (currentElement) {
-            let currentElementHasBackgroundImage = currentElement instanceof Container ? currentElement.backgroundImage.isValid() : false;
+            let currentElementHasBackgroundImage: boolean = false;
+
+            if (ignoreBackgroundImages) {
+                currentElementHasBackgroundImage = false;
+            } else {
+                currentElementHasBackgroundImage =
+                    currentElement instanceof Container
+                        ? currentElement.backgroundImage.isValid()
+                        : false;
+            }
 
             if (currentElement instanceof StylableCardElementContainer) {
-                if (this.hasExplicitStyle && (currentElement.getEffectiveStyle() != this.getEffectiveStyle() || currentElementHasBackgroundImage)) {
+                if (
+                    this.hasExplicitStyle &&
+                    (currentElement.getEffectiveStyle() !== this.getEffectiveStyle() ||
+                        currentElementHasBackgroundImage)
+                ) {
                     return true;
                 }
             }
@@ -5133,12 +6980,73 @@ export abstract class StylableCardElementContainer extends CardElementContainer 
     }
 
     protected getDefaultPadding(): PaddingDefinition {
-        return this.getHasBackground() ?
-            new PaddingDefinition(
-                Enums.Spacing.Padding,
-                Enums.Spacing.Padding,
-                Enums.Spacing.Padding,
-                Enums.Spacing.Padding) : super.getDefaultPadding();
+        return this.getHasBackground() || this.getHasBorder()
+            ? new PaddingDefinition(
+                  Enums.Spacing.Padding,
+                  Enums.Spacing.Padding,
+                  Enums.Spacing.Padding,
+                  Enums.Spacing.Padding
+              )
+            : super.getDefaultPadding();
+    }
+
+    internalValidateProperties(context: ValidationResults) {
+        super.internalValidateProperties(context);
+
+        const explicitStyle = this.getValue(StylableCardElementContainer.styleProperty);
+
+        if (explicitStyle !== undefined) {
+            const styleDefinition = this.hostConfig.containerStyles.getStyleByName(explicitStyle);
+
+            if (!styleDefinition) {
+                context.addFailure(
+                    this,
+                    Enums.ValidationEvent.InvalidPropertyValue,
+                    Strings.errors.invalidPropertyValue(explicitStyle, "style")
+                );
+            }
+        }
+    }
+
+    render(): HTMLElement | undefined {
+        const renderedElement = super.render();
+
+        if (renderedElement && this.getHasBackground()) {
+            this.applyBackground();
+        }
+
+        this.applyBorder();
+
+        return renderedElement;
+    }
+
+    getEffectiveStyle(): string {
+        const effectiveStyle = this.style;
+
+        return effectiveStyle ? effectiveStyle : super.getEffectiveStyle();
+    }
+}
+
+export abstract class ContainerBase extends StylableCardElementContainer {
+    //#region Schema
+
+    static readonly bleedProperty = new BoolProperty(Versions.v1_2, "bleed", false);
+    static readonly minHeightProperty = new PixelSizeProperty(Versions.v1_2, "minHeight");
+
+    @property(ContainerBase.bleedProperty)
+    private _bleed: boolean = false;
+
+    @property(ContainerBase.minHeightProperty)
+    minPixelHeight?: number;
+
+    //#endregion
+
+    protected adjustRenderedElementSize(renderedElement: HTMLElement) {
+        super.adjustRenderedElementSize(renderedElement);
+
+        if (this.minPixelHeight) {
+            renderedElement.style.minHeight = this.minPixelHeight + "px";
+        }
     }
 
     protected getHasExpandedAction(): boolean {
@@ -5157,49 +7065,8 @@ export abstract class StylableCardElementContainer extends CardElementContainer 
         return 0;
     }
 
-    protected get hasExplicitStyle(): boolean {
-        return this.getValue(StylableCardElementContainer.styleProperty) !== undefined;
-    }
-
-    protected get allowCustomStyle(): boolean {
-        return true;
-    }
-
     isBleeding(): boolean {
-		return (this.getHasBackground() || this.hostConfig.alwaysAllowBleed) && this.getBleed();
-    }
-
-    internalValidateProperties(context: ValidationResults) {
-        super.internalValidateProperties(context);
-
-        let explicitStyle = this.getValue(StylableCardElementContainer.styleProperty);
-
-        if (explicitStyle !== undefined) {
-            let styleDefinition = this.hostConfig.containerStyles.getStyleByName(explicitStyle);
-
-            if (!styleDefinition) {
-                context.addFailure(
-                    this,
-                    Enums.ValidationEvent.InvalidPropertyValue,
-                    Strings.errors.invalidPropertyValue(explicitStyle, "style"));
-            }
-        }
-    }
-
-    render(): HTMLElement | undefined {
-        let renderedElement = super.render();
-
-        if (renderedElement && this.getHasBackground()) {
-            this.applyBackground();
-        }
-
-        return renderedElement;
-    }
-
-    getEffectiveStyle(): string {
-        let effectiveStyle = this.style;
-
-        return effectiveStyle ? effectiveStyle : super.getEffectiveStyle();
+        return (this.getHasBackground() || this.hostConfig.alwaysAllowBleed) && this.getBleed();
     }
 }
 
@@ -5207,9 +7074,24 @@ export class BackgroundImage extends SerializableObject {
     //#region Schema
 
     static readonly urlProperty = new StringProperty(Versions.v1_0, "url");
-    static readonly fillModeProperty = new EnumProperty(Versions.v1_2, "fillMode", Enums.FillMode, Enums.FillMode.Cover);
-    static readonly horizontalAlignmentProperty = new EnumProperty(Versions.v1_2, "horizontalAlignment", Enums.HorizontalAlignment, Enums.HorizontalAlignment.Left);
-    static readonly verticalAlignmentProperty = new EnumProperty(Versions.v1_2, "verticalAlignment", Enums.VerticalAlignment, Enums.VerticalAlignment.Top);
+    static readonly fillModeProperty = new EnumProperty(
+        Versions.v1_2,
+        "fillMode",
+        Enums.FillMode,
+        Enums.FillMode.Cover
+    );
+    static readonly horizontalAlignmentProperty = new EnumProperty(
+        Versions.v1_2,
+        "horizontalAlignment",
+        Enums.HorizontalAlignment,
+        Enums.HorizontalAlignment.Left
+    );
+    static readonly verticalAlignmentProperty = new EnumProperty(
+        Versions.v1_2,
+        "verticalAlignment",
+        Enums.VerticalAlignment,
+        Enums.VerticalAlignment.Top
+    );
 
     @property(BackgroundImage.urlProperty)
     url?: string;
@@ -5233,15 +7115,17 @@ export class BackgroundImage extends SerializableObject {
         if (typeof source === "string") {
             this.resetDefaultValues();
             this.url = source;
-        }
-        else {
+        } else {
             return super.internalParse(source, context);
         }
     }
 
     apply(element: CardElement) {
         if (this.url && element.renderedElement) {
-            element.renderedElement.style.backgroundImage = "url('" + element.preProcessPropertyValue(BackgroundImage.urlProperty, this.url) + "')";
+            element.renderedElement.style.backgroundImage =
+                "url('" +
+                element.preProcessPropertyValue(BackgroundImage.urlProperty, this.url) +
+                "')";
 
             switch (this.fillMode) {
                 case Enums.FillMode.Repeat:
@@ -5261,6 +7145,8 @@ export class BackgroundImage extends SerializableObject {
             }
 
             switch (this.horizontalAlignment) {
+                case Enums.HorizontalAlignment.Left:
+                    break;
                 case Enums.HorizontalAlignment.Center:
                     element.renderedElement.style.backgroundPositionX = "center";
                     break;
@@ -5270,6 +7156,8 @@ export class BackgroundImage extends SerializableObject {
             }
 
             switch (this.verticalAlignment) {
+                case Enums.VerticalAlignment.Top:
+                    break;
                 case Enums.VerticalAlignment.Center:
                     element.renderedElement.style.backgroundPositionY = "center";
                     break;
@@ -5285,14 +7173,18 @@ export class BackgroundImage extends SerializableObject {
     }
 }
 
-export class Container extends StylableCardElementContainer {
+export class Container extends ContainerBase {
     //#region Schema
-
     static readonly backgroundImageProperty = new SerializableObjectProperty(
         Versions.v1_0,
         "backgroundImage",
-        BackgroundImage);
-    static readonly verticalContentAlignmentProperty = new EnumProperty(Versions.v1_1, "verticalContentAlignment", Enums.VerticalAlignment, Enums.VerticalAlignment.Top);
+        BackgroundImage
+    );
+    static readonly verticalContentAlignmentProperty = new EnumProperty(
+        Versions.v1_1,
+        "verticalContentAlignment",
+        Enums.VerticalAlignment
+    );
     static readonly rtlProperty = new BoolProperty(Versions.v1_0, "rtl");
 
     @property(Container.backgroundImageProperty)
@@ -5301,7 +7193,7 @@ export class Container extends StylableCardElementContainer {
     }
 
     @property(Container.verticalContentAlignmentProperty)
-    verticalContentAlignment: Enums.VerticalAlignment = Enums.VerticalAlignment.Top;
+    verticalContentAlignment?: Enums.VerticalAlignment;
 
     @property(Container.rtlProperty)
     rtl?: boolean;
@@ -5311,32 +7203,22 @@ export class Container extends StylableCardElementContainer {
     private _items: CardElement[] = [];
     private _renderedItems: CardElement[] = [];
 
-    private insertItemAt(
-        item: CardElement,
-        index: number,
-        forceInsert: boolean) {
+    protected insertItemAt(item: CardElement, index: number, forceInsert: boolean) {
         if (!item.parent || forceInsert) {
             if (item.isStandalone) {
                 if (index < 0 || index >= this._items.length) {
                     this._items.push(item);
-                }
-                else {
+                } else {
                     this._items.splice(index, 0, item);
                 }
 
                 item.setParent(this);
-            }
-            else {
+            } else {
                 throw new Error(Strings.errors.elementTypeNotStandalone(item.getJsonTypeName()));
             }
-        }
-        else {
+        } else {
             throw new Error(Strings.errors.elementAlreadyParented());
         }
-    }
-
-    protected supportsExcplitiHeight(): boolean {
-        return true;
     }
 
     protected getItemsCollectionPropertyName(): string {
@@ -5351,17 +7233,21 @@ export class Container extends StylableCardElementContainer {
         super.applyBackground();
     }
 
+    protected applyRTL(element: HTMLElement) {
+        if (this.rtl !== undefined) {
+            element.dir = this.rtl ? "rtl" : "ltr";
+        }
+    }
+
     protected internalRender(): HTMLElement | undefined {
         this._renderedItems = [];
 
         // Cache hostConfig to avoid walking the parent hierarchy several times
-        let hostConfig = this.hostConfig;
+        const hostConfig = this.hostConfig;
 
-        let element = document.createElement("div");
+        const element = document.createElement("div");
 
-        if (this.rtl !== undefined && this.rtl) {
-            element.dir = "rtl";
-        }
+        this.applyRTL(element);
 
         element.classList.add(hostConfig.makeCssClassName("ac-container"));
         element.style.display = "flex";
@@ -5379,10 +7265,10 @@ export class Container extends StylableCardElementContainer {
             //
             // See the "Browser Rendering Notes" section of this answer:
             // https://stackoverflow.com/questions/36247140/why-doesnt-flex-item-shrink-past-content-size
-            element.style.minHeight = '-webkit-min-content';
+            element.style.minHeight = "-webkit-min-content";
         }
 
-        switch (this.verticalContentAlignment) {
+        switch (this.getEffectiveVerticalContentAlignment()) {
             case Enums.VerticalAlignment.Center:
                 element.style.justifyContent = "center";
                 break;
@@ -5395,8 +7281,8 @@ export class Container extends StylableCardElementContainer {
         }
 
         if (this._items.length > 0) {
-            for (let item of this._items) {
-                let renderedItem = this.isElementAllowed(item) ? item.render() : undefined;
+            for (const item of this._items) {
+                const renderedItem = this.isElementAllowed(item) ? item.render() : undefined;
 
                 if (renderedItem) {
                     if (this._renderedItems.length > 0 && item.separatorElement) {
@@ -5410,10 +7296,9 @@ export class Container extends StylableCardElementContainer {
                     this._renderedItems.push(item);
                 }
             }
-        }
-        else {
+        } else {
             if (this.isDesignMode()) {
-                let placeholderElement = this.createPlaceholderElement();
+                const placeholderElement = this.createPlaceholderElement();
                 placeholderElement.style.width = "100%";
                 placeholderElement.style.height = "100%";
 
@@ -5427,15 +7312,15 @@ export class Container extends StylableCardElementContainer {
     protected truncateOverflow(maxHeight: number): boolean {
         if (this.renderedElement) {
             // Add 1 to account for rounding differences between browsers
-            let boundary = this.renderedElement.offsetTop + maxHeight + 1;
+            const boundary = this.renderedElement.offsetTop + maxHeight + 1;
 
-            let handleElement = (cardElement: CardElement) => {
-                let elt = cardElement.renderedElement;
+            const handleElement = (cardElement: CardElement) => {
+                const elt = cardElement.renderedElement;
 
                 if (elt) {
                     switch (Utils.getFitStatus(elt, boundary)) {
                         case Enums.ContainerFitStatus.FullyInContainer:
-                            let sizeChanged = cardElement['resetOverflow']();
+                            const sizeChanged = cardElement["resetOverflow"]();
                             // If the element's size changed after resetting content,
                             // we have to check if it still fits fully in the card
                             if (sizeChanged) {
@@ -5443,17 +7328,17 @@ export class Container extends StylableCardElementContainer {
                             }
                             break;
                         case Enums.ContainerFitStatus.Overflowing:
-                            let maxHeight = boundary - elt.offsetTop;
-                            cardElement['handleOverflow'](maxHeight);
+                            const containerMaxHeight = boundary - elt.offsetTop;
+                            cardElement["handleOverflow"](containerMaxHeight);
                             break;
                         case Enums.ContainerFitStatus.FullyOutOfContainer:
-                            cardElement['handleOverflow'](0);
+                            cardElement["handleOverflow"](0);
                             break;
                     }
                 }
             };
 
-            for (let item of this._items) {
+            for (const item of this._items) {
                 handleElement(item);
             }
 
@@ -5464,13 +7349,15 @@ export class Container extends StylableCardElementContainer {
     }
 
     protected undoOverflowTruncation() {
-        for (let item of this._items) {
-            item['resetOverflow']();
+        for (const item of this._items) {
+            item["resetOverflow"]();
         }
     }
 
-    protected getHasBackground(): boolean {
-        return this.backgroundImage.isValid() || super.getHasBackground();
+    protected getHasBackground(ignoreBackgroundImages: boolean = false): boolean {
+        let result = ignoreBackgroundImages ? false : this.backgroundImage.isValid();
+
+        return result || super.getHasBackground(ignoreBackgroundImages);
     }
 
     protected internalParse(source: any, context: SerializationContext) {
@@ -5482,8 +7369,13 @@ export class Container extends StylableCardElementContainer {
         let jsonItems = source[this.getItemsCollectionPropertyName()];
 
         if (Array.isArray(jsonItems)) {
-            for (let item of jsonItems) {
-                let element = context.parseElement(this, item, !this.isDesignMode());
+            for (const item of jsonItems) {
+                const element = context.parseElement(
+                    this,
+                    item,
+                    this.forbiddenChildElements(),
+                    !this.isDesignMode()
+                );
 
                 if (element) {
                     this.insertItemAt(element, -1, true);
@@ -5495,11 +7387,36 @@ export class Container extends StylableCardElementContainer {
     protected internalToJSON(target: PropertyBag, context: SerializationContext) {
         super.internalToJSON(target, context);
 
-        context.serializeArray(target, this.getItemsCollectionPropertyName(), this._items);
+        const collectionPropertyName = this.getItemsCollectionPropertyName();
+
+        context.serializeArray(target, collectionPropertyName, this._items);
     }
 
     protected get isSelectable(): boolean {
         return true;
+    }
+
+    getEffectivePadding(): PaddingDefinition {
+        if (
+            GlobalSettings.removePaddingFromContainersWithBackgroundImage &&
+            !this.getHasBackground(true)
+        ) {
+            return new PaddingDefinition();
+        }
+
+        return super.getEffectivePadding();
+    }
+
+    getEffectiveVerticalContentAlignment(): Enums.VerticalAlignment {
+        if (this.verticalContentAlignment !== undefined) {
+            return this.verticalContentAlignment;
+        }
+
+        const parentContainer = this.getParentContainer();
+
+        return parentContainer
+            ? parentContainer.getEffectiveVerticalContentAlignment()
+            : Enums.VerticalAlignment.Top;
     }
 
     getItemCount(): number {
@@ -5512,11 +7429,11 @@ export class Container extends StylableCardElementContainer {
 
     getFirstVisibleRenderedItem(): CardElement | undefined {
         if (this.renderedElement && this._renderedItems && this._renderedItems.length > 0) {
-            for (let item of this._renderedItems) {
+            for (const item of this._renderedItems) {
                 if (item.isVisible) {
                     return item;
                 }
-            };
+            }
         }
 
         return undefined;
@@ -5539,11 +7456,11 @@ export class Container extends StylableCardElementContainer {
     }
 
     isFirstElement(element: CardElement): boolean {
-        let designMode = this.isDesignMode();
+        const designMode = this.isDesignMode();
 
-        for (let item of this._items) {
+        for (const item of this._items) {
             if (item.isVisible || designMode) {
-                return item == element;
+                return item === element;
             }
         }
 
@@ -5551,11 +7468,11 @@ export class Container extends StylableCardElementContainer {
     }
 
     isLastElement(element: CardElement): boolean {
-        let designMode = this.isDesignMode();
+        const designMode = this.isDesignMode();
 
         for (let i = this._items.length - 1; i >= 0; i--) {
             if (this._items[i].isVisible || designMode) {
-                return this._items[i] == element;
+                return this._items[i] === element;
             }
         }
 
@@ -5565,24 +7482,31 @@ export class Container extends StylableCardElementContainer {
     isRtl(): boolean {
         if (this.rtl !== undefined) {
             return this.rtl;
-        }
-        else {
-            let parentContainer = this.getParentContainer();
+        } else {
+            const parentContainer = this.getParentContainer();
 
             return parentContainer ? parentContainer.isRtl() : false;
         }
     }
 
     isBleedingAtTop(): boolean {
-        let firstRenderedItem = this.getFirstVisibleRenderedItem();
+        const firstRenderedItem = this.getFirstVisibleRenderedItem();
 
-        return this.isBleeding() || (firstRenderedItem ? firstRenderedItem.isBleedingAtTop() : false);
+        return (
+            this.isBleeding() || (firstRenderedItem ? firstRenderedItem.isBleedingAtTop() : false)
+        );
     }
 
     isBleedingAtBottom(): boolean {
-        let lastRenderedItem = this.getLastVisibleRenderedItem();
+        const lastRenderedItem = this.getLastVisibleRenderedItem();
 
-        return this.isBleeding() || (lastRenderedItem ? lastRenderedItem.isBleedingAtBottom() && lastRenderedItem.getEffectiveStyle() == this.getEffectiveStyle() : false);
+        return (
+            this.isBleeding() ||
+            (lastRenderedItem
+                ? lastRenderedItem.isBleedingAtBottom() &&
+                  lastRenderedItem.getEffectiveStyle() === this.getEffectiveStyle()
+                : false)
+        );
     }
 
     indexOf(cardElement: CardElement): number {
@@ -5602,7 +7526,7 @@ export class Container extends StylableCardElementContainer {
     }
 
     removeItem(item: CardElement): boolean {
-        let itemIndex = this._items.indexOf(item);
+        const itemIndex = this._items.indexOf(item);
 
         if (itemIndex >= 0) {
             this._items.splice(itemIndex, 1);
@@ -5623,15 +7547,14 @@ export class Container extends StylableCardElementContainer {
     }
 
     getResourceInformation(): IResourceInformation[] {
-        let result = super.getResourceInformation();
+        const result = super.getResourceInformation();
 
         if (this.backgroundImage.isValid()) {
-            result.push(
-                {
-                    url: <string>this.backgroundImage.url,
-                    mimeType: "image"
-                }
-            );
+            result.push({
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- validated by `isValid()`
+                url: this.backgroundImage.url!,
+                mimeType: "image"
+            });
         }
 
         return result;
@@ -5646,7 +7569,7 @@ export class Container extends StylableCardElementContainer {
             }
 
             if (!result) {
-                for (let item of this._items) {
+                for (const item of this._items) {
                     result = item.getActionById(id);
 
                     if (result) {
@@ -5692,30 +7615,34 @@ export class Column extends Container {
     static readonly widthProperty = new CustomProperty<ColumnWidth>(
         Versions.v1_0,
         "width",
-        (sender: SerializableObject, property: PropertyDefinition, source: PropertyBag, context: BaseSerializationContext) => {
-            let result: ColumnWidth = property.defaultValue;
-            let value = source[property.name];
+        (
+            sender: SerializableObject,
+            prop: PropertyDefinition,
+            source: PropertyBag,
+            context: BaseSerializationContext
+        ) => {
+            let result: ColumnWidth = prop.defaultValue;
+            const value = source[prop.name];
             let invalidWidth = false;
 
             if (typeof value === "number" && !isNaN(value)) {
                 result = new SizeAndUnit(value, Enums.SizeUnit.Weight);
-            }
-            else if (value === "auto" || value === "stretch") {
+            } else if (value === "auto" || value === "stretch") {
                 result = value;
-            }
-            else if (typeof value === "string") {
+            } else if (typeof value === "string") {
                 try {
                     result = SizeAndUnit.parse(value);
 
-                    if (result.unit === Enums.SizeUnit.Pixel && property.targetVersion.compareTo(context.targetVersion) > 0) {
+                    if (
+                        result.unit === Enums.SizeUnit.Pixel &&
+                        prop.targetVersion.compareTo(context.targetVersion) > 0
+                    ) {
                         invalidWidth = true;
                     }
-                }
-                catch (e) {
+                } catch (e) {
                     invalidWidth = true;
                 }
-            }
-            else {
+            } else {
                 invalidWidth = true;
             }
 
@@ -5723,27 +7650,33 @@ export class Column extends Container {
                 context.logParseEvent(
                     sender,
                     Enums.ValidationEvent.InvalidPropertyValue,
-                    Strings.errors.invalidColumnWidth(value));
+                    Strings.errors.invalidColumnWidth(value)
+                );
 
                 result = "auto";
             }
 
             return result;
         },
-        (sender: SerializableObject, property: PropertyDefinition, target: PropertyBag, value: ColumnWidth, context: BaseSerializationContext) => {
+        (
+            sender: SerializableObject,
+            property: PropertyDefinition,
+            target: PropertyBag,
+            value: ColumnWidth,
+            context: BaseSerializationContext
+        ) => {
             if (value instanceof SizeAndUnit) {
                 if (value.unit === Enums.SizeUnit.Pixel) {
                     context.serializeValue(target, "width", value.physicalSize + "px");
-                }
-                else {
+                } else {
                     context.serializeNumber(target, "width", value.physicalSize);
                 }
-            }
-            else {
+            } else {
                 context.serializeValue(target, "width", value);
             }
         },
-        "stretch");
+        "stretch"
+    );
 
     @property(Column.widthProperty)
     width: ColumnWidth = "stretch";
@@ -5757,9 +7690,11 @@ export class Column extends Container {
 
         if (this.isDesignMode()) {
             renderedElement.style.minWidth = "20px";
-            renderedElement.style.minHeight = (!this.minPixelHeight ? minDesignTimeColumnHeight : Math.max(this.minPixelHeight, minDesignTimeColumnHeight)) + "px";
-        }
-        else {
+            renderedElement.style.minHeight =
+                (!this.minPixelHeight
+                    ? minDesignTimeColumnHeight
+                    : Math.max(this.minPixelHeight, minDesignTimeColumnHeight)) + "px";
+        } else {
             renderedElement.style.minWidth = "0";
 
             if (this.minPixelHeight) {
@@ -5769,22 +7704,22 @@ export class Column extends Container {
 
         if (this.width === "auto") {
             renderedElement.style.flex = "0 1 auto";
-        }
-        else if (this.width === "stretch") {
+        } else if (this.width === "stretch") {
             renderedElement.style.flex = "1 1 50px";
-        }
-        else if (this.width instanceof SizeAndUnit) {
-            if (this.width.unit == Enums.SizeUnit.Pixel) {
+        } else if (this.width instanceof SizeAndUnit) {
+            if (this.width.unit === Enums.SizeUnit.Pixel) {
                 renderedElement.style.flex = "0 0 auto";
                 renderedElement.style.width = this.width.physicalSize + "px";
-            }
-            else {
-                renderedElement.style.flex = "1 1 " + (this._computedWeight > 0 ? this._computedWeight : this.width.physicalSize) + "%";
+            } else {
+                renderedElement.style.flex =
+                    "1 1 " +
+                    (this._computedWeight > 0 ? this._computedWeight : this.width.physicalSize) +
+                    "%";
             }
         }
     }
 
-    protected shouldSerialize(context: SerializationContext): boolean {
+    protected shouldSerialize(_context: SerializationContext): boolean {
         return true;
     }
 
@@ -5805,8 +7740,7 @@ export class Column extends Container {
     get hasVisibleSeparator(): boolean {
         if (this.parent && this.parent instanceof ColumnSet) {
             return this.separatorElement !== undefined && !this.parent.isLeftMostElement(this);
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -5816,7 +7750,7 @@ export class Column extends Container {
     }
 }
 
-export class ColumnSet extends StylableCardElementContainer {
+export class ColumnSet extends ContainerBase {
     private _columns: Column[] = [];
     private _renderedColumns: Column[];
 
@@ -5824,17 +7758,19 @@ export class ColumnSet extends StylableCardElementContainer {
         return context.parseCardObject<Column>(
             this,
             source,
-            [], // Forbidden types not supported for elements for now
+            [],
             !this.isDesignMode(),
             (typeName: string) => {
                 return !typeName || typeName === "Column" ? new Column() : undefined;
             },
-            (typeName: string, errorType: TypeErrorType) => {
+            (typeName: string, _errorType: Enums.TypeErrorType) => {
                 context.logParseEvent(
                     undefined,
                     Enums.ValidationEvent.ElementTypeNotAllowed,
-                    Strings.errors.elementTypeNotAllowed(typeName));
-            });
+                    Strings.errors.elementTypeNotAllowed(typeName)
+                );
+            }
+        );
     }
 
     protected internalRender(): HTMLElement | undefined {
@@ -5842,18 +7778,18 @@ export class ColumnSet extends StylableCardElementContainer {
 
         if (this._columns.length > 0) {
             // Cache hostConfig to avoid walking the parent hierarchy several times
-            let hostConfig = this.hostConfig;
+            const hostConfig = this.hostConfig;
 
-            let element = document.createElement("div");
+            const element = document.createElement("div");
             element.className = hostConfig.makeCssClassName("ac-columnSet");
             element.style.display = "flex";
 
             if (GlobalSettings.useAdvancedCardBottomTruncation) {
                 // See comment in Container.internalRender()
-                element.style.minHeight = '-webkit-min-content';
+                element.style.minHeight = "-webkit-min-content";
             }
 
-            switch (this.horizontalAlignment) {
+            switch (this.getEffectiveHorizontalAlignment()) {
                 case Enums.HorizontalAlignment.Center:
                     element.style.justifyContent = "center";
                     break;
@@ -5867,21 +7803,28 @@ export class ColumnSet extends StylableCardElementContainer {
 
             let totalWeight: number = 0;
 
-            for (let column of this._columns) {
-                if (column.width instanceof SizeAndUnit && (column.width.unit == Enums.SizeUnit.Weight)) {
+            for (const column of this._columns) {
+                if (
+                    column.width instanceof SizeAndUnit &&
+                    column.width.unit === Enums.SizeUnit.Weight
+                ) {
                     totalWeight += column.width.physicalSize;
                 }
             }
 
-            for (let column of this._columns) {
-                if (column.width instanceof SizeAndUnit && column.width.unit == Enums.SizeUnit.Weight && totalWeight > 0) {
-                    let computedWeight = 100 / totalWeight * column.width.physicalSize;
+            for (const column of this._columns) {
+                if (
+                    column.width instanceof SizeAndUnit &&
+                    column.width.unit === Enums.SizeUnit.Weight &&
+                    totalWeight > 0
+                ) {
+                    const computedWeight = (100 / totalWeight) * column.width.physicalSize;
 
                     // Best way to emulate "internal" access I know of
                     column["_computedWeight"] = computedWeight;
                 }
 
-                let renderedColumn = column.render();
+                const renderedColumn = column.render();
 
                 if (renderedColumn) {
                     if (this._renderedColumns.length > 0 && column.separatorElement) {
@@ -5897,23 +7840,22 @@ export class ColumnSet extends StylableCardElementContainer {
             }
 
             return this._renderedColumns.length > 0 ? element : undefined;
-        }
-        else {
+        } else {
             return undefined;
         }
     }
 
     protected truncateOverflow(maxHeight: number): boolean {
-        for (let column of this._columns) {
-            column['handleOverflow'](maxHeight);
+        for (const column of this._columns) {
+            column["handleOverflow"](maxHeight);
         }
 
         return true;
     }
 
     protected undoOverflowTruncation() {
-        for (let column of this._columns) {
-            column['resetOverflow']();
+        for (const column of this._columns) {
+            column["resetOverflow"]();
         }
     }
 
@@ -5927,11 +7869,11 @@ export class ColumnSet extends StylableCardElementContainer {
         this._columns = [];
         this._renderedColumns = [];
 
-        let jsonColumns = source["columns"];
+        const jsonColumns = source["columns"];
 
         if (Array.isArray(jsonColumns)) {
-            for (let item of jsonColumns) {
-                let column = this.createColumnInstance(item, context);
+            for (const item of jsonColumns) {
+                const column = this.createColumnInstance(item, context);
 
                 if (column) {
                     this._columns.push(column);
@@ -5947,9 +7889,9 @@ export class ColumnSet extends StylableCardElementContainer {
     }
 
     isFirstElement(element: CardElement): boolean {
-        for (let column of this._columns) {
+        for (const column of this._columns) {
             if (column.isVisible) {
-                return column == element;
+                return column === element;
             }
         }
 
@@ -5962,7 +7904,7 @@ export class ColumnSet extends StylableCardElementContainer {
         }
 
         if (this._renderedColumns && this._renderedColumns.length > 0) {
-            for (let column of this._columns) {
+            for (const column of this._columns) {
                 if (column.isBleedingAtTop()) {
                     return true;
                 }
@@ -5978,7 +7920,7 @@ export class ColumnSet extends StylableCardElementContainer {
         }
 
         if (this._renderedColumns && this._renderedColumns.length > 0) {
-            for (let column of this._columns) {
+            for (const column of this._columns) {
                 if (column.isBleedingAtBottom()) {
                     return true;
                 }
@@ -5995,8 +7937,7 @@ export class ColumnSet extends StylableCardElementContainer {
     getFirstVisibleRenderedItem(): CardElement | undefined {
         if (this.renderedElement && this._renderedColumns && this._renderedColumns.length > 0) {
             return this._renderedColumns[0];
-        }
-        else {
+        } else {
             return undefined;
         }
     }
@@ -6004,8 +7945,7 @@ export class ColumnSet extends StylableCardElementContainer {
     getLastVisibleRenderedItem(): CardElement | undefined {
         if (this.renderedElement && this._renderedColumns && this._renderedColumns.length > 0) {
             return this._renderedColumns[this._renderedColumns.length - 1];
-        }
-        else {
+        } else {
             return undefined;
         }
     }
@@ -6028,11 +7968,10 @@ export class ColumnSet extends StylableCardElementContainer {
         let weightedColumns: number = 0;
         let stretchedColumns: number = 0;
 
-        for (let column of this._columns) {
+        for (const column of this._columns) {
             if (typeof column.width === "number") {
                 weightedColumns++;
-            }
-            else if (column.width === "stretch") {
+            } else if (column.width === "stretch") {
                 stretchedColumns++;
             }
         }
@@ -6041,7 +7980,8 @@ export class ColumnSet extends StylableCardElementContainer {
             context.addFailure(
                 this,
                 Enums.ValidationEvent.Hint,
-                Strings.hints.dontUseWeightedAndStrecthedColumnsInSameSet());
+                Strings.hints.dontUseWeightedAndStrecthedColumnsInSameSet()
+            );
         }
     }
 
@@ -6050,15 +7990,14 @@ export class ColumnSet extends StylableCardElementContainer {
             this._columns.push(column);
 
             column.setParent(this);
-        }
-        else {
+        } else {
             throw new Error(Strings.errors.columnAlreadyBelongsToAnotherSet());
         }
     }
 
     removeItem(item: CardElement): boolean {
         if (item instanceof Column) {
-            let itemIndex = this._columns.indexOf(item);
+            const itemIndex = this._columns.indexOf(item);
 
             if (itemIndex >= 0) {
                 this._columns.splice(itemIndex, 1);
@@ -6079,11 +8018,11 @@ export class ColumnSet extends StylableCardElementContainer {
     }
 
     isLeftMostElement(element: CardElement): boolean {
-        return this._columns.indexOf(<Column>element) == 0;
+        return this._columns.indexOf(<Column>element) === 0;
     }
 
     isRightMostElement(element: CardElement): boolean {
-        return this._columns.indexOf(<Column>element) == this._columns.length - 1;
+        return this._columns.indexOf(<Column>element) === this._columns.length - 1;
     }
 
     isTopElement(element: CardElement): boolean {
@@ -6097,7 +8036,7 @@ export class ColumnSet extends StylableCardElementContainer {
     getActionById(id: string): Action | undefined {
         let result: Action | undefined = undefined;
 
-        for (let column of this._columns) {
+        for (const column of this._columns) {
             result = column.getActionById(id);
 
             if (result) {
@@ -6134,24 +8073,33 @@ export class ColumnSet extends StylableCardElementContainer {
 }
 
 function raiseImageLoadedEvent(image: Image) {
-    let card = image.getRootElement() as AdaptiveCard;
-    let onImageLoadedHandler = (card && card.onImageLoaded) ? card.onImageLoaded : AdaptiveCard.onImageLoaded;
+    const card = image.getRootElement() as AdaptiveCard;
+    const onImageLoadedHandler =
+        card && card.onImageLoaded ? card.onImageLoaded : AdaptiveCard.onImageLoaded;
 
     if (onImageLoadedHandler) {
         onImageLoadedHandler(image);
     }
 }
 
-function raiseAnchorClickedEvent(element: CardElement, anchor: HTMLAnchorElement): boolean {
-    let card = element.getRootElement() as AdaptiveCard;
-    let onAnchorClickedHandler = (card && card.onAnchorClicked) ? card.onAnchorClicked : AdaptiveCard.onAnchorClicked;
+function raiseAnchorClickedEvent(
+    element: CardElement,
+    anchor: HTMLAnchorElement,
+    ev?: MouseEvent
+): boolean {
+    const card = element.getRootElement() as AdaptiveCard;
+    const onAnchorClickedHandler =
+        card && card.onAnchorClicked ? card.onAnchorClicked : AdaptiveCard.onAnchorClicked;
 
-    return onAnchorClickedHandler !== undefined ? onAnchorClickedHandler(element, anchor) : false;
+    return onAnchorClickedHandler !== undefined
+        ? onAnchorClickedHandler(element, anchor, ev)
+        : false;
 }
 
 function raiseExecuteActionEvent(action: Action) {
-    let card = action.parent ? action.parent.getRootElement() as AdaptiveCard : undefined;
-    let onExecuteActionHandler = (card && card.onExecuteAction) ? card.onExecuteAction : AdaptiveCard.onExecuteAction;
+    const card = action.parent ? (action.parent.getRootElement() as AdaptiveCard) : undefined;
+    const onExecuteActionHandler =
+        card && card.onExecuteAction ? card.onExecuteAction : AdaptiveCard.onExecuteAction;
 
     if (action.prepareForExecution() && onExecuteActionHandler) {
         onExecuteActionHandler(action);
@@ -6159,8 +8107,11 @@ function raiseExecuteActionEvent(action: Action) {
 }
 
 function raiseInlineCardExpandedEvent(action: ShowCardAction, isExpanded: boolean) {
-    let card = action.parent ? action.parent.getRootElement() as AdaptiveCard : undefined;
-    let onInlineCardExpandedHandler = (card && card.onInlineCardExpanded) ? card.onInlineCardExpanded : AdaptiveCard.onInlineCardExpanded;
+    const card = action.parent ? (action.parent.getRootElement() as AdaptiveCard) : undefined;
+    const onInlineCardExpandedHandler =
+        card && card.onInlineCardExpanded
+            ? card.onInlineCardExpanded
+            : AdaptiveCard.onInlineCardExpanded;
 
     if (onInlineCardExpandedHandler) {
         onInlineCardExpandedHandler(action, isExpanded);
@@ -6168,27 +8119,106 @@ function raiseInlineCardExpandedEvent(action: ShowCardAction, isExpanded: boolea
 }
 
 function raiseInputValueChangedEvent(input: Input) {
-    let card = input.getRootElement() as AdaptiveCard;
-    let onInputValueChangedHandler = (card && card.onInputValueChanged) ? card.onInputValueChanged : AdaptiveCard.onInputValueChanged;
+    const card = input.getRootElement() as AdaptiveCard;
+    const onInputValueChangedHandler =
+        card && card.onInputValueChanged
+            ? card.onInputValueChanged
+            : AdaptiveCard.onInputValueChanged;
 
     if (onInputValueChangedHandler) {
         onInputValueChangedHandler(input);
     }
 }
 
-function raiseElementVisibilityChangedEvent(element: CardElement, shouldUpdateLayout: boolean = true) {
-    let rootElement = element.getRootElement();
+function raiseElementVisibilityChangedEvent(
+    element: CardElement,
+    shouldUpdateLayout: boolean = true
+) {
+    const rootElement = element.getRootElement();
 
     if (shouldUpdateLayout) {
         rootElement.updateLayout();
     }
 
-    let card = rootElement as AdaptiveCard;
-    let onElementVisibilityChangedHandler = (card && card.onElementVisibilityChanged) ? card.onElementVisibilityChanged : AdaptiveCard.onElementVisibilityChanged;
+    const card = rootElement as AdaptiveCard;
+    const onElementVisibilityChangedHandler =
+        card && card.onElementVisibilityChanged
+            ? card.onElementVisibilityChanged
+            : AdaptiveCard.onElementVisibilityChanged;
 
     if (onElementVisibilityChangedHandler !== undefined) {
         onElementVisibilityChangedHandler(element);
     }
+}
+
+function updateInputAdornersVisibility(input: HTMLInputElement, hide: boolean) {
+    if (!!hide) {
+        // hides the time/date picker icon
+        input.readOnly = true;
+        // hides the cross button icon
+        input.required = true;
+    } else {
+         // shows the time/date picker icon
+         input.readOnly = false;
+         // shows the cross button icon
+         input.required = false;
+    }
+    
+}
+
+function shouldHideInputAdornersForRevealOnHover(input: HTMLElement, eventType: InputEventType) {
+    // show/hide input adorners (date picker, time picker, select dropdown picker) with inputStyle RevealOnHover
+    // 1. intial render of card: hide input adorners
+    // 2. mouse hover on the card: show input adorners
+    // 3. mouse hover outside the card: hide input adorners unless input is still in focus state
+    // 4. input loses focus: hide the input adorners unless mouse is still hovering on the card
+
+    // check if input still has the focus
+    const isInputInFocus = input === document.activeElement;
+
+    // check if mouse is still on the card
+    const isMouseOverCard = input.classList.contains("ac-inputStyle-revealOnHover-onhover");
+
+    const hideInputAdorners = (eventType === InputEventType.InitialRender) ||
+                              (eventType === InputEventType.FocusLeave && !isMouseOverCard) ||
+                              (eventType === InputEventType.MouseLeaveOnCard && !isInputInFocus);
+    return hideInputAdorners;
+}
+
+/**
+ * @returns return false to continue with default context menu; return true to skip SDK default context menu
+ */
+function raiseDisplayOverflowActionMenuEvent(
+    action: OverflowAction,
+    target?: HTMLElement
+): boolean {
+    const card = action.parent ? (action.parent.getRootElement() as AdaptiveCard) : undefined;
+    const onDisplayOverflowActionMenuHandler =
+        card && card.onDisplayOverflowActionMenu
+            ? card.onDisplayOverflowActionMenu
+            : AdaptiveCard.onDisplayOverflowActionMenu;
+
+    return onDisplayOverflowActionMenuHandler !== undefined
+        ? onDisplayOverflowActionMenuHandler(action.getActions(), target)
+        : false;
+}
+
+/**
+ * @returns return false to continue with default action button; return true to skip SDK default action button
+ */
+function raiseRenderOverflowActionsEvent(
+    action: OverflowAction,
+    isAtRootLevelActions: boolean
+): boolean {
+    const card = action.parent ? (action.parent.getRootElement() as AdaptiveCard) : undefined;
+    const onRenderOverflowActionsHandler =
+        card && card.onRenderOverflowActions
+            ? card.onRenderOverflowActions
+            : AdaptiveCard.onRenderOverflowActions;
+
+    return onRenderOverflowActionsHandler !== undefined
+        ? onRenderOverflowActionsHandler(action.getActions(), isAtRootLevelActions)
+        : false;
 }
 
 export abstract class ContainerWithActions extends Container {
@@ -6197,6 +8227,10 @@ export abstract class ContainerWithActions extends Container {
     protected internalParse(source: any, context: SerializationContext) {
         super.internalParse(source, context);
 
+        this.parseActions(source, context);
+    }
+
+    protected parseActions(source: any, context: SerializationContext) {
         this._actionCollection.parse(source["actions"], context);
     }
 
@@ -6207,43 +8241,48 @@ export abstract class ContainerWithActions extends Container {
     }
 
     protected internalRender(): HTMLElement | undefined {
-        let element = super.internalRender();
+        const element = super.internalRender();
 
         if (element) {
-            let renderedActions = this._actionCollection.render(this.hostConfig.actions.actionsOrientation, false);
+            const renderedActions = this._actionCollection.render(
+                this.hostConfig.actions.actionsOrientation
+            );
 
             if (renderedActions) {
                 Utils.appendChild(
                     element,
-                    Utils.renderSeparation(
+                    renderSeparation(
                         this.hostConfig,
                         {
-                            spacing: this.hostConfig.getEffectiveSpacing(this.hostConfig.actions.spacing)
+                            spacing: this.hostConfig.getEffectiveSpacing(
+                                this.hostConfig.actions.spacing
+                            )
                         },
-                        Enums.Orientation.Horizontal));
+                        Enums.Orientation.Horizontal
+                    )
+                );
                 Utils.appendChild(element, renderedActions);
             }
 
             if (this.renderIfEmpty) {
                 return element;
-            }
-            else {
+            } else {
                 return element.children.length > 0 ? element : undefined;
             }
-        }
-        else {
+        } else {
             return undefined;
         }
     }
 
     protected getHasExpandedAction(): boolean {
-        if (this.renderedActionCount == 0) {
+        if (this.renderedActionCount === 0) {
             return false;
-        }
-        else if (this.renderedActionCount == 1) {
-            return this._actionCollection.expandedAction !== undefined && !this.hostConfig.actions.preExpandSingleShowCardAction;
-        }
-        else {
+        } else if (this.renderedActionCount === 1) {
+            return (
+                this._actionCollection.expandedAction !== undefined &&
+                !this.hostConfig.actions.preExpandSingleShowCardAction
+            );
+        } else {
             return this._actionCollection.expandedAction !== undefined;
         }
     }
@@ -6262,21 +8301,26 @@ export abstract class ContainerWithActions extends Container {
         this._actionCollection = new ActionCollection(this);
     }
 
+    releaseDOMResources() {
+        super.releaseDOMResources();
+
+        this._actionCollection.releaseDOMResources();
+    }
+
     getActionCount(): number {
-        return this._actionCollection.items.length;
+        return this._actionCollection.getActionCount();
     }
 
     getActionAt(index: number): Action | undefined {
         if (index >= 0 && index < this.getActionCount()) {
-            return this._actionCollection.items[index];
-        }
-        else {
+            return this._actionCollection.getActionAt(index);
+        } else {
             return super.getActionAt(index);
         }
     }
 
     getActionById(id: string): Action | undefined {
-        let result: Action | undefined = this._actionCollection.getActionById(id);
+        const result: Action | undefined = this._actionCollection.getActionById(id);
 
         return result ? result : super.getActionById(id);
     }
@@ -6290,7 +8334,7 @@ export abstract class ContainerWithActions extends Container {
     }
 
     isLastElement(element: CardElement): boolean {
-        return super.isLastElement(element) && this._actionCollection.items.length == 0;
+        return super.isLastElement(element) && this._actionCollection.getActionCount() === 0;
     }
 
     addAction(action: Action) {
@@ -6307,28 +8351,47 @@ export abstract class ContainerWithActions extends Container {
         let result = super.getAllInputs(processActions);
 
         if (processActions) {
-            result = result.concat(this._actionCollection.getAllInputs(processActions));
+            result.push(...this._actionCollection.getAllInputs(processActions));
         }
 
         return result;
     }
 
     getResourceInformation(): IResourceInformation[] {
-        return super.getResourceInformation().concat(this._actionCollection.getResourceInformation());
+        let result = super.getResourceInformation();
+
+        result.push(...this._actionCollection.getResourceInformation());
+
+        return result;
     }
 
     isBleedingAtBottom(): boolean {
-        if (this._actionCollection.renderedActionCount == 0) {
+        if (this._actionCollection.renderedActionCount === 0) {
             return super.isBleedingAtBottom();
-        }
-        else {
-            if (this._actionCollection.items.length == 1) {
-                return this._actionCollection.expandedAction !== undefined && !this.hostConfig.actions.preExpandSingleShowCardAction;
-            }
-            else {
+        } else {
+            if (this._actionCollection.getActionCount() === 1) {
+                return (
+                    this._actionCollection.expandedAction !== undefined &&
+                    !this.hostConfig.actions.preExpandSingleShowCardAction
+                );
+            } else {
                 return this._actionCollection.expandedAction !== undefined;
             }
         }
+    }
+
+    getForbiddenActionNames(): string[] {
+        return [];
+    }
+    
+    getElementById(id: string): CardElement | undefined {
+        let result = super.getElementById(id);
+
+        if (!result) {
+            result = this.getElementByIdFromAction(id);
+        }
+
+        return result;
     }
 
     get isStandalone(): boolean {
@@ -6341,27 +8404,211 @@ export interface IMarkdownProcessingResult {
     outputHtml?: any;
 }
 
+export class RefreshActionProperty extends PropertyDefinition {
+    parse(
+        sender: RefreshDefinition,
+        source: PropertyBag,
+        context: SerializationContext
+    ): ExecuteAction | undefined {
+        const action = context.parseAction(sender.parent, source[this.name], [], false);
+
+        if (action !== undefined) {
+            if (action instanceof ExecuteAction) {
+                return action;
+            }
+
+            context.logParseEvent(
+                sender,
+                Enums.ValidationEvent.ActionTypeNotAllowed,
+                Strings.errors.actionTypeNotAllowed(action.getJsonTypeName())
+            );
+        }
+
+        context.logParseEvent(
+            sender,
+            Enums.ValidationEvent.PropertyCantBeNull,
+            Strings.errors.propertyMustBeSet("action")
+        );
+
+        return undefined;
+    }
+
+    toJSON(
+        sender: SerializableObject,
+        target: PropertyBag,
+        value: ExecuteAction | undefined,
+        context: SerializationContext
+    ) {
+        context.serializeValue(
+            target,
+            this.name,
+            value ? value.toJSON(context) : undefined,
+            undefined,
+            true
+        );
+    }
+
+    constructor(readonly targetVersion: Version, readonly name: string) {
+        super(targetVersion, name, undefined);
+    }
+}
+
+export class RefreshDefinition extends SerializableObject {
+    //#region Schema
+
+    static readonly actionProperty = new RefreshActionProperty(Versions.v1_4, "action");
+    static readonly userIdsProperty = new StringArrayProperty(Versions.v1_4, "userIds");
+
+    @property(RefreshDefinition.actionProperty)
+    get action(): ExecuteAction {
+        return this.getValue(RefreshDefinition.actionProperty);
+    }
+
+    set action(value: ExecuteAction) {
+        this.setValue(RefreshDefinition.actionProperty, value);
+
+        if (value) {
+            value.setParent(this.parent);
+        }
+    }
+
+    @property(RefreshDefinition.userIdsProperty)
+    userIds?: string[];
+
+    protected getSchemaKey(): string {
+        return "RefreshDefinition";
+    }
+
+    //#endregion
+
+    parent: CardElement;
+}
+
+export class AuthCardButton extends SerializableObject {
+    //#region Schema
+
+    static readonly typeProperty = new StringProperty(Versions.v1_4, "type");
+    static readonly titleProperty = new StringProperty(Versions.v1_4, "title");
+    static readonly imageProperty = new StringProperty(Versions.v1_4, "image");
+    static readonly valueProperty = new StringProperty(Versions.v1_4, "value");
+
+    protected getSchemaKey(): string {
+        return "AuthCardButton";
+    }
+
+    //#endregion
+
+    @property(AuthCardButton.typeProperty)
+    type: string;
+
+    @property(AuthCardButton.titleProperty)
+    title?: string;
+
+    @property(AuthCardButton.imageProperty)
+    image?: string;
+
+    @property(AuthCardButton.valueProperty)
+    value: string;
+}
+
+export class TokenExchangeResource extends SerializableObject {
+    //#region Schema
+
+    static readonly idProperty = new StringProperty(Versions.v1_4, "id");
+    static readonly uriProperty = new StringProperty(Versions.v1_4, "uri");
+    static readonly providerIdProperty = new StringProperty(Versions.v1_4, "providerId");
+
+    protected getSchemaKey(): string {
+        return "TokenExchangeResource";
+    }
+
+    //#endregion
+
+    @property(TokenExchangeResource.idProperty)
+    id?: string;
+
+    @property(TokenExchangeResource.uriProperty)
+    uri?: string;
+
+    @property(TokenExchangeResource.providerIdProperty)
+    providerId?: string;
+}
+
+export class Authentication extends SerializableObject {
+    //#region Schema
+
+    static readonly textProperty = new StringProperty(Versions.v1_4, "text");
+    static readonly connectionNameProperty = new StringProperty(Versions.v1_4, "connectionName");
+    static readonly buttonsProperty = new SerializableObjectCollectionProperty(
+        Versions.v1_4,
+        "buttons",
+        AuthCardButton
+    );
+    static readonly tokenExchangeResourceProperty = new SerializableObjectProperty(
+        Versions.v1_4,
+        "tokenExchangeResource",
+        TokenExchangeResource,
+        true
+    );
+
+    protected getSchemaKey(): string {
+        return "Authentication";
+    }
+
+    //#endregion
+
+    @property(Authentication.textProperty)
+    text?: string;
+
+    @property(Authentication.connectionNameProperty)
+    connectionName?: string;
+
+    @property(Authentication.buttonsProperty)
+    buttons: AuthCardButton[];
+
+    @property(Authentication.tokenExchangeResourceProperty)
+    tokenExchangeResource?: TokenExchangeResource;
+}
+
 // @dynamic
 export class AdaptiveCard extends ContainerWithActions {
     static readonly schemaUrl = "http://adaptivecards.io/schemas/adaptive-card.json";
 
     //#region Schema
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     protected static readonly $schemaProperty = new CustomProperty<string>(
         Versions.v1_0,
         "$schema",
-        (sender: SerializableObject, property: PropertyDefinition, source: PropertyBag, context: BaseSerializationContext) => {
+        (
+            sender: SerializableObject,
+            property: PropertyDefinition,
+            source: PropertyBag,
+            context: BaseSerializationContext
+        ) => {
             return AdaptiveCard.schemaUrl;
         },
-        (sender: SerializableObject, property: PropertyDefinition, target: PropertyBag, value: Versions | undefined, context: BaseSerializationContext) => {
-            context.serializeValue(target, property.name, AdaptiveCard.schemaUrl);
-        });
+        (
+            sender: SerializableObject,
+            prop: PropertyDefinition,
+            target: PropertyBag,
+            value: Versions | undefined,
+            context: BaseSerializationContext
+        ) => {
+            context.serializeValue(target, prop.name, AdaptiveCard.schemaUrl);
+        }
+    );
 
     static readonly versionProperty = new CustomProperty<Version | undefined>(
         Versions.v1_0,
         "version",
-        (sender: SerializableObject, property: PropertyDefinition, source: PropertyBag, context: BaseSerializationContext) => {
-            let version = Version.parse(source[property.name], context);
+        (
+            sender: SerializableObject,
+            prop: PropertyDefinition,
+            source: PropertyBag,
+            context: BaseSerializationContext
+        ) => {
+            let version = Version.parse(source[prop.name], context);
 
             if (version === undefined) {
                 version = Versions.latest;
@@ -6369,19 +8616,40 @@ export class AdaptiveCard extends ContainerWithActions {
                 context.logParseEvent(
                     sender,
                     Enums.ValidationEvent.InvalidPropertyValue,
-                    Strings.errors.invalidCardVersion(version.toString()));
+                    Strings.errors.invalidCardVersion(version.toString())
+                );
             }
 
             return version;
         },
-        (sender: SerializableObject, property: PropertyDefinition, target: PropertyBag, value: Versions | undefined, context: BaseSerializationContext) => {
+        (
+            sender: SerializableObject,
+            prop: PropertyDefinition,
+            target: PropertyBag,
+            value: Version | undefined,
+            context: BaseSerializationContext
+        ) => {
             if (value !== undefined) {
-                context.serializeValue(target, property.name, value.toString());
+                context.serializeValue(target, prop.name, value.toString());
             }
         },
-        Versions.v1_0);
+        Versions.v1_0
+    );
+
     static readonly fallbackTextProperty = new StringProperty(Versions.v1_0, "fallbackText");
     static readonly speakProperty = new StringProperty(Versions.v1_0, "speak");
+    static readonly refreshProperty = new SerializableObjectProperty(
+        Versions.v1_4,
+        "refresh",
+        RefreshDefinition,
+        true
+    );
+    static readonly authenticationProperty = new SerializableObjectProperty(
+        Versions.v1_4,
+        "authentication",
+        Authentication,
+        true
+    );
 
     @property(AdaptiveCard.versionProperty)
     version: Version;
@@ -6392,40 +8660,72 @@ export class AdaptiveCard extends ContainerWithActions {
     @property(AdaptiveCard.speakProperty)
     speak?: string;
 
+    @property(AdaptiveCard.refreshProperty)
+    get refresh(): RefreshDefinition | undefined {
+        return this.getValue(AdaptiveCard.refreshProperty);
+    }
+
+    set refresh(value: RefreshDefinition | undefined) {
+        this.setValue(AdaptiveCard.refreshProperty, value);
+
+        if (value) {
+            value.parent = this;
+        }
+    }
+
+    @property(AdaptiveCard.authenticationProperty)
+    authentication?: Authentication;
+
     //#endregion
 
-    static onAnchorClicked?: (element: CardElement, anchor: HTMLAnchorElement) => boolean;
+    private static _haveWarnedAboutNoMarkdownProcessing = false;
+
+    static onAnchorClicked?: (
+        element: CardElement,
+        anchor: HTMLAnchorElement,
+        ev?: MouseEvent
+    ) => boolean;
     static onExecuteAction?: (action: Action) => void;
     static onElementVisibilityChanged?: (element: CardElement) => void;
     static onImageLoaded?: (image: Image) => void;
     static onInlineCardExpanded?: (action: ShowCardAction, isExpanded: boolean) => void;
     static onInputValueChanged?: (input: Input) => void;
+    static onCarouselEvent?: (carouselEvent: CarouselEvent) => void;
     static onProcessMarkdown?: (text: string, result: IMarkdownProcessingResult) => void;
+    static onDisplayOverflowActionMenu?: (
+        actions: readonly Action[],
+        target?: HTMLElement
+    ) => boolean;
+    static onRenderOverflowActions?: (
+        actions: readonly Action[],
+        isRootLevelActions: boolean
+    ) => boolean;
 
     static get processMarkdown(): (text: string) => string {
         throw new Error(Strings.errors.processMarkdownEventRemoved());
     }
 
-    static set processMarkdown(value: (text: string) => string) {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    static set processMarkdown(_value: (text: string) => string) {
         throw new Error(Strings.errors.processMarkdownEventRemoved());
     }
 
     static applyMarkdown(text: string): IMarkdownProcessingResult {
-        let result: IMarkdownProcessingResult = {
+        const result: IMarkdownProcessingResult = {
             didProcess: false
         };
 
         if (AdaptiveCard.onProcessMarkdown) {
             AdaptiveCard.onProcessMarkdown(text, result);
-        }
-        else if ((<any>window).markdownit) {
+        } else if ((<any>window).markdownit) {
             // Check for markdownit
-            let markdownIt: any = (<any>window).markdownit;
+            const markdownIt: any = (<any>window).markdownit;
             result.outputHtml = markdownIt().render(text);
             result.didProcess = true;
-        }
-        else {
-            console.warn(Strings.errors.markdownProcessingNotEnabled)
+        } else if (!AdaptiveCard._haveWarnedAboutNoMarkdownProcessing) {
+            // eslint-disable-next-line no-console
+            console.warn(Strings.errors.markdownProcessingNotEnabled);
+            AdaptiveCard._haveWarnedAboutNoMarkdownProcessing = true;
         }
 
         return result;
@@ -6436,13 +8736,13 @@ export class AdaptiveCard extends ContainerWithActions {
     private isVersionSupported(): boolean {
         if (this.bypassVersionCheck) {
             return true;
-        }
-        else {
-            let unsupportedVersion: boolean =
+        } else {
+            const unsupportedVersion: boolean =
                 !this.version ||
                 !this.version.isValid ||
-                (this.maxVersion.major < this.version.major) ||
-                (this.maxVersion.major == this.version.major && this.maxVersion.minor < this.version.minor);
+                this.maxVersion.major < this.version.major ||
+                (this.maxVersion.major === this.version.major &&
+                    this.maxVersion.minor < this.version.minor);
 
             return !unsupportedVersion;
         }
@@ -6459,7 +8759,12 @@ export class AdaptiveCard extends ContainerWithActions {
     protected internalParse(source: any, context: SerializationContext) {
         this._fallbackCard = undefined;
 
-        let fallbackElement = context.parseElement(undefined, source["fallback"], !this.isDesignMode());
+        const fallbackElement = context.parseElement(
+            undefined,
+            source["fallback"],
+            this.forbiddenChildElements(),
+            !this.isDesignMode()
+        );
 
         if (fallbackElement) {
             this._fallbackCard = new AdaptiveCard();
@@ -6476,7 +8781,7 @@ export class AdaptiveCard extends ContainerWithActions {
     }
 
     protected internalRender(): HTMLElement | undefined {
-        let renderedElement = super.internalRender();
+        const renderedElement = super.internalRender();
 
         if (GlobalSettings.useAdvancedCardBottomTruncation && renderedElement) {
             // Unlike containers, the root card element should be allowed to
@@ -6488,7 +8793,7 @@ export class AdaptiveCard extends ContainerWithActions {
         return renderedElement;
     }
 
-    protected getHasBackground(): boolean {
+    protected getHasBackground(ignoreBackgroundImages: boolean = false): boolean {
         return true;
     }
 
@@ -6497,10 +8802,11 @@ export class AdaptiveCard extends ContainerWithActions {
             Enums.Spacing.Padding,
             Enums.Spacing.Padding,
             Enums.Spacing.Padding,
-            Enums.Spacing.Padding);
+            Enums.Spacing.Padding
+        );
     }
 
-    protected shouldSerialize(context: SerializationContext): boolean {
+    protected shouldSerialize(_context: SerializationContext): boolean {
         return true;
     }
 
@@ -6520,12 +8826,15 @@ export class AdaptiveCard extends ContainerWithActions {
         return true;
     }
 
-    onAnchorClicked?: (element: CardElement, anchor: HTMLAnchorElement) => boolean;
+    onAnchorClicked?: (element: CardElement, anchor: HTMLAnchorElement, ev?: MouseEvent) => boolean;
     onExecuteAction?: (action: Action) => void;
     onElementVisibilityChanged?: (element: CardElement) => void;
     onImageLoaded?: (image: Image) => void;
     onInlineCardExpanded?: (action: ShowCardAction, isExpanded: boolean) => void;
     onInputValueChanged?: (input: Input) => void;
+    onCarouselEvent?: (carouselEvent: CarouselEvent) => void;
+    onDisplayOverflowActionMenu?: (actions: readonly Action[], target?: HTMLElement) => boolean;
+    onRenderOverflowActions?: (actions: readonly Action[], isRootLevelActions: boolean) => boolean;
 
     designMode: boolean = false;
 
@@ -6540,20 +8849,25 @@ export class AdaptiveCard extends ContainerWithActions {
             context.addFailure(
                 this,
                 Enums.ValidationEvent.MissingCardType,
-                Strings.errors.invalidCardType());
+                Strings.errors.invalidCardType()
+            );
         }
 
         if (!this.bypassVersionCheck && !this.version) {
             context.addFailure(
                 this,
                 Enums.ValidationEvent.PropertyCantBeNull,
-                Strings.errors.propertyMustBeSet("version"));
-        }
-        else if (!this.isVersionSupported()) {
+                Strings.errors.propertyMustBeSet("version")
+            );
+        } else if (!this.isVersionSupported()) {
             context.addFailure(
                 this,
                 Enums.ValidationEvent.UnsupportedCardVersion,
-                Strings.errors.unsupportedCardVersion(this.version.toString(), this.maxVersion.toString()));
+                Strings.errors.unsupportedCardVersion(
+                    this.version.toString(),
+                    this.maxVersion.toString()
+                )
+            );
         }
     }
 
@@ -6564,8 +8878,7 @@ export class AdaptiveCard extends ContainerWithActions {
             this._fallbackCard.hostConfig = this.hostConfig;
 
             renderedCard = this._fallbackCard.render();
-        }
-        else {
+        } else {
             renderedCard = super.render();
 
             if (renderedCard) {
@@ -6583,6 +8896,16 @@ export class AdaptiveCard extends ContainerWithActions {
                 if (this.speak) {
                     renderedCard.setAttribute("aria-label", this.speak);
                 }
+
+                renderedCard.onmouseenter = (ev: MouseEvent) => {
+                    this.updateInputsVisualState(true /* hover */);
+                };
+
+                renderedCard.onmouseleave = (ev: MouseEvent) => {
+                    this.updateInputsVisualState(false /* hover */);
+                };
+
+                this.getRootElement().updateActionsEnabledState();
             }
         }
 
@@ -6599,9 +8922,10 @@ export class AdaptiveCard extends ContainerWithActions {
         super.updateLayout(processChildren);
 
         if (GlobalSettings.useAdvancedCardBottomTruncation && this.isDisplayed()) {
-            let padding = this.hostConfig.getEffectiveSpacing(Enums.Spacing.Default);
+            const padding = this.hostConfig.getEffectiveSpacing(Enums.Spacing.Default);
 
-            this['handleOverflow']((<HTMLElement>this.renderedElement).offsetHeight - padding);
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            this["handleOverflow"](this.renderedElement!.offsetHeight - padding);
         }
     }
 
@@ -6624,9 +8948,7 @@ class InlineAdaptiveCard extends AdaptiveCard {
     protected populateSchema(schema: SerializableObjectSchema) {
         super.populateSchema(schema);
 
-        schema.remove(
-            AdaptiveCard.$schemaProperty,
-            AdaptiveCard.versionProperty);
+        schema.remove(AdaptiveCard.$schemaProperty, AdaptiveCard.versionProperty);
     }
 
     //#endregion
@@ -6636,7 +8958,8 @@ class InlineAdaptiveCard extends AdaptiveCard {
             this.suppressStyle ? Enums.Spacing.None : Enums.Spacing.Padding,
             Enums.Spacing.Padding,
             this.suppressStyle ? Enums.Spacing.None : Enums.Spacing.Padding,
-            Enums.Spacing.Padding);
+            Enums.Spacing.Padding
+        );
     }
 
     protected get bypassVersionCheck(): boolean {
@@ -6646,16 +8969,17 @@ class InlineAdaptiveCard extends AdaptiveCard {
     protected get defaultStyle(): string {
         if (this.suppressStyle) {
             return Enums.ContainerStyle.Default;
-        }
-        else {
-            return this.hostConfig.actions.showCard.style ? this.hostConfig.actions.showCard.style : Enums.ContainerStyle.Emphasis;
+        } else {
+            return this.hostConfig.actions.showCard.style
+                ? this.hostConfig.actions.showCard.style
+                : Enums.ContainerStyle.Emphasis;
         }
     }
 
     suppressStyle: boolean = false;
 
     render(target?: HTMLElement): HTMLElement | undefined {
-        let renderedCard = super.render(target);
+        const renderedCard = super.render(target);
 
         if (renderedCard) {
             renderedCard.setAttribute("aria-live", "polite");
@@ -6666,111 +8990,73 @@ class InlineAdaptiveCard extends AdaptiveCard {
     }
 }
 
-export class GlobalRegistry {
-    static populateWithDefaultElements(registry: CardObjectRegistry<CardElement>) {
-        registry.clear();
-
-        registry.register("Container", Container);
-        registry.register("TextBlock", TextBlock);
-        registry.register("RichTextBlock", RichTextBlock, Versions.v1_2);
-        registry.register("TextRun", TextRun, Versions.v1_2);
-        registry.register("Image", Image);
-        registry.register("ImageSet", ImageSet);
-        registry.register("Media", Media, Versions.v1_1);
-        registry.register("FactSet", FactSet);
-        registry.register("ColumnSet", ColumnSet);
-        registry.register("ActionSet", ActionSet, Versions.v1_2);
-        registry.register("Input.Text", TextInput);
-        registry.register("Input.Date", DateInput);
-        registry.register("Input.Time", TimeInput);
-        registry.register("Input.Number", NumberInput);
-        registry.register("Input.ChoiceSet", ChoiceSetInput);
-        registry.register("Input.Toggle", ToggleInput);
-    }
-
-    static populateWithDefaultActions(registry: CardObjectRegistry<Action>) {
-        registry.clear();
-
-        registry.register(OpenUrlAction.JsonTypeName, OpenUrlAction);
-        registry.register(SubmitAction.JsonTypeName, SubmitAction);
-        registry.register(ShowCardAction.JsonTypeName, ShowCardAction);
-        registry.register(ToggleVisibilityAction.JsonTypeName, ToggleVisibilityAction, Versions.v1_2);
-    }
-
-    static readonly elements = new CardObjectRegistry<CardElement>();
-    static readonly actions = new CardObjectRegistry<Action>();
-
-    static reset() {
-        GlobalRegistry.populateWithDefaultElements(GlobalRegistry.elements);
-        GlobalRegistry.populateWithDefaultActions(GlobalRegistry.actions);
-    }
-}
-
-GlobalRegistry.reset();
-
-const enum TypeErrorType {
-    UnknownType,
-    ForbiddenType
-}
-
 export class SerializationContext extends BaseSerializationContext {
     private _elementRegistry?: CardObjectRegistry<CardElement>;
     private _actionRegistry?: CardObjectRegistry<Action>;
 
+    private _forbiddenTypes: Set<string> = new Set<string>();
     private internalParseCardObject<T extends CardObject>(
         parent: CardElement | undefined,
         source: any,
-        forbiddenTypeNames: string[],
+        forbiddenTypes: Set<string>,
         allowFallback: boolean,
-        createInstanceCallback: (typeName: string) => T | undefined,
-        logParseEvent: (typeName: string, errorType: TypeErrorType) => void): T | undefined {
+        createInstanceCallback: (typeName: string | undefined) => T | undefined,
+        logParseEvent: (typeName: string | undefined, errorType: Enums.TypeErrorType) => void
+    ): T | undefined {
         let result: T | undefined = undefined;
 
         if (source && typeof source === "object") {
-            let typeName = Utils.parseString(source["type"]);
+            const oldForbiddenTypes = new Set<string>();
+            this._forbiddenTypes.forEach((type) => {
+                oldForbiddenTypes.add(type);
+            });
+            forbiddenTypes.forEach((type) => {
+                this._forbiddenTypes.add(type);
+            });
 
-            if (typeName) {
-                if (forbiddenTypeNames.indexOf(typeName) >= 0) {
-                    logParseEvent(typeName, TypeErrorType.ForbiddenType);
+            const typeName = Utils.parseString(source["type"]);
+
+            if (typeName && this._forbiddenTypes.has(typeName)) {
+                logParseEvent(typeName, Enums.TypeErrorType.ForbiddenType);
+            } else {
+                let tryToFallback = false;
+
+                result = createInstanceCallback(typeName);
+
+                if (!result) {
+                    tryToFallback = GlobalSettings.enableFallback && allowFallback;
+
+                    logParseEvent(typeName, Enums.TypeErrorType.UnknownType);
+                } else {
+                    result.setParent(parent);
+                    result.parse(source, this);
+
+                    tryToFallback =
+                        GlobalSettings.enableFallback && allowFallback && result.shouldFallback();
                 }
-                else {
-                    let tryToFallback = false;
 
-                    result = createInstanceCallback(typeName);
+                if (tryToFallback) {
+                    const fallback = source["fallback"];
 
-                    if (!result) {
-                        tryToFallback = GlobalSettings.enableFallback && allowFallback;
-
-                        logParseEvent(typeName, TypeErrorType.UnknownType);
+                    if (!fallback && parent) {
+                        parent.setShouldFallback(true);
                     }
-                    else {
-                        result.setParent(parent);
-                        result.parse(source, this);
-
-                        tryToFallback = GlobalSettings.enableFallback && allowFallback && result.shouldFallback();
-                    }
-
-                    if (tryToFallback) {
-                        let fallback = source["fallback"];
-
-                        if (!fallback && parent) {
-                            parent.setShouldFallback(true);
-                        }
-                        if (typeof fallback === "string" && fallback.toLowerCase() === "drop") {
-                            result = undefined;
-                        }
-                        else if (typeof fallback === "object") {
-                            result = this.internalParseCardObject<T>(
-                                parent,
-                                fallback,
-                                forbiddenTypeNames,
-                                true,
-                                createInstanceCallback,
-                                logParseEvent);
-                        }
+                    if (typeof fallback === "string" && fallback.toLowerCase() === "drop") {
+                        result = undefined;
+                    } else if (typeof fallback === "object") {
+                        result = this.internalParseCardObject<T>(
+                            parent,
+                            fallback,
+                            forbiddenTypes,
+                            true,
+                            createInstanceCallback,
+                            logParseEvent
+                        );
                     }
                 }
             }
+
+            this._forbiddenTypes = oldForbiddenTypes;
         }
 
         return result;
@@ -6779,8 +9065,7 @@ export class SerializationContext extends BaseSerializationContext {
     protected cardObjectParsed(o: SerializableObject, source: any) {
         if (o instanceof Action && this.onParseAction) {
             this.onParseAction(o, source, this);
-        }
-        else if (o instanceof CardElement && this.onParseElement) {
+        } else if (o instanceof CardElement && this.onParseElement) {
             this.onParseElement(o, source, this);
         }
     }
@@ -6788,20 +9073,33 @@ export class SerializationContext extends BaseSerializationContext {
     onParseAction?: (action: Action, source: any, context: SerializationContext) => void;
     onParseElement?: (element: CardElement, source: any, context: SerializationContext) => void;
 
+    shouldSerialize(o: SerializableObject): boolean {
+        if (o instanceof Action) {
+            return this.actionRegistry.findByName(o.getJsonTypeName()) !== undefined;
+        } else if (o instanceof CardElement) {
+            return this.elementRegistry.findByName(o.getJsonTypeName()) !== undefined;
+        } else {
+            return true;
+        }
+    }
+
     parseCardObject<T extends CardObject>(
         parent: CardElement | undefined,
         source: any,
         forbiddenTypeNames: string[],
         allowFallback: boolean,
         createInstanceCallback: (typeName: string) => T | undefined,
-        logParseEvent: (typeName: string, errorType: TypeErrorType) => void): T | undefined {
-        let result = this.internalParseCardObject(
+        logParseEvent: (typeName: string, errorType: Enums.TypeErrorType) => void
+    ): T | undefined {
+        const forbiddenTypes = new Set<string>(forbiddenTypeNames);
+        const result = this.internalParseCardObject(
             parent,
             source,
-            forbiddenTypeNames,
+            forbiddenTypes,
             allowFallback,
             createInstanceCallback,
-            logParseEvent);
+            logParseEvent
+        );
 
         if (result !== undefined) {
             this.cardObjectParsed(result, source);
@@ -6810,36 +9108,44 @@ export class SerializationContext extends BaseSerializationContext {
         return result;
     }
 
-    parseElement(parent: CardElement | undefined, source: any, allowFallback: boolean): CardElement | undefined {
+    parseElement(
+        parent: CardElement | undefined,
+        source: any,
+        forbiddenTypes: string[],
+        allowFallback: boolean
+    ): CardElement | undefined {
         return this.parseCardObject<CardElement>(
             parent,
             source,
-            [], // Forbidden types not supported for elements for now
+            forbiddenTypes,
             allowFallback,
             (typeName: string) => {
                 return this.elementRegistry.createInstance(typeName, this.targetVersion);
             },
-            (typeName: string, errorType: TypeErrorType) => {
-                if (errorType === TypeErrorType.UnknownType) {
+            (typeName: string, errorType: Enums.TypeErrorType) => {
+                if (errorType === Enums.TypeErrorType.UnknownType) {
                     this.logParseEvent(
                         undefined,
                         Enums.ValidationEvent.UnknownElementType,
-                        Strings.errors.unknownElementType(typeName));
-                }
-                else {
+                        Strings.errors.unknownElementType(typeName)
+                    );
+                } else {
                     this.logParseEvent(
                         undefined,
                         Enums.ValidationEvent.ElementTypeNotAllowed,
-                        Strings.errors.elementTypeNotAllowed(typeName));
+                        Strings.errors.elementTypeNotAllowed(typeName)
+                    );
                 }
-            });
+            }
+        );
     }
 
     parseAction(
         parent: CardElement,
         source: any,
         forbiddenActionTypes: string[],
-        allowFallback: boolean): Action | undefined {
+        allowFallback: boolean
+    ): Action | undefined {
         return this.parseCardObject<Action>(
             parent,
             source,
@@ -6848,24 +9154,26 @@ export class SerializationContext extends BaseSerializationContext {
             (typeName: string) => {
                 return this.actionRegistry.createInstance(typeName, this.targetVersion);
             },
-            (typeName: string, errorType: TypeErrorType) => {
-                if (errorType == TypeErrorType.UnknownType) {
+            (typeName: string, errorType: Enums.TypeErrorType) => {
+                if (errorType === Enums.TypeErrorType.UnknownType) {
                     this.logParseEvent(
                         undefined,
                         Enums.ValidationEvent.UnknownActionType,
-                        Strings.errors.unknownActionType(typeName));
-                }
-                else {
+                        Strings.errors.unknownActionType(typeName)
+                    );
+                } else {
                     this.logParseEvent(
                         undefined,
                         Enums.ValidationEvent.ActionTypeNotAllowed,
-                        Strings.errors.actionTypeNotAllowed(typeName));
+                        Strings.errors.actionTypeNotAllowed(typeName)
+                    );
                 }
-            });
+            }
+        );
     }
 
     get elementRegistry(): CardObjectRegistry<CardElement> {
-        return this._elementRegistry ? this._elementRegistry : GlobalRegistry.elements;
+        return this._elementRegistry ?? GlobalRegistry.elements;
     }
 
     // Not using a property setter here because the setter should accept "undefined"
@@ -6875,7 +9183,7 @@ export class SerializationContext extends BaseSerializationContext {
     }
 
     get actionRegistry(): CardObjectRegistry<Action> {
-        return this._actionRegistry ? this._actionRegistry : GlobalRegistry.actions;
+        return this._actionRegistry ?? GlobalRegistry.actions;
     }
 
     // Not using a property setter here because the setter should accept "undefined"
@@ -6884,3 +9192,30 @@ export class SerializationContext extends BaseSerializationContext {
         this._actionRegistry = value;
     }
 }
+
+GlobalRegistry.defaultElements.register("Container", Container);
+GlobalRegistry.defaultElements.register("TextBlock", TextBlock);
+GlobalRegistry.defaultElements.register("RichTextBlock", RichTextBlock, Versions.v1_2);
+GlobalRegistry.defaultElements.register("TextRun", TextRun, Versions.v1_2);
+GlobalRegistry.defaultElements.register("Image", Image);
+GlobalRegistry.defaultElements.register("ImageSet", ImageSet);
+GlobalRegistry.defaultElements.register("Media", Media, Versions.v1_1);
+GlobalRegistry.defaultElements.register("FactSet", FactSet);
+GlobalRegistry.defaultElements.register("ColumnSet", ColumnSet);
+GlobalRegistry.defaultElements.register("ActionSet", ActionSet, Versions.v1_2);
+GlobalRegistry.defaultElements.register("Input.Text", TextInput);
+GlobalRegistry.defaultElements.register("Input.Date", DateInput);
+GlobalRegistry.defaultElements.register("Input.Time", TimeInput);
+GlobalRegistry.defaultElements.register("Input.Number", NumberInput);
+GlobalRegistry.defaultElements.register("Input.ChoiceSet", ChoiceSetInput);
+GlobalRegistry.defaultElements.register("Input.Toggle", ToggleInput);
+
+GlobalRegistry.defaultActions.register(OpenUrlAction.JsonTypeName, OpenUrlAction);
+GlobalRegistry.defaultActions.register(SubmitAction.JsonTypeName, SubmitAction);
+GlobalRegistry.defaultActions.register(ShowCardAction.JsonTypeName, ShowCardAction);
+GlobalRegistry.defaultActions.register(
+    ToggleVisibilityAction.JsonTypeName,
+    ToggleVisibilityAction,
+    Versions.v1_2
+);
+GlobalRegistry.defaultActions.register(ExecuteAction.JsonTypeName, ExecuteAction, Versions.v1_4);

@@ -37,20 +37,19 @@
     std::shared_ptr<BaseCardElement> elem = [acoElem element];
     std::shared_ptr<Container> containerElem = std::dynamic_pointer_cast<Container>(elem);
 
+    [rootView.context pushBaseCardElementContext:acoElem];
+
     ACRColumnView *container = [[ACRColumnView alloc] initWithStyle:(ACRContainerStyle)containerElem->GetStyle()
                                                         parentStyle:[viewGroup style]
                                                          hostConfig:acoConfig
                                                           superview:viewGroup];
+    container.rtl = rootView.context.rtl;
+
     [viewGroup addArrangedSubview:container];
 
     configBleed(rootView, elem, container, acoConfig);
 
     renderBackgroundImage(containerElem->GetBackgroundImage(), container, rootView);
-
-    UIView *leadingBlankSpace = nil, *trailingBlankSpace = nil;
-    if (containerElem->GetVerticalContentAlignment() == VerticalContentAlignment::Center || containerElem->GetVerticalContentAlignment() == VerticalContentAlignment::Bottom) {
-        leadingBlankSpace = [container addPaddingSpace];
-    }
 
     container.frame = viewGroup.frame;
 
@@ -60,54 +59,31 @@
           withCardElems:containerElem->GetItems()
           andHostConfig:acoConfig];
 
-    const VerticalContentAlignment adaptiveVAlignment = containerElem->GetVerticalContentAlignment();
-    // Dont add the trailing space if the vertical content alignment is top/default
-    if (adaptiveVAlignment == VerticalContentAlignment::Center || (adaptiveVAlignment == VerticalContentAlignment::Top && !(container.hasStretchableView))) {
-        trailingBlankSpace = [container addPaddingSpace];
-    }
-
     [container setClipsToBounds:NO];
-
-    if (containerElem->GetMinHeight() > 0) {
-        [NSLayoutConstraint constraintWithItem:container
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                        toItem:nil
-                                     attribute:NSLayoutAttributeNotAnAttribute
-                                    multiplier:1
-                                      constant:containerElem->GetMinHeight()]
-            .active = YES;
-    }
-
-    if (leadingBlankSpace != nil && trailingBlankSpace != nil) {
-        [NSLayoutConstraint constraintWithItem:leadingBlankSpace
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:trailingBlankSpace
-                                     attribute:NSLayoutAttributeHeight
-                                    multiplier:1.0
-                                      constant:0]
-            .active = YES;
-    }
 
     std::shared_ptr<BaseActionElement> selectAction = containerElem->GetSelectAction();
     ACOBaseActionElement *acoSelectAction = [ACOBaseActionElement getACOActionElementFromAdaptiveElement:selectAction];
     [container configureForSelectAction:acoSelectAction rootView:rootView];
 
-    configVisibility(container, elem);
+    [container configureLayoutAndVisibility:GetACRVerticalContentAlignment(containerElem->GetVerticalContentAlignment().value_or(VerticalContentAlignment::Top))
+                                  minHeight:containerElem->GetMinHeight()
+                                 heightType:GetACRHeight(containerElem->GetHeight())
+                                       type:ACRContainer];
 
-    [container hideIfSubviewsAreAllHidden];
+    [rootView.context popBaseCardElementContext:acoElem];
 
-    return viewGroup;
+    container.accessibilityElements = [container getArrangedSubviews];
+
+    return container;
 }
 
-- (void)configUpdateForUIImageView:(ACOBaseCardElement *)acoElem config:(ACOHostConfig *)acoConfig image:(UIImage *)image imageView:(UIImageView *)imageView
+- (void)configUpdateForUIImageView:(ACRView *)rootView acoElem:(ACOBaseCardElement *)acoElem config:(ACOHostConfig *)acoConfig image:(UIImage *)image imageView:(UIImageView *)imageView
 {
     std::shared_ptr<BaseCardElement> elem = [acoElem element];
     std::shared_ptr<Container> containerElem = std::dynamic_pointer_cast<Container>(elem);
     auto backgroundImageProperties = containerElem->GetBackgroundImage();
 
-    renderBackgroundImage(backgroundImageProperties.get(), imageView, image);
+    renderBackgroundImage(rootView, backgroundImageProperties.get(), imageView, image);
 }
 
 @end

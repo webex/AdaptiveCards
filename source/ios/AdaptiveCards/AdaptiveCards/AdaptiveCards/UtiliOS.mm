@@ -9,10 +9,12 @@
 #import "ACOBaseCardElementPrivate.h"
 #import "ACOHostConfigPrivate.h"
 #import "ACRBaseCardElementRenderer.h"
+#import "ACRBaseTarget.h"
 #import "ACRColumnSetView.h"
 #import "ACRContentStackView.h"
 #import "ACRIBaseActionElementRenderer.h"
 #import "ACRRegistration.h"
+#import "ACRTableRow.h"
 #import "ACRTargetBuilderDirector.h"
 #import "ACRUIImageView.h"
 #import "ACRViewPrivate.h"
@@ -24,6 +26,9 @@
 #import "TextRun.h"
 
 using namespace AdaptiveCards;
+
+// tolerance value for computing scaler for background cover size
+const CGFloat kACRScalerTolerance = 0.025f;
 
 void configVisibility(UIView *view, std::shared_ptr<BaseCardElement> const &visibilityInfo)
 {
@@ -37,6 +42,14 @@ void configVisibility(UIView *view, std::shared_ptr<BaseCardElement> const &visi
                                            encoding:NSUTF8StringEncoding];
     view.tag = hashkey.hash;
 }
+
+void configVisibilityWithVisibilityManager(ACRView *rootView, NSObject<ACOIVisibilityManagerFacade> *facade, ACRContentStackView *view)
+{
+    for (UIView *subview in [view getContentStackSubviews]) {
+        [rootView.context registerVisibilityManager:facade targetViewTag:subview.tag];
+    }
+}
+
 
 void configSeparatorVisibility(ACRSeparator *view,
                                std::shared_ptr<BaseCardElement> const &visibilityInfo)
@@ -52,12 +65,43 @@ void configSeparatorVisibility(ACRSeparator *view,
                                                          encoding:NSUTF8StringEncoding];
     [hashkey appendString:@"-separator"];
     view.tag = hashkey.hash;
+    view.isVisibilityObserved = YES;
+}
+
+ACRRtl getiOSRtl(std::optional<bool> const rtl)
+{
+    ACRRtl acrtl = ACRRtlNone;
+    if (rtl.has_value()) {
+        BOOL doSetRTL = rtl.value_or(false);
+        if (doSetRTL) {
+            acrtl = ACRRtlRTL;
+        } else {
+            acrtl = ACRRtlLTR;
+        }
+    }
+    return acrtl;
+}
+
+void configRtl(UIView *view, ACORenderContext *context)
+{
+    if (!view || !context) {
+        return;
+    }
+
+    ACRRtl rtl = context.rtl;
+    if (rtl == ACRRtlNone) {
+        return;
+    } else if (rtl == ACRRtlRTL) {
+        view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+    } else if (rtl == ACRRtlRTL) {
+        view.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
+    }
 }
 
 void renderBackgroundImage(const std::shared_ptr<AdaptiveCards::BackgroundImage> backgroundImage,
-                           UIView *containerView, ACRView *rootView)
+                           ACRContentStackView *containerView, ACRView *rootView)
 {
-    if (backgroundImage == nullptr || backgroundImage->GetUrl().empty()) {
+    if (rootView == nil || backgroundImage == nullptr || backgroundImage->GetUrl().empty()) {
         return;
     }
 
@@ -94,17 +138,17 @@ void renderBackgroundImage(const std::shared_ptr<AdaptiveCards::BackgroundImage>
             [containerView insertSubview:imgView atIndex:0];
 
             if (imgView.image) {
-                // apply now if image is ready, otherwise wait until it is loaded
-                applyBackgroundImageConstraints(backgroundImage.get(), imgView, imgView.image);
+                // if image is ready, proceed to setting contraints
+                renderBackgroundImage(rootView, backgroundImage.get(), imgView, imgView.image);
             }
         }
     }
 }
 
-void renderBackgroundImage(const BackgroundImage *backgroundImageProperties, UIImageView *imageView,
+void renderBackgroundImage(ACRView *rootView, const BackgroundImage *backgroundImageProperties, UIImageView *imageView,
                            UIImage *image)
 {
-    if (backgroundImageProperties == nullptr || imageView == nullptr || image == nullptr) {
+    if (rootView == nil || backgroundImageProperties == nullptr || imageView == nullptr || image == nullptr) {
         return;
     }
 
@@ -112,9 +156,69 @@ void renderBackgroundImage(const BackgroundImage *backgroundImageProperties, UII
         backgroundImageProperties->GetFillMode() == ImageFillMode::RepeatHorizontally ||
         backgroundImageProperties->GetFillMode() == ImageFillMode::RepeatVertically) {
         imageView.backgroundColor = [UIColor colorWithPatternImage:image];
+        [rootView removeObserver:rootView forKeyPath:@"image" onObject:imageView];
         imageView.image = nil;
     }
     applyBackgroundImageConstraints(backgroundImageProperties, imageView, image);
+    [rootView removeObserver:rootView forKeyPath:@"image" onObject:imageView];
+}
+
+// apply contraints for 'Cover' fill mode
+// the backgroundView is set on the targetView
+void renderBackgroundCoverMode(UIView *backgroundView, UIView *targetView, NSMutableArray<NSLayoutConstraint *> *constraints, ACRContentStackView *parentView)
+{
+    if (!targetView) {
+        targetView = parentView;
+    }
+
+    if (!backgroundView || !targetView || ![backgroundView isKindOfClass:[UIImageView class]] || parentView.isBackgroundImageSet) {
+        return;
+    }
+
+    UIImageView *imageView = (UIImageView *)backgroundView;
+    UIImage *image = imageView.image;
+
+    if (!image) {
+        return;
+    }
+
+    parentView.isBackgroundImageSet = YES;
+
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    // Fill Mode Description
+    // ScaleAspectFill increases one dimension of image proportionally if
+    // corresponding dimension increases but it does not increase view surroinding the image
+    // find which dimension is in deficit and act accordingly
+    // when both dimensions are in deficit find the most deficient dimension
+    // and increase
+    // center the modified image view to the target view.
+
+    CGSize targetViewSize = targetView.frame.size;
+    CGSize sourceSize = image.size;
+    BOOL isDeficientInWidth = NO;
+    BOOL isDeficientInHeight = NO;
+
+    if (sourceSize.width < targetViewSize.width) {
+        isDeficientInWidth = YES;
+    }
+
+    if (sourceSize.height < targetViewSize.height) {
+        isDeficientInHeight = YES;
+    }
+
+    if (isDeficientInWidth || isDeficientInHeight) {
+        [constraints addObjectsFromArray:@[
+            [imageView.widthAnchor constraintGreaterThanOrEqualToAnchor:targetView.widthAnchor],
+            [imageView.heightAnchor constraintGreaterThanOrEqualToAnchor:targetView.heightAnchor]
+        ]];
+    } else {
+        // scale background image view to the minimum size that can still cover all of the target view.
+        CGRect newCoverRect = FindClosestRectToCover(CGRectMake(0, 0, sourceSize.width, sourceSize.height), targetView.frame);
+        [constraints addObjectsFromArray:@[
+            [imageView.widthAnchor constraintEqualToConstant:newCoverRect.size.width],
+            [imageView.heightAnchor constraintEqualToConstant:newCoverRect.size.height]
+        ]];
+    }
 }
 
 void applyBackgroundImageConstraints(const BackgroundImage *backgroundImageProperties,
@@ -129,154 +233,126 @@ void applyBackgroundImageConstraints(const BackgroundImage *backgroundImagePrope
         return;
     }
 
+    UIView *backgroundView = nil;
+    if ([superView isKindOfClass:[ACRContentStackView class]]) {
+        backgroundView = ((ACRContentStackView *)superView).backgroundView;
+        if (backgroundView) {
+            [imageView removeFromSuperview];
+            [backgroundView addSubview:imageView];
+        }
+    }
+
+    UIView *targetView = backgroundView ? backgroundView : superView;
+
+    NSMutableArray<NSLayoutConstraint *> *constraints = [[NSMutableArray alloc] init];
     switch (backgroundImageProperties->GetFillMode()) {
         case ImageFillMode::Repeat: {
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeTop
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:superView
-                                         attribute:NSLayoutAttributeTop
-                                        multiplier:1.0
-                                          constant:0]
-                .active = YES;
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeBottom
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:superView
-                                         attribute:NSLayoutAttributeBottom
-                                        multiplier:1.0
-                                          constant:0]
-                .active = YES;
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeLeading
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:superView
-                                         attribute:NSLayoutAttributeLeading
-                                        multiplier:1.0
-                                          constant:0]
-                .active = YES;
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeTrailing
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:superView
-                                         attribute:NSLayoutAttributeTrailing
-                                        multiplier:1.0
-                                          constant:0]
-                .active = YES;
+            [constraints addObjectsFromArray:@[
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeTop
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:targetView
+                                             attribute:NSLayoutAttributeTop
+                                            multiplier:1.0
+                                              constant:0],
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeBottom
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:targetView
+                                             attribute:NSLayoutAttributeBottom
+                                            multiplier:1.0
+                                              constant:0],
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeLeading
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:targetView
+                                             attribute:NSLayoutAttributeLeading
+                                            multiplier:1.0
+                                              constant:0],
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeTrailing
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:targetView
+                                             attribute:NSLayoutAttributeTrailing
+                                            multiplier:1.0
+                                              constant:0]
+            ]];
 
             imageView.contentMode = UIViewContentModeScaleAspectFill;
             break;
         }
         case ImageFillMode::RepeatHorizontally: {
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeHeight
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:nil
-                                         attribute:NSLayoutAttributeNotAnAttribute
-                                        multiplier:1.0
-                                          constant:image.size.height]
-                .active = YES;
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeLeading
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:superView
-                                         attribute:NSLayoutAttributeLeading
-                                        multiplier:1.0
-                                          constant:0]
-                .active = YES;
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeTrailing
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:superView
-                                         attribute:NSLayoutAttributeTrailing
-                                        multiplier:1.0
-                                          constant:0]
-                .active = YES;
+            [constraints addObjectsFromArray:@[
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeHeight
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:nil
+                                             attribute:NSLayoutAttributeNotAnAttribute
+                                            multiplier:1.0
+                                              constant:image.size.height],
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeLeading
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:targetView
+                                             attribute:NSLayoutAttributeLeading
+                                            multiplier:1.0
+                                              constant:0],
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeTrailing
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:targetView
+                                             attribute:NSLayoutAttributeTrailing
+                                            multiplier:1.0
+                                              constant:0]
+            ]];
 
-            configVerticalAlignmentConstraintsForBackgroundImageView(backgroundImageProperties, superView, imageView);
+            configVerticalAlignmentConstraintsForBackgroundImageView(backgroundImageProperties, superView, imageView, constraints);
             break;
         }
         case ImageFillMode::RepeatVertically: {
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeWidth
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:nil
-                                         attribute:NSLayoutAttributeNotAnAttribute
-                                        multiplier:1.0
-                                          constant:image.size.width]
-                .active = YES;
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeTop
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:superView
-                                         attribute:NSLayoutAttributeTop
-                                        multiplier:1.0
-                                          constant:0]
-                .active = YES;
-            [NSLayoutConstraint constraintWithItem:imageView
-                                         attribute:NSLayoutAttributeBottom
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:superView
-                                         attribute:NSLayoutAttributeBottom
-                                        multiplier:1.0
-                                          constant:0]
-                .active = YES;
-            configHorizontalAlignmentConstraintsForBackgroundImageView(backgroundImageProperties, superView, imageView);
+            [constraints addObjectsFromArray:@[
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeWidth
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:nil
+                                             attribute:NSLayoutAttributeNotAnAttribute
+                                            multiplier:1.0
+                                              constant:image.size.width],
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeTop
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:targetView
+                                             attribute:NSLayoutAttributeTop
+                                            multiplier:1.0
+                                              constant:0],
+                [NSLayoutConstraint constraintWithItem:imageView
+                                             attribute:NSLayoutAttributeBottom
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:targetView
+                                             attribute:NSLayoutAttributeBottom
+                                            multiplier:1.0
+                                              constant:0]
+            ]];
+            configHorizontalAlignmentConstraintsForBackgroundImageView(backgroundImageProperties, targetView, imageView, constraints);
             break;
         }
         case ImageFillMode::Cover:
         default: {
-            imageView.contentMode = UIViewContentModeScaleAspectFill;
-            // Fill Mode Description
-            // ScaleAspectFill increases one dimension of image proportionally if
-            // corresponding dimension increases but it does not increase view surroinding the image
-            // find which dimension is in deficit and act accordingly
-            // when both dimensions are in deficit find the most deficient dimension
-            // and increase
-            // center the modified image view to the target view.
-
-            CGSize targetViewSize = superView.frame.size;
-            CGSize sourceSize = image.size;
-            BOOL isDeficientInWidth = NO;
-            BOOL isDeficientInHeight = NO;
-
-            if (sourceSize.width < targetViewSize.width) {
-                isDeficientInWidth = YES;
+            // we should not apply the constraints if the superView's frame is not ready
+            // check layoutSubview of ACRContentStackView to see the alternate case
+            if (superView.frame.size.width != 0 && superView.frame.size.height != 0) {
+                renderBackgroundCoverMode(imageView, targetView, constraints, (ACRContentStackView *)superView);
             }
 
-            if (sourceSize.height < targetViewSize.height) {
-                isDeficientInHeight = YES;
-            }
+            configVerticalAlignmentConstraintsForBackgroundImageView(backgroundImageProperties, targetView, imageView, constraints);
 
-            if (isDeficientInWidth and isDeficientInHeight) {
-                CGFloat widthDeficiencyRaito = sourceSize.width ? targetViewSize.width / sourceSize.width : 1;
-                CGFloat heightDifficiencyRaito = sourceSize.height ? targetViewSize.height / sourceSize.height : 1;
-                // m * a >= x
-                // m * b >= y
-                // we want factor m that produces width and height when multiplied to a and b that are equal or greater than x and y where a, b is the background image size, and x, y are size of super view we are trying to fill
-                // then m is max of (a/x, b/y)
-                // we applies m to image view's corresponding axis.
-                // then we applies a/b or b/a aspect raito to y or x to increase the other axis and keep the aspect ratio.
-                if (widthDeficiencyRaito >= heightDifficiencyRaito) {
-                    configWidthAndHeightAnchors(superView, imageView, false);
-                } else {
-                    configWidthAndHeightAnchors(superView, imageView, true);
-                }
-            } else if (isDeficientInWidth) {
-                configWidthAndHeightAnchors(superView, imageView, false);
-            } else if (isDeficientInHeight) {
-                configWidthAndHeightAnchors(superView, imageView, true);
-            }
+            configHorizontalAlignmentConstraintsForBackgroundImageView(backgroundImageProperties, targetView, imageView, constraints);
 
-            configVerticalAlignmentConstraintsForBackgroundImageView(backgroundImageProperties, superView, imageView);
-
-            configHorizontalAlignmentConstraintsForBackgroundImageView(backgroundImageProperties, superView, imageView);
-
-            superView.clipsToBounds = YES;
-
+            targetView.clipsToBounds = YES;
             break;
         }
     }
+    [NSLayoutConstraint activateConstraints:constraints];
 }
 
 void configBleed(ACRView *rootView, std::shared_ptr<BaseCardElement> const &elem,
@@ -288,8 +364,8 @@ void configBleed(ACRView *rootView, std::shared_ptr<BaseCardElement> const &elem
 void configBleed(ACRView *rootView, std::shared_ptr<BaseCardElement> const &elem,
                  ACRContentStackView *container, ACOHostConfig *acoConfig, UIView<ACRIContentHoldingView> *superview)
 {
-    std::shared_ptr<CollectionTypeElement> collection =
-        std::dynamic_pointer_cast<CollectionTypeElement>(elem);
+    std::shared_ptr<StyledCollectionElement> collection =
+        std::dynamic_pointer_cast<StyledCollectionElement>(elem);
     if (collection) {
         // check current collection type element has padding, if so added to the padding map
         [rootView updatePaddingMap:collection view:container];
@@ -503,6 +579,9 @@ ACRRenderingStatus buildTargetForButton(ACRTargetBuilderDirector *director,
                                         UIButton *button, NSObject **target)
 {
     *target = [director build:action forButton:button];
+    if (action.tooltip && target) {
+        [((ACRBaseTarget *)*target) addGestureRecognizer:button toolTipText:action.tooltip];
+    }
     return *target ? ACRRenderingStatus::ACROk : ACRRenderingStatus::ACRFailed;
 }
 
@@ -516,14 +595,39 @@ ACRRenderingStatus buildTarget(ACRTargetBuilderDirector *director,
 
 void setAccessibilityTrait(UIView *recipientView, ACOBaseActionElement *action)
 {
-    recipientView.userInteractionEnabled = YES;
+    recipientView.userInteractionEnabled = [action isEnabled];
     recipientView.accessibilityTraits |= action.accessibilityTraits;
+    if (![action isEnabled]) {
+        recipientView.accessibilityTraits |= UIAccessibilityTraitNotEnabled;
+    }
+}
+
+NSString *configureForAccessibilityLabel(ACOBaseActionElement *action, NSString *contentString)
+{
+    NSMutableArray<NSString *> *accessibilityLabels = [[NSMutableArray alloc] init];
+    if (action.title) {
+        [accessibilityLabels addObject:action.title];
+    } else {
+        if (contentString) {
+            [accessibilityLabels addObject:contentString];
+        }
+    }
+
+    if (action.tooltip) {
+        [accessibilityLabels addObject:action.tooltip];
+    }
+
+    return [accessibilityLabels componentsJoinedByString:@", "];
 }
 
 UIFont *getFont(ACOHostConfig *hostConfig, const AdaptiveCards::RichTextElementProperties &textProperties)
 {
-    int fontweight = [hostConfig getTextBlockFontWeight:textProperties.GetFontType()
-                                             textWeight:textProperties.GetTextWeight()];
+    FontType sharedFontType = textProperties.GetFontType().value_or(FontType::Default);
+    TextWeight sharedTextWeight = textProperties.GetTextWeight().value_or(TextWeight::Default);
+    TextSize sharedTextSize = textProperties.GetTextSize().value_or(TextSize::Default);
+
+    int fontweight = [hostConfig getTextBlockFontWeight:sharedFontType
+                                             textWeight:sharedTextWeight];
     // sanity check, 400 is the normal font;
     if (fontweight <= 0 || fontweight > 900) {
         fontweight = 400;
@@ -532,10 +636,10 @@ UIFont *getFont(ACOHostConfig *hostConfig, const AdaptiveCards::RichTextElementP
     fontweight -= 100;
     fontweight /= 100;
 
-    if (![hostConfig getFontFamily:textProperties.GetFontType()]) {
+    if (![hostConfig getFontFamily:sharedFontType]) {
         const NSArray<NSNumber *> *fontweights = @[ @(UIFontWeightUltraLight), @(UIFontWeightThin), @(UIFontWeightLight), @(UIFontWeightRegular), @(UIFontWeightMedium),
                                                     @(UIFontWeightSemibold), @(UIFontWeightBold), @(UIFontWeightHeavy), @(UIFontWeightBlack) ];
-        const CGFloat size = [hostConfig getTextBlockTextSize:textProperties.GetFontType() textSize:textProperties.GetTextSize()];
+        const CGFloat size = [hostConfig getTextBlockTextSize:sharedFontType textSize:sharedTextSize];
         if (textProperties.GetFontType() == FontType::Monospace) {
             const NSArray<NSString *> *fontweights = @[ @"UltraLight", @"Thin", @"Light", @"Regular",
                                                         @"Medium", @"Semibold", @"Bold", @"Heavy", @"Black" ];
@@ -543,7 +647,7 @@ UIFont *getFont(ACOHostConfig *hostConfig, const AdaptiveCards::RichTextElementP
                                                                                                 UIFontDescriptorFaceAttribute : fontweights[fontweight]}];
             descriptor = getItalicFontDescriptor(descriptor, textProperties.GetItalic());
 
-            font = [UIFont fontWithDescriptor:descriptor size:[hostConfig getTextBlockTextSize:textProperties.GetFontType() textSize:textProperties.GetTextSize()]];
+            font = [UIFont fontWithDescriptor:descriptor size:[hostConfig getTextBlockTextSize:sharedFontType textSize:sharedTextSize]];
         } else {
             font = [UIFont systemFontOfSize:size weight:[fontweights[fontweight] floatValue]];
 
@@ -559,14 +663,15 @@ UIFont *getFont(ACOHostConfig *hostConfig, const AdaptiveCards::RichTextElementP
         const NSArray<NSString *> *fontweights = @[ @"UltraLight", @"Thin", @"Light", @"Regular",
                                                     @"Medium", @"Semibold", @"Bold", @"Heavy", @"Black" ];
         UIFontDescriptor *descriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:
-                                                             @{UIFontDescriptorFamilyAttribute : [hostConfig getFontFamily:textProperties.GetFontType()],
+                                                             @{UIFontDescriptorFamilyAttribute : [hostConfig getFontFamily:sharedFontType],
                                                                UIFontDescriptorFaceAttribute : fontweights[fontweight]}];
 
         descriptor = getItalicFontDescriptor(descriptor, textProperties.GetItalic());
 
-        font = [UIFont fontWithDescriptor:descriptor size:[hostConfig getTextBlockTextSize:textProperties.GetFontType() textSize:textProperties.GetTextSize()]];
+        font = [UIFont fontWithDescriptor:descriptor size:[hostConfig getTextBlockTextSize:sharedFontType textSize:sharedTextSize]];
     }
-    return font;
+
+    return [UIFontMetrics.defaultMetrics scaledFontForFont:font];
 }
 
 void buildIntermediateResultForText(ACRView *rootView, ACOHostConfig *hostConfig, RichTextElementProperties const &textProperties, NSString *elementId)
@@ -574,31 +679,44 @@ void buildIntermediateResultForText(ACRView *rootView, ACOHostConfig *hostConfig
     std::shared_ptr<MarkDownParser> markDownParser = std::make_shared<MarkDownParser>([ACOHostConfig getLocalizedDate:textProperties.GetText() language:textProperties.GetLanguage()]);
 
     // MarkDownParser transforms text with MarkDown to a html string
-    NSString *parsedString = [NSString stringWithCString:markDownParser->TransformToHtml().c_str() encoding:NSUTF8StringEncoding];
+    auto markdownString = markDownParser->TransformToHtml();
+    NSString *parsedString = (markDownParser->HasHtmlTags()) ? [NSString stringWithCString:markdownString.c_str() encoding:NSUTF8StringEncoding] : [NSString stringWithCString:markDownParser->GetRawText().c_str() encoding:NSUTF8StringEncoding];
+
+    if (markDownParser->HasHtmlTags() && ([parsedString containsString:@"\n"] || [parsedString containsString:@"\r"])) {
+        parsedString = [parsedString stringByReplacingOccurrencesOfString:@"[\\n\\r]"
+                                                               withString:@"<br>"
+                                                                  options:NSRegularExpressionSearch
+                                                                    range:NSMakeRange(0, [parsedString length])];
+    }
+
     NSDictionary *data = nil;
 
+    FontType sharedFontType = textProperties.GetFontType().value_or(FontType::Default);
+    TextWeight sharedTextWeight = textProperties.GetTextWeight().value_or(TextWeight::Default);
+    TextSize sharedTextSize = textProperties.GetTextSize().value_or(TextSize::Default);
+
     // use Apple's html rendering only if the string has markdowns
-    if (markDownParser->HasHtmlTags() || markDownParser->IsEscaped()) {
+    if (markDownParser->HasHtmlTags()) {
         NSString *fontFamilyName = nil;
 
-        if (![hostConfig getFontFamily:textProperties.GetFontType()]) {
-            if (textProperties.GetFontType() == FontType::Monospace) {
+        if (![hostConfig getFontFamily:sharedFontType]) {
+            if (sharedFontType == FontType::Monospace) {
                 fontFamilyName = @"'Courier New'";
             } else {
                 fontFamilyName = @"'-apple-system',  'San Francisco'";
             }
         } else {
-            fontFamilyName = [hostConfig getFontFamily:textProperties.GetFontType()];
+            fontFamilyName = [hostConfig getFontFamily:sharedFontType];
         }
 
         NSString *font_style = textProperties.GetItalic() ? @"italic" : @"normal";
         // Font and text size are applied as CSS style by appending it to the html string
         parsedString = [parsedString stringByAppendingString:[NSString stringWithFormat:@"<style>body{font-family: %@; font-size:%dpx; font-weight: %d; font-style: %@;}</style>",
                                                                                         fontFamilyName,
-                                                                                        [hostConfig getTextBlockTextSize:textProperties.GetFontType()
-                                                                                                                textSize:textProperties.GetTextSize()],
-                                                                                        [hostConfig getTextBlockFontWeight:textProperties.GetFontType()
-                                                                                                                textWeight:textProperties.GetTextWeight()],
+                                                                                        [hostConfig getTextBlockTextSize:sharedFontType
+                                                                                                                textSize:sharedTextSize],
+                                                                                        [hostConfig getTextBlockFontWeight:sharedFontType
+                                                                                                                textWeight:sharedTextWeight],
                                                                                         font_style]];
 
         NSData *htmlData = [parsedString dataUsingEncoding:NSUTF16StringEncoding];
@@ -617,15 +735,29 @@ void buildIntermediateResultForText(ACRView *rootView, ACOHostConfig *hostConfig
     }
 }
 
-void TextBlockToRichTextElementProperties(const std::shared_ptr<TextBlock> &textBlock, RichTextElementProperties &textProp)
+void UpdateFontWithDynamicType(NSMutableAttributedString *content)
+{
+    [content enumerateAttribute:NSFontAttributeName
+                        inRange:NSMakeRange(0, content.length)
+                        options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+                     usingBlock:^(id value, NSRange range, BOOL *stop) {
+                         [content addAttribute:NSFontAttributeName value:[UIFontMetrics.defaultMetrics scaledFontForFont:(UIFont *)value] range:range];
+                     }];
+}
+
+void TexStylesToRichTextElementProperties(const std::shared_ptr<TextBlock> &textBlock,
+                                          const TextStyleConfig &textStyleConfig,
+                                          RichTextElementProperties &textProp)
 {
     textProp.SetText(textBlock->GetText());
-    textProp.SetTextSize(textBlock->GetTextSize());
-    textProp.SetTextWeight(textBlock->GetTextWeight());
-    textProp.SetFontType(textBlock->GetFontType());
-    textProp.SetTextColor(textBlock->GetTextColor());
-    textProp.SetIsSubtle(textBlock->GetIsSubtle());
     textProp.SetLanguage(textBlock->GetLanguage());
+    textProp.SetText(textBlock->GetText());
+    textProp.SetLanguage(textBlock->GetLanguage());
+    textProp.SetTextSize(textBlock->GetTextSize().value_or(textStyleConfig.size));
+    textProp.SetTextWeight(textBlock->GetTextWeight().value_or(textStyleConfig.weight));
+    textProp.SetFontType(textBlock->GetFontType().value_or(textStyleConfig.fontType));
+    textProp.SetTextColor(textBlock->GetTextColor().value_or(textStyleConfig.color));
+    textProp.SetIsSubtle(textBlock->GetIsSubtle().value_or(textStyleConfig.isSubtle));
 }
 
 void TextRunToRichTextElementProperties(const std::shared_ptr<TextRun> &textRun, RichTextElementProperties &textProp)
@@ -686,6 +818,8 @@ unsigned int getSpacing(Spacing spacing, std::shared_ptr<HostConfig> const &conf
             return config->GetSpacing().mediumSpacing;
         case Spacing::Small:
             return config->GetSpacing().smallSpacing;
+        case Spacing::Padding:
+            return config->GetSpacing().paddingSpacing;
         case Spacing::Default:
             return config->GetSpacing().defaultSpacing;
         default:
@@ -695,7 +829,7 @@ unsigned int getSpacing(Spacing spacing, std::shared_ptr<HostConfig> const &conf
     return 0;
 }
 
-void configVerticalAlignmentConstraintsForBackgroundImageView(const BackgroundImage *backgroundImageProperties, UIView *superView, UIImageView *imageView)
+void configVerticalAlignmentConstraintsForBackgroundImageView(const BackgroundImage *backgroundImageProperties, UIView *superView, UIImageView *imageView, NSMutableArray<NSLayoutConstraint *> *constraints)
 {
     if (!backgroundImageProperties || !superView || !imageView) {
         return;
@@ -703,19 +837,19 @@ void configVerticalAlignmentConstraintsForBackgroundImageView(const BackgroundIm
 
     switch (backgroundImageProperties->GetVerticalAlignment()) {
         case VerticalAlignment::Bottom:
-            [imageView.bottomAnchor constraintEqualToAnchor:superView.bottomAnchor].active = YES;
+            [constraints addObject:[imageView.bottomAnchor constraintEqualToAnchor:superView.bottomAnchor]];
             break;
         case VerticalAlignment::Center:
-            [imageView.centerYAnchor constraintEqualToAnchor:superView.centerYAnchor].active = YES;
+            [constraints addObject:[imageView.centerYAnchor constraintEqualToAnchor:superView.centerYAnchor]];
             break;
         case VerticalAlignment::Top:
         default:
-            [imageView.topAnchor constraintEqualToAnchor:superView.topAnchor].active = YES;
+            [constraints addObject:[imageView.topAnchor constraintEqualToAnchor:superView.topAnchor]];
             break;
     }
 }
 
-void configHorizontalAlignmentConstraintsForBackgroundImageView(const BackgroundImage *backgroundImageProperties, UIView *superView, UIImageView *imageView)
+void configHorizontalAlignmentConstraintsForBackgroundImageView(const BackgroundImage *backgroundImageProperties, UIView *superView, UIImageView *imageView, NSMutableArray<NSLayoutConstraint *> *constraints)
 {
     if (!backgroundImageProperties || !superView || !imageView) {
         return;
@@ -723,40 +857,22 @@ void configHorizontalAlignmentConstraintsForBackgroundImageView(const Background
 
     switch (backgroundImageProperties->GetHorizontalAlignment()) {
         case HorizontalAlignment::Right:
-            [imageView.trailingAnchor constraintEqualToAnchor:superView.trailingAnchor].active = YES;
+            [constraints addObject:[imageView.trailingAnchor constraintEqualToAnchor:superView.trailingAnchor]];
             break;
         case HorizontalAlignment::Center:
-            [imageView.centerXAnchor constraintEqualToAnchor:superView.centerXAnchor].active = YES;
+            [constraints addObject:[imageView.centerXAnchor constraintEqualToAnchor:superView.centerXAnchor]];
             break;
         case HorizontalAlignment::Left:
         default:
-            [imageView.leadingAnchor constraintEqualToAnchor:superView.leadingAnchor].active = YES;
+            [constraints addObject:[imageView.leadingAnchor constraintEqualToAnchor:superView.leadingAnchor]];
             break;
-    }
-}
-
-void configWidthAndHeightAnchors(UIView *superView, UIImageView *imageView, bool isComplimentaryAxisHorizontal)
-{
-    if (!imageView || !imageView.image || !superView) {
-        return;
-    }
-    CGSize targetViewSize = superView.frame.size;
-    CGSize sourceSize = imageView.image.size;
-    if (isComplimentaryAxisHorizontal) {
-        CGFloat complementaryWidth = sourceSize.height ? sourceSize.width * targetViewSize.height / sourceSize.height : 1;
-        [imageView.widthAnchor constraintEqualToConstant:complementaryWidth].active = YES;
-        [imageView.heightAnchor constraintEqualToAnchor:superView.heightAnchor].active = YES;
-    } else {
-        CGFloat complementaryHeight = sourceSize.width ? sourceSize.height * targetViewSize.width / sourceSize.width : 1;
-        [imageView.widthAnchor constraintEqualToAnchor:superView.widthAnchor].active = YES;
-        [imageView.heightAnchor constraintEqualToConstant:complementaryHeight].active = YES;
     }
 }
 
 NSMutableAttributedString *initAttributedText(ACOHostConfig *acoConfig, const std::string &text, const AdaptiveCards::RichTextElementProperties &textElementProperties, ACRContainerStyle style)
 {
     UIFont *font = getFont(acoConfig, textElementProperties);
-    auto foregroundColor = [acoConfig getTextBlockColor:style textColor:textElementProperties.GetTextColor() subtleOption:NO];
+    auto foregroundColor = [acoConfig getTextBlockColor:style textColor:textElementProperties.GetTextColor().value_or(ForegroundColor::Default) subtleOption:NO];
 
     return [[NSMutableAttributedString alloc] initWithString:[NSString stringWithCString:text.c_str() encoding:NSUTF8StringEncoding] attributes:@{NSFontAttributeName : font, NSForegroundColorAttributeName : foregroundColor}];
 }
@@ -782,19 +898,6 @@ NSString *makeKeyForImage(ACOHostConfig *acoConfig, NSString *keyType, NSDiction
         key = (ACOImageViewIF == resolverType) ? pieces[@"playicon-url-imageView-viewIF"] : pieces[@"playicon-url-imageView"];
     }
     return key;
-}
-
-CGSize getAspectRatio(CGSize size)
-{
-    CGFloat heightToWidthRatio = 0.0f, widthToHeightRatio = 0.0f;
-    if (size.width > 0) {
-        heightToWidthRatio = size.height / size.width;
-    }
-
-    if (size.height > 0) {
-        widthToHeightRatio = size.width / size.height;
-    }
-    return CGSizeMake(widthToHeightRatio, heightToWidthRatio);
 }
 
 ACRImageSize getACRImageSize(ImageSize adaptiveImageSize, BOOL hasExplicitDimensions)
@@ -835,8 +938,139 @@ ACRHorizontalAlignment getACRHorizontalAlignment(HorizontalAlignment horizontalA
     }
 }
 
+ACRHeightType GetACRHeight(HeightType adaptiveHeight)
+{
+    ACRHeightType height = ACRHeightAuto;
+    switch (adaptiveHeight) {
+        case AdaptiveCards::HeightType::Auto:
+            height = ACRHeightAuto;
+            break;
+        case AdaptiveCards::HeightType::Stretch:
+            height = ACRHeightStretch;
+            break;
+    }
+    return height;
+}
+
+ACRVerticalContentAlignment GetACRVerticalContentAlignment(VerticalContentAlignment adaptiveVerticalContentAlignment)
+{
+    ACRVerticalContentAlignment contentAlignment = ACRVerticalContentAlignmentTop;
+    switch (adaptiveVerticalContentAlignment) {
+        case AdaptiveCards::VerticalContentAlignment::Top:
+            contentAlignment = ACRVerticalContentAlignmentTop;
+            break;
+        case AdaptiveCards::VerticalContentAlignment::Center:
+            contentAlignment = ACRVerticalContentAlignmentCenter;
+            break;
+        case AdaptiveCards::VerticalContentAlignment::Bottom:
+            contentAlignment = ACRVerticalContentAlignmentBottom;
+            break;
+    }
+    return contentAlignment;
+}
+
 void printSize(NSString *msg, CGSize size)
 {
     NSLog(@"%@, size = %f x %f", msg, size.width, size.height);
 }
 
+NSData *JsonToNSData(const Json::Value &blob)
+{
+    Json::StreamWriterBuilder streamWriterBuilder;
+    std::unique_ptr<Json::StreamWriter> writer(streamWriterBuilder.newStreamWriter());
+    std::stringstream sstream;
+    writer->write(blob, &sstream);
+    NSString *jsonString =
+        [[NSString alloc] initWithCString:sstream.str().c_str()
+                                 encoding:NSUTF8StringEncoding];
+    return (jsonString.length > 0) ? [jsonString dataUsingEncoding:NSUTF8StringEncoding] : nil;
+}
+
+void partitionActions(
+    const std::vector<std::shared_ptr<BaseActionElement>> &elems,
+    std::vector<std::shared_ptr<BaseActionElement>> &primary,
+    std::vector<std::shared_ptr<BaseActionElement>> &secondary,
+    unsigned int maxActions,
+    ACRView *rootView)
+{
+    std::partition_copy(std::begin(elems),
+                        std::end(elems),
+                        std::inserter(secondary, std::end(secondary)),
+                        std::inserter(primary, std::end(primary)),
+                        [](std::shared_ptr<BaseActionElement> elem) {
+                            return elem->GetMode() == Mode::Secondary;
+                        });
+
+    unsigned long uMaxActionsToRender = MIN(maxActions, primary.size());
+
+    BOOL allowMoreThanMaxActionsInOverflowMenu = NO;
+    if ([rootView.acrActionDelegate respondsToSelector:@selector(shouldAllowMoreThanMaxActionsInOverflowMenu)]) {
+        allowMoreThanMaxActionsInOverflowMenu =
+            [rootView.acrActionDelegate shouldAllowMoreThanMaxActionsInOverflowMenu];
+    }
+
+    if (uMaxActionsToRender < primary.size()) {
+        auto start = std::begin(primary) + uMaxActionsToRender;
+        auto end = std::end(primary);
+
+        if (allowMoreThanMaxActionsInOverflowMenu) {
+            std::copy(start, end, std::back_inserter(secondary));
+        } else {
+            [rootView addWarnings:ACRWarningStatusCode::ACRMaxActionsExceeded
+                           mesage:@"Some actions were not rendered due to exceeding the maximum number "
+                                  @"of actions allowed"];
+        }
+
+        primary.erase(start, end);
+    }
+}
+
+UIImage *scaleImageToSize(UIImage *image, CGSize newSize)
+{
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
+NSNumber *iOSInternalIdHash(const std::size_t internalIdHash)
+{
+    return [NSNumber numberWithLong:internalIdHash];
+}
+
+id traverseResponderChainForUIViewController(UIView *view)
+{
+    id nextResponder = [view nextResponder];
+    if ([nextResponder isKindOfClass:[UIViewController class]]) {
+        return nextResponder;
+    } else if ([nextResponder isKindOfClass:[UIView class]]) {
+        return traverseResponderChainForUIViewController((UIView *)nextResponder);
+    } else {
+        return nil;
+    }
+}
+
+/// returns CGRect that covers target rect while maintaining the aspect ratio of coverRect
+CGRect FindClosestRectToCover(CGRect coverRect, CGRect targetRectToCover)
+{
+    // do binary search upto the tolerance value
+    CGFloat scalerLowBound = 0.0f, scalerHighBound = 1.0f, scalerMidPoint = 0.0f;
+    while (abs(scalerLowBound - scalerHighBound) > kACRScalerTolerance) {
+        scalerMidPoint = (scalerLowBound + scalerHighBound) / 2.0f;
+        CGFloat scaledWidth = coverRect.size.width * scalerMidPoint;
+        CGFloat scaledHeight = coverRect.size.height * scalerMidPoint;
+        if (scaledWidth > targetRectToCover.size.width && scaledHeight > targetRectToCover.size.height) {
+            scalerHighBound = scalerMidPoint;
+        } else {
+            scalerLowBound = scalerMidPoint;
+        }
+    }
+
+    if (coverRect.size.width * scalerMidPoint < targetRectToCover.size.width ||
+        coverRect.size.height * scalerMidPoint < targetRectToCover.size.height) {
+        scalerMidPoint = scalerHighBound;
+    }
+
+    return CGRectMake(0, 0, coverRect.size.width * scalerMidPoint, coverRect.size.height * scalerMidPoint);
+}

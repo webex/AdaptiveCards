@@ -5,9 +5,11 @@
 //  Copyright © 2020 Microsoft. All rights reserved.
 //
 
+#import "ACOBundle.h"
 #import "ACOHostConfigPrivate.h"
 #import "ACRIContentHoldingView.h"
 #import "ACRInputLabelViewPrivate.h"
+#import "ACRQuickReplyView.h"
 #import "UtiliOS.h"
 
 @implementation ACRInputLabelView
@@ -28,8 +30,7 @@
 
 - (void)commonInit
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"MSFT.AdaptiveCards"];
-    UIView *contentView = [bundle loadNibNamed:@"ACRInputLabelView" owner:self options:nil][0];
+    UIView *contentView = [[[ACOBundle getInstance] getBundle] loadNibNamed:@"ACRInputLabelView" owner:self options:nil][0];
     [self addSubview:contentView];
     self.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     [self.layoutMarginsGuide.leadingAnchor constraintEqualToAnchor:contentView.leadingAnchor].active = YES;
@@ -38,7 +39,7 @@
     [self.layoutMarginsGuide.bottomAnchor constraintEqualToAnchor:contentView.bottomAnchor].active = YES;
 }
 
-- (instancetype)initInputLabelView:(ACRView *)rootView acoConfig:(ACOHostConfig *)acoConfig adptiveInputElement:(const std::shared_ptr<BaseInputElement> &)inputBlck inputView:(UIView *)inputView accessibilityItem:(UIView *)accessibilityItem viewGroup:(UIView<ACRIContentHoldingView> *)viewGroup dataSource:(NSObject<ACRIBaseInputHandler> *)dataSource
+- (instancetype)initInputLabelView:(ACRView *)rootView acoConfig:(ACOHostConfig *)acoConfig adaptiveInputElement:(const std::shared_ptr<BaseInputElement> &)inputBlck inputView:(UIView *)inputView accessibilityItem:(UIView *)accessibilityItem viewGroup:(UIView<ACRIContentHoldingView> *)viewGroup dataSource:(NSObject<ACRIBaseInputHandler> *)dataSource
 {
     self = [self initWithFrame:CGRectMake(0, 0, viewGroup.frame.size.width, 0)];
     if (self) {
@@ -111,14 +112,18 @@
         self.isAccessibilityElement = NO;
         inputView.accessibilityLabel = self.label.text;
         self.inputAccessibilityItem = inputView;
-
+        self.inputAccessibilityItem.accessibilityIdentifier = [NSString stringWithUTF8String:inputBlck->GetId().c_str()];
         if (inputView != accessibilityItem) {
             self.inputAccessibilityItem = accessibilityItem;
             self.inputAccessibilityItem.accessibilityLabel = inputView.accessibilityLabel;
         }
 
         self.inputAccessibilityItem.isAccessibilityElement = YES;
-        self.labelText = self.inputAccessibilityItem.accessibilityLabel;
+        self.labelText = self.label.text;
+
+        if (HeightType::Stretch == inputBlck->GetHeight() && [inputView isKindOfClass:[ACRQuickReplyView class]]) {
+            [self.stack addArrangedSubview:[(ACRColumnView *)viewGroup addPaddingFor:self]];
+        }
 
         self.shouldGroupAccessibilityChildren = NO;
 
@@ -133,7 +138,32 @@
             [rootView addWarnings:ACRMissingInputErrorMessage mesage:@"There exist required input, but there is no associated label with it, consider adding label to the input"];
         }
     }
+    [self setRtl:rootView.context.rtl];
     return self;
+}
+
+- (void)setRtl:(ACRRtl)rtl
+{
+    if (rtl == ACRRtlNone) {
+        return;
+    }
+    UISemanticContentAttribute semanticAttribute = (rtl == ACRRtlRTL) ? UISemanticContentAttributeForceRightToLeft : UISemanticContentAttributeForceLeftToRight;
+
+    if (self.errorMessage) {
+        self.errorMessage.semanticContentAttribute = semanticAttribute;
+    }
+
+    if (self.label) {
+        self.label.semanticContentAttribute = semanticAttribute;
+    }
+
+    if (self.stack) {
+        self.stack.semanticContentAttribute = semanticAttribute;
+    }
+
+    if (self.inputView) {
+        self.inputView.semanticContentAttribute = semanticAttribute;
+    }
 }
 
 - (BOOL)validate:(NSError **)error
@@ -151,6 +181,7 @@
                 self.errorMessage.hidden = NO;
                 self.errorMessage.isAccessibilityElement = NO;
                 self.inputAccessibilityItem.accessibilityLabel = [NSString stringWithFormat:@"%@, %@,", self.labelText, self.errorMessage.text];
+                self.inputAccessibilityItem.accessibilityIdentifier = self.id;
             }
         } else {
             if (self.hasErrorMessage) {
@@ -235,6 +266,21 @@
         return [predicate evaluateWithObject:text];
     }
     return YES;
+}
+
+// returns intrinsic content size for inputs
+- (CGSize)intrinsicContentSize
+{
+    CGFloat width = 0.0f, height = 0.0f;
+    for (UIView *view in self.stack.arrangedSubviews) {
+        if (!view.hidden) {
+            CGSize size = [view intrinsicContentSize];
+            width = MAX(size.width, width);
+            height += size.height;
+        }
+    }
+
+    return CGSizeMake(width, height);
 }
 
 @synthesize hasValidationProperties;

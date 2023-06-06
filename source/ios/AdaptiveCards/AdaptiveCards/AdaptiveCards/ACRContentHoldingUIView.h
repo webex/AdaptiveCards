@@ -5,9 +5,9 @@
 //  Copyright © 2017 Microsoft. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "ACRImageProperties.h"
 #import "ACRContentStackView.h"
+#import "ACRImageProperties.h"
+#import <UIKit/UIKit.h>
 
 const extern NSInteger eACRUILabelTag;
 const extern NSInteger eACRUIFactSetTag;
@@ -19,6 +19,7 @@ const extern NSInteger eACRUIImageTag;
 @property BOOL isPersonStyle;
 @property BOOL hidePlayIcon;
 @property BOOL isMediaType;
+@property (weak, readonly) UIView *contentView;
 
 - (instancetype)initWithImageProperties:(ACRImageProperties *)imageProperties imageView:(UIImageView *)imageView viewGroup:(ACRContentStackView *)viewGroup;
 - (void)update:(ACRImageProperties *)imageProperties;

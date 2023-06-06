@@ -5,11 +5,11 @@
 //  Copyright © 2020 Microsoft. All rights reserved.
 //
 
-#import "ACRIBaseInputHandler.h"
 #import "ACOBaseCardElement.h"
+#import "ACRIBaseInputHandler.h"
 #import <UIKit/UIKit.h>
 
-@interface ACRTextInputHandler : NSObject<ACRIBaseInputHandler, UITextFieldDelegate>
+@interface ACRTextInputHandler : NSObject <ACRIBaseInputHandler, UITextFieldDelegate>
 
 @property NSPredicate *regexPredicate;
 @property NSUInteger maxLength;
@@ -22,9 +22,9 @@
 
 @interface ACRNumberInputHandler : ACRTextInputHandler
 
-@property NSInteger min;
+@property double min;
 @property bool hasMin;
-@property NSInteger max;
+@property double max;
 @property bool hasMax;
 
 @end

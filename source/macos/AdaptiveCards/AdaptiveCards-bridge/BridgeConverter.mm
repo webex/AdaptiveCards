@@ -70,8 +70,8 @@ NSString *const ACRParseErrorDomain = @"ACRParseErrorDomain";
 {
     if (auto baseInputElement = dynamic_pointer_cast<BaseInputElement>(baseCardElementCpp))
         return [BridgeConverter convertFromBaseInputElement:baseInputElement];
-    if (auto collectionTypeElement = dynamic_pointer_cast<CollectionTypeElement>(baseCardElementCpp))
-        return [BridgeConverter covertFromCollectionTypeElement:collectionTypeElement];
+    if (auto styledCollectionElement = dynamic_pointer_cast<StyledCollectionElement>(baseCardElementCpp))
+        return [BridgeConverter convertFromStyledCollectionElement:styledCollectionElement];
     
     if (auto image = dynamic_pointer_cast<Image>(baseCardElementCpp))
         return [[ACSImage alloc] initWithImage:image];
@@ -132,17 +132,17 @@ NSString *const ACRParseErrorDomain = @"ACRParseErrorDomain";
     return [[ACSBaseInputElement alloc] initWithBaseInputElement:baseInputElementCpp];
 }
 
-+ (ACSCollectionTypeElement *)covertFromCollectionTypeElement:(std::shared_ptr<CollectionTypeElement>)collectionTypeElementCpp
++ (ACSStyledCollectionElement *)convertFromStyledCollectionElement:(std::shared_ptr<StyledCollectionElement>)styledCollectionElementCpp
 {
-    if (auto column = dynamic_pointer_cast<Column>(collectionTypeElementCpp))
+    if (auto column = dynamic_pointer_cast<Column>(styledCollectionElementCpp))
         return [[ACSColumn alloc] initWithColumn:column];
-    if (auto columnSet = dynamic_pointer_cast<ColumnSet>(collectionTypeElementCpp))
+    if (auto columnSet = dynamic_pointer_cast<ColumnSet>(styledCollectionElementCpp))
         return [[ACSColumnSet alloc] initWithColumnSet:columnSet];
-    if (auto container = dynamic_pointer_cast<Container>(collectionTypeElementCpp))
+    if (auto container = dynamic_pointer_cast<Container>(styledCollectionElementCpp))
         return [[ACSContainer alloc] initWithContainer:container];
     
     // Can't downcast any further. Returning as ACSBaseElement.
-    return [[ACSCollectionTypeElement alloc] initWithCollectionTypeElement:collectionTypeElementCpp];
+    return [[ACSStyledCollectionElement alloc] initWithStyledCollectionElement:styledCollectionElementCpp];
 }
 
 + (ACSInline *)convertFromInline:(std::shared_ptr<Inline>)inlineCpp

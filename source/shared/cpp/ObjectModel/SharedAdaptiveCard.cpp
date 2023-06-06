@@ -11,87 +11,116 @@
 #include "ParseContext.h"
 #include "BackgroundImage.h"
 
-using namespace AdaptiveSharedNamespace;
+using namespace AdaptiveCards;
 
 AdaptiveCard::AdaptiveCard() :
-    m_style(ContainerStyle::None), m_verticalContentAlignment(VerticalContentAlignment::Top),
-    m_height(HeightType::Auto), m_minHeight(0), m_internalId{InternalId::Next()}
+    AdaptiveCard("", "", std::shared_ptr<BackgroundImage>(), ContainerStyle::None, "", "", VerticalContentAlignment::Top, HeightType::Auto, 0)
 {
 }
 
-AdaptiveCard::AdaptiveCard(std::string const& version,
-                           std::string const& fallbackText,
-                           std::string const& backgroundImageUrl,
-                           ContainerStyle style,
-                           std::string const& speak,
-                           std::string const& language,
-                           VerticalContentAlignment verticalContentAlignment,
-                           HeightType height,
-                           unsigned int minHeight) :
-    m_version(version),
-    m_fallbackText(fallbackText), m_speak(speak), m_style(style), m_language(language),
-    m_verticalContentAlignment(verticalContentAlignment), m_height(height),
-    m_minHeight(minHeight), m_internalId{InternalId::Next()}
+AdaptiveCard::AdaptiveCard(
+    std::string const& version,
+    std::string const& fallbackText,
+    std::string const& backgroundImageUrl,
+    ContainerStyle style,
+    std::string const& speak,
+    std::string const& language,
+    VerticalContentAlignment verticalContentAlignment,
+    HeightType height,
+    unsigned int minHeight) :
+    AdaptiveCard(version, fallbackText, std::make_shared<BackgroundImage>(backgroundImageUrl), style, speak, language, verticalContentAlignment, height, minHeight)
 {
-    m_backgroundImage = std::make_shared<BackgroundImage>(backgroundImageUrl);
 }
 
-AdaptiveCard::AdaptiveCard(std::string const& version,
-                           std::string const& fallbackText,
-                           std::string const& backgroundImageUrl,
-                           ContainerStyle style,
-                           std::string const& speak,
-                           std::string const& language,
-                           VerticalContentAlignment verticalContentAlignment,
-                           HeightType height,
-                           unsigned int minHeight,
-                           std::vector<std::shared_ptr<BaseCardElement>>& body,
-                           std::vector<std::shared_ptr<BaseActionElement>>& actions) :
-    m_version(version),
-    m_fallbackText(fallbackText), m_speak(speak), m_style(style), m_language(language),
-    m_verticalContentAlignment(verticalContentAlignment), m_height(height),
-    m_minHeight(minHeight), m_internalId{InternalId::Next()}, m_body(body), m_actions(actions)
+AdaptiveCard::AdaptiveCard(
+    std::string const& version,
+    std::string const& fallbackText,
+    std::string const& backgroundImageUrl,
+    ContainerStyle style,
+    std::string const& speak,
+    std::string const& language,
+    VerticalContentAlignment verticalContentAlignment,
+    HeightType height,
+    unsigned int minHeight,
+    std::vector<std::shared_ptr<BaseCardElement>>& body,
+    std::vector<std::shared_ptr<BaseActionElement>>& actions) :
+    AdaptiveCard(
+        version, fallbackText, std::make_shared<BackgroundImage>(backgroundImageUrl), style, speak, language, verticalContentAlignment, height, minHeight, body, actions)
 {
-    m_backgroundImage = std::make_shared<BackgroundImage>(backgroundImageUrl);
 }
 
-AdaptiveCard::AdaptiveCard(std::string const& version,
-                           std::string const& fallbackText,
-                           std::shared_ptr<BackgroundImage> backgroundImage,
-                           ContainerStyle style,
-                           std::string const& speak,
-                           std::string const& language,
-                           VerticalContentAlignment verticalContentAlignment,
-                           HeightType height,
-                           unsigned int minHeight) :
+AdaptiveCard::AdaptiveCard(
+    std::string const& version,
+    std::string const& fallbackText,
+    std::shared_ptr<BackgroundImage> backgroundImage,
+    ContainerStyle style,
+    std::string const& speak,
+    std::string const& language,
+    VerticalContentAlignment verticalContentAlignment,
+    HeightType height,
+    unsigned int minHeight) :
     m_version(version),
     m_fallbackText(fallbackText), m_backgroundImage(backgroundImage), m_speak(speak), m_style(style),
     m_language(language), m_verticalContentAlignment(verticalContentAlignment), m_height(height),
-    m_minHeight(minHeight), m_internalId{InternalId::Next()}
+    m_minHeight(minHeight), m_internalId{InternalId::Next()}, m_additionalProperties{}
+{
+    PopulateKnownPropertiesSet();
+}
+
+AdaptiveCard::AdaptiveCard(
+    std::string const& version,
+    std::string const& fallbackText,
+    std::shared_ptr<BackgroundImage> backgroundImage,
+    ContainerStyle style,
+    std::string const& speak,
+    std::string const& language,
+    VerticalContentAlignment verticalContentAlignment,
+    HeightType height,
+    unsigned int minHeight,
+    std::vector<std::shared_ptr<BaseCardElement>>& body,
+    std::vector<std::shared_ptr<BaseActionElement>>& actions) :
+    AdaptiveCard(
+        version,
+        fallbackText,
+        backgroundImage,
+        std::shared_ptr<Refresh>(),
+        std::shared_ptr<Authentication>(),
+        style,
+        speak,
+        language,
+        verticalContentAlignment,
+        height,
+        minHeight,
+        body,
+        actions)
 {
 }
 
-AdaptiveCard::AdaptiveCard(std::string const& version,
-                           std::string const& fallbackText,
-                           std::shared_ptr<BackgroundImage> backgroundImage,
-                           ContainerStyle style,
-                           std::string const& speak,
-                           std::string const& language,
-                           VerticalContentAlignment verticalContentAlignment,
-                           HeightType height,
-                           unsigned int minHeight,
-                           std::vector<std::shared_ptr<BaseCardElement>>& body,
-                           std::vector<std::shared_ptr<BaseActionElement>>& actions) :
+AdaptiveCard::AdaptiveCard(
+    std::string const& version,
+    std::string const& fallbackText,
+    std::shared_ptr<BackgroundImage> backgroundImage,
+    std::shared_ptr<Refresh> refresh,
+    std::shared_ptr<Authentication> authentication,
+    ContainerStyle style,
+    std::string const& speak,
+    std::string const& language,
+    VerticalContentAlignment verticalContentAlignment,
+    HeightType height,
+    unsigned int minHeight,
+    std::vector<std::shared_ptr<BaseCardElement>>& body,
+    std::vector<std::shared_ptr<BaseActionElement>>& actions) :
     m_version(version),
-    m_fallbackText(fallbackText), m_backgroundImage(backgroundImage), m_speak(speak), m_style(style),
-    m_language(language), m_verticalContentAlignment(verticalContentAlignment), m_height(height),
-    m_minHeight(minHeight), m_internalId{InternalId::Next()}, m_body(body), m_actions(actions)
+    m_fallbackText(fallbackText), m_backgroundImage(backgroundImage), m_refresh(refresh),
+    m_authentication(authentication), m_speak(speak), m_style(style), m_language(language),
+    m_verticalContentAlignment(verticalContentAlignment), m_height(height),
+    m_minHeight(minHeight), m_internalId{InternalId::Next()}, m_body(body), m_actions(actions), m_additionalProperties{}
 {
+    PopulateKnownPropertiesSet();
 }
 
 #ifdef __ANDROID__
-std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromFile(const std::string& jsonFile,
-                                                               std::string rendererVersion) throw(AdaptiveSharedNamespace::AdaptiveCardParseException)
+std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromFile(const std::string& jsonFile, std::string rendererVersion) throw(AdaptiveCards::AdaptiveCardParseException)
 #else
 std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromFile(const std::string& jsonFile, const std::string& rendererVersion)
 #endif // __ANDROID__
@@ -103,13 +132,10 @@ std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromFile(const std::string
 #ifdef __ANDROID__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdynamic-exception-spec"
-std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromFile(const std::string& jsonFile,
-                                                               std::string rendererVersion,
-                                                               ParseContext& context) throw(AdaptiveSharedNamespace::AdaptiveCardParseException)
+std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromFile(
+    const std::string& jsonFile, std::string rendererVersion, ParseContext& context) throw(AdaptiveCards::AdaptiveCardParseException)
 #else
-std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromFile(const std::string& jsonFile,
-                                                               const std::string& rendererVersion,
-                                                               ParseContext& context)
+std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromFile(const std::string& jsonFile, const std::string& rendererVersion, ParseContext& context)
 #endif // __ANDROID__
 {
     std::ifstream jsonFileStream(jsonFile);
@@ -130,21 +156,20 @@ void AdaptiveCard::_ValidateLanguage(const std::string& language, std::vector<st
         }
         else
         {
-            warnings.push_back(std::make_shared<AdaptiveCardParseWarning>(AdaptiveSharedNamespace::WarningStatusCode::InvalidLanguage,
-                                                                          "Invalid language identifier: " + language));
+            warnings.push_back(std::make_shared<AdaptiveCardParseWarning>(
+                AdaptiveCards::WarningStatusCode::InvalidLanguage, "Invalid language identifier: " + language));
         }
     }
     catch (std::runtime_error)
     {
-        warnings.push_back(std::make_shared<AdaptiveCardParseWarning>(AdaptiveSharedNamespace::WarningStatusCode::InvalidLanguage,
-                                                                      "Invalid language identifier: " + language));
+        warnings.push_back(std::make_shared<AdaptiveCardParseWarning>(
+            AdaptiveCards::WarningStatusCode::InvalidLanguage, "Invalid language identifier: " + language));
     }
 }
 
 #ifdef __ANDROID__
-std::shared_ptr<ParseResult> AdaptiveCard::Deserialize(const Json::Value& json,
-                                                       std::string rendererVersion,
-                                                       ParseContext& context) throw(AdaptiveSharedNamespace::AdaptiveCardParseException)
+std::shared_ptr<ParseResult> AdaptiveCard::Deserialize(
+    const Json::Value& json, std::string rendererVersion, ParseContext& context) throw(AdaptiveCards::AdaptiveCardParseException)
 #else
 std::shared_ptr<ParseResult> AdaptiveCard::Deserialize(const Json::Value& json, const std::string& rendererVersion, ParseContext& context)
 #endif // __ANDROID__
@@ -191,28 +216,29 @@ std::shared_ptr<ParseResult> AdaptiveCard::Deserialize(const Json::Value& json, 
                 speak = fallbackText;
             }
 
-            context.warnings.push_back(std::make_shared<AdaptiveCardParseWarning>(AdaptiveSharedNamespace::WarningStatusCode::UnsupportedSchemaVersion,
-                                                                                  "Schema version not supported"));
+            context.warnings.push_back(std::make_shared<AdaptiveCardParseWarning>(
+                AdaptiveCards::WarningStatusCode::UnsupportedSchemaVersion, "Schema version not supported"));
             return std::make_shared<ParseResult>(MakeFallbackTextCard(fallbackText, language, speak), context.warnings);
         }
     }
 
-    auto backgroundImage = ParseUtil::GetBackgroundImage(json);
+    auto backgroundImage =
+        ParseUtil::DeserializeValue<BackgroundImage>(json, AdaptiveCardSchemaKey::BackgroundImage, BackgroundImage::Deserialize);
+    auto refresh = ParseUtil::DeserializeValue<Refresh>(context, json, AdaptiveCardSchemaKey::Refresh, Refresh::Deserialize);
+    auto authentication = ParseUtil::DeserializeValue<Authentication>(
+        context, json, AdaptiveCardSchemaKey::Authentication, Authentication::Deserialize);
 
     ContainerStyle style =
         ParseUtil::GetEnumValue<ContainerStyle>(json, AdaptiveCardSchemaKey::Style, ContainerStyle::None, ContainerStyleFromString);
     context.SetParentalContainerStyle(style);
 
-    VerticalContentAlignment verticalContentAlignment =
-        ParseUtil::GetEnumValue<VerticalContentAlignment>(json,
-                                                          AdaptiveCardSchemaKey::VerticalContentAlignment,
-                                                          VerticalContentAlignment::Top,
-                                                          VerticalContentAlignmentFromString);
+    VerticalContentAlignment verticalContentAlignment = ParseUtil::GetEnumValue<VerticalContentAlignment>(
+        json, AdaptiveCardSchemaKey::VerticalContentAlignment, VerticalContentAlignment::Top, VerticalContentAlignmentFromString);
     HeightType height =
         ParseUtil::GetEnumValue<HeightType>(json, AdaptiveCardSchemaKey::Height, HeightType::Auto, HeightTypeFromString);
 
     unsigned int minHeight =
-        ParseSizeForPixelSize(ParseUtil::GetString(json, AdaptiveCardSchemaKey::MinHeight), &context.warnings);
+        ParseSizeForPixelSize(ParseUtil::GetString(json, AdaptiveCardSchemaKey::MinHeight), &context.warnings).value_or(0);
 
     // Parse body
     auto body = ParseUtil::GetElementCollection<BaseCardElement>(true, context, json, AdaptiveCardSchemaKey::Body, false);
@@ -222,18 +248,23 @@ std::shared_ptr<ParseResult> AdaptiveCard::Deserialize(const Json::Value& json, 
     EnsureShowCardVersions(actions, version);
 
     auto result = std::make_shared<AdaptiveCard>(
-        version, fallbackText, backgroundImage, style, speak, language, verticalContentAlignment, height, minHeight, body, actions);
+        version, fallbackText, backgroundImage, refresh, authentication, style, speak, language, verticalContentAlignment, height, minHeight, body, actions);
     result->SetLanguage(language);
+    result->SetRtl(ParseUtil::GetOptionalBool(json, AdaptiveCardSchemaKey::Rtl));
 
     // Parse optional selectAction
     result->SetSelectAction(ParseUtil::GetAction(context, json, AdaptiveCardSchemaKey::SelectAction, false));
+
+    Json::Value additionalProperties;
+    HandleUnknownProperties(json, result->GetKnownProperties(), additionalProperties);
+    result->SetAdditionalProperties(additionalProperties);
 
     return std::make_shared<ParseResult>(result, context.warnings);
 }
 
 #ifdef __ANDROID__
-std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromString(const std::string& jsonString,
-                                                                 std::string rendererVersion) throw(AdaptiveSharedNamespace::AdaptiveCardParseException)
+std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromString(
+    const std::string& jsonString, std::string rendererVersion) throw(AdaptiveCards::AdaptiveCardParseException)
 #else
 std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromString(const std::string& jsonString, const std::string& rendererVersion)
 #endif // __ANDROID__
@@ -243,13 +274,10 @@ std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromString(const std::stri
 }
 
 #ifdef __ANDROID__
-std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromString(const std::string& jsonString,
-                                                                 std::string rendererVersion,
-                                                                 ParseContext& context) throw(AdaptiveSharedNamespace::AdaptiveCardParseException)
+std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromString(
+    const std::string& jsonString, std::string rendererVersion, ParseContext& context) throw(AdaptiveCards::AdaptiveCardParseException)
 #else
-std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromString(const std::string& jsonString,
-                                                                 const std::string& rendererVersion,
-                                                                 ParseContext& context)
+std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromString(const std::string& jsonString, const std::string& rendererVersion, ParseContext& context)
 #endif // __ANDROID__
 {
     return AdaptiveCard::Deserialize(ParseUtil::GetJsonValueFromString(jsonString), rendererVersion, context);
@@ -257,7 +285,7 @@ std::shared_ptr<ParseResult> AdaptiveCard::DeserializeFromString(const std::stri
 
 Json::Value AdaptiveCard::SerializeToJsonValue() const
 {
-    Json::Value root;
+    Json::Value root = GetAdditionalProperties();
     root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Type)] = CardElementTypeToString(CardElementType::AdaptiveCard);
 
     if (!m_version.empty())
@@ -273,9 +301,17 @@ Json::Value AdaptiveCard::SerializeToJsonValue() const
     {
         root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::FallbackText)] = m_fallbackText;
     }
-    if (m_backgroundImage != nullptr && !m_backgroundImage->GetUrl().empty())
+    if (m_backgroundImage != nullptr && m_backgroundImage->ShouldSerialize())
     {
         root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::BackgroundImage)] = m_backgroundImage->SerializeToJsonValue();
+    }
+    if (m_refresh != nullptr && m_refresh->ShouldSerialize())
+    {
+        root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Refresh)] = m_refresh->SerializeToJsonValue();
+    }
+    if (m_authentication != nullptr && m_authentication->ShouldSerialize())
+    {
+        root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Authentication)] = m_authentication->SerializeToJsonValue();
     }
     if (!m_speak.empty())
     {
@@ -298,6 +334,11 @@ Json::Value AdaptiveCard::SerializeToJsonValue() const
     if (m_minHeight)
     {
         root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::MinHeight)] = std::to_string(GetMinHeight()) + "px";
+    }
+
+    if (m_rtl.has_value())
+    {
+        root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Rtl)] = m_rtl.value_or("");
     }
 
     const HeightType height = GetHeight();
@@ -324,13 +365,11 @@ Json::Value AdaptiveCard::SerializeToJsonValue() const
 }
 
 #ifdef __ANDROID__
-std::shared_ptr<AdaptiveCard> AdaptiveCard::MakeFallbackTextCard(const std::string& fallbackText,
-                                                                 const std::string& language,
-                                                                 const std::string& speak) throw(AdaptiveSharedNamespace::AdaptiveCardParseException)
+std::shared_ptr<AdaptiveCard> AdaptiveCard::MakeFallbackTextCard(
+    const std::string& fallbackText, const std::string& language, const std::string& speak) throw(AdaptiveCards::AdaptiveCardParseException)
 #else
-std::shared_ptr<AdaptiveCard> AdaptiveCard::MakeFallbackTextCard(const std::string& fallbackText,
-                                                                 const std::string& language,
-                                                                 const std::string& speak)
+std::shared_ptr<AdaptiveCard> AdaptiveCard::MakeFallbackTextCard(
+    const std::string& fallbackText, const std::string& language, const std::string& speak)
 #endif // __ANDROID__
 {
     std::shared_ptr<AdaptiveCard> fallbackCard = std::make_shared<AdaptiveCard>(
@@ -378,6 +417,26 @@ std::shared_ptr<BackgroundImage> AdaptiveCard::GetBackgroundImage() const
 void AdaptiveCard::SetBackgroundImage(const std::shared_ptr<BackgroundImage> value)
 {
     m_backgroundImage = value;
+}
+
+std::shared_ptr<Refresh> AdaptiveCard::GetRefresh() const
+{
+    return m_refresh;
+}
+
+void AdaptiveCard::SetRefresh(const std::shared_ptr<Refresh> value)
+{
+    m_refresh = value;
+}
+
+std::shared_ptr<Authentication> AdaptiveCard::GetAuthentication() const
+{
+    return m_authentication;
+}
+
+void AdaptiveCard::SetAuthentication(const std::shared_ptr<Authentication> value)
+{
+    m_authentication = value;
 }
 
 std::string AdaptiveCard::GetSpeak() const
@@ -473,6 +532,57 @@ unsigned int AdaptiveCard::GetMinHeight() const
 void AdaptiveCard::SetMinHeight(const unsigned int value)
 {
     m_minHeight = value;
+}
+
+// value is present if and only if "rtl" property is explicitly set
+std::optional<bool> AdaptiveCard::GetRtl() const
+{
+    return m_rtl;
+}
+
+void AdaptiveCard::SetRtl(const std::optional<bool>& value)
+{
+    m_rtl = value;
+}
+
+void AdaptiveCard::PopulateKnownPropertiesSet()
+{
+    m_knownProperties.insert(
+        {AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Type),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Version),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Body),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Actions),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::FallbackText),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::BackgroundImage),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Refresh),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Authentication),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::MinHeight),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Speak),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Language),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::VerticalContentAlignment),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Style),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::SelectAction),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Height),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Schema)});
+}
+
+const std::unordered_set<std::string>& AdaptiveCard::GetKnownProperties() const
+{
+    return m_knownProperties;
+}
+
+const Json::Value& AdaptiveCard::GetAdditionalProperties() const
+{
+    return m_additionalProperties;
+}
+
+void AdaptiveCard::SetAdditionalProperties(Json::Value&& value)
+{
+    m_additionalProperties = std::move(value);
+}
+void AdaptiveCard::SetAdditionalProperties(const Json::Value& value)
+{
+    m_additionalProperties = value;
 }
 
 std::vector<RemoteResourceInformation> AdaptiveCard::GetResourceInformation()

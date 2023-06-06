@@ -5,7 +5,7 @@
 #include "ParseUtil.h"
 #include "Util.h"
 
-using namespace AdaptiveSharedNamespace;
+using namespace AdaptiveCards;
 
 ToggleInput::ToggleInput() :
     BaseInputElement(CardElementType::ToggleInput), m_valueOff("false"), m_valueOn("true"), m_wrap(false)
@@ -106,17 +106,17 @@ std::shared_ptr<BaseCardElement> ToggleInputParser::Deserialize(ParseContext& co
     return toggleInput;
 }
 
-std::shared_ptr<BaseCardElement>
-ToggleInputParser::DeserializeFromString(ParseContext& context, const std::string& jsonString)
+std::shared_ptr<BaseCardElement> ToggleInputParser::DeserializeFromString(ParseContext& context, const std::string& jsonString)
 {
     return ToggleInputParser::Deserialize(context, ParseUtil::GetJsonValueFromString(jsonString));
 }
 
 void ToggleInput::PopulateKnownPropertiesSet()
 {
-    m_knownProperties.insert({AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Title),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Value),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::ValueOn),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::ValueOff),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Wrap)});
+    m_knownProperties.insert(
+        {AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Title),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Value),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::ValueOn),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::ValueOff),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Wrap)});
 }

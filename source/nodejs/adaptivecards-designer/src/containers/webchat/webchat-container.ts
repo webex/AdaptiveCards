@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 import * as Adaptive from "adaptivecards";
-import { HostContainer } from "../host-container";
+import { SingleThemeHostContainer } from "../single-theme-host-container";
 import * as hostConfig from "../../hostConfigs/webchat.json";
 
-export class WebChatContainer extends HostContainer {
+export class WebChatContainer extends SingleThemeHostContainer {
     public renderTo(hostElement: HTMLElement) {
         this.cardHost.classList.add("webChatOuterContainer");
 
@@ -20,6 +20,6 @@ export class WebChatContainer extends HostContainer {
     }
 
     get targetVersion(): Adaptive.Version {
-        return Adaptive.Versions.v1_2;
+        return Adaptive.Versions.v1_3;
     }
 }

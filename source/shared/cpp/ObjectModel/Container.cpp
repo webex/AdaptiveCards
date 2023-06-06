@@ -7,9 +7,15 @@
 #include "ParseUtil.h"
 #include "Util.h"
 
-using namespace AdaptiveSharedNamespace;
+using namespace AdaptiveCards;
 
-Container::Container() : CollectionTypeElement(CardElementType::Container)
+// This ctor used by types that want to be exactly like Container, but with a different name (e.g. TableCell)
+Container::Container(CardElementType derivedType) : StyledCollectionElement(derivedType)
+{
+    PopulateKnownPropertiesSet();
+}
+
+Container::Container() : StyledCollectionElement(CardElementType::Container)
 {
     PopulateKnownPropertiesSet();
 }
@@ -24,14 +30,30 @@ std::vector<std::shared_ptr<BaseCardElement>>& Container::GetItems()
     return m_items;
 }
 
+// value is present if and only if "rtl" property is explicitly set
+std::optional<bool> Container::GetRtl() const
+{
+    return m_rtl;
+}
+
+void Container::SetRtl(const std::optional<bool>& value)
+{
+    m_rtl = value;
+}
+
 Json::Value Container::SerializeToJsonValue() const
 {
-    Json::Value root = CollectionTypeElement::SerializeToJsonValue();
+    Json::Value root = StyledCollectionElement::SerializeToJsonValue();
     std::string const& itemsPropertyName = AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Items);
     root[itemsPropertyName] = Json::Value(Json::arrayValue);
     for (const auto& cardElement : m_items)
     {
         root[itemsPropertyName].append(cardElement->SerializeToJsonValue());
+    }
+
+    if (m_rtl.has_value())
+    {
+        root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Rtl)] = m_rtl.value_or("");
     }
 
     return root;
@@ -41,7 +63,9 @@ std::shared_ptr<BaseCardElement> ContainerParser::Deserialize(ParseContext& cont
 {
     ParseUtil::ExpectTypeString(value, CardElementType::Container);
 
-    auto container = CollectionTypeElement::Deserialize<Container>(context, value);
+    auto container = StyledCollectionElement::Deserialize<Container>(context, value);
+
+    container->SetRtl(ParseUtil::GetOptionalBool(value, AdaptiveCardSchemaKey::Rtl));
 
     return container;
 }
@@ -49,11 +73,12 @@ std::shared_ptr<BaseCardElement> ContainerParser::Deserialize(ParseContext& cont
 void Container::DeserializeChildren(ParseContext& context, const Json::Value& value)
 {
     // Parse items
-    auto cardElements = ParseUtil::GetElementCollection<BaseCardElement>(true, // isTopToBottomContainer
-                                                                         context,
-                                                                         value,
-                                                                         AdaptiveCardSchemaKey::Items,
-                                                                         false); // isRequired
+    auto cardElements = ParseUtil::GetElementCollection<BaseCardElement>(
+        true, // isTopToBottomContainer
+        context,
+        value,
+        AdaptiveCardSchemaKey::Items,
+        false); // isRequired
     m_items = std::move(cardElements);
 }
 
@@ -64,16 +89,18 @@ std::shared_ptr<BaseCardElement> ContainerParser::DeserializeFromString(ParseCon
 
 void Container::PopulateKnownPropertiesSet()
 {
-    m_knownProperties.insert({AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Bleed),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Style),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::VerticalContentAlignment),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::SelectAction),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Items)});
+    m_knownProperties.insert(
+        {AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Bleed),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Rtl),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Style),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::VerticalContentAlignment),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::SelectAction),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Items)});
 }
 
 void Container::GetResourceInformation(std::vector<RemoteResourceInformation>& resourceInfo)
 {
     auto items = GetItems();
-    CollectionTypeElement::GetResourceInformation<BaseCardElement>(resourceInfo, items);
+    StyledCollectionElement::GetResourceInformation<BaseCardElement>(resourceInfo, items);
     return;
 }

@@ -42,6 +42,8 @@
       return AdaptiveCards::TextSize::Large;
     case ACSTextSize::ACSTextSizeExtraLarge:
       return AdaptiveCards::TextSize::ExtraLarge;
+    default:
+      return AdaptiveCards::TextSize::Default;
   }
 }
 

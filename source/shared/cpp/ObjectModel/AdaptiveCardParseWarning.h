@@ -4,19 +4,19 @@
 
 #include "pch.h"
 
-namespace AdaptiveSharedNamespace
+namespace AdaptiveCards
 {
-    class AdaptiveCardParseWarning
-    {
-    public:
-        AdaptiveCardParseWarning(AdaptiveSharedNamespace::WarningStatusCode statusCode, const std::string& message);
+class AdaptiveCardParseWarning
+{
+public:
+    AdaptiveCardParseWarning(AdaptiveCards::WarningStatusCode statusCode, const std::string& message);
 
-        AdaptiveSharedNamespace::WarningStatusCode GetStatusCode() const;
-        const std::string& GetReason() const;
+    AdaptiveCards::WarningStatusCode GetStatusCode() const;
+    const std::string& GetReason() const;
 
-    private:
-        const AdaptiveSharedNamespace::WarningStatusCode m_statusCode;
-        const std::string m_message;
-    };
+private:
+    const AdaptiveCards::WarningStatusCode m_statusCode;
+    const std::string m_message;
+};
 
-}
+} // namespace AdaptiveCards

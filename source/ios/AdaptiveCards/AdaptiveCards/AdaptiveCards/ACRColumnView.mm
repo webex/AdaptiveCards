@@ -5,9 +5,16 @@
 //  Copyright © 2020 Microsoft. All rights reserved.
 //
 
-#import "ACRColumnView.h"
+#import "ACOBaseCardElementPrivate.h"
+#import "ACOFillerSpaceManager.h"
+#import "ACRView.h"
 
 @implementation ACRColumnView
+
+- (void)setColumnWidth:(NSString *)columnWidth
+{
+    _columnWidth = columnWidth;
+}
 
 - (void)config:(nullable NSDictionary<NSString *, id> *)attributes
 {
@@ -16,7 +23,6 @@
     self.isLastColumn = NO;
     self.inputHandlers = [[NSMutableArray<ACRIBaseInputHandler> alloc] init];
 }
-
 - (void)addArrangedSubview:(UIView *)view
 {
     [self configureWidthOfView:view];
@@ -46,14 +52,20 @@
         }
 
         [view setContentHuggingPriority:priority forAxis:UILayoutConstraintAxisHorizontal];
-        [view setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
+        [view setContentCompressionResistancePriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
+        [self setContentHuggingPriority:priority forAxis:UILayoutConstraintAxisHorizontal];
+        [self setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
         // if columnWidth is set to stretch or number, allow column to fill the available space
-    } else if ([self.columnWidth isEqualToString:@"stretch"]) {
+    } else if ([self.columnWidth isEqualToString:@"stretch"] || (!self.hasMoreThanOneRelativeWidth && self.relativeWidth)) {
         [view setContentHuggingPriority:ACRColumnWidthPriorityStretch forAxis:UILayoutConstraintAxisHorizontal];
         [view setContentCompressionResistancePriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
+        [self setContentHuggingPriority:ACRColumnWidthPriorityStretch forAxis:UILayoutConstraintAxisHorizontal];
+        [self setContentCompressionResistancePriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
     } else {
         [view setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
         [view setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
+        [self setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
+        [self setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
     }
 }
 
@@ -64,6 +76,7 @@
     }
     [super increaseIntrinsicContentSize:view];
     CGSize size = [view intrinsicContentSize];
+
     if (size.width >= 0 and size.height >= 0) {
         self.combinedContentSize = CGSizeMake(MAX(self.combinedContentSize.width, size.width), self.combinedContentSize.height + size.height);
     }
@@ -83,13 +96,17 @@
     self.combinedContentSize = CGSizeMake(newWidth, self.combinedContentSize.height - size.height);
 }
 
-- (UIView *)addPaddingSpace
+- (void)updateIntrinsicContentSize
 {
-    UIView *blankTrailingSpace = [[UIView alloc] init];
-    blankTrailingSpace.translatesAutoresizingMaskIntoConstraints = NO;
-    [blankTrailingSpace setContentHuggingPriority:UILayoutPriorityDefaultLow - 10 forAxis:UILayoutConstraintAxisVertical];
-    [self addArrangedSubview:blankTrailingSpace];
-    return blankTrailingSpace;
+    self.combinedContentSize = CGSizeZero;
+    [super updateIntrinsicContentSize:^(UIView *view, NSUInteger idx, BOOL *stop) {
+        CGSize size = [view intrinsicContentSize];
+        if (!view.hidden) {
+            if (size.width >= 0 and size.height >= 0) {
+                self.combinedContentSize = CGSizeMake(MAX(self.combinedContentSize.width, size.width), self.combinedContentSize.height + size.height);
+            }
+        }
+    }];
 }
 
 @end

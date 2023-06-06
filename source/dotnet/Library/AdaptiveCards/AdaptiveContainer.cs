@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -57,5 +58,24 @@ namespace AdaptiveCards
 #endif
         public List<AdaptiveElement> Items { get; set; } = new List<AdaptiveElement>();
 
+        /// <summary>
+        /// Sets the text flow direction
+        /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+#if !NETSTANDARD1_3
+        [XmlElement]
+#endif
+        [DefaultValue(null)]
+        public bool? Rtl { get; set; } = null;
+
+        public override IEnumerator<AdaptiveElement> GetEnumerator()
+        {
+            return Items.GetEnumerator();
+        }
+
+        public override void Add(AdaptiveElement element)
+        {
+            Items.Add(element);
+        }
     }
 }

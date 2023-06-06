@@ -6,13 +6,13 @@ import Foundation
 @objcMembers
 open class ACSFactSetConfig: NSObject {
 
-    public private(set) var title: ACSTextConfig
-    public private(set) var value: ACSTextConfig
+    public private(set) var title: ACSFactSetTextConfig
+    public private(set) var value: ACSFactSetTextConfig
     public private(set) var spacing: NSNumber
 
     public init(
-        title: ACSTextConfig,
-        value: ACSTextConfig,
+        title: ACSFactSetTextConfig,
+        value: ACSFactSetTextConfig,
         spacing: NSNumber)
     {
         self.title = title

@@ -4,7 +4,7 @@
 #include "BaseInputElement.h"
 #include "ParseUtil.h"
 
-using namespace AdaptiveSharedNamespace;
+using namespace AdaptiveCards;
 
 BaseInputElement::BaseInputElement() : BaseCardElement(CardElementType::Custom), m_isRequired(false)
 {
@@ -76,9 +76,10 @@ Json::Value BaseInputElement::SerializeToJsonValue() const
 
 void BaseInputElement::PopulateKnownPropertiesSet()
 {
-    m_knownProperties.insert({AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::IsRequired),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::ErrorMessage),
-                              AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Label)});
+    m_knownProperties.insert(
+        {AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::IsRequired),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::ErrorMessage),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Label)});
 }
 
 std::shared_ptr<BaseInputElement> BaseInputElement::DeserializeBasePropertiesFromString(ParseContext& context, const std::string& jsonString)

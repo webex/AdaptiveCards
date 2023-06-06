@@ -4,7 +4,7 @@
 #include "ParseUtil.h"
 #include "ToggleVisibilityTarget.h"
 
-using namespace AdaptiveSharedNamespace;
+using namespace AdaptiveCards;
 
 ToggleVisibilityTarget::ToggleVisibilityTarget() : m_visibilityToggle(IsVisibleToggle)
 {
@@ -47,10 +47,10 @@ std::shared_ptr<ToggleVisibilityTarget> ToggleVisibilityTarget::Deserialize(Pars
         {
             if (!propertyValue.isBool())
             {
-                throw AdaptiveCardParseException(ErrorStatusCode::InvalidPropertyValue,
-                                                 "Value for property " +
-                                                     AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::IsVisible) +
-                                                     " was invalid. Expected type bool.");
+                throw AdaptiveCardParseException(
+                    ErrorStatusCode::InvalidPropertyValue,
+                    "Value for property " + AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::IsVisible) +
+                        " was invalid. Expected type bool.");
             }
 
             toggleVisibilityTargetElement->SetIsVisible(propertyValue.asBool() ? IsVisibleTrue : IsVisibleFalse);

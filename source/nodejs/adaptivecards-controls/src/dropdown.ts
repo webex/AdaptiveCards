@@ -32,8 +32,7 @@ export class DropDownItem {
             this._element = document.createElement("span");
             this._element.className = "ms-ctrl ms-ctrl-dropdown-item";
             this._element.innerText = this.value;
-            this._element.setAttribute("role", "menuitem");
-            this._element.setAttribute("aria-selected", "false");
+            this._element.setAttribute("role", "option");
             this._element.onmouseup = (e) => { this.click(); };
             this._element.onkeydown = (e) => {
                 if (e.key === Constants.keys.enter) {
@@ -73,11 +72,11 @@ export class DropDownPopupControl extends PopupControl {
     protected renderContent(): HTMLElement {
         var element = document.createElement("div");
         element.className = "ms-ctrl ms-popup";
-        element.setAttribute("role", "menu");
+        element.setAttribute("role", "listbox");
 
         var selectedIndex = this._owner.selectedIndex;
 
-        for (var i = 0; i < this._owner.items.length; i++) {
+        for (let i = 0; i < this._owner.items.length; i++) {
             var renderedItem = this._owner.items.get(i).render();
             renderedItem.tabIndex = 0;
 
@@ -85,6 +84,9 @@ export class DropDownPopupControl extends PopupControl {
 
             if (i == selectedIndex) {
                 renderedItem.focus();
+                renderedItem.setAttribute("aria-selected", "true");
+            } else {
+                renderedItem.setAttribute("aria-selected", "false");
             }
 
             this._renderedItems.push(renderedItem);
@@ -162,15 +164,8 @@ export class DropDownPopupControl extends PopupControl {
 
     set selectedIndex(index: number) {
         if (index >= 0 && index < this._renderedItems.length) {
-            // deselect previous item (if one was selected)
-            if (this._selectedIndex >= 0 && this._selectedIndex < this._renderedItems.length) {
-                this._renderedItems[this._selectedIndex].setAttribute("aria-selected", "false");
-            }
-
             // select new item
             this._renderedItems[index].focus();
-            this._renderedItems[index].setAttribute("aria-selected", "true");
-
             this._selectedIndex = index;
         }
     }
@@ -212,7 +207,7 @@ export class DropDown extends InputWithPopup<DropDownPopupControl, DropDownItem>
     attach(rootElement: HTMLElement) {
         super.attach(rootElement);
 
-        for (var i = 0; i < this.rootElement.children.length; i++) {
+        for (let i = 0; i < this.rootElement.children.length; i++) {
             var childElement = this.rootElement.children[i];
 
             if (childElement.tagName.toLowerCase() == "ms-dropdown-item") {
@@ -239,8 +234,9 @@ export class DropDown extends InputWithPopup<DropDownPopupControl, DropDownItem>
             this.rootElement.setAttribute("aria-labelledby", ariaLabelledByIds.join(" "));
         }
 
-        this.rootElement.setAttribute("role", "button");
-        this.rootElement.setAttribute("aria-haspopup", "menu");
+        this.rootElement.setAttribute("role", "combobox");
+        this.rootElement.setAttribute("aria-haspopup", "listbox");
+        this.rootElement.setAttribute("aria-expanded", "false");
     }
 
     popup() {

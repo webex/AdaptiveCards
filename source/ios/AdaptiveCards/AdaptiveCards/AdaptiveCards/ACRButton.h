@@ -20,7 +20,10 @@
 @property UIColor *defaultPositiveBackgroundColor;
 @property UIColor *defaultDestructiveForegroundColor;
 @property ACRIconPlacement iconPlacement;
+@property ACRActionType actionType;
 @property __weak UIImageView *iconView;
+@property NSLayoutConstraint *heightConstraint;
+@property NSLayoutConstraint *titleWidthConstraint;
 
 + (UIButton *)rootView:(ACRView *)rootView
      baseActionElement:(ACOBaseActionElement *)acoAction

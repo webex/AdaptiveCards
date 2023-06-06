@@ -8,15 +8,17 @@
 #import <Foundation/Foundation.h>
 
 #ifdef __cplusplus
-#import "BaseElement.h"
+#import "InternalId.h"
 using namespace AdaptiveCards;
 #endif
 
 
+#import "ACSInternalId.h"
 
 
-  
 
+
+@class ACSInternalId;
 
 
 

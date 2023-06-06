@@ -12,6 +12,13 @@
 using namespace AdaptiveCards;
 #endif
 
+// #import "ACSActionsConfig.h"
+// #import "ACSAdaptiveCardConfig.h"
+// #import "ACSColorConfig.h"
+// #import "ACSColorsConfig.h"
+#import "ACSFontSizesConfig.h"
+#import "ACSFontWeightsConfig.h"
+
 #import "ACSContainerStyle.h"
 //#import "ACSContainerStyleDefinition.h"
 //#import "ACSContainerStylesDefinition.h"
@@ -31,10 +38,13 @@ using namespace AdaptiveCards;
 //#import "ACSSpacingConfig.h"
 #import "ACSTextSize.h"
 #import "ACSTextWeight.h"
+// #import "ACSTableConfig.h"
+// #import "ACSTextBlockConfig.h"
+// #import "ACSTextStylesConfig.h"
 
 
 
-  
+
 
 @class ACSActionsConfig;
 @class ACSAdaptiveCardConfig;
@@ -54,6 +64,9 @@ using namespace AdaptiveCards;
 @class ACSMediaConfig;
 @class ACSSeparatorConfig;
 @class ACSSpacingConfig;
+@class ACSTableConfig;
+@class ACSTextBlockConfig;
+@class ACSTextStylesConfig;
 
 enum ACSContainerStyle: NSUInteger;
 enum ACSFontType: NSUInteger;
@@ -111,6 +124,12 @@ enum ACSTextWeight: NSUInteger;
 - (void)setMedia:(ACSMediaConfig * _Nonnull)value;
 - (ACSInputsConfig * _Nullable)getInputs;
 - (void)setInputs:(ACSInputsConfig * _Nonnull)value;
+- (ACSTextStylesConfig * _Nullable)getTextStyles;
+- (void)setTextStyles:(ACSTextStylesConfig * _Nonnull)value;
+- (ACSTextBlockConfig * _Nullable)getTextBlock;
+- (void)setTextBlock:(ACSTextBlockConfig * _Nonnull)value;
+- (ACSTableConfig * _Nullable)getTable;
+- (void)setTable:(ACSTableConfig * _Nonnull)value;
 
 
 @end

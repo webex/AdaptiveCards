@@ -4,19 +4,20 @@ import * as monaco from "monaco-editor";
 import * as markdownit from "markdown-it";
 import * as ACDesigner from "adaptivecards-designer";
 import * as ACTemplating from "adaptivecards-templating";
-import "adaptivecards-designer/dist/adaptivecards-designer.css";
+import "adaptivecards-designer/src/adaptivecards-designer.css";
 import "./app.css";
 
 // Uncomment below if you plan to use an empty hostContainers array
 // import "adaptivecards-designer/dist/adaptivecards-defaulthost.css";
 
-window.onload = function() {
+window.onload = function () {
     ACTemplating.GlobalSettings.getUndefinedFieldValueSubstitutionString = (path: string) => { return "<" + path + " is undefined>" };
 
     ACDesigner.GlobalSettings.showVersionPicker = true;
     ACDesigner.GlobalSettings.enableDataBindingSupport = true;
     ACDesigner.GlobalSettings.showDataStructureToolbox = false;
     ACDesigner.GlobalSettings.showSampleDataEditorToolbox = true;
+    ACDesigner.GlobalSettings.showSampleHostDataEditorToolbox = true;
 
     // Uncomment to configure default toolbox titles
     /*
@@ -28,9 +29,9 @@ window.onload = function() {
     ACDesigner.Strings.toolboxes.toolPalette.title = "Custom title";
     */
 
-	// Uncomment to configure pic2card service
-	/*
-	ACDesigner.Pic2Card.pic2cardService = "https://<<your-pic2Card-service-endpoint>>";
+    // Uncomment to configure pic2card service
+    /*
+    ACDesigner.Pic2Card.pic2cardService = "https://<<your-pic2Card-service-endpoint>>";
     */
 
     // To Configure path for pic2card image usage policy
@@ -38,13 +39,13 @@ window.onload = function() {
     ACDesigner.Pic2Card.privacyLink = "../myPath/privacy";
     */
 
-	ACDesigner.CardDesigner.onProcessMarkdown = (text: string, result: { didProcess: boolean, outputHtml: string }) => {
-		result.outputHtml = new markdownit().render(text);
-		result.didProcess = true;
-	}
+    ACDesigner.CardDesigner.onProcessMarkdown = (text: string, result: { didProcess: boolean, outputHtml: string }) => {
+        result.outputHtml = new markdownit().render(text);
+        result.didProcess = true;
+    }
 
-	if (!ACDesigner.SettingsManager.isLocalStorageAvailable) {
-		console.log("Local storage is not available.");
+    if (!ACDesigner.SettingsManager.isLocalStorageAvailable) {
+        console.log("Local storage is not available.");
     }
 
     // Uncomment to disable (de)serialization of a specific property
@@ -61,9 +62,13 @@ window.onload = function() {
     }
     */
 
-	let designer = new ACDesigner.CardDesigner(ACDesigner.defaultMicrosoftHosts);
-	designer.sampleCatalogueUrl = window.location.origin + "/sample-catalogue.json";
-	designer.attachTo(document.getElementById("designerRootHost"));
+    let designer = new ACDesigner.CardDesigner(
+      ACDesigner.defaultMicrosoftHosts,
+      ACDesigner.defaultMicrosoftDeviceEmulations
+    );
+
+    designer.sampleCatalogueUrl = window.location.origin + "/sample-catalogue.json";
+    designer.attachTo(document.getElementById("designerRootHost"));
 
     /* Uncomment to test a custom palette item example
     let exampleSnippet = new ACDesigner.SnippetPaletteItem("Custom", "Example");
@@ -77,7 +82,7 @@ window.onload = function() {
                         type: "Image",
                         size: "Small",
                         style: "Person",
-                        url: "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg"
+                        url: "https://matthidinger.com/images/bio-photo.jpg"
                     }
                 ]
             },
@@ -111,7 +116,7 @@ window.onload = function() {
         description: "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
         creator: {
             name: "Matt Hidinger",
-            profileImage: "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg"
+            profileImage: "https://matthidinger.com/images/bio-photo.jpg"
         },
         createdUtc: "2017-02-14T06:08:39Z",
         viewUrl: "https://adaptivecards.io",
@@ -153,7 +158,7 @@ window.onload = function() {
                         name: "profileImage",
                         displayName: "Profile image URL",
                         valueType: "String",
-                        sampleValue: "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg"
+                        sampleValue: "https://matthidinger.com/images/bio-photo.jpg"
                     }
                 ]
             },
@@ -195,29 +200,29 @@ window.onload = function() {
     };
 
     /*
-	let sampleData = {
-		firstName: "John",
-		lastName: "Doe",
-		age: 45,
-		isMarried: true,
-		address: {
-			street: "1234 555th Ave NE",
-			city: "Redmond",
-			state: "WA",
-			countryOrRegion: "USA"
-		},
-		children: [
-			{
-				firstName: "Jennifer",
-				lastName: "Doe",
-				age: 9
-			},
-			{
-				firstName: "James",
-				lastName: "Doe",
-				age: 13
-			}
-		]
+    let sampleData = {
+        firstName: "John",
+        lastName: "Doe",
+        age: 45,
+        isMarried: true,
+        address: {
+            street: "1234 555th Ave NE",
+            city: "Redmond",
+            state: "WA",
+            countryOrRegion: "USA"
+        },
+        children: [
+            {
+                firstName: "Jennifer",
+                lastName: "Doe",
+                age: 9
+            },
+            {
+                firstName: "James",
+                lastName: "Doe",
+                age: 13
+            }
+        ]
     };
 
     let sampleDataStructure: ACDesigner.IData = {
@@ -310,7 +315,7 @@ window.onload = function() {
     };
     */
 
-	designer.dataStructure = ACDesigner.FieldDefinition.parse(sampleDataStructure);
+    designer.dataStructure = ACDesigner.FieldDefinition.parse(sampleDataStructure);
     // designer.lockDataStructure = true;
     designer.sampleData = sampleData;
     designer.bindingPreviewMode = ACDesigner.BindingPreviewMode.SampleData;

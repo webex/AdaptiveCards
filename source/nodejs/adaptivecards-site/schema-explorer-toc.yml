@@ -5,6 +5,7 @@
   - Image
   - Media
   - MediaSource
+  - CaptionSource
   - RichTextBlock
   - TextRun
 - Containers:
@@ -15,12 +16,15 @@
   - FactSet
   - Fact
   - ImageSet
+  - Table
+  - TableCell
 - Actions:
   - Action.OpenUrl
   - Action.Submit
   - Action.ShowCard
   - Action.ToggleVisibility
   - TargetElement
+  - Action.Execute
 - Inputs:
   - Input.Text
   - Input.Number
@@ -31,3 +35,8 @@
   - Input.Choice
 - Types:
   - BackgroundImage
+  - Refresh
+  - Authentication
+  - TokenExchangeResource
+  - AuthCardButton
+  - Metadata

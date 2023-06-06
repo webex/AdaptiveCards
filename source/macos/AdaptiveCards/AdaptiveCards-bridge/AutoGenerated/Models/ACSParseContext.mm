@@ -4,15 +4,15 @@
 
 #import "SwiftInterfaceHeader.h"
 
-#import "ACSCollectionTypeElement.h"
+#import "ACSStyledCollectionElement.h"
 #import "ACSContainerBleedDirectionConvertor.h"
 #import "ACSContainerStyleConvertor.h"
 #import "ACSInternalId.h"
 
 //cpp includes
-#import "BaseElement.h"
-#import "CollectionTypeElement.h"
 #import "Enums.h"
+#import "InternalId.h"
+#import "StyledCollectionElement.h"
 
 
 #import "ACSParseContext.h"
@@ -105,7 +105,7 @@
 
 }
 
-- (void)saveContextForCollectionTypeElement:(ACSCollectionTypeElement * _Nonnull)current
+- (void)saveContextForStyledCollectionElement:(ACSStyledCollectionElement * _Nonnull)current
 {
 //    auto currentCpp = // NEED TO INSERT CODE //;
 //
@@ -113,7 +113,7 @@
     
 }
 
-- (void)restoreContextForCollectionTypeElement:(ACSCollectionTypeElement * _Nonnull)current
+- (void)restoreContextForStyledCollectionElement:(ACSStyledCollectionElement * _Nonnull)current
 {
 //    auto currentCpp = // NEED TO INSERT CODE //;
 //
@@ -150,7 +150,7 @@
  
 //    auto getNearestFallbackIdCpp = mCppObj->GetNearestFallbackId(skipIdCpp);
     return [[ACSInternalId alloc] init];
-
+	
 }
 
 

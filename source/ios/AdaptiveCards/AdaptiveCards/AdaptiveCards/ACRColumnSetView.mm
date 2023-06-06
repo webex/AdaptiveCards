@@ -58,6 +58,18 @@
     self.combinedContentSize = CGSizeMake(self.combinedContentSize.width - size.width, newHeight);
 }
 
+- (void)updateIntrinsicContentSize
+{
+    self.combinedContentSize = CGSizeZero;
+    [super updateIntrinsicContentSize:^(UIView *view, NSUInteger idx, BOOL *stop) {
+        CGSize size = [view intrinsicContentSize];
+        if (size.width >= 0 && size.height >= 0) {
+            CGSize combinedSize = CGSizeMake(self.combinedContentSize.width + size.width, MAX(self.combinedContentSize.height, size.height));
+            self.combinedContentSize = combinedSize;
+        }
+    }];
+}
+
 - (void)adjustHuggingForLastElement
 {
     UIView *view = [self getLastArrangedSubview];
@@ -69,6 +81,27 @@
 - (void)setAlignmentForColumnStretch
 {
     super.alignment = UIStackViewAlignmentFill;
+}
+
+- (void)configureLayoutAndVisibility:(ACRVerticalContentAlignment)verticalContentAlignment
+                           minHeight:(NSInteger)minHeight
+                          heightType:(ACRHeightType)heightType
+                                type:(ACRCardElementType)type
+{
+    [super applyVisibilityToSubviews];
+
+    if (minHeight > 0) {
+        NSLayoutConstraint *constraint =
+            [NSLayoutConstraint constraintWithItem:self
+                                         attribute:NSLayoutAttributeHeight
+                                         relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                            toItem:nil
+                                         attribute:NSLayoutAttributeNotAnAttribute
+                                        multiplier:1
+                                          constant:minHeight];
+        constraint.priority = 999;
+        constraint.active = YES;
+    }
 }
 
 @end

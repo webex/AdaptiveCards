@@ -19,7 +19,8 @@ using namespace AdaptiveCards;
 
 
 #import "ACSBaseElement.h"
-  
+
+@class ACSBaseElement;
 
 
 enum ACSCardElementType: NSUInteger;

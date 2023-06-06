@@ -6,11 +6,16 @@
 //
 
 #import "ACOAdaptiveCardParseResult.h"
+#import "ACOAuthentication.h"
+#import "ACORefresh.h"
 #import "ACORemoteResourceInformation.h"
 #import "ACRIBaseInputHandler.h"
 #import <Foundation/Foundation.h>
 
 @interface ACOAdaptiveCard : NSObject
+
+@property ACORefresh *refresh;
+@property ACOAuthentication *authentication;
 
 + (ACOAdaptiveCardParseResult *)fromJson:(NSString *)payload;
 - (NSData *)inputs;
@@ -18,5 +23,6 @@
 - (void)setInputs:(NSArray *)inputs;
 - (void)appendInputs:(NSArray *)inputs;
 - (NSArray<ACORemoteResourceInformation *> *)remoteResourceInformation;
+- (NSData *)additionalProperty;
 
 @end

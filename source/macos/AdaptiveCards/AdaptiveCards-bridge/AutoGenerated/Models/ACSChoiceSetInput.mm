@@ -5,10 +5,12 @@
 #import "SwiftInterfaceHeader.h"
 
 #import "ACSChoiceInput.h"
+#import "ACSChoicesData.h"
 #import "ACSChoiceSetStyleConvertor.h"
 
 //cpp includes
 #import "ChoiceInput.h"
+#import "ChoicesData.h"
 #import "Enums.h"
 
 
@@ -73,6 +75,25 @@
     return objList;
 
 
+}
+
+- (ACSChoicesData * _Nullable)getChoicesData
+{
+ 
+    auto getChoicesDataCpp = mCppObj->GetChoicesData();
+    if (getChoicesDataCpp)
+        return [[ACSChoicesData alloc] initWithChoicesData:getChoicesDataCpp];
+    return nil;
+
+}
+
+- (void)setChoicesData:(ACSChoicesData * _Nonnull)value
+{
+		
+    // auto Cpp = [ACSChoicesDataConvertor convertObj:];
+ 
+    // mCppObj->SetChoicesData(Cpp);
+    
 }
 
 - (NSString * _Nullable)getValue

@@ -10,13 +10,11 @@
 #import "ACSParseContext.h"
 #import "ACSTextSizeConvertor.h"
 #import "ACSTextWeightConvertor.h"
-// #import "ACSValue.h"
 
 //cpp includes
 #import "DateTimePreparser.h"
 #import "Enums.h"
 #import "json.h"
-#import "ParseContext.h"
 
 
 #import "ACSTextElementProperties.h"
@@ -64,7 +62,7 @@
 {
  
     auto getTextSizeCpp = mCppObj->GetTextSize();
-    return [ACSTextSizeConvertor convertCpp:getTextSizeCpp];
+    return getTextSizeCpp.has_value() ? [ACSTextSizeConvertor convertCpp:getTextSizeCpp.value_or(AdaptiveCards::TextSize::Default)] : ACSTextSizeNil;
 
 }
 
@@ -80,7 +78,7 @@
 {
  
     auto getTextWeightCpp = mCppObj->GetTextWeight();
-    return [ACSTextWeightConvertor convertCpp:getTextWeightCpp];
+    return getTextWeightCpp.has_value() ? [ACSTextWeightConvertor convertCpp:getTextWeightCpp.value_or(AdaptiveCards::TextWeight::Default)] : ACSTextWeightNil;
 
 }
 
@@ -96,7 +94,7 @@
 {
  
     auto getFontTypeCpp = mCppObj->GetFontType();
-    return [ACSFontTypeConvertor convertCpp:getFontTypeCpp];
+    return getFontTypeCpp.has_value() ? [ACSFontTypeConvertor convertCpp:getFontTypeCpp.value_or(AdaptiveCards::FontType::Default)] : ACSFontTypeNil;
 
 }
 
@@ -112,7 +110,7 @@
 {
  
     auto getTextColorCpp = mCppObj->GetTextColor();
-    return [ACSForegroundColorConvertor convertCpp:getTextColorCpp];
+    return getTextColorCpp.has_value() ?[ACSForegroundColorConvertor convertCpp:getTextColorCpp.value_or(AdaptiveCards::ForegroundColor::Default)] : ACSForegroundColorNil;
 
 }
 
@@ -128,7 +126,7 @@
 {
  
     auto getIsSubtleCpp = mCppObj->GetIsSubtle();
-    return getIsSubtleCpp;
+    return getIsSubtleCpp.value_or(false);
 
 }
 

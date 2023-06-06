@@ -41,6 +41,7 @@ using namespace AdaptiveCards;
         _imageView = imageView;
         _viewGroup = viewGroup;
         [self addSubview:imageView];
+        _contentView = imageView;
     }
 
     return self;
@@ -54,6 +55,7 @@ using namespace AdaptiveCards;
 - (void)layoutSubviews
 {
     [super layoutSubviews];
+
     if (_isPersonStyle) {
         UIView *subview = self.subviews[0];
         CGFloat radius = subview.bounds.size.width / 2.0;
@@ -133,27 +135,36 @@ using namespace AdaptiveCards;
                 [layer removeFromSuperlayer];
             }
         }
-    } else if (isImageSet) {
-        BOOL bUpdate = NO;
-        if (self.imageProperties.acrImageSize != ACRImageSizeExplicit && !heightConstraint) {
-            [self setHeightConstraint];
-            bUpdate = YES;
-        }
-
-        if (self.imageProperties.acrImageSize == ACRImageSizeStretch) {
-            bUpdate = !(heightConstraint && imageViewHeightConstraint);
-
-            if (!heightConstraint) {
+    } else {
+        if (isImageSet || _imageView.image) {
+            BOOL bUpdate = NO;
+            if (self.imageProperties.acrImageSize != ACRImageSizeExplicit && !heightConstraint) {
                 [self setHeightConstraint];
+                bUpdate = YES;
             }
 
-            if (!imageViewHeightConstraint) {
-                [self setImageViewHeightConstraint];
-            }
-        }
+            if (self.imageProperties.acrImageSize == ACRImageSizeStretch) {
+                bUpdate = !(heightConstraint && imageViewHeightConstraint);
 
-        if (bUpdate) {
-            [_viewGroup invalidateIntrinsicContentSize];
+                if (!heightConstraint) {
+                    [self setHeightConstraint];
+                }
+
+                if (!imageViewHeightConstraint) {
+                    [self setImageViewHeightConstraint];
+                }
+            }
+
+            if (bUpdate) {
+                if ([_viewGroup isKindOfClass:[ACRColumnView class]]) {
+                    ACRColumnSetView *columnSetView = ((ACRColumnView *)_viewGroup).columnsetView;
+                    if (columnSetView) {
+                        [columnSetView updateIntrinsicContentSize];
+                        [columnSetView invalidateIntrinsicContentSize];
+                    }
+                }
+                [_viewGroup invalidateIntrinsicContentSize];
+            }
         }
     }
 }
@@ -168,8 +179,8 @@ using namespace AdaptiveCards;
 
     CGFloat height = 1.0f;
 
-    CGSize ratios = getAspectRatio(self.imageProperties.contentSize);
-    height = width * ratios.height;
+    ACRAspectRatio ratios = [ACRImageProperties convertToAspectRatio:self.imageProperties.contentSize];
+    height = width * ratios.heightToWidth;
 
     // adjust intrinsic contentsize of superview
     // substract the previous intrinsic content size from the view group
@@ -207,5 +218,10 @@ using namespace AdaptiveCards;
     constraint.priority = 999;
     constraint.active = YES;
     return constraint;
+}
+
+- (NSString *)accessibilityLabel
+{
+    return self.subviews.count ? self.subviews[0].accessibilityLabel : super.accessibilityLabel;
 }
 @end

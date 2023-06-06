@@ -9,18 +9,18 @@
 
 namespace AdaptiveCards
 {
-    class ActionSet : public BaseCardElement
-    {
-        friend class ActionSetParser;
+class ActionSet : public BaseCardElement
+{
+    friend class ActionSetParser;
 
-    public:
-        ActionSet();
-        ActionSet(std::vector<std::shared_ptr<BaseActionElement>>& actions);
+public:
+    ActionSet();
+    ActionSet(std::vector<std::shared_ptr<BaseActionElement>>& actions);
 
-        Json::Value SerializeToJsonValue() const override;
+    Json::Value SerializeToJsonValue() const override;
 
-        std::vector<std::shared_ptr<BaseActionElement>>& GetActions();
-        const std::vector<std::shared_ptr<BaseActionElement>>& GetActions() const;
+    std::vector<std::shared_ptr<BaseActionElement>>& GetActions();
+    const std::vector<std::shared_ptr<BaseActionElement>>& GetActions() const;
 
 		HorizontalAlignment GetHorizontalAlignment() const;
         void SetHorizontalAlignment(const HorizontalAlignment& value);
@@ -31,17 +31,17 @@ namespace AdaptiveCards
         HorizontalAlignment m_hAlignment;
     };
 
-    class ActionSetParser : public BaseCardElementParser
-    {
-    public:
-        ActionSetParser() = default;
-        ActionSetParser(const ActionSetParser&) = default;
-        ActionSetParser(ActionSetParser&&) = default;
-        ActionSetParser& operator=(const ActionSetParser&) = default;
-        ActionSetParser& operator=(ActionSetParser&&) = default;
-        virtual ~ActionSetParser() = default;
+class ActionSetParser : public BaseCardElementParser
+{
+public:
+    ActionSetParser() = default;
+    ActionSetParser(const ActionSetParser&) = default;
+    ActionSetParser(ActionSetParser&&) = default;
+    ActionSetParser& operator=(const ActionSetParser&) = default;
+    ActionSetParser& operator=(ActionSetParser&&) = default;
+    virtual ~ActionSetParser() = default;
 
-        std::shared_ptr<BaseCardElement> Deserialize(ParseContext& context, const Json::Value& root) override;
-        std::shared_ptr<BaseCardElement> DeserializeFromString(ParseContext& contexts, const std::string& jsonString) override;
-    };
-}
+    std::shared_ptr<BaseCardElement> Deserialize(ParseContext& context, const Json::Value& root) override;
+    std::shared_ptr<BaseCardElement> DeserializeFromString(ParseContext& contexts, const std::string& jsonString) override;
+};
+} // namespace AdaptiveCards

@@ -6,7 +6,9 @@
 //
 
 #import "ACRChoiceSetViewDataSource.h"
+#import "ACOBundle.h"
 #import "ACRInputLabelView.h"
+#import "ACRInputTableView.h"
 #import "UtiliOS.h"
 #import <Foundation/Foundation.h>
 
@@ -17,31 +19,64 @@ NSString *uncheckedCheckboxReuseID = @"unchecked-checkbox";
 NSString *checkedRadioButtonReuseID = @"checked-radiobutton";
 NSString *uncheckedRadioButtonReuseID = @"unchecked-radiobutton";
 
-const CGFloat padding = 16.0f;
+const CGFloat padding = 2.0f;
 
-@implementation ACRChoiceSetCell
+@implementation ACRChoiceSetCell {
+    CGSize _imageSize;
+}
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(nullable NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         UIImage *iconImage = nil;
+        NSBundle *bundle = [[ACOBundle getInstance] getBundle];
         if ([reuseIdentifier isEqualToString:@"checked-checkbox"]) {
-            iconImage = [UIImage imageNamed:@"checked-checkbox-24.png" inBundle:[NSBundle bundleWithIdentifier:@"MSFT.AdaptiveCards"] compatibleWithTraitCollection:nil];
+            if (@available(iOS 13.0, *)) {
+                iconImage = [UIImage systemImageNamed:@"checkmark.square"];
+            } else {
+                iconImage = [UIImage imageNamed:@"checked-checkbox-24.png" inBundle:bundle compatibleWithTraitCollection:nil];
+            }
         } else if ([reuseIdentifier isEqualToString:@"checked-radiobutton"]) {
-            iconImage = [UIImage imageNamed:@"checked.png" inBundle:[NSBundle bundleWithIdentifier:@"MSFT.AdaptiveCards"] compatibleWithTraitCollection:nil];
+            if (@available(iOS 13.0, *)) {
+                iconImage = [UIImage systemImageNamed:@"record.circle"];
+            } else {
+                iconImage = [UIImage imageNamed:@"checked.png" inBundle:bundle compatibleWithTraitCollection:nil];
+            }
         } else if ([reuseIdentifier isEqualToString:@"unchecked-checkbox"]) {
-            iconImage = [UIImage imageNamed:@"unchecked-checkbox-24.png" inBundle:[NSBundle bundleWithIdentifier:@"MSFT.AdaptiveCards"] compatibleWithTraitCollection:nil];
-        } else {
-            iconImage = [UIImage imageNamed:@"unchecked.png" inBundle:[NSBundle bundleWithIdentifier:@"MSFT.AdaptiveCards"] compatibleWithTraitCollection:nil];
+            if (@available(iOS 13.0, *)) {
+                iconImage = [UIImage systemImageNamed:@"square"];
+            } else {
+                iconImage = [UIImage imageNamed:@"square" inBundle:bundle compatibleWithTraitCollection:nil];
+            }
+        } else if ([reuseIdentifier isEqualToString:@"unchecked-radiobutton"]) {
+            if (@available(iOS 13.0, *)) {
+                iconImage = [UIImage systemImageNamed:@"circle"];
+            } else {
+                iconImage = [UIImage imageNamed:@"unchecked.png" inBundle:bundle compatibleWithTraitCollection:nil];
+            }
         }
-        self.imageView.image = iconImage;
+
+        if (iconImage) {
+            self.imageView.image = iconImage;
+        }
         self.textLabel.numberOfLines = 0;
         self.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
         self.textLabel.adjustsFontSizeToFitWidth = NO;
         self.backgroundColor = UIColor.clearColor;
+        _imageSize = iconImage.size;
     }
     return self;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    if (self.imageView.image) {
+        self.imageView.frame = CGRectMake(0, 0, _imageSize.width, _imageSize.height);
+        self.imageView.center = CGPointMake(_imageSize.width / 2, self.bounds.size.height / 2);
+        self.textLabel.frame = CGRectMake(_imageSize.width + padding, 0, self.bounds.size.width - _imageSize.width + padding, self.bounds.size.height);
+    }
 }
 
 @end
@@ -110,7 +145,7 @@ const CGFloat padding = 16.0f;
     return 1;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPathInternal:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = nil;
 
@@ -137,13 +172,26 @@ const CGFloat padding = 16.0f;
     cell.textLabel.textColor = getForegroundUIColorFromAdaptiveAttribute(_config, _parentStyle);
     cell.textLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    if (!_accessibilityString) {
-        _accessibilityString = tableView.accessibilityLabel;
-        tableView.accessibilityLabel = nil;
-    }
-    cell.accessibilityTraits = cell.accessibilityTraits | UIAccessibilityTraitButton;
-    cell.accessibilityLabel = [NSString stringWithFormat:@"%@, %@", _accessibilityString, title];
+    return cell;
+}
 
+- (void)configureCellForAccsessibility:(UITableViewCell *)cell tableView:(UITableView *)tableView
+{
+    NSString *accessibilityLabel = ([tableView isKindOfClass:[ACRInputTableView class]]) ? ((ACRInputTableView *)tableView).adaptiveAccessibilityLabel : tableView.accessibilityLabel;
+    _accessibilityString = accessibilityLabel ? accessibilityLabel : @"";
+    cell.accessibilityTraits = cell.accessibilityTraits;
+    cell.accessibilityLabel = [NSString stringWithFormat:@"%@, %@, %@", _accessibilityString, cell.textLabel.text, _isMultiChoicesAllowed ? @"check box" : @"radio button"];
+    cell.accessibilityHint = NSLocalizedString(@"double tap to select", nil);
+
+    NSString *elementId = [NSString stringWithCString:_choiceSetDataSource->GetId().c_str()
+                                             encoding:NSUTF8StringEncoding];
+    cell.textLabel.accessibilityIdentifier = [NSString stringWithFormat:@"%@, %@", elementId, cell.textLabel.text];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPathInternal:indexPath];
+    [self configureCellForAccsessibility:cell tableView:tableView];
     return cell;
 }
 
@@ -201,7 +249,7 @@ const CGFloat padding = 16.0f;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView.dataSource tableView:tableView cellForRowAtIndexPath:indexPath];
+    UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPathInternal:indexPath];
     NSString *textString = nil;
 
     if (!_shouldWrap) {
@@ -221,8 +269,6 @@ const CGFloat padding = 16.0f;
                               attributes:@{NSFontAttributeName : cell.textLabel.font}
                                  context:nil]
             .size;
-
-    [tableView layoutIfNeeded];
 
     return labelStringSize.height + _spacing;
 }

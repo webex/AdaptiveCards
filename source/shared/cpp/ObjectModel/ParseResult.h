@@ -4,21 +4,21 @@
 
 #include "pch.h"
 
-namespace AdaptiveSharedNamespace
+namespace AdaptiveCards
 {
-    class AdaptiveCard;
-    class AdaptiveCardParseWarning;
+class AdaptiveCard;
+class AdaptiveCardParseWarning;
 
-    class ParseResult
-    {
-    public:
-        ParseResult(std::shared_ptr<AdaptiveCard> adaptiveCard, std::vector<std::shared_ptr<AdaptiveCardParseWarning>> warnings);
+class ParseResult
+{
+public:
+    ParseResult(std::shared_ptr<AdaptiveCard> adaptiveCard, std::vector<std::shared_ptr<AdaptiveCardParseWarning>> warnings);
 
-        std::shared_ptr<AdaptiveCard> GetAdaptiveCard() const;
-        std::vector<std::shared_ptr<AdaptiveCardParseWarning>> GetWarnings() const;
+    std::shared_ptr<AdaptiveCard> GetAdaptiveCard() const;
+    std::vector<std::shared_ptr<AdaptiveCardParseWarning>> GetWarnings() const;
 
-    private:
-        std::shared_ptr<AdaptiveCard> m_adaptiveCard;
-        std::vector<std::shared_ptr<AdaptiveCardParseWarning>> m_warnings;
-    };
-}
+private:
+    std::shared_ptr<AdaptiveCard> m_adaptiveCard;
+    std::vector<std::shared_ptr<AdaptiveCardParseWarning>> m_warnings;
+};
+} // namespace AdaptiveCards

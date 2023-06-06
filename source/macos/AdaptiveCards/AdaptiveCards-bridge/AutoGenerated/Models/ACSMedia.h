@@ -12,14 +12,16 @@
 using namespace AdaptiveCards;
 #endif
 
+#import "ACSCaptionSource.h"
 #import "ACSMediaSource.h"
 // #import "ACSRemoteResourceInformation.h"
 
 
 
 #import "ACSBaseCardElement.h"
-  
 
+
+@class ACSCaptionSource;
 @class ACSMediaSource;
 @class ACSRemoteResourceInformation;
 
@@ -36,6 +38,7 @@ using namespace AdaptiveCards;
 - (NSString * _Nullable)getAltText;
 - (void)setAltText:(NSString * _Nonnull)value;
 - (NSArray<ACSMediaSource *> * _Nonnull)getSources;
+- (NSArray<ACSCaptionSource *> * _Nonnull)getCaptionSources;
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceInfo;
 
 

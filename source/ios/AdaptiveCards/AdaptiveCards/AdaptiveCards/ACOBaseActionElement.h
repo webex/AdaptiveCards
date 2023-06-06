@@ -5,6 +5,7 @@
 //  Copyright © 2017 Microsoft. All rights reserved.
 //
 
+#import "ACOEnums.h"
 #import "ACOParseContext.h"
 #import <Foundation/Foundation.h>
 
@@ -12,29 +13,18 @@
 
 @interface ACOBaseActionElement : NSObject
 
-typedef NS_ENUM(NSInteger, ACRActionType) {
-    ACRShowCard = 1,
-    ACRSubmit,
-    ACROpenUrl,
-    ACRToggleVisibility,
-    ACRUnknownAction = 6,
-};
-
-typedef NS_ENUM(NSInteger, ACRIconPlacement) {
-    ACRAboveTitle = 0,
-    ACRLeftOfTitle,
-    ACRNoTitle,
-};
-
 @property ACRActionType type;
 @property NSString *sentiment;
+@property (nonatomic, copy) NSString *tooltip;
+@property (nonatomic, readonly) NSString *inlineTooltip;
 
 - (NSString *)title;
 - (NSString *)elementId;
 - (NSString *)url;
 - (NSString *)data;
+- (NSString *)verb;
 - (NSData *)additionalProperty;
-
+- (BOOL)isEnabled;
 - (BOOL)meetsRequirements:(ACOFeatureRegistration *)featureReg;
 
 + (NSNumber *)getKey:(ACRActionType)actionType;

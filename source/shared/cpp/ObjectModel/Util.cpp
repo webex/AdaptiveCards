@@ -10,7 +10,7 @@
 #include "TextBlock.h"
 #include "Util.h"
 
-using namespace AdaptiveSharedNamespace;
+using namespace AdaptiveCards;
 
 std::string ValidateColor(const std::string& backgroundColor, std::vector<std::shared_ptr<AdaptiveCardParseWarning>>& warnings)
 {
@@ -28,8 +28,9 @@ std::string ValidateColor(const std::string& backgroundColor, std::vector<std::s
 
     if (!isValidColor)
     {
-        warnings.emplace_back(std::make_shared<AdaptiveCardParseWarning>(WarningStatusCode::InvalidColorFormat,
-                                                                         "Image background color specified, but doesn't follow #AARRGGBB or #RRGGBB format"));
+        warnings.emplace_back(std::make_shared<AdaptiveCardParseWarning>(
+            WarningStatusCode::InvalidColorFormat,
+            "Image background color specified, but doesn't follow #AARRGGBB or #RRGGBB format"));
         return "#00000000";
     }
 
@@ -47,13 +48,14 @@ std::string ValidateColor(const std::string& backgroundColor, std::vector<std::s
     return validBackgroundColor;
 }
 
-void ValidateUserInputForDimensionWithUnit(const std::string& unit,
-                                           const std::string& requestedDimension,
-                                           int& parsedDimension,
-                                           std::vector<std::shared_ptr<AdaptiveCardParseWarning>>* warnings)
+void ValidateUserInputForDimensionWithUnit(
+    const std::string& unit,
+    const std::string& requestedDimension,
+    std::optional<int>& parsedDimension,
+    std::vector<std::shared_ptr<AdaptiveCardParseWarning>>* warnings)
 {
-    const std::string warningMessage = "expected input arugment to be specified as \\d+(\\.\\d+)?px with no spaces, but received ";
-    parsedDimension = 0;
+    constexpr auto warningMessage =
+        "expected input argument to be specified as \\d+(\\.\\d+)?px with no spaces, but received ";
     std::string stringPattern = "^([1-9]+\\d*)(\\.\\d+)?";
     stringPattern += ("(" + unit + ")$");
     std::regex pattern(stringPattern);
@@ -70,16 +72,16 @@ void ValidateUserInputForDimensionWithUnit(const std::string& unit,
         {
             if (warnings)
             {
-                warnings->emplace_back(std::make_shared<AdaptiveCardParseWarning>(WarningStatusCode::InvalidDimensionSpecified,
-                                                                                  warningMessage + requestedDimension));
+                warnings->emplace_back(std::make_shared<AdaptiveCardParseWarning>(
+                    WarningStatusCode::InvalidDimensionSpecified, warningMessage + requestedDimension));
             }
         }
         catch (const std::out_of_range&)
         {
             if (warnings)
             {
-                warnings->emplace_back(std::make_shared<AdaptiveCardParseWarning>(WarningStatusCode::InvalidDimensionSpecified,
-                                                                                  "out of range: " + requestedDimension));
+                warnings->emplace_back(std::make_shared<AdaptiveCardParseWarning>(
+                    WarningStatusCode::InvalidDimensionSpecified, "out of range: " + requestedDimension));
             }
         }
     }
@@ -87,8 +89,8 @@ void ValidateUserInputForDimensionWithUnit(const std::string& unit,
     {
         if (warnings)
         {
-            warnings->emplace_back(std::make_shared<AdaptiveCardParseWarning>(WarningStatusCode::InvalidDimensionSpecified,
-                                                                              warningMessage + requestedDimension));
+            warnings->emplace_back(std::make_shared<AdaptiveCardParseWarning>(
+                WarningStatusCode::InvalidDimensionSpecified, warningMessage + requestedDimension));
         }
     }
 }
@@ -121,15 +123,15 @@ bool ShouldParseForExplicitDimension(const std::string& input)
     return false;
 }
 
-int ParseSizeForPixelSize(const std::string& sizeString, std::vector<std::shared_ptr<AdaptiveCardParseWarning>>* warnings)
+std::optional<int> ParseSizeForPixelSize(const std::string& sizeString, std::vector<std::shared_ptr<AdaptiveCardParseWarning>>* warnings)
 {
-    int parsedDimension = 0;
+    std::optional<int> parsedSize{};
     if (ShouldParseForExplicitDimension(sizeString))
     {
         const std::string unit = "px";
-        ValidateUserInputForDimensionWithUnit(unit, sizeString, parsedDimension, warnings);
+        ValidateUserInputForDimensionWithUnit(unit, sizeString, parsedSize, warnings);
     }
-    return parsedDimension;
+    return parsedSize;
 }
 
 void EnsureShowCardVersions(const std::vector<std::shared_ptr<BaseActionElement>>& actions, const std::string& version)

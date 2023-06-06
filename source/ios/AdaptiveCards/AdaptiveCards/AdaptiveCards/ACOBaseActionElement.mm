@@ -7,6 +7,7 @@
 #import "ACOBaseActionElement.h"
 #import "ACRRegistrationPrivate.h"
 #import "BaseActionElement.h"
+#import "ExecuteAction.h"
 #import "OpenUrlAction.h"
 #import "SubmitAction.h"
 #import "UnknownAction.h"
@@ -17,6 +18,8 @@ using namespace AdaptiveCards;
 
 @implementation ACOBaseActionElement {
     std::shared_ptr<BaseActionElement> _elem;
+    NSString *_tooltip;
+    NSString *_inlineTooltip;
 }
 
 - (instancetype)init
@@ -78,15 +81,10 @@ using namespace AdaptiveCards;
 {
     if (_elem) {
         Json::Value blob = _elem->GetAdditionalProperties();
-        Json::StreamWriterBuilder streamWriterBuilder;
-        auto writer = streamWriterBuilder.newStreamWriter();
-        std::stringstream sstream;
-        writer->write(blob, &sstream);
-        delete writer;
-        NSString *jsonString =
-            [[NSString alloc] initWithCString:sstream.str().c_str()
-                                     encoding:NSUTF8StringEncoding];
-        return (jsonString.length > 0) ? [jsonString dataUsingEncoding:NSUTF8StringEncoding] : nil;
+        if (blob.empty()) {
+            return nil;
+        }
+        return JsonToNSData(blob);
     }
     return nil;
 }
@@ -96,7 +94,7 @@ using namespace AdaptiveCards;
     if (_elem) {
         return [NSString stringWithCString:_elem->GetTitle().c_str() encoding:NSUTF8StringEncoding];
     }
-    return @"";
+    return nil;
 }
 
 - (NSString *)elementId
@@ -104,7 +102,7 @@ using namespace AdaptiveCards;
     if (_elem) {
         return [NSString stringWithCString:_elem->GetId().c_str() encoding:NSUTF8StringEncoding];
     }
-    return @"";
+    return nil;
 }
 
 - (NSString *)url
@@ -113,16 +111,45 @@ using namespace AdaptiveCards;
         std::shared_ptr<OpenUrlAction> openUrlAction = std::dynamic_pointer_cast<OpenUrlAction>(_elem);
         return [NSString stringWithCString:openUrlAction->GetUrl().c_str() encoding:NSUTF8StringEncoding];
     }
-    return @"";
+    return nil;
 }
 
 - (NSString *)data
 {
-    if (_elem && _type == ACRSubmit) {
-        std::shared_ptr<SubmitAction> submitAction = std::dynamic_pointer_cast<SubmitAction>(_elem);
-        return [NSString stringWithCString:submitAction->GetDataJson().c_str() encoding:NSUTF8StringEncoding];
+    if (_elem) {
+        std::string data;
+        if (_type == ACRSubmit) {
+            std::shared_ptr<SubmitAction> submitAction = std::dynamic_pointer_cast<SubmitAction>(_elem);
+            data = submitAction->GetDataJson();
+        }
+
+        if (_type == ACRExecute) {
+            std::shared_ptr<ExecuteAction> executeAction = std::dynamic_pointer_cast<ExecuteAction>(_elem);
+            data = executeAction->GetDataJson();
+        }
+
+        if (!data.empty()) {
+            return [NSString stringWithCString:data.c_str() encoding:NSUTF8StringEncoding];
+        }
     }
-    return @"";
+    return nil;
+}
+
+- (NSString *)verb
+{
+    if (_elem && _type == ACRExecute) {
+        std::shared_ptr<ExecuteAction> executeAction = std::dynamic_pointer_cast<ExecuteAction>(_elem);
+        return [NSString stringWithCString:executeAction->GetVerb().c_str() encoding:NSUTF8StringEncoding];
+    }
+    return nil;
+}
+
+- (BOOL)isEnabled
+{
+    if (_elem) {
+        return _elem->GetIsEnabled();
+    }
+    return YES;
 }
 
 - (BOOL)meetsRequirements:(ACOFeatureRegistration *)featureReg
@@ -150,12 +177,52 @@ using namespace AdaptiveCards;
         case ACRToggleVisibility:
             key = [NSNumber numberWithInt:static_cast<int>(ActionType::ToggleVisibility)];
             break;
+        case ACRExecute:
+            key = [NSNumber numberWithInt:static_cast<int>(ActionType::Execute)];
+            break;
+        case ACROverflow:
+            key = [NSNumber numberWithInt:static_cast<int>(ActionType::Overflow)];
+            break;
         case ACRUnknownAction:
         default:
             key = [NSNumber numberWithInt:static_cast<int>(ActionType::UnknownAction)];
     }
 
     return key;
+}
+
+- (NSString *)tooltip
+{
+    if (_tooltip && _tooltip.length) {
+        return _tooltip;
+    }
+
+    if (_elem && !_elem->GetTooltip().empty()) {
+        _tooltip = [NSString stringWithCString:_elem->GetTooltip().c_str() encoding:NSUTF8StringEncoding];
+        return _tooltip;
+    }
+
+    return nil;
+}
+
+- (void)setTooltip:(NSString *)tooltip
+{
+    if (tooltip) {
+        _tooltip = [tooltip copy];
+    }
+}
+
+- (NSString *)inlineTooltip
+{
+    if (self.tooltip) {
+        if (!_inlineTooltip) {
+            _inlineTooltip = [self.tooltip copy];
+        }
+    } else if (self.title) {
+        _inlineTooltip = self.title;
+    }
+
+    return _inlineTooltip;
 }
 
 @end

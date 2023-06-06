@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 import * as Adaptive from "adaptivecards";
-import { HostContainer } from "../host-container";
+import { SingleThemeHostContainer } from "../single-theme-host-container";
 import * as hostConfig from "../../hostConfigs/outlook-desktop.json";
 
-export class OutlookContainer extends HostContainer {
+export class OutlookContainer extends SingleThemeHostContainer {
     constructor(name: string, styleSheet: string) {
         super(name, styleSheet);
 
@@ -13,7 +13,7 @@ export class OutlookContainer extends HostContainer {
     }
 
     public renderTo(hostElement: HTMLElement) {
-        hostElement.classList.add("outlook-frame");
+        this.cardHost.classList.add("outlook-frame");
         hostElement.appendChild(this.cardHost);
     }
 
@@ -60,7 +60,7 @@ export class OutlookContainer extends HostContainer {
             if (typeof source["resources"] === "object") {
                 var actionResources = source["resources"]["actions"] as Array<any>;
 
-                for (var i = 0; i < actionResources.length; i++) {
+                for (let i = 0; i < actionResources.length; i++) {
                     let action = this.actionsRegistry.createInstance(actionResources[i]["type"], context.targetVersion);
 
                     if (action) {
@@ -105,7 +105,7 @@ export class OutlookContainer extends HostContainer {
             if (rootCard) {
                 var actionArray = rootCard["resources"]["actions"] as Array<Adaptive.Action>;
 
-                for (var i = 0; i < actionArray.length; i++) {
+                for (let i = 0; i < actionArray.length; i++) {
                     if (actionArray[i].id == actionId) {
                         actionArray[i].execute();
 
@@ -120,5 +120,13 @@ export class OutlookContainer extends HostContainer {
 
     public getHostConfig(): Adaptive.HostConfig {
         return new Adaptive.HostConfig(hostConfig);
+    }
+
+    get targetVersion(): Adaptive.Version {
+        return Adaptive.Versions.v1_4;
+    }
+
+    get enableDeviceEmulation(): boolean {
+        return true;
     }
 }
