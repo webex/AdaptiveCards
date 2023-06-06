@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 protocol ACRActionSetViewDelegate: AnyObject {
-    func actionSetView(_ view: ACRActionSetView, didOpenURLWith actionView: NSView, urlString: String)
+    func actionSetView(_ view: ACRActionSetView, didOpenURL urlString: String)
     func actionSetView(_ view: ACRActionSetView, didSubmitInputsWith actionView: NSView, dataJson: String?, associatedInputs: Bool)
     func actionSetView(_ view: ACRActionSetView, didToggleVisibilityActionWith actionView: NSView, toggleTargets: [ACSToggleVisibilityTarget])
     func actionSetView(_ view: ACRActionSetView, willShowCardWith button: NSButton)
@@ -142,42 +142,28 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
     private func layoutHorizontally() {
         // first empty the stackview and remove all the views
         removeElements()
+
         var accumulatedWidth: CGFloat = 0
-        
-        // new child stackview for horizontal orientation
-        var curview = NSStackView()
-        curview.translatesAutoresizingMaskIntoConstraints = false
-        curview.spacing = buttonSpacing
-        // Resolve: We have a ActionSet button, which is nested in a h-stack which itself is nested in an V-stack. As soon as I nest one stack in another, the layout becomes ambiguous.
-        // ref: https://gist.github.com/helje5/0456aafe2a27b4ed37ce08bb7a53f133?permalink_comment_id=2769878#gistcomment-2769878
-        curview.setHuggingPriority(.defaultLow - 1, for: .horizontal)
-        
-        // adding new child stackview to parent stackview and the parent stackview will align child stackview vertically
-        stackView.addArrangedSubview(curview)
-        stackView.orientation = .vertical
+        var horStackView = NSStackView()
         let gravityArea: NSStackView.Gravity = horizontalAlignment == .centerY ? .center: (horizontalAlignment == .trailing ? .trailing: .leading)
-        for view in actions {
-            accumulatedWidth += view.intrinsicContentSize.width
-            if accumulatedWidth > bounds.width {
-                let newStackView: NSStackView = {
-                    let view = NSStackView()
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    // ref: https://gist.github.com/helje5/0456aafe2a27b4ed37ce08bb7a53f133?permalink_comment_id=2769878#gistcomment-2769878
-                    view.setHuggingPriority(.defaultLow - 1, for: .horizontal)
-                    return view
-                }()
-                curview = newStackView
-                curview.orientation = .horizontal
-                curview.addView(view, in: gravityArea)
-                curview.spacing = buttonSpacing
-                accumulatedWidth = 0
-                accumulatedWidth += view.intrinsicContentSize.width
-                accumulatedWidth += buttonSpacing
-                stackView.addArrangedSubview(curview)
-            } else {
-                curview.addView(view, in: gravityArea)
-                accumulatedWidth += buttonSpacing
+        stackView.orientation = .vertical
+
+        for index in 0..<actions.count {
+            let actionView = actions[index]
+            accumulatedWidth += actionView.intrinsicContentSize.width
+            if index == 0 || accumulatedWidth > self.bounds.width {
+                horStackView = NSStackView()
+                horStackView.orientation = .horizontal
+                horStackView.spacing = self.buttonSpacing
+                horStackView.translatesAutoresizingMaskIntoConstraints = false
+                // Resolve: We have a ActionSet button, which is nested in a h-stack which itself is nested in an v-stack, the layout becomes ambiguous due to stretch priority. so keep horizontal hugging priority low.
+                // ref: https://gist.github.com/helje5/0456aafe2a27b4ed37ce08bb7a53f133?permalink_comment_id=2769878#gistcomment-2769878
+                horStackView.setHuggingPriority(.defaultLow - 1, for: .horizontal)
+                stackView.addArrangedSubview(horStackView)
+                accumulatedWidth = actionView.intrinsicContentSize.width
             }
+            horStackView.addView(actionView, in: gravityArea)
+            accumulatedWidth += buttonSpacing
         }
     }
 }
@@ -227,8 +213,8 @@ extension ACRActionSetView: ShowCardTargetHandlerDelegate {
         delegate?.actionSetView(self, didShowCardWith: button)
     }
     
-    func handleOpenURLAction(actionView: NSView, urlString: String) {
-        delegate?.actionSetView(self, didOpenURLWith: actionView, urlString: urlString)
+    func handleOpenURLAction(urlString: String) {
+        delegate?.actionSetView(self, didOpenURL: urlString)
     }
     
     func handleSubmitAction(actionView: NSView, dataJson: String?, associatedInputs: Bool) {

@@ -17,9 +17,11 @@ class TextInputRenderer: NSObject, BaseCardElementRendererProtocol {
                 attributedString.addAttributes([.foregroundColor: textColor], range: NSRange(location: 0, length: attributedString.length))
             }
             inputTextView.inlineButtonAttributedTitle = attributedString
+            rootView.accessibilityContext?.registerView(inputTextView)
             return inputTextView
         } else {
             let inputTextView = ACRSingleLineInputTextView(renderConfig: config, element: inputBlock, style: style, with: hostConfig, rootview: rootView)
+            rootView.accessibilityContext?.registerView(inputTextView)
             return inputTextView
         }
     }

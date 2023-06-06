@@ -39,13 +39,11 @@
 {
     auto text = [BridgeConverter getStringCpp:[textRun getText]];
     auto language = [BridgeConverter getStringCpp:[textRun getLanguage]];
-    std::shared_ptr<MarkDownParser> markDownParser = std::make_shared<MarkDownParser>([BridgeTextUtils getLocalizedDate:text language:language]);
 
     // MarkDownParser transforms text with MarkDown to a html string
-    NSString *parsedString = [NSString stringWithCString:markDownParser->TransformToHtml().c_str() encoding:NSUTF8StringEncoding];
-    NSData *htmlData = [parsedString dataUsingEncoding:NSUTF16StringEncoding];
+    NSString *parsedString = [NSString stringWithCString:[BridgeTextUtils getLocalizedDate:text language:language].c_str() encoding:NSUTF8StringEncoding];
 
-    return [[ACSMarkdownParserResult alloc] initWithParsedString:parsedString htmlData:htmlData];
+    return [[ACSMarkdownParserResult alloc] initWithParsedString:parsedString htmlData:nil];
 }
 
  + (ACSMarkdownParserResult * _Nonnull)processTextFromFact:(ACSFact * _Nullable)fact hostConfig:(ACSHostConfig * _Nonnull)config isTitle:(BOOL)isTitle

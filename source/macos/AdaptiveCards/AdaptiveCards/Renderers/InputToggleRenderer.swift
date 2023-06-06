@@ -26,6 +26,9 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         inputToggleView.state = defaultInputToggleStateValue
         inputToggleView.labelAttributedString = attributedString
+        inputToggleView.choiceButton.buttonLabelField.openLinkCallBack = { [weak rootView] urlAddress in
+            rootView?.handleOpenURLAction(urlString: urlAddress)
+        }
         rootView.addInputHandler(inputToggleView)
         return inputToggleView
     }

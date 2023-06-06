@@ -372,7 +372,7 @@ namespace RendererQml
                     uiRectangle->Property("height", Formatter() << uiAction->GetId() << ".height");
                     uiRectangle->Property("width", Formatter() << uiAction->GetId() << ".width");
                     uiRectangle->Property("color", "'transparent'");
-                    uiAction->Property("width", "(parent.parent.width > implicitWidth) ? implicitWidth : parent.parent.width");
+                    uiAction->Property("width", Formatter() << "(" << uiRectangle->GetId() << ".parent.width > minWidth) ? minWidth : " << uiRectangle->GetId() << ".parent.width");
                     uiAction->Property("onWidthChanged", Formatter() << uiButtonStrip->GetId() << ".horizontalAlign()");
 
                     rectangleElements << (i == 0 ? "[" : "") << uiRectangle->GetId() << (i == maxActions - 1 ? "]" : ",");

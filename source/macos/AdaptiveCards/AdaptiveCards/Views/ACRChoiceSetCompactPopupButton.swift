@@ -28,7 +28,9 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
         self.label = element.getLabel()
         self.errorMessage = element.getErrorMessage()
         super.init(frame: .zero, pullsDown: false)
-        identifier = NSUserInterfaceItemIdentifier(rawValue: idString ?? "")
+        if let id = idString, !id.isEmpty {
+            identifier = NSUserInterfaceItemIdentifier(id)
+        }
         target = self
         action = #selector(popUpButtonUsed(_:))
         let trackingArea = NSTrackingArea(rect: bounds, options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited], owner: self, userInfo: nil)
@@ -57,7 +59,6 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
     
     func showError() {
         shouldShowError = true
-        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     func setAccessibilityFocus() {

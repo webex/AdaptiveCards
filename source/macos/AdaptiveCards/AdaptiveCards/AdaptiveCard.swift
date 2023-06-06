@@ -2,7 +2,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 public protocol AdaptiveCardActionDelegate: AnyObject {
-    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String, actionView: NSView)
+    func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String)
     func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses dict: [String: Any], actionView: NSView)
     func adaptiveCard(_ adaptiveCard: NSView, didShowCardWith actionView: NSView, previousHeight: CGFloat, newHeight: CGFloat)
     func adaptiveCard(_ adaptiveCard: NSView, didUpdateBoundsFrom oldValue: NSRect, to newValue: NSRect)
@@ -35,6 +35,11 @@ open class AdaptiveCard {
     
     public static func render(card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, width: CGFloat, actionDelegate: AdaptiveCardActionDelegate?, resourceResolver: AdaptiveCardResourceResolver?, config: RenderConfig = .default) -> NSView {
         return AdaptiveCardRenderer.shared.renderAdaptiveCard(card, with: hostConfig, width: width, config: config, actionDelegate: actionDelegate, resourceResolver: resourceResolver)
+    }
+    
+    public static func calculateKeyViewLoop(for card: NSView) {
+        guard let card = card as? ACRView else { return }
+        card.accessibilityContext?.recalculateKeyViewLoop()
     }
 }
 
@@ -147,8 +152,8 @@ public struct ChoiceSetButtonConfig {
     }
 }
 public struct InputFieldConfig {
-    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .darkGray, activeBorderColor: .darkGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorStateConfig: .default)
-    public static let darkDefault = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .darkGray, backgroundColor: NSColor(white: 0.11, alpha: 1), borderColor: .lightGray, activeBorderColor: .lightGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorStateConfig: .default)
+    public static let `default` = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .lightGray, backgroundColor: .white, borderColor: .darkGray, activeBorderColor: .darkGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorStateConfig: .default, errorBadgeImage: nil)
+    public static let darkDefault = InputFieldConfig(height: 20, leftPadding: 0, rightPadding: 0, yPadding: 0, focusRingCornerRadius: 0, borderWidth: 0.3, wantsClearButton: false, clearButtonImage: nil, calendarImage: nil, clockImage: nil, font: .systemFont(ofSize: 12), highlightedColor: .darkGray, backgroundColor: NSColor(white: 0.11, alpha: 1), borderColor: .lightGray, activeBorderColor: .lightGray, placeholderTextColor: .placeholderTextColor, multilineFieldInsets: NSEdgeInsets(top: 0, left: 2, bottom: 0, right: 0), errorStateConfig: .default, errorBadgeImage: nil)
     
     public let height: CGFloat
     public let leftPadding: CGFloat
@@ -168,8 +173,9 @@ public struct InputFieldConfig {
     public let placeholderTextColor: NSColor
     public let multilineFieldInsets: NSEdgeInsets
     public let errorStateConfig: ErrorStateConfig
+    public let errorBadgeImage: NSImage?
     
-    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, clearButtonImage: NSImage?, calendarImage: NSImage?, clockImage: NSImage?, font: NSFont, highlightedColor: NSColor, backgroundColor: NSColor, borderColor: NSColor, activeBorderColor: NSColor, placeholderTextColor: NSColor, multilineFieldInsets: NSEdgeInsets, errorStateConfig: ErrorStateConfig) {
+    public init(height: CGFloat, leftPadding: CGFloat, rightPadding: CGFloat, yPadding: CGFloat, focusRingCornerRadius: CGFloat, borderWidth: CGFloat, wantsClearButton: Bool, clearButtonImage: NSImage?, calendarImage: NSImage?, clockImage: NSImage?, font: NSFont, highlightedColor: NSColor, backgroundColor: NSColor, borderColor: NSColor, activeBorderColor: NSColor, placeholderTextColor: NSColor, multilineFieldInsets: NSEdgeInsets, errorStateConfig: ErrorStateConfig, errorBadgeImage: NSImage?) {
         self.height = height
         self.leftPadding = leftPadding
         self.rightPadding = rightPadding
@@ -188,27 +194,26 @@ public struct InputFieldConfig {
         self.placeholderTextColor = placeholderTextColor
         self.multilineFieldInsets = multilineFieldInsets
         self.errorStateConfig = errorStateConfig
+        self.errorBadgeImage = errorBadgeImage
     }
     
     public struct ErrorStateConfig {
-        public static let `default` = ErrorStateConfig(font: .systemFont(ofSize: 10), textColor: .systemRed, borderColor: .systemRed, backgroundColor: NSColor.systemRed.withAlphaComponent(0.1))
+        public static let `default` = ErrorStateConfig(font: .systemFont(ofSize: 10), textColor: .systemRed, borderColor: .systemRed)
 
         public let font: NSFont
         public let textColor: NSColor
         public let borderColor: NSColor
-        public let backgroundColor: NSColor
         
-        public init(font: NSFont, textColor: NSColor, borderColor: NSColor, backgroundColor: NSColor) {
+        public init(font: NSFont, textColor: NSColor, borderColor: NSColor) {
             self.font = font
             self.textColor = textColor
             self.borderColor = borderColor
-            self.backgroundColor = backgroundColor
         }
     }
 }
 
 public struct LocalisedStringConfig {
-    public static let `default` = LocalisedStringConfig(choiceSetCompactAccessibilityRoleDescriptor: "Drop Down", inputNumberAccessibilityTitle: "Input Number", inputTextFieldAccessibilityTitle: "Text Field", choiceSetTickBoxTicked: "Ticked", choiceSetTickBoxUnticked: "Unticked", choiceSetRadioButtonSelected: "Selectd", datePickerFieldAccessibilityRoleDescription: "Date Picker", timePickerFieldAccessibilityRoleDescription: "Time Picker", datePickerButtonAccessibilityTitle: "Date Picker Button", timePickerButtonAccessibilityTitle: "Time Picker Button", clearButtonAccessibilityTitle: "Clear Button", errorMessagePrefixString: "Error")
+    public static let `default` = LocalisedStringConfig(choiceSetCompactAccessibilityRoleDescriptor: "Drop Down", inputNumberAccessibilityTitle: "Input Number", inputTextFieldAccessibilityTitle: "Text Field", choiceSetTickBoxTicked: "Ticked", choiceSetTickBoxUnticked: "Unticked", choiceSetRadioButtonSelected: "Selectd", datePickerFieldAccessibilityRoleDescription: "Date Picker", timePickerFieldAccessibilityRoleDescription: "Time Picker", clearButtonAccessibilityTitle: "Clear Input", errorMessagePrefixString: "Error")
 
     let choiceSetCompactAccessibilityRoleDescriptor: String
     let inputNumberAccessibilityTitle: String
@@ -218,12 +223,10 @@ public struct LocalisedStringConfig {
     let choiceSetRadioButtonSelected: String
     let datePickerFieldAccessibilityRoleDescription: String
     let timePickerFieldAccessibilityRoleDescription: String
-    let datePickerButtonAccessibilityTitle: String
-    let timePickerButtonAccessibilityTitle: String
     let clearButtonAccessibilityTitle: String
     let errorMessagePrefixString: String
 
-    public init(choiceSetCompactAccessibilityRoleDescriptor: String, inputNumberAccessibilityTitle: String, inputTextFieldAccessibilityTitle: String, choiceSetTickBoxTicked: String, choiceSetTickBoxUnticked: String, choiceSetRadioButtonSelected: String, datePickerFieldAccessibilityRoleDescription: String, timePickerFieldAccessibilityRoleDescription: String, datePickerButtonAccessibilityTitle: String, timePickerButtonAccessibilityTitle: String, clearButtonAccessibilityTitle: String, errorMessagePrefixString: String) {
+    public init(choiceSetCompactAccessibilityRoleDescriptor: String, inputNumberAccessibilityTitle: String, inputTextFieldAccessibilityTitle: String, choiceSetTickBoxTicked: String, choiceSetTickBoxUnticked: String, choiceSetRadioButtonSelected: String, datePickerFieldAccessibilityRoleDescription: String, timePickerFieldAccessibilityRoleDescription: String, clearButtonAccessibilityTitle: String, errorMessagePrefixString: String) {
         self.choiceSetCompactAccessibilityRoleDescriptor = choiceSetCompactAccessibilityRoleDescriptor
         self.inputNumberAccessibilityTitle = inputNumberAccessibilityTitle
         self.inputTextFieldAccessibilityTitle = inputTextFieldAccessibilityTitle
@@ -232,8 +235,6 @@ public struct LocalisedStringConfig {
         self.choiceSetRadioButtonSelected = choiceSetRadioButtonSelected
         self.datePickerFieldAccessibilityRoleDescription = datePickerFieldAccessibilityRoleDescription
         self.timePickerFieldAccessibilityRoleDescription = timePickerFieldAccessibilityRoleDescription
-        self.datePickerButtonAccessibilityTitle = datePickerButtonAccessibilityTitle
-        self.timePickerButtonAccessibilityTitle = timePickerButtonAccessibilityTitle
         self.clearButtonAccessibilityTitle = clearButtonAccessibilityTitle
         self.errorMessagePrefixString = errorMessagePrefixString
     }

@@ -16,14 +16,24 @@ class ACRView: ACRColumnView {
     private var focusedElementOnHideError: NSView?
     private var firstFieldWithError: InputHandlingViewProtocol?
     private (set) var visibilityContext: ACOVisibilityContext?
+    private (set) var accessibilityContext: ACSAccessibilityFocusManager?
+    
+    // AccessibleFocusView property
+    override var validKeyView: NSView? {
+        get {
+            return self
+        }
+        set { }
+    }
     
     override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         super.init(style: style, parentStyle: nil, hostConfig: hostConfig, renderConfig: renderConfig, superview: nil, needsPadding: true)
     }
     
-    convenience init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig, visibilityContext: ACOVisibilityContext?) {
+    convenience init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig, visibilityContext: ACOVisibilityContext?, accessibilityContext: ACSAccessibilityFocusManager?) {
         self.init(style: style, hostConfig: hostConfig, renderConfig: renderConfig)
         self.visibilityContext = visibilityContext
+        self.accessibilityContext = accessibilityContext
     }
     
     required init?(coder: NSCoder) {
@@ -49,6 +59,11 @@ class ACRView: ACRColumnView {
         isLayoutDoneOnShowCard = false
         focusedElementOnHideError = nil
         firstFieldWithError = nil
+    }
+    
+    // AccessibleFocusView property
+    override func setupInternalKeyviews() {
+        self.nextKeyView = exitView?.validKeyView
     }
     
     func addTarget(_ target: TargetHandler) {
@@ -99,7 +114,12 @@ class ACRView: ACRColumnView {
             dict = dataJsonDict
         // data != "null\n" check is required as the objective String does not return nil if no data present
         } else if let data = dataJSON, data != "null\n" {
-            dict["data"] = data
+            let jsonStr = "{\"data\" : \(data)}"
+            if let data = jsonStr.data(using: String.Encoding.utf8), let jsonDataObj = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                dict = jsonDataObj
+            } else {
+                dict["data"] = data
+            }
         }
         
         // recursively fetch input handlers dictionary from the parent
@@ -117,7 +137,7 @@ class ACRView: ACRColumnView {
                 for handler in handlers {
                     guard !renderConfig.supportsSchemeV1_3 || handler.isValid else {
                         handler.showError()
-                        if isFirstErrorFieldInView {
+                        if isFirstErrorFieldInView && !handler.isHidden {
                             firstFieldWithError = handler
                             resetKeyboardFocus()
                             isFirstErrorFieldInView = false
@@ -178,8 +198,8 @@ class ACRView: ACRColumnView {
 }
 
 extension ACRView: ACRActionSetViewDelegate {
-    func actionSetView(_ view: ACRActionSetView, didOpenURLWith actionView: NSView, urlString: String) {
-        delegate?.adaptiveCard(self, didSelectOpenURL: urlString, actionView: actionView)
+    func actionSetView(_ view: ACRActionSetView, didOpenURL urlString: String) {
+        delegate?.adaptiveCard(self, didSelectOpenURL: urlString)
     }
     
     func actionSetView(_ view: ACRActionSetView, didSubmitInputsWith actionView: NSView, dataJson: String?, associatedInputs: Bool) {
@@ -214,8 +234,8 @@ extension ACRView: TargetHandlerDelegate {
         toggleVisibity(of: toggleTargets)
     }
     
-    func handleOpenURLAction(actionView: NSView, urlString: String) {
-        delegate?.adaptiveCard(self, didSelectOpenURL: urlString, actionView: actionView)
+    func handleOpenURLAction(urlString: String) {
+        delegate?.adaptiveCard(self, didSelectOpenURL: urlString)
     }
     
     func handleSubmitAction(actionView: NSView, dataJson: String?, associatedInputs: Bool) {

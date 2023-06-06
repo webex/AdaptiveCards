@@ -72,9 +72,9 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     
-     // Label
-    private (set) lazy var buttonLabelField: ACRHyperLinkTextView = {
-        let view = ACRHyperLinkTextView()
+    // Label
+    private (set) lazy var buttonLabelField: ACRTextView = {
+        let view = ACRTextView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isEditable = false
         view.backgroundColor = .clear
@@ -93,6 +93,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
             .underlineStyle: renderConfig.hyperlinkColorConfig.underlineStyle.rawValue,
             .cursor: NSCursor.pointingHand
         ]
+        view.elementType = .choiceInput
         return view
     }()
     
@@ -177,6 +178,10 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     func showError() {
         shouldShowError = true
         errorDelegate?.inputHandlingViewShouldShowError(self)
+    }
+    
+    func setShowError(_ value: Bool) {
+        self.shouldShowError = value
     }
     
     func setAccessibilityFocus() {
@@ -270,7 +275,7 @@ extension ACRChoiceButton {
     var labelAttributedString: NSAttributedString {
         get { buttonLabelField.attributedString() }
         set {
-            buttonLabelField.textStorage?.setAttributedString(newValue)
+            buttonLabelField.setAttributedString(str: newValue)
         }
     }
     var state: NSControl.StateValue {

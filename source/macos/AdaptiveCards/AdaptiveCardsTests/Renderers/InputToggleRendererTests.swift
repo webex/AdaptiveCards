@@ -6,12 +6,28 @@ class InputToggleRendererTests: XCTestCase {
     private var hostConfig: FakeHostConfig!
     private var inputToggle: FakeInputToggle!
     private var inputToggleRenderer: InputToggleRenderer!
+    private var renderConfig: RenderConfig!
     
     override func setUpWithError() throws {
         try super.setUpWithError()
         hostConfig = .make()
         inputToggle = .make()
         inputToggleRenderer = InputToggleRenderer()
+        renderConfig = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+    }
+    
+    func testErrorViewToggle() {
+        let title = "Hello world!"
+        inputToggle = .make(id: "id1", title: title, isRequired: true, visibility: false)
+        let fakeRoot = FakeRootView()
+        let container = FakeContainer.make(items: [inputToggle])
+        let containerView = ContainerRenderer.shared.render(element: container, with: hostConfig, style: .default, rootView: fakeRoot, parentView: fakeRoot, inputs: [], config: renderConfig)
+        guard let containerView = containerView as? ACRContainerView else { fatalError() }
+        guard let handlerView = fakeRoot.inputHandlers.first else { fatalError() }
+        XCTAssertEqual(handlerView.key, "id1")
+        XCTAssertTrue(handlerView.isHidden)
+        XCTAssertFalse(containerView.isErrorVisible(handlerView))
+        XCTAssertNotNil(containerView.getErrorTextField(for: handlerView))
     }
     
     func testRendererSetsTitle() {
@@ -20,6 +36,9 @@ class InputToggleRendererTests: XCTestCase {
         
         let inputToggleView = renderInputToggleView()
         XCTAssertEqual(inputToggleView.labelAttributedString.string, title)
+        XCTAssertFalse(inputToggleView.choiceButton.buttonLabelField.hasLinks)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.acceptsFirstResponder)
+        XCTAssertFalse(inputToggleView.choiceButton.buttonLabelField.canBecomeKeyView)
     }
     
     func testHeightProperty() {
@@ -125,6 +144,9 @@ class InputToggleRendererTests: XCTestCase {
         XCTAssertEqual(inputToggleView.labelAttributedString.string, "This is test Webex")
         XCTAssertEqual(inputToggleView.labelAttributedString.string, markDownTestAns)
         XCTAssertNotNil(inputToggleView.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.hasLinks)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.acceptsFirstResponder)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.canBecomeKeyView)
     }
     
     // This TestCase design for Multiple MarkDown title in Input.Choice element title text.
@@ -145,6 +167,9 @@ class InputToggleRendererTests: XCTestCase {
         let boldItalicfont = inputToggleView.labelAttributedString.fontAttributes(in: NSRange.init(location: boldItalic, length: 3))[.font] as? NSFont
         XCTAssertTrue(boldItalicfont?.fontDescriptor.symbolicTraits.contains([.italic, .bold]) ?? false)
         XCTAssertNotNil(inputToggleView.labelAttributedString.attributes(at: hyperlinkIndexAt, effectiveRange: nil)[.link])
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.hasLinks)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.acceptsFirstResponder)
+        XCTAssertTrue(inputToggleView.choiceButton.buttonLabelField.canBecomeKeyView)
     }
     
     private func renderInputToggleView() -> ACRInputToggleView {

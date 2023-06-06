@@ -1,5 +1,3 @@
-// Button Ends Here
-
 import "AdaptiveCardUtils.js" as AdaptiveCardUtils
 import QtGraphicalEffects 1.15
 import QtQuick 2.15
@@ -7,9 +5,6 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
 Button {
-    // background rectangle ends here
-    // Content Item Ends Here
-
     id: actionButton
 
     property string _buttonConfigType
@@ -35,7 +30,9 @@ Button {
     property var _buttonColors: getButtonConfig()
     property bool isButtonDisabled: false
     property bool _hasAssociatedInputs: false
-    property var submitData;
+    property var submitData: ""
+    property var buttonConstants: CardConstants.actionButtonConstants
+    property double minWidth: _textSpacing + textMetrics.width + buttonConstants.iconTextSpacing
 
     signal handleShowCardToggleVisibility(var showcardLoaderElement, var currButtonElemID)
 
@@ -45,6 +42,8 @@ Button {
             return ;
         } else if (_isActionSubmit && _selectActionId === 'Action.Submit') {
             actionButton.submitData = AdaptiveCardUtils.handleSubmitAction(_paramStr, _adaptiveCard, _hasAssociatedInputs);
+            if(actionButton.submitData)
+                isButtonDisabled = true;
             return ;
         } else if (_isActionOpenUrl) {
             _adaptiveCard.buttonClicked('', 'Action.OpenUrl', _selectActionId);
@@ -55,31 +54,29 @@ Button {
     }
 
     function getButtonConfig() {
-        if (_buttonConfigType === 'positiveColorConfig')
-            return CardConstants.positiveButtonColors;
-        else if (_buttonConfigType === 'destructiveColorConfig')
-            return CardConstants.destructiveButtonColors;
-        else
-            return CardConstants.primaryButtonColors;
+        return _buttonConfigType === 'positiveColorConfig' ? CardConstants.positiveButtonColors : _buttonConfigType === 'destructiveColorConfig' ? CardConstants.destructiveButtonColors : CardConstants.primaryButtonColors;
     }
 
     function getTextSpacing() {
+        let tempSpacing = 0;
         if (_hasIconUrl)
-            return CardConstants.actionButtonConstants.imageSize + CardConstants.actionButtonConstants.iconTextSpacing;
+            tempSpacing += buttonConstants.imageSize + buttonConstants.iconTextSpacing;
 
         if (_isShowCardButton)
-            return CardConstants.actionButtonConstants.iconWidth + CardConstants.actionButtonConstants.iconTextSpacing;
+            tempSpacing += buttonConstants.iconWidth + buttonConstants.iconTextSpacing;
 
-        return 2 * CardConstants.actionButtonConstants.horizotalPadding - 2;
+        tempSpacing += (2 * buttonConstants.horizotalPadding);
+        return tempSpacing;
     }
 
-    WCustomFocusItem {
+    function getTextColor() {
+        return actionButton.isButtonDisabled ? _buttonColors.textColorDisabled : (actionButton.showCard || actionButton.hovered || actionButton.down) ? _buttonColors.textColorHovered : _buttonColors.textColorNormal;
     }
 
     onReleased: handleMouseAreaClick()
-    horizontalPadding: CardConstants.actionButtonConstants.horizotalPadding
-    verticalPadding: CardConstants.actionButtonConstants.verticalPadding
-    height: CardConstants.actionButtonConstants.buttonHeight
+    horizontalPadding: buttonConstants.horizotalPadding
+    verticalPadding: buttonConstants.verticalPadding
+    height: buttonConstants.buttonHeight
     Keys.onPressed: {
         if (event.key === Qt.Key_Return) {
             down = true;
@@ -94,7 +91,20 @@ Button {
         }
     }
     enabled: !isButtonDisabled
-    Accessible.name: _isIconLeftOfTitle == true ? contentRowLayout.contentItemContentText : contentColLayout.contentItemContentText
+    Accessible.name: _escapedTitle
+
+    WCustomFocusItem {
+    }
+
+    TextMetrics {
+        id: textMetrics
+
+        text: _escapedTitle
+        font.pixelSize: buttonConstants.pixelSize
+        font.weight: Font.DemiBold
+        elide: Text.ElideRight
+    }
+
 
     Connections {
         id: buttonConnection
@@ -116,8 +126,8 @@ Button {
 
             visible: _hasIconUrl
             cache: false
-            height: CardConstants.actionButtonConstants.imageSize
-            width: CardConstants.actionButtonConstants.imageSize
+            height: buttonConstants.imageSize
+            width: buttonConstants.imageSize
             fillMode: Image.PreserveAspectFit
             source: actionButton._imgSource
         }
@@ -131,15 +141,15 @@ Button {
             id: contentItemRowContentShowCard
 
             visible: _isShowCardButton
-            width: contentRowLayout.fontPixelSizeAlias
-            height: contentRowLayout.fontPixelSizeAlias
+            width: buttonConstants.pixelSize
+            height: buttonConstants.pixelSize
             anchors.margins: 2
             horizontalPadding: 0
             verticalPadding: 0
             icon.width: 12
             icon.height: 12
             focusPolicy: Qt.NoFocus
-            icon.color: contentRowLayout.colorAlias
+            icon.color: getTextColor()
             icon.source: !showCard ? _iconSource : _iconSourceUp
             onReleased: actionButton.onReleased()
 
@@ -152,83 +162,79 @@ Button {
 
     }
 
+    Component {
+        id: buttonTextComponent
+
+        Text {
+            id: buttonContentText
+
+            function getTextWidth() {
+                if (text.length == 0)
+                    return 0;
+
+                if (implicitWidth < _textSpacing)
+                    return implicitWidth;
+
+                return implicitWidth < actionButton.parent.width - _textSpacing ? implicitWidth : (actionButton.parent.width - _textSpacing > 1 ? actionButton.parent.width - _textSpacing : 1);
+            }
+
+            verticalAlignment: Text.AlignVCenter
+            width: getTextWidth()
+            height: parent.height
+            text: _escapedTitle
+            font.pixelSize: buttonConstants.pixelSize
+            font.weight: buttonConstants.fontWeight
+            elide: Text.ElideRight
+            color: getTextColor()
+        }
+
+    }
+
     background: Rectangle {
         id: actionButtonBg
 
-        function setBorderColorForBackground() {
-            if (_isActionSubmit == true)
-                return (isButtonDisabled ? _buttonColors.buttonColorDisabled : _buttonColors.borderColorNormal);
-            else
-                return _buttonColors.borderColorNormal;
-        }
-
         function setColorForBackground() {
-            if (_isShowCardButton == true) {
-                if (actionButton.showCard || actionButton.down) {
-                    return _buttonColors.buttonColorPressed;
-                } else {
-                    if (actionButton.hovered)
-                        return _buttonColors.buttonColorHovered;
-                    else
-                        return _buttonColors.buttonColorNormal;
-                }
-            } else if (_isActionSubmit == true) {
-                if (actionButton.isButtonDisabled) {
-                    _buttonColors.buttonColorDisabled;
-                } else {
-                    if (actionButton.down) {
-                        return _buttonColors.buttonColorPressed;
-                    } else {
-                        if (actionButton.hovered)
-                            return _buttonColors.buttonColorHovered;
-                        else
-                            return _buttonColors.buttonColorNormal;
-                    }
-                }
-            } else {
-                if (actionButton.down) {
-                    return _buttonColors.buttonColorPressed;
-                } else {
-                    if (actionButton.hovered)
-                        return _buttonColors.buttonColorHovered;
-                    else
-                        return _buttonColors.buttonColorNormal;
-                }
-            }
+            return actionButton.isButtonDisabled ? _buttonColors.buttonColorDisabled : (actionButton.showCard || actionButton.down) ? _buttonColors.buttonColorPressed : actionButton.hovered ? _buttonColors.buttonColorHovered : _buttonColors.buttonColorNormal;
         }
 
         anchors.fill: parent
-        radius: CardConstants.actionButtonConstants.buttonRadius
-        border.color: setBorderColorForBackground()
+        radius: buttonConstants.buttonRadius
+        border.color: isButtonDisabled ? _buttonColors.buttonColorDisabled : _buttonColors.borderColorNormal
         color: setColorForBackground()
     }
 
     contentItem: Item {
         height: parent.height
         implicitWidth: _isIconLeftOfTitle == true ? contentItemRow.implicitWidth : contentItemCol.implicitWidth
-        Accessible.name: _isIconLeftOfTitle == true ? contentRowLayout.contentItemContentText : contentColLayout.contentItemContentText
 
         Row {
             id: contentItemRow
 
-            spacing: CardConstants.actionButtonConstants.iconTextSpacing
+            spacing: buttonConstants.iconTextSpacing
             padding: 0
             height: parent.height
             visible: _isIconLeftOfTitle == true
 
             Loader {
                 active: _hasIconUrl
+                height: parent.height
+                width: item ? item.width : 0
                 sourceComponent: imageComponent
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            ActionsContentLayout {
-                id: contentRowLayout
+            Loader {
+                sourceComponent: buttonTextComponent
+                height: parent.height
+                width: item ? item.width : 0
+                anchors.verticalCenter: parent.verticalCenter
             }
 
             Loader {
                 active: _isShowCardButton
-                anchors.verticalCenter: contentRowLayout.verticalCenter
+                height: parent.height
+                width: item ? item.width : 0
+                anchors.verticalCenter: parent.verticalCenter
                 sourceComponent: showcardComponent
             }
 
@@ -237,7 +243,7 @@ Button {
         Column {
             id: contentItemCol
 
-            spacing: CardConstants.actionButtonConstants.iconTextSpacing
+            spacing: buttonConstants.iconTextSpacing
             padding: 0
             height: parent.height
             visible: _isIconLeftOfTitle == false
@@ -248,13 +254,12 @@ Button {
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            ActionsContentLayout {
-                id: contentColLayout
+            Loader {
+                sourceComponent: buttonTextComponent
             }
 
             Loader {
                 active: _isShowCardButton
-                //anchors.verticalCenter: contentColLayout.verticalCenter
                 sourceComponent: showcardComponent
             }
 

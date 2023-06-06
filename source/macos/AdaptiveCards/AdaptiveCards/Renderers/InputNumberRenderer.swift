@@ -29,6 +29,7 @@ open class InputNumberRenderer: NSObject, BaseCardElementRendererProtocol {
         if inputElement.getHeight() == .stretch {
             inputField.setStretchableHeight()
         }
+        rootView.accessibilityContext?.registerView(inputField)
         return inputField
     }
 }
@@ -42,6 +43,9 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
     
     private var previousValue = ""
     private let config: RenderConfig
+    
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
     
     private (set) lazy var contentStackView: NSStackView = {
         let view = NSStackView()
@@ -188,6 +192,8 @@ open class ACRNumericTextField: NSView, NSTextFieldDelegate {
         case kVK_DownArrow:
             stepper.integerValue -= 1
             value = stepper.stringValue
+        case kVK_Space:
+            break
         default:
             super.keyDown(with: event)
         }
@@ -312,6 +318,18 @@ extension ACRNumericTextField: InputHandlingViewProtocol {
         guard isBasicValidationsSatisfied else { return false }
         let currValue = Double(value) ?? 0
         return currValue <= maxValue && currValue >= minValue
+    }
+}
+
+extension ACRNumericTextField: AccessibleFocusView {
+    var validKeyView: NSView? {
+        self.textField
+    }
+    
+    func setupInternalKeyviews() {
+        self.textField.exitView = self.stepper
+        self.textField.setupInternalKeyviews()
+        self.stepper.nextKeyView = exitView?.validKeyView
     }
 }
 

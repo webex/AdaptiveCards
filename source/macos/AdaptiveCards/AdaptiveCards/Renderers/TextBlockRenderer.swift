@@ -11,6 +11,9 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         let textView = ACRTextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.openLinkCallBack = { [weak rootView] urlAddress in
+            rootView?.handleOpenURLAction(urlString: urlAddress)
+        }
         
         let markdownResult = BridgeTextUtils.processText(from: textBlock, hostConfig: hostConfig)
         let markdownString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
@@ -42,8 +45,8 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.textContainer?.lineBreakMode = .byTruncatingTail
         let resolvedMaxLines = textBlock.getMaxLines()?.intValue ?? 0
         textView.textContainer?.maximumNumberOfLines = textBlock.getWrap() ? resolvedMaxLines : 1
-    
-        textView.textStorage?.setAttributedString(attributedString)
+        
+        textView.setAttributedString(str: attributedString)
         textView.textContainer?.widthTracksTextView = true
         textView.backgroundColor = .clear
         textView.linkTextAttributes = [
@@ -67,7 +70,9 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
             // Set Hugging priority Setting a lower value to this priority indicates that we want the view to grow larger than its content.
             textView.setContentHuggingPriority(.defaultLow, for: .vertical)
         }
-        
+        if textView.canBecomeKeyView {
+            rootView.accessibilityContext?.registerView(textView)
+        }
         return textView
     }
 }

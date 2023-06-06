@@ -1,0 +1,149 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Input.Text",
+            "placeholder": "Placeholder text",
+            "id": "text",
+            "label": "Label",
+            "errorMessage": "error Message",
+            "isRequired": true,
+            "inlineAction": {
+                "type": "Action.Submit",
+                "title": "Submit (None)",
+                "associatedInputs": "none"
+            }
+        },
+        {
+            "type": "Input.Text",
+            "placeholder": "Placeholder text",
+            "label": "Label",
+            "id": "text2",
+            "isRequired": true,
+            "errorMessage": "Error Message",
+            "inlineAction": {
+                "type": "Action.Submit",
+                "title": "Submit (Auto)",
+                "associatedInputs": "auto"
+            }
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Image None",
+                            "wrap": true
+                        },
+                        {
+                            "type": "Image",
+                            "url": "https://adaptivecards.io/content/cats/1.png",
+                            "size": "Medium",
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "associatedInputs": "none"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Image Auto",
+                            "wrap": true
+                        },
+                        {
+                            "type": "Image",
+                            "url": "https://adaptivecards.io/content/cats/1.png",
+                            "size": "Medium",
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "associatedInputs": "auto"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch"
+                }
+            ]
+        },
+        {
+            "type": "RichTextBlock",
+            "inlines": [
+                {
+                    "type": "TextRun",
+                    "text": "Submit (None)",
+                    "selectAction": {
+                        "type": "Action.Submit",
+                        "associatedInputs": "none"
+                    }
+                },
+                {
+                    "type": "TextRun",
+                    "text": "\n Some Text \n"
+                },
+                {
+                    "type": "TextRun",
+                    "text": "Submit (Auto)",
+                    "selectAction": {
+                        "type": "Action.Submit",
+                        "associatedInputs": "auto"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Submit(None)",
+                    "wrap": true
+                }
+            ],
+            "selectAction": {
+                "type": "Action.Submit",
+                "associatedInputs": "none"
+            },
+            "style": "warning"
+        },
+        {
+            "type": "Container",
+            "selectAction": {
+                "type": "Action.Submit",
+                "associatedInputs": "auto"
+            },
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Submit(Auto)",
+                    "wrap": true
+                }
+            ],
+            "style": "accent"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "Action.Submit (None)",
+            "associatedInputs": "none"
+        },
+        {
+            "type": "Action.Submit",
+            "title": "Action.Submit (Auto))",
+            "associatedInputs": "auto"
+        }
+    ]
+}

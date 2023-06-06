@@ -76,13 +76,18 @@ class InputDateRendererTest: XCTestCase {
     
     func testClearsText() {
         let val: String = "2000-11-23"
+        let fakeErrorDelegate = FakeErrorMessageHandlerDelegate()
         inputDate = .make(value: val)
 
         let inputDateField = renderDateInput()
+        inputDateField.errorDelegate = fakeErrorDelegate
+        fakeErrorDelegate.isErrorVisible = true
         inputDateField.textField.clearButton.performClick()
+        
         XCTAssertEqual(inputDateField.textField.stringValue, "")
         XCTAssertNil(inputDateField.dateValue)
         XCTAssertTrue(inputDateField.textField.clearButton.isHidden)
+        XCTAssertFalse(fakeErrorDelegate.isErrorVisible)
     }
     
     func testClearButtonHiddenWithPlaceholder() {
@@ -134,8 +139,49 @@ class InputDateRendererTest: XCTestCase {
         
         let inputDateField = renderDateInput()
         XCTAssertEqual(inputDateField.accessibilityRoleDescription(), "Date Picker")
-        XCTAssertEqual(inputDateField.iconButton.accessibilityRoleDescription(), "Date Picker Button")
         XCTAssertEqual(inputDateField.textField.accessibilityValue(), "10-Feb-2000")
+    }
+    
+    func testInvalidDateRejected() {
+        let minVal = "2023-04-05"
+        let maxVal = "2023-04-25"
+        
+        //date less than min date
+        var val = "2023-04-02"
+        inputDate = .make(value: val, max: maxVal, min: minVal)
+        var inputDateField = renderDateInput()
+        
+        XCTAssertFalse(inputDateField.isValid)
+        
+        //date in right range
+        val = "2023-04-10"
+        inputDate = .make(value: val, max: maxVal, min: minVal)
+        inputDateField = renderDateInput()
+        
+        XCTAssertTrue(inputDateField.isValid)
+        
+        //date greater than max range
+        val = "2023-04-30"
+        inputDate = .make(value: val, max: maxVal, min: minVal)
+        inputDateField = renderDateInput()
+        
+        XCTAssertFalse(inputDateField.isValid)
+    }
+    
+    func testInvalidDateOnClearRemovesError() {
+        let fakeErrorDelegate = FakeErrorMessageHandlerDelegate()
+        
+        inputDate = .make(value: "2023-04-02", min: "2023-04-05")
+        let inputDateField = renderDateInput()
+        inputDateField.errorDelegate = fakeErrorDelegate
+        fakeErrorDelegate.isErrorVisible = true
+        
+        XCTAssertFalse(inputDateField.isValid)
+        
+        inputDateField.textField.clearButton.performClick()
+        
+        XCTAssertTrue(inputDateField.isValid)
+        XCTAssertFalse(fakeErrorDelegate.isErrorVisible)
     }
     
     func testAccessibilityLabelV1_3() {

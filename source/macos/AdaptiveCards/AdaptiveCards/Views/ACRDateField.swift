@@ -1,7 +1,8 @@
 import AdaptiveCards_bridge
 import AppKit
+import Carbon.HIToolbox
 
-class ACRDateField: NSView, InputHandlingViewProtocol {
+class ACRDateField: NSView {
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = isTimeMode ? "HH:mm" : "yyyy-MM-dd"
@@ -31,19 +32,18 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
        return view
     }()
 
-    private (set) lazy var iconButton: NSButtonWithImageSpacing = {
+    private (set) lazy var iconImage: NSImageView = {
         let calendarResourceName = isDarkMode ? "calendar-month-dark" : "calendar-month-light"
         let clockResourceName = isDarkMode ? "recents_20_w" : "recents_20"
         let calendarImage = BundleUtils.getImage(calendarResourceName, ofType: "png")
         let clockImage = BundleUtils.getImage(clockResourceName, ofType: "png")
         let inputFieldConfig = config.inputFieldConfig
-        let view = NSButtonWithImageSpacing(image: (isTimeMode ? inputFieldConfig.clockImage ?? clockImage : inputFieldConfig.calendarImage ?? calendarImage) ?? NSImage(), target: self, action: #selector(handleOpenPickerAction))
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor.clear.cgColor
-        view.isBordered = false
-        view.setAccessibilityRoleDescription(isTimeMode ? config.localisedStringConfig.timePickerButtonAccessibilityTitle: config.localisedStringConfig.datePickerButtonAccessibilityTitle)
-        return view
+        let imageView = NSImageView()
+        imageView.image = (isTimeMode ? inputFieldConfig.clockImage ?? clockImage : inputFieldConfig.calendarImage ?? calendarImage)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.wantsLayer = true
+        imageView.layer?.backgroundColor = NSColor.clear.cgColor
+        return imageView
     }()
     
     private (set) lazy var contentStackView: NSStackView = {
@@ -67,6 +67,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     
     private var popover: NSPopover?
     private let inputElement: ACSBaseInputElement
+    private var isPopoverVisible = false
     
     let datePickerCalendar = NSDatePicker()
     let datePickerTextfield = NSDatePicker()
@@ -74,16 +75,19 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     let isDarkMode: Bool
     let config: RenderConfig
 
+    // InputHandlingViewProtocol property
+    weak var errorDelegate: InputHandlingViewErrorDelegate?
+    var isRequired = false
+    
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
+        
     var selectedDate: Date? {
         didSet {
             if let selectedDate = selectedDate {
                 textField.stringValue = dateFormatterOut.string(from: selectedDate)
                 datePickerCalendar.dateValue = selectedDate
                 datePickerTextfield.dateValue = selectedDate
-            }
-            if isValid {
-                errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: iconButton)
-                textField.hideError()
             }
         }
     }
@@ -114,42 +118,38 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         }
     }
     
-    var value: String {
-        guard !textField.stringValue.isEmpty, let selectedDate = selectedDate else {
-            return ""
+    override var canBecomeKeyView: Bool {
+        return true
+    }
+    
+    override var acceptsFirstResponder: Bool {
+        return true
+    }
+    
+    override public var focusRingMaskBounds: NSRect {
+        return self.textField.bounds.offsetBy(dx: 0, dy: self.contentView.frame.minY)
+    }
+    
+    override public func drawFocusRingMask() {
+        let path = NSBezierPath()
+        path.appendRoundedRect(self.textField.bounds.offsetBy(dx: 0, dy: self.contentView.frame.minY), xRadius: config.inputFieldConfig.focusRingCornerRadius, yRadius: config.inputFieldConfig.focusRingCornerRadius)
+        path.fill()
+        self.needsDisplay = true
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        if Int(event.keyCode) == kVK_Space {
+            if !isPopoverVisible {
+                handleOpenPickerAction()
+            }
+            return
         }
-        return dateFormatter.string(from: selectedDate)
+        super.keyDown(with: event)
     }
     
-    var key: String {
-        guard let id = idString else {
-            logError("ID must be set on creation")
-            return ""
-        }
-        return id
+    override func accessibilityLabel() -> String? {
+        return textField.accessibilityTitle()
     }
-    
-    var isValid: Bool {
-        // TODO: Add min and max date checks too
-        return isBasicValidationsSatisfied
-    }
-    
-    var isErrorShown: Bool {
-        return textField.isErrorShown()
-    }
-    
-    func showError() {
-        textField.showError()
-        errorDelegate?.inputHandlingViewShouldShowError(self)
-    }
-    
-    func setAccessibilityFocus() {
-        iconButton.setAccessibilityFocused(true)
-        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityLabel())
-    }
-    
-    weak var errorDelegate: InputHandlingViewErrorDelegate?
-    var isRequired = false
     
     init(isTimeMode: Bool, config: RenderConfig, inputElement: ACSBaseInputElement) {
         self.isTimeMode = isTimeMode
@@ -171,7 +171,7 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         addSubview(contentStackView)
         contentStackView.addArrangedSubview(contentView)
         contentView.addSubview(textField)
-        contentView.addSubview(iconButton)
+        contentView.addSubview(iconImage)
     }
     
     private func setupConstraints() {
@@ -185,8 +185,8 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         
-        iconButton.leadingAnchor.constraint(equalTo: textField.leadingAnchor, constant: config.inputFieldConfig.leftPadding).isActive = true
-        iconButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        iconImage.leadingAnchor.constraint(equalTo: textField.leadingAnchor, constant: config.inputFieldConfig.leftPadding).isActive = true
+        iconImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
     }
     
     private func setupPopover() {
@@ -200,15 +200,11 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
         setAccessibilityValue(config.supportsSchemeV1_3 ? nil : value)
         setAccessibilityRoleDescription(isTimeMode  ? config.localisedStringConfig.timePickerFieldAccessibilityRoleDescription : config.localisedStringConfig.datePickerFieldAccessibilityRoleDescription)
     }
-
-    override func accessibilityChildren() -> [Any]? {
-        var temp = textField.accessibilityChildren()
-        temp?.append(iconButton)
-        return temp
-    }
     
     override func mouseDown(with event: NSEvent) {
-        handleOpenPickerAction()
+        if self.contentView.isMouseInView {
+            handleOpenPickerAction()
+        }
         super.mouseDown(with: event)
     }
     
@@ -246,10 +242,11 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
             let popoverView = NSViewController()
             popoverView.view = stackview
             popoverView.view.frame = frame
-            popover = NSPopover(contentViewController: popoverView, sender: iconButton, bounds: frame, preferredEdge: .maxY, behavior: .transient, animates: true, delegate: nil)
+            popover = NSPopover(contentViewController: popoverView, sender: iconImage, bounds: frame, preferredEdge: .maxY, behavior: .transient, animates: true, delegate: self)
+            popover?.delegate = self
             popover?.setAccessibilityParent(self)
         } else {
-            popover?.show(relativeTo: iconButton.bounds, of: iconButton, preferredEdge: .maxY)
+            popover?.show(relativeTo: iconImage.bounds, of: iconImage, preferredEdge: .maxY)
         }
     }
     
@@ -269,9 +266,87 @@ class ACRDateField: NSView, InputHandlingViewProtocol {
     @objc private func handleDateAction(_ datePicker: NSDatePicker) {
         selectedDate = datePicker.dateValue
     }
+}
+
+extension ACRDateField: NSPopoverDelegate {
+    func popoverDidClose(_ notification: Notification) {
+        if isValid {
+            errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: iconImage)
+            textField.hideError()
+        }
+    }
     
-    override func accessibilityLabel() -> String? {
-        return textField.accessibilityTitle()
+    func popoverWillClose(_ notification: Notification) {
+        self.isPopoverVisible = false
+    }
+    
+    func popoverWillShow(_ notification: Notification) {
+        self.isPopoverVisible = true
+    }
+}
+
+extension ACRDateField: ACRTextFieldDelegate {
+    func acrTextFieldDidSelectClear(_ textField: ACRTextField) {
+        selectedDate = nil
+        guard isValid else { return }
+        errorDelegate?.inputHandlingViewShouldHideError(self, currentFocussedView: iconImage)
+        textField.hideError()
+    }
+}
+
+extension ACRDateField: InputHandlingViewProtocol {
+    var value: String {
+        guard !textField.stringValue.isEmpty, let selectedDate = selectedDate else {
+            return ""
+        }
+        return dateFormatter.string(from: selectedDate)
+    }
+    
+    var key: String {
+        guard let id = idString else {
+            logError("ID must be set on creation")
+            return ""
+        }
+        return id
+    }
+    
+    var isValid: Bool {
+        guard isBasicValidationsSatisfied else { return false }
+        if let selectedDate = selectedDate {
+            if let minDateValue = minDateValue, let minDate = dateFormatter.date(from: minDateValue), selectedDate < minDate {
+                return false
+            }
+            if let maxDateValue = maxDateValue, let maxDate = dateFormatter.date(from: maxDateValue), selectedDate > maxDate {
+                return false
+            }
+        }
+        return true
+    }
+    
+    var isErrorShown: Bool {
+        return textField.isErrorShown()
+    }
+    
+    func showError() {
+        textField.showError()
+        errorDelegate?.inputHandlingViewShouldShowError(self)
+    }
+    
+    func setAccessibilityFocus() {
+        setAccessibilityFocused(true)
+        errorDelegate?.inputHandlingViewShouldAnnounceErrorMessage(self, message: accessibilityLabel())
+    }
+}
+
+extension ACRDateField: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return self
+    }
+    
+    func setupInternalKeyviews() {
+        self.textField.dateView = self
+        self.textField.exitView = exitView?.validKeyView
+        self.textField.setupInternalKeyviews()
     }
 }
 
@@ -299,27 +374,23 @@ extension NSPopover {
 }
 
 @IBDesignable class NSButtonWithImageSpacing: NSButton {
-    @IBInspectable var verticalImagePadding: CGFloat = 1
-    @IBInspectable var horizontalImagePadding: CGFloat = 1
-    
-    override func draw(_ drawRect: NSRect) {
-        // Reset the bounds after drawing is complete
-        let originalBounds = self.bounds
-        defer { self.bounds = originalBounds }
-
-        // Inset bounds by the image padding
-        self.bounds = originalBounds.insetBy(
-            dx: horizontalImagePadding,
-            dy: verticalImagePadding
-        )
-
-        // Draw the button content with padding
-        super.draw(drawRect)
+    var keyDownCall: ((Bool) -> Void)?
+    override public var focusRingMaskBounds: NSRect {
+        return self.bounds
     }
-}
 
-extension ACRDateField: ACRTextFieldDelegate {
-    func acrTextFieldDidSelectClear(_ textField: ACRTextField) {
-        selectedDate = nil
+    override public func drawFocusRingMask() {
+        let path = NSBezierPath()
+        path.appendRoundedRect(self.bounds, xRadius: 4.0, yRadius: 4.0)
+        path.fill()
+        self.needsDisplay = true
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        if Int(event.keyCode) == kVK_Space {
+            keyDownCall?(true)
+            return
+        }
+        super.keyDown(with: event)
     }
 }

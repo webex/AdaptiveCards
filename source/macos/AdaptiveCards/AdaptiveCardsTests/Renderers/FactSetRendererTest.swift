@@ -17,7 +17,7 @@ class FactSetRendererTest: XCTestCase {
     
     func testACRFactSetViewInitsWithoutError() {
         //Test default initialsier
-        let factSetView = ACRFactSetView()
+        let factSetView = ACRFactSetView.init(config: .default, inputElement: factSet, hostConfig: hostConfig, style: .default, rootView: FakeRootView())
         XCTAssertNotNil(factSetView)
     }
     
@@ -181,6 +181,32 @@ class FactSetRendererTest: XCTestCase {
             XCTAssertEqual(factsRendered[index].getTitle(), titleView.string)
             XCTAssertEqual("Value Exists too", valueView.string)
         }
+    }
+    
+    func testAccessibilityFocus() throws {
+        var factArray: [FakeFacts] = []
+        let fakeFact1 = FakeFacts()
+        fakeFact1.setTitle("Title1 Exists")
+        fakeFact1.setValue("Value1 [Exists](htttps://www.google.com)")
+        fakeFact1.setLanguage("")
+        factArray.append(fakeFact1)
+        let fakeFact2 = FakeFacts()
+        fakeFact2.setTitle("Title2 Exists")
+        fakeFact2.setValue("Value2 [Exists](htttps://www.google.com)")
+        fakeFact2.setLanguage("")
+        factArray.append(fakeFact2)
+        factSet = .make(factArray: factArray)
+        
+        let factView = try XCTUnwrap(renderFactSet() as? ACRFactSetView)
+        factView.setupInternalKeyviews()
+        XCTAssertEqual(factView.titleStackView.arrangedSubviews.first?.nextKeyView, factView.valueStackView.arrangedSubviews.first)
+        XCTAssertEqual(factView.valueStackView.arrangedSubviews.first?.nextKeyView, factView.titleStackView.arrangedSubviews.last)
+        XCTAssertEqual(factView.titleStackView.arrangedSubviews.last?.nextKeyView, factView.valueStackView.arrangedSubviews.last)
+        
+        guard let titleFact = factView.titleStackView.arrangedSubviews.first else { return XCTFail() }
+        guard let valueFact = factView.valueStackView.arrangedSubviews.first else { return XCTFail() }
+        XCTAssertFalse(titleFact.canBecomeKeyView)
+        XCTAssertTrue(valueFact.canBecomeKeyView)
     }
     
     private func renderFactSet() -> NSView {

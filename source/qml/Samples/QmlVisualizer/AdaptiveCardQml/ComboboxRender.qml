@@ -127,6 +127,11 @@ ComboBox {
         highlighted: ListView.isCurrentItem || hovered
         Accessible.name: modelData.text
 
+        onHoveredChanged: {
+            if(hovered)
+                comboBoxListView.currentIndex = index;
+        }
+
         background: Rectangle {
             x: parent.highlighted ? comboBoxConstants.popoutDelegateCordinates : 0
             y: parent.highlighted ? comboBoxConstants.popoutDelegateCordinates : 0

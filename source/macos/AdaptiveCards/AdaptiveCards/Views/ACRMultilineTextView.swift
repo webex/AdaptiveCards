@@ -184,7 +184,6 @@ class ACRMultilineTextView: NSView, NSTextViewDelegate {
     private func updateAppearance(hasFocus: Bool = false) {
         if shouldShowError {
             layer?.borderColor = inputConfig.errorStateConfig.borderColor.cgColor
-            textView.backgroundColor = inputConfig.errorStateConfig.backgroundColor
         } else {
             layer?.borderColor = hasFocus ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
             textView.backgroundColor = isMouseInView ? inputConfig.highlightedColor : inputConfig.backgroundColor

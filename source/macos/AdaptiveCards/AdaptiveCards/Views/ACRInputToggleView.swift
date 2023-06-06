@@ -118,7 +118,8 @@ extension ACRInputToggleView: InputHandlingViewProtocol {
     }
     
     func showError() {
-        self.choiceButton.showError()
+        self.choiceButton.setShowError(true)
+        errorDelegate?.inputHandlingViewShouldShowError(self)
     }
     
     func setAccessibilityFocus() {

@@ -623,6 +623,7 @@
 		A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */; };
 		AA05DC7E28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA05DC7D28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift */; };
 		AA09229D2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA09229C2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift */; };
+		AA104A932A2778DD00EA30DC /* ACSAccessibilityFocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA104A922A2778DD00EA30DC /* ACSAccessibilityFocusManager.swift */; };
 		AA1B49B628C5D7630049584A /* ACOVisibilityContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */; };
 		AA26969D28D050470095D396 /* ACRCompactChoiceSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA26969C28D050470095D396 /* ACRCompactChoiceSetView.swift */; };
 		AA26969F28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA26969E28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift */; };
@@ -630,7 +631,7 @@
 		AA2696AF28D1CCF90095D396 /* ACRMultilineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2696AE28D1CCF90095D396 /* ACRMultilineTextView.swift */; };
 		AA371D0628911F63002D618A /* ACRContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA371D0528911F63002D618A /* ACRContainerView.swift */; };
 		AA3C416328D84D5D00406C36 /* ACRInputLabelTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3C416228D84D5D00406C36 /* ACRInputLabelTextField.swift */; };
-		AA3C416528D85BE300406C36 /* ACRInputErrorTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3C416428D85BE300406C36 /* ACRInputErrorTextField.swift */; };
+		AA3C416528D85BE300406C36 /* ACRInputErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3C416428D85BE300406C36 /* ACRInputErrorView.swift */; };
 		AA4B4D4A28CF532000734278 /* ACRInputToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */; };
 		AA4B4D4E28CF548800734278 /* ACRSingleLineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */; };
 		AA4D26A6289A679700CA502D /* ACRColumnSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */; };
@@ -638,7 +639,8 @@
 		AA7A97BD288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */; };
 		AAC42D9628C22937007C4367 /* ACSVisibilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */; };
 		AACC2B8E29504A6300A4AB7C /* ImageSetRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACC2B8D29504A6300A4AB7C /* ImageSetRendererTests.swift */; };
-		AAE0E9182844D8260034FE2A /* ACRHyperLinkTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */; };
+		AAD0AC7729C0692100998C99 /* warning-badge-filled-light.png in Resources */ = {isa = PBXBuildFile; fileRef = AAD0AC7529C0692100998C99 /* warning-badge-filled-light.png */; };
+		AAD0AC7829C0692100998C99 /* warning-badge-filled-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = AAD0AC7629C0692100998C99 /* warning-badge-filled-dark.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1300,6 +1302,7 @@
 		A0D65D0925E6B4FD00A50EC1 /* ImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRenderer.swift; sourceTree = "<group>"; };
 		AA05DC7D28D988C30055DEC2 /* ACRInputLabelTextFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputLabelTextFieldTests.swift; sourceTree = "<group>"; };
 		AA09229C2935CE35004D55A0 /* ACSCollectionViewAlignLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSCollectionViewAlignLayout.swift; sourceTree = "<group>"; };
+		AA104A922A2778DD00EA30DC /* ACSAccessibilityFocusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSAccessibilityFocusManager.swift; sourceTree = "<group>"; };
 		AA1B49B528C5D7630049584A /* ACOVisibilityContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACOVisibilityContext.swift; sourceTree = "<group>"; };
 		AA26969C28D050470095D396 /* ACRCompactChoiceSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRCompactChoiceSetView.swift; sourceTree = "<group>"; };
 		AA26969E28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRChoiceSetCompactPopupButton.swift; sourceTree = "<group>"; };
@@ -1307,7 +1310,7 @@
 		AA2696AE28D1CCF90095D396 /* ACRMultilineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRMultilineTextView.swift; sourceTree = "<group>"; };
 		AA371D0528911F63002D618A /* ACRContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRContainerView.swift; sourceTree = "<group>"; };
 		AA3C416228D84D5D00406C36 /* ACRInputLabelTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputLabelTextField.swift; sourceTree = "<group>"; };
-		AA3C416428D85BE300406C36 /* ACRInputErrorTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputErrorTextField.swift; sourceTree = "<group>"; };
+		AA3C416428D85BE300406C36 /* ACRInputErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputErrorView.swift; sourceTree = "<group>"; };
 		AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRInputToggleView.swift; sourceTree = "<group>"; };
 		AA4B4D4D28CF548800734278 /* ACRSingleLineInputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRSingleLineInputTextView.swift; sourceTree = "<group>"; };
 		AA4D26A5289A679700CA502D /* ACRColumnSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRColumnSetView.swift; sourceTree = "<group>"; };
@@ -1315,7 +1318,8 @@
 		AA7A97BC288E725B00BED0DC /* ACSFillerSpaceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACSFillerSpaceManagerTests.swift; sourceTree = "<group>"; };
 		AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACSVisibilityManager.swift; sourceTree = "<group>"; };
 		AACC2B8D29504A6300A4AB7C /* ImageSetRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSetRendererTests.swift; sourceTree = "<group>"; };
-		AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRHyperLinkTextView.swift; sourceTree = "<group>"; };
+		AAD0AC7529C0692100998C99 /* warning-badge-filled-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-badge-filled-light.png"; sourceTree = "<group>"; };
+		AAD0AC7629C0692100998C99 /* warning-badge-filled-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-badge-filled-dark.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2073,6 +2077,7 @@
 				08D7767925CC339D0095C1B3 /* RendererManager.swift */,
 				AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */,
 				AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */,
+				AA104A922A2778DD00EA30DC /* ACSAccessibilityFocusManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -2099,7 +2104,7 @@
 				AA2696A028D053120095D396 /* ACRTextInputView.swift */,
 				2887215A26CE2D17007F7910 /* ACRTextField.swift */,
 				AA3C416228D84D5D00406C36 /* ACRInputLabelTextField.swift */,
-				AA3C416428D85BE300406C36 /* ACRInputErrorTextField.swift */,
+				AA3C416428D85BE300406C36 /* ACRInputErrorView.swift */,
 				28D7A57625F1E7E800AEA09C /* ACRCollectionViewItem.swift */,
 				28D7A57B25F1E84800AEA09C /* ACRCollectionView.swift */,
 				A032271A25E9176D00E7172E /* ACRImageWrappingView.swift */,
@@ -2109,7 +2114,6 @@
 				088C673B2615C2B00070186C /* ACRContentStackView.swift */,
 				088F716426A9925400C52C06 /* SpacingView.swift */,
 				8141136826F22F87009C4DB7 /* ACRFactSetView.swift */,
-				AAE0E9172844D8260034FE2A /* ACRHyperLinkTextView.swift */,
 				AA4B4D4928CF532000734278 /* ACRInputToggleView.swift */,
 			);
 			path = Views;
@@ -2160,6 +2164,8 @@
 				080DD9262689F4430058914A /* recents_20.png */,
 				13BE7602261C5F4600FC9636 /* calendar-month-light.png */,
 				13BE7606261C7EDA00FC9636 /* calendar-month-dark.png */,
+				AAD0AC7629C0692100998C99 /* warning-badge-filled-dark.png */,
+				AAD0AC7529C0692100998C99 /* warning-badge-filled-light.png */,
 				81C037282604B1F700B33324 /* cisco.jpg */,
 				81A94A7825FF86E70018213A /* arrowup.png */,
 				28B4AE1F26E1F30600FEC27E /* clear_18.png */,
@@ -2608,6 +2614,8 @@
 				08299F9E25AF279E00799C66 /* AdaptiveCards.xcconfig in Resources */,
 				81A94A7A25FF86E70018213A /* arrowup.png in Resources */,
 				28B4AE2026E1F30600FEC27E /* clear_18_w.png in Resources */,
+				AAD0AC7829C0692100998C99 /* warning-badge-filled-dark.png in Resources */,
+				AAD0AC7729C0692100998C99 /* warning-badge-filled-light.png in Resources */,
 				81A94A7925FF86E70018213A /* attachment.png in Resources */,
 				080DD9282689F4430058914A /* recents_20.png in Resources */,
 				080DD9292689F4430058914A /* recents_20_w.png in Resources */,
@@ -2674,7 +2682,7 @@
 				AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */,
 				082864FD25C99E300080D767 /* HostConfigUtils.swift in Sources */,
 				0876273F27734F9800F3347F /* ViewUtils.swift in Sources */,
-				AA3C416528D85BE300406C36 /* ACRInputErrorTextField.swift in Sources */,
+				AA3C416528D85BE300406C36 /* ACRInputErrorView.swift in Sources */,
 				A0D65D0A25E6B4FD00A50EC1 /* ImageRenderer.swift in Sources */,
 				28D7A52425EFAD8000AEA09C /* ImageSetRenderer.swift in Sources */,
 				08B5F91925C9272500A7D37A /* AdaptiveCardRenderer.swift in Sources */,
@@ -2689,6 +2697,7 @@
 				2887215B26CE2D17007F7910 /* ACRTextField.swift in Sources */,
 				AA26969F28D052B30095D396 /* ACRChoiceSetCompactPopupButton.swift in Sources */,
 				AA371D0628911F63002D618A /* ACRContainerView.swift in Sources */,
+				AA104A932A2778DD00EA30DC /* ACSAccessibilityFocusManager.swift in Sources */,
 				088C673C2615C2B00070186C /* ACRContentStackView.swift in Sources */,
 				28D7A57725F1E7E800AEA09C /* ACRCollectionViewItem.swift in Sources */,
 				28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */,
@@ -2700,7 +2709,6 @@
 				08E4044825B46ABA00C2092A /* AdaptiveCards.h in Sources */,
 				AA26969D28D050470095D396 /* ACRCompactChoiceSetView.swift in Sources */,
 				A032272525E93C7400E7172E /* ImageUtils.swift in Sources */,
-				AAE0E9182844D8260034FE2A /* ACRHyperLinkTextView.swift in Sources */,
 				2871B12A25DD27F10040AB27 /* ACRMultilineInputTextView.swift in Sources */,
 				8141136926F22F87009C4DB7 /* ACRFactSetView.swift in Sources */,
 				28F4E2142681DA77000B5131 /* ACRTextView.swift in Sources */,
@@ -3202,7 +3210,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.test.test.AdaptiveCards;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -3229,7 +3237,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.test.test.AdaptiveCards;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -3332,7 +3340,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.test.test.AdaptiveCards-bridge";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -3357,7 +3365,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.test.test.AdaptiveCards-bridge";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

@@ -21,6 +21,8 @@ class ACRTextField: NSTextField {
     private var shouldShowError = false
     private var errorMessage: String?
     private var labelString: String?
+    weak var exitView: NSView?
+    weak var dateView: ACRDateField?
     
     init(textFieldWith config: RenderConfig, mode: Mode, inputElement: ACSBaseInputElement) {
         self.config = config
@@ -31,7 +33,7 @@ class ACRTextField: NSTextField {
         super.init(frame: .zero)
         initialise()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -42,7 +44,7 @@ class ACRTextField: NSTextField {
         errorMessage = inputElement.getErrorMessage()
         setAccessibilityPlaceholderValue(nil)
     }
-
+    
     private func initialise() {
         let customCell = VerticallyCenteredTextFieldCell()
         customCell.drawsBackground = true
@@ -98,9 +100,13 @@ class ACRTextField: NSTextField {
         let view = NSButtonWithImageSpacing(image: clearImage ?? NSImage(), target: self, action: #selector(handleClearAction))
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor.clear.cgColor
         view.isBordered = false
+        view.setAccessibilityElement(true)
+        view.setAccessibilityRole(.button)
         view.setAccessibilityTitle(config.localisedStringConfig.clearButtonAccessibilityTitle)
+        view.keyDownCall = { [weak self] _ in
+            self?.handleClearAction()
+        }
         return view
     }()
     
@@ -124,7 +130,7 @@ class ACRTextField: NSTextField {
         textFieldDelegate?.acrTextFieldDidSelectClear(self)
         updateClearButton()
     }
-
+    
     override func textDidChange(_ notification: Notification) {
         super.textDidChange(notification)
         updateLastKnownCursorPosition()
@@ -176,6 +182,7 @@ class ACRTextField: NSTextField {
     
     private func updateClearButton() {
         clearButton.isHidden = isEmpty
+        self.setupInternalKeyviews()
     }
     
     private var wantsClearButton: Bool {
@@ -219,7 +226,7 @@ class ACRTextField: NSTextField {
             accessibilityTitle += accessibilityTitle.isEmpty ? "" : ", "
             accessibilityTitle += placeholder
         }
-    
+        
         return accessibilityTitle
     }
     
@@ -255,7 +262,6 @@ class ACRTextField: NSTextField {
         let isActive = hasFocus && isSelectable
         if shouldShowError {
             layer?.borderColor = inputConfig.errorStateConfig.borderColor.cgColor
-            layer?.backgroundColor = inputConfig.errorStateConfig.backgroundColor.cgColor
         } else {
             layer?.borderColor = isActive ? inputConfig.activeBorderColor.cgColor : inputConfig.borderColor.cgColor
             layer?.backgroundColor = isMouseInView ? inputConfig.highlightedColor.cgColor : inputConfig.backgroundColor.cgColor
@@ -263,14 +269,42 @@ class ACRTextField: NSTextField {
     }
 }
 
- class VerticallyCenteredTextFieldCell: NSTextFieldCell {
+extension ACRTextField {
+    func setupInternalKeyviews() {
+        if textFieldMode == .dateTime {
+            // NOTE: We require a date view ref to set the next keyview. We make acrdateview to the keyview in dateinput.
+            dateView?.nextKeyView = nil
+            clearButton.nextKeyView = nil
+            if !clearButton.isHidden {
+                dateView?.nextKeyView = clearButton
+                clearButton.nextKeyView = exitView
+                return
+            }
+            dateView?.nextKeyView = exitView
+        } else {
+            self.nextKeyView = nil
+            self.clearButton.nextKeyView = nil
+            if self.wantsClearButton && !clearButton.isHidden {
+                self.nextKeyView = self.clearButton
+                self.clearButton.nextKeyView = exitView
+                return
+            }
+            self.nextKeyView = exitView
+        }
+    }
+}
+
+class VerticallyCenteredTextFieldCell: NSTextFieldCell {
+    private struct Constants {
+        static let rightPaddingWithClearButton: CGFloat = 20
+    }
     private var rightPadding: CGFloat = 0
     private var leftPadding: CGFloat = 0
     private var yPadding: CGFloat = 0
     private var focusRingCornerRadius: CGFloat = 0
     private var wantsClearButton = false
     private var isNumericField = false
-
+    
     func setupSpacing(rightPadding: CGFloat = 0, leftPadding: CGFloat = 0, yPadding: CGFloat = 0, focusRingCornerRadius: CGFloat = 0, wantsClearButton: Bool, isNumericField: Bool) {
         self.leftPadding = leftPadding
         self.rightPadding = rightPadding
@@ -279,28 +313,31 @@ class ACRTextField: NSTextField {
         self.wantsClearButton = wantsClearButton
         self.isNumericField = isNumericField
     }
-
-    override func titleRect(forBounds rect: NSRect) -> NSRect {
-        var titleRect = super.titleRect(forBounds: rect)
-
-        let minimumHeight = self.cellSize(forBounds: rect).height
+    
+    private func adjustedFrame(forBounds rect: NSRect) -> NSRect {
+        var newRect = rect
         // Subtract yPadding to remove offset due to to font baseline
-        titleRect.origin.y += (titleRect.height - minimumHeight) / 2 - yPadding
-        titleRect.size.height = minimumHeight
-        titleRect.origin.x += leftPadding
-        // 16px is the image size(clear button)
-        titleRect.size.width -= rightPadding + leftPadding + (wantsClearButton ? 16 : 0)
-        return titleRect
+        let yoffset = floor((rect.height - ceil(font?.boundingRectForFont.size.height ?? 0)) / 2) - yPadding
+        newRect.origin.y += yoffset
+        newRect.origin.x += leftPadding
+        if rect.size.width > 0 {
+            newRect.size.width -= rightPadding + leftPadding + (wantsClearButton ? Constants.rightPaddingWithClearButton : 0)
+        }
+        return newRect
     }
-
+    
+    override func titleRect(forBounds rect: NSRect) -> NSRect {
+        return adjustedFrame(forBounds: rect)
+    }
+    
     override func drawInterior(withFrame cellFrame: NSRect, in controlView: NSView) {
         controlView.layer?.cornerRadius = focusRingCornerRadius
-        super.drawInterior(withFrame: titleRect(forBounds: cellFrame), in: controlView)
+        super.drawInterior(withFrame: adjustedFrame(forBounds: cellFrame), in: controlView)
     }
-
+    
     override func select(withFrame rect: NSRect, in controlView: NSView, editor textObj: NSText, delegate: Any?, start selStart: Int, length selLength: Int) {
         controlView.layer?.cornerRadius = focusRingCornerRadius
-        super.select(withFrame: titleRect(forBounds: rect), in: controlView, editor: textObj, delegate: delegate, start: selStart, length: selLength)
+        super.select(withFrame: adjustedFrame(forBounds: rect), in: controlView, editor: textObj, delegate: delegate, start: selStart, length: selLength)
     }
     
     override func drawFocusRingMask(withFrame cellFrame: NSRect, in controlView: NSView) {
@@ -319,4 +356,4 @@ class ACRTextField: NSTextField {
         }
         path.fill()
     }
- }
+}

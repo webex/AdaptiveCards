@@ -37,6 +37,27 @@ class ImageSetRendererTests: XCTestCase {
         XCTAssertEqual(renderImageSetView().contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
     }
     
+    func testToggleVisiblityProperty() throws {
+        let target = FakeToggleVisibilityTarget.make(elementId: "toggle1")
+        fakeImages = [.make(url: sampleURL), .make(url: sampleURL, id: "toggle1"), .make(url: sampleURL), .make(url: sampleURL, selectAction: FakeToggleVisibilityAction.make(targetElements: [target]))]
+        let imageSetView = FakeImageSet.make(imageSize: .small, images: fakeImages, height: .auto)
+        let container = FakeContainer.make(elemType: .container, minHeight: 500, items: [imageSetView])
+        
+        let fakeContext =  ACOVisibilityContext()
+        let mainRootView = ACRView(style: .default, hostConfig: FakeHostConfig.make(), renderConfig: .default, visibilityContext: fakeContext, accessibilityContext: ACSAccessibilityFocusManager())
+        let containerView = ContainerRenderer().render(element: container, with: hostConfig, style: .default, rootView: mainRootView, parentView: mainRootView, inputs: [], config: .default)
+        let fakeContainerView = try XCTUnwrap(containerView as? ACRContainerView)
+        
+        BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: fakeContainerView, element: container, parentView: mainRootView, rootView: mainRootView, style: .none, hostConfig: hostConfig, config: .default, isfirstElement: true)
+        
+        let collectionView = try XCTUnwrap(fakeContainerView.arrangedSubviews[0] as? ACRCollectionView)
+        XCTAssertFalse(collectionView.imageCell(with: "toggle1")?.isHidden ?? true)
+        XCTAssertEqual(collectionView.visibleImageViews.count, 4)
+        collectionView.imageViews[3].mouseDown(with: NSEvent())
+        XCTAssertTrue(collectionView.imageCell(with: "toggle1")?.isHidden ?? false)
+        XCTAssertEqual(collectionView.visibleImageViews.count, 3)
+    }
+    
     private func renderImageSetView() -> ACRCollectionView {
         let view = imageSetRenderer.render(element: imageSet, with: hostConfig, style: .default, rootView: rootView, parentView: rootView, inputs: [], config: RenderConfig.default)
         
@@ -47,7 +68,6 @@ class ImageSetRendererTests: XCTestCase {
     
     private func renderContainerView(_ element: ACSContainer) -> ACRContainerView {
         let view = ContainerRenderer().render(element: element, with: hostConfig, style: .default, rootView: rootView, parentView: rootView, inputs: [], config: .default)
-        
         XCTAssertTrue(view is ACRContainerView)
         guard let containerView = view as? ACRContainerView else { fatalError() }
         return containerView

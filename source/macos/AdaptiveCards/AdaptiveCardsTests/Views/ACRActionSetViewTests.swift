@@ -127,6 +127,12 @@ class ACRActionSetViewTests: XCTestCase {
         XCTAssertEqual(actionButtons[1].state, .off)
     }
     
+    func testActionSubStackViewCount() {
+        actions = [FakeSubmitAction.make(associatedInputs: .none, title: "submit")]
+        renderActionSetView()
+        XCTAssertEqual(view.stackView.arrangedSubviews.count, 1)
+    }
+    
     private var actionButtons: [NSButton] {
         return view.actions as! [NSButton]
     }
@@ -144,7 +150,7 @@ class ACRActionSetViewTests: XCTestCase {
 private class FakeActionSetViewDelegate: ACRActionSetViewDelegate {
     var isOpenURLCalled = false
     var calledURL: String?
-    func actionSetView(_ view: ACRActionSetView, didOpenURLWith actionView: NSView, urlString: String) {
+    func actionSetView(_ view: AdaptiveCards.ACRActionSetView, didOpenURL urlString: String) {
         isOpenURLCalled = true
         calledURL = urlString
     }

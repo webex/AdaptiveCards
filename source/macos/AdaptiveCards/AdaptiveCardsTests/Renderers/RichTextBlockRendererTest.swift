@@ -30,13 +30,21 @@ class RichTextBlockRendererTests: XCTestCase {
     }
     
     func testRendererSetsText() {
-        let textRun = FakeTextRun.make(text: sampleText)
+        let textRun = FakeTextRun.make(text: "**Hello**")
         
         richTextBlock = .make(textRun: textRun)
         
         let textView = renderTextView()
-        XCTAssertEqual(textView.string, sampleText)
-        XCTAssertTrue(resourceResolver.textResolverCalled)
+        XCTAssertEqual(textView.string, "**Hello**")
+    }
+    
+    func testRendererMarkDownText() {
+        let textRun = FakeTextRun.make(text: "[google](www.goggle.com) **Date-Time** parsing: {{DATE(2017-02-14T06:08:39Z,LONG)}} {{TIME(2017-02-14T06:08:39Z)}}")
+        
+        richTextBlock = .make(textRun: textRun)
+        
+        let textView = renderTextView()
+        XCTAssertEqual(textView.string, "[google](www.goggle.com) **Date-Time** parsing: February 14, 2017 11:38 AM")
     }
     
     func testRendererRightAlignsText() {
@@ -105,6 +113,7 @@ class RichTextBlockRendererTests: XCTestCase {
         XCTAssertNotNil(attributeValue(for: .selectAction, in: textView.attributedString()))
         XCTAssertTrue(attributeValue(for: .selectAction, in: textView.attributedString()) is ActionSubmitTarget)
         XCTAssertTrue(textView.target is ActionSubmitTarget)
+        XCTAssertTrue(textView.hasLinks)
         
         textRun = .make(text: sampleText, selectAction: FakeOpenURLAction.make())
         richTextBlock = .make(textRun: textRun)
@@ -113,6 +122,7 @@ class RichTextBlockRendererTests: XCTestCase {
         XCTAssertNotNil(attributeValue(for: .selectAction, in: textView.attributedString()))
         XCTAssertTrue(attributeValue(for: .selectAction, in: textView.attributedString()) is ActionOpenURLTarget)
         XCTAssertTrue(textView.target is ActionOpenURLTarget)
+        XCTAssertTrue(textView.hasLinks)
         
         textRun = .make(text: sampleText, selectAction: FakeToggleVisibilityAction.make())
         richTextBlock = .make(textRun: textRun)
@@ -121,6 +131,7 @@ class RichTextBlockRendererTests: XCTestCase {
         XCTAssertNotNil(attributeValue(for: .selectAction, in: textView.attributedString()))
         XCTAssertTrue(attributeValue(for: .selectAction, in: textView.attributedString()) is ActionToggleVisibilityTarget)
         XCTAssertTrue(textView.target is ActionToggleVisibilityTarget)
+        XCTAssertTrue(textView.hasLinks)
         
         // ShowCard Action is not available as a SelectAction
         textRun = .make(text: sampleText, selectAction: FakeShowCardAction.make())
@@ -129,6 +140,21 @@ class RichTextBlockRendererTests: XCTestCase {
         
         XCTAssertNil(attributeValue(for: .selectAction, in: textView.attributedString()))
         XCTAssertNil(textView.target)
+        XCTAssertFalse(textView.hasLinks)
+    }
+    
+    func testHitTest() {
+        
+        let textRun = FakeTextRun.make(text: sampleText, selectAction: FakeSubmitAction.make())
+        richTextBlock = .make(textRun: textRun)
+        let textView = renderTextView()
+        textView.frame = NSRect(x: 0, y: 0, width: 50, height: 500)
+        
+        // return self if point inside textView and contains link
+        XCTAssertEqual(textView.hitTest(NSPoint(x: 10, y: 10)), textView)
+        
+        // pass over to super if point ouside textView
+        XCTAssertNotEqual(textView.hitTest(NSPoint(x: 100, y: 200)), textView)
     }
     
     private func isStringAttributePresent(attrString: NSAttributedString, attr: NSAttributedString.Key) -> Bool {

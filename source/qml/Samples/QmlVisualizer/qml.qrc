@@ -27,10 +27,6 @@
         <file alias="InputLabel.qml">AdaptiveCardQml/InputLabel.qml</file>
         <file alias="CardGenericTextElement.qml">AdaptiveCardQml/CardGenericTextElement.qml</file>
         <file alias="AdaptiveActionRender.qml">AdaptiveCardQml/AdaptiveActionRender.qml</file>
-        <file alias="ActionsContentLayout.qml">AdaptiveCardQml/ActionsContentLayout.qml</file>
-        <file alias="ActionSetHorizontalRender.qml">AdaptiveCardQml/ActionSetHorizontalRender.qml</file>
-        <file alias="ActionSetVerticalRender.qml">AdaptiveCardQml/ActionSetVerticalRender.qml</file>
-        <file alias="ActionSetRepeaterElement.qml">AdaptiveCardQml/ActionSetRepeaterElement.qml</file>
         <file alias="NumberInputRender.qml">AdaptiveCardQml/NumberInputRender.qml</file>
         <file alias="DateInputPopout.qml">AdaptiveCardQml/DateInputPopout.qml</file>
         <file alias="DateInputRender.qml">AdaptiveCardQml/DateInputRender.qml</file>

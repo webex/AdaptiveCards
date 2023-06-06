@@ -36,8 +36,8 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
             }
             
             let markdownResult = BridgeTextUtils.processText(fromRichTextBlock: textRun, hostConfig: hostConfig)
-            
-            let markdownString = TextUtils.getMarkdownString(for: rootView, with: markdownResult)
+            let markdownString = NSMutableAttributedString(string: markdownResult.parsedString)
+            markdownString.addAttributes([.font: NSFont.systemFont(ofSize: 12.0)], range: NSRange(location: 0, length: markdownString.length))
             let textRunContent = TextUtils.addFontProperties(attributedString: markdownString, textProperties: BridgeTextUtils.convertTextRun(toRichTextElementProperties: textRun), hostConfig: hostConfig)
             
             // Set paragraph style such as line break mode and alignment
@@ -85,7 +85,10 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         }
         
         textView.textContainer?.lineBreakMode = .byTruncatingTail
-        textView.textStorage?.setAttributedString(content)
+        textView.setAttributedString(str: content)
+        textView.openLinkCallBack = { [weak rootView] urlAddress in
+            rootView?.handleOpenURLAction(urlString: urlAddress)
+        }
         textView.textContainer?.widthTracksTextView = true
         
         // Set compression priority higher value means that we don’t want the view to shrink smaller than the intrinsic content size.
@@ -97,6 +100,9 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         } else {
             // Set Hugging priority Setting a lower value to this priority indicates that we want the view to grow larger than its content.
             textView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        }
+        if textView.canBecomeKeyView {
+            rootView.accessibilityContext?.registerView(textView)
         }
         return textView
     }
