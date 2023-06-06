@@ -12,6 +12,9 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
         
         let columnView = ACRColumnView(style: column.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: column.getPadding())
         columnView.translatesAutoresizingMaskIntoConstraints = false
+        if column.getSelectAction() != nil {
+            rootView.accessibilityContext?.registerView(columnView)
+        }
         columnView.setWidth(ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth()))
         columnView.bleed = column.getBleed()
         

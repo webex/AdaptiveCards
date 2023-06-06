@@ -66,6 +66,14 @@ class ACRColumnView: ACRContentStackView {
         return view
     }()
     
+    // AccessibleFocusView property
+    override var validKeyView: NSView? {
+        get {
+            return self
+        }
+        set { }
+    }
+    
     override func addArrangedSubview(_ subview: NSView) {
         // Activate min Width constraint only if column has a non-image subview
         // Because - column can be empty                        -> should have zero content size
@@ -90,6 +98,10 @@ class ACRColumnView: ACRContentStackView {
     override func setupViews() {
         addSubview(backgroundImageView)
         super.setupViews()
+    }
+    
+    override func setupInternalKeyviews() {
+        self.nextKeyView = self.exitView?.validKeyView
     }
     
     override func setupConstraints() {

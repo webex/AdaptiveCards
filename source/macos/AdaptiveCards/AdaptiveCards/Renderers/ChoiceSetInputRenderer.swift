@@ -24,37 +24,15 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
     
     private func choiceSetRenderInternal(choiceSetInput: ACSChoiceSetInput, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, renderConfig: RenderConfig) -> NSView {
         // Parse input default values for multi-select
-        let defaultParsedValues = parseChoiceSetInputDefaultValues(value: choiceSetInput.getValue() ?? "")
-        let isMultiSelect = choiceSetInput.getIsMultiSelect()
-        let view = ACRChoiceSetView(renderConfig: renderConfig)
-        view.isRadioGroup = !isMultiSelect
-        view.wrap = choiceSetInput.getWrap()
-        view.idString = choiceSetInput.getId()
-        view.isRequired = choiceSetInput.getIsRequired()
-        view.errorMessage = choiceSetInput.getErrorMessage()
-        for choice in choiceSetInput.getChoices() {
-            let title = choice.getTitle() ?? ""
-            let attributedString = TextUtils.getRenderAttributedString(text: title, with: hostConfig, renderConfig: renderConfig, rootView: rootView, style: style)
-            let choiceButton = view.setupButton(attributedString: attributedString, value: choice.getValue(), for: choiceSetInput)
-            if defaultParsedValues.contains(choice.getValue() ?? "") {
-                choiceButton.state = .on
-                choiceButton.buttonValue = choice.getValue()
-                view.previousButton = choiceButton
-            }
-            choiceButton.buttonLabelField.openLinkCallBack = { [weak rootView] urlAddress in
-                rootView?.handleOpenURLAction(urlString: urlAddress)
-            }
-            view.addChoiceButton(choiceButton)
-        }
-        
+        let choiceSetView = ACRChoiceSetView(config: renderConfig, inputElement: choiceSetInput, hostConfig: hostConfig, style: style, rootView: rootView)
         if choiceSetInput.getHeight() == .stretch {
-            if !view.getArrangedSubviews.isEmpty {
-                view.setStretchableHeight()
+            if !choiceSetView.getArrangedSubviews.isEmpty {
+                choiceSetView.setStretchableHeight()
             }
         }
-        
-        rootView.addInputHandler(view)
-        return view
+        rootView.addInputHandler(choiceSetView)
+        rootView.accessibilityContext?.registerView(choiceSetView)
+        return choiceSetView
     }
     
     private func parseChoiceSetInputDefaultValues(value: String) -> [String] {
@@ -64,6 +42,7 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
     private func choiceSetCompactRenderInternal (choiceSetInput: ACSChoiceSetInput, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, renderConfig: RenderConfig) -> NSView {
         // compact button renderer
         let view = ACRCompactChoiceSetView(renderConfig: renderConfig, element: choiceSetInput, style: style, with: hostConfig, rootview: rootView)
+        rootView.accessibilityContext?.registerView(view)
         return view
     }
 }

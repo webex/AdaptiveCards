@@ -12,7 +12,9 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         
         let containerView = ACRContainerView(style: container.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: rootView, needsPadding: container.getPadding())
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        
+        if container.getSelectAction() != nil {
+            rootView.accessibilityContext?.registerView(containerView)
+        }
         containerView.bleed = container.getBleed()
         containerView.frame = parentView.bounds
         // add selectAction
