@@ -19,12 +19,12 @@ using namespace AdaptiveCards;
 
 
 
-  
+//#import "ACSRemoteResourceInformation.h"
+
 
 @class ACSBaseElement;
 @class ACSFeatureRegistration;
 @class ACSInternalId;
-@class ACSParseContext;
 @class ACSRemoteResourceInformation;
 
 enum ACSFallbackType: NSUInteger;
@@ -49,6 +49,8 @@ enum ACSFallbackType: NSUInteger;
 - (bool)meetsRequirements:(ACSFeatureRegistration * _Nonnull)hostProvides;
 - (NSString * _Nullable)getRequirements;
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceUris;
+- (void)setTypeString:(NSString * _Nonnull)type;
+- (void)setCanFallbackToAncestor:(bool)value;
 
 
 @end

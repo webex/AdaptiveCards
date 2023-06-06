@@ -10,7 +10,8 @@
 typedef NS_ENUM(NSUInteger, ACSHorizontalAlignment) {
     ACSHorizontalAlignmentLeft,
     ACSHorizontalAlignmentCenter,
-    ACSHorizontalAlignmentRight
+    ACSHorizontalAlignmentRight,
+    ACSHorizontalAlignmentNil
 };
 
 #endif

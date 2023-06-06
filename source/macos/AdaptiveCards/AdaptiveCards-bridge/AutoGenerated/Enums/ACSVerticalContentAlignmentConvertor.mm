@@ -34,6 +34,8 @@
       return AdaptiveCards::VerticalContentAlignment::Center;
     case ACSVerticalContentAlignment::ACSVerticalContentAlignmentBottom:
       return AdaptiveCards::VerticalContentAlignment::Bottom;
+    default:
+      return AdaptiveCards::VerticalContentAlignment::Top;
   }
 }
 

@@ -27,6 +27,15 @@
     return self;
 }
 
+- (NSNumber * _Nullable)getDefaultFontWeight:(enum ACSTextWeight)weight
+{
+    auto weightCpp = [ACSTextWeightConvertor convertObj:weight];
+ 
+    auto getDefaultFontWeightCpp = mCppObj->GetDefaultFontWeight(weightCpp);
+    return [NSNumber numberWithUnsignedInt:getDefaultFontWeightCpp];
+
+}
+
 - (NSNumber * _Nullable)getFontWeight:(enum ACSTextWeight)weight
 {
     auto weightCpp = [ACSTextWeightConvertor convertObj:weight];

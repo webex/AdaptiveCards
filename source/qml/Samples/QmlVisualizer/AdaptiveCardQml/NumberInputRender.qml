@@ -13,9 +13,11 @@ Column {
     property string _mEscapedErrorString
     property string _mEscapedPlaceholderString
     property bool showErrorMessage: false
-    property int _minValue
-    property int _maxValue
-    property int _value
+    property double _minValue
+    property double _maxValue
+    property double _value
+    property int _spinBoxMinVal : Math.max(-2147483648, _minValue)
+    property int _spinBoxMaxVal : Math.min(2147483647, _maxValue)
     property bool _hasDefaultValue: false
     property var numberInputConstants: CardConstants.inputNumberConstants
     property var inputFieldConstants: CardConstants.inputFieldConstants
@@ -23,7 +25,7 @@ Column {
     property string _submitValue: _numberInputTextField.text ? Number(_numberInputTextField.text).toString() : ''
 
     function validate() {
-        if (_numberInputTextField.text.length !== 0 && Number(_numberInputTextField.text) >= _numberInputSpinBox.from && Number(_numberInputTextField.text) <= _numberInputSpinBox.to) {
+        if (_numberInputTextField.text.length !== 0 && Number(_numberInputTextField.text) >= _minValue && Number(_numberInputTextField.text) <= _maxValue) {
             showErrorMessage = false;
             return false;
         } else {
@@ -114,8 +116,8 @@ Column {
                 padding: 0
                 editable: true
                 stepSize: 1
-                to: _maxValue
-                from: _minValue
+                to: _spinBoxMaxVal
+                from: _spinBoxMinVal
                 Keys.onPressed: {
                     if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
                         _numberInputSpinBox.changeValue(event.key);
@@ -168,7 +170,6 @@ Column {
                     Component.onCompleted: {
                         if (_hasDefaultValue)
                             _numberInputTextField.text = _numberInputSpinBox.value;
-
                     }
 
                     background: Rectangle {

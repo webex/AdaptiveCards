@@ -67,11 +67,12 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
     }
     
     func setToolTip() {
+        guard !itemArray.isEmpty else { return }
         toolTip = itemArray[indexOfSelectedItem].title
     }
     
     var value: String {
-        return arrayValues[indexOfSelectedItem] ?? ""
+        return arrayValues.isEmpty ? "" : arrayValues[indexOfSelectedItem] ?? ""
     }
     
     var key: String {
@@ -88,7 +89,7 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
     
     override func accessibilityValue() -> Any? {
         guard renderConfig.supportsSchemeV1_3 else {
-            return itemArray[indexOfSelectedItem].title
+            return itemArray.isEmpty ? "" : itemArray[indexOfSelectedItem].title
         }
         var accessibilityLabel = ""
         if let errorDelegate = errorDelegate, errorDelegate.isErrorVisible(self) {
@@ -98,13 +99,13 @@ class ACRChoiceSetCompactPopupButton: NSPopUpButton, InputHandlingViewProtocol {
             }
         }
         if let label = label, !label.isEmpty {
-            accessibilityLabel += label + ", "
+            accessibilityLabel += label
         }
-        accessibilityLabel += itemArray[indexOfSelectedItem].title
+        accessibilityLabel += itemArray.isEmpty ? "" : (", " + itemArray[indexOfSelectedItem].title)
         return accessibilityLabel
     }
     
     var isValid: Bool {
-        return isRequired ? (arrayValues[indexOfSelectedItem] != nil) : true
+        return isRequired ? (arrayValues.isEmpty ? false : (arrayValues[indexOfSelectedItem] != nil)) : true
     }
 }

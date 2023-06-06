@@ -12,29 +12,25 @@
 using namespace AdaptiveCards;
 #endif
 
-#import "ACSParseContext.h"
 #import "ACSBaseCardElement.h"
-// #import "ACSRemoteResourceInformation.h"
-// #import "ACSValue.h"
+//#import "ACSRemoteResourceInformation.h"
+#import "ACSStyledCollectionElement.h"
 
-
-
-#import "ACSCollectionTypeElement.h"
-  
-
-@class ACSParseContext;
+@class ACSBaseCardElement;
 @class ACSRemoteResourceInformation;
 
 
 
 
-@interface ACSContainer : ACSCollectionTypeElement
+@interface ACSContainer : ACSStyledCollectionElement
 
 #ifdef __cplusplus
 - (instancetype _Nonnull)initWithContainer:(const std::shared_ptr<Container>)cppObj;
 #endif
 
 - (NSArray<ACSBaseCardElement *> * _Nonnull)getItems;
+- (bool)getRtl;
+- (void)setRtl:(bool)value;
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceInfo;
 
 

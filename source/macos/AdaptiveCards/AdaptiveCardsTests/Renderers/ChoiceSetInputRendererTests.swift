@@ -193,6 +193,49 @@ class ChoiceSetInputRendererTests: XCTestCase {
         XCTAssertEqual(choiceSetCompactView.choiceSetPopup.itemArray[1].toolTip, "Test Title 2")
     }
     
+    func testCompactChoiceSetTooltipWhenEpty() {
+        button = .make(title: "", value: "")
+        choices.removeAll()
+        choices.append(button)
+        choiceSetInput = .make(choices: choices, choiceSetStyle: .compact, heightType: .auto)
+        
+        let choiceSetCompactView = renderChoiceSetCompactView()
+        
+        XCTAssertEqual(choiceSetCompactView.choiceSetPopup.toolTip, "")
+    }
+    
+    func testChoiceSetAccessibilityValue() {
+        button = .make(title: "Test Title", value: "Test Value")
+        choices.removeAll()
+        choices.append(button)
+        choiceSetInput = .make(choices: choices, choiceSetStyle: .compact, heightType: .auto)
+        
+        let choiceSetCompactView = renderChoiceSetCompactView()
+        
+        XCTAssertEqual(choiceSetCompactView.accessibilityValue() as? String, "Test Title")
+    }
+    
+    func testChoiceSetAccessibilityValueWhenEpmty() {
+        button = .make(title: "", value: "")
+        choices.removeAll()
+        choices.append(button)
+        choiceSetInput = .make(choices: choices, choiceSetStyle: .compact, heightType: .auto)
+        
+        let choiceSetCompactView = renderChoiceSetCompactView()
+        
+        XCTAssertEqual(choiceSetCompactView.accessibilityValue() as? String, "")
+    }
+    
+    func testisInValidSetForChoiceSetWhenEmpty(){
+        let config = RenderConfig(isDarkMode: false, buttonConfig: .default, supportsSchemeV1_3: true, hyperlinkColorConfig: .default, inputFieldConfig: .default, checkBoxButtonConfig: nil, radioButtonConfig: nil, localisedStringConfig: nil)
+        choices.removeAll()
+        choiceSetInput = .make(value: "", choices: choices, choiceSetStyle: .compact, placeholder: "Test", isRequired: true)
+        let view = choiceSetInputRenderer.render(element: choiceSetInput, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: config)
+        XCTAssertTrue(view is ACRCompactChoiceSetView)
+        guard let choiceSetView = view as? ACRCompactChoiceSetView else { fatalError() }
+        XCTAssertFalse(choiceSetView.choiceSetPopup.isValid)
+    }
+    
     private func renderChoiceSetView() -> ACRChoiceSetView {
         let view = choiceSetInputRenderer.render(element: choiceSetInput, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         

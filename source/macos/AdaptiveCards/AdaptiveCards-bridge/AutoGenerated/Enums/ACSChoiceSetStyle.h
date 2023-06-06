@@ -9,7 +9,8 @@
 
 typedef NS_ENUM(NSUInteger, ACSChoiceSetStyle) {
     ACSChoiceSetStyleCompact,
-    ACSChoiceSetStyleExpanded
+    ACSChoiceSetStyleExpanded,
+    ACSChoiceSetStyleFiltered
 };
 
 #endif

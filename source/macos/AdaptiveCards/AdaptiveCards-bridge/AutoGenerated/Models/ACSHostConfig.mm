@@ -27,6 +27,13 @@
 #import "ACSSpacingConfigConvertor.h"
 #import "ACSTextSizeConvertor.h"
 #import "ACSTextWeightConvertor.h"
+#import "ACSForegroundColorConvertor.h"
+#import "ACSContainerStyleDefinitionConvertor.h"
+#import "ACSContainerStyleConvertor.h"
+#import "ACSColorsConfigConvertor.h"
+#import "ACSTableConfigConvertor.h"
+#import "ACSTextBlockConfigConvertor.h"
+#import "ACSTextStylesConfigConvertor.h"
 
 //cpp includes
 #import "Enums.h"
@@ -408,5 +415,52 @@
     
 }
 
+- (ACSTextStylesConfig * _Nullable)getTextStyles
+{
+ 
+    auto getTextStylesCpp = mCppObj->GetTextStyles();
+    return [ACSTextStylesConfigConvertor convertCpp:getTextStylesCpp];
+
+}
+
+- (void)setTextStyles:(ACSTextStylesConfig * _Nonnull)value
+{
+    auto valueCpp = [ACSTextStylesConfigConvertor convertObj:value];
+ 
+    mCppObj->SetTextStyles(valueCpp);
+    
+}
+
+- (ACSTextBlockConfig * _Nullable)getTextBlock
+{
+ 
+    auto getTextBlockCpp = mCppObj->GetTextBlock();
+    return [ACSTextBlockConfigConvertor convertCpp:getTextBlockCpp];
+
+}
+
+- (void)setTextBlock:(ACSTextBlockConfig * _Nonnull)value
+{
+    auto valueCpp = [ACSTextBlockConfigConvertor convertObj:value];
+ 
+    mCppObj->SetTextBlock(valueCpp);
+    
+}
+
+- (ACSTableConfig * _Nullable)getTable
+{
+ 
+    auto getTableCpp = mCppObj->GetTable();
+    return [ACSTableConfigConvertor convertCpp:getTableCpp];
+
+}
+
+- (void)setTable:(ACSTableConfig * _Nonnull)value
+{
+    auto valueCpp = [ACSTableConfigConvertor convertObj:value];
+ 
+    mCppObj->SetTable(valueCpp);
+    
+}
 
 @end

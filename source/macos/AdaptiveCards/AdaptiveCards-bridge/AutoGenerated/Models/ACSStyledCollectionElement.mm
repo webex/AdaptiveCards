@@ -16,23 +16,24 @@
 //cpp includes
 #import "BackgroundImage.h"
 #import "BaseActionElement.h"
-#import "BaseElement.h"
 #import "Enums.h"
 #import "json.h"
 #import "ParseContext.h"
+#import "InternalId.h"
 
 
-#import "ACSCollectionTypeElement.h"
-#import "CollectionTypeElement.h"
+#import "ACSStyledCollectionElement.h"
+#import "StyledCollectionElement.h"
 
 
-@implementation  ACSCollectionTypeElement {
-    std::shared_ptr<CollectionTypeElement> mCppObj;
+
+@implementation  ACSStyledCollectionElement {
+    std::shared_ptr<StyledCollectionElement> mCppObj;
 }
 
-- (instancetype _Nonnull)initWithCollectionTypeElement:(const std::shared_ptr<CollectionTypeElement>)cppObj
+- (instancetype _Nonnull)initWithStyledCollectionElement:(const std::shared_ptr<StyledCollectionElement>)cppObj
 {
-    if (self = [super initWithBaseCardElement: cppObj])
+    if (self = [super initWithCollectionCoreElement: cppObj])
     {
         mCppObj = cppObj;
     }
@@ -59,7 +60,7 @@
 {
  
     auto getVerticalContentAlignmentCpp = mCppObj->GetVerticalContentAlignment();
-    return [ACSVerticalContentAlignmentConvertor convertCpp:getVerticalContentAlignmentCpp];
+    return getVerticalContentAlignmentCpp.has_value() ? [ACSVerticalContentAlignmentConvertor convertCpp:getVerticalContentAlignmentCpp.value_or(AdaptiveCards::VerticalContentAlignment::Top)] : ACSVerticalContentAlignmentNil;
 
 }
 
@@ -121,26 +122,27 @@
 
 - (void)configForContainerStyle:(ACSParseContext * _Nonnull)context
 {
-//    auto contextCpp = // NEED TO INSERT CODE //;
-//
-//    mCppObj->ConfigForContainerStyle(contextCpp);
+    // auto contextCpp = [ACSParseContextConvertor convertObj:context];
+ 
+    // mCppObj->ConfigForContainerStyle(contextCpp);
     
 }
 
 - (void)setParentalId:(ACSInternalId * _Nonnull)id
 {
-//    auto idCpp = // NEED TO INSERT CODE //;
-//
-//    mCppObj->SetParentalId(idCpp);
-//
+    // auto idCpp = [ACSInternalIdConvertor convertObj:id];
+ 
+    // mCppObj->SetParentalId(idCpp);
+    
 }
 
 - (ACSInternalId * _Nullable)getParentalId
 {
  
-//    auto getParentalIdCpp = mCppObj->GetParentalId();
-//    return [[ACSInternalId alloc] initWithInternalId:getParentalIdCpp];
+    // auto getParentalIdCpp = mCppObj->GetParentalId();
+    // return [ACSInternalIdConvertor convertCpp:getParentalIdCpp];
     return [[ACSInternalId alloc] init];
+
 }
 
 - (ACSBaseActionElement * _Nullable)getSelectAction
@@ -153,9 +155,9 @@
 
 - (void)setSelectAction:(ACSBaseActionElement * _Nonnull)action
 {
-//    auto actionCpp = // NEED TO INSERT CODE //;
-//
-//    mCppObj->SetSelectAction(actionCpp);
+    // auto actionCpp = [ACSBaseActionElementConvertor convertObj:action];
+ 
+    // mCppObj->SetSelectAction(actionCpp);
     
 }
 
@@ -166,6 +168,7 @@
     if (getBackgroundImageCpp)
         return [[ACSBackgroundImage alloc] initWithBackgroundImage:getBackgroundImageCpp];
     return NULL;
+
 }
 
 - (void)setBackgroundImage:(ACSBackgroundImage * _Nonnull)value
@@ -191,6 +194,7 @@
     mCppObj->SetMinHeight(valueCpp);
     
 }
+
 
 
 @end

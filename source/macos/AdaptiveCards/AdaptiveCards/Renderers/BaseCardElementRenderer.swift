@@ -13,7 +13,7 @@ class BaseCardElementRenderer {
             separator = SpacingView.renderSpacer(elem: element, forSuperView: parentView, withHostConfig: hostConfig)
         }
         
-        if let collectionElement = element as? ACSCollectionTypeElement {
+        if let collectionElement = element as? ACSStyledCollectionElement {
             if let columnView = view as? ACRColumnView, let backgroundImage = collectionElement.getBackgroundImage(), let url = backgroundImage.getUrl() {
                 columnView.setupBackgroundImageProperties(backgroundImage)
                 rootView.registerImageHandlingView(columnView.backgroundImageView, for: url)
@@ -59,7 +59,7 @@ class BaseCardElementRenderer {
     }
     
     func configBleed(collectionView: NSView, parentView: ACRContentStackView, with hostConfig: ACSHostConfig, element: ACSBaseCardElement, parentElement: ACSBaseCardElement?) {
-        guard let collection = element as? ACSCollectionTypeElement, collection.getBleed() else {
+        guard let collection = element as? ACSStyledCollectionElement, collection.getBleed() else {
             return
         }
         guard let collectionView = collectionView as? ACRContentStackView else {
@@ -99,11 +99,11 @@ class BaseCardElementRenderer {
                 // case 2: when parent is bleeding but, bottom bleed direction false
                 // case 3: when parent bleeds till end and has bottom bleed direction true
                 var parentBottomBleedDirection = false
-                if let parent = parentElement as? ACSCollectionTypeElement {
+                if let parent = parentElement as? ACSStyledCollectionElement {
                     let directionParent = parent.getBleedDirection()
                     parentBottomBleedDirection = (directionParent.rawValue & ACRBleedDirection.ACRBleedToBottomEdge.rawValue) != 0
                 }
-                if let parentCollection = parentElement as? ACSCollectionTypeElement {
+                if let parentCollection = parentElement as? ACSStyledCollectionElement {
                     paddingBottom = !parentCollection.getPadding() || (parentView.bleed && parentBottomBleedDirection
                     ) ? padding : 0
                 }

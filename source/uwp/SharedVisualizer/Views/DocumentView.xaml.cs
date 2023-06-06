@@ -17,10 +17,17 @@ using Microsoft.Toolkit.Uwp.UI.Controls;
 #endif
 using AdaptiveCardVisualizer.ViewModel;
 
+#if USE_WINUI3
+using Microsoft.UI.Xaml.Controls;
+#else
+using Windows.UI.Xaml.Controls;
+#endif
+
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace AdaptiveCardVisualizer
 {
+
     public sealed partial class DocumentView : UserControl
     {
         public DocumentViewModel ViewModel

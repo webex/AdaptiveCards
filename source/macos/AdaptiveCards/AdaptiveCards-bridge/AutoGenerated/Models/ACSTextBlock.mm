@@ -5,6 +5,7 @@
 #import "SwiftInterfaceHeader.h"
 
 #import "ACSDateTimePreparser.h"
+#import "ACSTextStyleConvertor.h"
 #import "ACSFontTypeConvertor.h"
 #import "ACSForegroundColorConvertor.h"
 #import "ACSHorizontalAlignmentConvertor.h"
@@ -57,11 +58,28 @@
 
 }
 
+- (ACSTextStyle)getStyle
+{
+ 
+    auto getStyleCpp = mCppObj->GetStyle();
+    return getStyleCpp.has_value() ? [ACSTextStyleConvertor convertCpp:getStyleCpp.value_or(AdaptiveCards::TextStyle::Default)] : ACSTextStyleNil ;
+
+}
+
+- (void)setStyle:(enum ACSTextStyle)value
+{
+        
+    auto valueCpp = [ACSTextStyleConvertor convertObj:value];
+ 
+    mCppObj->SetStyle(valueCpp);
+    
+}
+
 - (ACSTextSize)getTextSize
 {
  
     auto getTextSizeCpp = mCppObj->GetTextSize();
-    return [ACSTextSizeConvertor convertCpp:getTextSizeCpp];
+    return getTextSizeCpp.has_value() ? [ACSTextSizeConvertor convertCpp:getTextSizeCpp.value_or(AdaptiveCards::TextSize::Default)] : ACSTextSizeNil;
 
 }
 
@@ -77,7 +95,7 @@
 {
  
     auto getTextWeightCpp = mCppObj->GetTextWeight();
-    return [ACSTextWeightConvertor convertCpp:getTextWeightCpp];
+    return getTextWeightCpp.has_value() ? [ACSTextWeightConvertor convertCpp:getTextWeightCpp.value_or(AdaptiveCards::TextWeight::Default)] : ACSTextWeightNil;
 
 }
 
@@ -93,7 +111,7 @@
 {
  
     auto getFontTypeCpp = mCppObj->GetFontType();
-    return [ACSFontTypeConvertor convertCpp:getFontTypeCpp];
+    return getFontTypeCpp.has_value() ? [ACSFontTypeConvertor convertCpp:getFontTypeCpp.value_or(AdaptiveCards::FontType::Default)] : ACSFontTypeNil;
 
 }
 
@@ -109,7 +127,7 @@
 {
  
     auto getTextColorCpp = mCppObj->GetTextColor();
-    return [ACSForegroundColorConvertor convertCpp:getTextColorCpp];
+    return getTextColorCpp.has_value() ?[ACSForegroundColorConvertor convertCpp:getTextColorCpp.value_or(AdaptiveCards::ForegroundColor::Default)] : ACSForegroundColorNil;
 
 }
 
@@ -141,7 +159,7 @@
 {
  
     auto getIsSubtleCpp = mCppObj->GetIsSubtle();
-    return getIsSubtleCpp;
+    return getIsSubtleCpp.has_value() ? getIsSubtleCpp.value_or(false) : false;
 
 }
 
@@ -173,7 +191,7 @@
 {
  
     auto getHorizontalAlignmentCpp = mCppObj->GetHorizontalAlignment();
-    return [ACSHorizontalAlignmentConvertor convertCpp:getHorizontalAlignmentCpp];
+    return getHorizontalAlignmentCpp.has_value() ? [ACSHorizontalAlignmentConvertor convertCpp:getHorizontalAlignmentCpp.value_or(AdaptiveCards::HorizontalAlignment::Left)] : ACSHorizontalAlignmentNil;
 
 }
 

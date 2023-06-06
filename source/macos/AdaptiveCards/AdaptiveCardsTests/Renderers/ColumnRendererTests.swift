@@ -133,6 +133,12 @@ class ColumnRendererTests: XCTestCase {
         XCTAssertEqual(columnView.stackView.arrangedSubviews.count, 1)
     }
     
+    func testEmptyColumnRendersWithoutError() {
+        column = .make(items: [])
+        
+        XCTAssertNoThrow(renderColumnView())
+    }
+    
     private func renderColumnView() -> ACRColumnView {
         let view = columnRenderer.render(element: column, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         

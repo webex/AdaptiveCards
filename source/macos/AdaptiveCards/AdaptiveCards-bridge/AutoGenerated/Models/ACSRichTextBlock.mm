@@ -33,7 +33,7 @@
 {
  
     auto getHorizontalAlignmentCpp = mCppObj->GetHorizontalAlignment();
-    return [ACSHorizontalAlignmentConvertor convertCpp:getHorizontalAlignmentCpp];
+    return getHorizontalAlignmentCpp.has_value() ? [ACSHorizontalAlignmentConvertor convertCpp:getHorizontalAlignmentCpp.value_or(AdaptiveCards::HorizontalAlignment::Left)] : ACSHorizontalAlignmentNil;
 
 }
 

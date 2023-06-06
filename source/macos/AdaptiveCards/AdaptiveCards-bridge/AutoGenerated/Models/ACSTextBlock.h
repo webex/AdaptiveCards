@@ -17,12 +17,13 @@ using namespace AdaptiveCards;
 #import "ACSForegroundColor.h"
 #import "ACSHorizontalAlignment.h"
 #import "ACSTextSize.h"
+#import "ACSTextStyle.h"
 #import "ACSTextWeight.h"
 
 
 
 #import "ACSBaseCardElement.h"
-  
+
 
 @class ACSDateTimePreparser;
 
@@ -30,6 +31,7 @@ enum ACSFontType: NSUInteger;
 enum ACSForegroundColor: NSUInteger;
 enum ACSHorizontalAlignment: NSUInteger;
 enum ACSTextSize: NSUInteger;
+enum ACSTextStyle: NSUInteger;
 enum ACSTextWeight: NSUInteger;
 
 
@@ -42,6 +44,8 @@ enum ACSTextWeight: NSUInteger;
 - (NSString * _Nullable)getText;
 - (void)setText:(NSString * _Nonnull)value;
 - (ACSDateTimePreparser * _Nullable)getTextForDateParsing;
+- (ACSTextStyle)getStyle;
+- (void)setStyle:(enum ACSTextStyle)value;
 - (ACSTextSize)getTextSize;
 - (void)setTextSize:(enum ACSTextSize)value;
 - (ACSTextWeight)getTextWeight;

@@ -164,7 +164,6 @@ function createTable(formattedProperties: any[], title: string) {
 	*/
 	var tableData = [];
 	var headerRow = [];
-
 	for (let propName in formattedProperties[0]) {
 		headerRow.push(__(propName));
 	}

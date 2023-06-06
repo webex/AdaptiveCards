@@ -30,7 +30,6 @@ using namespace AdaptiveCards;
 #endif
 
 - (NSArray<ACSToggleVisibilityTarget *> * _Nonnull)getTargetElements;
-- (NSArray<ACSToggleVisibilityTarget *> * _Nonnull)getTargetElements;
 
 
 

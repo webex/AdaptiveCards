@@ -20,10 +20,6 @@ std::string MarkDownStringHtmlGenerator::GenerateHtmlString()
     return m_token;
 }
 
-std::string MarkDownNewLineHtmlGenerator::GenerateHtmlString()
-{
-    return "<br>";
-}
 
 //     left and right emphasis tokens are match if
 //     1. they are same types

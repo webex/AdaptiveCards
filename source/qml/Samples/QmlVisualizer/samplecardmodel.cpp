@@ -4,6 +4,7 @@
 #include "adaptivecard_dark_config.h"
 #include "AdaptiveCardRenderConfig.h"
 
+#define NOMINNAX
 #include <windows.h>
 #include <shellapi.h>
 #include <mutex>
@@ -18,7 +19,7 @@ SampleCardModel::SampleCardModel(QObject *parent)
     , mList(nullptr)
 {
 
-    std::shared_ptr<AdaptiveSharedNamespace::HostConfig> hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(LightConfig::lightConfig));
+    std::shared_ptr<AdaptiveCards::HostConfig> hostConfig = std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(LightConfig::lightConfig));
     auto renderConfig = getRenderConfig(false);
     renderer_ptr = std::make_shared<AdaptiveCardQmlRenderer>(AdaptiveCardQmlRenderer(hostConfig, renderConfig));
     mContextMenu = new QMenu();
@@ -177,17 +178,17 @@ const std::map<std::string, std::string> SampleCardModel::rehostImage(const std:
 
 void SampleCardModel::setTheme(const QString& theme)
 {
-    std::shared_ptr<AdaptiveSharedNamespace::HostConfig> hostConfig;
+    std::shared_ptr<AdaptiveCards::HostConfig> hostConfig;
     bool isDark = true;
 
     if(theme.toStdString() == "Light")
     {
         isDark = false;
-        hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(LightConfig::lightConfig));
+        hostConfig = std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(LightConfig::lightConfig));
     }
     else
     {
-        hostConfig = std::make_shared<AdaptiveSharedNamespace::HostConfig>(AdaptiveSharedNamespace::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
+        hostConfig = std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
     }
 
     auto renderConfig = getRenderConfig(isDark);

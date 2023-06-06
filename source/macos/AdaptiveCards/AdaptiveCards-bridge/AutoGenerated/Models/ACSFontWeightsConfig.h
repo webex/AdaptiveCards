@@ -27,6 +27,7 @@ enum ACSTextWeight: NSUInteger;
 - (instancetype _Nonnull)initWithFontWeightsConfig:(const std::shared_ptr<FontWeightsConfig>)cppObj;
 #endif
 
+- (NSNumber * _Nullable)getDefaultFontWeight:(enum ACSTextWeight)weight;
 - (NSNumber * _Nullable)getFontWeight:(enum ACSTextWeight)weight;
 - (void)setFontWeight:(enum ACSTextWeight)weight value:(NSNumber * _Nonnull)value;
 

@@ -563,7 +563,6 @@ namespace AdaptiveCards.Templating
 
                                 templateVisitorWarnings.Add($"WARN: Could not evaluate {returnedResult} because it is not an expression or the " +
                                     $"expression is invalid. The $when condition has been set to false by default.");
-
                             }
                             else
                             {

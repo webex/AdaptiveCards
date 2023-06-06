@@ -12,27 +12,16 @@
 using namespace AdaptiveCards;
 #endif
 
-// #import "ACSRemoteResourceInformation.h"
+
+#import "ACSContentSource.h"
 
 
 
-  
-
-@class ACSRemoteResourceInformation;
-
-
-
-@interface ACSMediaSource : NSObject
-
+@interface ACSMediaSource : ACSContentSource
 #ifdef __cplusplus
 - (instancetype _Nonnull)initWithMediaSource:(const std::shared_ptr<MediaSource>)cppObj;
 #endif
 
-- (NSString * _Nullable)getMimeType;
-- (void)setMimeType:(NSString * _Nonnull)value;
-- (NSString * _Nullable)getUrl;
-- (void)setUrl:(NSString * _Nonnull)value;
-- (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceInfo;
 
 
 @end
