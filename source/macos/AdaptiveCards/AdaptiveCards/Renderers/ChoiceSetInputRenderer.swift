@@ -35,10 +35,6 @@ class ChoiceSetInputRenderer: NSObject, BaseCardElementRendererProtocol {
         return choiceSetView
     }
     
-    private func parseChoiceSetInputDefaultValues(value: String) -> [String] {
-        return value.components(separatedBy: ",")
-    }
-    
     private func choiceSetCompactRenderInternal (choiceSetInput: ACSChoiceSetInput, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, renderConfig: RenderConfig) -> NSView {
         // compact button renderer
         let view = ACRCompactChoiceSetView(renderConfig: renderConfig, element: choiceSetInput, style: style, with: hostConfig, rootview: rootView)

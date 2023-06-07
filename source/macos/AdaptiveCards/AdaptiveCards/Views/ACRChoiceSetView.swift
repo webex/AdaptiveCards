@@ -13,8 +13,8 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     
     weak var errorDelegate: InputHandlingViewErrorDelegate?
     private(set) var isRadioGroup = false
-    private var previousButton: ACRChoiceButton?
     private(set) var wrap = false
+    private var previousButton: ACRChoiceButton?
     private var idString: String?
     private var errorMessage: String?
     private var shouldShowError = false
@@ -36,6 +36,11 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         self.style = style
         self.rootView = rootView
         super.init(frame: .zero)
+        isRadioGroup = !inputElement.getIsMultiSelect()
+        wrap = inputElement.getWrap()
+        idString = inputElement.getId()
+        isRequired = inputElement.getIsRequired()
+        errorMessage = inputElement.getErrorMessage()
         setupView()
         setupConstraints()
     }
@@ -45,11 +50,6 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }
     
     private func setupView() {
-        isRadioGroup = !inputElement.getIsMultiSelect()
-        wrap = inputElement.getWrap()
-        idString = inputElement.getId()
-        isRequired = inputElement.getIsRequired()
-        errorMessage = inputElement.getErrorMessage()
         addSubview(stackview)
         setupChoices()
     }
