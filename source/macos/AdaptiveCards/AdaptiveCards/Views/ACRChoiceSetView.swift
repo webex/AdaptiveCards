@@ -3,7 +3,7 @@ import AppKit
 
 // MARK: ACRChoiceSetView
 class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
-    private lazy var stackview: NSStackView = {
+    private(set) lazy var stackview: NSStackView = {
         let view = NSStackView()
         view.orientation = .vertical
         view.alignment = .leading
@@ -12,20 +12,36 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     }()
     
     weak var errorDelegate: InputHandlingViewErrorDelegate?
-    public var isRadioGroup = false
-    public var previousButton: ACRChoiceButton?
-    public var wrap = false
-    public var idString: String?
-    public var errorMessage: String?
+    private(set) var isRadioGroup = false
+    private(set) var wrap = false
+    private var previousButton: ACRChoiceButton?
+    private var idString: String?
+    private var errorMessage: String?
     private var shouldShowError = false
     
     private let renderConfig: RenderConfig
+    private let inputElement: ACSChoiceSetInput
+    private let hostConfig: ACSHostConfig
+    private let style: ACSContainerStyle
+    private weak var rootView: ACRView?
     var isRequired = false
     
-    init(renderConfig: RenderConfig) {
-        self.renderConfig = renderConfig
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
+    
+    init(config: RenderConfig, inputElement: ACSChoiceSetInput, hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView) {
+        self.inputElement = inputElement
+        self.renderConfig = config
+        self.hostConfig = hostConfig
+        self.style = style
+        self.rootView = rootView
         super.init(frame: .zero)
-        addSubview(stackview)
+        isRadioGroup = !inputElement.getIsMultiSelect()
+        wrap = inputElement.getWrap()
+        idString = inputElement.getId()
+        isRequired = inputElement.getIsRequired()
+        errorMessage = inputElement.getErrorMessage()
+        setupView()
         setupConstraints()
     }
     
@@ -33,8 +49,36 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupView() {
+        addSubview(stackview)
+        setupChoices()
+    }
+    
     private func setupConstraints() {
         stackview.constraint(toFill: self)
+    }
+    
+    private func setupChoices() {
+        let defaultParsedValues = parseChoiceSetInputDefaultValues(value: inputElement.getValue() ?? "")
+        for choice in inputElement.getChoices() {
+            guard let rootView = rootView else { continue }
+            let title = choice.getTitle() ?? ""
+            let attributedString = TextUtils.getRenderAttributedString(text: title, with: hostConfig, renderConfig: renderConfig, rootView: rootView, style: style)
+            let choiceButton = self.setupButton(attributedString: attributedString, value: choice.getValue(), for: inputElement)
+            if defaultParsedValues.contains(choice.getValue() ?? "") {
+                choiceButton.state = .on
+                choiceButton.buttonValue = choice.getValue()
+                previousButton = choiceButton
+            }
+            choiceButton.buttonLabelField.openLinkCallBack = { [weak rootView] urlAddress in
+                rootView?.handleOpenURLAction(urlString: urlAddress)
+            }
+            addChoiceButton(choiceButton)
+        }
+    }
+    
+    private func parseChoiceSetInputDefaultValues(value: String) -> [String] {
+        return value.components(separatedBy: ",")
     }
     
     private func handleClickAction(_ clickedButton: ACRChoiceButton) {
@@ -55,12 +99,12 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
         stackview.addArrangedSubview(padding)
     }
     
-    public func addChoiceButton(_ choiceButton: ACRChoiceButton) {
+    private func addChoiceButton(_ choiceButton: ACRChoiceButton) {
         choiceButton.delegate = self
         stackview.addArrangedSubview(choiceButton)
     }
     
-    public func setupButton(attributedString: NSMutableAttributedString, value: String?, for element: ACSChoiceSetInput) -> ACRChoiceButton {
+    private func setupButton(attributedString: NSMutableAttributedString, value: String?, for element: ACSChoiceSetInput) -> ACRChoiceButton {
         let newButton = ACRChoiceButton(renderConfig: renderConfig, buttonType: isRadioGroup ? .radio : .switch, element: element, title: attributedString.string)
         newButton.labelAttributedString = attributedString
         newButton.buttonValue = value
@@ -118,5 +162,24 @@ extension ACRChoiceSetView: ACRChoiceButtonDelegate {
     func acrChoiceButtonShouldReadError(_ button: ACRChoiceButton) -> Bool {
         guard let delegate = errorDelegate else { return false }
         return delegate.isErrorVisible(self)
+    }
+}
+
+extension ACRChoiceSetView: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return (self.stackview.arrangedSubviews.first as? ACRChoiceButton)?.button
+    }
+    
+    func setupInternalKeyviews() {
+        for index in 0..<stackview.arrangedSubviews.count {
+            guard let choiceButton = stackview.arrangedSubviews[index] as? ACRChoiceButton else { continue }
+            if index == stackview.arrangedSubviews.count - 1 {
+                choiceButton.exitView = self.exitView?.validKeyView
+            } else {
+                guard let nextChoiceButton = stackview.arrangedSubviews[index + 1] as? ACRChoiceButton else { continue }
+                choiceButton.exitView = nextChoiceButton.button
+            }
+            choiceButton.setupInternalKeyViews()
+        }
     }
 }

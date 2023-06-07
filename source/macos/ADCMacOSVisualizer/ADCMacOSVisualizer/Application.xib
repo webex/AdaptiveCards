@@ -45,6 +45,21 @@
                                     <action selector="renderShortcut:" target="-1" id="QXb-37-n5c"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Accessibility Focus" keyEquivalent=" " id="BPA-Dx-Iwg">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                <connections>
+                                    <action selector="actionFocusShortcutAction:" target="-1" id="BE6-Kz-88s"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Clear Card" id="Zix-bM-3qw">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="clearCardShortcutAction:" target="-1" id="8hw-f3-hDd"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Show All" id="Kd2-mp-pUS">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

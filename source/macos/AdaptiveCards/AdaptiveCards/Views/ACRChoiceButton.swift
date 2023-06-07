@@ -31,6 +31,8 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     private var shouldShowError = false
     var isRequired = false
     
+    weak var exitView: NSView?
+    
     init(renderConfig: RenderConfig, buttonType: ChoiceSetButtonType, element: ACSBaseInputElement, valueOn: String?, valueOff: String?, wrap: Bool, buttonTitle: String?) {
         // initialize configs
         self.renderConfig = renderConfig
@@ -261,6 +263,15 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
         message += ", " + (accessibilityLabel() ?? "")
         message += ", " + (accessibilityRole()?.description(with: .none) ?? "")
         return message
+    }
+    
+    func setupInternalKeyViews() {
+        if self.buttonLabelField.canBecomeKeyView {
+            self.button.nextKeyView = self.buttonLabelField
+            self.buttonLabelField.nextKeyView = self.exitView
+        } else {
+            self.button.nextKeyView = self.exitView
+        }
     }
 }
 // MARK: EXTENSION

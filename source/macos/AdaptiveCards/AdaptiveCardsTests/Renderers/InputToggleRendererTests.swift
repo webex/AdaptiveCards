@@ -132,6 +132,12 @@ class InputToggleRendererTests: XCTestCase {
         XCTAssertFalse(toggleView.isValid)
     }
     
+    func testInputToggleFocusAccessibility(){
+        inputToggle = .make(title: "Hello [Swift 5](www.swift.org)", value: "Swift")
+        let inputToggleView = renderInputToggleView()
+        inputToggleView.setupInternalKeyviews()
+        XCTAssertEqual(inputToggleView.choiceButton.button.nextKeyView, inputToggleView.choiceButton.buttonLabelField)
+    }
     
     // This Test Case design for HyperLink MarkDown title in Input.Toggle element.
     

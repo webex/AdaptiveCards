@@ -555,6 +555,34 @@ class ACRViewTests: XCTestCase {
         let factsetView = try XCTUnwrap(FactSetRenderer().render(element: factset, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRFactSetView)
         view.addArrangedSubview(factsetView)
         
+        // Input toggle
+        let inputToggle = FakeInputToggle.make(title: "Hello [Swift 5](www.swift.org)", value: "Swift")
+        let inputToggleView = try XCTUnwrap(InputToggleRenderer().render(element: inputToggle, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRInputToggleView)
+        view.addArrangedSubview(inputToggleView)
+        
+        // ChoiceSet
+        let choiceSetRadio = FakeChoiceSetInput.make(isMultiSelect: false, choices: [FakeChoiceInput.make(title: "Swift", value: "Swift"), FakeChoiceInput.make(title: "ObjectiveC", value: "ObjectiveC")])
+        let choiceSetRadioView = try XCTUnwrap(ChoiceSetInputRenderer().render(element: choiceSetRadio, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRChoiceSetView)
+        view.addArrangedSubview(choiceSetRadioView)
+        
+        let choiceSetMulti = FakeChoiceSetInput.make(isMultiSelect: true, choices: [FakeChoiceInput.make(title: "Hello [Swift 5](www.swift.org)", value: "Swift"), FakeChoiceInput.make(title: "Hello ObjectiveC", value: "ObjectiveC")])
+        let choiceSetMultiView = try XCTUnwrap(ChoiceSetInputRenderer().render(element: choiceSetMulti, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRChoiceSetView)
+        view.addArrangedSubview(choiceSetMultiView)
+        
+        let choiceSetCompact = FakeChoiceSetInput.make(isMultiSelect: true, choices: [FakeChoiceInput.make(title: "Hello [Swift 5](www.swift.org)", value: "Swift"), FakeChoiceInput.make(title: "Hello ObjectiveC", value: "ObjectiveC")], choiceSetStyle: .compact)
+        let choiceSetCompactView = try XCTUnwrap(ChoiceSetInputRenderer().render(element: choiceSetCompact, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRChoiceSetView)
+        view.addArrangedSubview(choiceSetCompactView)
+        
+        // Container
+        let container = FakeContainer.make(selectAction: FakeOpenURLAction.make())
+        let containerView = try XCTUnwrap(ContainerRenderer().render(element: container, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRContainerView)
+        view.addArrangedSubview(containerView)
+        
+        // ColumnSet
+        let columnset = FakeColumnSet.make(columns: [FakeColumn.make(selectAction: FakeOpenURLAction.make())], selectAction: FakeOpenURLAction.make())
+        let columnsetView = try XCTUnwrap(ColumnSetRenderer().render(element: columnset, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRColumnSetView)
+        let columnView = try XCTUnwrap(columnsetView.arrangedSubviews.first as? ACRColumnView)
+        
         XCTAssertEqual(view.accessibilityContext?.entryView, textView.validKeyView)
         
         view.accessibilityContext?.recalculateKeyViewLoop()
@@ -566,6 +594,13 @@ class ACRViewTests: XCTestCase {
         XCTAssertEqual(numberView.exitView?.validKeyView, textBlockView.validKeyView)
         XCTAssertEqual(textBlockView.exitView?.validKeyView, richTextBlockView.validKeyView)
         XCTAssertEqual(richTextBlockView.exitView?.validKeyView, factsetView.validKeyView)
+        XCTAssertEqual(factsetView.exitView?.validKeyView, inputToggleView.validKeyView)
+        XCTAssertEqual(inputToggleView.exitView?.validKeyView, choiceSetRadioView.validKeyView)
+        XCTAssertEqual(choiceSetRadioView.exitView?.validKeyView, choiceSetMultiView.validKeyView)
+        XCTAssertEqual(choiceSetMultiView.exitView?.validKeyView, choiceSetCompactView.validKeyView)
+        XCTAssertEqual(choiceSetCompactView.exitView?.validKeyView, containerView.validKeyView)
+        XCTAssertEqual(containerView.exitView?.validKeyView, columnsetView.validKeyView)
+        XCTAssertEqual(columnsetView.exitView?.validKeyView, columnView.validKeyView)
     }
     
 }

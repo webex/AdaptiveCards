@@ -15,6 +15,9 @@ class ACRCompactChoiceSetView: NSView {
     private let hostConfig: ACSHostConfig
     private weak var rootview: ACRView?
     
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
+    
     private lazy var contentStackView: NSStackView = {
         let view = NSStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -146,5 +149,15 @@ extension ACRCompactChoiceSetView: InputHandlingViewProtocol {
     
     func setAccessibilityFocus() {
         choiceSetPopup.setAccessibilityFocus()
+    }
+}
+
+extension ACRCompactChoiceSetView: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return self.choiceSetPopup
+    }
+    
+    func setupInternalKeyviews() {
+        self.choiceSetPopup.nextKeyView = exitView?.validKeyView
     }
 }
