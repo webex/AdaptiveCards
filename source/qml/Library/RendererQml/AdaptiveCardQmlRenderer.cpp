@@ -1239,6 +1239,7 @@ namespace RendererQml
 		}
 
 		uiFrame->Property("onWidthChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchWidth( row_" << id << ".children, parent.width - (" << marginReleased << "))}");
+		uiFrame->Property("Component.onCompleted", Formatter() << "{ AdaptiveCardUtils.generateStretchWidth( row_" << id << ".children, parent.width - (" << marginReleased << "))}");
 
 		return uiFrame;
 	}
