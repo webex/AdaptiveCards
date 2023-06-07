@@ -9,6 +9,14 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRColumnSetView: ACRContentStackView {
+    // AccessibleFocusView property
+    override var validKeyView: NSView? {
+        get {
+            return self
+        }
+        set { }
+    }
+    
     override func addArrangedSubview(_ view: NSView) {
         super.addArrangedSubview(view)
         self.increaseIntrinsicContentSize(view)
@@ -17,6 +25,10 @@ class ACRColumnSetView: ACRContentStackView {
     override func addView(_ view: NSView, in gravity: NSStackView.Gravity) {
         super.addView(view, in: gravity)
         self.increaseIntrinsicContentSize(view)
+    }
+    
+    override func setupInternalKeyviews() {
+        self.nextKeyView = self.exitView?.validKeyView
     }
     
     override func increaseIntrinsicContentSize(_ view: NSView) {

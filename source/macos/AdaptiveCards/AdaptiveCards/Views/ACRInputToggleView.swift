@@ -45,6 +45,9 @@ class ACRInputToggleView: NSView {
         return view
     }()
     
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
+    
     init(renderConfig: RenderConfig, element: ACSToggleInput) {
         self.renderConfig = renderConfig
         self.element = element
@@ -124,5 +127,16 @@ extension ACRInputToggleView: InputHandlingViewProtocol {
     
     func setAccessibilityFocus() {
         self.choiceButton.setAccessibilityFocus()
+    }
+}
+
+extension ACRInputToggleView: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return self.choiceButton.button
+    }
+    
+    func setupInternalKeyviews() {
+        self.choiceButton.exitView = self.exitView?.validKeyView
+        self.choiceButton.setupInternalKeyViews()
     }
 }

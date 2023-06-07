@@ -98,7 +98,7 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         return config
     }
 
-    @IBAction private func clearCardAction(_ sender: NSButton) {
+    @IBAction private func clearCardShortcutAction(_ sender: NSButton) {
         if let renderedView = stackView.arrangedSubviews.first {
             renderedView.removeFromSuperview()
         }
@@ -106,6 +106,18 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     
     @IBAction private func handleRenderAction(_ sender: Any) {
         renderCard(with: textView.string)
+    }
+    
+    @IBAction private func actionFocusShortcutAction(_ sender: Any) {
+        if let cardView = stackView.arrangedSubviews.first {
+            if cardView.canBecomeKeyView {
+                cardView.setAccessibilityFocused(true)
+            } else {
+                if let nextValidKeyView = cardView.nextValidKeyView {
+                    nextValidKeyView.setAccessibilityFocused(true)
+                }
+            }
+        }
     }
     
     @IBAction private func renderShortcut(_ sender: NSMenuItem) {

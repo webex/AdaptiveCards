@@ -30,6 +30,7 @@ class InputToggleRenderer: NSObject, BaseCardElementRendererProtocol {
             rootView?.handleOpenURLAction(urlString: urlAddress)
         }
         rootView.addInputHandler(inputToggleView)
+        rootView.accessibilityContext?.registerView(inputToggleView)
         return inputToggleView
     }
 }

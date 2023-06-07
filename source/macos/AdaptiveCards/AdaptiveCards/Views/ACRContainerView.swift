@@ -20,6 +20,14 @@ class ACRContainerView: ACRContentStackView {
     private lazy var backgroundImageViewLeadingConstraint = backgroundImageView.leadingAnchor.constraint(equalTo: leadingAnchor)
     private lazy var backgroundImageViewTrailingConstraint = backgroundImageView.trailingAnchor.constraint(equalTo: trailingAnchor)
     
+    // AccessibleFocusView property
+    override var validKeyView: NSView? {
+        get {
+            return self
+        }
+        set { }
+    }
+    
     override func setupViews() {
         addSubview(backgroundImageView)
         super.setupViews()
@@ -31,6 +39,10 @@ class ACRContainerView: ACRContentStackView {
         backgroundImageViewLeadingConstraint.isActive = true
         backgroundImageViewTrailingConstraint.isActive = true
         backgroundImageViewBottomConstraint.isActive = true
+    }
+    
+    override func setupInternalKeyviews() {
+        self.nextKeyView = self.exitView?.validKeyView
     }
     
     override func addArrangedSubview(_ subview: NSView) {

@@ -16,6 +16,9 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         }
         let columnSetView = ACRColumnSetView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: columnSet.getPadding())
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
+        if columnSet.getSelectAction() != nil {
+            rootView.accessibilityContext?.registerView(columnSetView)
+        }
         columnSetView.orientation = .horizontal
         var numberOfAutoItems = 0
         var numberOfStretchItems = 0
