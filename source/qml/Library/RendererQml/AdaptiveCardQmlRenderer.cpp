@@ -1325,6 +1325,11 @@ namespace RendererQml
         uiColumn->Property("Layout.fillWidth", "true");
 		uiColumn->Property("Layout.minimumHeight", "1");
 
+        if (!cardElement->GetVerticalContentAlignment().has_value())
+        {
+            cardElement->SetVerticalContentAlignment(AdaptiveCards::VerticalContentAlignment::Top);
+        }
+
         if (cardElement->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Top)
         {
             uiColumn->Property("Layout.alignment", "Qt.AlignTop");
