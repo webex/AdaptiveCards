@@ -124,7 +124,7 @@ ComboBox {
         height: comboBoxConstants.dropDownElementHeight
         verticalPadding: comboBoxConstants.dropDownElementVerticalPadding
         horizontalPadding: comboBoxConstants.dropDownElementHorizontalPadding
-        highlighted: ListView.isCurrentItem || hovered
+        highlighted: ListView.isCurrentItem
         Accessible.name: modelData.text
 
         onHoveredChanged: {
