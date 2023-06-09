@@ -581,7 +581,22 @@ class ACRViewTests: XCTestCase {
         // ColumnSet
         let columnset = FakeColumnSet.make(columns: [FakeColumn.make(selectAction: FakeOpenURLAction.make())], selectAction: FakeOpenURLAction.make())
         let columnsetView = try XCTUnwrap(ColumnSetRenderer().render(element: columnset, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRColumnSetView)
+        view.addArrangedSubview(columnsetView)
         let columnView = try XCTUnwrap(columnsetView.arrangedSubviews.first as? ACRColumnView)
+        
+        // Image
+        let image = FakeImage.make(url: "https://adaptivecards.io/content/cats/1.png", selectAction: FakeOpenURLAction.make())
+        let imageView = try XCTUnwrap(ImageRenderer().render(element: image, with: FakeHostConfig(), style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRImageWrappingView)
+        view.addArrangedSubview(imageView)
+        
+        // actions
+        let hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .vertical, actionAlignment: .center, buttonSpacing: 2, maxActions: 1, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 1))
+        let hostConfig = FakeHostConfig.make(actions: hostConfigActions)
+        let actionSet = FakeActionSet.make(actions: [FakeSubmitAction.make()])
+        
+        let actionSetView = try XCTUnwrap(ActionSetRenderer().render(element: actionSet, with: hostConfig, style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRActionSetView)
+        view.addArrangedSubview(actionSetView)
+        
         
         XCTAssertEqual(view.accessibilityContext?.entryView, textView.validKeyView)
         
@@ -601,6 +616,8 @@ class ACRViewTests: XCTestCase {
         XCTAssertEqual(choiceSetCompactView.exitView?.validKeyView, containerView.validKeyView)
         XCTAssertEqual(containerView.exitView?.validKeyView, columnsetView.validKeyView)
         XCTAssertEqual(columnsetView.exitView?.validKeyView, columnView.validKeyView)
+        XCTAssertEqual(columnView.exitView?.validKeyView, imageView.validKeyView)
+        XCTAssertEqual(imageView.exitView?.validKeyView, actionSetView.stackView.arrangedSubviews.first)
     }
     
 }

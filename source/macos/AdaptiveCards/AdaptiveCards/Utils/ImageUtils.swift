@@ -206,6 +206,9 @@ class ImageUtils {
         if let id = element.getId(), !id.isEmpty, isImageSet {
             wrappingView.identifier = NSUserInterfaceItemIdentifier(id)
         }
+        if element.getSelectAction() != nil {
+            rootView.accessibilityContext?.registerView(wrappingView)
+        }
         wrappingView.setupSelectAction(element.getSelectAction(), rootView: rootView)
         wrappingView.setupSelectActionAccessibility(on: wrappingView, for: element.getSelectAction())
         return wrappingView
