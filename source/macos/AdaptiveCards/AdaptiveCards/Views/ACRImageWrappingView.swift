@@ -14,6 +14,9 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
         return target != nil
     }
     
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
+    
     override var acceptsFirstResponder: Bool {
         return canAcceptFirstResponder
     }
@@ -142,5 +145,15 @@ class ACRImageWrappingView: NSView, SelectActionHandlingProtocol {
         columnView.layer?.backgroundColor = previousBackgroundColor ?? .clear
         // Back to the system cursor
         self.setCursorType(cursor: .current)
+    }
+}
+
+extension ACRImageWrappingView: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return self
+    }
+    
+    func setupInternalKeyviews() {
+        self.nextKeyView = exitView?.validKeyView
     }
 }

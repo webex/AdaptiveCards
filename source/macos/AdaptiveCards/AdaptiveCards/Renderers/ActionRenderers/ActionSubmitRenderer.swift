@@ -14,7 +14,7 @@ class ActionSubmitRenderer: BaseActionElementRendererProtocol {
         if let iconUrl = submitAction.getIconUrl(), !iconUrl.isEmpty {
             rootView.registerImageHandlingView(button, for: iconUrl)
         }
-        
+        rootView.accessibilityContext?.registerView(button)
         let target = ActionSubmitTarget(element: submitAction, delegate: targetHandlerDelegate)
         target.configureAction(for: button)
         rootView.addTarget(target)

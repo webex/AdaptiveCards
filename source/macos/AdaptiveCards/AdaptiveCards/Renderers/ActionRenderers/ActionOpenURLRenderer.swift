@@ -14,7 +14,7 @@ class ActionOpenURLRenderer: BaseActionElementRendererProtocol {
         if let iconUrl = openURLAction.getIconUrl(), !iconUrl.isEmpty {
             rootView.registerImageHandlingView(button, for: iconUrl)
         }
-        
+        rootView.accessibilityContext?.registerView(button)
         let target = ActionOpenURLTarget(element: openURLAction, delegate: targetHandlerDelegate)
         target.configureAction(for: button)
         rootView.addTarget(target)
