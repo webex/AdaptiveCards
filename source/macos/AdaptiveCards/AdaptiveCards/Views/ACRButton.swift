@@ -10,7 +10,10 @@ enum ActionStyle: String {
 
 class ACRButton: FlatButton, ImageHoldingView {
     private var buttonActionStyle: ActionStyle = .default
-        
+    
+    // AccessibleFocusView property
+    weak var exitView: AccessibleFocusView?
+    
     override init(frame: NSRect) {
         super.init(frame: frame)
         initialize()
@@ -94,5 +97,15 @@ extension ACRButton {
         let position = iconPlacement?.imagePosition ?? .imageLeft
         self.init(wantsChevron: actionElement is ACSShowCardAction, wantsIcon: actionElement?.hasValidIcon ?? false, iconPosition: position, style: buttonStyle, buttonConfig: buttonConfig)
         title = actionElement?.getTitle() ?? ""
+    }
+}
+
+extension ACRButton: AccessibleFocusView {
+    var validKeyView: NSView? {
+        return self
+    }
+    
+    func setupInternalKeyviews() {
+        self.nextKeyView = exitView?.validKeyView
     }
 }

@@ -14,7 +14,8 @@ class ActionShowCardRenderer: BaseActionElementRendererProtocol {
         if let iconUrl = showCardAction.getIconUrl(), !iconUrl.isEmpty {
             rootView.registerImageHandlingView(button, for: iconUrl)
         }
-
+        rootView.accessibilityContext?.registerView(button)
+        
         guard let showCard = showCardAction.getCard() else {
             logError("ShowCard object is nil")
             return button

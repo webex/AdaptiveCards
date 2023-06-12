@@ -14,7 +14,7 @@ class ActionToggleVisibilityRenderer: BaseActionElementRendererProtocol {
         if let iconUrl = toggleVisibilityAction.getIconUrl(), !iconUrl.isEmpty {
             rootView.registerImageHandlingView(button, for: iconUrl)
         }
-        
+        rootView.accessibilityContext?.registerView(button)
         let target = ActionToggleVisibilityTarget(toggleTargets: toggleVisibilityAction.getTargetElements(), delegate: targetHandlerDelegate)
         target.configureAction(for: button)
         rootView.addTarget(target)
