@@ -11,6 +11,7 @@ Rectangle {
     property string _lineColor: "#B2000000"
     property var _visible: true
     property var _linkedElement: null
+    property bool isFirstItem: parent.visibleChildren[0] === separator;
 
     width: parent.width
     height: _height
@@ -21,6 +22,11 @@ Rectangle {
             width = _height;
             height = parent.height;
         }
+    }
+
+    onIsFirstItemChanged: {
+        width = (isFirstItem && _isColElement) ? 0 : (_isColElement) ? _height : parent.width
+        height = (isFirstItem && !_isColElement) ? 0 : (!_isColElement) ? _height : parent.height
     }
 
     Rectangle {

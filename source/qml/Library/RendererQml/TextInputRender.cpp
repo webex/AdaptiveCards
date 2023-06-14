@@ -35,7 +35,6 @@ void TextInputElement::initialize()
 
     mTextinput->SetId(mContext->ConvertToValidId(mTextinput->GetId()));
     mTextinputColElement->Property("id", mTextinput->GetId());
-    mTextinput->SetId(mTextinput->GetId() + "_textField");
     if (mTextinput->GetIsRequired() || !mTextinput->GetRegex().empty())
     {
         mContext->addToRequiredInputElementsIdList(mTextinput->GetId());
@@ -47,7 +46,6 @@ void TextInputElement::initialize()
     /* Setting QML Properties */
 
     mTextinputColElement->Property("_spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
-    mTextinputColElement->Property("id", mTextinput->GetId());
     std::string color = mContext->GetColor(AdaptiveCards::ForegroundColor::Default, false, false);
     mTextinputColElement->Property("_labelColor", color);
     mTextinputColElement->Property("_isRequired", mTextinput->GetIsRequired() == true ? "true" : "false");
