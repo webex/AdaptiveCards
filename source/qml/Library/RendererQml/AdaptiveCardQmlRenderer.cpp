@@ -1446,7 +1446,7 @@ namespace RendererQml
 		uiColumn->Property("onImplicitHeightChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchHeight(visibleChildren, " << id << "." << stretchHeight << " )}");
 
 		uiColumn->Property("onImplicitWidthChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchHeight(visibleChildren, " << id << "." << stretchHeight << " )}");
-		uiContainer->Property("onVisibleChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchHeight(visibleChildren, " << id << "." << stretchHeight << " )}");
+		uiContainer->Property("onVisibleChanged", Formatter() << "{ AdaptiveCardUtils.generateStretchHeight( column_" << id << ".visibleChildren," << stretchHeight << " )}");
 
 		uiContainer->Property("property int minWidth", Formatter() << "{ AdaptiveCardUtils.getMinWidth( column_" << cardElement->GetId() << ".children) + " << 2 * tempWidth << "}");
 
