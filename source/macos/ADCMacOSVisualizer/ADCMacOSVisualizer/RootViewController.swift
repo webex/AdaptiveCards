@@ -290,7 +290,6 @@ extension RootViewController: AdaptiveCardActionDelegate {
     
     func adaptiveCard(_ adaptiveCard: NSView, didShowCardWith actionView: NSView, previousHeight: CGFloat, newHeight: CGFloat) {
         print("SHOW CARD ACTION: Height changed from \(previousHeight) to \(newHeight)")
-        AdaptiveCard.calculateKeyViewLoop(for: adaptiveCard)
     }
 }
 
