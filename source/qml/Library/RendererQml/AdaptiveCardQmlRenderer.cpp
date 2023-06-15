@@ -1236,7 +1236,7 @@ namespace RendererQml
 			uiFrame->Property("width", "parent.width");
 		}
 
-        uiFrame->AddFunctions(Formatter() << "function generateStretchWidth(){AdaptiveCardUtils.generateStretchWidth( row_" << id << ".visibleChildren, parent.width - (" << marginReleased << "))}");
+        uiFrame->AddFunctions(Formatter() << "function generateStretchWidth(){AdaptiveCardUtils.generateStretchWidth( row_" << id << ".children, parent.width - (" << marginReleased << "))}");
 
 		uiFrame->Property("onWidthChanged", Formatter() << uiFrame->GetId() << ".generateStretchWidth()");
         uiFrame->Property("Component.onCompleted", Formatter() << uiFrame->GetId() << ".generateStretchWidth()");
