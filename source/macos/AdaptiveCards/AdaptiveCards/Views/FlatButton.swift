@@ -199,6 +199,13 @@ open class FlatButton: NSButton, CALayerDelegate {
         return NSSize(width: totalWidth, height: totalHeight)
     }
     
+    override public func drawFocusRingMask() {
+        let path = NSBezierPath()
+        path.appendRoundedRect(bounds, xRadius: cornerRadius, yRadius: cornerRadius)
+        path.fill()
+        self.needsDisplay = true
+    }
+    
     private func initialize() {
         wantsLayer = true
         layer?.masksToBounds = false
