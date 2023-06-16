@@ -516,8 +516,9 @@ class ACRViewTests: XCTestCase {
     
     func testAccessibilityFocus() throws {
         // Input Text
-        let inputText = FakeInputText.make()
+        let inputText = FakeInputText.make(id: "input_text")
         let textView = try XCTUnwrap(TextInputRenderer().render(element: inputText, with: FakeHostConfig(), style: .default, rootView: self.view, parentView: self.view, inputs: [], config: self.config) as? ACRSingleLineInputTextView)
+        textView.identifier = NSUserInterfaceItemIdentifier("input_text") /// there is no base card renderer involment, set TextView id manually.
         view.addArrangedSubview(textView)
         
         // Input Text
@@ -590,13 +591,19 @@ class ACRViewTests: XCTestCase {
         view.addArrangedSubview(imageView)
         
         // actions
-        let hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .vertical, actionAlignment: .center, buttonSpacing: 2, maxActions: 1, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 1))
+        let hostConfigActions = ACSActionsConfig(showCard: FakeShowCardActionConfig(actionMode: .inline, style: .accent, inlineTopMargin: 0), actionsOrientation: .vertical, actionAlignment: .center, buttonSpacing: 2, maxActions: 5, spacing: .default, iconPlacement: .aboveTitle, iconSize: NSNumber(value: 1))
         let hostConfig = FakeHostConfig.make(actions: hostConfigActions)
-        let actionSet = FakeActionSet.make(actions: [FakeSubmitAction.make()])
+        
+        let actionSet = FakeActionSet.make(actions:
+                                            [
+                                                FakeSubmitAction.make(),
+                                                FakeShowCardAction.make(card: FakeAdaptiveCard.make(actions: [FakeToggleVisibilityAction.make(targetElements: [FakeToggleVisibilityTarget.make(elementId: "input_text")])]))
+                                            ])
         
         let actionSetView = try XCTUnwrap(ActionSetRenderer().render(element: actionSet, with: hostConfig, style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRActionSetView)
         view.addArrangedSubview(actionSetView)
         
+        let actionButtons = try XCTUnwrap(actionSetView.actions as? [ACRButton])
         
         XCTAssertEqual(view.accessibilityContext?.entryView, textView.validKeyView)
         
@@ -617,7 +624,24 @@ class ACRViewTests: XCTestCase {
         XCTAssertEqual(containerView.exitView?.validKeyView, columnsetView.validKeyView)
         XCTAssertEqual(columnsetView.exitView?.validKeyView, columnView.validKeyView)
         XCTAssertEqual(columnView.exitView?.validKeyView, imageView.validKeyView)
-        XCTAssertEqual(imageView.exitView?.validKeyView, actionSetView.stackView.arrangedSubviews.first)
+        XCTAssertEqual(imageView.exitView?.validKeyView, actionButtons[0])
+        XCTAssertEqual(actionButtons[0].exitView?.validKeyView, actionButtons[1])
+        XCTAssertEqual(actionButtons[1].exitView?.validKeyView, textView.validKeyView)
+        /// ShowCard Action
+        actionButtons[1].performClick()
+        
+        let subCardView = try XCTUnwrap(actionSetView.currentShowCardItems?.showCard as? ACRView)
+        let subActionSetView = try XCTUnwrap(subCardView.arrangedSubviews.first as? ACRActionSetView)
+        let subActionButtons = try XCTUnwrap(subActionSetView.actions as? [ACRButton])
+        
+        XCTAssertEqual(actionButtons[1].exitView?.validKeyView, subCardView)
+        XCTAssertEqual(subCardView.exitView?.validKeyView, subActionButtons[0])
+        XCTAssertEqual(subActionButtons[0].exitView?.validKeyView, textView.validKeyView)
+        
+        /// Action Toggle
+        textView.isHidden = true    /// there is no visibility manager context involment, hide TextView manually.
+        subActionButtons[0].performClick()
+        XCTAssertEqual(subActionButtons[0].exitView?.validKeyView, multiTextView.validKeyView)
     }
     
 }
