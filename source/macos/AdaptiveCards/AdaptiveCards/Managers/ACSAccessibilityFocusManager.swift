@@ -29,6 +29,9 @@ class ACSAccessibilityFocusManager {
     /// track accessible view for nextKeyView
     @Weak private var accessibleViews: [NSView]
     
+    /// Index pointer for inserting new accessible views
+    private var pointerHead = 0
+    
     /// get first accessible view for root view
     var entryView: NSView? {
         return accessibleViews.first?.toAccessibleFocusView?.validKeyView
@@ -47,27 +50,50 @@ class ACSAccessibilityFocusManager {
     /// - Parameter view: The accessible `NSView` element to register with the accessibility context
     func registerView(_ view: AccessibleFocusView) {
         guard let nsview = view as? NSView else { return }
-        accessibleViews.append(nsview)
+        accessibleViews.insert(nsview, at: pointerHead)
+        pointerHead += 1
+    }
+    
+    /// Set the pointer head at the specified view
+    /// - Parameter view: The view to set as the pointer head
+    func setPointerHead(to view: NSView) {
+        if let index = accessibleViews.firstIndex(of: view) {
+            pointerHead = index + 1
+        }
+    }
+    
+    /// Set the pointer head at the last registered view
+    func setPointerHeadToLast() {
+        pointerHead = accessibleViews.count
     }
     
     /// Recalculate the key view loop and set exit views for each view
     func recalculateKeyViewLoop() {
         guard !accessibleViews.isEmpty else { return }
+        var previousVisibleView: AccessibleFocusView?
+        var firstVisibleView: AccessibleFocusView?
         
-        for (index, view) in accessibleViews.enumerated() {
-            guard let accessibleView = view.toAccessibleFocusView else { continue }
-            
-            // Set the exit view for the current accessible view
-            if index == accessibleViews.count - 1 {
-                guard let firstAccessibleView = accessibleViews[0].toAccessibleFocusView else { continue }
-                accessibleView.exitView = firstAccessibleView
-            } else {
-                guard let nextAccessibleView = accessibleViews[index + 1].toAccessibleFocusView else { continue }
-                accessibleView.exitView = nextAccessibleView
+        for view in accessibleViews {
+            guard let accessibleView = view.toAccessibleFocusView, !view.isHidden else {
+                continue
             }
             
-            // Setup the internal key views for the accessible view
-            accessibleView.setupInternalKeyviews()
+            // Set the exit view for the previous visible view
+            previousVisibleView?.exitView = accessibleView
+            previousVisibleView?.setupInternalKeyviews()
+            
+            // Track the first visible view
+            if firstVisibleView == nil {
+                firstVisibleView = accessibleView
+            }
+            
+            previousVisibleView = accessibleView
+        }
+        
+        // Set the exit view for the last visible view
+        if let lastVisibleView = previousVisibleView {
+            lastVisibleView.exitView = firstVisibleView ?? accessibleViews.first?.toAccessibleFocusView
+            lastVisibleView.setupInternalKeyviews()
         }
     }
 }

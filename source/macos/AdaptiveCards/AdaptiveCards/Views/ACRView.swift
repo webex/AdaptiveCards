@@ -11,8 +11,8 @@ class ACRView: ACRColumnView {
     private (set) var imageViewMap: [String: [ImageHoldingView]] = [:]
     private (set) var renderedShowCards: [NSView] = []
     private (set) var initialLayoutDone = false
-    private var currentFocusedActionElement: NSCell?
-    private var isLayoutDoneOnShowCard = false
+    private var refocusedActionElementView: NSView?
+    private var needsLayoutRefocus = false
     private var focusedElementOnHideError: NSView?
     private var firstFieldWithError: InputHandlingViewProtocol?
     private (set) var visibilityContext: ACOVisibilityContext?
@@ -56,7 +56,7 @@ class ACRView: ACRColumnView {
     
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
-        isLayoutDoneOnShowCard = false
+        needsLayoutRefocus = false
         focusedElementOnHideError = nil
         firstFieldWithError = nil
     }
@@ -90,8 +90,8 @@ class ACRView: ACRColumnView {
     }
     
     func resetKeyboardFocus() {
-        if isLayoutDoneOnShowCard, let lastFocusedElement = currentFocusedActionElement {
-            lastFocusedElement.controlView?.setAccessibilityFocused(true)
+        if needsLayoutRefocus, let focusedView = refocusedActionElementView {
+            focusedView.setAccessibilityFocused(true)
         } else if focusedElementOnHideError != nil {
             focusedElementOnHideError?.setAccessibilityFocused(true)
             // If it is a textfield, the entered text gets selected when focus is set, so taking the cursor to the last position it was present
@@ -194,6 +194,7 @@ class ACRView: ACRColumnView {
             facade?.visibilityManagerUpdateConstraint()
         }
         facadeArray.removeAll()
+        self.accessibilityContext?.recalculateKeyViewLoop()
     }
 }
 
@@ -207,19 +208,24 @@ extension ACRView: ACRActionSetViewDelegate {
     }
     
     func actionSetView(_ view: ACRActionSetView, didToggleVisibilityActionWith actionView: NSView, toggleTargets: [ACSToggleVisibilityTarget]) {
+        refocusedActionElementView = actionView
+        needsLayoutRefocus = true
         toggleVisibity(of: toggleTargets)
     }
     
     func actionSetView(_ view: ACRActionSetView, willShowCardWith button: NSButton) {
+        self.accessibilityContext?.setPointerHead(to: button)
         boundsBeforeShowCard = bounds
         if let buttonCell = button.cell, buttonCell.isAccessibilityFocused() {
-            currentFocusedActionElement = buttonCell
-            isLayoutDoneOnShowCard = true
+            refocusedActionElementView = buttonCell.controlView
+            needsLayoutRefocus = true
         }
     }
     
     func actionSetView(_ view: ACRActionSetView, didShowCardWith button: NSButton) {
+        self.accessibilityContext?.setPointerHeadToLast()
         delegate?.adaptiveCard(self, didShowCardWith: button, previousHeight: boundsBeforeShowCard?.height ?? -1, newHeight: bounds.height)
+        self.accessibilityContext?.recalculateKeyViewLoop()
     }
     
     func actionSetView(_ view: ACRActionSetView, renderShowCardFor cardData: ACSAdaptiveCard) -> NSView {
@@ -231,6 +237,8 @@ extension ACRView: ACRActionSetViewDelegate {
 
 extension ACRView: TargetHandlerDelegate {
     func handleToggleVisibilityAction(actionView: NSView, toggleTargets: [ACSToggleVisibilityTarget]) {
+        refocusedActionElementView = actionView
+        needsLayoutRefocus = true
         toggleVisibity(of: toggleTargets)
     }
     
