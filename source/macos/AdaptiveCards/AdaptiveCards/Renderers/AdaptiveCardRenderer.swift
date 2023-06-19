@@ -51,6 +51,12 @@ class AdaptiveCardRenderer {
         if card.getVersion() == "1.3", !config.supportsSchemeV1_3 {
             logError("CardVersion 1.3 not supported, Card properties of this version and above won't be rendered")
         }
+        // Note: This currently does not have any affect since shared code does not allow optional value for card's verticalContentAlignment
+        if card.getVerticalContentAlignment() == .nil, let parentView = parentRootView {
+            rootView.setVerticalContentAlignment(parentView.verticalContentAlignment)
+        } else {
+            rootView.setVerticalContentAlignment(card.getVerticalContentAlignment())
+        }
         for (index, element) in card.getBody().enumerated() {
             let isFirstElement = index == 0
             let renderer = RendererManager.shared.renderer(for: element.getType())
@@ -81,7 +87,7 @@ class AdaptiveCardRenderer {
             rootView.registerImageHandlingView(rootView.backgroundImageView, for: url)
         }
         
-        rootView.configureLayoutAndVisibility(verticalContentAlignment: card.getVerticalContentAlignment(), minHeight: card.getMinHeight())
+        rootView.configureLayoutAndVisibility(minHeight: card.getMinHeight())
         rootView.appearance = NSAppearance.getAppearance(isDark: config.isDarkMode)
         rootView.dispatchImageResolveRequests()
         return rootView

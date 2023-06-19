@@ -110,6 +110,23 @@ class ACSFillerSpaceManager {
         }
     }
     
+    /// This function reports if a padding view is already hidden or has been marked to be hidden
+    func isPaddingInvisble(invisibleViews: NSMutableSet) -> Bool {
+        if !stretchableViews.isEmpty {
+            for nsValue in stretchableViews {
+                if let view = nsValue.nonretainedObjectValue as? NSView {
+                    if !view.isHidden && !invisibleViews.contains(view) {
+                        return false
+                    }
+                }
+            }
+        }
+        if !(self.lastStretchableView?.isHidden ?? true) {
+            return false
+        }
+        return true
+    }
+    
     /// activates the constraints together for performance
     /// two stretchable views get same height
     /// by setting low priority, the relationship can be overridden

@@ -20,6 +20,11 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
         // add selectAction
         containerView.setupSelectAction(container.getSelectAction(), rootView: rootView)
         containerView.setupSelectActionAccessibility(on: containerView, for: container.getSelectAction())
+        if container.getVerticalContentAlignment() == .nil, let parentView = parentView as? ACRContentStackView {
+            containerView.setVerticalContentAlignment(parentView.verticalContentAlignment)
+        } else {
+            containerView.setVerticalContentAlignment(container.getVerticalContentAlignment())
+        }
         
         for (index, element) in container.getItems().enumerated() {
             let isFirstElement = index == 0
@@ -28,7 +33,9 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: view, element: element, parentView: containerView, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
             BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: containerView, with: hostConfig, element: element, parentElement: container)
         }
-        containerView.configureLayoutAndVisibility(verticalContentAlignment: container.getVerticalContentAlignment(), minHeight: container.getMinHeight())
+
+        containerView.configureLayoutAndVisibility(minHeight: container.getMinHeight())
+        
         if container.getHeight() == .stretch {
             containerView.setStretchableHeight()
         }

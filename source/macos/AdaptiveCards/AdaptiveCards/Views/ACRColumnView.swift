@@ -119,8 +119,8 @@ class ACRColumnView: ACRContentStackView {
         backgroundImageViewBottomConstraint.isActive = true
     }
     
-    override func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?) {
-        super.configureLayoutAndVisibility(verticalContentAlignment: verticalContentAlignment, minHeight: minHeight)
+    override func configureLayoutAndVisibility(minHeight: NSNumber?) {
+        super.configureLayoutAndVisibility(minHeight: minHeight)
         setStretchableHeight()
     }
     
