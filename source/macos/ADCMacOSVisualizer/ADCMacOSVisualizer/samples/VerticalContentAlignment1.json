@@ -1,0 +1,49 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "minHeight": "150px",
+    "verticalContentAlignment": "Center",
+    "body": [
+        {
+            "type": "Container",
+            "height": "stretch",
+            "backgroundImage": {
+                "url": "https://adaptivecards.io/content/AlkiBeach.jpg"
+            },
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "I am header.",
+                    "height": "stretch"
+                },
+                {
+                    "type": "Container",
+                    "backgroundImage": {
+                        "url": "https://picsum.photos/200/300"
+                    },
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "And I'm like a centered!"
+                        }
+                    ],
+                    "minHeight": "100px"
+                }
+            ],
+            "minHeight": "200px"
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "And I'm footer"
+                }
+            ],
+            "minHeight": "100px",
+            "horizontalAlignment": "Left",
+            "verticalContentAlignment": "Bottom"
+        }
+    ]
+}
