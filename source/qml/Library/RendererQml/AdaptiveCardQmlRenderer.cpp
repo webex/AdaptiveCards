@@ -1477,6 +1477,7 @@ namespace RendererQml
 
 		outerContainer->Property("id", context->ConvertToValidId(actionSet->GetId()));
 		outerContainer->Property("width", "parent.width");
+        outerContainer->Property("onImplicitHeightChanged", "{height = implicitHeight}");
 
 		if (!actionSet->GetIsVisible())
 		{
