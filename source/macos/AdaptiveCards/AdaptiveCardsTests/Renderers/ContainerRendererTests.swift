@@ -4,18 +4,16 @@ import XCTest
 
 class ContainerRendererTests: XCTestCase {
     private var hostConfig: FakeHostConfig!
-    private var container: FakeContainer!
     private var containerRenderer: ContainerRenderer!
    
     override func setUpWithError() throws {
         try super.setUpWithError()
         hostConfig = .make()
-        container = .make()
         containerRenderer = ContainerRenderer()
     }
     
     func testRendererSetsStyle() {
-        container = .make(style: .none)
+        let container = FakeContainer.make(style: .none)
         let containerView = renderContainerView(container)
         XCTAssertEqual(containerView.layer?.backgroundColor, nil)
     }
@@ -40,7 +38,7 @@ class ContainerRendererTests: XCTestCase {
     }
     
     func testRendererSetsVerticalContentAlignment() {
-        container = .make(verticalContentAlignment: .top, items: [FakeTextBlock.make()])
+        var container = FakeContainer.make(verticalContentAlignment: .top, items: [FakeTextBlock.make()])
         // Removing this since we don't need subviews to have padding to have explicit width
         var containerView = renderContainerView(container)
         // For HeightType Property we have add stretchable view. so it will increase count for subviews.
@@ -66,7 +64,7 @@ class ContainerRendererTests: XCTestCase {
     func testRendererInheritsVerticalContentAlignment() {
         var parentContainer = FakeContainer.make(verticalContentAlignment: .top)
         var parentContainerView = renderContainerView(parentContainer)
-        container = .make(verticalContentAlignment: .nil, items: [FakeTextBlock.make()])
+        let container = FakeContainer.make(verticalContentAlignment: .nil, items: [FakeTextBlock.make()])
         var containerView = renderContainerView(container, parentView: parentContainerView)
         
         // For HeightType Property we have add stretchable view. so it will increase count for subviews.
@@ -89,7 +87,7 @@ class ContainerRendererTests: XCTestCase {
     
     func testInvisibleViewsWithVerticalContentAlignment() {
         let stretcableView = FakeContainer.make(heightType: .stretch)
-        container = .make(verticalContentAlignment: .bottom, items: [stretcableView])
+        let container = FakeContainer.make(verticalContentAlignment: .bottom, items: [stretcableView])
         let containerView = renderContainerView(container)
         
         // Normally there are 3 subviews in case of botom, with stretcable view, it is reduced to 2
@@ -99,7 +97,7 @@ class ContainerRendererTests: XCTestCase {
     func testSelectActionTargetIsSet() {
         var containerView: ACRContentStackView!
         
-        container = .make(selectAction: FakeSubmitAction.make())
+        var container = FakeContainer.make(selectAction: FakeSubmitAction.make())
         containerView = renderContainerView(container)
         
         XCTAssertNotNil(containerView.target)
@@ -144,13 +142,13 @@ class ContainerRendererTests: XCTestCase {
     }
     
     func testRendersItems() {
-        container = .make(items: [FakeInputToggle.make()])
+        let container = FakeContainer.make(items: [FakeInputToggle.make()])
         let containerView = renderContainerView(container)
         XCTAssertEqual(containerView.arrangedSubviews.count, 2)
     }
     
     func testRendersWhenNoItems() {
-        container = .make(items: [])
+        let container = FakeContainer.make(items: [])
         XCTAssertNoThrow(renderContainerView(container))
     }
     
