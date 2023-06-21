@@ -20,6 +20,12 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             rootView.accessibilityContext?.registerView(columnSetView)
         }
         columnSetView.orientation = .horizontal
+        if columnSet.getVerticalContentAlignment() == .nil, let parentView = parentView as? ACRContentStackView {
+            columnSetView.setVerticalContentAlignment(parentView.verticalContentAlignment)
+        } else {
+            columnSetView.setVerticalContentAlignment(columnSet.getVerticalContentAlignment())
+        }
+        
         var numberOfAutoItems = 0
         var numberOfStretchItems = 0
         var numberOfWeightedItems = 0
@@ -100,7 +106,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
                 }
             }
         }
-        columnSetView.configureLayoutAndVisibility(verticalContentAlignment: columnSet.getVerticalContentAlignment(), minHeight: columnSet.getMinHeight())
+        columnSetView.configureLayoutAndVisibility(minHeight: columnSet.getMinHeight())
         return columnSetView
     }
     
