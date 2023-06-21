@@ -17,7 +17,12 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
         }
         columnView.setWidth(ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth()))
         columnView.bleed = column.getBleed()
-        
+        if column.getVerticalContentAlignment() == .nil, let parentView = parentView as? ACRContentStackView {
+            columnView.setVerticalContentAlignment(parentView.verticalContentAlignment)
+        } else {
+            columnView.setVerticalContentAlignment(column.getVerticalContentAlignment())
+        }
+		
         for (index, element) in column.getItems().enumerated() {
             let isFirstElement = index == 0
             let renderer = RendererManager.shared.renderer(for: element.getType())
@@ -27,7 +32,7 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
             BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: columnView, with: hostConfig, element: element, parentElement: column)
         }
         
-        columnView.configureLayoutAndVisibility(verticalContentAlignment: column.getVerticalContentAlignment(), minHeight: column.getMinHeight())
+        columnView.configureLayoutAndVisibility(minHeight: column.getMinHeight())
         
         if let backgroundImage = column.getBackgroundImage(), let url = backgroundImage.getUrl() {
             columnView.setupBackgroundImageProperties(backgroundImage)

@@ -6,7 +6,7 @@ protocol ACRContentHoldingViewProtocol {
     func addArrangedSubview(_ subview: NSView)
     func insertArrangedSubview(_ view: NSView, at insertionIndex: Int)
     func updateLayoutAndVisibilityOfRenderedView(_ renderedView: NSView, acoElement acoElem: ACSBaseCardElement, separator: SpacingView?, rootView: ACRView?)
-    func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?)
+    func configureLayoutAndVisibility(minHeight: NSNumber?)
     func applyPadding(_ padding: CGFloat)
 }
 
@@ -35,15 +35,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     var target: TargetHandler?
     public var bleed = false
     private let visibilityManager = ACSVisibilityManager()
-    private var verticalContentAlignment: ACSVerticalContentAlignment = .top {
-        didSet {
-            if self.verticalContentAlignment != .top {
-                // temporary fix to avoid regression.
-                // Plan to make vertical content alignment work with gravity areas hence removing dependency with padding
-                addPadding()
-            }
-        }
-    }
+    private(set) var verticalContentAlignment: ACSVerticalContentAlignment = .nil
     private var cursorType = NSCursor.arrow
     private var paddings = [NSView]()
     private let invisibleViews = NSMutableSet()
@@ -364,9 +356,14 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     /// activation constraint all at once is more efficient than activating
     /// constraints one by one.
     
-    func configureLayoutAndVisibility(verticalContentAlignment: ACSVerticalContentAlignment, minHeight: NSNumber?) {
-        // If a container has a stretchable view, set the top vertical alignment.
-        self.verticalContentAlignment = self.hasStretchableView ? .top : verticalContentAlignment
+    func configureLayoutAndVisibility(minHeight: NSNumber?) {
+        if hasStretchableView && !visibilityManagerAllStretchableViewsHidden() {
+            // TODO: Handle Case for toggle visibility with vertical content alignment
+        } else if self.verticalContentAlignment != .top {
+            // in add padding check and add firstPadding accordingly
+            // and since now vertical content alignment isn't modified
+            addPadding()
+        }
         self.applyVisibilityToSubviews()
         
         if self.hasStretchableView || visibilityManager.hasVisibleViews {
@@ -375,6 +372,10 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         
         self.setMinimumHeight(minHeight)
         visibilityManager.fillerSpaceManager.activateConstraintsForPadding()
+    }
+    
+    func setVerticalContentAlignment( _ value: ACSVerticalContentAlignment) {
+        self.verticalContentAlignment = value
     }
     
     func setStretchableHeight() {
@@ -606,7 +607,7 @@ extension ACRContentStackView: ACSVisibilityManagerFacade {
     }
     
     func visibilityManagerAllStretchableViewsHidden() -> Bool {
-        return !visibilityManager.fillerSpaceManager.hasPadding()
+        return visibilityManager.fillerSpaceManager.isPaddingInvisble(invisibleViews: invisibleViews)
     }
     
     func visibilityManagerSetLastStretchableView(isHidden: Bool) {
