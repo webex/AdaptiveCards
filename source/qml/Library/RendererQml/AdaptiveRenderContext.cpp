@@ -466,4 +466,14 @@ namespace RendererQml
 
         return height;
     }
+
+    AdaptiveCards::VerticalContentAlignment AdaptiveRenderContext::getNearestVerticalAlignment()
+    {
+        return m_NearestVerticalAlignment;
+    }
+
+    void AdaptiveRenderContext::setNearestVerticalAlignment(AdaptiveCards::VerticalContentAlignment verticalContentAlignment)
+    {
+        m_NearestVerticalAlignment = verticalContentAlignment;
+    }
 }
