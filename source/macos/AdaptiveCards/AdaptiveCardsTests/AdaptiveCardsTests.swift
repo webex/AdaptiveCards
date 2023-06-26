@@ -91,7 +91,7 @@ class AdaptiveCardsTests: XCTestCase {
         let cardView = AdaptiveCard.render(card: card, with: hostConfig, width: 432, actionDelegate: delegate, resourceResolver: resourceResolver)
         
         // get the show card button to show child card view
-        guard let showCardButton = cardView.buttonInHierachy(withTitle: "Showcard1") else {
+        guard let showCardButton = cardView.buttonInHierachy(withTitle: "ShowCard1") else {
             XCTFail()
             return
         }
