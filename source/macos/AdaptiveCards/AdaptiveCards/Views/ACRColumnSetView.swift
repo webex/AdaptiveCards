@@ -9,6 +9,7 @@ import AdaptiveCards_bridge
 import AppKit
 
 class ACRColumnSetView: ACRContentStackView {
+    var numberOfColumns: Int?
     // AccessibleFocusView property
     override var validKeyView: NSView? {
         get {

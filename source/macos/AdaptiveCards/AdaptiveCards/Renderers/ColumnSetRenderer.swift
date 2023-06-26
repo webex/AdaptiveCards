@@ -6,7 +6,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
     
     struct Constants {
         static let kFillColumnViewVerticalLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 1
-        static let maxCardWidth: Float = 350.0
+        static let maxCardWidth: CGFloat = 432.0
     }
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {
@@ -32,6 +32,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         let totalColumns = columnSet.getColumns().count
         var totalPaddingSpace = Float.zero
         var columnViews: [NSView] = []
+        columnSetView.numberOfColumns = columnSet.getColumns().count
         
         for (index, column) in columnSet.getColumns().enumerated() {
             let isfirstElement = index == 0
@@ -59,13 +60,15 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             }
             columnSetView.distribution = .fill
         } else if numberOfAutoItems == totalColumns {
-            let width = (Constants.maxCardWidth - totalPaddingSpace) / Float(columnViews.count)
-            for index in (0 ..< columnViews.count) {
+            columnSetView.distribution = .gravityAreas
+            // We need to do this as an edge case where there are too many columns so at least no views get hidden
+            let cardWidth = Float(rootView.cardWidth ?? Constants.maxCardWidth)
+            let width = (Float(cardWidth) - totalPaddingSpace) / Float(columnViews.count)
+            for index in (0 ..< columnViews.count) where totalColumns > 5 {
                 let widthAnchor = columnViews[index].widthAnchor.constraint(equalToConstant: CGFloat(width))
                 widthAnchor.priority = .defaultHigh
                 widthAnchor.isActive = true
             }
-            columnSetView.distribution = .gravityAreas
         } else if numberOfStretchItems == 0 && numberOfWeightedItems == 0 {
             columnSetView.distribution = .gravityAreas
         } else {
