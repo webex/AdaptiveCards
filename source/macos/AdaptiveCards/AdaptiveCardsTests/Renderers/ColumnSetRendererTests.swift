@@ -130,21 +130,17 @@ class ColumnSetRendererTests: XCTestCase {
     func testColumnSetWithMultipleColumns() {
         let columns: [FakeColumn] = [.make(width: "auto"), .make(width: "auto"), .make(width: "auto"), .make(width: "auto"), .make(width: "auto"), .make(width: "auto")]
         columnSet = .make(columns: columns)
-        let parentView = NSView()
-        parentView.widthAnchor.constraint(equalToConstant: 540).isActive = true
-        let columnSetView = renderColumnSetView(parentView: parentView)
+        let columnSetView = renderColumnSetView()
         
         // Since more than 5 columns width gets divided equally
-        XCTAssertEqual(columnSetView.arrangedSubviews[0].fittingSize.width, 90)
+        XCTAssertEqual(columnSetView.arrangedSubviews[0].fittingSize.width, 72)
         XCTAssertEqual(columnSetView.arrangedSubviews[0].bounds.width, columnSetView.arrangedSubviews[1].bounds.width)
     }
     
     func testColumnSetWithMultipleInputElementInColumns() {
         let columns: [FakeColumn] = [.make(width: "auto", items: [FakeInputText.make()]), .make(width: "auto", items: [FakeInputText.make()]), .make(width: "auto", items: [FakeInputText.make()])]
         columnSet = .make(columns: columns)
-        let parentView = NSView()
-        parentView.widthAnchor.constraint(equalToConstant: 500).isActive = true
-        let columnSetView = renderColumnSetView(parentView: parentView)
+        let columnSetView = renderColumnSetView()
         // Since 3 or less column, width is min 100
         XCTAssertEqual(columnSetView.arrangedSubviews[0].fittingSize.width, 100)
         // Since there is padding between the columns are present in position 0, 2, 4
@@ -154,9 +150,7 @@ class ColumnSetRendererTests: XCTestCase {
     func testColumnSetWithFourInputElementInColumns() {
         let columns: [FakeColumn] = [.make(width: "auto", items: [FakeInputText.make()]), .make(width: "auto", items: [FakeInputText.make()]), .make(width: "auto", items: [FakeInputText.make()]), .make(width: "auto", items: [FakeInputText.make()])]
         columnSet = .make(columns: columns)
-        let parentView = NSView()
-        parentView.widthAnchor.constraint(equalToConstant: 500).isActive = true
-        let columnSetView = renderColumnSetView(parentView: parentView)
+        let columnSetView = renderColumnSetView()
         // Since more than 3 column, width is min 100
         
         XCTAssertEqual(columnSetView.arrangedSubviews[0].fittingSize.width, 60)
@@ -164,8 +158,8 @@ class ColumnSetRendererTests: XCTestCase {
         XCTAssertEqual(columnSetView.arrangedSubviews[0].fittingSize.width, columnSetView.arrangedSubviews[2].fittingSize.width)
     }
     
-    private func renderColumnSetView(parentView: NSView = NSView()) -> ACRContentStackView {
-        let view = columnSetRenderer.render(element: columnSet, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: parentView, inputs: [], config: .default)
+    private func renderColumnSetView() -> ACRContentStackView {
+        let view = columnSetRenderer.render(element: columnSet, with: hostConfig, style: .default, rootView: FakeRootView(), parentView: NSView(), inputs: [], config: .default)
         
         XCTAssertTrue(view is ACRContentStackView)
         guard let columnSetView = view as? ACRContentStackView else { fatalError() }
