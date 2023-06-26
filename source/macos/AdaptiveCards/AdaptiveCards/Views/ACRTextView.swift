@@ -127,9 +127,9 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     }
     
     override func keyDown(with event: NSEvent) {
-        if !isEditable {
-            switch Int(event.keyCode) {
-            case kVK_Return, kVK_Space:
+        switch Int(event.keyCode) {
+        case kVK_Return, kVK_Space:
+            if !isEditable {
                 let selectedRange = self.selectedRange()
                 if let data = linkDataList.first(where: { data in
                     return selectedRange == data.linkRange
@@ -140,7 +140,9 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
                         action.handleSelectionAction(for: self)
                     }
                 }
-            case kVK_Tab:
+            }
+        case kVK_Tab:
+            if !isEditable {
                 if event.modifierFlags.contains(.shift) {
                     if keyTabEntry, let data = getPreviousTextViewHyperLinkDataClosestToSelectedRange() {
                         self.setSelectedRange(data.linkRange)
@@ -153,9 +155,11 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
                         return
                     }
                 }
-            default:
-                break
             }
+        case kVK_Escape:
+            self.window?.makeFirstResponder(nil)
+        default:
+            break
         }
         super.keyDown(with: event)
     }
