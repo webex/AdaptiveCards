@@ -145,7 +145,7 @@ namespace RendererQml
 		ValidateLastBodyElementIsShowCard(card->GetBody(), context);
 		
 		ValidateShowCardInActions(card->GetActions(), context);
-		AddContainerElements(bodyLayout, card->GetBody(), context);
+        AddContainerElements(bodyLayout, card->GetBody(), card->GetVerticalContentAlignment(), context);
 		AddActions(bodyLayout, card->GetActions(), context);
         addSelectAction(uiCard, uiCard->GetId(), card->GetSelectAction(), context, "Adaptive Card", hasBackgroundImage);
 
@@ -265,10 +265,11 @@ namespace RendererQml
 		return uiCard;
 	}
 
-    void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, std::shared_ptr<AdaptiveRenderContext> context)
+    void AdaptiveCardQmlRenderer::AddContainerElements(std::shared_ptr<QmlTag> uiContainer, const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& elements, AdaptiveCards::VerticalContentAlignment verticalContentAlignment, std::shared_ptr<AdaptiveRenderContext> context)
     {
 		for (const auto& cardElement : elements)
 		{
+            context->setNearestVerticalAlignment(verticalContentAlignment);
             try {
                 auto uiElement = context->Render(cardElement);
 
@@ -290,6 +291,7 @@ namespace RendererQml
             catch (const std::exception& e) {
                 context->AddWarning(AdaptiveWarning(Code::RenderException, e.what()));
             }
+            context->setNearestVerticalAlignment(verticalContentAlignment);
         }
     }
 
@@ -1327,7 +1329,7 @@ namespace RendererQml
 
         if (!cardElement->GetVerticalContentAlignment().has_value())
         {
-            cardElement->SetVerticalContentAlignment(AdaptiveCards::VerticalContentAlignment::Top);
+            cardElement->SetVerticalContentAlignment(context->getNearestVerticalAlignment());
         }
 
         if (cardElement->GetVerticalContentAlignment() == AdaptiveCards::VerticalContentAlignment::Top)
@@ -1367,7 +1369,7 @@ namespace RendererQml
         uiContainer->Property("implicitHeight", Formatter() << "Math.max(" << cardElement->GetMinHeight() << ", clayout_" << cardElement->GetId() << ".implicitHeight)");
         uiContainer->Property("readonly property string bgColor", "'transparent'");
 
-        AddContainerElements(uiColumn, cardElement->GetItems(), context);
+        AddContainerElements(uiColumn, cardElement->GetItems(), cardElement->GetVerticalContentAlignment().value(), context);
 
         uiColumnLayout->AddChild(uiColumn);
 

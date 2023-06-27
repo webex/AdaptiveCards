@@ -107,6 +107,9 @@ namespace RendererQml
 
         const int getEstimatedTextHeight(const std::string text);
 
+        AdaptiveCards::VerticalContentAlignment getNearestVerticalAlignment();
+        void setNearestVerticalAlignment(AdaptiveCards::VerticalContentAlignment);
+
     private:
         bool m_isShowCardinAction{ false };
         bool m_isShowCardLastBodyElement{ false };
@@ -122,6 +125,7 @@ namespace RendererQml
         AdaptiveRenderArgs m_renderArgs;
         AdaptiveCards::FeatureRegistration m_featureRegistration;
         std::string m_lang;
+        AdaptiveCards::VerticalContentAlignment m_NearestVerticalAlignment{ AdaptiveCards::VerticalContentAlignment::Top };
 
         std::string m_CardRootId;
         std::string m_defaultId;
