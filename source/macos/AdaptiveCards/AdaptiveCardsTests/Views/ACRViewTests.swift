@@ -597,7 +597,8 @@ class ACRViewTests: XCTestCase {
         let actionSet = FakeActionSet.make(actions:
                                             [
                                                 FakeSubmitAction.make(),
-                                                FakeShowCardAction.make(card: FakeAdaptiveCard.make(actions: [FakeToggleVisibilityAction.make(targetElements: [FakeToggleVisibilityTarget.make(elementId: "input_text")])]))
+                                                FakeShowCardAction.make(card: FakeAdaptiveCard.make(body: [inputMultiText, inputDate],
+                                                                                                    actions: [FakeToggleVisibilityAction.make(targetElements: [FakeToggleVisibilityTarget.make(elementId: "input_text")])]))
                                             ])
         
         let actionSetView = try XCTUnwrap(ActionSetRenderer().render(element: actionSet, with: hostConfig, style: .default, rootView: view, parentView: view, inputs: [], config: config) as? ACRActionSetView)
@@ -631,11 +632,15 @@ class ACRViewTests: XCTestCase {
         actionButtons[1].performClick()
         
         let subCardView = try XCTUnwrap(actionSetView.currentShowCardItems?.showCard as? ACRView)
-        let subActionSetView = try XCTUnwrap(subCardView.arrangedSubviews.first as? ACRActionSetView)
+        let multilineTextView = try XCTUnwrap(subCardView.arrangedSubviews.first as? ACRMultilineInputTextView)
+        let dateInputView = try XCTUnwrap(subCardView.arrangedSubviews[2] as? ACRDateField)
+        let subActionSetView = try XCTUnwrap(subCardView.arrangedSubviews[3] as? ACRActionSetView)
         let subActionButtons = try XCTUnwrap(subActionSetView.actions as? [ACRButton])
         
         XCTAssertEqual(actionButtons[1].exitView?.validKeyView, subCardView)
-        XCTAssertEqual(subCardView.exitView?.validKeyView, subActionButtons[0])
+        XCTAssertEqual(subCardView.exitView?.validKeyView, multilineTextView.validKeyView)
+        XCTAssertEqual(multilineTextView.exitView?.validKeyView, dateInputView.validKeyView)
+        XCTAssertEqual(dateInputView.exitView?.validKeyView, subActionButtons[0].validKeyView)
         XCTAssertEqual(subActionButtons[0].exitView?.validKeyView, textView.validKeyView)
         
         /// Action Toggle

@@ -12,6 +12,7 @@ class FakeInputDate: ACSDateInput {
     public var label: String?
     public var separator: Bool = false
     public var height: ACSHeightType = .auto
+    public var spacing: ACSSpacing = .default
 
     open override func getValue() -> String? {
         return value
@@ -100,10 +101,18 @@ class FakeInputDate: ACSDateInput {
     open override func getType() -> ACSCardElementType {
         return .dateInput
     }
+    
+    override func getSpacing() -> ACSSpacing {
+        return spacing
+    }
+    
+    override func setSpacing(_ value: ACSSpacing) {
+        spacing = value
+    }
 }
 
 extension FakeInputDate {
-    static func make(id: String? = "", value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, heightType: ACSHeightType = .auto) -> FakeInputDate {
+    static func make(id: String? = "", value: String? = "", placeholder: String? = "", max: String? = "", min: String? = "", isRequired: Bool = false, errorMessage: String? = "", label: String? = "", separator: Bool = false, spacing: ACSSpacing = .default, heightType: ACSHeightType = .auto) -> FakeInputDate {
         let fakeInputDate = FakeInputDate()
         fakeInputDate.id = id
         fakeInputDate.value = value
@@ -114,6 +123,7 @@ extension FakeInputDate {
         fakeInputDate.errorMessage = errorMessage
         fakeInputDate.label = label
         fakeInputDate.separator = separator
+        fakeInputDate.spacing = spacing
         fakeInputDate.height = heightType
         return fakeInputDate
     }

@@ -43,7 +43,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     weak var exitView: AccessibleFocusView?
     
     override public var canBecomeKeyView: Bool {
-        return isEditable ? true : hasLinks
+        return isEditable ? super.canBecomeKeyView : hasLinks
     }
     
     override public var focusRingMaskBounds: NSRect {

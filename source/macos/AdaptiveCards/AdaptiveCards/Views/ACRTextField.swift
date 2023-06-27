@@ -230,6 +230,13 @@ class ACRTextField: NSTextField {
         return accessibilityTitle
     }
     
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        if textFieldMode == .dateTime {
+            return nil
+        }
+        return self
+    }
+    
     private var lastCursorPosition: Int?
     private func updateLastKnownCursorPosition() {
         guard let selectedRange = currentEditor()?.selectedRange else {

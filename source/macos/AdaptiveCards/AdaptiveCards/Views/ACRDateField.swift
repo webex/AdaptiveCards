@@ -23,7 +23,7 @@ class ACRDateField: NSView {
         let view = ACRTextField(textFieldWith: config, mode: .dateTime, inputElement: inputElement)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isEditable = true
-        view.isSelectable = false
+        view.isSelectable = true
         view.cell?.lineBreakMode = .byTruncatingTail
         view.stringValue = ""
         view.textFieldDelegate = self
@@ -119,11 +119,11 @@ class ACRDateField: NSView {
     }
     
     override var canBecomeKeyView: Bool {
-        return true
+        return textField.canBecomeKeyView
     }
     
     override var acceptsFirstResponder: Bool {
-        return true
+        return textField.acceptsFirstResponder
     }
     
     override public var focusRingMaskBounds: NSRect {
