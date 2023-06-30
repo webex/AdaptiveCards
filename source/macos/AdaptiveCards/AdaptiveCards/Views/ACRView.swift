@@ -17,6 +17,7 @@ class ACRView: ACRColumnView {
     private var firstFieldWithError: InputHandlingViewProtocol?
     private (set) var visibilityContext: ACOVisibilityContext?
     private (set) var accessibilityContext: ACSAccessibilityFocusManager?
+    private (set) var cardWidth: CGFloat?
     
     // AccessibleFocusView property
     override var validKeyView: NSView? {
@@ -87,6 +88,10 @@ class ACRView: ACRColumnView {
     
     func getImageDimensions(for url: String) -> NSSize? {
         return resolverDelegate?.adaptiveCard(self, dimensionsForImageWith: url)
+    }
+    
+    func setCardWidth(_ value: CGFloat?) {
+        self.cardWidth = value
     }
     
     func resetKeyboardFocus() {
