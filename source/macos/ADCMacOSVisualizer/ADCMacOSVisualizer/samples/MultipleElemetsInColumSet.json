@@ -1,0 +1,426 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "texte"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text2e"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text3e"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text4e"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text5e"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text45e"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text345e"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Date",
+                            "id": "datee"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text2"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text3"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text4"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text5"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text6"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text7"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "texta"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text2a"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text3a"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text4a"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text5a"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text45a"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "textb"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text2b"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text3b"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text4b"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text5b"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "textc"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text2c"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text3c"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text4c"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "textd"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text2d"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text3d"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "textf"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "placeholder": "Placeholder text",
+                            "id": "text2f"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -17,6 +17,9 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
         }
         columnView.setWidth(ColumnWidth(columnWidth: column.getWidth(), pixelWidth: column.getPixelWidth()))
         columnView.bleed = column.getBleed()
+        if let parentView = parentView as? ACRColumnSetView {
+            columnView.setNumberOfColumns(parentView.numberOfColumns)
+        }
         if column.getVerticalContentAlignment() == .nil, let parentView = parentView as? ACRContentStackView {
             columnView.setVerticalContentAlignment(parentView.verticalContentAlignment)
         } else {

@@ -1,0 +1,175 @@
+{
+   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+   "actions": [
+      {
+         "card": {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "body": [
+               {
+                  "errorMessage": "error message error message error message error message ",
+                  "height": "stretch",
+                  "id": "11",
+                  "isRequired": true,
+                  "isVisible": true,
+                  "label": "Hello this is label",
+                  "type": "Input.Date"
+               },
+               {
+                  "errorMessage": "error message error message error message error message ",
+                  "height": "stretch",
+                  "id": "33",
+                  "isRequired": true,
+                  "isVisible": true,
+                  "label": "This is label",
+                  "type": "Input.Time"
+               },
+               {
+                  "type": "Container",
+                  "items": [
+                     {
+                        "type": "Input.Text",
+                        "height": "stretch",
+                        "placeholder": "Placeholder text",
+                        "id": "test2",
+                        "label": "Input Text"
+                     }
+                  ],
+                  "height": "stretch",
+                  "minHeight": "200px"
+               },
+               {
+                  "actions": [
+                     {
+                        "targetElements": [
+                           "11",
+                           "33"
+                        ],
+                        "title": "Action.ToggleVisibility",
+                        "type": "Action.ToggleVisibility"
+                     }
+                  ],
+                  "id": "22",
+                  "type": "ActionSet"
+               }
+            ],
+            "minHeight": "450px",
+            "type": "AdaptiveCard",
+            "version": "1.3"
+         },
+         "title": "Action.ShowCard",
+         "type": "Action.ShowCard"
+      }
+   ],
+   "body": [
+      {
+         "height": "stretch",
+         "items": [
+            {
+               "errorMessage": "error message error message error message error message ",
+               "height": "stretch",
+               "id": "1",
+               "isRequired": true,
+               "isVisible": true,
+               "label": "Hello this is label",
+               "type": "Input.Date"
+            },
+            {
+               "errorMessage": "error message error message error message error message ",
+               "height": "stretch",
+               "id": "3",
+               "isRequired": true,
+               "isVisible": true,
+               "label": "This is label",
+               "type": "Input.Time"
+            },
+            {
+               "actions": [
+                  {
+                     "targetElements": [
+                        "1",
+                        "3"
+                     ],
+                     "title": "Action.ToggleVisibility",
+                     "type": "Action.ToggleVisibility"
+                  }
+               ],
+               "id": "2",
+               "type": "ActionSet"
+            }
+         ],
+         "minHeight": "400px",
+         "type": "Container"
+      },
+      {
+         "type": "Container",
+         "items": [
+            {
+               "type": "Input.Text",
+               "height": "stretch",
+               "placeholder": "Placeholder text",
+               "id": "test1",
+               "label": "Input Text"
+            }
+         ],
+         "height": "stretch",
+         "minHeight": "200px"
+      },
+      {
+         "type": "Container",
+         "items": [
+            {
+               "type": "Input.Text",
+               "height": "stretch",
+               "placeholder": "Placeholder text",
+               "id": "test3",
+               "label": "Input Text"
+            },
+            {
+               "actions": [
+                  {
+                     "targetElements": [
+                        "test3"
+                     ],
+                     "title": "Action.ToggleVisibility",
+                     "type": "Action.ToggleVisibility"
+                  }
+               ],
+               "id": "ac2",
+               "type": "ActionSet"
+            }
+         ],
+         "height": "stretch",
+         "minHeight": "200px"
+      },
+      {
+         "type": "Container",
+         "items": [
+            {
+               "type": "Input.Text",
+               "height": "stretch",
+               "placeholder": "Placeholder text",
+               "id": "test4",
+               "label": "Input Text"
+            },
+            {
+               "actions": [
+                  {
+                     "targetElements": [
+                        "test4"
+                     ],
+                     "title": "Action.ToggleVisibility",
+                     "type": "Action.ToggleVisibility"
+                  }
+               ],
+               "id": "ac3",
+               "type": "ActionSet"
+            }
+         ],
+         "height": "stretch",
+         "minHeight": "200px"
+      }
+   ],
+   "type": "AdaptiveCard",
+   "version": "1.3"
+}
+

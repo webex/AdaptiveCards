@@ -48,6 +48,7 @@ class AdaptiveCardRenderer {
         rootView.delegate = actionDelegate
         rootView.resolverDelegate = resourceResolver
         rootView.setMinimumHeight(card.getMinHeight())
+        rootView.setCardWidth(width)
         if card.getVersion() == "1.3", !config.supportsSchemeV1_3 {
             logError("CardVersion 1.3 not supported, Card properties of this version and above won't be rendered")
         }

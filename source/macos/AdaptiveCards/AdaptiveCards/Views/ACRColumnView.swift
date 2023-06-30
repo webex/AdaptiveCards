@@ -66,6 +66,8 @@ class ACRColumnView: ACRContentStackView {
         return view
     }()
     
+    private var numberOfColumns: Int?
+    
     // AccessibleFocusView property
     override var validKeyView: NSView? {
         get {
@@ -132,8 +134,11 @@ class ACRColumnView: ACRContentStackView {
     }
     
     func configureColumnProperties(for view: NSView) {
-        if view is ACRDateField || view is ACRSingleLineInputTextView || view is ACRMultilineInputTextView {
+        if view is ACRDateField || view is ACRSingleLineInputTextView || view is ACRMultilineInputTextView || view is ACRNumericTextField {
             minWidthConstraint.constant = 100
+            if let numberOfColumns = numberOfColumns, numberOfColumns > 3 {
+                minWidthConstraint.constant = 60
+            }
         }
         manageWidth(of: view)
     }
@@ -142,6 +147,10 @@ class ACRColumnView: ACRContentStackView {
         columnWidth = width
         manageWidth(of: self)
         manageWidth(of: stackView)
+    }
+    
+    func setNumberOfColumns(_ value: Int?) {
+        self.numberOfColumns = value
     }
     
     private func manageWidth(of view: NSView) {

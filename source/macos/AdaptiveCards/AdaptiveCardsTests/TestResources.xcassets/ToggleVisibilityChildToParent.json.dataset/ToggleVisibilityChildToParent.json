@@ -1,0 +1,172 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.2",
+  "body": [
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 1",
+              "wrap": true
+            }
+          ],
+          "style": "attention",
+          "id": "column1"
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 2",
+              "wrap": true
+            }
+          ],
+          "style": "attention",
+          "id": "column2"
+        }
+      ],
+      "style": "good",
+      "id": "columnSet"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.ToggleVisibility",
+      "title": "Column Set",
+      "targetElements": [
+        "columnSet"
+      ]
+    },
+    {
+      "type": "Action.ToggleVisibility",
+      "title": "Column Parent",
+      "targetElements": [
+        "column1"
+      ]
+    },
+    {
+      "type": "Action.ToggleVisibility",
+      "title": "Column 2",
+      "targetElements": [
+        "column2"
+      ]
+    },
+    {
+      "type": "Action.ShowCard",
+      "title": "ShowCard1",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.ToggleVisibility",
+                "title": "Column Set",
+                "targetElements": [
+                  "columnSet"
+                ]
+              },
+              {
+                "type": "Action.ToggleVisibility",
+                "title": "Column Child1",
+                "targetElements": [
+                  "column1"
+                ]
+              },
+              {
+                "type": "Action.ToggleVisibility",
+                "title": "Column 2",
+                "targetElements": [
+                  "column2"
+                ]
+              },
+              {
+      "type": "Action.ShowCard",
+      "title": "ShowCard2",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.ToggleVisibility",
+                "title": "Column Set",
+                "targetElements": [
+                  "columnSet"
+                ]
+              },
+              {
+                "type": "Action.ToggleVisibility",
+                "title": "Column 1",
+                "targetElements": [
+                  "column1"
+                ]
+              },
+              {
+                "type": "Action.ToggleVisibility",
+                "title": "Column 2",
+                "targetElements": [
+                  "column2"
+                ]
+              },
+              {
+      "type": "Action.ShowCard",
+      "title": "ShowCard3",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.ToggleVisibility",
+                "title": "Column Set",
+                "targetElements": [
+                  "columnSet"
+                ]
+              },
+              {
+                "type": "Action.ToggleVisibility",
+                "title": "Column 1",
+                "targetElements": [
+                  "column1"
+                ]
+              },
+              {
+                "type": "Action.ToggleVisibility",
+                "title": "Column 2",
+                "targetElements": [
+                  "column2"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "id": "showCard3"
+    }
+            ]
+          }
+        ]
+      },
+      "id": "showCard2"
+    }
+            ]
+          }
+        ]
+      },
+      "id": "showCard"
+    }
+  ]
+}
+
