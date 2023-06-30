@@ -119,11 +119,11 @@ class ACRDateField: NSView {
     }
     
     override var canBecomeKeyView: Bool {
-        return true
+        return !textField.visibleRect.isEmpty
     }
     
     override var acceptsFirstResponder: Bool {
-        return true
+        return !textField.visibleRect.isEmpty
     }
     
     override public var focusRingMaskBounds: NSRect {
