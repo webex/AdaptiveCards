@@ -17,21 +17,6 @@ class ACRColumnSetView: ACRContentStackView {
         set { }
     }
     
-    override public func drawFocusRingMask() {
-        if self.target != nil {
-            if bleed {
-                if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing, let padding = CGFloat(exactly: paddingSpace) {
-                    bleedView.bounds.offsetBy(dx: -padding, dy: -padding).fill()
-                } else {
-                    bleedView.bounds.fill()
-                }
-            } else {
-                self.bounds.fill()
-            }
-            self.needsDisplay = true
-        }
-    }
-    
     override func addArrangedSubview(_ view: NSView) {
         super.addArrangedSubview(view)
         self.increaseIntrinsicContentSize(view)

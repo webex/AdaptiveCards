@@ -111,20 +111,12 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     override public var focusRingMaskBounds: NSRect {
-        return bleed ? self.bleedView.bounds : self.bounds
+        return self.bounds
     }
     
     override public func drawFocusRingMask() {
         if self.target != nil {
-            if bleed {
-                if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing, let padding = CGFloat(exactly: paddingSpace) {
-                    bleedView.bounds.offsetBy(dx: -padding, dy: 0).fill()
-                } else {
-                    bleedView.bounds.fill()
-                }
-            } else {
-                self.bounds.fill()
-            }
+            self.bounds.fill()
             self.needsDisplay = true
         }
     }
