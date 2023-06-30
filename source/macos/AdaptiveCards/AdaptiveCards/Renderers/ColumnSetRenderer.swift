@@ -16,6 +16,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
         }
         let columnSetView = ACRColumnSetView(style: columnSet.getStyle(), parentStyle: style, hostConfig: hostConfig, renderConfig: config, superview: parentView, needsPadding: columnSet.getPadding())
         columnSetView.translatesAutoresizingMaskIntoConstraints = false
+        columnSetView.bleed = columnSet.getBleed()
         if columnSet.getSelectAction() != nil {
             rootView.accessibilityContext?.registerView(columnSetView)
         }
@@ -45,7 +46,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
             let columnView = ColumnRenderer.shared.render(element: column, with: hostConfig, style: columnSet.getStyle(), rootView: rootView, parentView: columnSetView, inputs: [], config: config)
             columnViews.append(columnView)
             updateColumnSetSeparatorAndAlignment(columnView: columnView, column: column, columnSetView: columnSetView, rootView: rootView, columnSet: columnSet, isfirstElement: isfirstElement, hostConfig: hostConfig)
-            BaseCardElementRenderer.shared.configBleed(collectionView: columnView, parentView: columnSetView, with: hostConfig, element: column, parentElement: columnSet)
+            BaseCardElementRenderer.shared.configBleed(for: columnView, with: hostConfig, element: column)
         }
         
         // Add SelectAction

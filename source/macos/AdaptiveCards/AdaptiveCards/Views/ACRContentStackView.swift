@@ -11,11 +11,6 @@ protocol ACRContentHoldingViewProtocol {
 }
 
 class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHandlingProtocol, AccessibleFocusView {
-    private var stackViewLeadingConstraint: NSLayoutConstraint?
-    private var stackViewTrailingConstraint: NSLayoutConstraint?
-    private var stackViewTopConstraint: NSLayoutConstraint?
-    private var stackViewBottomConstraint: NSLayoutConstraint?
-    
     // map table store errror message field
     private let errorMessageFieldMap = NSMapTable<NSString, ACRInputErrorView>(keyOptions: .strongMemory, valueOptions: .weakMemory)
     // map table store input label field
@@ -80,6 +75,23 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         view.distribution = .fill
         return view
     }()
+    // StackView layout constraint
+    private (set) var stackViewLeadingLayoutConstraint: NSLayoutConstraint?
+    private (set) var stackViewTrailingLayoutConstraint: NSLayoutConstraint?
+    private (set) var stackViewTopLayoutConstraint: NSLayoutConstraint?
+    private (set) var stackViewBottomLayoutConstraint: NSLayoutConstraint?
+    
+    private (set) lazy var bleedView: NSView = {
+        let view = NSView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.wantsLayer = true
+        return view
+    }()
+    // BleedView layout constraint
+    private (set) var bleedViewLeadingLayoutConstraint: NSLayoutConstraint?
+    private (set) var bleedViewTrailingLayoutConstraint: NSLayoutConstraint?
+    private (set) var bleedViewTopLayoutConstraint: NSLayoutConstraint?
+    private (set) var bleedViewBottomLayoutConstraint: NSLayoutConstraint?
     
     var hasStretchableView: Bool {
         return visibilityManager.fillerSpaceManager.hasPadding()
@@ -99,12 +111,20 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     override public var focusRingMaskBounds: NSRect {
-        return self.bounds
+        return bleed ? self.bleedView.bounds : self.bounds
     }
     
     override public func drawFocusRingMask() {
         if self.target != nil {
-            self.bounds.fill()
+            if bleed {
+                if let paddingSpace = hostConfig.getSpacing()?.paddingSpacing, let padding = CGFloat(exactly: paddingSpace) {
+                    bleedView.bounds.offsetBy(dx: -padding, dy: 0).fill()
+                } else {
+                    bleedView.bounds.fill()
+                }
+            } else {
+                self.bounds.fill()
+            }
             self.needsDisplay = true
         }
     }
@@ -130,6 +150,9 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         if needsPadding {
             if let bgColor = hostConfig.getBackgroundColor(for: style) {
                 layer?.backgroundColor = bgColor.cgColor
+                bleedView.layer?.backgroundColor = self.layer?.backgroundColor
+                bleedView.layer?.borderWidth = self.layer?.borderWidth ?? 0
+                bleedView.layer?.borderColor = self.layer?.borderColor
             }
         /* Experimental Feature
             // set border color
@@ -187,25 +210,35 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     }
     
     func applyPadding(_ padding: CGFloat) {
-        stackViewLeadingConstraint?.constant = padding
-        stackViewTopConstraint?.constant = padding
-        stackViewTrailingConstraint?.constant = -padding
-        stackViewBottomConstraint?.constant = -padding
+        stackViewLeadingLayoutConstraint?.constant = padding
+        stackViewTopLayoutConstraint?.constant = padding
+        stackViewTrailingLayoutConstraint?.constant = -padding
+        stackViewBottomLayoutConstraint?.constant = -padding
     }
     
-    func setBleedProp(top: Bool, bottom: Bool, trailing: Bool, leading: Bool) {
-        if top {
-            stackViewTopConstraint?.constant = 0
+    func setStackViewConstraint(direction: (top: Bool, bottom: Bool, leading: Bool, trailing: Bool)) {
+        if direction.top {
+            stackViewTopLayoutConstraint?.constant = 0
         }
-        if bottom {
-            stackViewBottomConstraint?.constant = 0
+        if direction.bottom {
+            stackViewBottomLayoutConstraint?.constant = 0
         }
-        if leading {
-            stackViewLeadingConstraint?.constant = 0
+        if direction.leading {
+            stackViewLeadingLayoutConstraint?.constant = 0
         }
-        if trailing {
-            stackViewTrailingConstraint?.constant = 0
+        if direction.trailing {
+            stackViewTrailingLayoutConstraint?.constant = 0
         }
+    }
+    
+    func setBleedViewConstraint(direction: (top: Bool, bottom: Bool, leading: Bool, trailing: Bool), with padding: CGFloat) {
+        bleedViewLeadingLayoutConstraint?.constant = direction.leading ? -padding : 0
+        bleedViewTopLayoutConstraint?.constant = direction.top ? -padding : 0
+        bleedViewTrailingLayoutConstraint?.constant = direction.trailing ? padding : 0
+        bleedViewBottomLayoutConstraint?.constant = direction.bottom ? padding : 0
+        
+        guard let leading = bleedViewLeadingLayoutConstraint, let trailing = bleedViewTrailingLayoutConstraint, let top = bleedViewTopLayoutConstraint, let bottom = bleedViewBottomLayoutConstraint else { return }
+        NSLayoutConstraint.activate([leading, trailing, top, bottom])
     }
     
     func setCustomSpacing(spacing: CGFloat, after view: NSView) {
@@ -396,21 +429,28 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
     
     /// This method can be overridden, but not to be called from anywhere
     func setupConstraints() {
-        stackViewLeadingConstraint = stackView.leadingAnchor.constraint(equalTo: leadingAnchor)
-        stackViewTrailingConstraint = stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        stackViewTopConstraint = stackView.topAnchor.constraint(equalTo: topAnchor)
-        stackViewBottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        // StackView constraint
+        stackViewLeadingLayoutConstraint = stackView.leadingAnchor.constraint(equalTo: leadingAnchor)
+        stackViewTopLayoutConstraint = stackView.topAnchor.constraint(equalTo: topAnchor)
+        stackViewTrailingLayoutConstraint = stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        stackViewBottomLayoutConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         
-        guard let leading = stackViewLeadingConstraint, let trailing = stackViewTrailingConstraint, let top = stackViewTopConstraint, let bottom = stackViewBottomConstraint else { return }
+        // BleedView constraint
+        bleedViewLeadingLayoutConstraint = bleedView.leadingAnchor.constraint(equalTo: leadingAnchor)
+        bleedViewTopLayoutConstraint = bleedView.topAnchor.constraint(equalTo: topAnchor)
+        bleedViewTrailingLayoutConstraint = bleedView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        bleedViewBottomLayoutConstraint = bleedView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        
+        guard let leading = stackViewLeadingLayoutConstraint, let trailing = stackViewTrailingLayoutConstraint, let top = stackViewTopLayoutConstraint, let bottom = stackViewBottomLayoutConstraint else { return }
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
         stackView.setContentHuggingPriority(.defaultLow, for: .vertical)
     }
     
     /// This method can be overridden, but not to be called from anywhere
     func anchorBottomConstraint(with anchor: NSLayoutAnchor<NSLayoutYAxisAnchor>) {
-        stackViewBottomConstraint?.isActive = false
-        stackViewBottomConstraint = stackView.bottomAnchor.constraint(equalTo: anchor)
-        stackViewBottomConstraint?.isActive = true
+        stackViewBottomLayoutConstraint?.isActive = false
+        stackViewBottomLayoutConstraint = stackView.bottomAnchor.constraint(equalTo: anchor)
+        stackViewBottomLayoutConstraint?.isActive = true
     }
     
     /// This methid can be overridden. super implementation must be called
@@ -454,16 +494,6 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
             inputHandlingViewShouldShowError(inputView)
         }
         setInputLabel(isHidden: false, for: inputView)
-    }
-    
-    // MARK: Mouse Events and SelectAction logics
-    private var previousBackgroundColor: CGColor?
-    override func mouseEntered(with event: NSEvent) {
-        guard target != nil else { return }
-        previousBackgroundColor = layer?.backgroundColor
-        layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
-        // Added a pointing hand here
-        self.setCursorType(cursor: .pointingHand)
     }
     
     /// set the cursor type while the image hovering and the select action is active
@@ -530,9 +560,24 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         inputLabelField?.isHidden = hidden
     }
     
+    // MARK: Mouse Events and SelectAction logics
+    private var previousBackgroundColor: CGColor?
+    
+    override func mouseEntered(with event: NSEvent) {
+        guard target != nil else { return }
+        previousBackgroundColor = layer?.backgroundColor
+        layer?.backgroundColor = ColorUtils.hoverColorOnMouseEnter().cgColor
+        // bleedView
+        bleedView.layer?.backgroundColor = self.layer?.backgroundColor
+        // Added a pointing hand here
+        self.setCursorType(cursor: .pointingHand)
+    }
+    
     override func mouseExited(with event: NSEvent) {
         guard target != nil else { return }
         layer?.backgroundColor = previousBackgroundColor ?? .clear
+        // bleedView
+        bleedView.layer?.backgroundColor = self.layer?.backgroundColor
         // Back to the system cursor
         self.setCursorType(cursor: .current)
     }
