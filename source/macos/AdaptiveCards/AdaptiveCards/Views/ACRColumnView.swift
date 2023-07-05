@@ -167,14 +167,14 @@ class ACRColumnView: ACRContentStackView {
         }
     }
     
-    func bleedBackgroundImage(direction: (top: Bool, bottom: Bool, leading: Bool, trailing: Bool), with padding: CGFloat) {
+    func bleedBackgroundImage(direction: ACRBleedValue, with padding: CGFloat) {
         backgroundImageViewTopConstraint.constant = direction.top ? -padding : 0
         backgroundImageViewTrailingConstraint.constant = direction.trailing ? padding : 0
         backgroundImageViewLeadingConstraint.constant = direction.leading ? -padding : 0
         backgroundImageViewBottomConstraint.constant = direction.bottom ?  padding : 0
     }
     
-    override func setBleedViewConstraint(direction: (top: Bool, bottom: Bool, leading: Bool, trailing: Bool), with padding: CGFloat) {
+    override func setBleedViewConstraint(direction: ACRBleedValue, with padding: CGFloat) {
         // adding this below collectionView backgroundImage view
         addSubview(bleedView, positioned: .below, relativeTo: self.backgroundImageView)
         super.setBleedViewConstraint(direction: direction, with: padding)

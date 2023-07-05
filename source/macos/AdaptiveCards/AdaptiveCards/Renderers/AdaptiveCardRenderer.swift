@@ -86,8 +86,8 @@ class AdaptiveCardRenderer {
             rootView.setupBackgroundImageProperties(backgroundImage)
             let padding = CGFloat(truncating: hostConfig.getSpacing()?.paddingSpacing ?? 0)
             // bleed view setup
-            rootView.setBleedViewConstraint(direction: (true, true, true, true), with: padding)
-            rootView.bleedBackgroundImage(direction: (true, true, true, true), with: padding)
+            rootView.setBleedViewConstraint(direction: ACRBleedValue(top: true, bottom: true, leading: true, trailing: true), with: padding)
+            rootView.bleedBackgroundImage(direction: ACRBleedValue(top: true, bottom: true, leading: true, trailing: true), with: padding)
             rootView.registerImageHandlingView(rootView.backgroundImageView, for: url)
         }
         

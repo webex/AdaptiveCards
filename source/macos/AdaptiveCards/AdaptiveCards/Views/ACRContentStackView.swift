@@ -208,7 +208,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         stackViewBottomLayoutConstraint?.constant = -padding
     }
     
-    func setStackViewConstraint(direction: (top: Bool, bottom: Bool, leading: Bool, trailing: Bool)) {
+    func setStackViewConstraint(direction: ACRBleedValue) {
         if direction.top {
             stackViewTopLayoutConstraint?.constant = 0
         }
@@ -223,7 +223,7 @@ class ACRContentStackView: NSView, ACRContentHoldingViewProtocol, SelectActionHa
         }
     }
     
-    func setBleedViewConstraint(direction: (top: Bool, bottom: Bool, leading: Bool, trailing: Bool), with padding: CGFloat) {
+    func setBleedViewConstraint(direction: ACRBleedValue, with padding: CGFloat) {
         bleedViewLeadingLayoutConstraint?.constant = direction.leading ? -padding : 0
         bleedViewTopLayoutConstraint?.constant = direction.top ? -padding : 0
         bleedViewTrailingLayoutConstraint?.constant = direction.trailing ? padding : 0
