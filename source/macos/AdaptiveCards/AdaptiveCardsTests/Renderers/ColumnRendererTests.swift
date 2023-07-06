@@ -63,6 +63,36 @@ class ColumnRendererTests: XCTestCase {
         XCTAssertEqual(columnView.arrangedSubviews.count, 2)
     }
     
+    func testBleedView() {
+        let backgroundImage = FakeBackgroundImage.make(url: "https://picsum.photos/200", fillMode: .cover)
+        hostConfig = .make(spacing: ACSSpacingConfig.init(smallSpacing: 4, defaultSpacing: 6, mediumSpacing: 8, largeSpacing: 10, extraLargeSpacing: 14, paddingSpacing: 12))
+        
+        let column = FakeColumn.make(bleed: true, backgroundImage: backgroundImage, padding: true)
+        let columnView = renderColumnView(column)
+        
+        XCTAssertFalse(columnView.bleedViewTopLayoutConstraint?.isActive ?? true)
+        XCTAssertFalse(columnView.bleedViewBottomLayoutConstraint?.isActive ?? true)
+        XCTAssertFalse(columnView.bleedViewLeadingLayoutConstraint?.isActive ?? true)
+        XCTAssertFalse(columnView.bleedViewTrailingLayoutConstraint?.isActive ?? true)
+        
+        BaseCardElementRenderer.shared.configBleed(for: columnView, with: hostConfig, element: column)
+        
+        XCTAssertEqual(columnView.bleedViewTopLayoutConstraint?.constant, -12)
+        XCTAssertEqual(columnView.bleedViewBottomLayoutConstraint?.constant, 12)
+        XCTAssertEqual(columnView.bleedViewLeadingLayoutConstraint?.constant, -12)
+        XCTAssertEqual(columnView.bleedViewTrailingLayoutConstraint?.constant, 12)
+        
+        XCTAssertEqual(columnView.backgroundImageViewTopConstraint.constant, -12)
+        XCTAssertEqual(columnView.backgroundImageViewBottomConstraint.constant, 12)
+        XCTAssertEqual(columnView.backgroundImageViewLeadingConstraint.constant, -12)
+        XCTAssertEqual(columnView.backgroundImageViewTrailingConstraint.constant, 12)
+        
+        XCTAssertEqual(columnView.stackViewTopLayoutConstraint?.constant, 0)
+        XCTAssertEqual(columnView.stackViewBottomLayoutConstraint?.constant, 0)
+        XCTAssertEqual(columnView.stackViewLeadingLayoutConstraint?.constant, 0)
+        XCTAssertEqual(columnView.stackViewTrailingLayoutConstraint?.constant, 0)
+    }
+    
     func testSelectActionTargetIsSet() {
         var columnView: ACRColumnView!
         

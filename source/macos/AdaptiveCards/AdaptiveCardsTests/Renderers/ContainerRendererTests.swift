@@ -37,6 +37,36 @@ class ContainerRendererTests: XCTestCase {
         XCTAssertEqual(rootStretchView.stackView.arrangedSubviews.first?.contentHuggingPriority(for: .vertical), kFillerViewLayoutConstraintPriority)
     }
     
+    func testBleedView() {
+        let backgroundImage = FakeBackgroundImage.make(url: "https://picsum.photos/200", fillMode: .cover)
+        hostConfig = .make(spacing: ACSSpacingConfig.init(smallSpacing: 4, defaultSpacing: 6, mediumSpacing: 8, largeSpacing: 10, extraLargeSpacing: 14, paddingSpacing: 12))
+        
+        let container = FakeContainer.make(bleed: true, backgroundImage: backgroundImage, padding: true)
+        let containerView = renderContainerView(container)
+        
+        XCTAssertFalse(containerView.bleedViewTopLayoutConstraint?.isActive ?? true)
+        XCTAssertFalse(containerView.bleedViewBottomLayoutConstraint?.isActive ?? true)
+        XCTAssertFalse(containerView.bleedViewLeadingLayoutConstraint?.isActive ?? true)
+        XCTAssertFalse(containerView.bleedViewTrailingLayoutConstraint?.isActive ?? true)
+        
+        BaseCardElementRenderer.shared.configBleed(for: containerView, with: hostConfig, element: container)
+        
+        XCTAssertEqual(containerView.bleedViewTopLayoutConstraint?.constant, -12)
+        XCTAssertEqual(containerView.bleedViewBottomLayoutConstraint?.constant, 12)
+        XCTAssertEqual(containerView.bleedViewLeadingLayoutConstraint?.constant, -12)
+        XCTAssertEqual(containerView.bleedViewTrailingLayoutConstraint?.constant, 12)
+        
+        XCTAssertEqual(containerView.backgroundImageViewTopConstraint.constant, -12)
+        XCTAssertEqual(containerView.backgroundImageViewBottomConstraint.constant, 12)
+        XCTAssertEqual(containerView.backgroundImageViewLeadingConstraint.constant, -12)
+        XCTAssertEqual(containerView.backgroundImageViewTrailingConstraint.constant, 12)
+        
+        XCTAssertEqual(containerView.stackViewTopLayoutConstraint?.constant, 0)
+        XCTAssertEqual(containerView.stackViewBottomLayoutConstraint?.constant, 0)
+        XCTAssertEqual(containerView.stackViewLeadingLayoutConstraint?.constant, 0)
+        XCTAssertEqual(containerView.stackViewTrailingLayoutConstraint?.constant, 0)
+    }
+    
     func testRendererSetsVerticalContentAlignment() {
         var container = FakeContainer.make(verticalContentAlignment: .top, items: [FakeTextBlock.make()])
         // Removing this since we don't need subviews to have padding to have explicit width

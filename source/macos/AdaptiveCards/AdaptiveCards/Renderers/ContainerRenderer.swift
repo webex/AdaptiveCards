@@ -31,7 +31,7 @@ class ContainerRenderer: BaseCardElementRendererProtocol {
             let renderer = RendererManager.shared.renderer(for: element.getType())
             let view = renderer.render(element: element, with: hostConfig, style: container.getStyle(), rootView: rootView, parentView: containerView, inputs: [], config: config)
             BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: view, element: element, parentView: containerView, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
-            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: containerView, with: hostConfig, element: element, parentElement: container)
+            BaseCardElementRenderer.shared.configBleed(for: view, with: hostConfig, element: element)
         }
 
         containerView.configureLayoutAndVisibility(minHeight: container.getMinHeight())

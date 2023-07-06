@@ -63,6 +63,30 @@ class ColumnSetRendererTests: XCTestCase {
         XCTAssertEqual(columnSetView.distribution, .fill)
     }
     
+    func testBleedView() {
+        hostConfig = .make(spacing: ACSSpacingConfig.init(smallSpacing: 4, defaultSpacing: 6, mediumSpacing: 8, largeSpacing: 10, extraLargeSpacing: 14, paddingSpacing: 12))
+        columnSet = .make(columns: [FakeColumn.make(), FakeColumn.make()], bleed: true, padding: true)
+        
+        let columnSetView = renderColumnSetView()
+        
+        XCTAssertFalse(columnSetView.bleedViewTopLayoutConstraint?.isActive ?? true)
+        XCTAssertFalse(columnSetView.bleedViewBottomLayoutConstraint?.isActive ?? true)
+        XCTAssertFalse(columnSetView.bleedViewLeadingLayoutConstraint?.isActive ?? true)
+        XCTAssertFalse(columnSetView.bleedViewTrailingLayoutConstraint?.isActive ?? true)
+        
+        BaseCardElementRenderer.shared.configBleed(for: columnSetView, with: hostConfig, element: columnSet)
+        
+        XCTAssertEqual(columnSetView.bleedViewTopLayoutConstraint?.constant, -12)
+        XCTAssertEqual(columnSetView.bleedViewBottomLayoutConstraint?.constant, 12)
+        XCTAssertEqual(columnSetView.bleedViewLeadingLayoutConstraint?.constant, -12)
+        XCTAssertEqual(columnSetView.bleedViewTrailingLayoutConstraint?.constant, 12)
+        
+        XCTAssertEqual(columnSetView.stackViewTopLayoutConstraint?.constant, 0)
+        XCTAssertEqual(columnSetView.stackViewBottomLayoutConstraint?.constant, 0)
+        XCTAssertEqual(columnSetView.stackViewLeadingLayoutConstraint?.constant, 0)
+        XCTAssertEqual(columnSetView.stackViewTrailingLayoutConstraint?.constant, 0)
+    }
+    
     func testDefaultOrientation() {
         let columnStackView = renderColumnSetView()
         XCTAssertEqual(columnStackView.orientation, .horizontal)

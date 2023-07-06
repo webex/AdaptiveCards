@@ -63,7 +63,7 @@ class AdaptiveCardRenderer {
             let renderer = RendererManager.shared.renderer(for: element.getType())
             let view = renderer.render(element: element, with: hostConfig, style: style, rootView: rootView, parentView: rootView, inputs: [], config: config)
             BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: view, element: element, parentView: rootView, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
-            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: rootView, with: hostConfig, element: element, parentElement: nil)
+            BaseCardElementRenderer.shared.configBleed(for: view, with: hostConfig, element: element)
         }
         
         if !card.getActions().isEmpty {
@@ -85,6 +85,10 @@ class AdaptiveCardRenderer {
         
         if let backgroundImage = card.getBackgroundImage(), let url = backgroundImage.getUrl() {
             rootView.setupBackgroundImageProperties(backgroundImage)
+            let padding = CGFloat(truncating: hostConfig.getSpacing()?.paddingSpacing ?? 0)
+            // bleed view setup
+            rootView.setBleedViewConstraint(direction: ACRBleedValue(top: true, bottom: true, leading: true, trailing: true), with: padding)
+            rootView.bleedBackgroundImage(direction: ACRBleedValue(top: true, bottom: true, leading: true, trailing: true), with: padding)
             rootView.registerImageHandlingView(rootView.backgroundImageView, for: url)
         }
         

@@ -43,6 +43,14 @@ class FakeContainer: ACSContainer {
         bleed = value
     }
     
+    override func getCanBleed() -> Bool {
+        return true
+    }
+    
+    override func getBleedDirection() -> ACSContainerBleedDirection {
+        return .bleedAll
+    }
+    
     open override func getBackgroundImage() -> ACSBackgroundImage? {
         return backgroundImage
     }

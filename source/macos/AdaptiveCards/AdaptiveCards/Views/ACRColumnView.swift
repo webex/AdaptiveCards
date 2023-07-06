@@ -48,10 +48,10 @@ class ACRColumnView: ACRContentStackView {
     }
     
     private lazy var widthConstraint = widthAnchor.constraint(equalToConstant: Constants.minWidth)
-    private lazy var backgroundImageViewBottomConstraint = backgroundImageView.bottomAnchor.constraint(equalTo: bottomAnchor)
-    private lazy var backgroundImageViewTopConstraint = backgroundImageView.topAnchor.constraint(equalTo: topAnchor)
-    private lazy var backgroundImageViewLeadingConstraint = backgroundImageView.leadingAnchor.constraint(equalTo: leadingAnchor)
-    private lazy var backgroundImageViewTrailingConstraint = backgroundImageView.trailingAnchor.constraint(equalTo: trailingAnchor)
+    private (set) lazy var backgroundImageViewBottomConstraint = backgroundImageView.bottomAnchor.constraint(equalTo: bottomAnchor)
+    private (set) lazy var backgroundImageViewTopConstraint = backgroundImageView.topAnchor.constraint(equalTo: topAnchor)
+    private (set) lazy var backgroundImageViewLeadingConstraint = backgroundImageView.leadingAnchor.constraint(equalTo: leadingAnchor)
+    private (set) lazy var backgroundImageViewTrailingConstraint = backgroundImageView.trailingAnchor.constraint(equalTo: trailingAnchor)
     
     private (set) var columnWidth: ColumnWidth = .weighted(1)
     private (set) lazy var minWidthConstraint: NSLayoutConstraint = {
@@ -63,6 +63,7 @@ class ACRColumnView: ACRContentStackView {
     private (set) lazy var backgroundImageView: ACRBackgroundImageView = {
         let view = ACRBackgroundImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
         return view
     }()
     
@@ -127,6 +128,7 @@ class ACRColumnView: ACRContentStackView {
     }
     
     func setupBackgroundImageProperties(_ properties: ACSBackgroundImage) {
+        backgroundImageView.isHidden = false
         backgroundImageView.fillMode = properties.getFillMode()
         backgroundImageView.horizontalAlignment = properties.getHorizontalAlignment()
         backgroundImageView.verticalAlignment = properties.getVerticalAlignment()
@@ -174,12 +176,16 @@ class ACRColumnView: ACRContentStackView {
         }
     }
     
-    func bleedBackgroundImage(padding: CGFloat, top: Bool, bottom: Bool, leading: Bool, trailing: Bool, paddingBottom: CGFloat, with anchor: NSLayoutAnchor<NSLayoutYAxisAnchor>) {
-        backgroundImageViewTopConstraint.constant = top ? -padding : 0
-        backgroundImageViewTrailingConstraint.constant = trailing ? padding : 0
-        backgroundImageViewLeadingConstraint.constant = leading ? -padding : 0
-        backgroundImageViewBottomConstraint.isActive = false
-        backgroundImageViewBottomConstraint = backgroundImageView.bottomAnchor.constraint(equalTo: anchor, constant: bottom ?  padding : 0)
-        backgroundImageViewBottomConstraint.isActive = true
+    func bleedBackgroundImage(direction: ACRBleedValue, with padding: CGFloat) {
+        backgroundImageViewTopConstraint.constant = direction.top ? -padding : 0
+        backgroundImageViewTrailingConstraint.constant = direction.trailing ? padding : 0
+        backgroundImageViewLeadingConstraint.constant = direction.leading ? -padding : 0
+        backgroundImageViewBottomConstraint.constant = direction.bottom ?  padding : 0
+    }
+    
+    override func setBleedViewConstraint(direction: ACRBleedValue, with padding: CGFloat) {
+        // adding this below collectionView backgroundImage view
+        addSubview(bleedView, positioned: .below, relativeTo: self.backgroundImageView)
+        super.setBleedViewConstraint(direction: direction, with: padding)
     }
 }
