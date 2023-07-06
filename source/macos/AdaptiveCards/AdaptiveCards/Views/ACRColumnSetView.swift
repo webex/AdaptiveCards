@@ -85,4 +85,10 @@ class ACRColumnSetView: ACRContentStackView {
         self.applyVisibilityToSubviews()
         self.setMinimumHeight(minHeight)
     }
+    
+    override func setBleedViewConstraint(direction: ACRBleedValue, with padding: CGFloat) {
+        // adding this below stackView
+        addSubview(bleedView, positioned: .below, relativeTo: self.stackView)
+        super.setBleedViewConstraint(direction: direction, with: padding)
+    }
 }

@@ -82,6 +82,14 @@ class FakeColumn: ACSColumn {
         bleed = value
     }
     
+    override func getCanBleed() -> Bool {
+        return true
+    }
+    
+    override func getBleedDirection() -> ACSContainerBleedDirection {
+        return .bleedAll
+    }
+    
     override func getSpacing() -> ACSSpacing {
         return spacing
     }
@@ -131,6 +139,7 @@ extension FakeColumn {
         fakeColumn.verticalContentAlignment = verticalContentAlignment
         fakeColumn.minHeight = minHeight
         fakeColumn.bleed = bleed
+        fakeColumn.padding = padding
         fakeColumn.spacing = spacing
         fakeColumn.height = height
         fakeColumn.separator = separator

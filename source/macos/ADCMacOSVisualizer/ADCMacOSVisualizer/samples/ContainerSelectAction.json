@@ -185,7 +185,8 @@
                 "data": {
                     "info": "My submit action data"
                 }
-            }
+            },
+            "bleed": true
         },
         {
             "type": "TextBlock",
@@ -224,7 +225,8 @@
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    "bleed": true
                 },
                 {
                     "type": "Column",

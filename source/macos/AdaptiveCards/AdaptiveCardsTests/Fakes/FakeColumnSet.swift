@@ -12,7 +12,6 @@ class FakeColumnSet: ACSColumnSet {
     var height: ACSHeightType = .auto
     var type: ACSCardElementType = .columnSet
     var bleed: Bool = false
-    var backgroundImage: ACSBackgroundImage?
     var separator: Bool = false
     var visible: Bool = true
     
@@ -60,6 +59,10 @@ class FakeColumnSet: ACSColumnSet {
         return padding
     }
     
+    override func setPadding(_ value: Bool) {
+        padding = value
+    }
+    
     override func getMinHeight() -> NSNumber? {
         return minHeight
     }
@@ -84,12 +87,12 @@ class FakeColumnSet: ACSColumnSet {
         bleed = value
     }
     
-    open override func getBackgroundImage() -> ACSBackgroundImage? {
-        return backgroundImage
+    override func getCanBleed() -> Bool {
+        return true
     }
     
-    open override func setBackgroundImage(_ value: ACSBackgroundImage?) {
-        backgroundImage = value
+    override func getBleedDirection() -> ACSContainerBleedDirection {
+        return .bleedAll
     }
     
     override func getSeparator() -> Bool {
@@ -99,10 +102,14 @@ class FakeColumnSet: ACSColumnSet {
     override func getIsVisible() -> Bool {
         return visible
     }
+    
+    override func getBackgroundImage() -> ACSBackgroundImage? {
+        return nil
+    }
 }
 
 extension FakeColumnSet {
-    static func make(columns: [ACSColumn] = [], style: ACSContainerStyle = .default, selectAction: ACSBaseActionElement? = nil, horizontalAlignment: ACSHorizontalAlignment = .left, padding: Bool = false, heightType: ACSHeightType = .auto) -> FakeColumnSet {
+    static func make(columns: [ACSColumn] = [], style: ACSContainerStyle = .default, selectAction: ACSBaseActionElement? = nil, horizontalAlignment: ACSHorizontalAlignment = .left, bleed: Bool = false, padding: Bool = false, heightType: ACSHeightType = .auto) -> FakeColumnSet {
        let fakeColumnSet = FakeColumnSet()
         fakeColumnSet.columns = columns
         fakeColumnSet.style = style
@@ -110,6 +117,7 @@ extension FakeColumnSet {
         fakeColumnSet.horizontalAlignment = horizontalAlignment
         fakeColumnSet.padding = padding
         fakeColumnSet.height = heightType
+        fakeColumnSet.bleed = bleed
         return fakeColumnSet
     }
 }

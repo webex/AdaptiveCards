@@ -32,7 +32,7 @@ class ColumnRenderer: BaseCardElementRendererProtocol {
             let view = renderer.render(element: element, with: hostConfig, style: style, rootView: rootView, parentView: columnView, inputs: [], config: config)
             columnView.configureColumnProperties(for: view)
             BaseCardElementRenderer.shared.updateLayoutForSeparatorAndAlignment(view: view, element: element, parentView: columnView, rootView: rootView, style: style, hostConfig: hostConfig, config: config, isfirstElement: isFirstElement)
-            BaseCardElementRenderer.shared.configBleed(collectionView: view, parentView: columnView, with: hostConfig, element: element, parentElement: column)
+            BaseCardElementRenderer.shared.configBleed(for: view, with: hostConfig, element: element)
         }
         
         columnView.configureLayoutAndVisibility(minHeight: column.getMinHeight())
