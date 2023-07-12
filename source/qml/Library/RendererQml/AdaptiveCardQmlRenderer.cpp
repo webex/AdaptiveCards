@@ -226,8 +226,19 @@ namespace RendererQml
 
 		if (card->GetMinHeight() > 0)
 		{
-			rectangle->Property("Layout.minimumHeight", std::to_string(cardMinHeight));
+            columnLayout->Property("height", Formatter() << "Math.max(" << std::to_string(card->GetMinHeight()) << ", " << rectangle->GetId() << ".height + " << tempMargin << ")");
 		}
+
+        switch (card->GetVerticalContentAlignment())
+        {
+            case AdaptiveCards::VerticalContentAlignment::Top:
+                rectangle->Property("Layout.alignment", "Qt.AlignTop");
+                break;
+            case AdaptiveCards::VerticalContentAlignment::Bottom:
+                rectangle->Property("Layout.alignment", "Qt.AlignBottom");
+                break;
+        }
+        uiCard->Property("Layout.preferredHeight", Formatter() << columnLayout->GetId() << ".height");
 
         //Add submit onclick event
         addSubmitActionButtonClickFunc(context);
