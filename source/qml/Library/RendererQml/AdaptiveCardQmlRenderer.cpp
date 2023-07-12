@@ -226,7 +226,7 @@ namespace RendererQml
 
 		if (card->GetMinHeight() > 0)
 		{
-            columnLayout->Property("height", Formatter() << "Math.max(" << std::to_string(card->GetMinHeight()) << ", " << rectangle->GetId() << ".height)");
+            columnLayout->Property("height", Formatter() << "Math.max(" << std::to_string(card->GetMinHeight()) << ", " << rectangle->GetId() << ".height + " << tempMargin << ")");
 		}
 
         switch (card->GetVerticalContentAlignment())
