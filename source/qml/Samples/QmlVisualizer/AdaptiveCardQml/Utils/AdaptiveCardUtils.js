@@ -156,66 +156,32 @@ function onSelectionChanged(buttonGroup, isMultiSelect) {
     return values;
 }
 
-
-function generateStretchHeight(childrens,minHeight){
-    var n = childrens.length
-    var implicitHt = 0;
+function generateStretchHeight(children, parentMinHeight) {
     var stretchCount = 0;
-    var stretchMinHeight = 0;
-    for(var i=0;i<childrens.length;i++)
+    var heightConsumed = 0;
+    for(var i=0;i<children.length;i++)
     {
-        if(typeof childrens[i].seperator !== 'undefined')
+        if(children[i].seperator)
         {
-            implicitHt += childrens[i].height;
-            stretchMinHeight += childrens[i].height;
+            heightConsumed += children[i].height;
         }
         else
         {
-            implicitHt += childrens[i].implicitHeight;
-            if(typeof childrens[i].stretch !== 'undefined')
+            heightConsumed += children[i].implicitHeight;
+            if(children[i].stretch)
             {
                 stretchCount++;
             }
-            else
-            {
-                stretchMinHeight += childrens[i].implicitHeight;
-            }
         }
     }
-    stretchMinHeight = (minHeight - stretchMinHeight)/stretchCount
-    for(i=0;(i<childrens.length);i++)
-    {
-        if(typeof childrens[i].seperator === 'undefined')
-        {
-            if(typeof childrens[i].stretch !== 'undefined' && typeof childrens[i].minHeight !== 'undefined')
-            {
-                childrens[i].minHeight = Math.max(childrens[i].minHeight,stretchMinHeight)
-            }
-        }
-    }
-    if(stretchCount > 0 && implicitHt < minHeight)
-    {
-        var stretctHeight = (minHeight - implicitHt)/stretchCount
-        for(i=0;i<childrens.length;i++)
-        {
-            if(typeof childrens[i].seperator === 'undefined')
-            {
-                if(typeof childrens[i].stretch !== 'undefined')
-                {
-                    childrens[i].height = childrens[i].implicitHeight + stretctHeight
-                }
-            }
-        }
-    }
-    else
-    {
-        for(i=0;i<childrens.length;i++)
-        {
-            if(typeof childrens[i].seperator === 'undefined')
-            {
-                if(typeof childrens[i].stretch !== 'undefined')
-                {
-                    childrens[i].height = childrens[i].implicitHeight
+
+    if (stretchCount > 0) {
+        var stretchHeightToBeAdded = (parentMinHeight - heightConsumed)/stretchCount
+
+        for (i = 0; i < children.length; i++) {
+            if (!children[i].seperator) {
+                if (children[i].stretch) {
+                    children[i].height = children[i].implicitHeight + (stretchHeightToBeAdded > 0 ? stretchHeightToBeAdded : 0)
                 }
             }
         }
@@ -223,7 +189,7 @@ function generateStretchHeight(childrens,minHeight){
 }
 
 function generateStretchWidth(childrens,width){
-    var implicitWid = 0
+    var widthConsumed = 0
     var autoWid = 0
     var autoCount = 0
     var weightSum = 0
@@ -233,14 +199,14 @@ function generateStretchWidth(childrens,width){
     {
         if(typeof childrens[i].seperator !== 'undefined')
         {
-            implicitWid += childrens[i].width
+            widthConsumed += childrens[i].width
         }
         else
         {
             if(childrens[i].widthProperty.endsWith("px"))
             {
                 childrens[i].width = parseInt(childrens[i].widthProperty.slice(0,-2))
-                implicitWid += childrens[i].width
+                widthConsumed += childrens[i].width
             }
             else
             {
@@ -251,7 +217,7 @@ function generateStretchWidth(childrens,width){
                 else if(childrens[i].widthProperty === "stretch")
                 {
                     stretchCount++
-                    implicitWid += 50;
+                    widthConsumed += 50;
                 }
                 else
                 {
@@ -261,8 +227,8 @@ function generateStretchWidth(childrens,width){
             }
         }
     }
-    autoWid = (width - implicitWid)/(weightPresent + autoCount)
-    var flags = new Array(childrens.length).fill(0)
+    autoWid = (width - widthConsumed)/(weightPresent + autoCount)
+    var autoWidthAssigned = new Array(childrens.length).fill(0)
     for(i=0;i<childrens.length;i++)
     {
         if(typeof childrens[i].seperator === 'undefined')
@@ -272,10 +238,10 @@ function generateStretchWidth(childrens,width){
                 if(childrens[i].minWidth < autoWid)
                 {
                     childrens[i].width = childrens[i].minWidth
-                    implicitWid += childrens[i].width
-                    flags[i] = 1;
+                    widthConsumed += childrens[i].width
+                    autoWidthAssigned[i] = 1;
                     autoCount--;
-                    autoWid = (width - implicitWid)/(weightPresent + autoCount)
+                    autoWid = (width - widthConsumed)/(weightPresent + autoCount)
                 }
             }
         }
@@ -286,10 +252,10 @@ function generateStretchWidth(childrens,width){
         {
             if(childrens[i].widthProperty === "auto")
             {
-                if(flags[i] === 0)
+                if(autoWidthAssigned[i] === 0)
                 {
                     childrens[i].width = autoWid
-                    implicitWid += childrens[i].width
+                    widthConsumed += childrens[i].width
                 }
             }
             else if(childrens[i].widthProperty !== "stretch" && !childrens[i].widthProperty.endsWith("px"))
@@ -297,12 +263,12 @@ function generateStretchWidth(childrens,width){
                 if(weightSum !== 0)
                 {
                     childrens[i].width = ((parseInt(childrens[i].widthProperty)/weightSum) * autoWid)
-                    implicitWid += childrens[i].width
+                    widthConsumed += childrens[i].width
                 }
             }
         }
     }
-    var stretchWidth = (width - implicitWid)/stretchCount
+    var stretchWidth = (width - widthConsumed)/stretchCount
     for(i=0;i<childrens.length;i++)
     {
         if(typeof childrens[i].seperator === 'undefined')
