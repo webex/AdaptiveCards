@@ -97,7 +97,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
     
     // This method set boolen True When user click on the hyperlink in the text.
     override func clicked(onLink link: Any, at charIndex: Int) {
-        super.clicked(onLink: link, at: charIndex)
+        self.openLinkCallBack?((link as? URL)?.absoluteString ?? "")
         if elementType == .choiceInput {
             clickOnLink = true
         }

@@ -12,7 +12,7 @@ class TextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         let textView = ACRTextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.openLinkCallBack = { [weak rootView] urlAddress in
-            rootView?.handleOpenURLAction(urlString: urlAddress)
+            rootView?.handleOpenURLAction(urlString: urlAddress, actionView: textView)
         }
         
         let markdownResult = BridgeTextUtils.processText(from: textBlock, hostConfig: hostConfig)

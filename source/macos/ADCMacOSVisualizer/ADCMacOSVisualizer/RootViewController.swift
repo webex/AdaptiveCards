@@ -262,6 +262,10 @@ class RootViewController: NSViewController, NSTableViewDelegate, NSTableViewData
 }
 
 extension RootViewController: AdaptiveCardActionDelegate {
+    func adaptiveCard(_ adaptiveCard: NSView, didActionWith event: AdaptiveCards.CardActionEvent, from source: AdaptiveCards.CardActionSource) {
+        print("ACTION : source \(source) action \(event)")
+    }
+    
     func adaptiveCard(_ adaptiveCard: NSView, didUpdateBoundsFrom oldValue: NSRect, to newValue: NSRect) {
         print("LAYOUT CHANGE: Height changed from \(oldValue.height) to \(newValue.height)")
     }

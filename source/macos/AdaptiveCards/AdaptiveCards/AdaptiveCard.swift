@@ -6,6 +6,7 @@ public protocol AdaptiveCardActionDelegate: AnyObject {
     func adaptiveCard(_ adaptiveCard: NSView, didSubmitUserResponses dict: [String: Any], actionView: NSView)
     func adaptiveCard(_ adaptiveCard: NSView, didShowCardWith actionView: NSView, previousHeight: CGFloat, newHeight: CGFloat)
     func adaptiveCard(_ adaptiveCard: NSView, didUpdateBoundsFrom oldValue: NSRect, to newValue: NSRect)
+    func adaptiveCard(_ adaptiveCard: NSView, didActionWith event: CardActionEvent, from source: CardActionSource)
 }
 
 public protocol AdaptiveCardResourceResolver: AnyObject {
@@ -16,6 +17,13 @@ public protocol AdaptiveCardResourceResolver: AnyObject {
 
 enum HostConfigParseError: Error {
     case resultIsNil, configIsNil
+}
+
+public enum CardActionEvent {
+    case openurl, submit, toggle, showcard
+}
+public enum CardActionSource {
+    case adaptivecard, container, columnset, column, text, image, button
 }
 
 open class AdaptiveCard {
