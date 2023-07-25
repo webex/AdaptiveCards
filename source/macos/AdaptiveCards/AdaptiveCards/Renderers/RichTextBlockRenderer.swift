@@ -87,7 +87,7 @@ class RichTextBlockRenderer: NSObject, BaseCardElementRendererProtocol {
         textView.textContainer?.lineBreakMode = .byTruncatingTail
         textView.setAttributedString(str: content)
         textView.openLinkCallBack = { [weak rootView] urlAddress in
-            rootView?.handleOpenURLAction(urlString: urlAddress)
+            rootView?.handleOpenURLAction(urlString: urlAddress, actionView: textView)
         }
         textView.textContainer?.widthTracksTextView = true
         

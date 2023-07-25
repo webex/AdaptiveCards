@@ -150,7 +150,7 @@ class ACRActionSetViewTests: XCTestCase {
 private class FakeActionSetViewDelegate: ACRActionSetViewDelegate {
     var isOpenURLCalled = false
     var calledURL: String?
-    func actionSetView(_ view: AdaptiveCards.ACRActionSetView, didOpenURL urlString: String) {
+    func actionSetView(_ view: AdaptiveCards.ACRActionSetView, didOpenURL urlString: String, with actionView: NSView) {
         isOpenURLCalled = true
         calledURL = urlString
     }

@@ -201,21 +201,46 @@ class ACRView: ACRColumnView {
         facadeArray.removeAll()
         self.accessibilityContext?.recalculateKeyViewLoop()
     }
+    
+    private func sendActionEvent(action: CardActionEvent, from sourceView: NSView) {
+        var source: CardActionSource = .button
+        if sourceView is ACRView {
+            source = .adaptivecard
+        } else if sourceView is ACRContainerView {
+            source = .container
+        } else if sourceView is ACRColumnSetView {
+            source = .columnset
+        } else if sourceView is ACRColumnView {
+            source = .column
+        } else if sourceView is ACRImageWrappingView {
+            source = .image
+        } else if sourceView is ACRButton {
+            source = .button
+        } else if sourceView is ACRActionSetView {
+            source = .button
+        } else if sourceView is ACRTextView {
+            source = .text
+        }
+        delegate?.adaptiveCard(self, didActionWith: action, from: source)
+    }
 }
 
 extension ACRView: ACRActionSetViewDelegate {
-    func actionSetView(_ view: ACRActionSetView, didOpenURL urlString: String) {
+    func actionSetView(_ view: ACRActionSetView, didOpenURL urlString: String, with actionView: NSView) {
         delegate?.adaptiveCard(self, didSelectOpenURL: urlString)
+        sendActionEvent(action: .openurl, from: actionView)
     }
     
     func actionSetView(_ view: ACRActionSetView, didSubmitInputsWith actionView: NSView, dataJson: String?, associatedInputs: Bool) {
         submitCardInputs(actionView: actionView, dataJSON: dataJson, associatedInputs: associatedInputs)
+        sendActionEvent(action: .submit, from: actionView)
     }
     
     func actionSetView(_ view: ACRActionSetView, didToggleVisibilityActionWith actionView: NSView, toggleTargets: [ACSToggleVisibilityTarget]) {
         refocusedActionElementView = actionView
         needsLayoutRefocus = true
         toggleVisibity(of: toggleTargets)
+        sendActionEvent(action: .toggle, from: actionView)
     }
     
     func actionSetView(_ view: ACRActionSetView, willShowCardWith button: NSButton) {
@@ -225,6 +250,7 @@ extension ACRView: ACRActionSetViewDelegate {
             refocusedActionElementView = buttonCell.controlView
             needsLayoutRefocus = true
         }
+        sendActionEvent(action: .showcard, from: button)
     }
     
     func actionSetView(_ view: ACRActionSetView, didShowCardWith button: NSButton) {
@@ -245,14 +271,17 @@ extension ACRView: TargetHandlerDelegate {
         refocusedActionElementView = actionView
         needsLayoutRefocus = true
         toggleVisibity(of: toggleTargets)
+        sendActionEvent(action: .toggle, from: actionView)
     }
     
-    func handleOpenURLAction(urlString: String) {
+    func handleOpenURLAction(urlString: String, actionView: NSView) {
         delegate?.adaptiveCard(self, didSelectOpenURL: urlString)
+        sendActionEvent(action: .openurl, from: actionView)
     }
     
     func handleSubmitAction(actionView: NSView, dataJson: String?, associatedInputs: Bool) {
         submitCardInputs(actionView: actionView, dataJSON: dataJson, associatedInputs: associatedInputs)
+        sendActionEvent(action: .submit, from: actionView)
     }
 }
 
