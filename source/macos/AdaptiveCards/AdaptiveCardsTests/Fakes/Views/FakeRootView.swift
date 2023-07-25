@@ -33,6 +33,7 @@ class FakeResourceResolver: AdaptiveCardResourceResolver {
 }
 
 class FakeAdaptiveCardActionDelegate: AdaptiveCardActionDelegate {
+    
     var calledURL: String?
     func adaptiveCard(_ adaptiveCard: NSView, didSelectOpenURL urlString: String) {
         calledURL = urlString
@@ -49,6 +50,7 @@ class FakeAdaptiveCardActionDelegate: AdaptiveCardActionDelegate {
     
     func adaptiveCard(_ adaptiveCard: NSView, didUpdateBoundsFrom oldValue: NSRect, to newValue: NSRect) { }
     func adaptiveCard(_ adaptiveCard: NSView, didShowCardWith actionView: NSView, previousHeight: CGFloat, newHeight: CGFloat) { }
+    func adaptiveCard(_ adaptiveCard: NSView, didActionWith event: AdaptiveCards.CardActionEvent, from source: AdaptiveCards.CardActionSource) { }
 }
 
 class FakeTargetHandlerDelegate: ShowCardTargetHandlerDelegate {
@@ -60,7 +62,7 @@ class FakeTargetHandlerDelegate: ShowCardTargetHandlerDelegate {
     }
     
     var calledURL: String?
-    func handleOpenURLAction(urlString: String) {
+    func handleOpenURLAction(urlString: String, actionView: NSView) {
         calledURL = urlString
     }
     
