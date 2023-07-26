@@ -32,12 +32,12 @@ void NumberInputElement::initialize()
 
     if (mInput->GetValue().has_value())
     {
-        mNumberInputQmlElement->Property("_value", RendererQml::Formatter() << mInput->GetValue().value());
+        mNumberInputQmlElement->Property("_value", std::to_string(mInput->GetValue().value()));
         mNumberInputQmlElement->Property("_hasDefaultValue", "true");
     }
 
-    mNumberInputQmlElement->Property("_minValue", RendererQml::Formatter() << mInput->GetMin().value_or(-DBL_MAX));
-    mNumberInputQmlElement->Property("_maxValue", RendererQml::Formatter() << mInput->GetMax().value_or(DBL_MAX));
+    mNumberInputQmlElement->Property("_minValue", std::to_string(mInput->GetMin().value_or(-DBL_MAX)));
+    mNumberInputQmlElement->Property("_maxValue", std::to_string(mInput->GetMax().value_or(DBL_MAX)));
 
 
     if (mInput->GetIsRequired() || mInput->GetMin().has_value() || mInput->GetMax().has_value())
