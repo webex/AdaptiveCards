@@ -240,10 +240,7 @@ namespace RendererQml
         }
         uiCard->Property("Layout.preferredHeight", Formatter() << columnLayout->GetId() << ".height");
 
-        //Add submit onclick event
-        addSubmitActionButtonClickFunc(context);
         addShowCardLoaderComponents(context);
-        addTextRunSelectActions(context);
 
         uiCard->Property("property var requiredElements", "[]");
         auto requiredElementsList = context->getRequiredInputElementsIdList();
@@ -480,25 +477,27 @@ namespace RendererQml
             mouseArea->Property("onActiveFocusChanged", "handleBgColor()");
             mouseArea->Property("cursorShape", "Qt.PointingHandCursor");
 
-            std::string onClickedFunction;
+            std::ostringstream onClickedFunction;
+            std::string selectActionId;
+            onClickedFunction << "{";
             if (selectAction->GetElementTypeString() == "Action.OpenUrl")
             {
-                onClickedFunction = getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(selectAction), context);
-                mouseArea->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}");
+                const auto paramStr = getActionData(context, selectAction, selectActionId);
+                onClickedFunction << "adaptiveCard.buttonClicked('" << paramStr << "', 'Action.OpenUrl', '" << selectActionId << "')";
             }
             else if (selectAction->GetElementTypeString() == "Action.ToggleVisibility")
             {
-                onClickedFunction = getActionToggleVisibilityClickFunc(std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(selectAction), context);
-                mouseArea->Property("onClicked", Formatter() << "{\n" << onClickedFunction << "}");
+                mouseArea->Property("property var toggleVisibilityTarget", getActionData(context, selectAction, selectActionId));
+                onClickedFunction << "AdaptiveCardUtils.handleToggleVisibilityAction(toggleVisibilityTarget)";
             }
             else if (selectAction->GetElementTypeString() == "Action.Submit")
             {
-                context->addToSubmitActionButtonList(mouseArea, std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(selectAction));
+                const auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(selectAction);
+                mouseArea->Property("property string paramStr", getActionData(context, selectAction, selectActionId));
+                onClickedFunction << "AdaptiveCardUtils.handleSubmitAction(paramStr, adaptiveCard, " << (submitAction->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto ? "true" : "false") << ")";
             }
-            else
-            {
-                onClickedFunction = "";
-            }
+            onClickedFunction << "}";
+            mouseArea->Property("onClicked", onClickedFunction.str());
             mouseArea->Property("Keys.onPressed", Formatter() << "{if (event.key === Qt.Key_Return || event.key === Qt.Key_Space){ " << mouseAreaId << ".clicked( " << mouseAreaId << ".mouseX)}}");
             mouseArea->Property("activeFocusOnTab", "true");
             mouseArea->Property("z", "1");
@@ -509,32 +508,6 @@ namespace RendererQml
 
             mouseArea->AddChild(customFocusItem);
             parent->AddChild(mouseArea);
-        }
-    }
-
-    void AdaptiveCardQmlRenderer::addTextRunSelectActions(const std::shared_ptr<AdaptiveRenderContext>& context)
-    {
-        if (context->GetConfig()->GetSupportsInteractivity())
-        {
-            for (const auto& textRunElement : context->getTextRunSelectActionList())
-            {
-                std::ostringstream onLinkActivated;
-                for (const auto& action : textRunElement.second)
-                {
-                    onLinkActivated << "if(link === '" << action.first << "'){\n";
-
-                    if (action.second->GetElementTypeString() == "Action.OpenUrl")
-                    {
-                        onLinkActivated << getActionOpenUrlClickFunc(std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(action.second), context);
-                    }
-                    else if (action.second->GetElementTypeString() == "Action.Submit")
-                    {
-                        onLinkActivated << getActionSubmitClickFunc(std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(action.second), context, textRunElement.first->GetElement());
-                    }
-                    onLinkActivated << "return;\n}\n";
-                }
-                textRunElement.first->Property("onLinkActivated", Formatter() << "{\n" << onLinkActivated.str() << "}");
-            }
         }
     }
 
@@ -1586,19 +1559,6 @@ namespace RendererQml
 
     }
 
-    void AdaptiveCardQmlRenderer::addSubmitActionButtonClickFunc(const std::shared_ptr<AdaptiveRenderContext>& context)
-    {
-        for (auto& element : context->getSubmitActionButtonList())
-        {
-            std::string onReleasedFunction;
-            const auto buttonElement = element.first;
-            const auto action = element.second;
-
-            onReleasedFunction = getActionSubmitClickFunc(action, context, buttonElement->GetElement());
-            buttonElement->Property((buttonElement->GetElement() == "MouseArea" ? "onClicked" : "onReleased"), Formatter() << "{\n" << onReleasedFunction << "}\n");
-        }
-    }
-
     void AdaptiveCardQmlRenderer::addShowCardButtonClickFunc(const std::shared_ptr<AdaptiveRenderContext>& context)
     {
         for (auto& element : context->getShowCardButtonList())
@@ -1659,18 +1619,6 @@ namespace RendererQml
         }
     }
 
-    const std::string AdaptiveCardQmlRenderer::getActionOpenUrlClickFunc(const std::shared_ptr<AdaptiveCards::OpenUrlAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
-    {
-        // Sample signal to emit on click
-        //adaptiveCard.buttonClick(var title, var type, var data);
-        //adaptiveCard.buttonClick("title", "Action.OpenUrl", "https://adaptivecards.io");
-        std::ostringstream function;
-        function << context->getCardRootId() << ".buttonClicked(String.raw`" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "`, \"" << action->GetElementTypeString() << "\", \"" << action->GetUrl() << "\");\n";
-        function << "\nconsole.log(\"" << action->GetUrl() << "\");\n";
-
-        return function.str();
-    }
-
 	const std::string AdaptiveCardQmlRenderer::getActionShowCardClickFunc(const std::shared_ptr<QmlTag>& buttonElement, const std::shared_ptr<AdaptiveRenderContext>& context)
 	{
 		std::ostringstream function;
@@ -1690,115 +1638,6 @@ namespace RendererQml
 		function << "\n" << buttonElement->GetId() << "_loader.visible = " << buttonElement->GetId() << ".showCard";
 		return function.str();
 	}
-
-	const std::string AdaptiveCardQmlRenderer::getActionSubmitClickFunc(const std::shared_ptr<AdaptiveCards::SubmitAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context, std::string elementType)
-    {
-        // Sample signal to emit on click
-        //adaptiveCard.buttonClick(var title, var type, var data);
-        //adaptiveCard.buttonClick("title", "Action.Submit", "{"x":13,"firstName":"text1","lastName":"text2"}");
-        std::ostringstream function;
-
-        std::string submitDataJson = action->GetDataJson();
-        submitDataJson = Utils::Trim(submitDataJson);
-
-        function << "var paramJson = {};\n";
-
-        function << (elementType == "Button" ? "if (!isButtonDisabled) \n{\n" : "");
-
-        if (!submitDataJson.empty() && submitDataJson != "null")
-        {
-            if (submitDataJson.front() == '{' && submitDataJson.back() == '}')
-            {
-                function << "var parmStr = String.raw`" << Utils::getBackQuoteEscapedString(submitDataJson) << "`;";
-                function << "paramJson = JSON.parse(parmStr);\n";
-            }
-            else
-            {
-                function << "paramJson[\"data\"] = " << submitDataJson << ";\n";
-            }
-        }
-
-
-        if (action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
-        {
-            std::string requiredElements = "var requiredElements = [";
-            std::string lastElement = context->getRequiredInputElementsIdList().size() > 0 ? *(context->getRequiredInputElementsIdList().rbegin()) : "";
-
-            for (const auto& element : context->getRequiredInputElementsIdList())
-            {
-                requiredElements += element;
-                if (element != lastElement)
-                {
-                    requiredElements += ",";
-                }
-            }
-
-            requiredElements += "];";
-
-            function << requiredElements << "var firstElement = undefined; var isNotSubmittable = false;";
-            function << "for(var i=0;i<requiredElements.length;i++){"
-                "requiredElements[i].showErrorMessage = requiredElements[i].validate();"
-                "isNotSubmittable |= requiredElements[i].showErrorMessage;"
-                "if (firstElement === undefined && requiredElements[i].showErrorMessage  && requiredElements[i].visible){"
-                "firstElement = requiredElements[i];"
-                "}}";
-
-            function << "if(isNotSubmittable){"
-                "if(firstElement !== undefined){"
-                "if(firstElement.isButtonGroup !== undefined){"
-                    "firstElement.focusFirstButton();"
-                "}else {"
-                    "firstElement.forceActiveFocus();"
-                "}}"
-                "}else{";
-
-            for (const auto& element : context->getInputElementList())
-            {
-                function << "paramJson[\"" << element.first << "\"] = " << element.second << ";\n";
-            }
-        }
-
-        function << "var paramslist = JSON.stringify(paramJson);\n";
-        function << context->getCardRootId() << ".buttonClicked(String.raw`" << Utils::getBackQuoteEscapedString(action->GetTitle()) << "`, \"" << action->GetElementTypeString() << "\", paramslist);\n";
-        function << (elementType == "Button" ? "isButtonDisabled = true;}" : "");
-
-        if (action->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto)
-        {
-            function << "}";
-        }
-
-        return function.str();
-    }
-
-	const std::string AdaptiveCardQmlRenderer::getActionToggleVisibilityClickFunc(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& action, const std::shared_ptr<AdaptiveRenderContext>& context)
-	{
-		std::ostringstream function;
-
-		for (const auto& targetElement : action->GetTargetElements())
-		{
-			std::string targetElementId;
-
-			if (targetElement != nullptr)
-			{
-				targetElementId = context->ConvertToValidId(targetElement->GetElementId());
-
-				switch (targetElement->GetIsVisible())
-				{
-				case AdaptiveCards::IsVisible::IsVisibleTrue:
-					function << targetElementId << ".visible = true";
-					break;
-				case AdaptiveCards::IsVisible::IsVisibleFalse:
-					function << targetElementId << ".visible = false";
-					break;
-				default:
-					function << targetElementId << ".visible = !" << targetElementId << ".visible ";
-				}
-			}
-			function << "\n";
-		}
-
-		return function.str();
-  }
 
     const std::string AdaptiveCardQmlRenderer::getActionToggleVisibilityObject(const std::shared_ptr<AdaptiveCards::ToggleVisibilityAction>& toggleVisibilityAction, const std::shared_ptr<AdaptiveRenderContext>& context)
     {
@@ -2149,73 +1988,6 @@ namespace RendererQml
         return uiFrame;
 	}
 
-    std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetIconTag(std::shared_ptr<AdaptiveRenderContext> context)
-    {
-        auto iconBackgroundTag = std::make_shared<QmlTag>("Rectangle");
-        iconBackgroundTag->Property("color", context->GetRGBColor(context->GetConfig()->GetContainerStyles().defaultPalette.backgroundColor));
-        iconBackgroundTag->Property("width", "parent.width");
-        iconBackgroundTag->Property("height", "parent.height");
-
-        auto iconTag = std::make_shared<QmlTag>("Button");
-        iconTag->Property("background", iconBackgroundTag->ToString());
-        iconTag->Property("width", "30");
-        iconTag->Property("anchors.top", "parent.top");
-        iconTag->Property("anchors.bottom", "parent.bottom");
-        iconTag->Property("anchors.right", "parent.right");
-        iconTag->Property("anchors.margins", "2");
-        iconTag->Property("horizontalPadding", "4");
-        iconTag->Property("verticalPadding", "4");
-        iconTag->Property("icon.width", "18");
-        iconTag->Property("icon.height", "18");
-        iconTag->Property("focusPolicy", "Qt.NoFocus");
-        iconTag->Property("icon.color", context->GetColor(AdaptiveCards::ForegroundColor::Default, false, false));
-        return iconTag;
-    }
-
-	std::shared_ptr<QmlTag> AdaptiveCardQmlRenderer::GetTextBlockMouseArea(std::string id, bool isButton)
-	{
-		auto MouseAreaTag = std::make_shared<QmlTag>("MouseArea");
-		MouseAreaTag->Property("anchors.fill", "parent");
-        MouseAreaTag->Property("hoverEnabled", "true");
-        MouseAreaTag->Property("preventStealing", "true");
-        MouseAreaTag->Property("id", Formatter() << id << "_mouseArea");
-        MouseAreaTag->Property("cursorShape", "parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor;");
-        MouseAreaTag->Property("acceptedButtons", "Qt.RightButton | Qt.LeftButton");
-
-        std::string buttonClickFunction = "";
-        if (isButton)
-        {
-            buttonClickFunction = Formatter() << "if (!parent.linkAt(mouse.x, mouse.y)) { " << id << ".onButtonClicked();}";
-        }
-
-        std::string onPressed = Formatter() << "onPressed : {"
-            << "mouse.accepted = false;"
-            << "const mouseGlobal = mapToGlobal(mouseX, mouseY);"
-            << "const posAtMessage = mapToItem(adaptiveCard, mouse.x, mouse.y);"
-            << "if (mouse.button === Qt.RightButton){"
-            << "openContextMenu(mouseGlobal, " << id << ".selectedText, parent.linkAt(mouse.x, mouse.y));mouse.accepted = true;}"
-            << "else if (mouse.button === Qt.LeftButton){"
-            << "parent.cursorPosition = parent.positionAt(posAtMessage.x, posAtMessage.y);"
-            << "parent.forceActiveFocus();"
-            << (isButton ? buttonClickFunction : "") << "}}";
-
-        std::string onPositionChanged = Formatter() << "onPositionChanged : {"
-            << "const mouseGlobal = mapToGlobal(mouse.x, mouse.y);"
-            << "if (mouse.buttons & Qt.LeftButton)parent.moveCursorSelection(parent.positionAt(mouse.x, mouse.y));"
-            << "var link = parent.linkAt(mouse.x, mouse.y);"
-            << "adaptiveCard.showToolTipifNeeded(link, mouseGlobal);"
-            << "if (link){cursorShape = Qt.PointingHandCursor;}"
-            << "else{cursorShape = Qt.IBeamCursor;}"
-            << "mouse.accepted = true;}";
-
-        MouseAreaTag->AddFunctions(onPressed);
-        MouseAreaTag->AddFunctions(onPositionChanged);
-
-		return MouseAreaTag;
-	}
-
-
-
 	void AdaptiveCardQmlRenderer::ValidateLastBodyElementIsShowCard(const std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>>& bodyElements, std::shared_ptr<AdaptiveRenderContext> context)
 	{
 		if (bodyElements.empty())
@@ -2276,34 +2048,6 @@ namespace RendererQml
 		return value;
 	}
 
-    std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetClearIconButton(std::shared_ptr<AdaptiveRenderContext> context)
-    {
-        auto iconConfig = context->GetRenderConfig()->getInputTextConfig();
-
-        auto backgroundTag = std::make_shared<QmlTag>("Rectangle");
-        backgroundTag->Property("color", "'transparent'");
-
-        auto clearIcon = GetIconTag(context);
-
-        clearIcon->RemoveProperty("anchors.bottom");
-        clearIcon->RemoveProperty("anchors.top");
-        clearIcon->RemoveProperty("anchors.left");
-        clearIcon->RemoveProperty("focusPolicy");
-        clearIcon->Property("anchors.verticalCenter", "parent.verticalCenter");
-        clearIcon->Property("anchors.margins", Formatter() << iconConfig.clearIconHorizontalPadding);
-        clearIcon->Property("width", Formatter() << iconConfig.clearIconSize);
-        clearIcon->Property("horizontalPadding", "0");
-        clearIcon->Property("verticalPadding", "0");
-        clearIcon->Property("icon.width", Formatter() << iconConfig.clearIconSize);
-        clearIcon->Property("icon.height", Formatter() << iconConfig.clearIconSize);
-        clearIcon->Property("icon.color", Formatter() << "activeFocus ? " << context->GetHexColor(iconConfig.clearIconColorOnFocus) << " : " << context->GetHexColor(iconConfig.clearIconColorNormal));
-        clearIcon->Property("icon.source", RendererQml::cancel_icon_10, true);
-        clearIcon->Property("background", backgroundTag->ToString());
-        clearIcon->Property("Keys.onReturnPressed", "onClicked()");
-
-        return clearIcon;
-    }
-
     const std::string RendererQml::AdaptiveCardQmlRenderer::GetImagePath(std::shared_ptr<AdaptiveRenderContext> context, const std::string url)
     {
         if (url.rfind("data:image", 0) == 0)
@@ -2343,17 +2087,6 @@ namespace RendererQml
         uiCard->AddChild(rightRectangle);
 
         return uiCard;
-    }
-
-    std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetStretchRectangle(std::shared_ptr<QmlTag> element)
-    {
-        auto stretchRectangle = std::make_shared<QmlTag>("Rectangle");
-        stretchRectangle->Property("height", "parent.height");
-        stretchRectangle->Property("width", "parent.width");
-        stretchRectangle->Property("color", "transparent", true);
-        stretchRectangle->AddChild(element);
-
-        return stretchRectangle;
     }
 
     std::shared_ptr<QmlTag> RendererQml::AdaptiveCardQmlRenderer::GetOpacityMask(std::string parentId)
