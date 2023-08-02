@@ -53,7 +53,7 @@ namespace RendererQml
                 }
             }
 
-            throw std::invalid_argument(Formatter() << "Unable to locate renderer for " << type.name());
+            return nullptr;
         }
 
     private:
