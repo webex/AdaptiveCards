@@ -145,7 +145,7 @@ class ACRActionSetView: NSView, ShowCardHandlingView {
 
         var accumulatedWidth: CGFloat = 0
         var horStackView = NSStackView()
-        let gravityArea: NSStackView.Gravity = horizontalAlignment == .centerY ? .center: (horizontalAlignment == .trailing ? .trailing: .leading)
+        let gravityArea: NSStackView.Gravity = horizontalAlignment == .centerY ? .center : (horizontalAlignment == .trailing ? .trailing : .leading)
         stackView.orientation = .vertical
 
         for index in 0..<actions.count {
