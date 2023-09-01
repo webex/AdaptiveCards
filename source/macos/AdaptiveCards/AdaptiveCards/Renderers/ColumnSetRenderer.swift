@@ -123,7 +123,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
     
     private func updateColumnSetSeparatorAndAlignment(columnView: NSView, column: ACSColumn, columnSetView: ACRContentStackView, rootView: ACRView, columnSet: ACSColumnSet, isfirstElement: Bool, hostConfig: ACSHostConfig) {
         guard let columnView = columnView as? ACRColumnView else { return }
-        let gravityArea: NSStackView.Gravity = columnSet.getHorizontalAlignment() == .center ? .center: (columnSet.getHorizontalAlignment() == .right ? .trailing: .leading)
+        let gravityArea: NSStackView.Gravity = columnSet.getHorizontalAlignment() == .center ? .center : (columnSet.getHorizontalAlignment() == .right ? .trailing : .leading)
         var separator: SpacingView?
         if !isfirstElement {
             // For seperator and spacing

@@ -70,8 +70,8 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
                 choiceButton.buttonValue = choice.getValue()
                 previousButton = choiceButton
             }
-            choiceButton.buttonLabelField.openLinkCallBack = { [weak rootView] urlAddress in
-                rootView?.handleOpenURLAction(urlString: urlAddress, actionView: choiceButton.buttonLabelField)
+            choiceButton.buttonLabelField.openLinkCallBack = { urlAddress in
+                URLUtils.open(urlAddress)
             }
             addChoiceButton(choiceButton)
         }

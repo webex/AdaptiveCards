@@ -110,10 +110,8 @@ class ImageUtils {
         }
         
         // remove old constraint to avoid dublicates
-        for constraint in imageView.constraints {
-            if ImageViewConstraint(rawValue: constraint.identifier ?? "") != nil {
-                NSLayoutConstraint.deactivate([constraint])
-            }
+        for constraint in imageView.constraints where ImageViewConstraint(rawValue: constraint.identifier ?? "") != nil {
+            NSLayoutConstraint.deactivate([constraint])
         }
         NSLayoutConstraint.activate(constraints)
         superView.update(imageProperties: imageProperties)

@@ -247,3 +247,4 @@ public struct LocalisedStringConfig {
         self.errorMessagePrefixString = errorMessagePrefixString
     }
 }
+// swiftlint:enable identifier_name

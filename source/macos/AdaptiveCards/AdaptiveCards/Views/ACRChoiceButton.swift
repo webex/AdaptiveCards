@@ -230,7 +230,7 @@ class ACRChoiceButton: NSView, NSTextFieldDelegate, InputHandlingViewProtocol {
     }
     
     var value: String {
-        return (state == .on ? valueOn: valueOff) ?? ""
+        return (state == .on ? valueOn : valueOff) ?? ""
     }
     
     var key: String {

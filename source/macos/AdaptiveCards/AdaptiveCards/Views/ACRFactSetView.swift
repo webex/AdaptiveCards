@@ -112,12 +112,12 @@ class ACRFactSetView: NSView {
             let titleView = ACRTextView(asFactSetFieldWith: config.hyperlinkColorConfig)
             let valueView = ACRTextView(asFactSetFieldWith: config.hyperlinkColorConfig)
             
-            titleView.openLinkCallBack = { [weak rootView] urlAddress in
-                rootView?.handleOpenURLAction(urlString: urlAddress, actionView: titleView)
+            titleView.openLinkCallBack = { urlAddress in
+                URLUtils.open(urlAddress)
             }
             
-            valueView.openLinkCallBack = { [weak rootView] urlAddress in
-                rootView?.handleOpenURLAction(urlString: urlAddress, actionView: valueView)
+            valueView.openLinkCallBack = { urlAddress in
+                URLUtils.open(urlAddress)
             }
             
             // If not markdown use plain text

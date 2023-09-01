@@ -180,7 +180,7 @@ class ACRColumnView: ACRContentStackView {
         backgroundImageViewTopConstraint.constant = direction.top ? -padding : 0
         backgroundImageViewTrailingConstraint.constant = direction.trailing ? padding : 0
         backgroundImageViewLeadingConstraint.constant = direction.leading ? -padding : 0
-        backgroundImageViewBottomConstraint.constant = direction.bottom ?  padding : 0
+        backgroundImageViewBottomConstraint.constant = direction.bottom ? padding : 0
     }
     
     override func setBleedViewConstraint(direction: ACRBleedValue, with padding: CGFloat) {

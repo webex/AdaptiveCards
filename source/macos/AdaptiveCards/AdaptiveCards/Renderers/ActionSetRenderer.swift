@@ -17,7 +17,7 @@ class ActionSetRenderer: NSObject, BaseCardElementRendererProtocol {
         // vertical card are always stretched to fill full width
         let actionHorizontalAlignment: ACSHorizontalAlignment
         switch hostConfig.getActions()?.actionAlignment {
-        case .left : actionHorizontalAlignment = .left
+        case .left: actionHorizontalAlignment = .left
         case .center: actionHorizontalAlignment = .center
         case .right: actionHorizontalAlignment = .right
         default: actionHorizontalAlignment = .left
