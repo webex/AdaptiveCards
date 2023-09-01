@@ -209,7 +209,7 @@ class ACRTextView: NSTextView, SelectActionHandlingProtocol {
         let attrString = self.attributedString()
         let fullTextRange = NSRange(location: 0, length: attrString.length)
         
-        attrString.enumerateAttributes(in: fullTextRange) {(keyValue, range: NSRange, _ : UnsafeMutablePointer<ObjCBool>) -> Void in
+        attrString.enumerateAttributes(in: fullTextRange) {(keyValue, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
             if let linkStr = keyValue[.link] as? String {
                 updateLinkTextAttributes(range: range, attrString: attrString, target: nil, linkAddr: linkStr)
             }

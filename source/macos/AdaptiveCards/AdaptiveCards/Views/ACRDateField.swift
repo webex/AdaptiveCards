@@ -198,7 +198,7 @@ class ACRDateField: NSView {
     private func setupAccessibility() {
         setAccessibilityElement(true)
         setAccessibilityValue(config.supportsSchemeV1_3 ? nil : value)
-        setAccessibilityRoleDescription(isTimeMode  ? config.localisedStringConfig.timePickerFieldAccessibilityRoleDescription : config.localisedStringConfig.datePickerFieldAccessibilityRoleDescription)
+        setAccessibilityRoleDescription(isTimeMode ? config.localisedStringConfig.timePickerFieldAccessibilityRoleDescription : config.localisedStringConfig.datePickerFieldAccessibilityRoleDescription)
     }
     
     override func mouseDown(with event: NSEvent) {

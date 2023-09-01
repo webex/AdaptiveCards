@@ -284,6 +284,17 @@ class TextUtils {
     }
 }
 
+class URLUtils {
+    static func open(_ urlString: String) {
+        guard let url = URL(string: urlString) else {
+            return logError("AdaptiveCards: Invalid URL '\(urlString)'")
+        }
+        guard NSWorkspace.shared.open(url) else {
+            return logError("AdaptiveCards: Action failed. '\(urlString)'")
+        }
+    }
+}
+
 class HostConfigUtils {
     static func getSpacing(_ spacing: ACSSpacing, with hostConfig: ACSHostConfig) -> NSNumber {
         let spacingConfig = hostConfig.getSpacing()

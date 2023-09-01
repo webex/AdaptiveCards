@@ -13,12 +13,7 @@ let kFillerViewLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow
 /// This class use for stretchable padding space
 class StretchableView: NSView {
 }
-///
-/// Stretchable maintain with two scenario.
-/// CASE I : when there is no stretchable view inside the NSStackView.
-/// we are add one dummy padding stretchable view to maintain class stretching and hugging. give hugging and stretching constraint to that view.
-/// CASE II : when there is already stretchable view present inside the NSStackView.
-/// give hugging and stretching constraint to that view.
+
 /*
  B = StackView
  A = inside subview
@@ -38,6 +33,12 @@ class StretchableView: NSView {
   +------------------------------+
  */
 
+///
+/// Stretchable maintain with two scenario.
+/// CASE I : when there is no stretchable view inside the NSStackView.
+/// we are add one dummy padding stretchable view to maintain class stretching and hugging. give hugging and stretching constraint to that view.
+/// CASE II : when there is already stretchable view present inside the NSStackView.
+/// give hugging and stretching constraint to that view.
 class ACSFillerSpaceManager {
     private var paddingMap: NSMapTable<NSView, NSMutableArray>
     private var separatorMap: NSMapTable<NSView, NSView>

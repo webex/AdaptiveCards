@@ -526,3 +526,4 @@ open class FlatButton: NSButton, CALayerDelegate {
         positionTitleAndImage()
     }
 }
+// swiftlint:enable all
