@@ -3,7 +3,11 @@
 #pragma once
 
 #include "pch.h"
+#if defined(__APPLE__)
+#include "json.h"
+#else
 #include "json/json.h"
+#endif
 #include "InternalId.h"
 #include "ParseContext.h"
 #include "ParseUtil.h"

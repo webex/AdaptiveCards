@@ -40,7 +40,11 @@
 #endif
 
 #include "Enums.h"
+#if defined(__APPLE__)
+#include "json.h"
+#else
 #include "json/json.h"
+#endif
 
 namespace AdaptiveCards
 {
