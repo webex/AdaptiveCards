@@ -1,6 +1,7 @@
 #ifndef ACSHostConfigParseResult_h
 #define ACSHostConfigParseResult_h
 #import <Foundation/Foundation.h>
+#import <AdaptiveCards_Shared/AdaptiveCards_Shared.h>
 
 #import "ACSHostConfig.h"
 

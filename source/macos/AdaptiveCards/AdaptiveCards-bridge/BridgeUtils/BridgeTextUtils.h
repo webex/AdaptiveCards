@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <AdaptiveCards_Shared/AdaptiveCards_Shared.h>
 
 @class ACSMarkdownParserResult;
 @class ACSTextBlock;
