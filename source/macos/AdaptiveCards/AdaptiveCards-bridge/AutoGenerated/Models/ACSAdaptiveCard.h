@@ -24,6 +24,7 @@ using namespace AdaptiveCards;
 #import "ACSInternalId.h"
 #import "ACSVerticalContentAlignment.h"
 #import "ACSAdaptiveCardParseWarning.h"
+#import "ACSWebexData.h"
 
 
 
@@ -38,6 +39,7 @@ using namespace AdaptiveCards;
 @class ACSRefresh;
 @class ACSRemoteResourceInformation;
 @class ACSAdaptiveCardParseWarning;
+@class ACSWebexData;
 
 enum ACSCardElementType: NSUInteger;
 enum ACSContainerStyle: NSUInteger;
@@ -77,6 +79,8 @@ enum ACSVerticalContentAlignment: NSUInteger;
 - (void)setRtl:(bool)value;
 - (ACSBaseActionElement * _Nullable)getSelectAction;
 - (void)setSelectAction:(ACSBaseActionElement * _Nonnull)action;
+- (ACSWebexData * _Nullable)getWebexData;
+- (void)setWebexData:(ACSWebexData * _Nonnull)data;
 - (NSArray<ACSBaseCardElement *> * _Nonnull)getBody;
 - (NSArray<ACSBaseActionElement *> * _Nonnull)getActions;
 - (NSArray<ACSRemoteResourceInformation *> * _Nonnull)getResourceInformation;

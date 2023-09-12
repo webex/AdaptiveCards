@@ -203,7 +203,9 @@ namespace AdaptiveCards
             {AdaptiveCardSchemaKey::Warning, "warning"},
             {AdaptiveCardSchemaKey::Weight, "weight"},
             {AdaptiveCardSchemaKey::Width, "width"},
-            {AdaptiveCardSchemaKey::Wrap, "wrap"}});
+            {AdaptiveCardSchemaKey::Wrap, "wrap"},
+            {AdaptiveCardSchemaKey::Webex, "webex"},
+            {AdaptiveCardSchemaKey::CardWidth, "cardWidth"}});
 
     DEFINE_ADAPTIVECARD_ENUM(CardElementType, {
             {CardElementType::ActionSet, "ActionSet"},
@@ -244,6 +246,12 @@ namespace AdaptiveCards
     DEFINE_ADAPTIVECARD_ENUM(HeightType, {
             {HeightType::Auto, "Auto"},
             {HeightType::Stretch, "Stretch"}});
+
+    DEFINE_ADAPTIVECARD_ENUM(CardWidth, {
+            {CardWidth::Auto, "Auto"},
+            {CardWidth::Large, "Large"},
+            {CardWidth::Medium, "Medium"},
+            {CardWidth::Short, "Short"}});
 
     DEFINE_ADAPTIVECARD_ENUM(Spacing, {
             {Spacing::Default, "default"},

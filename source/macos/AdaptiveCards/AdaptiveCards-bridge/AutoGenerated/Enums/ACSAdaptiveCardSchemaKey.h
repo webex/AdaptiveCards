@@ -205,7 +205,9 @@ typedef NS_ENUM(NSUInteger, ACSAdaptiveCardSchemaKey) {
     ACSAdaptiveCardSchemaKeyWarning,
     ACSAdaptiveCardSchemaKeyWeight,
     ACSAdaptiveCardSchemaKeyWidth,
-    ACSAdaptiveCardSchemaKeyWrap
+    ACSAdaptiveCardSchemaKeyWrap,
+    ACSAdaptiveCardSchemaKeyWebex,
+    ACSAdaptiveCardSchemaKeyCardWidth
 };
 
 #endif

@@ -410,6 +410,10 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWidth;
     case AdaptiveCards::AdaptiveCardSchemaKey::Wrap:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWrap;
+      case AdaptiveCards::AdaptiveCardSchemaKey::Webex:
+          return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWebex;
+      case AdaptiveCards::AdaptiveCardSchemaKey::CardWidth:
+          return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCardWidth;
   }
 }
 
@@ -814,6 +818,10 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::Width;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWrap:
       return AdaptiveCards::AdaptiveCardSchemaKey::Wrap;
+    case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWebex:
+      return AdaptiveCards::AdaptiveCardSchemaKey::Webex;
+    case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCardWidth:
+      return AdaptiveCards::AdaptiveCardSchemaKey::CardWidth;
   }
 }
 

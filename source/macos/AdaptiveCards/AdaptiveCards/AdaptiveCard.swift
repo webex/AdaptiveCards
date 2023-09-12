@@ -42,13 +42,30 @@ open class AdaptiveCard {
     }
     
     public static func render(card: ACSAdaptiveCard, with hostConfig: ACSHostConfig, width: CGFloat, actionDelegate: AdaptiveCardActionDelegate?, resourceResolver: AdaptiveCardResourceResolver?, config: RenderConfig = .default) -> NSView {
-        return AdaptiveCardRenderer.shared.renderAdaptiveCard(card, with: hostConfig, width: width, config: config, actionDelegate: actionDelegate, resourceResolver: resourceResolver)
+        let webexData = card.getWebexData()
+        
+        return AdaptiveCardRenderer.shared.renderAdaptiveCard(card, with: hostConfig, width: getCardWidth(width: webexData?.getCardWidth() ?? .auto), config: config, actionDelegate: actionDelegate, resourceResolver: resourceResolver)
     }
     
     public static func calculateKeyViewLoop(for card: NSView) {
         guard let card = card as? ACRView else { return }
         card.accessibilityContext?.recalculateKeyViewLoop()
     }
+                                                              
+  public static func getCardWidth(width: ACSCardWidth) -> CGFloat {
+      switch width {
+      case .auto:
+          return 432
+      case .short:
+          return 300
+      case .medium:
+          return 500
+      case .large:
+          return 700
+      @unknown default:
+          return 432
+      }
+  }
 }
 
 public struct RenderConfig {

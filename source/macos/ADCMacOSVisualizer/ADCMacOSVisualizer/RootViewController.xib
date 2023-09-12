@@ -151,7 +151,7 @@
                                     <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wOe-bU-DLU">
                                         <rect key="frame" x="-21" y="504" width="432" height="0.0"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="432" id="kJn-4U-cPM"/>
+                                            <constraint firstAttribute="width" priority="750" constant="432" id="kJn-4U-cPM"/>
                                         </constraints>
                                     </stackView>
                                 </subviews>

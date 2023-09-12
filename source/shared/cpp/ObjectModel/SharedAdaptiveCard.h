@@ -8,6 +8,7 @@
 #include "ParseResult.h"
 #include "Refresh.h"
 #include "Authentication.h"
+#include "WebexData.h"
 
 namespace AdaptiveCards
 {
@@ -109,6 +110,9 @@ public:
 
     std::shared_ptr<BaseActionElement> GetSelectAction() const;
     void SetSelectAction(const std::shared_ptr<BaseActionElement> action);
+    
+    std::shared_ptr<WebexData> GetWebexData() const;
+    void SetWebexData(const std::shared_ptr<WebexData> data);
 
     std::vector<std::shared_ptr<BaseCardElement>>& GetBody();
     const std::vector<std::shared_ptr<BaseCardElement>>& GetBody() const;
@@ -184,5 +188,6 @@ private:
     std::vector<std::shared_ptr<BaseActionElement>> m_actions;
 
     std::shared_ptr<BaseActionElement> m_selectAction;
+    std::shared_ptr<WebexData> m_webexData;
 };
 } // namespace AdaptiveCards

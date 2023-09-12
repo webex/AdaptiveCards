@@ -355,6 +355,13 @@
 		281415F429EEF6200042F0FC /* ACSTableRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415EC29EEF61F0042F0FC /* ACSTableRow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		281415F529EEF6200042F0FC /* ACSTableCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415ED29EEF6200042F0FC /* ACSTableCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		281950432703141500B0D790 /* HostConfigUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281950422703141500B0D790 /* HostConfigUtilsTests.swift */; };
+		2830AC4B2AA85DA7002B4990 /* WebexData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2830AC492AA85DA7002B4990 /* WebexData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2830AC4C2AA85DA7002B4990 /* WebexData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2830AC4A2AA85DA7002B4990 /* WebexData.cpp */; };
+		2830AC4F2AA8941F002B4990 /* ACSWebexData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2830AC4D2AA8941F002B4990 /* ACSWebexData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2830AC502AA8941F002B4990 /* ACSWebexData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2830AC4E2AA8941F002B4990 /* ACSWebexData.mm */; };
+		2830AC542AA89915002B4990 /* ACSCardWidthConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2830AC512AA89915002B4990 /* ACSCardWidthConvertor.mm */; };
+		2830AC552AA89915002B4990 /* ACSCardWidthConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2830AC522AA89915002B4990 /* ACSCardWidthConvertor.h */; };
+		2830AC562AA89915002B4990 /* ACSCardWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = 2830AC532AA89915002B4990 /* ACSCardWidth.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2871B11825DD20A30040AB27 /* FakeTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B11725DD20A30040AB27 /* FakeTextInput.swift */; };
 		2871B11D25DD225C0040AB27 /* ACRMultilineTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2871B11C25DD225C0040AB27 /* ACRMultilineTextView.xib */; };
 		2871B12A25DD27F10040AB27 /* ACRMultilineInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */; };
@@ -1043,6 +1050,13 @@
 		281415EC29EEF61F0042F0FC /* ACSTableRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTableRow.h; sourceTree = "<group>"; };
 		281415ED29EEF6200042F0FC /* ACSTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSTableCell.h; sourceTree = "<group>"; };
 		281950422703141500B0D790 /* HostConfigUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostConfigUtilsTests.swift; sourceTree = "<group>"; };
+		2830AC492AA85DA7002B4990 /* WebexData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebexData.h; path = ../../../shared/cpp/ObjectModel/WebexData.h; sourceTree = "<group>"; };
+		2830AC4A2AA85DA7002B4990 /* WebexData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebexData.cpp; path = ../../../shared/cpp/ObjectModel/WebexData.cpp; sourceTree = "<group>"; };
+		2830AC4D2AA8941F002B4990 /* ACSWebexData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSWebexData.h; sourceTree = "<group>"; };
+		2830AC4E2AA8941F002B4990 /* ACSWebexData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSWebexData.mm; sourceTree = "<group>"; };
+		2830AC512AA89915002B4990 /* ACSCardWidthConvertor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSCardWidthConvertor.mm; sourceTree = "<group>"; };
+		2830AC522AA89915002B4990 /* ACSCardWidthConvertor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSCardWidthConvertor.h; sourceTree = "<group>"; };
+		2830AC532AA89915002B4990 /* ACSCardWidth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSCardWidth.h; sourceTree = "<group>"; };
 		2871B11725DD20A30040AB27 /* FakeTextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeTextInput.swift; sourceTree = "<group>"; };
 		2871B11C25DD225C0040AB27 /* ACRMultilineTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ACRMultilineTextView.xib; sourceTree = "<group>"; };
 		2871B12925DD27F10040AB27 /* ACRMultilineInputTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACRMultilineInputTextView.swift; sourceTree = "<group>"; };
@@ -1561,6 +1575,9 @@
 				083EA7C325C19E0F00DE2BF7 /* ACSVerticalContentAlignmentConvertor.h */,
 				083EA7C425C19E0F00DE2BF7 /* ACSVerticalContentAlignment.h */,
 				083EA7C525C19E0F00DE2BF7 /* ACSHeightTypeConvertor.mm */,
+				2830AC532AA89915002B4990 /* ACSCardWidth.h */,
+				2830AC522AA89915002B4990 /* ACSCardWidthConvertor.h */,
+				2830AC512AA89915002B4990 /* ACSCardWidthConvertor.mm */,
 				083EA7C625C19E0F00DE2BF7 /* ACSActionAlignmentConvertor.h */,
 				083EA7C725C19E0F00DE2BF7 /* ACSFallbackType.h */,
 				083EA7C825C19E0F00DE2BF7 /* ACSWarningStatusCodeConvertor.h */,
@@ -1753,6 +1770,8 @@
 				288E3F4C29C1C23700CF3D93 /* ACSRefresh.mm */,
 				288E3F4A29C1C22D00CF3D93 /* ACSRefresh.h */,
 				288E3F4829C1C14900CF3D93 /* ACSTokenExchangeResource.mm */,
+				2830AC4D2AA8941F002B4990 /* ACSWebexData.h */,
+				2830AC4E2AA8941F002B4990 /* ACSWebexData.mm */,
 				288E3F4629C1C14000CF3D93 /* ACSTokenExchangeResource.h */,
 				288E3F4429C1C04A00CF3D93 /* ACSAuthCardButton.mm */,
 				288E3F4229C1C03D00CF3D93 /* ACSAuthCardButton.h */,
@@ -2024,6 +2043,8 @@
 				28E779772AA5F6C000AFD3DA /* ChoiceInput.h */,
 				28E7797E2AA5F6C000AFD3DA /* ChoicesData.cpp */,
 				28E779882AA5F6C100AFD3DA /* ChoicesData.h */,
+				2830AC4A2AA85DA7002B4990 /* WebexData.cpp */,
+				2830AC492AA85DA7002B4990 /* WebexData.h */,
 				28E779A72AA5F6C200AFD3DA /* ChoiceSetInput.cpp */,
 				28E779902AA5F6C100AFD3DA /* ChoiceSetInput.h */,
 				28E7797B2AA5F6C000AFD3DA /* CollectionCoreElement.cpp */,
@@ -2211,6 +2232,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2830AC562AA89915002B4990 /* ACSCardWidth.h in Headers */,
 				08E4047025B46BDB00C2092A /* AdaptiveCards_bridge.h in Headers */,
 				281415F529EEF6200042F0FC /* ACSTableCell.h in Headers */,
 				281415F229EEF6200042F0FC /* ACSTableColumnDefinition.h in Headers */,
@@ -2295,6 +2317,7 @@
 				083EA8F825C19E1000DE2BF7 /* ACSActionType.h in Headers */,
 				083EA9CE25C19E1000DE2BF7 /* ACSBaseElement.h in Headers */,
 				083EAA0025C19E1000DE2BF7 /* ACSAdaptiveBase64Util.h in Headers */,
+				2830AC4F2AA8941F002B4990 /* ACSWebexData.h in Headers */,
 				083EA9F525C19E1000DE2BF7 /* ACSBaseCardElement.h in Headers */,
 				083EAA0525C19E1000DE2BF7 /* ACSDateTimePreparsedToken.h in Headers */,
 				083EA92E25C19E1000DE2BF7 /* ACSAdaptiveCardSchemaKey.h in Headers */,
@@ -2306,6 +2329,7 @@
 				083EA92925C19E1000DE2BF7 /* ACSContainerStyle.h in Headers */,
 				083EA8EB25C19E1000DE2BF7 /* ACSWarningStatusCode.h in Headers */,
 				083EA93725C19E1000DE2BF7 /* ACSAssociatedInputs.h in Headers */,
+				2830AC552AA89915002B4990 /* ACSCardWidthConvertor.h in Headers */,
 				281415EE29EEF6200042F0FC /* ACSTable.h in Headers */,
 				083EAA0A25C19E1000DE2BF7 /* ACSAdaptiveCardParseException.h in Headers */,
 				288E3FFF29C852AE00CF3D93 /* ACSExecuteAction.h in Headers */,
@@ -2463,6 +2487,7 @@
 				28E77A2D2AA5F6C500AFD3DA /* Image.h in Headers */,
 				28E77A302AA5F6C500AFD3DA /* ParseUtil.h in Headers */,
 				28E77A262AA5F6C500AFD3DA /* ToggleVisibilityTarget.h in Headers */,
+				2830AC4B2AA85DA7002B4990 /* WebexData.h in Headers */,
 				28E77A462AA5F6C500AFD3DA /* UnknownAction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2882,9 +2907,11 @@
 				083EA9A625C19E1000DE2BF7 /* ACSRemoteResourceInformationConvertor.mm in Sources */,
 				083EA9ED25C19E1000DE2BF7 /* ACSDateInput.mm in Sources */,
 				083EA99725C19E1000DE2BF7 /* ACSImageConfig.swift in Sources */,
+				2830AC502AA8941F002B4990 /* ACSWebexData.mm in Sources */,
 				083EA9D925C19E1000DE2BF7 /* ACSActionSet.mm in Sources */,
 				083EA90425C19E1000DE2BF7 /* ACSHeightTypeConvertor.mm in Sources */,
 				083EA9B825C19E1000DE2BF7 /* ACSBaseActionElement.mm in Sources */,
+				2830AC542AA89915002B4990 /* ACSCardWidthConvertor.mm in Sources */,
 				083EA92D25C19E1000DE2BF7 /* ACSInlineElementTypeConvertor.mm in Sources */,
 				083EA9E825C19E1000DE2BF7 /* ACSChoiceSetInput.mm in Sources */,
 				083EA9EE25C19E1000DE2BF7 /* ACSContainer.mm in Sources */,
@@ -3041,6 +3068,7 @@
 				28E77A892AA5F6C500AFD3DA /* TableColumnDefinition.cpp in Sources */,
 				28E77A252AA5F6C500AFD3DA /* ToggleVisibilityAction.cpp in Sources */,
 				28E77A5D2AA5F6C500AFD3DA /* Util.cpp in Sources */,
+				2830AC4C2AA85DA7002B4990 /* WebexData.cpp in Sources */,
 				28E77A742AA5F6C500AFD3DA /* ParseUtil.cpp in Sources */,
 				28E77A102AA5F6C500AFD3DA /* ChoicesData.cpp in Sources */,
 				28E77A422AA5F6C500AFD3DA /* AdaptiveCardParseWarning.cpp in Sources */,

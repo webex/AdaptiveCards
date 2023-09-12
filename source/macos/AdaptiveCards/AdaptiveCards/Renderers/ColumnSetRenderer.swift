@@ -6,7 +6,7 @@ class ColumnSetRenderer: BaseCardElementRendererProtocol {
     
     struct Constants {
         static let kFillColumnViewVerticalLayoutConstraintPriority = NSLayoutConstraint.Priority.defaultLow - 1
-        static let maxCardWidth: CGFloat = 432.0
+        static let maxCardWidth: CGFloat = 700
     }
     
     func render(element: ACSBaseCardElement, with hostConfig: ACSHostConfig, style: ACSContainerStyle, rootView: ACRView, parentView: NSView, inputs: [BaseInputHandler], config: RenderConfig) -> NSView {

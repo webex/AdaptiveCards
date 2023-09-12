@@ -206,6 +206,8 @@ enum class AdaptiveCardSchemaKey
     Weight,
     Width,
     Wrap,
+    Webex,
+    CardWidth,
 };
 DECLARE_ADAPTIVECARD_ENUM(AdaptiveCardSchemaKey);
 
@@ -545,6 +547,15 @@ enum class HeightType
     Stretch
 };
 DECLARE_ADAPTIVECARD_ENUM(HeightType);
+
+enum class CardWidth
+{
+    Auto = 0,
+    Short,
+    Medium,
+    Large
+};
+DECLARE_ADAPTIVECARD_ENUM(CardWidth);
 
 // Important: "Content" below is a placeholder for a JSON value -- we can't perform automatic mapping.
 enum class FallbackType

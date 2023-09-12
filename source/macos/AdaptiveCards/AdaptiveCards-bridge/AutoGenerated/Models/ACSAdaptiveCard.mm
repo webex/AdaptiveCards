@@ -281,6 +281,20 @@
     
 }
 
+- (ACSWebexData * _Nullable)getWebexData
+{
+    auto getWebexDataCpp = mCppObj->GetWebexData();
+    if (getWebexDataCpp)
+        return [[ACSWebexData alloc] initWithWebexData:getWebexDataCpp];
+    return NULL;
+    
+}
+
+- (void)setWebexData:(ACSWebexData * _Nonnull)data
+{
+    // do nothing
+}
+
 - (NSArray<ACSBaseCardElement *> * _Nonnull)getBody
 {
  

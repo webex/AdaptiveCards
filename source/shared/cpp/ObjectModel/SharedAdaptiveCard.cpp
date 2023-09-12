@@ -227,6 +227,7 @@ std::shared_ptr<ParseResult> AdaptiveCard::Deserialize(const Json::Value& json, 
     auto refresh = ParseUtil::DeserializeValue<Refresh>(context, json, AdaptiveCardSchemaKey::Refresh, Refresh::Deserialize);
     auto authentication = ParseUtil::DeserializeValue<Authentication>(
         context, json, AdaptiveCardSchemaKey::Authentication, Authentication::Deserialize);
+    auto webexData = ParseUtil::DeserializeValue<WebexData>(context, json, AdaptiveCardSchemaKey::Webex, WebexData::Deserialize);
 
     ContainerStyle style =
         ParseUtil::GetEnumValue<ContainerStyle>(json, AdaptiveCardSchemaKey::Style, ContainerStyle::None, ContainerStyleFromString);
@@ -254,6 +255,7 @@ std::shared_ptr<ParseResult> AdaptiveCard::Deserialize(const Json::Value& json, 
 
     // Parse optional selectAction
     result->SetSelectAction(ParseUtil::GetAction(context, json, AdaptiveCardSchemaKey::SelectAction, false));
+    result->SetWebexData(webexData);
 
     Json::Value additionalProperties;
     HandleUnknownProperties(json, result->GetKnownProperties(), additionalProperties);
@@ -329,6 +331,10 @@ Json::Value AdaptiveCard::SerializeToJsonValue() const
     {
         root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::VerticalContentAlignment)] =
             VerticalContentAlignmentToString(m_verticalContentAlignment);
+    }
+    if (m_webexData != nullptr && m_webexData->ShouldSerialize())
+    {
+        root[AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Webex)] = m_webexData->SerializeToJsonValue();
     }
 
     if (m_minHeight)
@@ -545,6 +551,16 @@ void AdaptiveCard::SetRtl(const std::optional<bool>& value)
     m_rtl = value;
 }
 
+std::shared_ptr<WebexData> AdaptiveCard::GetWebexData() const
+{
+    return m_webexData;
+}
+
+void AdaptiveCard::SetWebexData(const std::shared_ptr<WebexData> data)
+{
+    m_webexData = data;
+}
+
 void AdaptiveCard::PopulateKnownPropertiesSet()
 {
     m_knownProperties.insert(
@@ -563,7 +579,8 @@ void AdaptiveCard::PopulateKnownPropertiesSet()
          AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Style),
          AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::SelectAction),
          AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Height),
-         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Schema)});
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Schema),
+         AdaptiveCardSchemaKeyToString(AdaptiveCardSchemaKey::Webex)});
 }
 
 const std::unordered_set<std::string>& AdaptiveCard::GetKnownProperties() const
