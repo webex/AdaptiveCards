@@ -15,6 +15,7 @@ class SpacingView: NSView {
         super.init(frame: frameRect)
         translatesAutoresizingMaskIntoConstraints = false
         wantsLayer = true
+        clipsToBounds = true
     }
     
     required init?(coder: NSCoder) {
@@ -32,7 +33,7 @@ class SpacingView: NSView {
         if requestedSpacing == .none {
             return nil
         } else {
-            let separator = SpacingView()
+            let separator = SpacingView(frame: .zero)
             separator.orientation = view.orientation
             let spacing = HostConfigUtils.getSpacing(requestedSpacing, with: config).doubleValue
             separator.spacing = spacing
