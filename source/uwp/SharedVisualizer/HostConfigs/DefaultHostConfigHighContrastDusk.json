@@ -16,7 +16,7 @@
 	"fontFamily": "Segoe UI",
 	"fontTypes": {
 		"default": {
-			"fontFamily": "'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+			"fontFamily": "'Segoe UI', 'sans-serif', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue'",
 			"fontSizes": {
 				"small": 12,
 				"default": 14,
@@ -86,8 +86,8 @@
 					"subtle": "#882E89FC"
 				},
 				"attention": {
-					"default": "#FF0000",
-					"subtle": "#DDFF0000"
+					"default": "#E31B13",
+					"subtle": "#DDE31B13"
 				},
 				"good": {
 					"default": "#028A02",
@@ -112,24 +112,24 @@
 					"subtle": "#66000000"
 				},
 				"light": {
-					"default": "#FFFFFF",
-					"subtle": "#33000000"
+					"default": "#646464",
+					"subtle": "#33646464"
 				},
 				"accent": {
 					"default": "#1F6BF1",
 					"subtle": "#882E89FC"
 				},
 				"attention": {
-					"default": "#cc3300",
-					"subtle": "#DDcc3300"
+					"default": "#C42C07",
+					"subtle": "#DDC42C07"
 				},
 				"good": {
 					"default": "#028A02",
 					"subtle": "#DD027502"
 				},
 				"warning": {
-					"default": "#e69500",
-					"subtle": "#DDe69500"
+					"default": "#935A10",
+					"subtle": "#DD935A10"
 				}
 			}
 		},
@@ -146,24 +146,24 @@
 					"subtle": "#66000000"
 				},
 				"light": {
-					"default": "#FFFFFF",
-					"subtle": "#33000000"
+					"default": "#6E6E6E",
+					"subtle": "#336E6E6E"
 				},
 				"accent": {
 					"default": "#1F6BF1",
 					"subtle": "#882E89FC"
 				},
 				"attention": {
-					"default": "#cc3300",
-					"subtle": "#DDcc3300"
+					"default": "#CC3300",
+					"subtle": "#DDCC3300"
 				},
 				"good": {
 					"default": "#028A02",
 					"subtle": "#DD027502"
 				},
 				"warning": {
-					"default": "#e69500",
-					"subtle": "#DDe69500"
+					"default": "#9A630D",
+					"subtle": "#DD9A630D"
 				}
 			}
 		},
@@ -180,24 +180,24 @@
 					"subtle": "#66000000"
 				},
 				"light": {
-					"default": "#FFFFFF",
-					"subtle": "#33000000"
+					"default": "#5A5A5A",
+					"subtle": "#335A5A5A"
 				},
 				"accent": {
 					"default": "#1F6BF1",
 					"subtle": "#882E89FC"
 				},
 				"attention": {
-					"default": "#cc3300",
-					"subtle": "#DDcc3300"
+					"default": "#A92E0E",
+					"subtle": "#DDA92E0E"
 				},
 				"good": {
 					"default": "#028A02",
 					"subtle": "#DD027502"
 				},
 				"warning": {
-					"default": "#e69500",
-					"subtle": "#DDe69500"
+					"default": "#775502",
+					"subtle": "#DD775502"
 				}
 			}
 		},
@@ -214,24 +214,24 @@
 					"subtle": "#66000000"
 				},
 				"light": {
-					"default": "#FFFFFF",
-					"subtle": "#33000000"
+					"default": "#646464",
+					"subtle": "#33646464"
 				},
 				"accent": {
 					"default": "#1F6BF1",
 					"subtle": "#882E89FC"
 				},
 				"attention": {
-					"default": "#cc3300",
-					"subtle": "#DDcc3300"
+					"default": "#BF3505",
+					"subtle": "#DDBF3505"
 				},
 				"good": {
 					"default": "#028A02",
 					"subtle": "#DD027502"
 				},
 				"warning": {
-					"default": "#e69500",
-					"subtle": "#DDe69500"
+					"default": "#866107",
+					"subtle": "#DD866107"
 				}
 			}
 		}

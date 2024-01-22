@@ -4419,6 +4419,22 @@ export class ChoiceSetInput extends Input {
         return undefined;
     }
 
+    private createPlaceholderOptionWhenValueDoesNotExist(): HTMLElement | undefined {
+        if (!this.value) {
+            const placeholderOption = document.createElement("option");
+            placeholderOption.selected = true;
+            placeholderOption.disabled = true;
+            placeholderOption.hidden = true;
+            placeholderOption.value = "";
+
+            if (this.placeholder) {
+                placeholderOption.text = this.placeholder;
+            }
+            return placeholderOption;
+        }
+        return undefined;
+    }
+
     // Make sure `aria-current` is applied to the currently-selected item
     private internalApplyAriaCurrent(): void {
         if (this._selectElement) {
