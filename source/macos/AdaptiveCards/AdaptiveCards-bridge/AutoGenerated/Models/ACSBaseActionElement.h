@@ -15,6 +15,7 @@ using namespace AdaptiveCards;
 //#import "ACSRemoteResourceInformation.h"
 #import "ACSActionType.h"
 #import "ACSMode.h"
+#import "ACSActionRole.h"
 
 #import "ACSBaseElement.h"
 @class ACSBaseElement;
@@ -22,6 +23,7 @@ using namespace AdaptiveCards;
 
 enum ACSActionType: NSUInteger;
 enum ACSMode: NSUInteger;
+enum ACSActionRole: NSUInteger;
 
 @interface ACSBaseActionElement : ACSBaseElement
 
@@ -42,6 +44,8 @@ enum ACSMode: NSUInteger;
 - (void)setMode:(enum ACSMode)mode;
 - (bool)getIsEnabled;
 - (void)setIsEnabled:(bool)isEnabled;
+- (ACSActionRole)getRole;
+- (void)setRole:(enum ACSActionRole)role;
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceUris;
 
 

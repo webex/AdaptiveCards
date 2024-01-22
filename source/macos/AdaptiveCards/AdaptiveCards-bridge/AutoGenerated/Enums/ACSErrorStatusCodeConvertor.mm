@@ -24,6 +24,8 @@
       return ACSErrorStatusCode::ACSErrorStatusCodeInvalidPropertyValue;
     case AdaptiveCards::ErrorStatusCode::UnsupportedParserOverride:
       return ACSErrorStatusCode::ACSErrorStatusCodeUnsupportedParserOverride;
+	case AdaptiveCards::ErrorStatusCode::ProhibitedType:
+      return ACSErrorStatusCode::ACSErrorStatusCodeProhibitedType;
     case AdaptiveCards::ErrorStatusCode::IdCollision:
       return ACSErrorStatusCode::ACSErrorStatusCodeIdCollision;
     case AdaptiveCards::ErrorStatusCode::CustomError:
@@ -46,6 +48,8 @@
       return AdaptiveCards::ErrorStatusCode::InvalidPropertyValue;
     case ACSErrorStatusCode::ACSErrorStatusCodeUnsupportedParserOverride:
       return AdaptiveCards::ErrorStatusCode::UnsupportedParserOverride;
+	case ACSErrorStatusCode::ACSErrorStatusCodeProhibitedType:
+	  return AdaptiveCards::ErrorStatusCode::ProhibitedType;
     case ACSErrorStatusCode::ACSErrorStatusCodeIdCollision:
       return AdaptiveCards::ErrorStatusCode::IdCollision;
     case ACSErrorStatusCode::ACSErrorStatusCodeCustomError:

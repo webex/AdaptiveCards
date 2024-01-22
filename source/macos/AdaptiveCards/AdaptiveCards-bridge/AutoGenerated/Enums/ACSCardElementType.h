@@ -10,6 +10,8 @@
 typedef NS_ENUM(NSUInteger, ACSCardElementType) {
     ACSCardElementTypeActionSet,
     ACSCardElementTypeAdaptiveCard,
+	ACSCardElementTypeCarousel,
+	ACSCardElementTypeCarouselPage,
     ACSCardElementTypeChoiceInput,
     ACSCardElementTypeChoiceSetInput,
     ACSCardElementTypeColumn,

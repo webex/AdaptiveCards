@@ -50,6 +50,8 @@
       return ACSWarningStatusCode::ACSWarningStatusCodeEmptyLabelInRequiredInput;
     case AdaptiveCards::WarningStatusCode::RequiredPropertyMissing:
       return ACSWarningStatusCode::ACSWarningStatusCodeRequiredPropertyMissing;
+    case AdaptiveCards::WarningStatusCode::ProhibitedTypeDetected:
+        return ACSWarningStatusCode::ACSWarningStatusCodeProhibitedTypeDetected;
   }
 }
 
@@ -94,6 +96,8 @@
       return AdaptiveCards::WarningStatusCode::EmptyLabelInRequiredInput;
     case ACSWarningStatusCode::ACSWarningStatusCodeRequiredPropertyMissing:
       return AdaptiveCards::WarningStatusCode::RequiredPropertyMissing;
+	case ACSWarningStatusCode::ACSWarningStatusCodeProhibitedTypeDetected:
+		return AdaptiveCards::WarningStatusCode::ProhibitedTypeDetected;
   }
 }
 

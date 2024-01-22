@@ -7,6 +7,7 @@
 #import "ACSActionTypeConvertor.h"
 #import "ACSRemoteResourceInformationConvertor.h"
 #import "ACSModeConvertor.h"
+#import "ACSActionRoleConvertor.h"
 
 //cpp includes
 #import "BaseElement.h"
@@ -133,6 +134,22 @@
  
     mCppObj->SetIsEnabled(isEnabledCpp);
     
+}
+
+- (ACSActionRole)getRole
+{
+ 
+	auto getRoleCpp = mCppObj->GetRole();
+	return [ACSActionRoleConvertor convertCpp:getRoleCpp];
+
+}
+
+- (void)setRole:(enum ACSActionRole)role
+{
+	auto roleCpp = [ACSActionRoleConvertor convertObj:role];
+
+	mCppObj->SetRole(roleCpp);
+
 }
 
 - (void)getResourceInformation:(NSArray<ACSRemoteResourceInformation *>* _Nonnull)resourceUris
