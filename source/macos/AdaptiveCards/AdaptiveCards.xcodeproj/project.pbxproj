@@ -343,6 +343,16 @@
 		2806E8F62608886F00CF7A40 /* ActionSubmitRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E8F52608886F00CF7A40 /* ActionSubmitRendererTests.swift */; };
 		2806E94826122F0D00CF7A40 /* SelectActionHandlingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E94726122F0D00CF7A40 /* SelectActionHandlingProtocol.swift */; };
 		2806E986261AEE4A00CF7A40 /* UnknownElementRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */; };
+		2812ABE72B5A734200FEB8B3 /* ACSActionRole.h in Headers */ = {isa = PBXBuildFile; fileRef = 2812ABE62B5A734200FEB8B3 /* ACSActionRole.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2812ABE92B5A734A00FEB8B3 /* ACSActionRoleConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2812ABE82B5A734A00FEB8B3 /* ACSActionRoleConvertor.h */; };
+		2812ABEB2B5A735200FEB8B3 /* ACSActionRoleConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2812ABEA2B5A735200FEB8B3 /* ACSActionRoleConvertor.mm */; };
+		2812ABED2B5A736B00FEB8B3 /* ACSCarouselOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2812ABEC2B5A736B00FEB8B3 /* ACSCarouselOrientation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2812ABEF2B5A737300FEB8B3 /* ACSCarouselOrientationConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2812ABEE2B5A737300FEB8B3 /* ACSCarouselOrientationConvertor.h */; };
+		2812ABF12B5A737E00FEB8B3 /* ACSCarouselOrientationConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2812ABF02B5A737E00FEB8B3 /* ACSCarouselOrientationConvertor.mm */; };
+		2812ABF32B5A73D800FEB8B3 /* ACSCarousel.h in Headers */ = {isa = PBXBuildFile; fileRef = 2812ABF22B5A73D800FEB8B3 /* ACSCarousel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2812ABF52B5A73DF00FEB8B3 /* ACSCarousel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2812ABF42B5A73DF00FEB8B3 /* ACSCarousel.mm */; };
+		2812ABF72B5A73E600FEB8B3 /* ACSCarouselPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2812ABF62B5A73E600FEB8B3 /* ACSCarouselPage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2812ABF92B5A73EC00FEB8B3 /* ACSCarouselPage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2812ABF82B5A73EC00FEB8B3 /* ACSCarouselPage.mm */; };
 		281415E329EEF5890042F0FC /* ACSMarkDownBlockType.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415E029EEF5890042F0FC /* ACSMarkDownBlockType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		281415E429EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 281415E129EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h */; };
 		281415E529EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 281415E229EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm */; };
@@ -412,6 +422,10 @@
 		2890094326D62B270045293A /* ACRTextFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2890094226D62B270045293A /* ACRTextFieldTests.swift */; };
 		28B4AE2026E1F30600FEC27E /* clear_18_w.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B4AE1E26E1F30600FEC27E /* clear_18_w.png */; };
 		28B4AE2126E1F30600FEC27E /* clear_18.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B4AE1F26E1F30600FEC27E /* clear_18.png */; };
+		28B9FF2F2B57B31B00224138 /* Carousel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28B9FF2E2B57B31B00224138 /* Carousel.cpp */; };
+		28B9FF312B57B32300224138 /* Carousel.h in Headers */ = {isa = PBXBuildFile; fileRef = 28B9FF302B57B32300224138 /* Carousel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28B9FF332B57B32900224138 /* CarouselPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28B9FF322B57B32900224138 /* CarouselPage.cpp */; };
+		28B9FF352B57B33200224138 /* CarouselPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 28B9FF342B57B33200224138 /* CarouselPage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */; };
 		28CE1A4425DFD64B00BFCFD9 /* FactSetRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A4325DFD64B00BFCFD9 /* FactSetRenderer.swift */; };
 		28CE1A6B25E4B67B00BFCFD9 /* FakeFactSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A6A25E4B67B00BFCFD9 /* FakeFactSet.swift */; };
@@ -1032,6 +1046,16 @@
 		2806E8F52608886F00CF7A40 /* ActionSubmitRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSubmitRendererTests.swift; sourceTree = "<group>"; };
 		2806E94726122F0D00CF7A40 /* SelectActionHandlingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectActionHandlingProtocol.swift; sourceTree = "<group>"; };
 		2806E985261AEE4A00CF7A40 /* UnknownElementRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownElementRenderer.swift; sourceTree = "<group>"; };
+		2812ABE62B5A734200FEB8B3 /* ACSActionRole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSActionRole.h; sourceTree = "<group>"; };
+		2812ABE82B5A734A00FEB8B3 /* ACSActionRoleConvertor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSActionRoleConvertor.h; sourceTree = "<group>"; };
+		2812ABEA2B5A735200FEB8B3 /* ACSActionRoleConvertor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSActionRoleConvertor.mm; sourceTree = "<group>"; };
+		2812ABEC2B5A736B00FEB8B3 /* ACSCarouselOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSCarouselOrientation.h; sourceTree = "<group>"; };
+		2812ABEE2B5A737300FEB8B3 /* ACSCarouselOrientationConvertor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSCarouselOrientationConvertor.h; sourceTree = "<group>"; };
+		2812ABF02B5A737E00FEB8B3 /* ACSCarouselOrientationConvertor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSCarouselOrientationConvertor.mm; sourceTree = "<group>"; };
+		2812ABF22B5A73D800FEB8B3 /* ACSCarousel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSCarousel.h; sourceTree = "<group>"; };
+		2812ABF42B5A73DF00FEB8B3 /* ACSCarousel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSCarousel.mm; sourceTree = "<group>"; };
+		2812ABF62B5A73E600FEB8B3 /* ACSCarouselPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSCarouselPage.h; sourceTree = "<group>"; };
+		2812ABF82B5A73EC00FEB8B3 /* ACSCarouselPage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSCarouselPage.mm; sourceTree = "<group>"; };
 		281415E029EEF5890042F0FC /* ACSMarkDownBlockType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSMarkDownBlockType.h; sourceTree = "<group>"; };
 		281415E129EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSMarkDownBlockTypeConvertor.h; sourceTree = "<group>"; };
 		281415E229EEF5890042F0FC /* ACSMarkDownBlockTypeConvertor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ACSMarkDownBlockTypeConvertor.mm; sourceTree = "<group>"; };
@@ -1102,6 +1126,10 @@
 		2890094226D62B270045293A /* ACRTextFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRTextFieldTests.swift; sourceTree = "<group>"; };
 		28B4AE1E26E1F30600FEC27E /* clear_18_w.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clear_18_w.png; sourceTree = "<group>"; };
 		28B4AE1F26E1F30600FEC27E /* clear_18.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clear_18.png; sourceTree = "<group>"; };
+		28B9FF2E2B57B31B00224138 /* Carousel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Carousel.cpp; path = ../../../shared/cpp/ObjectModel/Carousel.cpp; sourceTree = "<group>"; };
+		28B9FF302B57B32300224138 /* Carousel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Carousel.h; path = ../../../shared/cpp/ObjectModel/Carousel.h; sourceTree = "<group>"; };
+		28B9FF322B57B32900224138 /* CarouselPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CarouselPage.cpp; path = ../../../shared/cpp/ObjectModel/CarouselPage.cpp; sourceTree = "<group>"; };
+		28B9FF342B57B33200224138 /* CarouselPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CarouselPage.h; path = ../../../shared/cpp/ObjectModel/CarouselPage.h; sourceTree = "<group>"; };
 		28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputRenderer.swift; sourceTree = "<group>"; };
 		28CE1A4325DFD64B00BFCFD9 /* FactSetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactSetRenderer.swift; sourceTree = "<group>"; };
 		28CE1A6A25E4B67B00BFCFD9 /* FakeFactSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeFactSet.swift; sourceTree = "<group>"; };
@@ -1525,6 +1553,12 @@
 		083EA7A725C19E0F00DE2BF7 /* Enums */ = {
 			isa = PBXGroup;
 			children = (
+				2812ABE62B5A734200FEB8B3 /* ACSActionRole.h */,
+				2812ABE82B5A734A00FEB8B3 /* ACSActionRoleConvertor.h */,
+				2812ABEA2B5A735200FEB8B3 /* ACSActionRoleConvertor.mm */,
+				2812ABEC2B5A736B00FEB8B3 /* ACSCarouselOrientation.h */,
+				2812ABEE2B5A737300FEB8B3 /* ACSCarouselOrientationConvertor.h */,
+				2812ABF02B5A737E00FEB8B3 /* ACSCarouselOrientationConvertor.mm */,
 				288E3F6629C1C6F400CF3D93 /* ACSTextStyleConvertor.mm */,
 				288E3F6429C1C6EE00CF3D93 /* ACSTextStyleConvertor.h */,
 				288E3F6229C1C6E100CF3D93 /* ACSTextStyle.h */,
@@ -1736,6 +1770,10 @@
 				288E3F6029C1C49D00CF3D93 /* ACSContentSource.h */,
 				288E3F5E29C1C48C00CF3D93 /* ACSContentSource.mm */,
 				288E3F5C29C1C47C00CF3D93 /* ACSCaptionSource.mm */,
+				2812ABF22B5A73D800FEB8B3 /* ACSCarousel.h */,
+				2812ABF42B5A73DF00FEB8B3 /* ACSCarousel.mm */,
+				2812ABF62B5A73E600FEB8B3 /* ACSCarouselPage.h */,
+				2812ABF82B5A73EC00FEB8B3 /* ACSCarouselPage.mm */,
 				281415E629EEF61F0042F0FC /* ACSTable.h */,
 				281415E829EEF61F0042F0FC /* ACSTable.mm */,
 				281415ED29EEF6200042F0FC /* ACSTableCell.h */,
@@ -2023,6 +2061,10 @@
 				28E779C22AA5F6C300AFD3DA /* BaseInputElement.h */,
 				28E779CA2AA5F6C300AFD3DA /* CaptionSource.cpp */,
 				28E7797F2AA5F6C000AFD3DA /* CaptionSource.h */,
+				28B9FF2E2B57B31B00224138 /* Carousel.cpp */,
+				28B9FF302B57B32300224138 /* Carousel.h */,
+				28B9FF322B57B32900224138 /* CarouselPage.cpp */,
+				28B9FF342B57B33200224138 /* CarouselPage.h */,
 				28E779822AA5F6C000AFD3DA /* ChoiceInput.cpp */,
 				28E779772AA5F6C000AFD3DA /* ChoiceInput.h */,
 				28E7797E2AA5F6C000AFD3DA /* ChoicesData.cpp */,
@@ -2285,6 +2327,7 @@
 				083EA9FC25C19E1000DE2BF7 /* ACSParseContext.h in Headers */,
 				083EA9E625C19E1000DE2BF7 /* ACSHostConfig.h in Headers */,
 				083EA9B425C19E1000DE2BF7 /* ACSImageSet.h in Headers */,
+				2812ABE92B5A734A00FEB8B3 /* ACSActionRoleConvertor.h in Headers */,
 				083EA92325C19E1000DE2BF7 /* ACSChoiceSetStyle.h in Headers */,
 				083EA94225C19E1000DE2BF7 /* ACSForegroundColor.h in Headers */,
 				083EA9AD25C19E1000DE2BF7 /* ACSTextRun.h in Headers */,
@@ -2304,6 +2347,7 @@
 				083EA9C125C19E1000DE2BF7 /* ACSToggleVisibilityAction.h in Headers */,
 				083EA90A25C19E1000DE2BF7 /* ACSFontType.h in Headers */,
 				083EA9E725C19E1000DE2BF7 /* ACSFontSizesConfig.h in Headers */,
+				2812ABEF2B5A737300FEB8B3 /* ACSCarouselOrientationConvertor.h in Headers */,
 				281415F429EEF6200042F0FC /* ACSTableRow.h in Headers */,
 				083EA9C325C19E1000DE2BF7 /* ACSRichTextBlock.h in Headers */,
 				083EA92925C19E1000DE2BF7 /* ACSContainerStyle.h in Headers */,
@@ -2313,10 +2357,14 @@
 				083EAA0A25C19E1000DE2BF7 /* ACSAdaptiveCardParseException.h in Headers */,
 				288E3FFF29C852AE00CF3D93 /* ACSExecuteAction.h in Headers */,
 				083EAA1A25C19E1000DE2BF7 /* ACSTextBlock.h in Headers */,
+				2812ABF72B5A73E600FEB8B3 /* ACSCarouselPage.h in Headers */,
 				083EA94825C19E1000DE2BF7 /* ACSEmphasisState.h in Headers */,
 				083EA8F925C19E1000DE2BF7 /* ACSContainerBleedDirection.h in Headers */,
+				2812ABE72B5A734200FEB8B3 /* ACSActionRole.h in Headers */,
 				281415E329EEF5890042F0FC /* ACSMarkDownBlockType.h in Headers */,
+				2812ABED2B5A736B00FEB8B3 /* ACSCarouselOrientation.h in Headers */,
 				083EA9E125C19E1000DE2BF7 /* ACSUnknownElement.h in Headers */,
+				2812ABF32B5A73D800FEB8B3 /* ACSCarousel.h in Headers */,
 				08E4052125B46C3B00C2092A /* SwiftInterfaceHeader.h in Headers */,
 				083EA90225C19E1000DE2BF7 /* ACSVerticalContentAlignmentConvertor.h in Headers */,
 				083EA95325C19E1000DE2BF7 /* ACSImageSetConfigConvertor.h in Headers */,
@@ -2460,6 +2508,8 @@
 				28E77A532AA5F6C500AFD3DA /* Refresh.h in Headers */,
 				28E77A032AA5F6C500AFD3DA /* SubmitAction.h in Headers */,
 				28E77A2E2AA5F6C500AFD3DA /* InternalId.h in Headers */,
+				28B9FF352B57B33200224138 /* CarouselPage.h in Headers */,
+				28B9FF312B57B32300224138 /* Carousel.h in Headers */,
 				28E77A472AA5F6C500AFD3DA /* AuthCardButton.h in Headers */,
 				28E77A572AA5F6C500AFD3DA /* Util.h in Headers */,
 				28E77A782AA5F6C500AFD3DA /* MarkDownParser.h in Headers */,
@@ -2843,6 +2893,7 @@
 				288E3F4D29C1C23700CF3D93 /* ACSRefresh.mm in Sources */,
 				288E3F7229C1C80F00CF3D93 /* ACSTextStyleConfigConvertor.mm in Sources */,
 				083EA99E25C19E1000DE2BF7 /* ACSAdaptiveCardConfig.swift in Sources */,
+				2812ABF92B5A73EC00FEB8B3 /* ACSCarouselPage.mm in Sources */,
 				083EA94F25C19E1000DE2BF7 /* ACSVerticalAlignmentConvertor.mm in Sources */,
 				083EAA1925C19E1000DE2BF7 /* ACSAdaptiveBase64Util.mm in Sources */,
 				083EA8F425C19E1000DE2BF7 /* ACSDateTimePreparsedTokenFormatConvertor.mm in Sources */,
@@ -2876,6 +2927,7 @@
 				083EA99225C19E1000DE2BF7 /* ACSSeparatorConfigConvertor.mm in Sources */,
 				083EA9BB25C19E1000DE2BF7 /* ACSFactSet.mm in Sources */,
 				083EA97D25C19E1000DE2BF7 /* ACSMediaConfig.swift in Sources */,
+				2812ABF12B5A737E00FEB8B3 /* ACSCarouselOrientationConvertor.mm in Sources */,
 				083EAA2125C19E1000DE2BF7 /* ACSImage.mm in Sources */,
 				083EA99825C19E1000DE2BF7 /* ACSContainerStyleDefinitionConvertor.mm in Sources */,
 				083EA9E225C19E1000DE2BF7 /* ACSFact.mm in Sources */,
@@ -2893,6 +2945,7 @@
 				083EA9E825C19E1000DE2BF7 /* ACSChoiceSetInput.mm in Sources */,
 				083EA9EE25C19E1000DE2BF7 /* ACSContainer.mm in Sources */,
 				083EA95125C19E1000DE2BF7 /* ACSActionsOrientationConvertor.mm in Sources */,
+				2812ABEB2B5A735200FEB8B3 /* ACSActionRoleConvertor.mm in Sources */,
 				083EA8E825C19E1000DE2BF7 /* ACSChoiceSetStyleConvertor.mm in Sources */,
 				083EA96D25C19E1000DE2BF7 /* ACSHighlightColorConfig.swift in Sources */,
 				083EA90925C19E1000DE2BF7 /* ACSTextSizeConvertor.mm in Sources */,
@@ -2976,6 +3029,7 @@
 				083EA96B25C19E1000DE2BF7 /* ACSFontTypesDefinitionConvertor.mm in Sources */,
 				083EA95A25C19E1000DE2BF7 /* ACSShowCardActionConfig.swift in Sources */,
 				083EA9B525C19E1000DE2BF7 /* ACSAdaptiveCardParseException.mm in Sources */,
+				2812ABF52B5A73DF00FEB8B3 /* ACSCarousel.mm in Sources */,
 				083EA95425C19E1000DE2BF7 /* ACSFontTypeDefinition.swift in Sources */,
 				083EA96225C19E1000DE2BF7 /* ACSColorConfig.swift in Sources */,
 			);
@@ -3012,6 +3066,7 @@
 				28E77A392AA5F6C500AFD3DA /* ChoiceSetInput.cpp in Sources */,
 				28E77A452AA5F6C500AFD3DA /* TableRow.cpp in Sources */,
 				28E77A682AA5F6C500AFD3DA /* DateTimePreparsedToken.cpp in Sources */,
+				28B9FF2F2B57B31B00224138 /* Carousel.cpp in Sources */,
 				28E77A052AA5F6C500AFD3DA /* FactSet.cpp in Sources */,
 				28E77A482AA5F6C500AFD3DA /* OpenUrlAction.cpp in Sources */,
 				28E77A6C2AA5F6C500AFD3DA /* ShowCardAction.cpp in Sources */,
@@ -3024,6 +3079,7 @@
 				28E77A6B2AA5F6C500AFD3DA /* Authentication.cpp in Sources */,
 				28E77A1C2AA5F6C500AFD3DA /* AdaptiveBase64Util.cpp in Sources */,
 				28E77A7D2AA5F6C500AFD3DA /* Separator.cpp in Sources */,
+				28B9FF332B57B32900224138 /* CarouselPage.cpp in Sources */,
 				28E77A3D2AA5F6C500AFD3DA /* TableCell.cpp in Sources */,
 				28E77A862AA5F6C500AFD3DA /* SubmitAction.cpp in Sources */,
 				28E77A4A2AA5F6C500AFD3DA /* RichTextBlock.cpp in Sources */,

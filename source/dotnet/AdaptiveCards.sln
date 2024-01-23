@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdaptiveCards.Rendering.Wpf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdaptiveCards.Rendering.Wpf.Xceed", "Library\AdaptiveCards.Rendering.Wpf.Xceed\AdaptiveCards.Rendering.Wpf.Xceed.csproj", "{4741ABEC-33B0-424F-B5F1-464EC31AEEBD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdaptiveCards.Sample.Html", "Samples\AdaptiveCards.Sample.Html\AdaptiveCards.Sample.Html.csproj", "{C015DC5F-E523-4828-8E46-118A8242B51A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdaptiveCards.Test", "Test\AdaptiveCards.Test\AdaptiveCards.Test.csproj", "{4DB2C1D1-630A-4445-95F3-4E342ABD9342}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdaptiveCards.Sample.ImageRender", "samples\AdaptiveCards.Sample.ImageRender\AdaptiveCards.Sample.ImageRender.csproj", "{BCFC1329-903B-4440-ABE1-160C22A3AE23}"

@@ -144,6 +144,19 @@
     
 }
 
+- (void)addProhibitedElementType:(NSArray<NSString *> * _Nonnull)list
+{
+//    auto listCpp = // NEED TO INSERT CODE //;
+//
+//    mCppObj->AddProhibitedElementType(listCpp);
+	
+}
+
+- (void)shouldParse:(NSString * _Nonnull)type
+{
+	// do nothing
+}
+
 - (ACSInternalId * _Nullable)getNearestFallbackId:(ACSInternalId * _Nonnull)skipId
 {
 //    auto skipIdCpp = // NEED TO INSERT CODE //;

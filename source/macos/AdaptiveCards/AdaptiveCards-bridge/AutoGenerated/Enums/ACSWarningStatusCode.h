@@ -25,7 +25,8 @@ typedef NS_ENUM(NSUInteger, ACSWarningStatusCode) {
     ACSWarningStatusCodeInvalidValue,
     ACSWarningStatusCodeCustomWarning,
     ACSWarningStatusCodeEmptyLabelInRequiredInput,
-    ACSWarningStatusCodeRequiredPropertyMissing
+    ACSWarningStatusCodeRequiredPropertyMissing,
+	ACSWarningStatusCodeProhibitedTypeDetected
 };
 
 #endif

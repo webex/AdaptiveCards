@@ -13,6 +13,7 @@ typedef NS_ENUM(NSUInteger, ACSErrorStatusCode) {
     ACSErrorStatusCodeRequiredPropertyMissing,
     ACSErrorStatusCodeInvalidPropertyValue,
     ACSErrorStatusCodeUnsupportedParserOverride,
+	ACSErrorStatusCodeProhibitedType,
     ACSErrorStatusCodeIdCollision,
     ACSErrorStatusCodeCustomError
 };

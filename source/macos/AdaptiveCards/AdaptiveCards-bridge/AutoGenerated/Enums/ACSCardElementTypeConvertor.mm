@@ -18,6 +18,10 @@
       return ACSCardElementType::ACSCardElementTypeActionSet;
     case AdaptiveCards::CardElementType::AdaptiveCard:
       return ACSCardElementType::ACSCardElementTypeAdaptiveCard;
+	case AdaptiveCards::CardElementType::Carousel:
+	  return ACSCardElementType::ACSCardElementTypeCarousel;
+	case AdaptiveCards::CardElementType::CarouselPage:
+	  return ACSCardElementType::ACSCardElementTypeCarouselPage;
     case AdaptiveCards::CardElementType::ChoiceInput:
       return ACSCardElementType::ACSCardElementTypeChoiceInput;
     case AdaptiveCards::CardElementType::ChoiceSetInput:
@@ -74,6 +78,10 @@
       return AdaptiveCards::CardElementType::ActionSet;
     case ACSCardElementType::ACSCardElementTypeAdaptiveCard:
       return AdaptiveCards::CardElementType::AdaptiveCard;
+	case ACSCardElementType::ACSCardElementTypeCarousel:
+	  return AdaptiveCards::CardElementType::Carousel;
+	case ACSCardElementType::ACSCardElementTypeCarouselPage:
+	  return AdaptiveCards::CardElementType::CarouselPage;
     case ACSCardElementType::ACSCardElementTypeChoiceInput:
       return AdaptiveCards::CardElementType::ChoiceInput;
     case ACSCardElementType::ACSCardElementTypeChoiceSetInput:

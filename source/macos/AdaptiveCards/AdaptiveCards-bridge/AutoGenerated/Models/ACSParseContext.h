@@ -49,6 +49,8 @@ enum ACSContainerStyle: NSUInteger;
 - (ACSContainerBleedDirection)getBleedDirection;
 - (void)pushBleedDirection:(enum ACSContainerBleedDirection)direction;
 - (void)popBleedDirection;
+- (void)addProhibitedElementType:(NSArray<NSString *> * _Nonnull)list;
+- (void)shouldParse:(NSString * _Nonnull)type;
 - (ACSInternalId * _Nullable)getNearestFallbackId:(ACSInternalId * _Nonnull)skipId;
 
 

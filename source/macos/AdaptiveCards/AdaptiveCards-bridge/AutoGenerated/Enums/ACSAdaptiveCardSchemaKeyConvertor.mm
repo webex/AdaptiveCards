@@ -24,6 +24,8 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyActionMode;
     case AdaptiveCards::AdaptiveCardSchemaKey::ActionOrientation:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyActionOrientation;
+	case AdaptiveCards::AdaptiveCardSchemaKey::ActionRole:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyActionRole;
     case AdaptiveCards::AdaptiveCardSchemaKey::ActionSet:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyActionSet;
     case AdaptiveCards::AdaptiveCardSchemaKey::ActionSetConfig:
@@ -74,6 +76,10 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyButtons;
     case AdaptiveCards::AdaptiveCardSchemaKey::CaptionSources:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCaptionSources;
+	case AdaptiveCards::AdaptiveCardSchemaKey::Carousel:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCarousel;
+	case AdaptiveCards::AdaptiveCardSchemaKey::CarouselPage:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCarouselPage;
     case AdaptiveCards::AdaptiveCardSchemaKey::Card:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCard;
     case AdaptiveCards::AdaptiveCardSchemaKey::CellSpacing:
@@ -166,6 +172,8 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyHeadingLevel;
     case AdaptiveCards::AdaptiveCardSchemaKey::Height:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyHeight;
+	case AdaptiveCards::AdaptiveCardSchemaKey::HeightInPixels:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyHeightInPixels;
     case AdaptiveCards::AdaptiveCardSchemaKey::Highlight:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyHighlight;
     case AdaptiveCards::AdaptiveCardSchemaKey::HighlightColor:
@@ -186,6 +194,8 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyId;
     case AdaptiveCards::AdaptiveCardSchemaKey::Image:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyImage;
+	case AdaptiveCards::AdaptiveCardSchemaKey::InitialPage:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyInitialPage;
     case AdaptiveCards::AdaptiveCardSchemaKey::ImageBaseUrl:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyImageBaseUrl;
     case AdaptiveCards::AdaptiveCardSchemaKey::ImageSet:
@@ -240,6 +250,8 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyLineColor;
     case AdaptiveCards::AdaptiveCardSchemaKey::LineThickness:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyLineThickness;
+	case AdaptiveCards::AdaptiveCardSchemaKey::Loop:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyLoop;
     case AdaptiveCards::AdaptiveCardSchemaKey::Max:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMax;
     case AdaptiveCards::AdaptiveCardSchemaKey::MaxActions:
@@ -256,6 +268,8 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMedia;
     case AdaptiveCards::AdaptiveCardSchemaKey::Medium:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMedium;
+	case AdaptiveCards::AdaptiveCardSchemaKey::MetaData:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMetaData;
     case AdaptiveCards::AdaptiveCardSchemaKey::Method:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMethod;
     case AdaptiveCards::AdaptiveCardSchemaKey::MimeType:
@@ -272,8 +286,12 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyNumberInput;
     case AdaptiveCards::AdaptiveCardSchemaKey::OptionalInputs:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyOptionalInputs;
+	case AdaptiveCards::AdaptiveCardSchemaKey::Orientation:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyOrientation;
     case AdaptiveCards::AdaptiveCardSchemaKey::Padding:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyPadding;
+	case AdaptiveCards::AdaptiveCardSchemaKey::Pages:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyPages;
     case AdaptiveCards::AdaptiveCardSchemaKey::Placeholder:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyPlaceholder;
     case AdaptiveCards::AdaptiveCardSchemaKey::PlayButton:
@@ -366,6 +384,8 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyThickness;
     case AdaptiveCards::AdaptiveCardSchemaKey::TimeInput:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyTimeInput;
+	case AdaptiveCards::AdaptiveCardSchemaKey::Timer:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyTimer;
     case AdaptiveCards::AdaptiveCardSchemaKey::Title:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyTitle;
     case AdaptiveCards::AdaptiveCardSchemaKey::ToggleInput:
@@ -404,6 +424,8 @@
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyVerticalContentAlignment;
     case AdaptiveCards::AdaptiveCardSchemaKey::Warning:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWarning;
+	case AdaptiveCards::AdaptiveCardSchemaKey::WebUrl:
+	  return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWebUrl;
     case AdaptiveCards::AdaptiveCardSchemaKey::Weight:
       return ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWeight;
     case AdaptiveCards::AdaptiveCardSchemaKey::Width:
@@ -428,6 +450,8 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::ActionMode;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyActionOrientation:
       return AdaptiveCards::AdaptiveCardSchemaKey::ActionOrientation;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyActionRole:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::ActionRole;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyActionSet:
       return AdaptiveCards::AdaptiveCardSchemaKey::ActionSet;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyActionSetConfig:
@@ -478,6 +502,10 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::Buttons;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCaptionSources:
       return AdaptiveCards::AdaptiveCardSchemaKey::CaptionSources;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCarousel:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::Carousel;
+    case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCarouselPage:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::CarouselPage;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCard:
       return AdaptiveCards::AdaptiveCardSchemaKey::Card;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyCellSpacing:
@@ -570,6 +598,8 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::HeadingLevel;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyHeight:
       return AdaptiveCards::AdaptiveCardSchemaKey::Height;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyHeightInPixels:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::HeightInPixels;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyHighlight:
       return AdaptiveCards::AdaptiveCardSchemaKey::Highlight;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyHighlightColor:
@@ -600,6 +630,8 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::ImageSizes;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyImages:
       return AdaptiveCards::AdaptiveCardSchemaKey::Images;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyInitialPage:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::InitialPage;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyInlineAction:
       return AdaptiveCards::AdaptiveCardSchemaKey::InlineAction;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyInlineTopMargin:
@@ -644,6 +676,8 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::LineColor;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyLineThickness:
       return AdaptiveCards::AdaptiveCardSchemaKey::LineThickness;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyLoop:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::Loop;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMax:
       return AdaptiveCards::AdaptiveCardSchemaKey::Max;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMaxActions:
@@ -660,6 +694,8 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::Media;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMedium:
       return AdaptiveCards::AdaptiveCardSchemaKey::Medium;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMetaData:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::MetaData;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMethod:
       return AdaptiveCards::AdaptiveCardSchemaKey::Method;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyMimeType:
@@ -676,8 +712,12 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::NumberInput;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyOptionalInputs:
       return AdaptiveCards::AdaptiveCardSchemaKey::OptionalInputs;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyOrientation:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::Orientation;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyPadding:
       return AdaptiveCards::AdaptiveCardSchemaKey::Padding;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyPages:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::Pages;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyPlaceholder:
       return AdaptiveCards::AdaptiveCardSchemaKey::Placeholder;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyPlayButton:
@@ -770,6 +810,8 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::Thickness;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyTimeInput:
       return AdaptiveCards::AdaptiveCardSchemaKey::TimeInput;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyTimer:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::Timer;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyTitle:
       return AdaptiveCards::AdaptiveCardSchemaKey::Title;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyToggleInput:
@@ -808,6 +850,8 @@
       return AdaptiveCards::AdaptiveCardSchemaKey::VerticalContentAlignment;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWarning:
       return AdaptiveCards::AdaptiveCardSchemaKey::Warning;
+	case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWebUrl:
+	  return AdaptiveCards::AdaptiveCardSchemaKey::WebUrl;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWeight:
       return AdaptiveCards::AdaptiveCardSchemaKey::Weight;
     case ACSAdaptiveCardSchemaKey::ACSAdaptiveCardSchemaKeyWidth:
