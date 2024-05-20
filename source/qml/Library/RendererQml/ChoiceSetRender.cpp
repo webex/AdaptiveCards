@@ -36,6 +36,10 @@ void ChoiceSetElement::initialize()
     {
         type = RendererQml::ComboBox;
     }
+    else if ( mChoiceSetInput->GetChoiceSetStyle() == AdaptiveCards::ChoiceSetStyle::Filtered)
+    {
+        type = RendererQml::Filtered;
+    }
     else
     {
         type = mChoiceSetInput->GetIsMultiSelect() ? RendererQml::CheckBox : RendererQml::RadioButton;
@@ -120,6 +124,27 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
                     mChoiceSetColElement->Property("_comboboxCurrentIndex", std::to_string(index));
                 }
         }
+    }
+    else if (checkBoxType == RendererQml::CheckBoxType::Filtered)
+    {
+        if (mChoiceSetInput->GetIsVisible())
+        {
+                mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().inputElementHeight);
+        }
+        std::string choice_Text;
+        std::string choice_Value;
+
+        model << "[";
+        for (const auto& choice : choiceSet.choices)
+        {
+                choice_Text = choice.text;
+                choice_Value = choice.value;
+                model << "{ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value)
+                      << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
+        }
+        model << "]";
+        mChoiceSetColElement->Property("_elementType", "'Filtered'");
+       
     }
     else
     {

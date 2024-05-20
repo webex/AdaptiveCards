@@ -1,0 +1,56 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.6",
+    "body": [
+        {
+            "type": "Input.ChoiceSet",
+            "choices": [
+                {
+                    "title": "Red",
+                    "value": " 1"
+                },
+                {
+                    "title": "Blue",
+                    "value": "2"
+                },
+                {
+                    "title": "Green",
+                    "value": "3"
+                }
+            ],
+            "placeholder": "Choice&Search",
+            "id": "myColor",
+            "style": "filtered",
+            "label": "What color do you want? *(isMultiSelect:false, style:Filtered)*"
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "choices": [
+                {
+                    "title": "Red",
+                    "value": "1"
+                },
+                {
+                    "title": "Blue",
+                    "value": "2"
+                },
+                {
+                    "title": "Green",
+                    "value": "3"
+                }
+            ],
+            "placeholder": "Placeholder text",
+            "id": "myColor1",
+            "style": "filtered",
+            "isMultiSelect": true,
+            "label": "What colors do you want?(isMultiSelect:true, style:Filtered)        "
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "OK"
+        }
+    ]
+}

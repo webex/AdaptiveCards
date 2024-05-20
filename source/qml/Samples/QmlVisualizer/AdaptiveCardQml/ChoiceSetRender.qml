@@ -79,6 +79,19 @@ Column {
 
     }
 
+	Loader {
+        id: filteredLoader
+
+        height: item ? item.height : 0
+        width: parent.width
+        active: _elementType === "Filtered"
+
+        sourceComponent: FilteredChoiceSetRender {
+            id: filteredChoiceSet
+        }
+
+    } 
+
     Loader {
         id: radioButtonLoader
 
