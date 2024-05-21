@@ -93,6 +93,25 @@ Column {
     } 
 
     Loader {
+        id: filteredLoader
+
+        height: item ? item.height : 0
+        width: parent.width
+        active: _elementType === "Filtered"
+
+        sourceComponent: FilterChoiceSetRender {
+            id: filter
+            _model: _choiceSetModel
+            _mEscapedPlaceholderString: choiceSet._mEscapedPlaceholderString
+            _currentIndex: _comboboxCurrentIndex
+            _consumer: choiceSet
+            _adaptiveCard: choiceSet._adaptiveCard
+            
+        }
+
+    } 
+
+    Loader {
         id: radioButtonLoader
 
         height: item ? item.height : 0

@@ -36,7 +36,7 @@ void ChoiceSetElement::initialize()
     {
         type = RendererQml::ComboBox;
     }
-    else if ( mChoiceSetInput->GetChoiceSetStyle() == AdaptiveCards::ChoiceSetStyle::Filtered)
+    else if (mChoiceSetInput->GetChoiceSetStyle() == AdaptiveCards::ChoiceSetStyle::Filtered)
     {
         type = RendererQml::Filtered;
     }
@@ -106,7 +106,8 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         {
             choice_Text = choice.text;
             choice_Value = choice.value;
-            model << "{ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value) << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
+            model << "{ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value)
+                  << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
         }
         model << "]";
         mChoiceSetColElement->Property("_elementType", "'Combobox'");
@@ -115,21 +116,23 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         if (choiceSet.values.size() == 1)
         {
             const std::string target = choiceSet.values[0];
-            auto index = std::find_if(choiceSet.choices.begin(), choiceSet.choices.end(), [target](const RendererQml::Checkbox& options) {
-                return options.value == target;
-                }) - choiceSet.choices.begin();
+            auto index = std::find_if(
+                             choiceSet.choices.begin(),
+                             choiceSet.choices.end(),
+                             [target](const RendererQml::Checkbox& options) { return options.value == target; }) -
+                         choiceSet.choices.begin();
 
-                if (index < (signed int)(choiceSet.choices.size()))
-                {
-                    mChoiceSetColElement->Property("_comboboxCurrentIndex", std::to_string(index));
-                }
+            if (index < (signed int)(choiceSet.choices.size()))
+            {
+                mChoiceSetColElement->Property("_comboboxCurrentIndex", std::to_string(index));
+            }
         }
     }
     else if (checkBoxType == RendererQml::CheckBoxType::Filtered)
     {
         if (mChoiceSetInput->GetIsVisible())
         {
-                mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().inputElementHeight);
+            mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().inputElementHeight);
         }
         std::string choice_Text;
         std::string choice_Value;
@@ -137,14 +140,13 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         model << "[";
         for (const auto& choice : choiceSet.choices)
         {
-                choice_Text = choice.text;
-                choice_Value = choice.value;
-                model << "{ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value)
-                      << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
+            choice_Text = choice.text;
+            choice_Value = choice.value;
+            model << "{ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value)
+                  << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
         }
         model << "]";
         mChoiceSetColElement->Property("_elementType", "'Filtered'");
-       
     }
     else
     {
