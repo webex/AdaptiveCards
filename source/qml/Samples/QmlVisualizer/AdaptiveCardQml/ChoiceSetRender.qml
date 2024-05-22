@@ -79,19 +79,6 @@ Column {
 
     }
 
-	Loader {
-        id: filteredLoader
-
-        height: item ? item.height : 0
-        width: parent.width
-        active: _elementType === "Filtered"
-
-        sourceComponent: FilteredChoiceSetRender {
-            id: filteredChoiceSet
-        }
-
-    } 
-
     Loader {
         id: filteredLoader
 
@@ -99,7 +86,7 @@ Column {
         width: parent.width
         active: _elementType === "Filtered"
 
-        sourceComponent: FilterChoiceSetRender {
+        sourceComponent: FilteredChoiceSetRender {
             id: filter
             _model: _choiceSetModel
             _mEscapedPlaceholderString: choiceSet._mEscapedPlaceholderString
