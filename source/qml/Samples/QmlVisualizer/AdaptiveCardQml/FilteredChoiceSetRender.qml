@@ -16,6 +16,7 @@ ComboBox {
     property var inputFieldConstants: CardConstants.inputFieldConstants
     property var comboBoxConstants: CardConstants.comboBoxConstants
     property var cardConstants: CardConstants.cardConstants
+    property var _filteredModel: _model
     property int choiceWidth: 0
 
 
@@ -47,11 +48,24 @@ ComboBox {
         comboBox.popup.open();
     }
 
+    function selectOption(option) {
+	    textField.text = option
+	    comboBox.popup.visible = false
+	
+	}
+
+    function filterOptions() {
+        var filterText = textField.text.toLowerCase();
+        _filteredModel = _model.filter(function(entry) {
+            return entry.text.toLowerCase().includes(filterText);
+        });
+    }
+
     textRole: 'text'
     valueRole: 'valueOn'
     width: parent.width
     height: inputFieldConstants.height
-    model: _model
+    model: _filteredModel
     currentIndex: _currentIndex
     displayText: currentIndex === -1 ? _mEscapedPlaceholderString : currentText
     onPressedChanged: {
@@ -82,18 +96,7 @@ ComboBox {
     WCustomFocusItem {
         isRectangle: true
     }
-
-
-    function filterOptions() {
-        var filterText = textField.text.toLowerCase();
-        comboBoxListView.model = _model.filter(function(option) {
-            return option.text.toLowerCase().includes(filterText);
-        });
-    }
-    
-   
-
-    
+  
     indicator: Button {
         id: comboboxArrowIcon
 
@@ -143,9 +146,9 @@ ComboBox {
             color: "black"
 
 	    leftPadding: inputFieldConstants.textHorizontalPadding
-            rightPadding: inputFieldConstants.textHorizontalPadding
-            topPadding: inputFieldConstants.textVerticalPadding + 3.5
-            bottomPadding: inputFieldConstants.textVerticalPadding
+        rightPadding: inputFieldConstants.textHorizontalPadding
+        topPadding: inputFieldConstants.textVerticalPadding + 3.5
+        bottomPadding: inputFieldConstants.textVerticalPadding
             
             onFocusChanged: {
                 // Open the dropdown when the TextField gets focus
@@ -156,17 +159,11 @@ ComboBox {
             onTextChanged: {
                 // Open the dropdown when the user types anything
                 comboBox.popup.visible = true;
+                comboBox.filterOptions();
 	
             }
-
+           
         }
-
-
-   function selectOption(option) {
-	textField.text = option
-	comboBox.popup.visible = false
-	
-	}
 
     delegate: ItemDelegate {
         id: comboBoxItemDelegate
@@ -179,7 +176,7 @@ ComboBox {
         Accessible.name: modelData.text
 
         onHoveredChanged: {
-            if(hovered)
+			 if(hovered)
                 comboBoxListView.currentIndex = index;
         }
 
@@ -218,7 +215,7 @@ ComboBox {
 	}
     
 
-    popup: Popup {
+     popup: Popup {
         y: comboBox.height + 5
         width: Math.max(comboBox.choiceWidth, comboBox.width)
         padding: comboBoxConstants.dropDownPadding
@@ -242,24 +239,24 @@ ComboBox {
 
 
         contentItem: ListView {
-            id: comboBoxListView
+                id: comboBoxListView
 
-            clip: true
-            model: comboBox.delegateModel
+                clip: true
+                model: comboBox.delegateModel
 	      
 		
             
-            currentIndex: comboBox.highlightedIndex
-            Keys.onReturnPressed: {
-                comboBox.currentIndex = comboBoxListView.currentIndex;
-                popup.close();
-            }
+                currentIndex: comboBox.highlightedIndex
+                Keys.onReturnPressed: {
+                    comboBox.currentIndex = comboBoxListView.currentIndex;
+                    popup.close();
+                }
 
-            ScrollBar.vertical: ScrollBar {
-                width: comboBoxConstants.scrollbarWidth
-                policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
-            }
-
+                ScrollBar.vertical: ScrollBar {
+                    width: comboBoxConstants.scrollbarWidth
+                    policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+                }
+            
         }
 
     }
