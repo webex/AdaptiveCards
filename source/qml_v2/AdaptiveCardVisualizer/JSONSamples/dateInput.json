@@ -1,0 +1,36 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Sample Card with InputDate"
+        },
+        {
+            "type": "Input.Date",
+            "id": "date1",
+            "placeholder": "Enter a date",
+            "value": "2017-10-12",
+            "min": "1900-01-01",
+            "max": "2030-01-01"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Date Input Test"
+        },
+        {
+            "type": "Input.Date",
+            "id": "sample2",
+            "placeholder": "Enter a date",
+            "min": "1900-01-01",
+            "max": "2030-01-01"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "OK"
+        }
+    ]
+}
