@@ -31,7 +31,6 @@ class ACRCollectionView: NSScrollView {
     
     private(set) lazy var collectionView: NSCollectionView = {
         let view = NSCollectionView()
-        view.itemPrototype = nil
         view.backgroundColors = [.clear]
         return view
     }()

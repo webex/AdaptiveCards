@@ -298,6 +298,54 @@ extension RootViewController: AdaptiveCardActionDelegate {
 }
 
 extension RootViewController: AdaptiveCardResourceResolver {
+    func adaptiveCard(_ adaptiveCard: NSView, typeAheadQueryFor query: String) async throws -> QueryResponse {
+        let sample = """
+                    {
+                        "status": 200,
+                        "body" : {
+                            "type": "application/vnd.microsoft.search.searchResponse",
+                            "value": {
+                               "results": [
+                                    {
+                                        "value": "FluentAssertions",
+                                        "title": "A very extensive set of extension methods."
+                                    },
+                                    {
+                                        "value": "FluentUI",
+                                        "title": "Fluent UI Library"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                    """
+        return try await withCheckedThrowingContinuation { continuation in
+            decodeJSONWithDelay(from: sample) { result in
+                switch result {
+                case .success(let queryResponse):
+                    continuation.resume(returning: queryResponse)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    func decodeJSONWithDelay(from jsonString: String, completion: @escaping (Result<QueryResponse, Error>) -> Void) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2) { // 2 seconds delay
+            guard let jsonData = jsonString.data(using: .utf8) else {
+                completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to convert string to Data"])))
+                return
+            }
+            do {
+                let queryResponse = try JSONDecoder().decode(QueryResponse.self, from: jsonData)
+                completion(.success(queryResponse))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+
     func adaptiveCard(_ card: ImageResourceHandlerView, dimensionsForImageWith url: String) -> NSSize? {
         guard let dimensions = TestUtils.imageDimensionsDict[url] else {
             print("### ResourceResolver: returning nil for URL '\(url)'")

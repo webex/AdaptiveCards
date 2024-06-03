@@ -427,6 +427,7 @@
 		28B9FF332B57B32900224138 /* CarouselPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28B9FF322B57B32900224138 /* CarouselPage.cpp */; };
 		28B9FF352B57B33200224138 /* CarouselPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 28B9FF342B57B33200224138 /* CarouselPage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28BDFD5525D55AF3000C3795 /* TextInputRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */; };
+		28C4770E2C0DF12000FA51C8 /* QueryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C4770D2C0DF12000FA51C8 /* QueryManager.swift */; };
 		28CE1A4425DFD64B00BFCFD9 /* FactSetRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A4325DFD64B00BFCFD9 /* FactSetRenderer.swift */; };
 		28CE1A6B25E4B67B00BFCFD9 /* FakeFactSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A6A25E4B67B00BFCFD9 /* FakeFactSet.swift */; };
 		28CE1A7025E4B96300BFCFD9 /* FactSetRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CE1A6F25E4B96300BFCFD9 /* FactSetRendererTest.swift */; };
@@ -1131,6 +1132,7 @@
 		28B9FF322B57B32900224138 /* CarouselPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CarouselPage.cpp; path = ../../../shared/cpp/ObjectModel/CarouselPage.cpp; sourceTree = "<group>"; };
 		28B9FF342B57B33200224138 /* CarouselPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CarouselPage.h; path = ../../../shared/cpp/ObjectModel/CarouselPage.h; sourceTree = "<group>"; };
 		28BDFD5425D55AF3000C3795 /* TextInputRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputRenderer.swift; sourceTree = "<group>"; };
+		28C4770D2C0DF12000FA51C8 /* QueryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryManager.swift; sourceTree = "<group>"; };
 		28CE1A4325DFD64B00BFCFD9 /* FactSetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactSetRenderer.swift; sourceTree = "<group>"; };
 		28CE1A6A25E4B67B00BFCFD9 /* FakeFactSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeFactSet.swift; sourceTree = "<group>"; };
 		28CE1A6F25E4B96300BFCFD9 /* FactSetRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactSetRendererTest.swift; sourceTree = "<group>"; };
@@ -1959,6 +1961,7 @@
 			isa = PBXGroup;
 			children = (
 				08D7767925CC339D0095C1B3 /* RendererManager.swift */,
+				28C4770D2C0DF12000FA51C8 /* QueryManager.swift */,
 				AA7A97B7288E554300BED0DC /* ACSFillerSpaceManager.swift */,
 				AAC42D9528C22937007C4367 /* ACSVisibilityManager.swift */,
 				AA104A922A2778DD00EA30DC /* ACSAccessibilityFocusManager.swift */,
@@ -2731,6 +2734,7 @@
 				81A3000B260C7961003848DD /* BundleUtils.swift in Sources */,
 				0872609025E6AF530036061C /* ColumnSetRenderer.swift in Sources */,
 				AA7A97B8288E554300BED0DC /* ACSFillerSpaceManager.swift in Sources */,
+				28C4770E2C0DF12000FA51C8 /* QueryManager.swift in Sources */,
 				082864FD25C99E300080D767 /* HostConfigUtils.swift in Sources */,
 				0876273F27734F9800F3347F /* ViewUtils.swift in Sources */,
 				AA3C416528D85BE300406C36 /* ACRInputErrorView.swift in Sources */,
@@ -3277,7 +3281,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.test.test.AdaptiveCards;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -3304,7 +3308,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.test.test.AdaptiveCards;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -3365,7 +3369,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.test.test.AdaptiveCards-bridge";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -3390,7 +3394,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.test.test.AdaptiveCards-bridge";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

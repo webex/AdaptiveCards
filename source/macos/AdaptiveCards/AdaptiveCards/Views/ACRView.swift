@@ -18,6 +18,7 @@ class ACRView: ACRColumnView {
     private (set) var visibilityContext: ACOVisibilityContext?
     private (set) var accessibilityContext: ACSAccessibilityFocusManager?
     private (set) var cardWidth: CGFloat?
+    let queryManager = QueryManager()
     
     // AccessibleFocusView property
     override var validKeyView: NSView? {
@@ -29,6 +30,7 @@ class ACRView: ACRColumnView {
     
     override init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig) {
         super.init(style: style, parentStyle: nil, hostConfig: hostConfig, renderConfig: renderConfig, superview: nil, needsPadding: true)
+        queryManager.delegate = self
     }
     
     convenience init(style: ACSContainerStyle, hostConfig: ACSHostConfig, renderConfig: RenderConfig, visibilityContext: ACOVisibilityContext?, accessibilityContext: ACSAccessibilityFocusManager?) {
@@ -164,6 +166,7 @@ class ACRView: ACRColumnView {
     }
     
     private func toggleVisibity(of targets: [ACSToggleVisibilityTarget]) {
+        queryManager.handleQueryResponse(resolverDelegate: resolverDelegate)
         var facadeArray: [ACSVisibilityManagerFacade?] = []
         for target in targets {
             guard let id = target.getElementId(), let toggleView = self.findView(withIdentifier: id) else {
@@ -315,5 +318,19 @@ extension ACRView: ImageResourceHandlerView {
         for url in imageViewMap.keys {
             resolverDelegate?.adaptiveCard(self, requestImageFor: url)
         }
+    }
+}
+
+extension ACRView: QueryResponseDelegate {
+    func didReceiveQueryResponse(_ response: QueryResponse?) {
+        // Handle the successful response
+        print("Received Query Response:", response ?? "lol")
+        // Do something with the response here
+    }
+
+    func didFailWithError(_ error: Error) {
+        // Handle the error
+        print("Failed with error:", error.localizedDescription)
+        // Show an error message or take other appropriate action
     }
 }
