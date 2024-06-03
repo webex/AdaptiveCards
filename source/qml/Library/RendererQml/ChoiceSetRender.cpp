@@ -89,27 +89,14 @@ void ChoiceSetElement::initialize()
 void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, RendererQml::CheckBoxType checkBoxType, const std::string choiceSetId)
 {
     addInputLabel(mChoiceSetInput->GetIsRequired());
-
     std::ostringstream model;
 
     if (checkBoxType == RendererQml::CheckBoxType::ComboBox)
     {
-        if (mChoiceSetInput->GetIsVisible())
-        {
-            mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().inputElementHeight);
-        }
-        std::string choice_Text;
-        std::string choice_Value;
-
-        model << "[";
-        for (const auto& choice : choiceSet.choices)
-        {
-            choice_Text = choice.text;
-            choice_Value = choice.value;
-            model << "{ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value)
-                  << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
-        }
-        model << "]";
+        updateContext();
+         
+        model = populateModel(choiceSet);
+        
         mChoiceSetColElement->Property("_elementType", "'Combobox'");
         mChoiceSetColElement->Property("_comboboxCurrentIndex", "-1");
 
@@ -130,22 +117,10 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
     }
     else if (checkBoxType == RendererQml::CheckBoxType::Filtered)
     {
-        if (mChoiceSetInput->GetIsVisible())
-        {
-            mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().inputElementHeight);
-        }
-        std::string choice_Text;
-        std::string choice_Value;
-
-        model << "[";
-        for (const auto& choice : choiceSet.choices)
-        {
-            choice_Text = choice.text;
-            choice_Value = choice.value;
-            model << "{ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value)
-                  << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
-        }
-        model << "]";
+        updateContext();
+        
+        model = populateModel(choiceSet);
+        
         mChoiceSetColElement->Property("_elementType", "'Filtered'");
     }
     else
@@ -220,6 +195,33 @@ void ChoiceSetElement::addErrorMessage()
     {
         mChoiceSetColElement->Property("_mEscapedErrorString", RendererQml::Formatter() << "String.raw`" << mEscapedErrorString << "`");
     }
+}
+
+void ChoiceSetElement::updateContext()
+{
+    if (mChoiceSetInput->GetIsVisible())
+    {
+        mContext->addHeightEstimate(mContext->GetRenderConfig()->getCardConfig().inputElementHeight);
+    }
+}
+
+std::ostringstream ChoiceSetElement::populateModel(const RendererQml::ChoiceSet& choiceSet)
+{
+    std::ostringstream model;
+    
+    std::string choice_Text;
+    std::string choice_Value;
+
+    model << "[";
+    for (const auto& choice : choiceSet.choices)
+    {
+        choice_Text = choice.text;
+        choice_Value = choice.value;
+        model << "{ valueOn: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Value)
+              << "`, text: String.raw`" << RendererQml::Utils::getBackQuoteEscapedString(choice_Text) << "`},\n";
+    }
+     model << "]";
+    return  model;
 }
 
 const std::string ChoiceSetElement::generateChoiceSetButtonId(const std::string& parentId, RendererQml::CheckBoxType ButtonType, const int& ButtonNumber)
