@@ -50,7 +50,7 @@ ComboBox {
 
     function selectOption(option) {
 	    textField.text = option
-	    comboBox.popup.visible = false
+        comboBox.popup.close();
 	
 	}
 
@@ -153,12 +153,12 @@ ComboBox {
             onFocusChanged: {
                 // Open the dropdown when the TextField gets focus
                 if (focus) {
-                    comboBox.popup.visible = true;
+                    comboBox.popup.open();
                 }
             }
             onTextChanged: {
                 // Open the dropdown when the user types anything
-                comboBox.popup.visible = true;
+                comboBox.popup.open();
                 comboBox.filterOptions();
 	
             }
