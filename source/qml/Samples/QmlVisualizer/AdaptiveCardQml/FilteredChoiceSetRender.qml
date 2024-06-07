@@ -16,6 +16,7 @@ ComboBox {
     property var inputFieldConstants: CardConstants.inputFieldConstants
     property var comboBoxConstants: CardConstants.comboBoxConstants
     property var cardConstants: CardConstants.cardConstants
+    property var _filteredModel: _model
     property int choiceWidth: 0
 
 
@@ -47,11 +48,24 @@ ComboBox {
         comboBox.popup.open();
     }
 
+    function selectOption(option) {
+	    textField.text = option
+        comboBox.popup.close();
+	
+	}
+
+    function filterOptions() {
+        var filterText = textField.text.toLowerCase();
+        _filteredModel = _model.filter(function(entry) {
+            return entry.text.toLowerCase().includes(filterText);
+        });
+    }
+
     textRole: 'text'
     valueRole: 'valueOn'
     width: parent.width
     height: inputFieldConstants.height
-    model: _model
+    model: _filteredModel
     currentIndex: _currentIndex
     displayText: currentIndex === -1 ? _mEscapedPlaceholderString : currentText
     onPressedChanged: {
@@ -82,18 +96,7 @@ ComboBox {
     WCustomFocusItem {
         isRectangle: true
     }
-
-
-    function filterOptions() {
-        var filterText = textField.text.toLowerCase();
-        comboBoxListView.model = _model.filter(function(option) {
-            return option.text.toLowerCase().includes(filterText);
-        });
-    }
-    
-   
-
-    
+  
     indicator: Button {
         id: comboboxArrowIcon
 
@@ -150,23 +153,17 @@ ComboBox {
             onFocusChanged: {
                 // Open the dropdown when the TextField gets focus
                 if (focus) {
-                    comboBox.popup.visible = true;
+                    comboBox.popup.open();
                 }
             }
             onTextChanged: {
                 // Open the dropdown when the user types anything
-                comboBox.popup.visible = true;
+                comboBox.popup.open();
+                comboBox.filterOptions();
 	
             }
-
+           
         }
-
-
-   function selectOption(option) {
-	textField.text = option
-	comboBox.popup.visible = false
-	
-	}
 
     delegate: ItemDelegate {
         id: comboBoxItemDelegate
