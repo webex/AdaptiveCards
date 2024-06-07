@@ -14,6 +14,7 @@ SampleCardList::SampleCardList(QObject *parent) : QObject(parent)
     mCards.append({ QStringLiteral("Input date"), getJsonString("dateInput") } );
     mCards.append({ QStringLiteral("Input Toggle"), getJsonString("checkboxInput") } );
     mCards.append({ QStringLiteral("Input ChoiceSet"), getJsonString("choiceSetInput") } );
+    mCards.append({ QStringLiteral("Input ChoiceSet - Filtered"), getJsonString("ChoiceSetRenderFiltered")});
     mCards.append({ QStringLiteral("Image"), getJsonString("image") } );
     mCards.append({ QStringLiteral("Fact Set"), getJsonString("factSet") } );
 	mCards.append({ QStringLiteral("Container"), getJsonString("container") } );

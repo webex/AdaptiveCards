@@ -168,6 +168,9 @@
     <None Include="AdaptiveCardQml\InputFieldClearIcon.qml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="AdaptiveCardQml\FilteredChoiceSetRender.qml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="samplecardmodel.h">

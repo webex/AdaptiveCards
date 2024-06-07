@@ -10,7 +10,8 @@ namespace RendererQml
 		Toggle,
 		RadioButton,
 		CheckBox,
-		ComboBox
+		ComboBox,
+		Filtered
 	};
 
 	struct Checkbox

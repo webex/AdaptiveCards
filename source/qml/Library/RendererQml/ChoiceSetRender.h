@@ -29,6 +29,8 @@ private:
     void initialize();
     void addInputLabel(bool isRequired = false);
     void addErrorMessage();
+    void updateContext();
+    std::ostringstream populateModel(const RendererQml::ChoiceSet& choiceSet);
     const std::string generateChoiceSetButtonId(const std::string& parentId, RendererQml::CheckBoxType ButtonType, const int& ButtonNumber);
 };
 

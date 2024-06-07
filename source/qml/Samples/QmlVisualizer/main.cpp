@@ -24,6 +24,7 @@ int main(int argc, char* argv[])
     qmlRegisterType(QUrl("qrc:/TextInputRender.qml"), "AdaptiveCards", 1, 0, "TextInputRender");
     qmlRegisterType(QUrl("qrc:/CustomCheckBox.qml"), "AdaptiveCards", 1, 0, "CustomCheckBox");
     qmlRegisterType(QUrl("qrc:/ChoiceSetRender.qml"), "AdaptiveCards", 1, 0, "ChoiceSetRender");
+    qmlRegisterType(QUrl("qrc:/FilteredChoiceSetRender.qml"), "AdaptiveCards", 1, 0, "FilteredChoiceSetRender");
     qmlRegisterType(QUrl("qrc:/ComboboxRender.qml"), "AdaptiveCards", 1, 0, "ComboboxRender");
     qmlRegisterType(QUrl("qrc:/CustomRadioButton.qml"), "AdaptiveCards", 1, 0, "CustomRadioButton");
     qmlRegisterType(QUrl("qrc:/TextElement.qml"), "AdaptiveCards", 1, 0, "TextElement");
