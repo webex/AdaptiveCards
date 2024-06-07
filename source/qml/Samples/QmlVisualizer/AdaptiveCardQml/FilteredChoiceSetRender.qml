@@ -146,9 +146,9 @@ ComboBox {
             color: "black"
 
 	    leftPadding: inputFieldConstants.textHorizontalPadding
-        rightPadding: inputFieldConstants.textHorizontalPadding
-        topPadding: inputFieldConstants.textVerticalPadding + 3.5
-        bottomPadding: inputFieldConstants.textVerticalPadding
+            rightPadding: inputFieldConstants.textHorizontalPadding
+            topPadding: inputFieldConstants.textVerticalPadding + 3.5
+            bottomPadding: inputFieldConstants.textVerticalPadding
             
             onFocusChanged: {
                 // Open the dropdown when the TextField gets focus
@@ -176,7 +176,7 @@ ComboBox {
         Accessible.name: modelData.text
 
         onHoveredChanged: {
-			 if(hovered)
+            if(hovered)
                 comboBoxListView.currentIndex = index;
         }
 
@@ -215,7 +215,7 @@ ComboBox {
 	}
     
 
-     popup: Popup {
+    popup: Popup {
         y: comboBox.height + 5
         width: Math.max(comboBox.choiceWidth, comboBox.width)
         padding: comboBoxConstants.dropDownPadding
@@ -239,24 +239,24 @@ ComboBox {
 
 
         contentItem: ListView {
-                id: comboBoxListView
+            id: comboBoxListView
 
-                clip: true
-                model: comboBox.delegateModel
+            clip: true
+            model: comboBox.delegateModel
 	      
 		
             
-                currentIndex: comboBox.highlightedIndex
-                Keys.onReturnPressed: {
-                    comboBox.currentIndex = comboBoxListView.currentIndex;
-                    popup.close();
-                }
+            currentIndex: comboBox.highlightedIndex
+            Keys.onReturnPressed: {
+                comboBox.currentIndex = comboBoxListView.currentIndex;
+                popup.close();
+            }
 
-                ScrollBar.vertical: ScrollBar {
-                    width: comboBoxConstants.scrollbarWidth
-                    policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
-                }
-            
+            ScrollBar.vertical: ScrollBar {
+                width: comboBoxConstants.scrollbarWidth
+                policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+            }
+
         }
 
     }
