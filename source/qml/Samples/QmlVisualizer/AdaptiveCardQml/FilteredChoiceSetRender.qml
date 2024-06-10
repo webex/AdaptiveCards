@@ -99,7 +99,6 @@ ComboBox {
   
     indicator: Button {
         id: comboboxArrowIcon
-
         width: comboBoxConstants.indicatorWidth
         horizontalPadding: comboBoxConstants.arrowIconHorizontalPadding
         verticalPadding: comboBoxConstants.arrowIconVerticalPadding
@@ -141,8 +140,7 @@ ComboBox {
 	    leftPadding: inputFieldConstants.textHorizontalPadding
         rightPadding: inputFieldConstants.textHorizontalPadding
         topPadding: inputFieldConstants.textVerticalPadding + 3.5
-        bottomPadding: inputFieldConstants.textVerticalPadding
-            
+        bottomPadding: inputFieldConstants.textVerticalPadding           
         onFocusChanged: {
                 // Open the dropdown when the TextField gets focus
             if (focus) {
@@ -152,8 +150,7 @@ ComboBox {
         onTextChanged: {
                 // Open the dropdown when the user types anything
             comboBox.popup.open();
-            comboBox.filterOptions();
-	
+            comboBox.filterOptions();	
                 }           
             }
 
@@ -198,8 +195,7 @@ ComboBox {
             comboBox.popup.close()
             }
 	    }
-    
-
+	
     popup: Popup {
         y: comboBox.height + 5
         width: Math.max(comboBox.choiceWidth, comboBox.width)
