@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.3
 
 ComboBox {
     id: comboBox
-
+    
     property var _adaptiveCard
     property var _consumer
     property var _model
@@ -18,20 +18,20 @@ ComboBox {
     property var cardConstants: CardConstants.cardConstants
     property var _filteredModel: _model
     property int choiceWidth: 0
-
-
+    
+    
     onActivated: selectOption(currentText)
-
+    
     
     signal selectionChanged()
-
+    
     function colorChange(isPressed) {
         if (isPressed)
             background.color = inputFieldConstants.backgroundColorOnPressed;
         else
             background.color = activeFocus ? inputFieldConstants.backgroundColorOnPressed : hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
     }
-
+    
     function getAccessibleName() {
         let accessibleName = _consumer.getAccessibleName() + ' ';
         if (comboBox.currentIndex !== -1)
@@ -42,25 +42,25 @@ ComboBox {
             accessibleName += 'Choice Set';
         return accessibleName;
     }
-
+    
     function openPopout() {
         setFocusBackOnClose(comboBox);
         comboBox.popup.open();
     }
-
+    
     function selectOption(option) {
-	    textField.text = option
+        textField.text = option
         comboBox.popup.close();
-	
-	}
-
+        
+    }
+    
     function filterOptions() {
         var filterText = textField.text.toLowerCase();
         _filteredModel = _model.filter(function(entry) {
             return entry.text.toLowerCase().includes(filterText);
         });
     }
-
+    
     textRole: 'text'
     valueRole: 'valueOn'
     width: parent.width
@@ -78,13 +78,13 @@ ComboBox {
         colorChange(false);
         if (activeFocus)
             Accessible.name = getAccessibleName();
-
+        
     }
     onHoveredChanged: {
         colorChange(false);
         if (hovered)
             _adaptiveCard.showToolTipOnElement(hovered, displayText, comboBox);
-
+        
     }
     onCurrentValueChanged: {
         Accessible.name = displayText;
@@ -92,11 +92,11 @@ ComboBox {
     }
     Keys.onReturnPressed: openPopout()
     Keys.onSpacePressed: openPopout()
-
+    
     WCustomFocusItem {
         isRectangle: true
     }
-  
+    
     indicator: Button {
         id: comboboxArrowIcon
         width: comboBoxConstants.indicatorWidth
@@ -110,38 +110,40 @@ ComboBox {
         enabled: textField.text.length > 0 || comboBox.popup.visible
         
         onClicked: {
-			if (textField.text.length > 0) {           
-				textField.clear();
-			 	comboBox.currentIndex = -1;
-				_filteredModel = _model; 
-				comboBox.popup.close();
-			} else  {           
-				comboBox.popup.open();
-			}
+            if (textField.text.length > 0) {           
+                textField.clear();
+                comboBox.currentIndex = -1;
+                _filteredModel = _model; 
+                comboBox.popup.close();
+            } else  {           
+                comboBox.popup.open();
+            }
         }
-
+        
         anchors {
             top: parent.top
             bottom: parent.bottom
             right: parent.right
         }
-
+        
         background: Rectangle {
             color: 'transparent'
             width: parent.width
             height: parent.height
         }	
     }
-
+    
     contentItem: TextInput {
         id: textField
         text: ""
         color:  inputFieldConstants.textColor
-	    leftPadding: inputFieldConstants.textHorizontalPadding
+        leftPadding: inputFieldConstants.textHorizontalPadding
         rightPadding: inputFieldConstants.textHorizontalPadding
         topPadding: inputFieldConstants.textVerticalPadding + 3.5
-        bottomPadding: inputFieldConstants.textVerticalPadding           
+        bottomPadding: inputFieldConstants.textVerticalPadding
+        
         onFocusChanged: {
+            // Open the dropdown when the TextField gets focus
             if (focus) {
                 comboBox.popup.open();
             }
@@ -150,9 +152,9 @@ ComboBox {
             // Open the dropdown when the user types anything
             comboBox.popup.open();
             comboBox.filterOptions();	
-        }           
+        }          
     }
-
+    
     delegate: ItemDelegate {
         id: comboBoxItemDelegate
         width: Math.max(comboBox.choiceWidth, parent.width)
@@ -161,7 +163,7 @@ ComboBox {
         horizontalPadding: comboBoxConstants.dropDownElementHorizontalPadding
         highlighted: ListView.isCurrentItem
         Accessible.name: modelData.text
-
+        
         background: Rectangle {
             x: parent.highlighted ? comboBoxConstants.popoutDelegateCordinates : 0
             y: parent.highlighted ? comboBoxConstants.popoutDelegateCordinates : 0
@@ -169,14 +171,14 @@ ComboBox {
             height: parent.highlighted ? parent.height - comboBoxConstants.focusRingSize : parent.height
             color: comboBoxItemDelegate.pressed ? comboBoxConstants.dropDownElementColorPressed : comboBoxItemDelegate.highlighted ? comboBoxConstants.dropDownElementColorHovered : comboBoxConstants.dropDownElementColorNormal
             radius: comboBoxConstants.dropDownElementRadius 
-
+            
             WCustomFocusItem {
                 visible: highlighted
                 isRectangle: true
                 designatedParent: parent
             }
         }  
-
+        
         contentItem: Text {
             text: modelData.text
             font.family: "Segeo UI"
@@ -188,74 +190,78 @@ ComboBox {
                 comboBox.choiceWidth = Math.max(maxWidth, comboBox.choiceWidth);
             }
         }
-
-	    onClicked: {
+        
+        onClicked: {
             comboBox.currentIndex = index
             comboBox.popup.close()
         }
     }
-	
-        popup: Popup {
-            y: comboBox.height + 5
-            width: Math.max(comboBox.choiceWidth, comboBox.width)
-            padding: comboBoxConstants.dropDownPadding       
-            height: comboBoxListView.contentHeight + (2 * padding) > comboBoxConstants.dropDownHeight ? comboBoxConstants.dropDownHeight : comboBoxListView.contentHeight + (2 * padding)
-            onOpened: {
-                comboBoxListView.forceActiveFocus();
-                if (comboBoxListView.currentIndex === -1)
-                    comboBoxListView.currentIndex = 0;
-            }
-            onClosed: {
-                comboBox.forceActiveFocus();
-            }
-
+    
+    
+    popup: Popup {
+        y: comboBox.height + 5
+        width: Math.max(comboBox.choiceWidth, comboBox.width)
+        padding: comboBoxConstants.dropDownPadding       
+        height: comboBoxListView.contentHeight + (2 * padding) > comboBoxConstants.dropDownHeight ? comboBoxConstants.dropDownHeight : comboBoxListView.contentHeight + (2 * padding)
+        onOpened: {
+            comboBoxListView.forceActiveFocus();
+            if (comboBoxListView.currentIndex === -1)
+                comboBoxListView.currentIndex = 0;
             
-
-
-            contentItem: Item {
-                height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height
+        }
+        
+        onClosed: {
+            comboBox.forceActiveFocus();
+        }
+        
+        background: Rectangle {
+            height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height + 16
+            color: comboBoxConstants.dropDownBackgroundColor
+            border.color: comboBoxConstants.dropDownBorderColor
+            radius: comboBoxConstants.dropDownRadius
+        } 
+        
+        
+        contentItem: Item {
+            height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height
+            
+            ListView {
+                id: comboBoxListView               
+                anchors.fill: parent
+                clip: true
+                model: comboBox.delegateModel	               
+                currentIndex: comboBox.highlightedIndex
                 
-                ListView {
-                    id: comboBoxListView               
-                    anchors.fill: parent
-                    clip: true
-                    model: comboBox.delegateModel	               
-                    currentIndex: comboBox.highlightedIndex                       
-                    Keys.onReturnPressed: {
-                        comboBox.currentIndex = comboBoxListView.currentIndex;
-                        popup.close();
-                    }
-
-                    ScrollBar.vertical: ScrollBar {
-                        width: comboBoxConstants.scrollbarWidth
-                        policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
-                    }
-                            
-				    Text {                      
-					    visible: comboBox.delegateModel.count === 0
-					    text: "We can't find anything that matches your search"
-					    anchors.horizontalCenter: parent.horizontalCenter
-					    anchors.verticalCenter: parent.verticalCenter                        
-					    font.family: "Segeo UI"
-					    font.pixelSize: inputFieldConstants.pixelSize
-					    color: inputFieldConstants.textColor
-				    }				
-			    }
-
-                background: Rectangle {
-                    height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height + 16
-                    color: comboBoxConstants.dropDownBackgroundColor
-                    border.color: comboBoxConstants.dropDownBorderColor                  
-                    radius: comboBoxConstants.dropDownRadius
-                } 
-		    }
-	    }
-
+                Keys.onReturnPressed: {
+                    comboBox.currentIndex = comboBoxListView.currentIndex;
+                    popup.close();
+                }
+                
+                ScrollBar.vertical: ScrollBar {
+                    width: comboBoxConstants.scrollbarWidth
+                    policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+                }
+                
+                
+                Text {                      
+                    visible: comboBox.delegateModel.count === 0
+                    text: "We can't find anything that matches your search"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter                        
+                    font.family: "Segeo UI"
+                    font.pixelSize: inputFieldConstants.pixelSize
+                    color: inputFieldConstants.textColor
+                }    
+            }
+        }
+    }
+    
     background: Rectangle {
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
         border.color: inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
     } 
+    
 }
 
