@@ -131,15 +131,13 @@ ComboBox {
             color: 'transparent'
             width: parent.width
             height: parent.height
-        }
-	
+        }	
     }
 
     contentItem: TextInput {
         id: textField
         text: ""
         color:  inputFieldConstants.textColor
-
 	    leftPadding: inputFieldConstants.textHorizontalPadding
         rightPadding: inputFieldConstants.textHorizontalPadding
         topPadding: inputFieldConstants.textVerticalPadding + 3.5
@@ -156,13 +154,11 @@ ComboBox {
             comboBox.popup.open();
             comboBox.filterOptions();
 	
-                }
-           
+                }           
             }
 
     delegate: ItemDelegate {
         id: comboBoxItemDelegate
-
         width: Math.max(comboBox.choiceWidth, parent.width)
         height: comboBoxConstants.dropDownElementHeight
         verticalPadding: comboBoxConstants.dropDownElementVerticalPadding
@@ -183,7 +179,6 @@ ComboBox {
                 isRectangle: true
                 designatedParent: parent
             }
-
         }  
 
     contentItem: Text {
@@ -214,7 +209,6 @@ ComboBox {
             comboBoxListView.forceActiveFocus();
             if (comboBoxListView.currentIndex === -1)
                 comboBoxListView.currentIndex = 0;
-
         }
         onClosed: {
             comboBox.forceActiveFocus();
@@ -236,9 +230,7 @@ ComboBox {
                 anchors.fill: parent
                 clip: true
                 model: comboBox.delegateModel	               
-                currentIndex: comboBox.highlightedIndex
-                        
-
+                currentIndex: comboBox.highlightedIndex                       
                 Keys.onReturnPressed: {
                     comboBox.currentIndex = comboBoxListView.currentIndex;
                     popup.close();
@@ -268,6 +260,5 @@ ComboBox {
         border.color: inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
     } 
-
 }
 
