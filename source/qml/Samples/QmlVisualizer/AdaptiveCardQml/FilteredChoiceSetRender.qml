@@ -107,22 +107,19 @@ ComboBox {
         icon.height: comboBoxConstants.arrowIconHeight
         focusPolicy: Qt.NoFocus
         icon.color: comboBoxConstants.arrowIconColor
-        icon.source: comboBox.popup.visible ? "data:image/svg+xml;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACAAgMAAAC+UIlYAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAoNAAAKDQFKsqGvAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAAxQTFRF////AAAAAAAAAAAA+IwCTQAAAAN0Uk5TAHCPqE4jmQAAAe9JREFUWMOd2MHRqzAMRlGFTRYUkRJogc5CZ7RACRSRBRvyvQXDk20pvjN/VrGGmBMDloSZmdljsfAZ5mLw3OMB41YMXkc8YPoUg/c3HrCe/v0hBcQgOeIpBcQoOeIlBcQkOeItBcQqnQUhIAbJEU8pIEbJES8pICbJEW8pIFbpP+IhBcRwxWYnNIjxim1OaBDTFfs4oUGsV+wsCBViuGOzEyrEeMc2J1SI6Y59nFAh1jt2FoQCMXhsdkKBGD22OaFATB77OKFArB47y8GNKAj6ltPdiIKgoxm1BO3NfC1Bi0VE+5OAaE8aEO0vAiKcswlEdTNl/N9NJK5cM2ey9lUoWbh60mTpa0Ry8WpEQqgRCaFGJIQakRBqREb4gfia9RGHWR+xm/URS7Jh/CKkiMOsj9jN+ogl2Th/ExLEYdZH7GZ9xJIkkB4hIGKeHPuEgEhy9donNIgkVdeIJNnXiOUvB+ApEEl/ExcKlxovFl1uvGHwlsOblm57fHDw0cOHlx5/3EBwC8JNjLZB3EhxK8bNnNIBJhRMSZjUKC1iYsXUjMmdygMsMLBEwSKHyiQstLBUw2IPy0UsOLFkxaIXy2YsvLl0x+If2wdsQLiFwSYI2yhsxLiVw2YQ20lsSLmlxaYY22pszLm1x5cDndcL/wA9JaEl0OukTwAAAABJRU5ErkJggg==" : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDE0IDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xMy4zNTM3IDAuNjQ2NTRDMTMuMjYgMC41NTI3ODkgMTMuMTMyOCAwLjUwMDEyMiAxMy4wMDAyIDAuNTAwMTIyQzEyLjg2NzYgMC41MDAxMjIgMTIuNzQwNSAwLjU1Mjc4OSAxMi42NDY3IDAuNjQ2NTRMNi45OTk5OSA2LjI5MzA0TDEuMzUzNDkgMC42NDY1NEMxLjI1OTI1IDAuNTU1MTI5IDEuMTMyODQgMC41MDQ0NTQgMS4wMDE1NSAwLjUwNTQ1N0MwLjg3MDI2NCAwLjUwNjQ2IDAuNzQ0NjM5IDAuNTU5MDYxIDAuNjUxODA1IDAuNjUxOTAxQzAuNTU4OTcyIDAuNzQ0NzQxIDAuNTA2Mzc5IDAuODcwMzcgMC41MDUzODUgMS4wMDE2NkMwLjUwNDM5MiAxLjEzMjk0IDAuNTU1MDc2IDEuMjU5MzYgMC42NDY0OTQgMS4zNTM1OUw2LjY0NjQ5IDcuMzUzNTlDNi43NDAyNiA3LjQ0NzMzIDYuODY3NDEgNy40OTk5OCA2Ljk5OTk5IDcuNDk5OThDNy4xMzI1OCA3LjQ5OTk4IDcuMjU5NzMgNy40NDczMyA3LjM1MzUgNy4zNTM1OUwxMy4zNTM1IDEuMzUzNTlDMTMuNDQ3MyAxLjI1OTg2IDEzLjUgMS4xMzI3MSAxMy41IDEuMDAwMTJDMTMuNTAwMSAwLjg2NzUyMyAxMy40NDc1IDAuNzQwMzM5IDEzLjM1MzcgMC42NDY1NFoiIGZpbGw9ImJsYWNrIiBmaWxsLW9wYWNpdHk9IjAuOTUiLz4KPC9zdmc+Cg=="
-        enabled: true
-
-    //   visible: textField.text.length > 0 // Show only when there is text to clear
-            onClicked: {
-		            if (textField.text.length > 0){
-			        textField.clear();
-			        comboBox.currentIndex = -1;
+        icon.source: textField.text.length > 0 ? "data:image/svg+xml;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACAAgMAAAC+UIlYAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAoNAAAKDQFKsqGvAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAAxQTFRF////AAAAAAAAAAAA+IwCTQAAAAN0Uk5TAHCPqE4jmQAAAe9JREFUWMOd2MHRqzAMRlGFTRYUkRJogc5CZ7RACRSRBRvyvQXDk20pvjN/VrGGmBMDloSZmdljsfAZ5mLw3OMB41YMXkc8YPoUg/c3HrCe/v0hBcQgOeIpBcQoOeIlBcQkOeItBcQqnQUhIAbJEU8pIEbJES8pICbJEW8pIFbpP+IhBcRwxWYnNIjxim1OaBDTFfs4oUGsV+wsCBViuGOzEyrEeMc2J1SI6Y59nFAh1jt2FoQCMXhsdkKBGD22OaFATB77OKFArB47y8GNKAj6ltPdiIKgoxm1BO3NfC1Bi0VE+5OAaE8aEO0vAiKcswlEdTNl/N9NJK5cM2ey9lUoWbh60mTpa0Ry8WpEQqgRCaFGJIQakRBqREb4gfia9RGHWR+xm/URS7Jh/CKkiMOsj9jN+ogl2Th/ExLEYdZH7GZ9xJIkkB4hIGKeHPuEgEhy9donNIgkVdeIJNnXiOUvB+ApEEl/ExcKlxovFl1uvGHwlsOblm57fHDw0cOHlx5/3EBwC8JNjLZB3EhxK8bNnNIBJhRMSZjUKC1iYsXUjMmdygMsMLBEwSKHyiQstLBUw2IPy0UsOLFkxaIXy2YsvLl0x+If2wdsQLiFwSYI2yhsxLiVw2YQ20lsSLmlxaYY22pszLm1x5cDndcL/wA9JaEl0OukTwAAAABJRU5ErkJggg==" : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDE0IDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xMy4zNTM3IDAuNjQ2NTRDMTMuMjYgMC41NTI3ODkgMTMuMTMyOCAwLjUwMDEyMiAxMy4wMDAyIDAuNTAwMTIyQzEyLjg2NzYgMC41MDAxMjIgMTIuNzQwNSAwLjU1Mjc4OSAxMi42NDY3IDAuNjQ2NTRMNi45OTk5OSA2LjI5MzA0TDEuMzUzNDkgMC42NDY1NEMxLjI1OTI1IDAuNTU1MTI5IDEuMTMyODQgMC41MDQ0NTQgMS4wMDE1NSAwLjUwNTQ1N0MwLjg3MDI2NCAwLjUwNjQ2IDAuNzQ0NjM5IDAuNTU5MDYxIDAuNjUxODA1IDAuNjUxOTAxQzAuNTU4OTcyIDAuNzQ0NzQxIDAuNTA2Mzc5IDAuODcwMzcgMC41MDUzODUgMS4wMDE2NkMwLjUwNDM5MiAxLjEzMjk0IDAuNTU1MDc2IDEuMjU5MzYgMC42NDY0OTQgMS4zNTM1OUw2LjY0NjQ5IDcuMzUzNTlDNi43NDAyNiA3LjQ0NzMzIDYuODY3NDEgNy40OTk5OCA2Ljk5OTk5IDcuNDk5OThDNy4xMzI1OCA3LjQ5OTk4IDcuMjU5NzMgNy40NDczMyA3LjM1MzUgNy4zNTM1OUwxMy4zNTM1IDEuMzUzNTlDMTMuNDQ3MyAxLjI1OTg2IDEzLjUgMS4xMzI3MSAxMy41IDEuMDAwMTJDMTMuNTAwMSAwLjg2NzUyMyAxMy40NDc1IDAuNzQwMzM5IDEzLjM1MzcgMC42NDY1NFoiIGZpbGw9ImJsYWNrIiBmaWxsLW9wYWNpdHk9IjAuOTUiLz4KPC9zdmc+Cg=="
+        enabled: textField.text.length > 0 || comboBox.popup.visible
+        
+        onClicked: {
+			if (textField.text.length > 0) {           
+				textField.clear();
+			 	comboBox.currentIndex = -1;
+				_filteredModel = _model; 
 				comboBox.popup.close();
-		            } else {
-				   comboBox.popup.open();
-				  
-		         }         
-            }   
-	
-	
+			} else  {           
+				comboBox.popup.open();
+			}
+        }
 
         anchors {
             top: parent.top
@@ -135,35 +132,33 @@ ComboBox {
             width: parent.width
             height: parent.height
         }
-
 	
-
     }
 
     contentItem: TextInput {
-            id: textField
-            text: ""
-            color: "black"
+        id: textField
+        text: ""
+        color:  inputFieldConstants.textColor
 
 	    leftPadding: inputFieldConstants.textHorizontalPadding
-            rightPadding: inputFieldConstants.textHorizontalPadding
-            topPadding: inputFieldConstants.textVerticalPadding + 3.5
-            bottomPadding: inputFieldConstants.textVerticalPadding
+        rightPadding: inputFieldConstants.textHorizontalPadding
+        topPadding: inputFieldConstants.textVerticalPadding + 3.5
+        bottomPadding: inputFieldConstants.textVerticalPadding
             
-            onFocusChanged: {
+        onFocusChanged: {
                 // Open the dropdown when the TextField gets focus
-                if (focus) {
-                    comboBox.popup.open();
+            if (focus) {
+                comboBox.popup.open();
                 }
             }
-            onTextChanged: {
+        onTextChanged: {
                 // Open the dropdown when the user types anything
-                comboBox.popup.open();
-                comboBox.filterOptions();
+            comboBox.popup.open();
+            comboBox.filterOptions();
 	
-            }
+                }
            
-        }
+            }
 
     delegate: ItemDelegate {
         id: comboBoxItemDelegate
@@ -175,18 +170,13 @@ ComboBox {
         highlighted: ListView.isCurrentItem
         Accessible.name: modelData.text
 
-        onHoveredChanged: {
-            if(hovered)
-                comboBoxListView.currentIndex = index;
-        }
-
         background: Rectangle {
             x: parent.highlighted ? comboBoxConstants.popoutDelegateCordinates : 0
             y: parent.highlighted ? comboBoxConstants.popoutDelegateCordinates : 0
             width: parent.highlighted ? parent.width - comboBoxConstants.focusRingSize : parent.width
             height: parent.highlighted ? parent.height - comboBoxConstants.focusRingSize : parent.height
             color: comboBoxItemDelegate.pressed ? comboBoxConstants.dropDownElementColorPressed : comboBoxItemDelegate.highlighted ? comboBoxConstants.dropDownElementColorHovered : comboBoxConstants.dropDownElementColorNormal
-            radius: comboBoxConstants.dropDownElementRadius
+            radius: comboBoxConstants.dropDownElementRadius 
 
             WCustomFocusItem {
                 visible: highlighted
@@ -196,29 +186,29 @@ ComboBox {
 
         }  
 
-        contentItem: Text {
-            text: modelData.text
-            font.family: "Segeo UI"
-            font.pixelSize:  inputFieldConstants.pixelSize
-            color: inputFieldConstants.textColor
-            elide: Text.ElideRight
-            onImplicitWidthChanged: {
-                var maxWidth = implicitWidth > comboBoxConstants.maxDropDownWidth ? comboBoxConstants.maxDropDownWidth : implicitWidth;
-                comboBox.choiceWidth = Math.max(maxWidth, comboBox.choiceWidth);
-            }
-        }
-
-	onClicked: {
-                    comboBox.currentIndex = index
-                    comboBox.popup.close()
+    contentItem: Text {
+        text: modelData.text
+        font.family: "Segeo UI"
+        font.pixelSize:  inputFieldConstants.pixelSize
+        color: inputFieldConstants.textColor
+        elide: Text.ElideRight
+        onImplicitWidthChanged: {
+            var maxWidth = implicitWidth > comboBoxConstants.maxDropDownWidth ? comboBoxConstants.maxDropDownWidth : implicitWidth;
+            comboBox.choiceWidth = Math.max(maxWidth, comboBox.choiceWidth);
                 }
-	}
+            }
+
+	    onClicked: {
+            comboBox.currentIndex = index
+            comboBox.popup.close()
+            }
+	    }
     
 
     popup: Popup {
         y: comboBox.height + 5
         width: Math.max(comboBox.choiceWidth, comboBox.width)
-        padding: comboBoxConstants.dropDownPadding
+        padding: comboBoxConstants.dropDownPadding       
         height: comboBoxListView.contentHeight + (2 * padding) > comboBoxConstants.dropDownHeight ? comboBoxConstants.dropDownHeight : comboBoxListView.contentHeight + (2 * padding)
         onOpened: {
             comboBoxListView.forceActiveFocus();
@@ -231,43 +221,53 @@ ComboBox {
         }
 
         background: Rectangle {
-            anchors.fill: parent
+            height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height + 16
             color: comboBoxConstants.dropDownBackgroundColor
-            border.color: comboBoxConstants.dropDownBorderColor
+            border.color: comboBoxConstants.dropDownBorderColor                  
             radius: comboBoxConstants.dropDownRadius
-        }
+        } 
 
 
-        contentItem: ListView {
-            id: comboBoxListView
+        contentItem: Item {
+            height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height
+                
+            ListView {
+                id: comboBoxListView               
+                anchors.fill: parent
+                clip: true
+                model: comboBox.delegateModel	               
+                currentIndex: comboBox.highlightedIndex
+                        
 
-            clip: true
-            model: comboBox.delegateModel
-	      
-		
-            
-            currentIndex: comboBox.highlightedIndex
-            Keys.onReturnPressed: {
-                comboBox.currentIndex = comboBoxListView.currentIndex;
-                popup.close();
-            }
+                Keys.onReturnPressed: {
+                    comboBox.currentIndex = comboBoxListView.currentIndex;
+                    popup.close();
+                }
 
-            ScrollBar.vertical: ScrollBar {
-                width: comboBoxConstants.scrollbarWidth
-                policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
-            }
-
-        }
-
-    }
-
+                ScrollBar.vertical: ScrollBar {
+                    width: comboBoxConstants.scrollbarWidth
+                    policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+                }
+                            
+				Text {                      
+					visible: comboBox.delegateModel.count === 0
+					text: "We can't find anything that matches your search"
+					anchors.horizontalCenter: parent.horizontalCenter
+					anchors.verticalCenter: parent.verticalCenter                        
+					font.family: "Segeo UI"
+					font.pixelSize: inputFieldConstants.pixelSize
+					color: inputFieldConstants.textColor
+				}				
+			}
+		}
+	}
 
     background: Rectangle {
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
         border.color: inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
-    }
+    } 
 
 }
 
