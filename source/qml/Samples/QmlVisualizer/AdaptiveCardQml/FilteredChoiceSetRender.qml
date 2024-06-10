@@ -142,17 +142,16 @@ ComboBox {
         topPadding: inputFieldConstants.textVerticalPadding + 3.5
         bottomPadding: inputFieldConstants.textVerticalPadding           
         onFocusChanged: {
-                // Open the dropdown when the TextField gets focus
             if (focus) {
                 comboBox.popup.open();
-                }
             }
+        }
         onTextChanged: {
-                // Open the dropdown when the user types anything
+            // Open the dropdown when the user types anything
             comboBox.popup.open();
             comboBox.filterOptions();	
-                }           
-            }
+        }           
+    }
 
     delegate: ItemDelegate {
         id: comboBoxItemDelegate
@@ -178,77 +177,79 @@ ComboBox {
             }
         }  
 
-    contentItem: Text {
-        text: modelData.text
-        font.family: "Segeo UI"
-        font.pixelSize:  inputFieldConstants.pixelSize
-        color: inputFieldConstants.textColor
-        elide: Text.ElideRight
-        onImplicitWidthChanged: {
-            var maxWidth = implicitWidth > comboBoxConstants.maxDropDownWidth ? comboBoxConstants.maxDropDownWidth : implicitWidth;
-            comboBox.choiceWidth = Math.max(maxWidth, comboBox.choiceWidth);
-                }
+        contentItem: Text {
+            text: modelData.text
+            font.family: "Segeo UI"
+            font.pixelSize:  inputFieldConstants.pixelSize
+            color: inputFieldConstants.textColor
+            elide: Text.ElideRight
+            onImplicitWidthChanged: {
+                var maxWidth = implicitWidth > comboBoxConstants.maxDropDownWidth ? comboBoxConstants.maxDropDownWidth : implicitWidth;
+                comboBox.choiceWidth = Math.max(maxWidth, comboBox.choiceWidth);
             }
+        }
 
 	    onClicked: {
             comboBox.currentIndex = index
             comboBox.popup.close()
-            }
-	    }
+        }
+    }
 	
-    popup: Popup {
-        y: comboBox.height + 5
-        width: Math.max(comboBox.choiceWidth, comboBox.width)
-        padding: comboBoxConstants.dropDownPadding       
-        height: comboBoxListView.contentHeight + (2 * padding) > comboBoxConstants.dropDownHeight ? comboBoxConstants.dropDownHeight : comboBoxListView.contentHeight + (2 * padding)
-        onOpened: {
-            comboBoxListView.forceActiveFocus();
-            if (comboBoxListView.currentIndex === -1)
-                comboBoxListView.currentIndex = 0;
-        }
-        onClosed: {
-            comboBox.forceActiveFocus();
-        }
+        popup: Popup {
+            y: comboBox.height + 5
+            width: Math.max(comboBox.choiceWidth, comboBox.width)
+            padding: comboBoxConstants.dropDownPadding       
+            height: comboBoxListView.contentHeight + (2 * padding) > comboBoxConstants.dropDownHeight ? comboBoxConstants.dropDownHeight : comboBoxListView.contentHeight + (2 * padding)
+            onOpened: {
+                comboBoxListView.forceActiveFocus();
+                if (comboBoxListView.currentIndex === -1)
+                    comboBoxListView.currentIndex = 0;
+            }
+            onClosed: {
+                comboBox.forceActiveFocus();
+            }
 
-        background: Rectangle {
-            height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height + 16
-            color: comboBoxConstants.dropDownBackgroundColor
-            border.color: comboBoxConstants.dropDownBorderColor                  
-            radius: comboBoxConstants.dropDownRadius
-        } 
+            
 
 
-        contentItem: Item {
-            height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height
+            contentItem: Item {
+                height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height
                 
-            ListView {
-                id: comboBoxListView               
-                anchors.fill: parent
-                clip: true
-                model: comboBox.delegateModel	               
-                currentIndex: comboBox.highlightedIndex                       
-                Keys.onReturnPressed: {
-                    comboBox.currentIndex = comboBoxListView.currentIndex;
-                    popup.close();
-                }
+                ListView {
+                    id: comboBoxListView               
+                    anchors.fill: parent
+                    clip: true
+                    model: comboBox.delegateModel	               
+                    currentIndex: comboBox.highlightedIndex                       
+                    Keys.onReturnPressed: {
+                        comboBox.currentIndex = comboBoxListView.currentIndex;
+                        popup.close();
+                    }
 
-                ScrollBar.vertical: ScrollBar {
-                    width: comboBoxConstants.scrollbarWidth
-                    policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
-                }
+                    ScrollBar.vertical: ScrollBar {
+                        width: comboBoxConstants.scrollbarWidth
+                        policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+                    }
                             
-				Text {                      
-					visible: comboBox.delegateModel.count === 0
-					text: "We can't find anything that matches your search"
-					anchors.horizontalCenter: parent.horizontalCenter
-					anchors.verticalCenter: parent.verticalCenter                        
-					font.family: "Segeo UI"
-					font.pixelSize: inputFieldConstants.pixelSize
-					color: inputFieldConstants.textColor
-				}				
-			}
-		}
-	}
+				    Text {                      
+					    visible: comboBox.delegateModel.count === 0
+					    text: "We can't find anything that matches your search"
+					    anchors.horizontalCenter: parent.horizontalCenter
+					    anchors.verticalCenter: parent.verticalCenter                        
+					    font.family: "Segeo UI"
+					    font.pixelSize: inputFieldConstants.pixelSize
+					    color: inputFieldConstants.textColor
+				    }				
+			    }
+
+                background: Rectangle {
+                    height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height + 16
+                    color: comboBoxConstants.dropDownBackgroundColor
+                    border.color: comboBoxConstants.dropDownBorderColor                  
+                    radius: comboBoxConstants.dropDownRadius
+                } 
+		    }
+	    }
 
     background: Rectangle {
         radius: inputFieldConstants.borderRadius
