@@ -340,6 +340,18 @@ extension RootViewController: AdaptiveCardResourceResolver {
             do {
                 let queryResponse = try JSONDecoder().decode(QueryResponse.self, from: jsonData)
                 completion(.success(queryResponse))
+            } catch DecodingError.valueNotFound(_, let context) {
+                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                completion(.failure(TypeAheadParsingError(kind: .valueNotFound, description: "Null value found for expected non-optional", path: path)))
+            } catch DecodingError.dataCorrupted(let context) {
+                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                completion(.failure(TypeAheadParsingError(kind: .dataCorrupted, description: "Invalid/Corrupt Data", path: path)))
+            } catch DecodingError.typeMismatch(_, let context) {
+                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                completion(.failure(TypeAheadParsingError(kind: .typeMismatch, description: "Unexpected type found", path: path)))
+            } catch DecodingError.keyNotFound(let codingKey, let context) {
+                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                completion(.failure(TypeAheadParsingError(kind: .keyNotFound, description: "Could not find key", path: path)))
             } catch {
                 completion(.failure(error))
             }

@@ -40,6 +40,25 @@ public struct QueryResponse: Codable {
     }
 }
 
+public struct TypeAheadParsingError: Error {
+    public enum ErrorKind {
+        case valueNotFound
+        case dataCorrupted
+        case typeMismatch
+        case keyNotFound
+    }
+    
+    let kind: ErrorKind
+    let description: String
+    let path: String
+    
+    public init(kind: ErrorKind, description: String, path: String) {
+        self.kind = kind
+        self.description = description
+        self.path = path
+    }
+}
+
 enum HostConfigParseError: Error {
     case resultIsNil, configIsNil
 }

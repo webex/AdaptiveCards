@@ -330,7 +330,11 @@ extension ACRView: QueryResponseDelegate {
 
     func didFailWithError(_ error: Error) {
         // Handle the error
-        print("Failed with error:", error.localizedDescription)
+        guard let error = error as? TypeAheadParsingError else {
+            print("Failed with error:", error.localizedDescription)
+            return
+        }
+        print("Decoding error with details: \(error.kind), \(error.description), \(error.path)")
         // Show an error message or take other appropriate action
     }
 }

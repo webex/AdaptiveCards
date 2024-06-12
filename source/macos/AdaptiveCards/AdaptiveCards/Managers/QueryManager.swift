@@ -21,13 +21,15 @@ class QueryManager {
             do {
                 let response = try await resolverDelegate?.adaptiveCard(NSView(), typeAheadQueryFor: "abc")
                 DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
                     // Notify the delegate with the received response
-                    self?.delegate?.didReceiveQueryResponse(response)
+                    self.delegate?.didReceiveQueryResponse(response)
                 }
             } catch {
                 DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
                     // Notify the delegate that an error has occurred
-                    self?.delegate?.didFailWithError(error)
+                    self.delegate?.didFailWithError(error)
                 }
             }
         }
