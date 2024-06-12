@@ -50,8 +50,7 @@ ComboBox {
     
     function selectOption(option) {
         textField.text = option
-        comboBox.popup.close();
-        
+        comboBox.popup.close();       
     }
     
     function filterOptions() {
@@ -77,14 +76,12 @@ ComboBox {
     onActiveFocusChanged: {
         colorChange(false);
         if (activeFocus)
-            Accessible.name = getAccessibleName();
-        
+            Accessible.name = getAccessibleName();        
     }
     onHoveredChanged: {
         colorChange(false);
         if (hovered)
-            _adaptiveCard.showToolTipOnElement(hovered, displayText, comboBox);
-        
+            _adaptiveCard.showToolTipOnElement(hovered, displayText, comboBox);       
     }
     onCurrentValueChanged: {
         Accessible.name = displayText;
@@ -196,8 +193,7 @@ ComboBox {
             comboBox.popup.close()
         }
     }
-    
-    
+        
     popup: Popup {
         y: comboBox.height + 5
         width: Math.max(comboBox.choiceWidth, comboBox.width)
@@ -206,8 +202,7 @@ ComboBox {
         onOpened: {
             comboBoxListView.forceActiveFocus();
             if (comboBoxListView.currentIndex === -1)
-                comboBoxListView.currentIndex = 0;
-            
+                comboBoxListView.currentIndex = 0;            
         }
         
         onClosed: {
@@ -220,8 +215,7 @@ ComboBox {
             border.color: comboBoxConstants.dropDownBorderColor
             radius: comboBoxConstants.dropDownRadius
         } 
-        
-        
+               
         contentItem: Item {
             height: comboBox.delegateModel.count === 0 ? comboBoxConstants.dropDownHeight : comboBoxListView.height
             
@@ -241,8 +235,7 @@ ComboBox {
                     width: comboBoxConstants.scrollbarWidth
                     policy: comboBoxListView.contentHeight > comboBoxConstants.dropDownHeight ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
                 }
-                
-                
+                               
                 Text {                      
                     visible: comboBox.delegateModel.count === 0
                     text: "We can't find anything that matches your search"
@@ -261,7 +254,6 @@ ComboBox {
         color: inputFieldConstants.backgroundColorNormal
         border.color: inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
-    } 
-    
+    }     
 }
 
