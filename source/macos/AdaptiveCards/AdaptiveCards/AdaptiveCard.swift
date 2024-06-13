@@ -13,6 +13,50 @@ public protocol AdaptiveCardResourceResolver: AnyObject {
     func adaptiveCard(_ adaptiveCard: ImageResourceHandlerView, dimensionsForImageWith url: String) -> NSSize?
     func adaptiveCard(_ adaptiveCard: ImageResourceHandlerView, requestImageFor url: String)
     func adaptiveCard(_ adaptiveCard: NSView, attributedStringFor htmlString: String) -> NSAttributedString?
+    func adaptiveCard(_ adaptiveCard: NSView, typeAheadQueryFor query: String) async throws -> QueryResponse
+}
+
+public struct QueryResponse: Codable {
+    var status: Int
+    var queryBody: QueryBody
+    
+    enum CodingKeys: String, CodingKey {
+        case status
+        case queryBody = "body"
+    }
+    
+    public struct QueryBody: Codable {
+        var type: String
+        var value: QueryValues
+        
+        public struct QueryValues: Codable {
+            var results: [QueryResults]
+            
+            public struct QueryResults: Codable {
+                var value: String
+                var title: String
+            }
+        }
+    }
+}
+
+public struct TypeAheadParsingError: Error {
+    public enum ErrorKind {
+        case valueNotFound
+        case dataCorrupted
+        case typeMismatch
+        case keyNotFound
+    }
+    
+    let kind: ErrorKind
+    let description: String
+    let path: String
+    
+    public init(kind: ErrorKind, description: String, path: String) {
+        self.kind = kind
+        self.description = description
+        self.path = path
+    }
 }
 
 enum HostConfigParseError: Error {
