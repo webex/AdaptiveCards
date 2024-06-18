@@ -5,7 +5,7 @@
 #include "ParseResult.h"
 #include "SharedAdaptiveCard.h"
 
-#include "AdaptiveCardModel.h"
+#include "../models/AdaptiveCardModel.h"
 
 class AdaptiveCardController : public QObject 
 {
@@ -17,11 +17,13 @@ class AdaptiveCardController : public QObject
     Q_PROPERTY(Qt::AlignmentFlag verticalAlignment MEMBER mVerticalAlignment CONSTANT)
 
 public:
-	explicit AdaptiveCardController(QObject* parent);
+	explicit AdaptiveCardController(QObject* parent  =  nullptr);
 	~AdaptiveCardController();
 
 public slots:
-	void setCardJSON(const QString& cardJSON);
+	Q_INVOKABLE void setCardJSON(const QString& cardJSON);
+    Q_INVOKABLE QString getCardJSON() const;
+    Q_INVOKABLE void setCardTheme(int selectionIndex);
 
 signals:
 	void adaptiveCardModelChanged();
@@ -31,8 +33,8 @@ private:
 
 private:
     int mMinHeight;
-    Qt::AlignmentFlag mVerticalAlignment;
-	QString mCardJSON;
+    QString mCardJSON;
+
+	Qt::AlignmentFlag mVerticalAlignment;
 	AdaptiveCardModel* mAdaptiveCardModel;
 };
-

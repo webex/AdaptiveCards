@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qmlFiles/CardEditor.qml</file>
+        <file>qmlFiles/CardViewer.qml</file>
+        <file>qmlFiles/main.qml</file>
+        <file>qmlFiles/SampleCardListView.qml</file>
+    </qresource>
+</RCC>

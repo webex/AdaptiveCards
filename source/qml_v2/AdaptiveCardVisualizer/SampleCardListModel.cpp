@@ -130,7 +130,7 @@ QHash<int, QByteArray> SampleCardListModel::roleNames() const
 
     names[CardFileNameRole] = "CardFileName";
     names[CardDisplayNameRole] = "CardDisplayName";
-    names[CardJSONStringRole] = "CardJson";
+    names[CardJSONStringRole] = "CardJSON";
 
     return names;
 }

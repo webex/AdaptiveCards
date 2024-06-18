@@ -26,13 +26,12 @@ file(GLOB_RECURSE ALL_QML_FILES LIST_DIRECTORIES false *.qml *.js)
 
 # This is a dummy just to show the files in the IDE  
 add_library(qmlFiles INTERFACE ${ALL_QML_FILES})
-
-#set_target_properties(VisualizerQmlFiles PROPERTIES FOLDER "Visualizer")
+set_target_properties(qmlFiles PROPERTIES FOLDER "Visualizer")
 
 add_definitions( -DSAMPLE_JSON_FOLDER="${CMAKE_CURRENT_SOURCE_DIR}/JSONSamples" )
 
 file(GLOB_RECURSE SOURCES
-    "qmlFiles/resource.qrc"
+    "resourceVisualizer.qrc"
 	"main.cpp"
 	"SampleCardListModel.cpp"
 	"SampleCardController.cpp"
