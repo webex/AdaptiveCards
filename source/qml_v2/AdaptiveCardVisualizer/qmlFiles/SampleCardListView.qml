@@ -54,19 +54,19 @@ Rectangle {
 		    text: model.CardDisplayName
 		    onClicked: {
 			    cardListView.currentIndex = index;
-                listItemClicked(model.CardJson);
+                listItemClicked(model.CardJSON);
 		    }
                 
             onTextChanged: {
                 if(model.CardDisplayName === "Empty card") {
                     defaultCardIndex = index;
-                    defaultCardJSON = model.CardJson;
+                    defaultCardJSON = model.CardJSON;
                 }
             }
 
             onActiveFocusChanged: {
 				if(activeFocus) {
-					listItemClicked(model.CardJson);
+					listItemClicked(model.CardJSON);
 				}
 			}
 		}

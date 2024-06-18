@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/AdaptiveCard.qml</file>
+        <file>qml/CollectionItem.qml</file>
+        <file>qml/TextBlockRender.qml</file>
+        <file>qml/CollectionItemDelegate.qml</file>
+        <file>qml/WCustomFocusItem.qml</file>
+        <file>qml/JSUtils/DrawUtils.js</file>
+        <file>qml/JSUtils/AdaptiveCardUtils.js</file>
+        <file>qml/JSUtils/ThemeUtils.js</file>
+        <file>qml/CardConstants.qml</file>
+    </qresource>
+</RCC>

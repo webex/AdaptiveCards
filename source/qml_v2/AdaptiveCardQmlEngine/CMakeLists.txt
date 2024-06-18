@@ -37,15 +37,42 @@ find_package(Qt5Quick REQUIRED)
 file(GLOB_RECURSE ALL_QML_FILES LIST_DIRECTORIES false *.qml *.js *.json)
 
 # This is a dummy just to show the files in the IDE  
-add_library(engineQmlFiles INTERFACE ${ALL_QML_FILES})
-set_target_properties(engineQmlFiles PROPERTIES FOLDER "AdaptiveCardQmlEngine")
+add_library(qml INTERFACE ${ALL_QML_FILES})
+set_target_properties(qml PROPERTIES FOLDER "AdaptiveCardQmlEngine")
 
 file(GLOB_RECURSE SOURCES
-    "engineQmlFiles/engineResource.qrc"
+    "resourceEngine.qrc"
+	"AdaptiveCardUtils.cpp"
+	"AdaptiveCardContext.cpp"
+	"AdaptiveCardConfig.cpp"
+	"AdaptiveRenderArgs.cpp"
+	"Formatter.cpp"
+	"Utils.cpp"
+	"stdafx.cpp"
+	
 	"AdaptiveCardController.cpp"
 	"AdaptiveCardModel.cpp"
+	"CollectionItemModel.cpp"
+	
+	"TextBlockModel.cpp"
+	
+	"AdaptiveCardQmlTypes.h"
+	"AdaptiveCardUtils.cpp"
+	"AdaptiveCardEnums.h"
+	"AdaptiveCardContext.h"
+	"AdaptiveCardConfig.h"
+	"AdaptiveCardDarkThemeConfig.h"
+	"AdaptiveCardLightThemeConfig.h"
+	"AdaptiveRenderArgs.h"
+	"Formatter.h"
+	"Utils.h"
+	"stdafx.h"
+	
     "AdaptiveCardController.h"
-    "AdaptiveCardModel.h"	
+    "AdaptiveCardModel.h"
+    "CollectionItemModel.h"
+	
+    "TextBlockModel.h"	
 )
 
 # Setup Library

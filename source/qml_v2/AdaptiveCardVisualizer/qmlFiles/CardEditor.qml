@@ -9,7 +9,7 @@ Rectangle {
 
     color: "black"
 
-    signal renderButtonClicked()
+    signal renderButtonClicked(var cardJSON)
     property alias text: textArea.text
 
 ScrollView {
@@ -54,7 +54,7 @@ ScrollView {
         anchors.margins: 10
             
         onClicked: {
-            renderButtonClicked();
+            renderButtonClicked(root.text);
         }
     }
 }
