@@ -9,7 +9,7 @@ import QtGraphicalEffects 1.0
 ComboBox {
     id: comboBox
     
-    property var _adaptiveCard
+    property var _adaptiveCard 
     property var _consumer
     property var _model
     property int _currentIndex
@@ -58,7 +58,8 @@ ComboBox {
             comboBox.filterOptions();
         }
         textField.text = _isMultiselect ? "" : option;
-        comboBox.popup.close();       
+        comboBox.popup.close();
+        selectionChanged();
     }
 
     function clearMultiselectTile(index) {
@@ -98,12 +99,11 @@ ComboBox {
     width: parent.width
     height: {
         if (selectedChoices.length == 0) {
-            return inputFieldConstants.height;   // Height without any multiselect tiles
+            return inputFieldConstants.height;                                          // Height without any multiselect tiles
         } else if (buttonFlow.implicitHeight > (inputFieldConstants.height * 2)) {
-
-            return (inputFieldConstants.height * 2) + 4; // Height with too many multiselect tiles
+            return (inputFieldConstants.height * 2) + 8;                                // Height with too many multiselect tiles
         }
-        return buttonFlow.implicitHeight + 8; // Height adjusting according to number of multiselect tiles
+        return buttonFlow.implicitHeight + 8;                                           // Height adjusting according to number of multiselect tiles
     }
     model: filteredModel
     currentIndex: _currentIndex
@@ -126,7 +126,6 @@ ComboBox {
     }
     onCurrentValueChanged: {
         Accessible.name = displayText;
-        selectionChanged();
     }
     Keys.onReturnPressed: openPopout()
     Keys.onSpacePressed: openPopout()
@@ -177,7 +176,7 @@ ComboBox {
         property alias buttonFlowModel: comboBox.selectedChoices
 
         function clearMultiselectTile(index) {
-            comboBox.clearMultiselectTile(model.index);
+            comboBox.clearMultiselectTile(index);
         }
         clip: true
         ScrollBar.vertical.policy: ScrollBar.AsNeeded

@@ -30,7 +30,9 @@
             "placeholder": "Choice&Search",
             "id": "myColor",
             "style": "filtered",
-            "label": "What color do you want? (isMultiSelect:false, style:Filtered)"
+            "label": "What color do you want? (isMultiSelect:false, style:Filtered)",
+            "isRequired": true,
+            "errorMessage": "Fill something here"
         },
         {
             "type": "Input.ChoiceSet",
@@ -80,7 +82,9 @@
             "id": "myColor1",
             "style": "filtered",
             "isMultiSelect": true,
-            "label": "What colors do you want? (isMultiSelect:true, style:Filtered)        "
+            "label": "What colors do you want? (isMultiSelect:true, style:Filtered)        ",
+            "isRequired": true,
+            "errorMessage": "Select something"
         },
         {
             "type": "Input.ChoiceSet",
@@ -104,7 +108,9 @@
             ],
             "style": "filtered",
             "label": "What color do you want? ",
-            "id": "myColor2"
+            "id": "myColor2",
+            "isRequired": true,
+            "errorMessage": "Required"
         },
         {
             "type": "Input.ChoiceSet",
