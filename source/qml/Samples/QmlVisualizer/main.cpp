@@ -10,6 +10,7 @@
 
 int main(int argc, char* argv[])
 {
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
     qmlRegisterType<SampleCardModel>("SampleCard", 1, 0, "SampleCardModel");

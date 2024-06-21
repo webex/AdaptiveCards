@@ -12,6 +12,7 @@ Column {
     property string _mEscapedErrorString
     property string _mEscapedPlaceholderString
     property var _choiceSetModel
+    property bool _isMultiselect: false
     property bool showErrorMessage: false
     property string _elementType
     property int minWidth: CardConstants.comboBoxConstants.choiceSetMinWidth
@@ -93,7 +94,7 @@ Column {
             _currentIndex: _comboboxCurrentIndex
             _consumer: choiceSet
             _adaptiveCard: choiceSet._adaptiveCard
-            
+            _isMultiselect: choiceSet._isMultiselect
         }
 
     } 
