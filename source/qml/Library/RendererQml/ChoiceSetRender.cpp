@@ -122,6 +122,7 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         model = populateModel(choiceSet);
         
         mChoiceSetColElement->Property("_elementType", "'Filtered'");
+        mChoiceSetColElement->Property("_isMultiselect", mChoiceSetInput->GetIsMultiSelect() ? "true" : "false");
     }
     else
     {

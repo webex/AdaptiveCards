@@ -12,6 +12,7 @@ Column {
     property string _mEscapedErrorString
     property string _mEscapedPlaceholderString
     property var _choiceSetModel
+    property bool _isMultiselect: false
     property bool showErrorMessage: false
     property string _elementType
     property int minWidth: CardConstants.comboBoxConstants.choiceSetMinWidth
@@ -87,13 +88,29 @@ Column {
         active: _elementType === "Filtered"
 
         sourceComponent: FilteredChoiceSetRender {
-            id: filter
+            id: filtered
             _model: _choiceSetModel
             _mEscapedPlaceholderString: choiceSet._mEscapedPlaceholderString
             _currentIndex: _comboboxCurrentIndex
             _consumer: choiceSet
             _adaptiveCard: choiceSet._adaptiveCard
-            
+            _isMultiselect: choiceSet._isMultiselect
+            Component.onCompleted: {
+                selectionChanged.connect(function() {
+                    if (!_isMultiselect) {
+                        choiceSet.selectedValues = currentText == "" ? "" : currentValue;
+                    } else {
+                        choiceSet.selectedValues = selectedChoices[0].valueOn;
+                        for (let index = 1; index < selectedChoices.length; index++) {
+                            choiceSet.selectedValues = choiceSet.selectedValues + "," + selectedChoices[index].valueOn;
+                        }
+                    }
+                    
+                    if (_isRequired)
+                        validate();
+
+                });
+            }
         }
 
     } 
