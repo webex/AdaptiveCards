@@ -20,6 +20,7 @@
 #include "ImageSet.h"
 #include "ActionSet.h"
 #include "ChoiceSetInput.h"
+#include "ChoicesData.h"
 #include "ChoiceInput.h"
 #include "StyledCollectionElement.h"
 #include "TextInput.h"
