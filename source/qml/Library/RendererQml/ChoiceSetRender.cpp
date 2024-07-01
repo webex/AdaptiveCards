@@ -75,6 +75,9 @@ void ChoiceSetElement::initialize()
     mChoiceSetColElement->Property("id", RendererQml::Formatter() << mChoiceSetInput->GetId());
     mChoiceSetColElement->Property("_adaptiveCard", "adaptiveCard");
     mChoiceSetColElement->Property("spacing", RendererQml::Formatter() << RendererQml::Utils::GetSpacing(mContext->GetConfig()->GetSpacing(), AdaptiveCards::Spacing::Small));
+    mChoiceSetColElement->Property("_dataType", RendererQml::Formatter() << "String.raw`" << mChoiceSetInput->GetChoicesData()->GetChoicesDataType() << "`"); 
+    mChoiceSetColElement->Property("_dataSet", RendererQml::Formatter() << "String.raw`" << mChoiceSetInput->GetChoicesData()->GetDataset() << "`");
+
     mChoiceSetColElement->Property("width", "parent.width");
     mChoiceSetColElement->Property("visible", mChoiceSetInput->GetIsVisible() ? "true" : "false");
 
