@@ -107,8 +107,6 @@ Column {
                             choiceSet.selectedValues = choiceSet.selectedValues + "," + selectedChoices[index].valueOn;
                         }
                     }
-                    console.log("DataType", choiceSet._dataType);
-					console.log("Dataset", choiceSet._dataSet);
                     if (_isRequired)
                         validate();
 
