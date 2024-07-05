@@ -13,6 +13,8 @@ Column {
     property string _mEscapedPlaceholderString
     property var _choiceSetModel
     property bool _isMultiselect: false
+    property var _dataType
+    property var _dataSet
     property bool showErrorMessage: false
     property string _elementType
     property int minWidth: CardConstants.comboBoxConstants.choiceSetMinWidth
@@ -105,7 +107,6 @@ Column {
                             choiceSet.selectedValues = choiceSet.selectedValues + "," + selectedChoices[index].valueOn;
                         }
                     }
-                    
                     if (_isRequired)
                         validate();
 
