@@ -9,6 +9,7 @@ ColumnLayout{
     signal openContextMenu(var pos, var text, var link)
     signal showToolTipifNeeded(var text, var pos)
     signal showToolTipOnElement(bool show,var text, var pos)
+    signal fetchFilteredChoices(var dataSource, var text, var id)
 
     Component.onCompleted: reload(CardString);
 
@@ -23,5 +24,6 @@ ColumnLayout{
         card.openContextMenu.connect(openContextMenu)
         card.showToolTipifNeeded.connect(showToolTipifNeeded)
         card.showToolTipOnElement.connect(showToolTipOnElement)
+        card.fetchFilteredChoices.connect(fetchFilteredChoices)
     }
 }

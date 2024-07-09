@@ -9,12 +9,15 @@ import QtGraphicalEffects 1.0
 ComboBox {
     id: comboBox
     
+    property var _id
     property var _adaptiveCard 
     property var _consumer
     property var _model
     property int _currentIndex
     property bool _isMultiselect
     property string _mEscapedPlaceholderString
+    property var _dataType
+    property var _dataSet
     property var inputFieldConstants: CardConstants.inputFieldConstants
     property var comboBoxConstants: CardConstants.comboBoxConstants
     property var cardConstants: CardConstants.cardConstants
@@ -27,6 +30,7 @@ ComboBox {
     
     
     signal selectionChanged()
+    signal fetchChoices(var text)
     
     function colorChange(isPressed) {
         if (isPressed)
@@ -60,6 +64,7 @@ ComboBox {
         textField.text = _isMultiselect ? "" : option;
         comboBox.popup.close();
         selectionChanged();
+        filteredModel = _model;
     }
 
     function clearMultiselectTile(index) {
@@ -76,7 +81,7 @@ ComboBox {
         }
         var filterText = textField.text.toLowerCase();
 
-        //Filtering the main model for entered text
+        //Filtering the static model for entered text
         filteredModel = _model.filter(function(entry) {
             return entry.text.toLowerCase().includes(filterText);
         });
@@ -92,6 +97,10 @@ ComboBox {
             }
         }
         filteredModel = filteredModelCopy;
+
+        if (_dataSet != "") {
+            comboBox.fetchChoices(textField.text);
+        }
     }
     
     textRole: 'text'
@@ -149,8 +158,7 @@ ComboBox {
         onClicked: {
             if (textField.text.length > 0) {           
                 textField.clear();
-                comboBox.currentIndex = -1;
-                filteredModel = _model; 
+                comboBox.currentIndex = -1; 
                 comboBox.popup.close();
             } else  {           
                 comboBox.popup.open();
@@ -412,6 +420,23 @@ ComboBox {
         color: inputFieldConstants.backgroundColorNormal
         border.color: inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
-    }     
+    }
+    
+    Connections {
+	    id: filteringResponseConnection
+
+		function onFilteredChoicesFetched(id, fetchedModel) {
+            if (id == _id) {
+                responseModel = fetchedModel;
+                var filteredModelCopy = filteredModel;
+                for (var index = 0; index < fetchedModel.length; index++) {
+                    filteredModelCopy.push(fetchedModel[index]);
+                }
+                filteredModel = filteredModelCopy;
+            }
+		}
+
+		target: _aModel
+    }
 }
 
