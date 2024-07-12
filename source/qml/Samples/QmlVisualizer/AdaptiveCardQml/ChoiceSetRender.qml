@@ -107,13 +107,9 @@ Column {
             _dataType: choiceSet._dataType
             Component.onCompleted: {
                 selectionChanged.connect(function() {
-                    if (!_isMultiselect) {
-                        choiceSet.selectedValues = currentText == "" ? "" : currentValue;
-                    } else {
-                        choiceSet.selectedValues = selectedChoices[0].valueOn;
-                        for (let index = 1; index < selectedChoices.length; index++) {
-                            choiceSet.selectedValues = choiceSet.selectedValues + "," + selectedChoices[index].valueOn;
-                        }
+                    choiceSet.selectedValues = selectedChoices[0] ? selectedChoices[0].valueOn : "";
+                    for (let index = 1; index < selectedChoices.length; index++) {
+                        choiceSet.selectedValues = choiceSet.selectedValues + "," + selectedChoices[index].valueOn;
                     }
                     if (_isRequired)
                         validate();
