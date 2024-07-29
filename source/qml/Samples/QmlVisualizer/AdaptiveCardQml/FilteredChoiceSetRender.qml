@@ -440,30 +440,30 @@ ComboBox {
     Connections {
 	    id: filteringResponseConnection
 
-		function onFilteredChoicesFetched(id, fetchedModel) {
-            if (id == _id) {
-                waitingResponse = false;
-                var filteredModelCopy = filteredModel;
-                for (var index = 0; index < fetchedModel.length; index++) {
-                    filteredModelCopy.push(fetchedModel[index]);
-                }
-                filteredModel = filteredModelCopy;
-                if (_isMultiselect) {
-                    var filteredModelCopy = filteredModel
-                    for (let index = 0; index < selectedChoices.length; index++) {
-                        var elementIndex = filteredModelCopy.findIndex(function(entry) {
-                            return entry.valueOn == selectedChoices[index].valueOn && entry.text == selectedChoices[index].text;
-                        });
-                        if (elementIndex != -1) {
-                            filteredModelCopy.splice(elementIndex, 1);
-                        }
-                    }
-                    filteredModel = filteredModelCopy;
-                }
-            }
-		}
+	    function onFilteredChoicesFetched(id, fetchedModel) {
+            	if (id == _id) {
+		    waitingResponse = false;
+		    var filteredModelCopy = filteredModel;
+		    for (var index = 0; index < fetchedModel.length; index++) {
+		        filteredModelCopy.push(fetchedModel[index]);
+		    }
+		    filteredModel = filteredModelCopy;
+		    if (_isMultiselect) {
+		        var filteredModelCopy = filteredModel
+		        for (let index = 0; index < selectedChoices.length; index++) {
+			    var elementIndex = filteredModelCopy.findIndex(function(entry) {
+			        return entry.valueOn == selectedChoices[index].valueOn && entry.text == selectedChoices[index].text;
+			    });
+			    if (elementIndex != -1) {
+			        filteredModelCopy.splice(elementIndex, 1);
+			    }
+		        }
+		        filteredModel = filteredModelCopy;
+		    }
+	        }
+	    }
 
-		target: _aModel
+	    target: _aModel
     }
 }
 
