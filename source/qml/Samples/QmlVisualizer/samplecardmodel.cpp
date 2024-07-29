@@ -281,7 +281,7 @@ void SampleCardModel::fetchFilteredChoices(const QString& dataSource, const QStr
 {
     std::thread thread_object([this, id]() {
         dataset_mutex.lock();
-        std::chrono::seconds duration(5);
+        std::chrono::seconds duration(2);
         std::this_thread::sleep_for(duration);
 
         QVariantList colorList;

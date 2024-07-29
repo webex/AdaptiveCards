@@ -25,6 +25,7 @@ ComboBox {
     property var selectedChoices: []
     property var filteredModel: _model;
     property bool waitingResponse: false
+    property string searchedText: ""
     
     
     onActivated: selectOption(currentText)
@@ -82,7 +83,7 @@ ComboBox {
         selectionChanged();
     }
     
-    function filterOptions() {
+    function filterOptions(shouldFetch = false) {
         if (textField.text == "") {
             filteredModel = _model;
         }
@@ -97,18 +98,19 @@ ComboBox {
         if (_isMultiselect) {
             var filteredModelCopy = filteredModel
             for (let index = 0; index < selectedChoices.length; index++) {
-                var elementIndex = filteredModelCopy.findIndex(function(entry) {
-                    return entry.valueOn == selectedChoices[index].valueOn && entry.text == selectedChoices[index].text;
-                });
-                if (elementIndex != -1) {
-                    console.log(filteredModelCopy.splice(elementIndex, 1));
-                }
+            var elementIndex = filteredModelCopy.findIndex(function(entry) {
+                return entry.valueOn == selectedChoices[index].valueOn && entry.text == selectedChoices[index].text;
+            });
+            if (elementIndex != -1) {
+                filteredModelCopy.splice(elementIndex, 1);
             }
-            filteredModel = filteredModelCopy;
+        }
+        filteredModel = filteredModelCopy;
         }
 
-        if (_dataSet != "") {
+        if (_dataSet != ""  && searchedText != textField.text && shouldFetch) {
             waitingResponse = true;
+            searchedText = textField.text;
             comboBox.fetchChoices(textField.text);
         }
     }
@@ -237,7 +239,7 @@ ComboBox {
             onTextChanged: {
                 // Open the dropdown when the user types anything
                 comboBox.popup.open();
-                comboBox.filterOptions();
+                comboBox.filterOptions(true);
                 textField.forceActiveFocus();
             }
             
@@ -440,12 +442,24 @@ ComboBox {
 
 		function onFilteredChoicesFetched(id, fetchedModel) {
             if (id == _id) {
-                waitingResponse = true;
+                waitingResponse = false;
                 var filteredModelCopy = filteredModel;
                 for (var index = 0; index < fetchedModel.length; index++) {
                     filteredModelCopy.push(fetchedModel[index]);
                 }
                 filteredModel = filteredModelCopy;
+                if (_isMultiselect) {
+                    var filteredModelCopy = filteredModel
+                    for (let index = 0; index < selectedChoices.length; index++) {
+                        var elementIndex = filteredModelCopy.findIndex(function(entry) {
+                            return entry.valueOn == selectedChoices[index].valueOn && entry.text == selectedChoices[index].text;
+                        });
+                        if (elementIndex != -1) {
+                            filteredModelCopy.splice(elementIndex, 1);
+                        }
+                    }
+                    filteredModel = filteredModelCopy;
+                }
             }
 		}
 
