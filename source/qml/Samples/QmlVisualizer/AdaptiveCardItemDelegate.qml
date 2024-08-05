@@ -12,6 +12,7 @@ Item {
     signal openContextMenu(var pos, var text, var link)
     signal showToolTipifNeeded(var text, var pos)
     signal showToolTipOnElement(bool show,var text, var pos)
+    signal fetchFilteredChoices(var dataSource, var text, var id)
 
     height: mainLayout.height
     width: listView.width
@@ -48,6 +49,7 @@ Item {
                         item.openContextMenu.connect(openContextMenu)
                         item.showToolTipifNeeded.connect(showToolTipifNeeded)
                         item.showToolTipOnElement.connect(showToolTipOnElement)
+                        item.fetchFilteredChoices.connect(fetchFilteredChoices)
                     }
                 }
             }

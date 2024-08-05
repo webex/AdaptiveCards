@@ -9,24 +9,30 @@ import QtGraphicalEffects 1.0
 ComboBox {
     id: comboBox
     
+    property var _id
     property var _adaptiveCard 
     property var _consumer
     property var _model
     property int _currentIndex
     property bool _isMultiselect
     property string _mEscapedPlaceholderString
+    property var _dataType
+    property var _dataSet
     property var inputFieldConstants: CardConstants.inputFieldConstants
     property var comboBoxConstants: CardConstants.comboBoxConstants
     property var cardConstants: CardConstants.cardConstants
     property int choiceWidth: 0
     property var selectedChoices: []
     property var filteredModel: _model;
+    property bool waitingResponse: false
+    property string searchedText: ""
     
     
     onActivated: selectOption(currentText)
     
     
     signal selectionChanged()
+    signal fetchChoices(var text)
     
     function colorChange(isPressed) {
         if (isPressed)
@@ -52,38 +58,46 @@ ComboBox {
     }
     
     function selectOption(option) {
-        if (_isMultiselect) {
-            selectedChoices.push(filteredModel[currentIndex]);
-            contentItem.buttonFlowModel = selectedChoices;
-            comboBox.filterOptions();
+        if (!_isMultiselect) {
+            selectedChoices = [];  //Resetting since only one option can be selected
         }
+        selectedChoices.push(filteredModel[currentIndex]);
         textField.text = _isMultiselect ? "" : option;
         comboBox.popup.close();
+        filteredModel = _model;
+        if (_isMultiselect) {
+            contentItem.buttonFlowModel = selectedChoices;
+            filterOptions();    //Filtering options so that selected tile is removed from dropdown
+        }
         selectionChanged();
     }
 
-    function clearMultiselectTile(index) {
+    function deselectOption(index) {
         var removedItem = selectedChoices.splice(index, 1);
-        filteredModel.push(removedItem[0]);
-        var filteredModelCopy = filteredModel;
-        filteredModel = filteredModelCopy;
-        contentItem.buttonFlowModel = selectedChoices;
+        if (_isMultiselect) {
+            filteredModel.push(removedItem[0]);
+            var filteredModelCopy = filteredModel;
+            filteredModel = filteredModelCopy;
+            contentItem.buttonFlowModel = selectedChoices;
+        }
+        selectionChanged();
     }
     
-    function filterOptions() {
+    function filterOptions(shouldFetch = false) {
         if (textField.text == "") {
             filteredModel = _model;
         }
         var filterText = textField.text.toLowerCase();
 
-        //Filtering the main model for entered text
+        //Filtering the static model for entered text
         filteredModel = _model.filter(function(entry) {
             return entry.text.toLowerCase().includes(filterText);
         });
 
         //Removing entries that are already selected
-        var filteredModelCopy = filteredModel
-        for (let index = 0; index < selectedChoices.length; index++) {
+        if (_isMultiselect) {
+            var filteredModelCopy = filteredModel
+            for (let index = 0; index < selectedChoices.length; index++) {
             var elementIndex = filteredModelCopy.findIndex(function(entry) {
                 return entry.valueOn == selectedChoices[index].valueOn && entry.text == selectedChoices[index].text;
             });
@@ -92,6 +106,13 @@ ComboBox {
             }
         }
         filteredModel = filteredModelCopy;
+        }
+
+        if (_dataSet != ""  && searchedText != textField.text && shouldFetch) {
+            waitingResponse = true;
+            searchedText = textField.text;
+            comboBox.fetchChoices(textField.text);
+        }
     }
     
     textRole: 'text'
@@ -149,9 +170,11 @@ ComboBox {
         onClicked: {
             if (textField.text.length > 0) {           
                 textField.clear();
-                comboBox.currentIndex = -1;
-                filteredModel = _model; 
+                comboBox.currentIndex = -1; 
                 comboBox.popup.close();
+                if (!_isMultiselect) {
+                    comboBox.deselectOption(0); //Index is always 0 for single select
+                }
             } else  {           
                 comboBox.popup.open();
             }
@@ -175,8 +198,8 @@ ComboBox {
 
         property alias buttonFlowModel: comboBox.selectedChoices
 
-        function clearMultiselectTile(index) {
-            comboBox.clearMultiselectTile(index);
+        function deselectOption(index) {
+            comboBox.deselectOption(index);
         }
         clip: true
         ScrollBar.vertical.policy: ScrollBar.AsNeeded
@@ -216,7 +239,7 @@ ComboBox {
             onTextChanged: {
                 // Open the dropdown when the user types anything
                 comboBox.popup.open();
-                comboBox.filterOptions();
+                comboBox.filterOptions(true);
                 textField.forceActiveFocus();
             }
             
@@ -285,7 +308,7 @@ ComboBox {
         
                             anchors.fill: parent
                             onClicked: (mouse)=> {
-                                textFieldScroller.clearMultiselectTile(model.index);
+                                textFieldScroller.deselectOption(model.index);
                                 mouse.accepted = false;
             
                             }
@@ -381,7 +404,7 @@ ComboBox {
                 }
                                
                 Text {                      
-                    visible: comboBox.delegateModel.count === 0
+                    visible: comboBox.delegateModel.count === 0 && !waitingResponse
                     text: "We can't find anything that matches your search"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter                        
@@ -391,7 +414,7 @@ ComboBox {
                 } 
 
                 Image {
-                    visible: false
+                    visible: comboBox.delegateModel.count === 0 && waitingResponse
                     source: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iMzYiIHZpZXdCb3g9IjAgMCAzNiAzNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMyLjYyNSAxOS4xMjVDMzIuNDc3MiAxOS4xMjUxIDMyLjMzMDkgMTkuMDk2IDMyLjE5NDQgMTkuMDM5NUMzMi4wNTc5IDE4Ljk4MyAzMS45MzM4IDE4LjkwMDIgMzEuODI5MyAxOC43OTU3QzMxLjcyNDggMTguNjkxMiAzMS42NDIgMTguNTY3MiAzMS41ODU1IDE4LjQzMDZDMzEuNTI5IDE4LjI5NDEgMzEuNDk5OSAxOC4xNDc4IDMxLjUgMThDMzEuNSAyMC42NyAzMC43MDgyIDIzLjI4MDEgMjkuMjI0OCAyNS41MDAyQzI3Ljc0MTQgMjcuNzIwMyAyNS42MzMgMjkuNDUwNiAyMy4xNjYyIDMwLjQ3MjRDMjAuNjk5NCAzMS40OTQyIDE3Ljk4NSAzMS43NjE1IDE1LjM2NjMgMzEuMjQwNkMxMi43NDc1IDMwLjcxOTcgMTAuMzQyMSAyOS40MzQgOC40NTQwNyAyNy41NDU5QzYuNTY2MDYgMjUuNjU3OSA1LjI4MDMxIDIzLjI1MjUgNC43NTk0MSAyMC42MzM3QzQuMjM4NTEgMTguMDE1IDQuNTA1ODUgMTUuMzAwNiA1LjUyNzYzIDEyLjgzMzhDNi41NDk0MiAxMC4zNjcgOC4yNzk3NSA4LjI1ODU2IDEwLjQ5OTggNi43NzUxNkMxMi43MTk5IDUuMjkxNzYgMTUuMzMgNC41IDE4IDQuNUMxNy43MDE2IDQuNSAxNy40MTU1IDQuMzgxNDcgMTcuMjA0NSA0LjE3MDVDMTYuOTkzNSAzLjk1OTUyIDE2Ljg3NSAzLjY3MzM3IDE2Ljg3NSAzLjM3NUMxNi44NzUgMy4wNzY2MyAxNi45OTM1IDIuNzkwNDggMTcuMjA0NSAyLjU3OTVDMTcuNDE1NSAyLjM2ODUzIDE3LjcwMTYgMi4yNSAxOCAyLjI1QzE0Ljg4NSAyLjI1IDExLjgzOTggMy4xNzM3MiA5LjI0OTc4IDQuOTA0MzVDNi42NTk3IDYuNjM0OTkgNC42NDA5OCA5LjA5NDggMy40NDg5IDExLjk3MjdDMi4yNTY4MiAxNC44NTA3IDEuOTQ0OTIgMTguMDE3NSAyLjU1MjY0IDIxLjA3MjdDMy4xNjAzNiAyNC4xMjc5IDQuNjYwNCAyNi45MzQzIDYuODYzMDcgMjkuMTM2OUM5LjA2NTc1IDMxLjMzOTYgMTEuODcyMSAzMi44Mzk3IDE0LjkyNzMgMzMuNDQ3NEMxNy45ODI1IDM0LjA1NTEgMjEuMTQ5MyAzMy43NDMyIDI0LjAyNzMgMzIuNTUxMUMyNi45MDUyIDMxLjM1OSAyOS4zNjUgMjkuMzQwMyAzMS4wOTU3IDI2Ljc1MDJDMzIuODI2MyAyNC4xNjAyIDMzLjc1IDIxLjExNTEgMzMuNzUgMThDMzMuNzUwMSAxOC4xNDc4IDMzLjcyMTEgMTguMjk0MSAzMy42NjQ1IDE4LjQzMDZDMzMuNjA4IDE4LjU2NzIgMzMuNTI1MiAxOC42OTEyIDMzLjQyMDcgMTguNzk1N0MzMy4zMTYyIDE4LjkwMDIgMzMuMTkyMiAxOC45ODMgMzMuMDU1NiAxOS4wMzk1QzMyLjkxOTEgMTkuMDk2IDMyLjc3MjggMTkuMTI1MSAzMi42MjUgMTkuMTI1WiIgZmlsbD0iIzhGOEY4RiIvPgo8cGF0aCBkPSJNMTYuODc1IDMuMzc1QzE2Ljg3NDkgMy41MjI3NiAxNi45MDQgMy42NjkwOSAxNi45NjA1IDMuODA1NjJDMTcuMDE3IDMuOTQyMTUgMTcuMDk5OCA0LjA2NjIgMTcuMjA0MyA0LjE3MDY5QzE3LjMwODggNC4yNzUxNyAxNy40MzI5IDQuMzU4MDMgMTcuNTY5NCA0LjQxNDU0QzE3LjcwNTkgNC40NzEwNSAxNy44NTIyIDQuNTAwMDkgMTggNC41QzIxLjU3OTIgNC41MDM5MSAyNS4wMTA3IDUuOTI3NDggMjcuNTQxNiA4LjQ1ODM3QzMwLjA3MjUgMTAuOTg5MyAzMS40OTYxIDE0LjQyMDggMzEuNSAxOEMzMS41IDE4LjI5ODQgMzEuNjE4NSAxOC41ODQ1IDMxLjgyOTUgMTguNzk1NUMzMi4wNDA1IDE5LjAwNjUgMzIuMzI2NiAxOS4xMjUgMzIuNjI1IDE5LjEyNUMzMi45MjM0IDE5LjEyNSAzMy4yMDk1IDE5LjAwNjUgMzMuNDIwNSAxOC43OTU1QzMzLjYzMTUgMTguNTg0NSAzMy43NSAxOC4yOTg0IDMzLjc1IDE4QzMzLjc0NTMgMTMuODI0MyAzMi4wODQ0IDkuODIwOTMgMjkuMTMxOCA2Ljg2ODI0QzI2LjE3OTEgMy45MTU1NiAyMi4xNzU3IDIuMjU0NjkgMTggMi4yNUMxNy44NTIyIDIuMjQ5OTEgMTcuNzA1OSAyLjI3ODk1IDE3LjU2OTQgMi4zMzU0NkMxNy40MzI5IDIuMzkxOTcgMTcuMzA4OCAyLjQ3NDgzIDE3LjIwNDMgMi41NzkzMUMxNy4wOTk4IDIuNjgzOCAxNy4wMTcgMi44MDc4NSAxNi45NjA1IDIuOTQ0MzhDMTYuOTA0IDMuMDgwOTEgMTYuODc0OSAzLjIyNzI0IDE2Ljg3NSAzLjM3NVoiIGZpbGw9IiMxMTcwQ0YiLz4KPC9zdmc+Cg=="
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -412,6 +435,35 @@ ComboBox {
         color: inputFieldConstants.backgroundColorNormal
         border.color: inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
-    }     
+    }
+    
+    Connections {
+	    id: filteringResponseConnection
+
+	    function onFilteredChoicesFetched(id, fetchedModel) {
+            	if (id == _id) {
+		    waitingResponse = false;
+		    var filteredModelCopy = filteredModel;
+		    for (var index = 0; index < fetchedModel.length; index++) {
+		        filteredModelCopy.push(fetchedModel[index]);
+		    }
+		    filteredModel = filteredModelCopy;
+		    if (_isMultiselect) {
+		        var filteredModelCopy = filteredModel
+		        for (let index = 0; index < selectedChoices.length; index++) {
+			    var elementIndex = filteredModelCopy.findIndex(function(entry) {
+			        return entry.valueOn == selectedChoices[index].valueOn && entry.text == selectedChoices[index].text;
+			    });
+			    if (elementIndex != -1) {
+			        filteredModelCopy.splice(elementIndex, 1);
+			    }
+		        }
+		        filteredModel = filteredModelCopy;
+		    }
+	        }
+	    }
+
+	    target: _aModel
+    }
 }
 

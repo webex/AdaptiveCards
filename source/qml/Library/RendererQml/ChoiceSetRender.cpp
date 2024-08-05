@@ -123,7 +123,8 @@ void ChoiceSetElement::renderChoiceSet(RendererQml::ChoiceSet choiceSet, Rendere
         updateContext();
         
         model = populateModel(choiceSet);
-        
+
+        mChoiceSetColElement->Property("_id", mChoiceSetColElement->GetId());
         mChoiceSetColElement->Property("_elementType", "'Filtered'");
         mChoiceSetColElement->Property("_isMultiselect", mChoiceSetInput->GetIsMultiSelect() ? "true" : "false");
     }
