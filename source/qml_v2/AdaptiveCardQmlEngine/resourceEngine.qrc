@@ -9,5 +9,6 @@
         <file>qml/JSUtils/AdaptiveCardUtils.js</file>
         <file>qml/JSUtils/ThemeUtils.js</file>
         <file>qml/CardConstants.qml</file>
+        <file>qml/RichTextBlockRender.qml</file>
     </qresource>
 </RCC>

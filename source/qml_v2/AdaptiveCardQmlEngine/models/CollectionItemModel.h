@@ -4,23 +4,27 @@
 #include <SharedAdaptiveCard.h>
 
 #include <TextBlock.h>
+#include "RichTextBlock.h"
+
 #include "Enums.h"
 
 class TextBlockModel;
+class RichTextBlockModel;
 
-class CollectionItemModel  : public QAbstractListModel
+class CollectionItemModel : public QAbstractListModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	enum CollectionModelRole
+    enum CollectionModelRole
     {
         DelegateType = Qt::UserRole + 1,
         TextBlockRole,
+        RichTextBlockRole,
         FillHeightRole
     };
 
 public:
-	using RowContent = std::unordered_map<int, QVariant>;
+    using RowContent = std::unordered_map<int, QVariant>;
 
     explicit CollectionItemModel(std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>> elements, QObject* parent = nullptr);
     ~CollectionItemModel();
@@ -36,4 +40,5 @@ private:
 private:
     void populateRowData(std::shared_ptr<AdaptiveCards::BaseCardElement> element);
     void populateTextBlockModel(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, RowContent& rowContent);
+    void populateRichTextBlockModel(std::shared_ptr<AdaptiveCards::RichTextBlock> rightTextBlock, RowContent& rowContent);
 };

@@ -7,7 +7,7 @@ Loader {
 
     property var parentCardItem
 
-    source: "qrc:qml/TextBlockRender.qml"
+    source: "qrc:qml/RichTextBlockRender.qml"
 
     /*
     {

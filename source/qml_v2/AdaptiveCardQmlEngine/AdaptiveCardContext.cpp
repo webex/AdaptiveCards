@@ -3,8 +3,7 @@
 
 namespace AdaptiveCardQmlEngine
 {
-    AdaptiveCardContext::AdaptiveCardContext()
-    : mHostConfig(nullptr)
+    AdaptiveCardContext::AdaptiveCardContext() : mHostConfig(nullptr)
     {
     }
 
@@ -14,28 +13,31 @@ namespace AdaptiveCardQmlEngine
 
     void AdaptiveCardContext::initAdaptiveCardContext()
     {
-        // Initializing Host config and Card config
+    // Initializing Host config and Card config
         mCardConfig = std::make_shared<AdaptiveCardQmlEngine::AdaptiveCardConfig>(true);
-        mHostConfig = std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
+        mHostConfig =
+        std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
     }
 
     void AdaptiveCardContext::setAdaptiveCardTheme(AdaptiveCardEnums::AdaptiveCardTheme theme)
     {
         mAdaptiveCardTheme = theme;
 
-        // ReInitializing AdaptiveCard and Host config
-        mCardConfig = std::make_shared<AdaptiveCardConfig>(mAdaptiveCardTheme == AdaptiveCardEnums::AdaptiveCardTheme::DarkTheme ? true : false);
+    // ReInitializing AdaptiveCard and Host config
+        mCardConfig =
+        std::make_shared<AdaptiveCardConfig>(mAdaptiveCardTheme == AdaptiveCardEnums::AdaptiveCardTheme::DarkTheme ? true : false);
 
         if (mAdaptiveCardTheme == AdaptiveCardEnums::AdaptiveCardTheme::DarkTheme)
         {
-			mHostConfig = std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
-		}
+            mHostConfig =
+            std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
+        }
         else
         {
-			mHostConfig = std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(LightConfig::lightConfig));
-		}
+            mHostConfig = std::make_shared<AdaptiveCards::HostConfig>(
+            AdaptiveCards::HostConfig::DeserializeFromString(LightConfig::lightConfig));
+        }
     }
-
 
     std::shared_ptr<AdaptiveCards::HostConfig> AdaptiveCardContext::getHostConfig()
     {
@@ -44,12 +46,12 @@ namespace AdaptiveCardQmlEngine
 
     std::shared_ptr<AdaptiveCardConfig> AdaptiveCardContext::getCardConfig()
     {
-        return mCardConfig;
+    return mCardConfig;
     }
 
     QString AdaptiveCardContext::getColor(AdaptiveCards::ForegroundColor color, bool isSubtle, bool highlight, bool isQml)
     {
-        AdaptiveCards::ColorConfig colorConfig; 
+        AdaptiveCards::ColorConfig colorConfig;
         switch (color)
         {
         case AdaptiveCards::ForegroundColor::Accent:
@@ -73,8 +75,8 @@ namespace AdaptiveCardQmlEngine
         default:
             if (mAdaptiveCardTheme == AdaptiveCardEnums::AdaptiveCardTheme::DarkTheme)
             {
-				colorConfig = mRenderArgs.GetForegroundColors().light;
-			}
+                colorConfig = mRenderArgs.GetForegroundColors().light;
+            }
             break;
         }
 
@@ -88,6 +90,17 @@ namespace AdaptiveCardQmlEngine
             const auto color = isSubtle ? colorConfig.subtleColor : colorConfig.defaultColor;
             return QString::fromStdString(color);
         }
-	}
+    }
+
+    std::string AdaptiveCardContext::getLang()
+    {
+        return m_lang;
+    }
+
+    void AdaptiveCardContext::setLang(const std::string& lang)
+    {
+        m_lang = lang;
+    }
+
 } // namespace AdaptiveCardQmlEngine
 
