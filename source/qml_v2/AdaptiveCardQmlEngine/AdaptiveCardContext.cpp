@@ -44,7 +44,7 @@ namespace AdaptiveCardQmlEngine
 
     std::shared_ptr<AdaptiveCardConfig> AdaptiveCardContext::getCardConfig()
     {
-    return mCardConfig;
+        return mCardConfig;
     }
 
     QString AdaptiveCardContext::getColor(AdaptiveCards::ForegroundColor color, bool isSubtle, bool highlight, bool isQml)
