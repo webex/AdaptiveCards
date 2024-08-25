@@ -4,9 +4,11 @@
 #include <SharedAdaptiveCard.h>
 
 #include <TextBlock.h>
+#include <Image.h>
 #include "Enums.h"
 
 class TextBlockModel;
+class ImageModel;
 
 class CollectionItemModel  : public QAbstractListModel
 {
@@ -16,6 +18,7 @@ class CollectionItemModel  : public QAbstractListModel
     {
         DelegateType = Qt::UserRole + 1,
         TextBlockRole,
+        ImageRole,
         FillHeightRole
     };
 
@@ -36,4 +39,5 @@ private:
 private:
     void populateRowData(std::shared_ptr<AdaptiveCards::BaseCardElement> element);
     void populateTextBlockModel(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, RowContent& rowContent);
+    void populateImageModel(std::shared_ptr<AdaptiveCards::Image> image, RowContent& rowContent);
 };

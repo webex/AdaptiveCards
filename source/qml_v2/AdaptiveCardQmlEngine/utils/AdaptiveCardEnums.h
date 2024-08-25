@@ -8,6 +8,7 @@ namespace AdaptiveCardEnums
     enum class CardElementType {
         AdaptiveCard,
         TextBlock,
+        Image,
         Container,
         Column,
         ColumnSet,

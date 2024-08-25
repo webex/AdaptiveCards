@@ -9,5 +9,11 @@
         <file>qml/JSUtils/AdaptiveCardUtils.js</file>
         <file>qml/JSUtils/ThemeUtils.js</file>
         <file>qml/CardConstants.qml</file>
+        <file>qml/ImageRender.qml</file>
+        <file>images/0.jpg</file>
+        <file>images/1.jpg</file>
+        <file>images/2.jpg</file>
+        <file>images/3.jpg</file>
+        <file>images/4.jpg</file>
     </qresource>
 </RCC>
