@@ -25,4 +25,10 @@ TextEdit {
                           richTextBlockModel.horizontalAlignment === 1 ? Text.AlignHCenter : Text.AlignRight  
 
     color: richTextBlockModel.color
+    activeFocusOnTab: true
+    readOnly: true
+
+    WCustomFocusItem {
+        isRectangle: true
+    }
 }
