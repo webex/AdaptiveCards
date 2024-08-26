@@ -27,13 +27,11 @@ namespace AdaptiveCardQmlEngine
 
         if (mAdaptiveCardTheme == AdaptiveCardEnums::AdaptiveCardTheme::DarkTheme)
         {
-            mHostConfig =
-            std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
+            mHostConfig = std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
         }
         else
         {
-            mHostConfig = std::make_shared<AdaptiveCards::HostConfig>(
-            AdaptiveCards::HostConfig::DeserializeFromString(LightConfig::lightConfig));
+            mHostConfig = std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(LightConfig::lightConfig));
         }
     }
 
