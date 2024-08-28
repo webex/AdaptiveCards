@@ -39,6 +39,9 @@ namespace AdaptiveCardQmlEngine
 
         QString getColor(AdaptiveCards::ForegroundColor color, bool isSubtle, bool highlight, bool isQml = true);
 
+        std::string getLang();
+        void setLang(const std::string& lang);
+
     private:
         AdaptiveCardContext();
         ~AdaptiveCardContext();
@@ -51,5 +54,6 @@ namespace AdaptiveCardQmlEngine
         std::shared_ptr<AdaptiveCards::HostConfig> mHostConfig;
         std::shared_ptr<AdaptiveCardConfig> mCardConfig;
         AdaptiveCardEnums::AdaptiveCardTheme mAdaptiveCardTheme;
+        std::string m_lang; 
     };
 }

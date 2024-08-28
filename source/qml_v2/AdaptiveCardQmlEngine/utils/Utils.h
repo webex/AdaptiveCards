@@ -16,22 +16,12 @@ namespace AdaptiveCardQmlEngine
         static const std::string handleEscapeSequences(std::string& text);
         static const std::string formatHtmlUrl(std::string& text, const std::string& linkColor, const std::string& textDecoration);
         static std::vector<std::string> splitString(const std::string& string, char delimiter);
-        
+
+        static std::string GetHorizontalAlignment(std::string alignType);
+        static std::string GetVerticalAlignment(std::string alignType);
 		
     private:
         Utils() {}
     };
 
-    /*
-    class TextUtils
-    {
-    public:
-        static std::string applyTextFunctions(const std::string& text, const std::string& lang);  
-        static std::locale getValidCultureInfo(const std::string& lang);
-        static bool getLocalTime(const std::string& tzOffset, std::tm& tm, std::tm& lt);
-
-    private:
-        static std::regex m_textFunctionRegex;
-    };
-    */
 }   // namespace AdaptiveCardQmlEngine

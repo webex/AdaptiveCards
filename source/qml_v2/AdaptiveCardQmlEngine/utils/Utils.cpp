@@ -86,117 +86,25 @@ namespace AdaptiveCardQmlEngine
         return splitElements;
     }
 
-    //-------------------------------------------------------------------------------------------------------
-
-    /*
-    std::string TextUtils::applyTextFunctions(const std::string& text, const std::string& lang)
+    std::string Utils::GetHorizontalAlignment(std::string alignType)
     {
-        std::smatch oneMatch;
-        std::string result = text;
-        std::string::const_iterator searchLoc(text.cbegin());
-        while (std::regex_search(searchLoc, text.cend(), oneMatch, m_textFunctionRegex))
-        {
-            if (oneMatch[1] == "DATE" || oneMatch[1] == "TIME")
-            {
-                std::tm utcTm = {};
-                std::stringstream tmss(oneMatch[2]);
-                tmss >> std::get_time(&utcTm, "%Y-%m-%dT%H:%M:%S");
-
-                if (!tmss.fail())
-                {
-                    std::tm lt = {};
-                    if (getLocalTime(oneMatch[3], utcTm, lt))
-                    {
-                        std::string format = "%x";
-                        if (oneMatch[1] == "DATE")
-                        {
-                            // Check if date before 1970
-                            auto date_split = Utils::splitString(oneMatch[2], '-');
-                            if (date_split.empty() || std::stoi(date_split[0]) < 1970)
-                            {
-                                return result;
-                            }
-
-                            if (oneMatch[4] == "LONG")
-                            {
-                                format = "%A, %B %d, %Y"; // There is no equivalent for C# "D" format in C++
-                            }
-                            else if (oneMatch[4] == "SHORT")
-                            {
-                                format = "%a, %b %d, %Y";
-                            }
-                            else
-                            {
-                                format = "%x";
-                            }
-                        }
-                        else if (oneMatch[1] == "TIME")
-                        {
-                            if (oneMatch[4] != "")
-                            {
-                                searchLoc = oneMatch.suffix().first;
-                                continue;
-                            }
-                            format = "%I:%M %p";
-                        }
-
-                        std::stringstream ss2;
-                        ss2.imbue(getValidCultureInfo(lang));
-                        ss2 << std::put_time(&lt, format.c_str());
-
-                        result = Utils::Replace(result, oneMatch[0], ss2.str());
-                    }
-                }
-            }
-            searchLoc = oneMatch.suffix().first;
-        }
-        return result;
+        if (alignType.compare("center") == 0)
+            return "Qt.AlignHCenter";
+        else if (alignType.compare("right") == 0)
+            return "Qt.AlignRight";
+        else
+            return "Qt.AlignLeft";
     }
 
-    std::locale TextUtils::getValidCultureInfo(const std::string& lang)
+    std::string Utils::GetVerticalAlignment(std::string alignType)
     {
-        return std::locale("en_US");
+        if (alignType.compare("center") == 0)
+            return "Qt.AlignVCenter";
+        else if (alignType.compare("bottom") == 0)
+            return "Qt.AlignBottom";
+        else
+            return "Qt.AlignTop";
     }
-
-    bool TextUtils::getLocalTime(const std::string& tzOffset, std::tm& utcTm, std::tm& lt)
-    {
-        lt = {};
-        std::stringstream tzss(tzOffset);
-        char offsetType;
-        tzss >> offsetType;
-
-        time_t tzt = 0;
-        if (offsetType != 'Z' && !tzss.fail())
-        {
-            std::tm tzm = {};
-            tzss >> std::get_time(&tzm, "%H:%M");
-            if (!tzss.fail())
-            {
-                tzt = (tzm.tm_hour * 60 * 60) + (tzm.tm_min * 60) + tzm.tm_sec;
-                if (offsetType == '-')
-                {
-                    tzt = -tzt;
-                }
-            }
-        }
-
-        if (tzss.fail())
-        {
-            return false;
-        }
-
-#ifdef _WIN32
-        const time_t utct = _mkgmtime(&utcTm) - tzt;
-        localtime_s(&lt, &utct);
-#else
-        const time_t utct = timegm(&utcTm) - tzt;
-        localtime_r(&utct, &lt);
-#endif
-
-        return true;
-    }
-    */
-
 
 } // namespace AdaptiveCardQmlEngine
 
