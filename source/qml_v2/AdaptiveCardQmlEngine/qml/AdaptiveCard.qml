@@ -24,7 +24,7 @@ Rectangle {
     
     // Card body model -----
     property var cardBodyModel: cardRootModel.cardBodyModel
-    
+
     // Properties for the main card -----
     property string cardJSON
     property int cardTheme
@@ -35,14 +35,35 @@ Rectangle {
     radius: 8
     color : cardRootModel.backgroundColor
 
-    Image {
-        id: backGroundImage
+    // Background image container rect. 
+    Rectangle {
+       id: imageRect
 
-        width: parent.width
-        height: parent.height
+       width: parent.width
+       height: parent.height
+       visible : cardRootModel.hasBackgroundImage
 
-        visible : false
-        source: ""
+       color: "transparent"
+
+       Image {
+            id: backGroundImage
+   
+            anchors.fill: parent 
+
+            visible: parent.visible
+            source: cardRootModel.backgroundImageSource
+
+            fillMode: cardRootModel.fillMode == "Cover" ? Image.PreserveAspectCrop : cardRootModel.fillMode == "Tile" ? Image.Tile : cardRootModel.fillMode == "TileHorizontally" ? Image.TileHorizontally : cardRootModel.fillMode == "TileVertically" ?  Image.TileVertically : Image.PreserveAspectFit
+
+            anchors {
+                top :  cardRootModel.imageVerticalAlignment == "top" ?  parent.top : undefined
+                verticalCenter : cardRootModel.imageVerticalAlignment == "center" ? parent.verticalCenter : undefined
+                bottom : cardRootModel.imageVerticalAlignment == "bottom" ? parent.bottom : undefined
+                left : cardRootModel.imageHorizontalAlignment == "left" ? parent.left : undefined
+                horizontalCenter : cardRootModel.imageHorizontalAlignment == "center" ? parent.horizontalCenter : undefined
+                right : cardRootModel.imageHorizontalAlignment == "right" ? parent.right : undefined
+            }    
+        }
     }
 
     Component.onCompleted: {
