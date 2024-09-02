@@ -7,16 +7,14 @@
 RichTextBlockModel::RichTextBlockModel(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, QObject* parent) :
     QObject(parent)
 {
-    const auto hostConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig();
     const auto rendererConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getCardConfig();
 
     // Property values assigned for RichTextBlock
     const auto selectionColor = rendererConfig->getCardConfig().textHighlightBackground;
     const auto hAlignmentValue = richTextBlock->GetHorizontalAlignment().value_or(AdaptiveCards::HorizontalAlignment::Left);
-    const auto textType = richTextBlock->GetElementTypeString();
-
+   
     QString textrun_all = "";
-    auto config = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getCardConfig();
+
     for (const auto& inlineRun : richTextBlock->GetInlines())
     {
         if (AdaptiveCardQmlEngine::Utils::IsInstanceOfSmart<AdaptiveCards::TextRun>(inlineRun))
@@ -41,8 +39,7 @@ QString RichTextBlockModel::textRunRender(const std::shared_ptr<AdaptiveCards::T
     const auto textColor = textRun->GetTextColor().value_or(AdaptiveCards::ForegroundColor::Default);
     const auto textIsSubtle = textRun->GetIsSubtle().value_or(false);
     const auto textWeight = textRun->GetTextWeight().value_or(AdaptiveCards::TextWeight::Default);
-    const auto textType = QString::fromStdString(textRun->GetInlineTypeString());
-
+   
     const auto fontType = textRun->GetFontType().value_or(AdaptiveCards::FontType::Default);
 
     // Context & Config properties
@@ -53,7 +50,6 @@ QString RichTextBlockModel::textRunRender(const std::shared_ptr<AdaptiveCards::T
 
     const QString color = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getColor(textColor, textIsSubtle, false, true);
 
-    int mTextMaxLines{INT_MAX};
     bool mTextWrap = true;
 
     QString uiTextRun = "<span style='";
