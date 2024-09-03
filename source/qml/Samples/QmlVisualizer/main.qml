@@ -61,6 +61,7 @@ Row{
                         loader.item.openContextMenu.connect(root.onOpenContextMenu);
                         loader.item.showToolTipifNeeded.connect(root.showToolTipifNeeded)
                         loader.item.showToolTipOnElement.connect(root.showToolTipOnElement);
+                        loader.item.fetchFilteredChoices.connect(root.fetchFilteredChoices);
                     }
                 }
             }
@@ -108,5 +109,9 @@ Row{
 
     function showToolTipOnElement(show, text, item){
         _aModel.showToolTipOnElement(show, text, item)
+    }
+
+    function fetchFilteredChoices(dataSource, text, id){
+        _aModel.fetchFilteredChoices(dataSource, text, id);
     }
 }

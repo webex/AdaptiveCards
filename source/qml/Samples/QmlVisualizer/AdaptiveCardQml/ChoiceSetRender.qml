@@ -7,6 +7,7 @@ Column {
     id: choiceSet
 
     property var _adaptiveCard
+    property var _id
     property bool _isRequired: false
     property string _mEscapedLabelString
     property string _mEscapedErrorString
@@ -89,28 +90,32 @@ Column {
         width: parent.width
         active: _elementType === "Filtered"
 
+        function onFetchChoices(text) {
+            choiceSet._adaptiveCard.fetchFilteredChoices(choiceSet._dataSet, text, choiceSet._id);
+        }
+
         sourceComponent: FilteredChoiceSetRender {
             id: filtered
+            _id: choiceSet._id
             _model: _choiceSetModel
             _mEscapedPlaceholderString: choiceSet._mEscapedPlaceholderString
             _currentIndex: _comboboxCurrentIndex
             _consumer: choiceSet
             _adaptiveCard: choiceSet._adaptiveCard
             _isMultiselect: choiceSet._isMultiselect
+            _dataSet: choiceSet._dataSet
+            _dataType: choiceSet._dataType
             Component.onCompleted: {
                 selectionChanged.connect(function() {
-                    if (!_isMultiselect) {
-                        choiceSet.selectedValues = currentText == "" ? "" : currentValue;
-                    } else {
-                        choiceSet.selectedValues = selectedChoices[0].valueOn;
-                        for (let index = 1; index < selectedChoices.length; index++) {
-                            choiceSet.selectedValues = choiceSet.selectedValues + "," + selectedChoices[index].valueOn;
-                        }
+                    choiceSet.selectedValues = selectedChoices[0] ? selectedChoices[0].valueOn : "";
+                    for (let index = 1; index < selectedChoices.length; index++) {
+                        choiceSet.selectedValues = choiceSet.selectedValues + "," + selectedChoices[index].valueOn;
                     }
                     if (_isRequired)
                         validate();
 
                 });
+                fetchChoices.connect(filteredLoader.onFetchChoices);
             }
         }
 

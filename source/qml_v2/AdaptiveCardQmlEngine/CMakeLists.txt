@@ -56,6 +56,7 @@ file(GLOB_RECURSE SOURCES
 	
 	"TextBlockModel.cpp"
 	"ImageModel.cpp"
+	"RichTextBlockModel.cpp"
 	
 	"AdaptiveCardQmlTypes.h"
 	"AdaptiveCardUtils.cpp"
@@ -75,6 +76,8 @@ file(GLOB_RECURSE SOURCES
 	
     "TextBlockModel.h"	
     "ImageModel.h"
+    "TextBlockModel.h"
+    "RichTextBlockModel.h"	
 )
 
 # Setup Library
