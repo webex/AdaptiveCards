@@ -16,13 +16,30 @@ namespace AdaptiveCardQmlEngine
         static const std::string handleEscapeSequences(std::string& text);
         static const std::string formatHtmlUrl(std::string& text, const std::string& linkColor, const std::string& textDecoration);
         static std::vector<std::string> splitString(const std::string& string, char delimiter);
-        
-		
+        static std::string& replace(std::string& str, char what, char with);
+               
+        template <class T, class U>
+        static bool IsInstanceOfSmart(U u);
+
+        template <class T, class U>
+        static bool IsInstanceOf(U u);
+
     private:
         Utils() {}
     };
 
-    /*
+    template <class T, class U>
+    inline bool Utils::IsInstanceOfSmart(U u)
+    {
+        return std::dynamic_pointer_cast<T>(u) != nullptr;
+    }
+
+    template <class T, class U>
+    inline bool Utils::IsInstanceOf(U u)
+    {
+        return dynamic_cast<T>(u) != nullptr;
+    }
+
     class TextUtils
     {
     public:
@@ -33,5 +50,5 @@ namespace AdaptiveCardQmlEngine
     private:
         static std::regex m_textFunctionRegex;
     };
-    */
-}   // namespace AdaptiveCardQmlEngine
+
+} // namespace AdaptiveCardQmlEngine
