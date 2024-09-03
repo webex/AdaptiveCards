@@ -13,7 +13,7 @@ namespace AdaptiveCardQmlEngine
 
     void AdaptiveCardContext::initAdaptiveCardContext()
     {
-    // Initializing Host config and Card config
+        // Initializing Host config and Card config
         mCardConfig = std::make_shared<AdaptiveCardQmlEngine::AdaptiveCardConfig>(true);
         mHostConfig = std::make_shared<AdaptiveCards::HostConfig>(AdaptiveCards::HostConfig::DeserializeFromString(DarkConfig::darkConfig));
     }
@@ -22,7 +22,7 @@ namespace AdaptiveCardQmlEngine
     {
         mAdaptiveCardTheme = theme;
 
-    // ReInitializing AdaptiveCard and Host config
+        // ReInitializing AdaptiveCard and Host config
         mCardConfig = std::make_shared<AdaptiveCardConfig>(mAdaptiveCardTheme == AdaptiveCardEnums::AdaptiveCardTheme::DarkTheme ? true : false);
 
         if (mAdaptiveCardTheme == AdaptiveCardEnums::AdaptiveCardTheme::DarkTheme)
