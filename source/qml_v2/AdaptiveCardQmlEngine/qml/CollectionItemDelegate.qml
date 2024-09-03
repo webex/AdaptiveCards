@@ -12,5 +12,7 @@ Loader {
 			source = "TextBlockRender.qml"
 		else if (model.delegateType == AdaptiveCardEnums.CardElementType.Image)
 			source = "ImageRender.qml"
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.RichTextBlock)
+            source: "RichTextBlockRender.qml"
 	}
 }

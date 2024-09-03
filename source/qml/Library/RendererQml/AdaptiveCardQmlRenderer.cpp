@@ -90,6 +90,7 @@ namespace RendererQml
         uiCard->AddFunctions("signal setFocusBackOnClose(var element)");
         uiCard->AddFunctions("signal showToolTipifNeeded(var link, var point)");
         uiCard->AddFunctions("signal showToolTipOnElement(bool show, var text, var point)");
+        uiCard->AddFunctions("signal fetchFilteredChoices(var dataSource, var text, var id)");
 		//1px extra height to accomodate the border of a showCard if present at the bottom
         uiCard->Property("implicitHeight", "adaptiveCardLayout.implicitHeight");
 		uiCard->Property("Layout.fillWidth", "true");
@@ -538,7 +539,8 @@ namespace RendererQml
             "card.textEditFocussed.connect(adaptiveCard.textEditFocussed);"
             "card.setFocusBackOnClose.connect(adaptiveCard.setFocusBackOnClose);"
             "card.showToolTipifNeeded.connect(adaptiveCard.showToolTipifNeeded);"
-            "card.showToolTipOnElement.connect(adaptiveCard.showToolTipOnElement);}}}";
+            "card.showToolTipOnElement.connect(adaptiveCard.showToolTipOnElement);"
+            "card.fetchFilteredChoices.connect(adaptiveCard.fetchFilteredChoices);}}}";
 
         uiColumn->AddFunctions(reloadFunction.str());
 		uiComponent->AddChild(uiColumn);

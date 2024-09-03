@@ -48,11 +48,13 @@ public:
     Q_INVOKABLE void onOpenContextMenu(const QPoint& pos, const QString& selectedText, const QString& link);
     Q_INVOKABLE void showToolTipifNeeded(const QString& text, const QPoint& location);
     Q_INVOKABLE void showToolTipOnElement(bool show, const QString& text, QQuickItem* item, bool isWordWrapEnabled = true);
+    Q_INVOKABLE void fetchFilteredChoices(const QString& dataSource, const QString& text, const QString& id);
 
 signals:
     void reloadCardOnThemeChange(const bool isDarkTheme);
     void sendCardResponseToQml(const QString& output);
     void enableAdaptiveCardSubmitButton();
+    void filteredChoicesFetched(const QString& id, const QVariantList& fetchedModel);
 
 private:
     SampleCardList *mList;

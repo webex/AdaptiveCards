@@ -1,6 +1,7 @@
 #include "CollectionItemModel.h"
 #include "TextBlockModel.h"
 #include "ImageModel.h"
+#include "RichTextBlockModel.h"
 #include "AdaptiveCardEnums.h"
 
 CollectionItemModel::CollectionItemModel(std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>> elements, QObject* parent)
@@ -41,6 +42,8 @@ QHash<int, QByteArray> CollectionItemModel::roleNames() const
     cardListModel[DelegateType] = "delegateType";
     cardListModel[TextBlockRole] = "textBlockRole";
     cardListModel[ImageRole] = "imageRole";
+    cardListModel[RichTextBlockRole] = "richTextBlockRole";
+
     cardListModel[FillHeightRole] = "fillHeightRole";
 
     return cardListModel;
@@ -59,7 +62,9 @@ void CollectionItemModel::populateRowData(std::shared_ptr<AdaptiveCards::BaseCar
     case AdaptiveCards::CardElementType::Image:
         populateImageModel(std::dynamic_pointer_cast<AdaptiveCards::Image>(element), rowContent);
         break;
-
+	case AdaptiveCards::CardElementType::RichTextBlock:
+        populateRichTextBlockModel(std::dynamic_pointer_cast<AdaptiveCards::RichTextBlock>(element), rowContent);
+        break;
     default:
         break;
     }
@@ -76,4 +81,9 @@ void CollectionItemModel::populateImageModel(std::shared_ptr<AdaptiveCards::Imag
 {
     rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::Image);
     rowContent[CollectionModelRole::ImageRole] = QVariant::fromValue(new ImageModel(image, nullptr));
+}
+void CollectionItemModel::populateRichTextBlockModel(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, RowContent& rowContent)
+{
+    rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::RichTextBlock);
+    rowContent[CollectionModelRole::RichTextBlockRole] = QVariant::fromValue(new RichTextBlockModel(richTextBlock, nullptr));
 }

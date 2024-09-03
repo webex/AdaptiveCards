@@ -86,9 +86,21 @@ namespace AdaptiveCardQmlEngine
         return splitElements;
     }
 
-    //-------------------------------------------------------------------------------------------------------
+    std::string& Utils::replace(std::string& str, char what, char with)
+    {
+        if (!with)
+        {
+            str.erase(std::remove(str.begin(), str.end(), what), str.end());
+        }
+        else
+        {
+            std::replace(str.begin(), str.end(), what, with);
+        }
+        return str;
+    }
 
-    /*
+    std::regex TextUtils::m_textFunctionRegex(R"xxx(\{\{(DATE|TIME)\(([\d]{4}-[\d]{2}-[\d]{2}T[\d]{2}:[\d]{2}:[\d]{2})(Z|(?:(?:-|\+)\d{2}:\d{2}))(?:,\s*(SHORT|LONG|COMPACT)\s*)??\)\}\})xxx");
+
     std::string TextUtils::applyTextFunctions(const std::string& text, const std::string& lang)
     {
         std::smatch oneMatch;
@@ -144,7 +156,7 @@ namespace AdaptiveCardQmlEngine
                         ss2.imbue(getValidCultureInfo(lang));
                         ss2 << std::put_time(&lt, format.c_str());
 
-                        result = Utils::Replace(result, oneMatch[0], ss2.str());
+                        result = Utils::replace(result, oneMatch[0], ss2.str());
                     }
                 }
             }
@@ -195,8 +207,6 @@ namespace AdaptiveCardQmlEngine
 
         return true;
     }
-    */
-
 
 } // namespace AdaptiveCardQmlEngine
 

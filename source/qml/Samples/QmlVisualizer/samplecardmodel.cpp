@@ -13,6 +13,7 @@ using namespace RendererQml;
 
 std::mutex images_mutex;
 std::mutex submit_mutex;
+std::mutex dataset_mutex;
 
 SampleCardModel::SampleCardModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -274,6 +275,46 @@ void SampleCardModel::showToolTipOnElement(bool show, const QString& text, QQuic
     {
         QToolTip::hideText();
     }
+}
+
+void SampleCardModel::fetchFilteredChoices(const QString& dataSource, const QString& text, const QString& id)
+{
+    std::thread thread_object([this, id]() {
+        dataset_mutex.lock();
+        std::chrono::seconds duration(2);
+        std::this_thread::sleep_for(duration);
+
+        QVariantList colorList;
+        QVariantMap color1;
+        color1["text"] = "Mock Red";
+        color1["valueOn"] = "Mock Red";
+        colorList.append(color1);
+
+        QVariantMap color2;
+        color2["text"] = "Mock Blue";
+        color2["valueOn"] = "Mock Blue";
+        colorList.append(color2);
+
+        QVariantMap color3;
+        color3["text"] = "Mock Green";
+        color3["valueOn"] = "Mock Green";
+        colorList.append(color3);
+
+        QVariantMap color4;
+        color4["text"] = "Mock Pink";
+        color4["valueOn"] = "Mock Pink";
+        colorList.append(color4);
+
+        QVariantMap color5;
+        color5["text"] = "Mock Yellow";
+        color5["valueOn"] = "Mock Yellow";
+        colorList.append(color5);
+
+        emit filteredChoicesFetched(id, colorList);
+        dataset_mutex.unlock();
+    });
+
+    thread_object.detach();
 }
 
 void SampleCardModel::actionOpenUrlButtonClicked(const QString& title, const QString& type, const QString& data)
