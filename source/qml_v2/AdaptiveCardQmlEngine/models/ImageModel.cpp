@@ -12,7 +12,6 @@ ImageModel::ImageModel(std::shared_ptr<AdaptiveCards::Image> image, QObject* par
     mAnchorCenter(""), mAnchorRight(""), mAnchorLeft("")
 {
     const auto hostConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig();
-    const auto rendererConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getCardConfig();
 
     mSourceImage = GetImagePath(image->GetUrl());
     mVisibleRect = image->GetIsVisible();
@@ -131,5 +130,4 @@ QString ImageModel::GetImagePath(const std::string url)
 }
 
 ImageModel::~ImageModel()
-{
-}
+{}

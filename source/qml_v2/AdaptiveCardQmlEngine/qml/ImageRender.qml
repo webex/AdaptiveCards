@@ -27,8 +27,8 @@ Item {
 
         anchors {
             left: imageModel.anchorLeft ? parent.left : undefined
-			horizontalCenter: imageModel.anchorCenter ? parent.horizontalCenter : undefined
-			right: imageModel.anchorRight ? parent.right : undefined
+            horizontalCenter: imageModel.anchorCenter ? parent.horizontalCenter : undefined
+            right: imageModel.anchorRight ? parent.right : undefined
         }
 
         clip: true
@@ -46,7 +46,6 @@ Item {
 
                 radius: imageRender.radius
             }
-
         }
         
         Image {
