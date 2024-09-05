@@ -51,14 +51,14 @@ private :
     QString mAnchorCenter{""};
     QString mAnchorRight{""};
     QString mAnchorLeft{""};
-    QString mActionType;
-    QString mSubmitJSON;
-    QString mOpenUrl;
+    QString mActionType{""};
+    QString mSubmitJSON{""};
+    QString mOpenUrl{""};
 
-    bool mHasAssociatedInputs; 
+    bool mHasAssociatedInputs{false};
     bool mVisibleRect{false};
     bool mIsImage{false};
-    bool mToggleVisibility;
+    bool mToggleVisibility{false};
 
     int mImageHeight{0};
     int mImageWidth{0};
