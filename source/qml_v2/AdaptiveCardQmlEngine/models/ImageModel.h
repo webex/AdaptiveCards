@@ -19,7 +19,6 @@ class ImageModel : public QObject
     Q_PROPERTY(QString anchorCenter MEMBER mAnchorCenter CONSTANT);
     Q_PROPERTY(QString anchorRight MEMBER mAnchorRight CONSTANT);
     Q_PROPERTY(QString anchorLeft MEMBER mAnchorLeft CONSTANT);
-
     Q_PROPERTY(QString actionType MEMBER mActionType CONSTANT);
     Q_PROPERTY(QString submitData MEMBER mSubmitJSON CONSTANT);
     Q_PROPERTY(QString openUrl MEMBER mOpenUrl CONSTANT);
@@ -40,23 +39,28 @@ public:
 private:
     QString GetImagePath(const std::string url);
 
-private :
-    QString mSourceImage;
-    QString mBgColor;
-    QString mAnchorCenter;
-    QString mAnchorRight;
-    QString mAnchorLeft;
+    void setImageLayoutProperties();
+    void setImageVisualProperties();
+    void setImageActionProperties();
 
+private :
+    const std::shared_ptr<AdaptiveCards::Image>& mImage;
+
+    QString mSourceImage{""};
+    QString mBgColor{"transparent"};
+    QString mAnchorCenter{""};
+    QString mAnchorRight{""};
+    QString mAnchorLeft{""};
     QString mActionType;
     QString mSubmitJSON;
     QString mOpenUrl;
 
     bool mHasAssociatedInputs; 
-    bool mVisibleRect;
-    bool mIsImage;
+    bool mVisibleRect{false};
+    bool mIsImage{false};
     bool mToggleVisibility;
 
-    int mImageHeight;
-    int mImageWidth;
-    int mRadius;
+    int mImageHeight{0};
+    int mImageWidth{0};
+    int mRadius{0};
 };

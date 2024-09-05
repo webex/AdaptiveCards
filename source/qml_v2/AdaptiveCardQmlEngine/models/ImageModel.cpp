@@ -6,108 +6,121 @@
 
 
 ImageModel::ImageModel(std::shared_ptr<AdaptiveCards::Image> image, QObject* parent)
-    : QObject(parent),
-    mSourceImage(""), mImageHeight(0), mImageWidth(0), mRadius(0),
-    mIsImage(false), mVisibleRect(false), mBgColor("transparent"),
-    mAnchorCenter(""), mAnchorRight(""), mAnchorLeft("")
+    : QObject(parent),mImage(image)
+{
+    setImageLayoutProperties();
+    setImageVisualProperties();
+    setImageActionProperties();
+ }
+
+ImageModel::~ImageModel()
+ {
+ }
+     
+void ImageModel::setImageLayoutProperties()
 {
     const auto hostConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig();
 
-    mSourceImage = GetImagePath(image->GetUrl());
-    mVisibleRect = image->GetIsVisible();
+    // If the image has a pixel width and height, use that else calculate the width and height based on the image size
+    if (mImage->GetPixelWidth() != 0 || mImage->GetPixelHeight() != 0)
+    {
+        mImageHeight = mImage->GetPixelHeight() != 0 ? mImage->GetPixelHeight() : mImage->GetPixelWidth();
+        mImageWidth = mImage->GetPixelWidth() != 0 ? mImage->GetPixelWidth() : mImage->GetPixelHeight();
+    }
+    else
+    {
+        switch (mImage->GetImageSize())
+        {
+            case AdaptiveCards::ImageSize::None:
+            case AdaptiveCards::ImageSize::Auto:
+            case AdaptiveCards::ImageSize::Small:
+
+                mImageWidth = hostConfig->GetImageSizes().smallSize;
+                mImageHeight = hostConfig->GetImageSizes().smallSize;
+                break;
+
+            case AdaptiveCards::ImageSize::Medium:
+
+                mImageWidth = hostConfig->GetImageSizes().mediumSize;
+                mImageHeight = hostConfig->GetImageSizes().mediumSize;
+                break;
+
+            case AdaptiveCards::ImageSize::Large:
+                mImageWidth = hostConfig->GetImageSizes().largeSize;
+                mImageHeight = hostConfig->GetImageSizes().largeSize;
+                break;
+        }
+    }
+}
+
+void ImageModel::setImageVisualProperties()
+{
+    mSourceImage = GetImagePath(mImage->GetUrl());
+    mVisibleRect = mImage->GetIsVisible();
     mIsImage = true;
 
-    // If the image has a pixel width and height, use that else calculate the width and height based on the image size
-    if (image->GetPixelWidth() != 0 || image->GetPixelHeight() != 0)
+     // Image Background Color
+    if (!mImage->GetBackgroundColor().empty())
     {
-        mImageHeight = image->GetPixelHeight() != 0 ? image->GetPixelHeight() : image->GetPixelWidth();
-        mImageWidth = image->GetPixelWidth() != 0 ? image->GetPixelWidth() : image->GetPixelHeight();
-    }
-    else 
-    {
-        switch (image->GetImageSize())
-        {
-        case AdaptiveCards::ImageSize::None:
-        case AdaptiveCards::ImageSize::Auto:
-        case AdaptiveCards::ImageSize::Small:
-
-            mImageWidth = hostConfig->GetImageSizes().smallSize;
-            mImageHeight = hostConfig->GetImageSizes().smallSize;
-            break;
-
-        case AdaptiveCards::ImageSize::Medium:
-
-            mImageWidth = hostConfig->GetImageSizes().mediumSize;
-            mImageHeight = hostConfig->GetImageSizes().mediumSize;
-            break;
-
-        case AdaptiveCards::ImageSize::Large:
-            mImageWidth = hostConfig->GetImageSizes().largeSize;
-            mImageHeight = hostConfig->GetImageSizes().largeSize;
-            break;
-        }
-
-    }
-
-    // Image Background Color
-    if (!image->GetBackgroundColor().empty())
-    {
-        mBgColor = QString::fromStdString(image->GetBackgroundColor()); 
+        mBgColor = QString::fromStdString(mImage->GetBackgroundColor());
     }
 
     // Image Horizontal Alignment
-    const auto imageHorizontalAlignment = image->GetHorizontalAlignment().value_or(AdaptiveCards::HorizontalAlignment::Left);
+    const auto imageHorizontalAlignment = mImage->GetHorizontalAlignment().value_or(AdaptiveCards::HorizontalAlignment::Left);
     switch (imageHorizontalAlignment)
     {
-    case AdaptiveCards::HorizontalAlignment::Left:
-        mAnchorLeft = "left";
-		break;
-    case AdaptiveCards::HorizontalAlignment::Center:
-        mAnchorCenter = "center";
-        break;
-    case AdaptiveCards::HorizontalAlignment::Right:
-        mAnchorRight = "right";
-        break;
-    default:
-        mAnchorLeft = "left";
-        break;
+        case AdaptiveCards::HorizontalAlignment::Left:
+            mAnchorLeft = "left";
+            break;
+        case AdaptiveCards::HorizontalAlignment::Center:
+            mAnchorCenter = "center";
+            break;
+        case AdaptiveCards::HorizontalAlignment::Right:
+            mAnchorRight = "right";
+            break;
+        default:
+            mAnchorLeft = "left";
+            break;
     }
 
     // Image Style
-    switch (image->GetImageStyle())
+    switch (mImage->GetImageStyle())
     {
-    case AdaptiveCards::ImageStyle::Default:
-        break;
-    case AdaptiveCards::ImageStyle::Person:
-        mRadius = mImageWidth/2;
-        break;
+        case AdaptiveCards::ImageStyle::Default:
+            break;
+        case AdaptiveCards::ImageStyle::Person:
+            mRadius = mImageWidth / 2;
+            break;
     }
+}
 
+void ImageModel::setImageActionProperties()
+{
     // To Do: Need to implement the actions
     // Image selection action
-    if (image->GetSelectAction() != nullptr)
+    if (mImage->GetSelectAction() != nullptr)
     {
         bool mHoverEnabled = true;
-        if (image->GetSelectAction()->GetElementTypeString() == "Action.Submit")
+        if (mImage->GetSelectAction()->GetElementTypeString() == "Action.Submit")
         {
-             auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(image->GetSelectAction());
-             mActionType  = QString::fromStdString(submitAction->GetElementTypeString());
-             mSubmitJSON = QString::fromStdString(submitAction->GetDataJson());
-             mHasAssociatedInputs = submitAction->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto ? true : false;
+            auto submitAction = std::dynamic_pointer_cast<AdaptiveCards::SubmitAction>(mImage->GetSelectAction());
+            mActionType = QString::fromStdString(submitAction->GetElementTypeString());
+            mSubmitJSON = QString::fromStdString(submitAction->GetDataJson());
+            mHasAssociatedInputs = submitAction->GetAssociatedInputs() == AdaptiveCards::AssociatedInputs::Auto ? true : false;
         }
-        else if (image->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
+        else if (mImage->GetSelectAction()->GetElementTypeString() == "Action.OpenUrl")
         {
-            auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(image->GetSelectAction());
+            auto openUrlAction = std::dynamic_pointer_cast<AdaptiveCards::OpenUrlAction>(mImage->GetSelectAction());
             mActionType = QString::fromStdString(openUrlAction->GetElementTypeString());
             mOpenUrl = QString::fromStdString(openUrlAction->GetUrl());
         }
-        else if (image->GetSelectAction()->GetElementTypeString() == "Action.ToggleVisibility")
+        else if (mImage->GetSelectAction()->GetElementTypeString() == "Action.ToggleVisibility")
         {
-            auto toggleVisibilityAction = std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(image->GetSelectAction());
+            auto toggleVisibilityAction =std::dynamic_pointer_cast<AdaptiveCards::ToggleVisibilityAction>(mImage->GetSelectAction());
             mActionType = QString::fromStdString(toggleVisibilityAction->GetElementTypeString());
             mToggleVisibility = !mToggleVisibility;
         }
-    } 
+    }
 }
 
 QString ImageModel::GetImagePath(const std::string url)
@@ -128,6 +141,3 @@ QString ImageModel::GetImagePath(const std::string url)
 
     return dir_path;
 }
-
-ImageModel::~ImageModel()
-{}
