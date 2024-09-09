@@ -7,7 +7,16 @@ Loader {
 
     property var parentCardItem
 
-    source: "qrc:qml/RichTextBlockRender.qml"
+ //   source: "qrc:qml/TextInputRender.qml"
+
+     Component.onCompleted :{
+        if (model.delegateType == AdaptiveCardEnums.CardElementType.TextBlock)
+            source = "TextBlockRender.qml"
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.RichTextBlock)
+            source = "RichTextBlockRender.qml"
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.TextInput)
+            source = "TextInputRender.qml"       
+        }
 
     /*
     {

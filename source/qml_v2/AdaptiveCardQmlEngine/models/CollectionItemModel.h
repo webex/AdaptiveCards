@@ -5,11 +5,13 @@
 
 #include <TextBlock.h>
 #include "RichTextBlock.h"
+#include <TextInput.h>
 
 #include "Enums.h"
 
 class TextBlockModel;
 class RichTextBlockModel;
+class TextIputModel;
 
 class CollectionItemModel : public QAbstractListModel
 {
@@ -20,6 +22,7 @@ class CollectionItemModel : public QAbstractListModel
         DelegateType = Qt::UserRole + 1,
         TextBlockRole,
         RichTextBlockRole,
+        TextInputRole,
         FillHeightRole
     };
 
@@ -41,4 +44,5 @@ private:
     void populateRowData(std::shared_ptr<AdaptiveCards::BaseCardElement> element);
     void populateTextBlockModel(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, RowContent& rowContent);
     void populateRichTextBlockModel(std::shared_ptr<AdaptiveCards::RichTextBlock> rightTextBlock, RowContent& rowContent);
+    void populateTextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, RowContent& rowContent);
 };
