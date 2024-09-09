@@ -10,5 +10,8 @@
         <file>qml/JSUtils/ThemeUtils.js</file>
         <file>qml/CardConstants.qml</file>
         <file>qml/RichTextBlockRender.qml</file>
+        <file>qml/NumberInputRender.qml</file>
+        <file>qml/InputLabel.qml</file>
+        <file>qml/InputFieldClearIcon.qml</file>
     </qresource>
 </RCC>

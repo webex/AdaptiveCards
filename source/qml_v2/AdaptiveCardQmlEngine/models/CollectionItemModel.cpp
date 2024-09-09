@@ -1,6 +1,7 @@
 #include "CollectionItemModel.h"
 #include "TextBlockModel.h"
 #include "RichTextBlockModel.h"
+#include "NumberInputModel.h"
 #include "AdaptiveCardEnums.h"
 
 CollectionItemModel::CollectionItemModel(std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>> elements, QObject* parent)
@@ -41,6 +42,7 @@ QHash<int, QByteArray> CollectionItemModel::roleNames() const
     cardListModel[DelegateType] = "delegateType";
     cardListModel[TextBlockRole] = "textBlockRole";
     cardListModel[RichTextBlockRole] = "richTextBlockRole";
+    cardListModel[NumberInputRole] = "numberInputRole";
     cardListModel[FillHeightRole] = "fillHeightRole";
 
     return cardListModel;
@@ -59,6 +61,10 @@ void CollectionItemModel::populateRowData(std::shared_ptr<AdaptiveCards::BaseCar
 	case AdaptiveCards::CardElementType::RichTextBlock:
         populateRichTextBlockModel(std::dynamic_pointer_cast<AdaptiveCards::RichTextBlock>(element), rowContent);
         break;
+    case AdaptiveCards::CardElementType::NumberInput:
+        populateNumberInputModel(std::dynamic_pointer_cast<AdaptiveCards::NumberInput>(element), rowContent);
+        break;
+
     default:
         break;
     }
@@ -76,4 +82,10 @@ void CollectionItemModel::populateRichTextBlockModel(std::shared_ptr<AdaptiveCar
 {
     rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::RichTextBlock);
     rowContent[CollectionModelRole::RichTextBlockRole] = QVariant::fromValue(new RichTextBlockModel(richTextBlock, nullptr));
+}
+
+void CollectionItemModel::populateNumberInputModel(std::shared_ptr<AdaptiveCards::NumberInput> numberInput, RowContent& rowContent)
+{
+    rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::NumberInput);
+    rowContent[CollectionModelRole::NumberInputRole] = QVariant::fromValue(new NumberInputModel(numberInput, nullptr));
 }

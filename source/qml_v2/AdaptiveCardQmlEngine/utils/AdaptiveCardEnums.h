@@ -9,6 +9,7 @@ namespace AdaptiveCardEnums
         AdaptiveCard,
         TextBlock,
         RichTextBlock,
+        NumberInput,
         Container,
         Column,
         ColumnSet,
