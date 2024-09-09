@@ -7,24 +7,12 @@ Loader {
 
     property var parentCardItem
 
-    source: "qrc:qml/RichTextBlockRender.qml"
-
-    /*
-    {
-        switch (delegateType) {
-        case AdaptiveCardEnums.CardElementType.TextBlock:
-            return "TextBlockRender.qml"
-        case AdaptiveCardEnums.CardElementType.Container:
-            return "ContainerRender.qml"
-        case AdaptiveCardEnums.CardElementType.ColumnSet:
-            return "ColumnSetRender.qml"
-        case AdaptiveCardEnums.CardElementType.Column:
-            return "ColumnRender.qml"
-        case AdaptiveCardEnums.CardElementType.ToggleInput:
-            return "ToggleInputRender.qml"
-        case AdaptiveCardEnums.CardElementType.ActionSet:
-            return "ActionSetRender.qml"
-        }
+    Component.onCompleted :{
+        if (model.delegateType == AdaptiveCardEnums.CardElementType.TextBlock)
+            source = "TextBlockRender.qml"
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.Image)
+            source = "ImageRender.qml"
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.RichTextBlock)
+            source = "RichTextBlockRender.qml";
     }
-    */
 }
