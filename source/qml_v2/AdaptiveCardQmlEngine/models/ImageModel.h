@@ -40,23 +40,29 @@ public:
 private:
     QString GetImagePath(const std::string url);
 
+
+    void setImageLayoutProperties();
+    void setImageVisualProperties();
+    void setImageActionProperties();
+
 private :
-    QString mSourceImage;
-    QString mBgColor;
-    QString mAnchorCenter;
-    QString mAnchorRight;
-    QString mAnchorLeft;
+    const std::shared_ptr<AdaptiveCards::Image>& mImage;
 
-    QString mActionType;
-    QString mSubmitJSON;
-    QString mOpenUrl;
+    QString mSourceImage{""};
+    QString mBgColor{"transparent"};
+    QString mAnchorCenter{""};
+    QString mAnchorRight{""};
+    QString mAnchorLeft{""};
+    QString mActionType{""};
+    QString mSubmitJSON{""};
+    QString mOpenUrl{""};
 
-    bool mHasAssociatedInputs; 
-    bool mVisibleRect;
-    bool mIsImage;
-    bool mToggleVisibility;
+    bool mHasAssociatedInputs{false};
+    bool mVisibleRect{false};
+    bool mIsImage{false};
+    bool mToggleVisibility{false};
 
-    int mImageHeight;
-    int mImageWidth;
-    int mRadius;
+    int mImageHeight{0};
+    int mImageWidth{0};
+    int mRadius{0};
 };

@@ -4,16 +4,15 @@
 #include <SharedAdaptiveCard.h>
 #include <TextBlock.h>
 #include <Image.h>
+#include "RichTextBlock.h"
+#include <NumberInput.h>
 #include "Enums.h"
+
 
 class TextBlockModel;
 class ImageModel;
-#include "RichTextBlock.h"
-
-#include "Enums.h"
-
-class TextBlockModel;
 class RichTextBlockModel;
+class NumberInputModel;
 
 
 class CollectionItemModel : public QAbstractListModel
@@ -26,6 +25,7 @@ class CollectionItemModel : public QAbstractListModel
         TextBlockRole,
         ImageRole,
         RichTextBlockRole,
+        NumberInputRole,
         FillHeightRole
     };
 
@@ -48,4 +48,5 @@ private:
     void populateTextBlockModel(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, RowContent& rowContent);
     void populateImageModel(std::shared_ptr<AdaptiveCards::Image> image, RowContent& rowContent);
     void populateRichTextBlockModel(std::shared_ptr<AdaptiveCards::RichTextBlock> rightTextBlock, RowContent& rowContent);
+    void populateNumberInputModel(std::shared_ptr<AdaptiveCards::NumberInput> numberInput, RowContent& rowContent);
 };

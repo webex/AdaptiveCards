@@ -41,7 +41,7 @@ add_library(qml INTERFACE ${ALL_QML_FILES})
 set_target_properties(qml PROPERTIES FOLDER "AdaptiveCardQmlEngine")
 
 file(GLOB_RECURSE SOURCES
-    "resourceEngine.qrc"
+	"resourceEngine.qrc"
 	"AdaptiveCardUtils.cpp"
 	"AdaptiveCardContext.cpp"
 	"AdaptiveCardConfig.cpp"
@@ -71,14 +71,13 @@ file(GLOB_RECURSE SOURCES
 	"Utils.h"
 	"stdafx.h"
 	
-    "AdaptiveCardController.h"
-    "AdaptiveCardModel.h"
-    "CollectionItemModel.h"
+	"AdaptiveCardController.h"
+	"AdaptiveCardModel.h"
+	"CollectionItemModel.h"
 	
     "TextBlockModel.h"	
     "ImageModel.h"
     "RichTextBlockModel.h"	
-
 )
 
 # Setup Library
