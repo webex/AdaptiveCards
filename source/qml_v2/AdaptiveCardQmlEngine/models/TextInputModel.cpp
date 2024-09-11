@@ -46,7 +46,6 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
     {
         mHeightStreched = input->GetHeight() == AdaptiveCards::HeightType::Stretch ? "true" : "false";
     }
-
 }
 
 TextInputModel::~TextInputModel()

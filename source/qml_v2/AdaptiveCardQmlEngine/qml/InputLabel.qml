@@ -8,7 +8,7 @@ Label {
     id: inputLabel
 
     property bool required
-    
+ 
     wrapMode: Text.Wrap
     width: parent.width
     color: cardConst.toggleButtonConstants.textColor

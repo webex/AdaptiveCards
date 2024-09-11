@@ -35,7 +35,7 @@ Rectangle {
         }
 
         selectByMouse: true
-        selectedTextColor: 'white'
+        selectedTextColor: 'white'     
         color: cardConst.inputFieldConstants.textColor
         placeholderTextColor: cardConst.inputFieldConstants.placeHolderColor
         Accessible.role: Accessible.EditableText
@@ -99,10 +99,10 @@ Rectangle {
         }
     }
 
-/*   WCustomFocusItem {
+   /*WCustomFocusItem {
         isRectangle: true
         visible: inputtextTextField.activeFocus
         designatedParent: parent
-    } */
+   } */ 
     
 }

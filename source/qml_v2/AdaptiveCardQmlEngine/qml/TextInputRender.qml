@@ -11,11 +11,11 @@ Column {
         id: cardConst
     }
 
-    property var textInputModel:  model.textInputRole
+    property var textInputModel: model.textInputRole
     property bool _isMultiLineText
     property bool isheightStreched
     property string submitValue: !_isMultiLineText ? singlineLoaderElement.item.textValue : multilineLoaderElement.item.textValue
-    property bool showErrorMessage: false
+    property bool showErrorMessage: true
 
     function validate() {
         const regex = new RegExp(textInputModel.regex);
@@ -47,6 +47,7 @@ Column {
         return accessibleName;
     }
 
+    visible: textInputModel.isVisible
     spacing: textInputModel.spacing
     width: parent.width
     onActiveFocusChanged: {
@@ -70,10 +71,11 @@ Column {
 
     InputLabel {
         id: inputTextLabel
-
+        
         required: textInputModel.isRequired
-        visible: textInputModel.label
-    }
+        visible: textInputModel.isVisible
+      
+    } 
 
     Row {
         id: inputtextTextFieldRow
@@ -100,15 +102,13 @@ Column {
 
                 _showErrorMessage: showErrorMessage
             }
-
         }
-    
     }
 
     InputErrorMessage {
         id: inputtextErrorMessage
 
-        _errorMessage: textInputModel.errorMessage
+        errorMessage: textInputModel.errorMessage
         visible: showErrorMessage
     }
 }

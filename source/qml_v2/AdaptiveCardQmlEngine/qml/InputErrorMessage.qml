@@ -7,7 +7,7 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 Rectangle {
     id: errorMessage
 
-    property string _errorMessage
+    property string errorMessage
 
     width: parent.width
     height: errorMessageLabel.implicitHeight
@@ -45,7 +45,7 @@ Rectangle {
         anchors.left: errorIcon.right
         anchors.leftMargin: cardConst.inputFieldConstants.errorIconLeftMargin
         anchors.right: parent.right
-        text: _errorMessage
+        text: textInputModel.errorMessage//_errorMessage
     }
 
 }
