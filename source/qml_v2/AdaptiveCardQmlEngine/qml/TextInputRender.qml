@@ -12,10 +12,10 @@ Column {
     }
 
     property var textInputModel: model.textInputRole
-    property bool _isMultiLineText
-    property bool isheightStreched
-    property string submitValue: !_isMultiLineText ? singlineLoaderElement.item.textValue : multilineLoaderElement.item.textValue
-    property bool showErrorMessage: true
+
+    property bool isMultiLineText
+    property string submitValue: !isMultiLineText ? singlineLoaderElement.item.textValue : multilineLoaderElement.item.textValue
+    property bool showErrorMessage: false
 
     function validate() {
         const regex = new RegExp(textInputModel.regex);
@@ -47,7 +47,7 @@ Column {
         return accessibleName;
     }
 
-    visible: textInputModel.isVisible
+
     spacing: textInputModel.spacing
     width: parent.width
     onActiveFocusChanged: {
@@ -61,7 +61,7 @@ Column {
 
     }
     onShowErrorMessageChanged: {
-        if (isheightStreched && _isMultiLineText) {
+        if (textInputModel.heightStreched && isMultiLineText) {
             if (showErrorMessage)
                 inputtextTextFieldRow.height = inputtextTextFieldRow.height - inputtextErrorMessage.height;
             else
@@ -73,17 +73,15 @@ Column {
         id: inputTextLabel
         
         required: textInputModel.isRequired
-        visible: textInputModel.isVisible
-      
+        visible: textInputModel.isVisible      
     } 
 
     Row {
         id: inputtextTextFieldRow
 
         function getStrechHeight() {
-            if (textInputModel.heightStreched && _isMultiLineText)
+            if (textInputModel.heightStreched && isMultiLineText)
                 return parent.height > 0 ? parent.height - y : CardConstants.inputTextConstants.multiLineTextHeight;
-
         }
 
         spacing: 5
@@ -95,12 +93,12 @@ Column {
 
             height: 30
             width: parent.width
-            active: !_isMultiLineText
+            active: !isMultiLineText
 
             sourceComponent: SingleLineTextInputRender {
                 id: inputtextTextFieldWrapper
 
-                _showErrorMessage: showErrorMessage
+                errorMessageVisible: showErrorMessage
             }
         }
     }

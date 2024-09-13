@@ -7,7 +7,7 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 Rectangle {
     id: singleLineTextElementRect
 
-    property bool _showErrorMessage
+    property bool errorMessageVisible
     property string textValue: inputtextTextField.text
 
     border.color: inputtextTextField.outerShowErrorMessage ? cardConst.inputFieldConstants.borderColorOnError : cardConst.inputFieldConstants.borderColorNormal
@@ -19,7 +19,7 @@ Rectangle {
     TextField {
         id: inputtextTextField
 
-        property bool outerShowErrorMessage: _showErrorMessage
+        property bool outerShowErrorMessage: errorMessageVisible
 
         function colorChange(colorItem, focusItem, isPressed) {
             if (isPressed && !focusItem.outerShowErrorMessage)
@@ -39,6 +39,7 @@ Rectangle {
         color: cardConst.inputFieldConstants.textColor
         placeholderTextColor: cardConst.inputFieldConstants.placeHolderColor
         Accessible.role: Accessible.EditableText
+
         onPressed: {
             colorChange(inputtextTextFieldWrapper, inputtextTextField, true);
             event.accepted = true;
@@ -48,18 +49,19 @@ Rectangle {
             forceActiveFocus();
             event.accepted = true;
         }
+
         onHoveredChanged: colorChange(inputtextTextFieldWrapper, inputtextTextField, false)
         onActiveFocusChanged: {
             colorChange(inputtextTextFieldWrapper, inputtextTextField, false);
             if (activeFocus)
                 Accessible.name = getAccessibleName();
-
         }
+
         onOuterShowErrorMessageChanged: {
             if (textInputModel.isRequired || textInputModel.regex != "")
                 colorChange(inputtextTextFieldWrapper, inputtextTextField, false);
-
         }
+
         Accessible.name: ""
         leftPadding: cardConst.inputFieldConstants.textHorizontalPadding
         rightPadding: cardConst.inputFieldConstants.textHorizontalPadding
@@ -70,10 +72,10 @@ Rectangle {
         text: textInputModel.value
         placeholderText: activeFocus ? '' : textInputModel.placeholder
         width: parent.width
+
         onTextChanged: {
             if (textInputModel.maxLength != 0)
                 remove(textInputModel.maxLength, length);
-
         }
         Component.onCompleted: {
             assignMaxLength();
@@ -82,7 +84,6 @@ Rectangle {
         background: Rectangle {
             color: 'transparent'
         }
-
     }
 
     InputFieldClearIcon {
@@ -99,10 +100,10 @@ Rectangle {
         }
     }
 
-   /*WCustomFocusItem {
+    WCustomFocusItem {
         isRectangle: true
         visible: inputtextTextField.activeFocus
         designatedParent: parent
-   } */ 
+    }  
     
 }
