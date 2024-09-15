@@ -19,5 +19,6 @@
         <file>qml/NumberInputRender.qml</file>
         <file>qml/InputLabel.qml</file>
         <file>qml/InputFieldClearIcon.qml</file>
+        <file>qml/InputErrorMessage.qml</file>
     </qresource>
 </RCC>

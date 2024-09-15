@@ -7,13 +7,13 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 Label {
     id: inputLabel
 
-    property bool _required
-    property string _label
+    property bool required
+    property string label
 
     wrapMode: Text.Wrap
     width: parent.width
-    color:  "black"//CardConstants.toggleButtonConstants.textColor
-    font.pixelSize: 14 //CardConstants.inputFieldConstants.labelPixelSize
+    color: cardConst.toggleButtonConstants.textColor
+    font.pixelSize: cardConst.inputFieldConstants.labelPixelSize
     Accessible.ignored: true
-    text:""// _isRequired ? AdaptiveCardUtils.escapeHtml(_label) + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : AdaptiveCardUtils.escapeHtml(_label)
+    text: required ? AdaptiveCardUtils.escapeHtml(label) + " " + "<font color='" + cardConst.inputFieldConstants.errorMessageColor + "'>*</font>" : AdaptiveCardUtils.escapeHtml(label)
 }
