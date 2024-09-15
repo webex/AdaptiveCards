@@ -53,6 +53,7 @@ file(GLOB_RECURSE SOURCES
 	"AdaptiveCardController.cpp"
 	"AdaptiveCardModel.cpp"
 	"CollectionItemModel.cpp"
+	"NumberInputModel.cpp"
 	
 	"TextBlockModel.cpp"
 	"ImageModel.cpp"
@@ -75,9 +76,9 @@ file(GLOB_RECURSE SOURCES
 	"CollectionItemModel.h"
 	
 	"TextBlockModel.h"
-	"ImageModel.h"
-	"TextBlockModel.h"
 	"RichTextBlockModel.h"
+	"NumberInputModel.h"	
+	"ImageModel.h"
 )
 
 # Setup Library

@@ -93,12 +93,12 @@ Item {
     Canvas {
         id: canvas
 
-        readonly property var focusOutlineMiddleColor: CardConstants.cardConstants.focusOutlineMiddleColor
-        readonly property var focusOutlineOuterColor: CardConstants.cardConstants.focusOutlineOuterColor
-        readonly property var focusOutlineInnerColor: CardConstants.cardConstants.focusOutlineInnerColor
+        readonly property var focusOutlineMiddleColor: cardConst.cardConst.focusOutlineMiddleColor
+        readonly property var focusOutlineOuterColor: cardConst.cardConst.focusOutlineOuterColor
+        readonly property var focusOutlineInnerColor: cardConst.cardConst.focusOutlineInnerColor
         readonly property int lineThickness: 2
         readonly property int outerLineThickness: 1
-        readonly property int smallRadius: 4
+        readonly property int smallRadius: 5
         readonly property int extraSmallRadius: 2
         readonly property bool isRTLEnabled: Qt.application.layoutDirection === Qt.RightToLeft
 
