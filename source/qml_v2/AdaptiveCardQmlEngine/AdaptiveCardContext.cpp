@@ -45,6 +45,35 @@ namespace AdaptiveCardQmlEngine
         return mCardConfig;
     }
 
+    void AdaptiveCardContext::addHeightEstimate(const int height)
+    {
+        m_HeightEstimate += height;
+    }
+
+    void AdaptiveCardContext::setHeightEstimate(const int height)
+    {
+        m_HeightEstimate = height;
+    }
+
+    const int AdaptiveCardContext::getHeightEstimate()
+    {
+        return m_HeightEstimate;
+    }
+
+    const int AdaptiveCardQmlEngine::AdaptiveCardContext::getEstimatedTextHeight(const std::string text)
+    {
+        auto cardConfig = this->getCardConfig()->getCardConfig();
+
+        int height = 0;
+
+        height += ((((int(text.size()) * cardConfig.averageCharWidth) / cardConfig.cardWidth) + 1) * cardConfig.averageCharHeight);
+        height += (int(std::count(text.begin(), text.end(), '\n')) * cardConfig.averageCharHeight);
+        height += cardConfig.averageSpacing;
+
+        return height;
+    }
+
+
     QString AdaptiveCardContext::getColor(AdaptiveCards::ForegroundColor color, bool isSubtle, bool highlight, bool isQml)
     {
         AdaptiveCards::ColorConfig colorConfig;
@@ -96,6 +125,16 @@ namespace AdaptiveCardQmlEngine
     void AdaptiveCardContext::setLang(const std::string& lang)
     {
         m_lang = lang;
+    }
+
+    const std::vector<AdaptiveWarning>& AdaptiveCardContext::GetWarnings()
+    {
+        return m_warnings;
+    }
+
+    void AdaptiveCardContext::AddWarning(const AdaptiveWarning& warning)
+    {
+        m_warnings.push_back(warning);
     }
 
 } // namespace AdaptiveCardQmlEngine

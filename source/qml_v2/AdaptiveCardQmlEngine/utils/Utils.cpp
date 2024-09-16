@@ -208,6 +208,44 @@ namespace AdaptiveCardQmlEngine
         return true;
     }
 
+    std::string AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(std::string str)
+    {
+        std::string rawString = "";
+        for (int i = 0; i < str.size(); i++)
+        {
+            if (str[i] == '`')
+            {
+                rawString += "${'`'}";
+            }
+            else
+            {
+                rawString += str[i];
+            }
+        }
+        return rawString;
+    }
+
+    int Utils::GetSpacing(const AdaptiveCards::SpacingConfig& spacingConfig, const AdaptiveCards::Spacing spacing)
+    {
+        switch (spacing)
+        {
+        case AdaptiveCards::Spacing::None:
+            return 0;
+        case AdaptiveCards::Spacing::Small:
+            return spacingConfig.smallSpacing;
+        case AdaptiveCards::Spacing::Medium:
+            return spacingConfig.mediumSpacing;
+        case AdaptiveCards::Spacing::Large:
+            return spacingConfig.largeSpacing;
+        case AdaptiveCards::Spacing::ExtraLarge:
+            return spacingConfig.extraLargeSpacing;
+        case AdaptiveCards::Spacing::Padding:
+            return spacingConfig.paddingSpacing;
+        default:
+            return spacingConfig.defaultSpacing;
+        }
+    }
+
 } // namespace AdaptiveCardQmlEngine
 
 

@@ -17,6 +17,9 @@ namespace AdaptiveCardQmlEngine
         static const std::string formatHtmlUrl(std::string& text, const std::string& linkColor, const std::string& textDecoration);
         static std::vector<std::string> splitString(const std::string& string, char delimiter);
         static std::string& replace(std::string& str, char what, char with);
+
+        static std::string getBackQuoteEscapedString(std::string str);
+        static int GetSpacing(const AdaptiveCards::SpacingConfig& spacingConfig, const AdaptiveCards::Spacing spacing);
                
         template <class T, class U>
         static bool IsInstanceOfSmart(U u);

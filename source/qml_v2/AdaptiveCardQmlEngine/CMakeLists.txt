@@ -53,10 +53,12 @@ file(GLOB_RECURSE SOURCES
 	"AdaptiveCardController.cpp"
 	"AdaptiveCardModel.cpp"
 	"CollectionItemModel.cpp"
+	"AdaptiveWarning.cpp"
 	
 	"TextBlockModel.cpp"
 	"ImageModel.cpp"
 	"RichTextBlockModel.cpp"
+    "TextInputModel.cpp"
 	
 	"AdaptiveCardQmlTypes.h"
 	"AdaptiveCardUtils.cpp"
@@ -69,15 +71,16 @@ file(GLOB_RECURSE SOURCES
 	"Formatter.h"
 	"Utils.h"
 	"stdafx.h"
+
+    "AdaptiveCardController.h"
+    "AdaptiveCardModel.h"
+    "CollectionItemModel.h"
+    "AdaptiveWarning.h"
 	
-	"AdaptiveCardController.h"
-	"AdaptiveCardModel.h"
-	"CollectionItemModel.h"
-	
-	"TextBlockModel.h"
+    "TextBlockModel.h"
+    "RichTextBlockModel.h"
+    "TextInputModel.h"
 	"ImageModel.h"
-	"TextBlockModel.h"
-	"RichTextBlockModel.h"
 )
 
 # Setup Library
