@@ -47,7 +47,7 @@ Column {
         return accessibleName;
     }
 
-
+    visible: textInputModel.isVisible 
     spacing: textInputModel.spacing
     width: parent.width
     onActiveFocusChanged: {
@@ -72,8 +72,7 @@ Column {
     InputLabel {
         id: inputTextLabel
         
-        required: textInputModel.isRequired
-        visible: textInputModel.isVisible      
+        required: textInputModel.isRequired     
     } 
 
     Row {

@@ -15,8 +15,8 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
 
     std::string mOriginalElementId = input->GetId();
   
-    mIsVisible = input->GetIsVisible() ? "true" : "false";
-    mIsRequired = input->GetIsRequired() == true ? "true" : "false";
+    mIsVisible = input->GetIsVisible() ? true : false;
+    mIsRequired = input->GetIsRequired() == true ? true : false;
 
     mLabel = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(input->GetLabel()));
     mErrorMessage = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(input->GetErrorMessage()));
