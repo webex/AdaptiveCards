@@ -208,6 +208,23 @@ namespace AdaptiveCardQmlEngine
         return true;
     }
 
+    std::string AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(std::string str)
+    {
+        std::string rawString = "";
+        for (int i = 0; i < str.size(); i++)
+        {
+            if (str[i] == '`')
+            {
+                rawString += "${'`'}";
+            }
+            else
+            {
+                rawString += str[i];
+            }
+        }
+        return rawString;
+    }
+
 } // namespace AdaptiveCardQmlEngine
 
 

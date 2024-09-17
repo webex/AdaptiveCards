@@ -98,5 +98,54 @@ namespace AdaptiveCardQmlEngine
         m_lang = lang;
     }
 
+    void AdaptiveCardContext::addHeightEstimate(const int height)
+    {
+        m_HeightEstimate += height;
+    }
+
+    void AdaptiveCardContext::setHeightEstimate(const int height)
+    {
+        m_HeightEstimate = height;
+    }
+
+    const int AdaptiveCardContext::getHeightEstimate()
+    {
+        return m_HeightEstimate;
+    }
+
+    const int AdaptiveCardQmlEngine::AdaptiveCardContext::getEstimatedTextHeight(const std::string text)
+    {
+        auto mCardConfig = this->getCardConfig()->getCardConfig();
+
+        int height = 0;
+
+        height += ((((int(text.size()) * mCardConfig.averageCharWidth) / mCardConfig.cardWidth) + 1) * mCardConfig.averageCharHeight);
+        height += (int(std::count(text.begin(), text.end(), '\n')) * mCardConfig.averageCharHeight);
+        height += mCardConfig.averageSpacing;
+
+        return height;
+    }
+
+    	const std::vector<AdaptiveWarning>& AdaptiveCardContext::GetWarnings()
+    {
+        return m_warnings;
+    }
+
+    void AdaptiveCardContext::AddWarning(const AdaptiveWarning& warning)
+    {
+        m_warnings.push_back(warning);
+    }
+
+
+    void AdaptiveCardQmlEngine::AdaptiveCardContext::addToRequiredInputElementsIdList(const std::string& elementId)
+    {
+        m_RequiredInputElementsIdList.push_back(elementId);
+    }
+
+     const std::vector<std::string>& AdaptiveCardQmlEngine::AdaptiveCardContext::getRequiredInputElementsIdList()
+    {
+        return m_RequiredInputElementsIdList;
+    }
+
 } // namespace AdaptiveCardQmlEngine
 

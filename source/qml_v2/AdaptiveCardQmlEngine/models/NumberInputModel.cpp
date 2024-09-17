@@ -8,39 +8,65 @@ NumberInputModel::NumberInputModel(std::shared_ptr<AdaptiveCards::NumberInput> n
     QObject(parent), mInput(numberInput)
 
 {
+    initialize();
+    createInputLabel();
+    createErrorMessage();
+}
+
+void NumberInputModel::initialize()
+{
     const auto hostConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig();
-    const auto rendererConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getCardConfig();
 
     mVisible = mInput->GetIsVisible();
-    // mPlaceholder = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mInput->GetPlaceholder()) + "`");
-
-    createInputLabel();
+    mPlaceholder = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mInput->GetPlaceholder()));
 
     if (mInput->GetValue().has_value())
     {
         mValue = mInput->GetValue().value();
-        mDefaultValue = true;
+        mDefaultValue =  "true";
     }
+    mMinValue = mInput->GetMin().value_or(-DBL_MAX);
+    mMaxValue = mInput->GetMax().value_or(DBL_MAX);
 
-    mMinValue = numberInput->GetMin().value_or(-DBL_MAX);
-    mMaxValue = numberInput->GetMax().value_or(DBL_MAX);
-
-    if (numberInput->GetIsRequired() || numberInput->GetMin().has_value() || numberInput->GetMax().has_value())
+    if (mInput->GetIsRequired() || mInput->GetMin().has_value() || mInput->GetMax().has_value())
     {
+        AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addToRequiredInputElementsIdList(mInput->GetId());
+        mIsRequired = mInput->GetIsRequired();
+        mValidationRequired = mInput->GetIsRequired();
     }
 }
+
 void NumberInputModel::createInputLabel()
 {
     if (!mInput->GetLabel().empty())
     {
-        // mContext->addHeightEstimate(mContext->getEstimatedTextHeight(mInput->GetLabel()));
-        // mEscapedLabelString = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mInput->GetLabel()) + "`");
+        AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(
+            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getEstimatedTextHeight(mInput->GetLabel()));
+        mEscapedLabelString =
+            QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mInput->GetLabel()));
     }
     else
     {
         if (mInput->GetIsRequired())
         {
-            //  mContext->AddWarning(RendererQml::AdaptiveWarning(RendererQml::Code::RenderException, "isRequired is not supported without labels"));
+            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().AddWarning(AdaptiveCardQmlEngine::AdaptiveWarning(
+                AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without labels"));
+        }
+    }
+}
+
+void NumberInputModel::createErrorMessage()
+{
+    if (!mInput->GetErrorMessage().empty())
+    {
+        // mNumberInputQmlElement->Property("_mEscapedErrorString",RendererQml::Formatter() << "String.raw`"<< RendererQml::Utils::getBackQuoteEscapedString(mInput->GetErrorMessage()) << "`");
+        mEscapedErrorString = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mInput->GetErrorMessage()));
+    }
+    else
+    {
+        if (mInput->GetIsRequired())
+        {
+            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().AddWarning(AdaptiveCardQmlEngine::AdaptiveWarning(AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without error message"));
         }
     }
 }
