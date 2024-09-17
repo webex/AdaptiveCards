@@ -26,7 +26,5 @@ Button {
             visible: inputFieldClearIcon.activeFocus
             designatedParent: parent
         }
-
     }
-
 }

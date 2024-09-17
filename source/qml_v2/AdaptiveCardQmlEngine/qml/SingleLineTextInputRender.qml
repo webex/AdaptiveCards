@@ -31,7 +31,6 @@ Rectangle {
         function assignMaxLength() {
             if (textInputModel.maxLength != 0)
                 maximumLength = textInputModel.maxLength;
-
         }
 
         selectByMouse: true

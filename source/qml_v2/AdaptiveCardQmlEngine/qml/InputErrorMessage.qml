@@ -32,7 +32,6 @@ Rectangle {
         background: Rectangle {
             color: 'transparent'
         }
-
     }
 
     Label {
@@ -47,5 +46,4 @@ Rectangle {
         anchors.right: parent.right
         text: textInputModel.errorMessage//_errorMessage
     }
-
 }
