@@ -16,5 +16,10 @@
         <file>images/3.jpg</file>
         <file>images/4.jpg</file>
         <file>qml/RichTextBlockRender.qml</file>
+        <file>qml/InputErrorMessage.qml</file>
+        <file>qml/InputFieldClearIcon.qml</file>
+        <file>qml/InputLabel.qml</file>
+        <file>qml/SingleLineTextInputRender.qml</file>
+        <file>qml/TextInputRender.qml</file>
     </qresource>
 </RCC>

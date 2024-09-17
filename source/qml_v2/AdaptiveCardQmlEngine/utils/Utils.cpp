@@ -208,6 +208,70 @@ namespace AdaptiveCardQmlEngine
         return true;
     }
 
+    std::string AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(std::string str)
+    {
+        std::string rawString = "";
+        for (int i = 0; i < str.size(); i++)
+        {
+            if (str[i] == '`')
+            {
+                rawString += "${'`'}";
+            }
+            else
+            {
+                rawString += str[i];
+            }
+        }
+        return rawString;
+    }
+
+    int Utils::GetSpacing(const AdaptiveCards::SpacingConfig& spacingConfig, const AdaptiveCards::Spacing spacing)
+    {
+        switch (spacing)
+        {
+        case AdaptiveCards::Spacing::None:
+            return 0;
+        case AdaptiveCards::Spacing::Small:
+            return spacingConfig.smallSpacing;
+        case AdaptiveCards::Spacing::Medium:
+            return spacingConfig.mediumSpacing;
+        case AdaptiveCards::Spacing::Large:
+            return spacingConfig.largeSpacing;
+        case AdaptiveCards::Spacing::ExtraLarge:
+            return spacingConfig.extraLargeSpacing;
+        case AdaptiveCards::Spacing::Padding:
+            return spacingConfig.paddingSpacing;
+        default:
+            return spacingConfig.defaultSpacing;
+        }
+    }
+
+    const std::string Utils::HandleKeywords(const std::string& id)
+    {
+        // Add underscore to take care of keywords
+        return Formatter() << "_" << id;
+    }
+
+    std::string& Utils::ToLower(std::string& str)
+    {
+        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+        return str;
+    }
+
+    bool Utils::hasNonAlphaNumeric(const std::string& id)
+    {
+        // QML does not allow special characters except underscore
+        // check if non alpha numeric character other than underscore exists
+        for (auto& character : id)
+        {
+            if (!std::isalnum(character) && character != '_')
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 } // namespace AdaptiveCardQmlEngine
 
 

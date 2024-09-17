@@ -2,10 +2,11 @@
 #include "TextBlockModel.h"
 #include "ImageModel.h"
 #include "RichTextBlockModel.h"
+#include "TextInputModel.h"
 #include "AdaptiveCardEnums.h"
 
-CollectionItemModel::CollectionItemModel(std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>> elements, QObject* parent)
-	: QAbstractListModel(parent)
+CollectionItemModel::CollectionItemModel(std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>> elements, QObject* parent) :
+    QAbstractListModel(parent)
 {
     for (auto& element : elements)
     {
@@ -43,6 +44,7 @@ QHash<int, QByteArray> CollectionItemModel::roleNames() const
     cardListModel[TextBlockRole] = "textBlockRole";
     cardListModel[ImageRole] = "imageRole";
     cardListModel[RichTextBlockRole] = "richTextBlockRole";
+    cardListModel[TextInputRole] = "textInputRole";
     cardListModel[FillHeightRole] = "fillHeightRole";
 
     return cardListModel;
@@ -61,8 +63,11 @@ void CollectionItemModel::populateRowData(std::shared_ptr<AdaptiveCards::BaseCar
     case AdaptiveCards::CardElementType::Image:
         populateImageModel(std::dynamic_pointer_cast<AdaptiveCards::Image>(element), rowContent);
         break;
-	case AdaptiveCards::CardElementType::RichTextBlock:
+    case AdaptiveCards::CardElementType::RichTextBlock:
         populateRichTextBlockModel(std::dynamic_pointer_cast<AdaptiveCards::RichTextBlock>(element), rowContent);
+        break;
+    case AdaptiveCards::CardElementType::TextInput:
+        populateTextInputModel(std::dynamic_pointer_cast<AdaptiveCards::TextInput>(element), rowContent);
         break;
     default:
         break;
@@ -85,4 +90,10 @@ void CollectionItemModel::populateRichTextBlockModel(std::shared_ptr<AdaptiveCar
 {
     rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::RichTextBlock);
     rowContent[CollectionModelRole::RichTextBlockRole] = QVariant::fromValue(new RichTextBlockModel(richTextBlock, nullptr));
+}
+
+void CollectionItemModel::populateTextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, RowContent& rowContent)
+{
+    rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::TextInput);
+    rowContent[CollectionModelRole::TextInputRole] = QVariant::fromValue(new TextInputModel(input, nullptr));
 }
