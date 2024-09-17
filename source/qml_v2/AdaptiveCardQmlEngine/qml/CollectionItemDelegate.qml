@@ -7,12 +7,15 @@ Loader {
 
     property var parentCardItem
 
-    Component.onCompleted :{
+      Component.onCompleted :{
         if (model.delegateType == AdaptiveCardEnums.CardElementType.TextBlock)
             source = "TextBlockRender.qml"
-        else if (model.delegateType == AdaptiveCardEnums.CardElementType.Image)
-            source = "ImageRender.qml"
         else if (model.delegateType == AdaptiveCardEnums.CardElementType.RichTextBlock)
             source = "RichTextBlockRender.qml";
-    }
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.Image)
+            source = "ImageRender.qml"
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.NumberInput)
+            source = "NumberInputRender.qml";
+    }  
+
 }

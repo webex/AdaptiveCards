@@ -19,6 +19,7 @@ class ImageModel : public QObject
     Q_PROPERTY(QString anchorCenter MEMBER mAnchorCenter CONSTANT);
     Q_PROPERTY(QString anchorRight MEMBER mAnchorRight CONSTANT);
     Q_PROPERTY(QString anchorLeft MEMBER mAnchorLeft CONSTANT);
+
     Q_PROPERTY(QString actionType MEMBER mActionType CONSTANT);
     Q_PROPERTY(QString submitData MEMBER mSubmitJSON CONSTANT);
     Q_PROPERTY(QString openUrl MEMBER mOpenUrl CONSTANT);
@@ -38,6 +39,7 @@ public:
 
 private:
     QString GetImagePath(const std::string url);
+
 
     void setImageLayoutProperties();
     void setImageVisualProperties();

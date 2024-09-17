@@ -6,6 +6,7 @@
 
 
 ImageModel::ImageModel(std::shared_ptr<AdaptiveCards::Image> image, QObject* parent)
+
     : QObject(parent),mImage(image)
 {
     setImageLayoutProperties();

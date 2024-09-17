@@ -7,6 +7,7 @@
 #include "AdaptiveCardLightThemeConfig.h"
 
 #include "AdaptiveRenderArgs.h"
+#include "AdaptiveWarning.h"
 
 #include "HostConfig.h"
 #include "Formatter.h"
@@ -42,6 +43,19 @@ namespace AdaptiveCardQmlEngine
         std::string getLang();
         void setLang(const std::string& lang);
 
+        void addHeightEstimate(const int height);
+        void setHeightEstimate(const int height);
+        const int getHeightEstimate();
+
+        const int getEstimatedTextHeight(const std::string text);
+
+        const std::vector<AdaptiveWarning>& GetWarnings();
+        void AddWarning(const AdaptiveWarning& warning);
+
+        void addToRequiredInputElementsIdList(const std::string& elementId);
+        const std::vector<std::string>& getRequiredInputElementsIdList();
+
+
     private:
         AdaptiveCardContext();
         ~AdaptiveCardContext();
@@ -54,6 +68,12 @@ namespace AdaptiveCardQmlEngine
         std::shared_ptr<AdaptiveCards::HostConfig> mHostConfig;
         std::shared_ptr<AdaptiveCardConfig> mCardConfig;
         AdaptiveCardEnums::AdaptiveCardTheme mAdaptiveCardTheme;
-        std::string m_lang; 
+        std::string m_lang;
+        std::vector<std::string> m_RequiredInputElementsIdList;
+
+
+        std::vector<AdaptiveWarning> m_warnings;
+
+        int m_HeightEstimate{0};
     };
 }
