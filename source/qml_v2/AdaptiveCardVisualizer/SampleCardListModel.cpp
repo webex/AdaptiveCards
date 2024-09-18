@@ -57,7 +57,7 @@ void SampleCardListModel::populateCardDisplayNames()
     mCardDisplayNames.insert("richTextBlock.json", "Rich text");
     mCardDisplayNames.insert("inputText.json", "Input text");
     mCardDisplayNames.insert("actionInline.json", "Action Inline");
-    mCardDisplayNames.insert("inputNumber.json", "Input number");
+    mCardDisplayNames.insert("inputNumber.json", "Input Number");
     mCardDisplayNames.insert("dateInput.json", "Input date");
     mCardDisplayNames.insert("checkBoxInput.json", "Input Toggle");
     mCardDisplayNames.insert("choiceSetInput.json", "Input ChoiceSet");
