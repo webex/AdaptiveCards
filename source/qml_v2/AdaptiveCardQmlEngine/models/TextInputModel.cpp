@@ -12,6 +12,7 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
 
     const auto textConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getCardConfig()->getInputTextConfig();
     AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getEstimatedTextHeight(input->GetLabel()));
+    AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(input->GetIsMultiline() ? textConfig.multiLineTextHeight : textConfig.height);
 
     std::string mOriginalElementId = input->GetId();
 
@@ -45,6 +46,16 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
     if (input->GetHeight() == AdaptiveCards::HeightType::Stretch)
     {
         mHeightStreched = input->GetHeight() == AdaptiveCards::HeightType::Stretch ? "true" : "false";
+    }
+    if (input->GetIsMultiline())
+    {
+        mIsMultiLineText = true;
+        // addActions();
+    }
+    else
+    {
+        mIsMultiLineText = false;
+        // addActions();
     }
 }
 

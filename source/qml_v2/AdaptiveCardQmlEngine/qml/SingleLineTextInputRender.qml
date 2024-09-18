@@ -94,7 +94,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.margins: cardConst.inputFieldConstants.clearIconHorizontalPadding
         onClicked: {
-            nextItemInFocusChain().forceActiveFocus();
+            inputtextTextField.forceActiveFocus();
             inputtextTextField.clear();
         }
     }

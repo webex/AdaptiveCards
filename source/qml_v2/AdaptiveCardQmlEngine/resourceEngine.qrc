@@ -21,5 +21,6 @@
         <file>qml/InputLabel.qml</file>
         <file>qml/SingleLineTextInputRender.qml</file>
         <file>qml/TextInputRender.qml</file>
+        <file>qml/MultiLineTextInputRender.qml</file>
     </qresource>
 </RCC>

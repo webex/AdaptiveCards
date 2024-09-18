@@ -28,5 +28,6 @@ namespace AdaptiveCardQmlEngine
         qmlRegisterType(QUrl("qrc:qml/InputLabel.qml"), "AdaptiveCardQmlEngine", 1, 0, "InputLabel");
         qmlRegisterType(QUrl("qrc:qml/InputErrorMessage.qml"), "AdaptiveCardQmlEngine", 1, 0, "InputErrorMessage");
         qmlRegisterType(QUrl("qrc:qml/InputFieldClearIcon.qml"), "AdaptiveCardQmlEngine", 1, 0, "InputFieldClearIcon");
+        qmlRegisterType(QUrl("qrc:qml/MultiLineTextInputRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "MultiLineTextInputRender");
     }
 } // namespace RendererQml

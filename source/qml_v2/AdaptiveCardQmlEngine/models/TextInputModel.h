@@ -20,6 +20,7 @@ class TextInputModel : public QObject
     Q_PROPERTY(bool isVisible MEMBER mIsVisible CONSTANT)
     Q_PROPERTY(bool isRequired MEMBER mIsRequired CONSTANT)
     Q_PROPERTY(bool heightStreched MEMBER mHeightStreched CONSTANT)
+    Q_PROPERTY(bool isMultiLineText MEMBER mIsMultiLineText CONSTANT)
 
     Q_PROPERTY(int maxLength MEMBER mMaxLength CONSTANT)
 
@@ -37,6 +38,7 @@ private:
     bool mIsVisible;
     bool mIsRequired;
     bool mHeightStreched;
+    bool mIsMultiLineText;
 
     int mMaxLength;
 };

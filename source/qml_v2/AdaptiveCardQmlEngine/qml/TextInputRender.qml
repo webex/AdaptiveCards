@@ -12,9 +12,8 @@ Column {
     }
 
     property var textInputModel: model.textInputRole
-    
-    property bool isMultiLineText
-    property string submitValue: !isMultiLineText ? singlineLoaderElement.item.textValue : multilineLoaderElement.item.textValue
+
+    property string submitValue: !textInputModel.isMultiLineText ? singlineLoaderElement.item.textValue : multilineLoaderElement.item.textValue
     property bool showErrorMessage: false
 
     function validate() {
@@ -60,7 +59,7 @@ Column {
             validate();
     }
     onShowErrorMessageChanged: {
-        if (textInputModel.heightStreched && isMultiLineText) {
+        if (textInputModel.heightStreched && textInputModel.isMultiLineText) {
             if (showErrorMessage)
                 inputtextTextFieldRow.height = inputtextTextFieldRow.height - inputtextErrorMessage.height;
             else
@@ -79,7 +78,7 @@ Column {
         id: inputtextTextFieldRow
 
         function getStrechHeight() {
-            if (textInputModel.heightStreched && isMultiLineText)
+            if (textInputModel.heightStreched && textInputModel.isMultiLineText)
                 return parent.height > 0 ? parent.height - y : cardConst.inputTextConstants.multiLineTextHeight;
         }
 
@@ -93,13 +92,30 @@ Column {
             height: 30
             width: parent.width
             active: !textInputModel.isMultiLineText
- 
+            visible: !textInputModel.isMultiLineText
+
             sourceComponent: SingleLineTextInputRender {
                 id: inputtextTextFieldWrapper
 
                 errorMessageVisible: showErrorMessage
             }
         }
+        
+        Loader {
+            id: multilineLoaderElement
+
+            height: 100
+            width: parent.width 
+            active: textInputModel.isMultiLineText
+            visible: textInputModel.isMultiLineText
+
+            sourceComponent: MultiLineTextInputRender {
+                id: inputtextTextFieldWrapper
+
+                errorMessageVisible: showErrorMessage
+                height: textInputModel.heightStreched ? parent.height : cardConst.inputTextConstants.multiLineTextHeight
+            }           
+        } 
     }
 
     InputErrorMessage {

@@ -4,19 +4,15 @@
 #include <SharedAdaptiveCard.h>
 
 #include <TextBlock.h>
+#include <RichTextBlock.h>
 #include <Image.h>
-#include "Enums.h"
-
-class TextBlockModel;
-class ImageModel;
-#include "RichTextBlock.h"
 #include <TextInput.h>
-
 #include "Enums.h"
 
 class TextBlockModel;
 class RichTextBlockModel;
-class TextIputModel;
+class ImageModel;
+class TextInputModel;
 
 class CollectionItemModel : public QAbstractListModel
 {
