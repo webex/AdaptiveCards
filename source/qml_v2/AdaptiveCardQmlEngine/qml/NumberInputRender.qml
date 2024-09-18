@@ -216,6 +216,13 @@ Column {
             activeFocusOnTab: true
             color:(numberInputArrowIcon.pressed || activeFocus) ? cardConst.inputFieldConstants.backgroundColorOnPressed : numberInputArrowIcon.hovered ? cardConst.inputFieldConstants.backgroundColorOnHovered : cardConst.inputFieldConstants.backgroundColorNormal
             
+            Keys.onPressed: {
+                if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
+                    numberInputSpinBox.changeValue(event.key);
+                    accessibilityPrefix = '';
+                    event.accepted = true;
+                }
+            }
             onActiveFocusChanged: {
                 if (activeFocus)
                     accessibilityPrefix = qsTr("Use up arrow to increase the value and down arrow to decrease the value") + (numberInputTextField.text ? ", Current number is " : "");
