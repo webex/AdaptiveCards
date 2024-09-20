@@ -14,8 +14,6 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
     AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getEstimatedTextHeight(input->GetLabel()));
     AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(input->GetIsMultiline() ? textConfig.multiLineTextHeight : textConfig.height);
 
-    std::string mOriginalElementId = input->GetId();
-
     mIsVisible = input->GetIsVisible() ? true : false;
     mIsRequired = input->GetIsRequired() == true ? true : false;
 

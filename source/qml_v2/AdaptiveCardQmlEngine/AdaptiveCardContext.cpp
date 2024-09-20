@@ -46,17 +46,17 @@ namespace AdaptiveCardQmlEngine
 
     void AdaptiveCardContext::addHeightEstimate(const int height)
     {
-        m_HeightEstimate += height;
+        mHeightEstimate += height;
     }
 
     void AdaptiveCardContext::setHeightEstimate(const int height)
     {
-        m_HeightEstimate = height;
+        mHeightEstimate = height;
     }
 
     const int AdaptiveCardContext::getHeightEstimate()
     {
-        return m_HeightEstimate;
+        return mHeightEstimate;
     }
 
     const int AdaptiveCardQmlEngine::AdaptiveCardContext::getEstimatedTextHeight(const std::string text)
@@ -117,22 +117,22 @@ namespace AdaptiveCardQmlEngine
 
     std::string AdaptiveCardContext::getLang()
     {
-        return m_lang;
+        return mLang;
     }
 
     void AdaptiveCardContext::setLang(const std::string& lang)
     {
-        m_lang = lang;
+        mLang = lang;
     }
 
     const std::vector<AdaptiveWarning>& AdaptiveCardContext::getWarnings()
     {
-        return m_warnings;
+        return mWarnings;
     }
 
     void AdaptiveCardContext::addWarning(const AdaptiveWarning& warning)
     {
-        m_warnings.push_back(warning);
+        mWarnings.push_back(warning);
     }
 
 } // namespace AdaptiveCardQmlEngine

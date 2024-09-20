@@ -99,14 +99,14 @@ namespace AdaptiveCardQmlEngine
         return str;
     }
 
-    std::regex TextUtils::m_textFunctionRegex(R"xxx(\{\{(DATE|TIME)\(([\d]{4}-[\d]{2}-[\d]{2}T[\d]{2}:[\d]{2}:[\d]{2})(Z|(?:(?:-|\+)\d{2}:\d{2}))(?:,\s*(SHORT|LONG|COMPACT)\s*)??\)\}\})xxx");
+    std::regex TextUtils::mTextFunctionRegex(R"xxx(\{\{(DATE|TIME)\(([\d]{4}-[\d]{2}-[\d]{2}T[\d]{2}:[\d]{2}:[\d]{2})(Z|(?:(?:-|\+)\d{2}:\d{2}))(?:,\s*(SHORT|LONG|COMPACT)\s*)??\)\}\})xxx");
 
     std::string TextUtils::applyTextFunctions(const std::string& text, const std::string& lang)
     {
         std::smatch oneMatch;
         std::string result = text;
         std::string::const_iterator searchLoc(text.cbegin());
-        while (std::regex_search(searchLoc, text.cend(), oneMatch, m_textFunctionRegex))
+        while (std::regex_search(searchLoc, text.cend(), oneMatch, mTextFunctionRegex))
         {
             if (oneMatch[1] == "DATE" || oneMatch[1] == "TIME")
             {

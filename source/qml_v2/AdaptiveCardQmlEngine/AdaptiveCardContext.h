@@ -64,11 +64,8 @@ namespace AdaptiveCardQmlEngine
         std::shared_ptr<AdaptiveCards::HostConfig> mHostConfig;
         std::shared_ptr<AdaptiveCardConfig> mCardConfig;
         AdaptiveCardEnums::AdaptiveCardTheme mAdaptiveCardTheme;
-        std::string m_lang;
-        int m_HeightEstimate{0};
-        std::vector<AdaptiveWarning> m_warnings;
-        std::string m_defaultId;
-        int m_DefaultIdCounter{0};
-        std::map<std::string, std::string> m_inputElementList;
+        std::string mLang;
+        int mHeightEstimate{0};
+        std::vector<AdaptiveWarning> mWarnings;
     };
 } // namespace AdaptiveCardQmlEngine

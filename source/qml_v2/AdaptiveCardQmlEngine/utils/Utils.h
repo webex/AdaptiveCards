@@ -55,7 +55,7 @@ namespace AdaptiveCardQmlEngine
         static bool getLocalTime(const std::string& tzOffset, std::tm& tm, std::tm& lt);
         
         private:
-        static std::regex m_textFunctionRegex;
+        static std::regex mTextFunctionRegex;
     };
     
 } // namespace AdaptiveCardQmlEngine
