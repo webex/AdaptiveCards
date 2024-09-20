@@ -4,21 +4,19 @@
 
 namespace AdaptiveCardQmlEngine
 {
-
     AdaptiveWarning::AdaptiveWarning(Code code, const std::string& message) :
-        m_code(code), m_message(message)
+        mCode(code), mMessage(message)
     {
 
     }
 
     Code AdaptiveWarning::GetStatusCode() const
     {
-        return m_code;
+        return mCode;
     }
 
     const std::string& AdaptiveWarning::GetReason() const
     {
-        return m_message;
+        return mMessage;
     }
-
 }

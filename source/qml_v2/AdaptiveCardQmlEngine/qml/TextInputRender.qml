@@ -6,11 +6,8 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 
 Column {
     id: inputText
-
-    CardConstants {
-        id: cardConst
-    }
-
+    
+    property var cardConst: CardConstants
     property var textInputModel: model.textInputRole
 
     property string submitValue: !textInputModel.isMultiLineText ? singlineLoaderElement.item.textValue : multilineLoaderElement.item.textValue

@@ -225,7 +225,7 @@ namespace AdaptiveCardQmlEngine
         return rawString;
     }
 
-    int Utils::GetSpacing(const AdaptiveCards::SpacingConfig& spacingConfig, const AdaptiveCards::Spacing spacing)
+    int Utils::getSpacing(const AdaptiveCards::SpacingConfig& spacingConfig, const AdaptiveCards::Spacing spacing)
     {
         switch (spacing)
         {
@@ -246,13 +246,13 @@ namespace AdaptiveCardQmlEngine
         }
     }
 
-    const std::string Utils::HandleKeywords(const std::string& id)
+    const std::string Utils::handleKeywords(const std::string& id)
     {
         // Add underscore to take care of keywords
         return Formatter() << "_" << id;
     }
 
-    std::string& Utils::ToLower(std::string& str)
+    std::string& Utils::toLower(std::string& str)
     {
         std::transform(str.begin(), str.end(), str.begin(), ::tolower);
         return str;

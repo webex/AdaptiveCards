@@ -1,6 +1,6 @@
 import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 import QtQuick 2.15
-//pragma Singleton
+pragma Singleton
 
 QtObject {
     property bool isDarkTheme: false

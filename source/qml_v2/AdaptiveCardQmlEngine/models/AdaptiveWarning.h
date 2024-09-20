@@ -4,7 +4,6 @@
 
 namespace AdaptiveCardQmlEngine
 {
-
     enum class Code
     {
         RenderException = 1
@@ -18,8 +17,7 @@ namespace AdaptiveCardQmlEngine
         const std::string& GetReason() const;
 
     private:
-        const Code m_code;
-        const std::string m_message;
+        const Code mCode;
+        const std::string mMessage;
     };
-
 }

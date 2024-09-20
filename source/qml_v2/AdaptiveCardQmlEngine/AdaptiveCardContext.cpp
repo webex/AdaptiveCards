@@ -125,12 +125,12 @@ namespace AdaptiveCardQmlEngine
         m_lang = lang;
     }
 
-    const std::vector<AdaptiveWarning>& AdaptiveCardContext::GetWarnings()
+    const std::vector<AdaptiveWarning>& AdaptiveCardContext::getWarnings()
     {
         return m_warnings;
     }
 
-    void AdaptiveCardContext::AddWarning(const AdaptiveWarning& warning)
+    void AdaptiveCardContext::addWarning(const AdaptiveWarning& warning)
     {
         m_warnings.push_back(warning);
     }

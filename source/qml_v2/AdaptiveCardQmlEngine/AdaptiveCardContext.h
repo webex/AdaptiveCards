@@ -49,8 +49,8 @@ namespace AdaptiveCardQmlEngine
         std::string getLang();
         void setLang(const std::string& lang);
 
-        const std::vector<AdaptiveWarning>& GetWarnings();
-        void AddWarning(const AdaptiveWarning& warning);
+        const std::vector<AdaptiveWarning>& getWarnings();
+        void addWarning(const AdaptiveWarning& warning);
 
     private:
         AdaptiveCardContext();
@@ -69,7 +69,6 @@ namespace AdaptiveCardQmlEngine
         std::vector<AdaptiveWarning> m_warnings;
         std::string m_defaultId;
         int m_DefaultIdCounter{0};
-        std::vector<std::string> m_RequiredInputElementsIdList;
         std::map<std::string, std::string> m_inputElementList;
     };
 } // namespace AdaptiveCardQmlEngine

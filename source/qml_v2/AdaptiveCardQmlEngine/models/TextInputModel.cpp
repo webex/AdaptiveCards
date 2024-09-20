@@ -25,7 +25,7 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
     mPlaceHolder = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(input->GetPlaceholder()));
     mValue = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(input->GetValue()));
 
-    auto spacing = AdaptiveCardQmlEngine::Utils::GetSpacing(AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig()->GetSpacing(), AdaptiveCards::Spacing::Small);
+    auto spacing = AdaptiveCardQmlEngine::Utils::getSpacing(AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig()->GetSpacing(), AdaptiveCards::Spacing::Small);
     QString color = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getColor(AdaptiveCards::ForegroundColor::Default, false, false);
 
     if (input->GetRegex() != "")
@@ -39,7 +39,7 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
     {
         if (input->GetIsRequired())
         {
-            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().AddWarning(AdaptiveCardQmlEngine::AdaptiveWarning(AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without labels"));
+            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addWarning(AdaptiveCardQmlEngine::AdaptiveWarning(AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without labels"));
         }
     }
 
@@ -50,12 +50,10 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
     if (input->GetIsMultiline())
     {
         mIsMultiLineText = true;
-        // addActions();
     }
     else
     {
         mIsMultiLineText = false;
-        // addActions();
     }
 }
 
