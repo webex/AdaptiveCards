@@ -29,16 +29,20 @@ public:
     ~TextInputModel();
 
 private:
+
+    void setVisualProperties(const std::shared_ptr<AdaptiveCards::TextInput>& input);
+
+private:
     QString mLabel;
     QString mErrorMessage;
     QString mPlaceHolder;
     QString mValue;
     QString mRegex;
 
-    bool mIsVisible;
-    bool mIsRequired;
-    bool mHeightStreched;
-    bool mIsMultiLineText;
+    bool mIsVisible{false};
+    bool mIsRequired{false};
+    bool mHeightStreched{false};
+    bool mIsMultiLineText{false};
 
-    int mMaxLength;
+    int mMaxLength{0};
 };

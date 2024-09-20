@@ -7,7 +7,6 @@
 
 TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, QObject* parent) : QObject(parent)
 {
-    const auto hostConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig();
     const auto rendererConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getCardConfig();
 
     const auto textConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getCardConfig()->getInputTextConfig();
@@ -17,6 +16,11 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
     mIsVisible = input->GetIsVisible() ? true : false;
     mIsRequired = input->GetIsRequired() == true ? true : false;
 
+    setVisualProperties(input);
+}
+
+void TextInputModel::setVisualProperties(const std::shared_ptr<AdaptiveCards::TextInput>& input)
+{
     mLabel = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(input->GetLabel()));
     mErrorMessage = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(input->GetErrorMessage()));
 
@@ -37,7 +41,8 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
     {
         if (input->GetIsRequired())
         {
-            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addWarning(AdaptiveCardQmlEngine::AdaptiveWarning(AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without labels"));
+            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addWarning(AdaptiveCardQmlEngine::AdaptiveWarning(
+                AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without labels"));
         }
     }
 
@@ -45,6 +50,7 @@ TextInputModel::TextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, 
     {
         mHeightStreched = input->GetHeight() == AdaptiveCards::HeightType::Stretch ? "true" : "false";
     }
+
     if (input->GetIsMultiline())
     {
         mIsMultiLineText = true;

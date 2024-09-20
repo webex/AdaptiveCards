@@ -245,33 +245,6 @@ namespace AdaptiveCardQmlEngine
             return spacingConfig.defaultSpacing;
         }
     }
-
-    const std::string Utils::handleKeywords(const std::string& id)
-    {
-        // Add underscore to take care of keywords
-        return Formatter() << "_" << id;
-    }
-
-    std::string& Utils::toLower(std::string& str)
-    {
-        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-        return str;
-    }
-
-    bool Utils::hasNonAlphaNumeric(const std::string& id)
-    {
-        // QML does not allow special characters except underscore
-        // check if non alpha numeric character other than underscore exists
-        for (auto& character : id)
-        {
-            if (!std::isalnum(character) && character != '_')
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
 } // namespace AdaptiveCardQmlEngine
 
 

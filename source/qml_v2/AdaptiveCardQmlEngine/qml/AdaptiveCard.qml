@@ -103,5 +103,5 @@ Rectangle {
         } else {
             CardConstants.isDarkTheme = false
         }
-	}
+    }
 }

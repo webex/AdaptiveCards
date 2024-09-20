@@ -20,11 +20,7 @@ namespace AdaptiveCardQmlEngine
         
         static std::string getBackQuoteEscapedString(std::string str);
         static int getSpacing(const AdaptiveCards::SpacingConfig& spacingConfig, const AdaptiveCards::Spacing spacing);
-        
-        static std::string& toLower(std::string& str);
-        static bool hasNonAlphaNumeric(const std::string& id);
-        static const std::string handleKeywords(const std::string& id);
-        
+          
         template <class T, class U>
         static bool IsInstanceOfSmart(U u);
         
