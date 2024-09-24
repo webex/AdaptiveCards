@@ -46,7 +46,7 @@ void NumberInputModel::createInputLabel()
     {
         if (mInput->GetIsRequired())
         {
-            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().AddWarning(AdaptiveCardQmlEngine::AdaptiveWarning(AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without labels"));
+            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addWarning(AdaptiveCardQmlEngine::AdaptiveWarning(AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without labels"));
         }
     }
 }
@@ -61,7 +61,7 @@ void NumberInputModel::createErrorMessage()
     {
         if (mInput->GetIsRequired())
         {
-            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().AddWarning(AdaptiveCardQmlEngine::AdaptiveWarning(AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without error message"));
+            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addWarning(AdaptiveCardQmlEngine::AdaptiveWarning(AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without error message"));
         }
     }
 }

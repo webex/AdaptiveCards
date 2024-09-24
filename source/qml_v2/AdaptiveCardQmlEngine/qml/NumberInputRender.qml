@@ -10,7 +10,7 @@ Column {
     property bool showErrorMessage: false
     property int spinBoxMinVal : Math.max(-2147483648, numberinputModel.minValue)
     property int spinBoxMaxVal : Math.min(2147483647, numberinputModel.maxValue)
-
+    
     function validate() {
         if (numberInputTextField.text.length !== 0 && Number(numberInputTextField.text) >= numberinputModel.minValue && Number(numberInputTextField.text) <= numberinputModel.maxValue) {
             showErrorMessage = false;
@@ -48,7 +48,9 @@ Column {
     visible: numberinputModel.visible
     InputLabel {
         id: numberInputLabel
-     visible:numberinputModel.escapedLabelString
+        required: numberinputModel.isRequired
+        label:  numberinputModel.escapedLabelString
+        visible:numberinputModel.escapedLabelString
     }
     
     Row {

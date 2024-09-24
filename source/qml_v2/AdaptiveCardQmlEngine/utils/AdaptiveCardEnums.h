@@ -11,6 +11,7 @@ namespace AdaptiveCardEnums
         Image,
         RichTextBlock,
         NumberInput,
+        TextInput,
         Container,
         Column,
         ColumnSet,

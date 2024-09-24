@@ -13,16 +13,17 @@
 #include "Formatter.h"
 #include "utils/Utils.h"
 #include "utils/AdaptiveCardEnums.h"
+#include "AdaptiveWarning.h"
 
 namespace AdaptiveCardQmlEngine
 {
-    class AdaptiveCardContext:public QObject
+    class AdaptiveCardContext : public QObject
     {
         Q_OBJECT
         enum AdaptiveCardTheme
-        {   
+        {
             DarkTheme = 0,
-            LightTheme 
+            LightTheme
         };
 
     public:
@@ -30,7 +31,7 @@ namespace AdaptiveCardQmlEngine
         {
             static AdaptiveCardContext instance;
             return instance;
-		}
+        }
 
         void initAdaptiveCardContext();
         void setAdaptiveCardTheme(AdaptiveCardEnums::AdaptiveCardTheme theme);
@@ -38,23 +39,19 @@ namespace AdaptiveCardQmlEngine
         std::shared_ptr<AdaptiveCards::HostConfig> getHostConfig();
         std::shared_ptr<AdaptiveCardConfig> getCardConfig();
 
-        QString getColor(AdaptiveCards::ForegroundColor color, bool isSubtle, bool highlight, bool isQml = true);
-
-        std::string getLang();
-        void setLang(const std::string& lang);
-
         void addHeightEstimate(const int height);
         void setHeightEstimate(const int height);
         const int getHeightEstimate();
 
         const int getEstimatedTextHeight(const std::string text);
 
-        const std::vector<AdaptiveWarning>& GetWarnings();
-        void AddWarning(const AdaptiveWarning& warning);
+        QString getColor(AdaptiveCards::ForegroundColor color, bool isSubtle, bool highlight, bool isQml = true);
 
-        void addToRequiredInputElementsIdList(const std::string& elementId);
-        const std::vector<std::string>& getRequiredInputElementsIdList();
+        std::string getLang();
+        void setLang(const std::string& lang);
 
+        const std::vector<AdaptiveWarning>& getWarnings();
+        void addWarning(const AdaptiveWarning& warning);
 
     private:
         AdaptiveCardContext();
@@ -68,10 +65,8 @@ namespace AdaptiveCardQmlEngine
         std::shared_ptr<AdaptiveCards::HostConfig> mHostConfig;
         std::shared_ptr<AdaptiveCardConfig> mCardConfig;
         AdaptiveCardEnums::AdaptiveCardTheme mAdaptiveCardTheme;
-        std::string m_lang;
-
-        std::vector<AdaptiveWarning> m_warnings;
-
-        int m_HeightEstimate{0};
+        std::string mLang;
+        int mHeightEstimate{0};
+        std::vector<AdaptiveWarning> mWarnings;
     };
-}
+} // namespace AdaptiveCardQmlEngine

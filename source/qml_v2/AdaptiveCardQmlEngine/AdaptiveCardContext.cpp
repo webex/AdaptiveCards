@@ -1,6 +1,5 @@
 #include "AdaptiveCardContext.h"
 
-
 namespace AdaptiveCardQmlEngine
 {
     AdaptiveCardContext::AdaptiveCardContext() : mHostConfig(nullptr)
@@ -43,6 +42,34 @@ namespace AdaptiveCardQmlEngine
     std::shared_ptr<AdaptiveCardConfig> AdaptiveCardContext::getCardConfig()
     {
         return mCardConfig;
+    }
+
+    void AdaptiveCardContext::addHeightEstimate(const int height)
+    {
+        mHeightEstimate += height;
+    }
+
+    void AdaptiveCardContext::setHeightEstimate(const int height)
+    {
+        mHeightEstimate = height;
+    }
+
+    const int AdaptiveCardContext::getHeightEstimate()
+    {
+        return mHeightEstimate;
+    }
+
+    const int AdaptiveCardQmlEngine::AdaptiveCardContext::getEstimatedTextHeight(const std::string text)
+    {
+        auto cardConfig = this->getCardConfig()->getCardConfig();
+
+        int height = 0;
+
+        height += ((((int(text.size()) * cardConfig.averageCharWidth) / cardConfig.cardWidth) + 1) * cardConfig.averageCharHeight);
+        height += (int(std::count(text.begin(), text.end(), '\n')) * cardConfig.averageCharHeight);
+        height += cardConfig.averageSpacing;
+
+        return height;
     }
 
     QString AdaptiveCardContext::getColor(AdaptiveCards::ForegroundColor color, bool isSubtle, bool highlight, bool isQml)
@@ -90,52 +117,22 @@ namespace AdaptiveCardQmlEngine
 
     std::string AdaptiveCardContext::getLang()
     {
-        return m_lang;
+        return mLang;
     }
 
     void AdaptiveCardContext::setLang(const std::string& lang)
     {
-        m_lang = lang;
+        mLang = lang;
     }
 
-    void AdaptiveCardContext::addHeightEstimate(const int height)
+    const std::vector<AdaptiveWarning>& AdaptiveCardContext::getWarnings()
     {
-        m_HeightEstimate += height;
+        return mWarnings;
     }
 
-    void AdaptiveCardContext::setHeightEstimate(const int height)
+    void AdaptiveCardContext::addWarning(const AdaptiveWarning& warning)
     {
-        m_HeightEstimate = height;
+        mWarnings.push_back(warning);
     }
-
-    const int AdaptiveCardContext::getHeightEstimate()
-    {
-        return m_HeightEstimate;
-    }
-
-    const int AdaptiveCardQmlEngine::AdaptiveCardContext::getEstimatedTextHeight(const std::string text)
-    {
-        auto mCardConfig = this->getCardConfig()->getCardConfig();
-
-        int height = 0;
-
-        height += ((((int(text.size()) * mCardConfig.averageCharWidth) / mCardConfig.cardWidth) + 1) * mCardConfig.averageCharHeight);
-        height += (int(std::count(text.begin(), text.end(), '\n')) * mCardConfig.averageCharHeight);
-        height += mCardConfig.averageSpacing;
-
-        return height;
-    }
-
-    const std::vector<AdaptiveWarning>& AdaptiveCardContext::GetWarnings()
-    {
-        return m_warnings;
-    }
-
-    void AdaptiveCardContext::AddWarning(const AdaptiveWarning& warning)
-    {
-        m_warnings.push_back(warning);
-    }
-
 
 } // namespace AdaptiveCardQmlEngine
-
