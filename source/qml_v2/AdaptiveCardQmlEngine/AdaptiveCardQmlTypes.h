@@ -20,7 +20,7 @@ namespace AdaptiveCardQmlEngine
         qmlRegisterType(QUrl("qrc:qml/CollectionItem.qml"), "AdaptiveCardQmlEngine", 1, 0, "CollectionItem");
         qmlRegisterType(QUrl("qrc:qml/CollectionItemDelegate.qml"), "AdaptiveCardQmlEngine", 1, 0, "CollectionItemDelegate");
         qmlRegisterType(QUrl("qrc:qml/WCustomFocusItem.qml"), "AdaptiveCardQmlEngine", 1, 0, "WCustomFocusItem");
-        qmlRegisterType(QUrl("qrc:qml/CardConstants.qml"), "AdaptiveCardQmlEngine", 1, 0, "CardConstants");
+        qmlRegisterSingletonType(QUrl("qrc:qml/CardConstants.qml"), "AdaptiveCardQmlEngine", 1, 0, "CardConstants");
 
         qmlRegisterType(QUrl("qrc:qml/TextBlockRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "TextBlockRender");
         qmlRegisterType(QUrl("qrc:qml/ImageRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "ImageRender");

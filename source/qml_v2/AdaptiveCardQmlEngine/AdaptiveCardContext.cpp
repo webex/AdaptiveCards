@@ -136,15 +136,6 @@ namespace AdaptiveCardQmlEngine
         m_warnings.push_back(warning);
     }
 
-    void AdaptiveCardQmlEngine::AdaptiveCardContext::addToRequiredInputElementsIdList(const std::string& elementId)
-    {
-        m_RequiredInputElementsIdList.push_back(elementId);
-    }
-
-    const std::vector<std::string>& AdaptiveCardQmlEngine::AdaptiveCardContext::getRequiredInputElementsIdList()
-    {
-        return m_RequiredInputElementsIdList;
-    }
 
 } // namespace AdaptiveCardQmlEngine
 

@@ -30,7 +30,6 @@ void NumberInputModel::initialize()
 
     if (mInput->GetIsRequired() || mInput->GetMin().has_value() || mInput->GetMax().has_value())
     {
-        AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addToRequiredInputElementsIdList(mInput->GetId());
         mIsRequired = mInput->GetIsRequired();
         mValidationRequired = mInput->GetIsRequired();
     }

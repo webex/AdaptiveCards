@@ -8,19 +8,19 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 Button {
     id: inputFieldClearIcon
 
-    width: cardConst.inputFieldConstants.clearIconSize
+    width: CardConstants.inputFieldConstants.clearIconSize
     horizontalPadding: 0
     verticalPadding: 0
-    icon.width: cardConst.inputFieldConstants.clearIconSize
-    icon.height: cardConst.inputFieldConstants.clearIconSize
-    icon.color: cardConst.inputFieldConstants.clearIconColorNormal
-    icon.source: cardConst.clearIconImage
+    icon.width: CardConstants.inputFieldConstants.clearIconSize
+    icon.height: CardConstants.inputFieldConstants.clearIconSize
+    icon.color: CardConstants.inputFieldConstants.clearIconColorNormal
+    icon.source: CardConstants.clearIconImage
     Accessible.name: qsTr("Clear Input")
     Accessible.role: Accessible.Button
 
     background: Rectangle {
         color: 'transparent'
-        radius: cardConst.inputFieldConstants.borderRadius
+        radius: CardConstants.inputFieldConstants.borderRadius
 
         WCustomFocusItem {
             isRectangle: true

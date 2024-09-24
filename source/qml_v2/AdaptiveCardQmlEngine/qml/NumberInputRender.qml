@@ -10,10 +10,6 @@ Column {
     property bool showErrorMessage: false
     property int spinBoxMinVal : Math.max(-2147483648, numberinputModel.minValue)
     property int spinBoxMaxVal : Math.min(2147483647, numberinputModel.maxValue)
-    CardConstants{
-        id:cardConst
-        
-    }
 
     function validate() {
         if (numberInputTextField.text.length !== 0 && Number(numberInputTextField.text) >= numberinputModel.minValue && Number(numberInputTextField.text) <= numberinputModel.maxValue) {
@@ -40,7 +36,7 @@ Column {
         return accessibleName;
     }
     width: parent.width
-    spacing: cardConst.inputFieldConstants.columnSpacing
+    spacing: CardConstants.inputFieldConstants.columnSpacing
     onShowErrorMessageChanged: {
         numberInputRectangle.colorChange(false);
     }
@@ -59,7 +55,7 @@ Column {
         id: numberInputRow
         
         width: parent.width
-        height: cardConst.inputFieldConstants.height
+        height: CardConstants.inputFieldConstants.height
         
         Rectangle {
             id: numberInputRectangle
@@ -68,14 +64,14 @@ Column {
                 if (isPressed && !showErrorMessage)
                     color = inputFieldConstants.backgroundColorOnPressed;
                 else
-                    color = numberInputTextField.activeFocus ? cardConst.inputFieldConstants.backgroundColorOnPressed : numberInputTextField.hovered ? cardConst.inputFieldConstants.backgroundColorOnHovered : cardConst.inputFieldConstants.backgroundColorNormal;
+                    color = numberInputTextField.activeFocus ? CardConstants.inputFieldConstants.backgroundColorOnPressed : numberInputTextField.hovered ? CardConstants.inputFieldConstants.backgroundColorOnHovered : CardConstants.inputFieldConstants.backgroundColorNormal;
             }
             
-            border.width: cardConst.inputFieldConstants.borderWidth
-            border.color: showErrorMessage ? cardConst.inputFieldConstants.borderColorOnError : cardConst.inputFieldConstants.borderColorNormal
-            radius: cardConst.inputFieldConstants.borderRadius
+            border.width: CardConstants.inputFieldConstants.borderWidth
+            border.color: showErrorMessage ? CardConstants.inputFieldConstants.borderColorOnError : CardConstants.inputFieldConstants.borderColorNormal
+            radius: CardConstants.inputFieldConstants.borderRadius
             height: parent.height
-            color: numberInputSpinBox.Opressed ? cardConst.inputFieldConstants.backgroundColorOnPressed : numberInputSpinBox.hovered ? cardConst.inputFieldConstants.backgroundColorOnHovered : cardConst.inputFieldConstants.backgroundColorNormal
+            color: numberInputSpinBox.Opressed ? CardConstants.inputFieldConstants.backgroundColorOnPressed : numberInputSpinBox.hovered ? CardConstants.inputFieldConstants.backgroundColorOnHovered : CardConstants.inputFieldConstants.backgroundColorNormal
             width: parent.width - numberInputArrowRectangle.width
             WCustomFocusItem {
                 isRectangle: true
@@ -99,7 +95,7 @@ Column {
                     numberInputTextField.text = numberInputSpinBox.value;
                 }
                 
-                width: parent.width - numberInputClearIcon.width - cardConst.inputFieldConstants.clearIconHorizontalPadding
+                width: parent.width - numberInputClearIcon.width - CardConstants.inputFieldConstants.clearIconHorizontalPadding
                 padding: 0
                 editable: true
                 stepSize: 1
@@ -121,7 +117,7 @@ Column {
                 contentItem: TextField {
                     id: numberInputTextField
                     
-                    font.pixelSize: cardConst.inputFieldConstants.pixelSize
+                    font.pixelSize: CardConstants.inputFieldConstants.pixelSize
                     anchors.left: parent.left
                     anchors.right: parent.right
                     selectByMouse: true
@@ -144,14 +140,14 @@ Column {
                         Accessible.name = getAccessibleName();
                     }
                     
-                    leftPadding: cardConst.inputFieldConstants.textHorizontalPadding
-                    rightPadding: cardConst.inputFieldConstants.textHorizontalPadding
-                    topPadding: cardConst.inputFieldConstants.textVerticalPadding
-                    bottomPadding: cardConst.inputFieldConstants.textVerticalPadding
+                    leftPadding: CardConstants.inputFieldConstants.textHorizontalPadding
+                    rightPadding: CardConstants.inputFieldConstants.textHorizontalPadding
+                    topPadding: CardConstants.inputFieldConstants.textVerticalPadding
+                    bottomPadding: CardConstants.inputFieldConstants.textVerticalPadding
                     placeholderText: numberinputModel.placeHolder
                     Accessible.role: Accessible.EditableText
-                    color: cardConst.inputFieldConstants.textColor
-                    placeholderTextColor: cardConst.inputFieldConstants.placeHolderColor
+                    color: CardConstants.inputFieldConstants.textColor
+                    placeholderTextColor: CardConstants.inputFieldConstants.placeHolderColor
                     onTextChanged: {
                         validate();
                     }
@@ -195,7 +191,7 @@ Column {
                 visible: numberInputTextField.length !== 0
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: cardConst.inputFieldConstants.clearIconHorizontalPadding
+                anchors.margins: CardConstants.inputFieldConstants.clearIconHorizontalPadding
                 onClicked: {
                     nextItemInFocusChain().forceActiveFocus();
                     numberInputSpinBox.value = numberInputSpinBox.from;
@@ -209,12 +205,12 @@ Column {
             
             property string accessibilityPrefix: ''
             
-            width: cardConst.inputNumberConstants.upDownButtonWidth
-            radius: cardConst.inputFieldConstants.borderRadius
+            width: CardConstants.inputNumberConstants.upDownButtonWidth
+            radius: CardConstants.inputFieldConstants.borderRadius
             height: parent.height
-            border.color: cardConst.inputFieldConstants.borderColorNormal
+            border.color: CardConstants.inputFieldConstants.borderColorNormal
             activeFocusOnTab: true
-            color:(numberInputArrowIcon.pressed || activeFocus) ? cardConst.inputFieldConstants.backgroundColorOnPressed : numberInputArrowIcon.hovered ? cardConst.inputFieldConstants.backgroundColorOnHovered : cardConst.inputFieldConstants.backgroundColorNormal
+            color:(numberInputArrowIcon.pressed || activeFocus) ? CardConstants.inputFieldConstants.backgroundColorOnPressed : numberInputArrowIcon.hovered ? CardConstants.inputFieldConstants.backgroundColorOnHovered : CardConstants.inputFieldConstants.backgroundColorNormal
             
             Keys.onPressed: {
                 if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
@@ -236,14 +232,14 @@ Column {
                 
                 width: parent.width
                 anchors.right: parent.right
-                horizontalPadding: cardConst.inputFieldConstants.iconPadding
-                verticalPadding: cardConst.inputFieldConstants.iconPadding
-                icon.width: cardConst.numberInputConstants.upDownIconSize
-                icon.height: cardConst.numberInputConstants.upDownIconSize
+                horizontalPadding: CardConstants.inputFieldConstants.iconPadding
+                verticalPadding: CardConstants.inputFieldConstants.iconPadding
+                icon.width: CardConstants.numberInputConstants.upDownIconSize
+                icon.height: CardConstants.numberInputConstants.upDownIconSize
                 focusPolicy: Qt.NoFocus
-                icon.color: cardConst.inputNumberConstants.upDownIconColor
+                icon.color: CardConstants.inputNumberConstants.upDownIconColor
                 height: parent.height
-                icon.source: cardConst.numberInputUpDownArrowImage
+                icon.source: CardConstants.numberInputUpDownArrowImage
                 
                 background: Rectangle {
                     color: 'transparent'

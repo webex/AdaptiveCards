@@ -15,17 +15,17 @@ Rectangle {
     Button {
         id: errorIcon
         
-        width: cardConst.inputFieldConstants.errorIconWidth
+        width: CardConstants.inputFieldConstants.errorIconWidth
         anchors.left: parent.left
-        anchors.leftMargin: cardConst.inputFieldConstants.errorIconLeftMargin
-        anchors.topMargin: cardConst.inputFieldConstants.errorIconTopMargin
+        anchors.leftMargin: CardConstants.inputFieldConstants.errorIconLeftMargin
+        anchors.topMargin: CardConstants.inputFieldConstants.errorIconTopMargin
         horizontalPadding: 0
         verticalPadding: 0
-        icon.width: cardConst.inputFieldConstants.errorIconWidth
-        icon.height: cardConst.inputFieldConstants.errorIconHeight
-        icon.color: cardConst.toggleButtonConstants.errorMessageColor
+        icon.width: CardConstants.inputFieldConstants.errorIconWidth
+        icon.height: CardConstants.inputFieldConstants.errorIconHeight
+        icon.color: CardConstants.toggleButtonConstants.errorMessageColor
         anchors.top: parent.top
-        icon.source: cardConst.errorIcon
+        icon.source: CardConstants.errorIcon
         enabled: false
         
         background: Rectangle {
@@ -37,11 +37,11 @@ Rectangle {
         id: errorMessageLabel
         
         wrapMode: Text.Wrap
-        font.pixelSize: cardConst.inputFieldConstants.labelPixelSize
+        font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
         Accessible.ignored: true
-        color: cardConst.toggleButtonConstants.errorMessageColor
+        color: CardConstants.toggleButtonConstants.errorMessageColor
         anchors.left: errorIcon.right
-        anchors.leftMargin: cardConst.inputFieldConstants.errorIconLeftMargin
+        anchors.leftMargin: CardConstants.inputFieldConstants.errorIconLeftMargin
         anchors.right: parent.right
         text: numberinputModel.escapedErrorString
     }

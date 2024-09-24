@@ -9,8 +9,8 @@ Label {
     
     wrapMode: Text.Wrap
     width: parent.width
-    color: cardConst.toggleButtonConstants.textColor
-    font.pixelSize: cardConst.inputFieldConstants.labelPixelSize
+    color: CardConstants.toggleButtonConstants.textColor
+    font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
     Accessible.ignored: true
-    text: numberinputModel.isRequired ? AdaptiveCardUtils.escapeHtml( numberinputModel.escapedLabelString) + " " + "<font color='" + cardConst.inputFieldConstants.errorMessageColor + "'>*</font>" : AdaptiveCardUtils.escapeHtml( numberinputModel.escapedLabelString)
+    text: numberinputModel.isRequired ? AdaptiveCardUtils.escapeHtml( numberinputModel.escapedLabelString) + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : AdaptiveCardUtils.escapeHtml( numberinputModel.escapedLabelString)
 }

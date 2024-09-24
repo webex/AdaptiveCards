@@ -69,7 +69,6 @@ namespace AdaptiveCardQmlEngine
         std::shared_ptr<AdaptiveCardConfig> mCardConfig;
         AdaptiveCardEnums::AdaptiveCardTheme mAdaptiveCardTheme;
         std::string m_lang;
-        std::vector<std::string> m_RequiredInputElementsIdList;
 
         std::vector<AdaptiveWarning> m_warnings;
 
