@@ -12,16 +12,17 @@
 #include "Formatter.h"
 #include "utils/Utils.h"
 #include "utils/AdaptiveCardEnums.h"
+#include "AdaptiveWarning.h"
 
 namespace AdaptiveCardQmlEngine
 {
-    class AdaptiveCardContext:public QObject
+    class AdaptiveCardContext : public QObject
     {
         Q_OBJECT
         enum AdaptiveCardTheme
-        {   
+        {
             DarkTheme = 0,
-            LightTheme 
+            LightTheme
         };
 
     public:
@@ -29,7 +30,7 @@ namespace AdaptiveCardQmlEngine
         {
             static AdaptiveCardContext instance;
             return instance;
-		}
+        }
 
         void initAdaptiveCardContext();
         void setAdaptiveCardTheme(AdaptiveCardEnums::AdaptiveCardTheme theme);
@@ -37,10 +38,19 @@ namespace AdaptiveCardQmlEngine
         std::shared_ptr<AdaptiveCards::HostConfig> getHostConfig();
         std::shared_ptr<AdaptiveCardConfig> getCardConfig();
 
+        void addHeightEstimate(const int height);
+        void setHeightEstimate(const int height);
+        const int getHeightEstimate();
+
+        const int getEstimatedTextHeight(const std::string text);
+
         QString getColor(AdaptiveCards::ForegroundColor color, bool isSubtle, bool highlight, bool isQml = true);
 
         std::string getLang();
         void setLang(const std::string& lang);
+
+        const std::vector<AdaptiveWarning>& getWarnings();
+        void addWarning(const AdaptiveWarning& warning);
 
     private:
         AdaptiveCardContext();
@@ -54,6 +64,8 @@ namespace AdaptiveCardQmlEngine
         std::shared_ptr<AdaptiveCards::HostConfig> mHostConfig;
         std::shared_ptr<AdaptiveCardConfig> mCardConfig;
         AdaptiveCardEnums::AdaptiveCardTheme mAdaptiveCardTheme;
-        std::string m_lang; 
+        std::string mLang;
+        int mHeightEstimate{0};
+        std::vector<AdaptiveWarning> mWarnings;
     };
-}
+} // namespace AdaptiveCardQmlEngine
