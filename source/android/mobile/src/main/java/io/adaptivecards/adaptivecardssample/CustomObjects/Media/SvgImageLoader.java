@@ -1,6 +1,6 @@
 package io.adaptivecards.adaptivecardssample.CustomObjects.Media;
 
-import android.graphics.Bitmap;
+/*import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 
@@ -17,10 +17,10 @@ import io.adaptivecards.renderer.GenericImageLoaderAsync;
 import io.adaptivecards.renderer.IOnlineMediaLoader;
 import io.adaptivecards.renderer.IResourceResolver;
 import io.adaptivecards.renderer.Util;
-import io.adaptivecards.renderer.http.HttpRequestResult;
+import io.adaptivecards.renderer.http.HttpRequestResult;*/
 
-public class SvgImageLoader implements IResourceResolver
-{
+public class SvgImageLoader {}//implements IResourceResolver
+/*{
     @Override
     public HttpRequestResult<Bitmap> resolveImageResource(String uri, GenericImageLoaderAsync genericImageLoaderAsync) throws IOException, URISyntaxException
     {
@@ -61,4 +61,4 @@ public class SvgImageLoader implements IResourceResolver
 
         return new HttpRequestResult<>(bitmap);
     }
-}
+}*/

@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 package io.adaptivecards.adaptivecardssample;
 
-import android.content.Context;
+/*import android.content.Context;
 import androidx.annotation.Nullable;
 
 import android.util.Log;
@@ -28,12 +28,12 @@ import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RtpReceiver;
 import org.webrtc.SdpObserver;
-import org.webrtc.SessionDescription;
+import org.webrtc.SessionDescription*/;
 
 import java.util.ArrayList;
 
-public class RemoteClientConnection
-{
+public class RemoteClientConnection{}
+/*{
     public enum State {
         // Working on connecting for the first time.
         // Next states: Connected or Closed.
@@ -411,7 +411,7 @@ public class RemoteClientConnection
 
     private void openDataChannel()
     {
-        /*Log.i(LOG_TAG, "Creating data channel");
+        *//*Log.i(LOG_TAG, "Creating data channel");
         DataChannel dataChannel = m_conn.createDataChannel("test", new DataChannel.Init());
         dataChannel.registerObserver(new DataChannel.Observer() {
             @Override
@@ -429,7 +429,7 @@ public class RemoteClientConnection
                 Log.i(LOG_TAG, "DataChannel message received");
             }
         });
-        Log.i(LOG_TAG, "Created data channel");*/
+        Log.i(LOG_TAG, "Created data channel");*//*
         //dataChannel.send()
     }
 
@@ -491,4 +491,4 @@ public class RemoteClientConnection
             }
         }, sessionDescription);
     }
-}
+}*/
