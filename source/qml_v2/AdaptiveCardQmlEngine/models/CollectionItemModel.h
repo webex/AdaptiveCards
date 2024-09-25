@@ -5,16 +5,14 @@
 
 #include <TextBlock.h>
 #include <Image.h>
+#include <DateInput.h>
 #include "Enums.h"
+#include <RichTextBlock.h>
 
 class TextBlockModel;
 class ImageModel;
-#include "RichTextBlock.h"
-
-#include "Enums.h"
-
-class TextBlockModel;
 class RichTextBlockModel;
+class DateInputModel;
 
 class CollectionItemModel : public QAbstractListModel
 {
@@ -26,6 +24,7 @@ class CollectionItemModel : public QAbstractListModel
         TextBlockRole,
         ImageRole,
         RichTextBlockRole,
+        DateInputRole,
         FillHeightRole
     };
 
@@ -48,4 +47,5 @@ private:
     void populateTextBlockModel(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, RowContent& rowContent);
     void populateImageModel(std::shared_ptr<AdaptiveCards::Image> image, RowContent& rowContent);
     void populateRichTextBlockModel(std::shared_ptr<AdaptiveCards::RichTextBlock> rightTextBlock, RowContent& rowContent);
+    void populateDateInputModel(std::shared_ptr<AdaptiveCards::DateInput> dateInput, RowContent& rowContent);
 };

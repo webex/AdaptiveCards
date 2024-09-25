@@ -1,4 +1,4 @@
-import "AdaptiveCardUtils.js" as AdaptiveCardUtils
+import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 import QtQuick 2.15
 pragma Singleton
 
