@@ -247,13 +247,13 @@ public class MainActivityAdaptiveCardsSample extends FragmentActivity
         }
         CardRendererRegistration.getInstance().registerOnlineImageLoader(onlineImageLoader);
 
-        SvgImageLoader svgImageLoader = null;
+        /*SvgImageLoader svgImageLoader = null;
         if (m_svgSupport.isChecked())
         {
             svgImageLoader = new SvgImageLoader();
         }
         CardRendererRegistration.getInstance().registerResourceResolver("data", svgImageLoader);
-
+*/
         CustomImageLoaderForButtons httpResourceResolver = null;
         if (m_httpResourceResolver.isChecked())
         {
@@ -522,9 +522,9 @@ public class MainActivityAdaptiveCardsSample extends FragmentActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (handleQrActivityResult(requestCode, resultCode, data)) {
+       /* if (handleQrActivityResult(requestCode, resultCode, data)) {
             return;
-        }
+        }*/
 
         switch (requestCode) {
             case FILE_SELECT_CARD:
@@ -763,7 +763,7 @@ public class MainActivityAdaptiveCardsSample extends FragmentActivity
         this.runOnUiThread(new RunnableExtended(this, text, duration));
     }
 
-    public void onScanQrClicked(View view)
+    /*public void onScanQrClicked(View view)
     {
         goToConnectingState();
 
@@ -936,5 +936,5 @@ public class MainActivityAdaptiveCardsSample extends FragmentActivity
     {
         m_jsonEditText.setEnabled(true);
         m_configEditText.setEnabled(true);
-    }
+    }*/
 }

@@ -6,6 +6,7 @@ plugins {
 apply from: '../constants.gradle'
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'maven-publish'
 
 android {
@@ -39,6 +40,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     ndkVersion '24.0.8215888'
+    lintOptions {
+        abortOnError false
+    }
 }
 
 task sourceJar(type: Jar) {
@@ -178,7 +182,7 @@ dependencies {
     implementation 'androidx.multidex:multidex:' + androidxMultidexVersion
     implementation 'androidx.appcompat:appcompat:' + androidxAppCompatVersion
     implementation 'androidx.constraintlayout:constraintlayout:' + androidxConstraintLayoutVersion
-    implementation 'com.google.android:flexbox:' + androidFlexboxVersion
+    implementation 'com.google.android.flexbox:flexbox:' + androidFlexboxVersion
     testImplementation 'junit:junit:' + junitVersion
     implementation 'androidx.core:core-ktx:' + androidxKotlinCoreVersion
     implementation 'com.google.android.exoplayer:exoplayer:' + androidExoPlayerVersion
