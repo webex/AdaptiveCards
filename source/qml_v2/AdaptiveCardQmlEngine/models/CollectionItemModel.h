@@ -3,7 +3,6 @@
 #include <QAbstractListModel>
 #include <SharedAdaptiveCard.h>
 #include <TextBlock.h>
-#include <RichTextBlock.h>
 #include <Image.h>
 #include <TextInput.h>
 #include "RichTextBlock.h"

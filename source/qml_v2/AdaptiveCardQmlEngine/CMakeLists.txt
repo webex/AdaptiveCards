@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 if(WIN32)
     project(AdaptiveCardQmlEngine LANGUAGES CXX)
 elseif(UNIX)
-project(AdaptiveCardQmlEngine)
+    project(AdaptiveCardQmlEngine)
 endif()
 
 set(CMAKE_CONFIGURATION_TYPES "Debug" CACHE STRING "" FORCE)

@@ -82,7 +82,6 @@
 		"unordered_set": "cpp",
 		"variant": "cpp",
 		"algorithm": "cpp",
-		"__memory": "cpp",
-		"xstring": "cpp"
+		"__memory": "cpp"
 	}
 }
