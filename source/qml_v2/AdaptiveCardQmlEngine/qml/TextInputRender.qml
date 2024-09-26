@@ -67,6 +67,7 @@ Column {
     InputLabel {
         id: inputTextLabel
         
+        label: textInputModel.label
         required: textInputModel.isRequired
         visible: textInputModel.label
     } 
@@ -118,7 +119,7 @@ Column {
     InputErrorMessage {
         id: inputtextErrorMessage
 
-        errorMessage: textInputModel.errorMessage
+        isErrorMessage: textInputModel.errorMessage
         visible: showErrorMessage
     }
 }

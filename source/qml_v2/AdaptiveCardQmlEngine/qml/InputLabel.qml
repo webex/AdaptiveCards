@@ -8,11 +8,12 @@ Label {
     id: inputLabel
 
     property bool required
+    property string label
  
     wrapMode: Text.Wrap
     width: parent.width
-    color: cardConst.toggleButtonConstants.textColor
-    font.pixelSize: cardConst.inputFieldConstants.labelPixelSize
+    color: CardConstants.toggleButtonConstants.textColor
+    font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
     Accessible.ignored: true
-    text: textInputModel.isRequired ? AdaptiveCardUtils.escapeHtml(textInputModel.label) + " " + "<font color='" + cardConst.inputFieldConstants.errorMessageColor + "'>*</font>" : AdaptiveCardUtils.escapeHtml(textInputModel.label)
+    text: required ? AdaptiveCardUtils.escapeHtml(label) + " " + "<font color='" + CardConstants.inputFieldConstants.errorMessageColor + "'>*</font>" : AdaptiveCardUtils.escapeHtml(label)
 }
