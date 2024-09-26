@@ -14,9 +14,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(SHARED_CODE_DIR "${CMAKE_SOURCE_DIR}/../shared/cpp/ObjectModel")
 
 file(GLOB_RECURSE SHARED_CODE_SOURCES
-    "${SHARED_CODE_DIR}/*.h"
-    "${SHARED_CODE_DIR}/*.cpp"
-)
+     "${SHARED_CODE_DIR}/*.h"
+     "${SHARED_CODE_DIR}/*.cpp"
+     )
 
 add_library(AdaptiveCardShared STATIC ${SHARED_CODE_SOURCES})
 target_include_directories(AdaptiveCardShared PUBLIC ${SHARED_CODE_DIR})
@@ -41,48 +41,52 @@ add_library(qml INTERFACE ${ALL_QML_FILES})
 set_target_properties(qml PROPERTIES FOLDER "AdaptiveCardQmlEngine")
 
 file(GLOB_RECURSE SOURCES
-	"resourceEngine.qrc"
-	"AdaptiveCardUtils.cpp"
-	"AdaptiveCardContext.cpp"
-	"AdaptiveCardConfig.cpp"
-	"AdaptiveRenderArgs.cpp"
-	"Formatter.cpp"
-	"Utils.cpp"
-	"stdafx.cpp"
-	
-	"AdaptiveCardController.cpp"
-	"AdaptiveCardModel.cpp"
-	"CollectionItemModel.cpp"
-        "AdaptiveWarning.cpp"
-	
-	"TextBlockModel.cpp"
-	"ImageModel.cpp"
-	"RichTextBlockModel.cpp"
-        "TextInputModel.cpp"
-	
-	"AdaptiveCardQmlTypes.h"
-	"AdaptiveCardUtils.cpp"
-	"AdaptiveCardEnums.h"
-	"AdaptiveCardContext.h"
-	"AdaptiveCardConfig.h"
-	"AdaptiveCardDarkThemeConfig.h"
-	"AdaptiveCardLightThemeConfig.h"
-	"AdaptiveRenderArgs.h"
-	"Formatter.h"
-	"Utils.h"
-	"stdafx.h"
-	
-	"AdaptiveCardController.h"
-	"AdaptiveCardModel.h"
-	"CollectionItemModel.h"
-        "AdaptiveWarning.h"
-	
-	"TextBlockModel.h"
-	"ImageModel.h"
-	"TextBlockModel.h"
-	"RichTextBlockModel.h"
-        "TextInputModel.h"
-)
+     "resourceEngine.qrc"
+     "AdaptiveCardUtils.cpp"
+     "AdaptiveCardContext.cpp"
+     "AdaptiveCardConfig.cpp"
+     "AdaptiveRenderArgs.cpp"
+     "Formatter.cpp"
+     "Utils.cpp"
+     "stdafx.cpp"
+     
+     "AdaptiveCardController.cpp"
+     "AdaptiveCardModel.cpp"
+     "CollectionItemModel.cpp"
+     "AdaptiveWarning.cpp"
+     
+     "TextBlockModel.cpp"
+     "ImageModel.cpp"
+     "RichTextBlockModel.cpp"
+     "NumberInputModel.cpp"
+     "AdaptiveWarning.cpp"
+     "TextInputModel.cpp"
+     
+     "AdaptiveCardQmlTypes.h"
+     "AdaptiveCardUtils.cpp"
+     "AdaptiveCardEnums.h"
+     "AdaptiveCardContext.h"
+     "AdaptiveCardConfig.h"
+     "AdaptiveCardDarkThemeConfig.h"
+     "AdaptiveCardLightThemeConfig.h"
+     "AdaptiveRenderArgs.h"
+     "Formatter.h"
+     "Utils.h"
+     "stdafx.h"
+     
+     "AdaptiveCardController.h"
+     "AdaptiveCardModel.h"
+     "CollectionItemModel.h"
+     "AdaptiveWarning.h"
+     
+     "TextBlockModel.h"
+     "ImageModel.h"
+     "TextBlockModel.h"
+     "RichTextBlockModel.h"
+     "NumberInputModel.h"
+     "AdaptiveWarning.h"
+     "TextInputModel.h"
+     )
 
 # Setup Library
 
@@ -97,5 +101,3 @@ target_include_directories(AdaptiveCardQmlEngine PRIVATE "${CMAKE_CURRENT_SOURCE
 target_link_libraries(AdaptiveCardQmlEngine Qt5::Widgets)
 target_link_libraries(AdaptiveCardQmlEngine Qt5::Quick)
 target_link_libraries(AdaptiveCardQmlEngine AdaptiveCardShared)
-
-

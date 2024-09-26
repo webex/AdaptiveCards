@@ -19,6 +19,7 @@
         <file>qml/InputErrorMessage.qml</file>
         <file>qml/InputFieldClearIcon.qml</file>
         <file>qml/InputLabel.qml</file>
+        <file>qml/NumberInputRender.qml</file>
         <file>qml/SingleLineTextInputRender.qml</file>
         <file>qml/TextInputRender.qml</file>
         <file>qml/MultiLineTextInputRender.qml</file>

@@ -7,6 +7,7 @@
 #include "AdaptiveCardLightThemeConfig.h"
 
 #include "AdaptiveRenderArgs.h"
+#include "AdaptiveWarning.h"
 
 #include "HostConfig.h"
 #include "Formatter.h"
