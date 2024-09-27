@@ -274,6 +274,10 @@ public abstract class BaseActionElementRenderer implements IBaseActionElementRen
 
             m_invisibleCard.setVisibility(m_invisibleCard.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
 
+            //fix accessibility for card expanded and collapsed
+            String newVisibilityText = m_invisibleCard.getVisibility() == View.VISIBLE ? "Expanded" : "Collapsed";
+            v.announceForAccessibility(newVisibilityText);
+
             View mainCardView = ((ViewGroup) m_hiddenCardsLayout.getParent()).getChildAt(0);
             int padding = mainCardView.getPaddingTop();
 

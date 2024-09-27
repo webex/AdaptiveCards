@@ -30,6 +30,7 @@ import io.adaptivecards.objectmodel.Image;
 import io.adaptivecards.objectmodel.ImageSize;
 import io.adaptivecards.objectmodel.ImageSizesConfig;
 import io.adaptivecards.objectmodel.ImageStyle;
+import io.adaptivecards.objectmodel.OpenUrlAction;
 import io.adaptivecards.renderer.BaseCardElementRenderer;
 import io.adaptivecards.renderer.IOnlineImageLoader;
 import io.adaptivecards.renderer.InnerImageLoaderAsync;
@@ -328,8 +329,15 @@ public class ImageRenderer extends BaseCardElementRenderer
         }
 
         ImageView imageView = new ImageView(context);
-        imageView.setContentDescription(image.GetAltText());
-
+        OpenUrlAction openUrlAction = Util.tryCastTo(image.GetSelectAction(), OpenUrlAction.class);
+        if(openUrlAction!=null && !openUrlAction.GetUrl().isEmpty())
+        {
+            imageView.setContentDescription(openUrlAction.GetUrl());
+        }
+        else if(!image.GetAltText().isEmpty())
+        {
+            imageView.setContentDescription(image.GetAltText());
+        }
         int backgroundColor = getBackgroundColorFromHexCode(image.GetBackgroundColor());
 
         if(image.GetImageStyle() != ImageStyle.Person)
