@@ -7,16 +7,16 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 
 Rectangle {
     id: errorMessage
-
+    
     property string isErrorMessage
-
+    
     width: parent.width
     height: errorMessageLabel.implicitHeight
     color: 'transparent'
-
+    
     Button {
         id: errorIcon
-
+        
         width: CardConstants.inputFieldConstants.errorIconWidth
         anchors.left: parent.left
         anchors.leftMargin: CardConstants.inputFieldConstants.errorIconLeftMargin
@@ -29,16 +29,15 @@ Rectangle {
         anchors.top: parent.top
         icon.source: CardConstants.errorIcon
         enabled: false
-
+        
         background: Rectangle {
             color: 'transparent'
         }
-
     }
-
+    
     Label {
         id: errorMessageLabel
-
+        
         wrapMode: Text.Wrap
         font.pixelSize: CardConstants.inputFieldConstants.labelPixelSize
         Accessible.ignored: true
@@ -48,5 +47,4 @@ Rectangle {
         anchors.right: parent.right
         text: isErrorMessage
     }
-
 }

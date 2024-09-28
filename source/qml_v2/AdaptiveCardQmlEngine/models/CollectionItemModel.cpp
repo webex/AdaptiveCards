@@ -3,10 +3,12 @@
 #include "ImageModel.h"
 #include "RichTextBlockModel.h"
 #include "DateInputModel.h"
+#include "NumberInputModel.h"
+#include "TextInputModel.h"
 #include "AdaptiveCardEnums.h"
 
-CollectionItemModel::CollectionItemModel(std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>> elements, QObject* parent)
-	: QAbstractListModel(parent)
+CollectionItemModel::CollectionItemModel(std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>> elements, QObject* parent) :
+    QAbstractListModel(parent)
 {
     for (auto& element : elements)
     {
@@ -45,6 +47,8 @@ QHash<int, QByteArray> CollectionItemModel::roleNames() const
     cardListModel[ImageRole] = "imageRole";
     cardListModel[RichTextBlockRole] = "richTextBlockRole";
     cardListModel[DateInputRole] = "dateInputRole";
+    cardListModel[NumberInputRole] = "numberInputRole";
+    cardListModel[TextInputRole] = "textInputRole";
     cardListModel[FillHeightRole] = "fillHeightRole";
 
     return cardListModel;
@@ -63,11 +67,17 @@ void CollectionItemModel::populateRowData(std::shared_ptr<AdaptiveCards::BaseCar
     case AdaptiveCards::CardElementType::Image:
         populateImageModel(std::dynamic_pointer_cast<AdaptiveCards::Image>(element), rowContent);
         break;
-	case AdaptiveCards::CardElementType::RichTextBlock:
+    case AdaptiveCards::CardElementType::RichTextBlock:
         populateRichTextBlockModel(std::dynamic_pointer_cast<AdaptiveCards::RichTextBlock>(element), rowContent);
         break;
     case AdaptiveCards::CardElementType::DateInput:
         populateDateInputModel(std::dynamic_pointer_cast<AdaptiveCards::DateInput>(element), rowContent);
+        break;
+    case AdaptiveCards::CardElementType::NumberInput:
+        populateNumberInputModel(std::dynamic_pointer_cast<AdaptiveCards::NumberInput>(element), rowContent);
+        break;
+    case AdaptiveCards::CardElementType::TextInput:
+        populateTextInputModel(std::dynamic_pointer_cast<AdaptiveCards::TextInput>(element), rowContent);
         break;
     default:
         break;
@@ -94,5 +104,15 @@ void CollectionItemModel::populateRichTextBlockModel(std::shared_ptr<AdaptiveCar
 void CollectionItemModel::populateDateInputModel(std::shared_ptr<AdaptiveCards::DateInput> dateInput, RowContent& rowContent)
 {
     rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::DateInput);
-    rowContent[CollectionModelRole::DateInputRole] = QVariant::fromValue(new DateInputModel(dateInput , nullptr));
+    rowContent[CollectionModelRole::DateInputRole] = QVariant::fromValue(new DateInputModel(dateInput, nullptr));
+}
+void CollectionItemModel::populateNumberInputModel(std::shared_ptr<AdaptiveCards::NumberInput> numberInput, RowContent& rowContent)
+{
+    rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::NumberInput);
+    rowContent[CollectionModelRole::NumberInputRole] = QVariant::fromValue(new NumberInputModel(numberInput, nullptr));
+}
+void CollectionItemModel::populateTextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, RowContent& rowContent)
+{
+    rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::TextInput);
+    rowContent[CollectionModelRole::TextInputRole] = QVariant::fromValue(new TextInputModel(input, nullptr));
 }

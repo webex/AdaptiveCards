@@ -6,10 +6,10 @@ import AdaptiveCardQmlEngine 1.0
 import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 Label {
     id: inputLabel
-
+    
     property bool required
     property string label
-
+    
     wrapMode: Text.Wrap
     width: parent.width
     color: CardConstants.toggleButtonConstants.textColor

@@ -17,10 +17,14 @@
         <file>images/4.jpg</file>
         <file>qml/RichTextBlockRender.qml</file>
         <file>qml/DateInputRender.qml</file>
-        <file>qml/InputLabel.qml</file>
-        <file>qml/InputErrorMessage.qml</file>
-        <file>qml/InputFieldClearIcon.qml</file>
         <file>qml/DateInputTextField.qml</file>
         <file>qml/DateInputPopout.qml</file>
+        <file>qml/InputErrorMessage.qml</file>
+        <file>qml/InputFieldClearIcon.qml</file>
+        <file>qml/InputLabel.qml</file>
+        <file>qml/NumberInputRender.qml</file>
+        <file>qml/SingleLineTextInputRender.qml</file>
+        <file>qml/TextInputRender.qml</file>
+        <file>qml/MultiLineTextInputRender.qml</file>
     </qresource>
 </RCC>

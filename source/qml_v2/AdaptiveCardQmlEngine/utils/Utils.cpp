@@ -99,14 +99,14 @@ namespace AdaptiveCardQmlEngine
         return str;
     }
 
-    std::regex TextUtils::m_textFunctionRegex(R"xxx(\{\{(DATE|TIME)\(([\d]{4}-[\d]{2}-[\d]{2}T[\d]{2}:[\d]{2}:[\d]{2})(Z|(?:(?:-|\+)\d{2}:\d{2}))(?:,\s*(SHORT|LONG|COMPACT)\s*)??\)\}\})xxx");
+    std::regex TextUtils::mTextFunctionRegex(R"xxx(\{\{(DATE|TIME)\(([\d]{4}-[\d]{2}-[\d]{2}T[\d]{2}:[\d]{2}:[\d]{2})(Z|(?:(?:-|\+)\d{2}:\d{2}))(?:,\s*(SHORT|LONG|COMPACT)\s*)??\)\}\})xxx");
 
     std::string TextUtils::applyTextFunctions(const std::string& text, const std::string& lang)
     {
         std::smatch oneMatch;
         std::string result = text;
         std::string::const_iterator searchLoc(text.cbegin());
-        while (std::regex_search(searchLoc, text.cend(), oneMatch, m_textFunctionRegex))
+        while (std::regex_search(searchLoc, text.cend(), oneMatch, mTextFunctionRegex))
         {
             if (oneMatch[1] == "DATE" || oneMatch[1] == "TIME")
             {
@@ -208,6 +208,43 @@ namespace AdaptiveCardQmlEngine
         return true;
     }
 
+    std::string AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(std::string str)
+    {
+        std::string rawString = "";
+        for (int i = 0; i < str.size(); i++)
+        {
+            if (str[i] == '`')
+            {
+                rawString += "${'`'}";
+            }
+            else
+            {
+                rawString += str[i];
+            }
+        }
+        return rawString;
+    }
+
+    int Utils::getSpacing(const AdaptiveCards::SpacingConfig& spacingConfig, const AdaptiveCards::Spacing spacing)
+    {
+        switch (spacing)
+        {
+        case AdaptiveCards::Spacing::None:
+            return 0;
+        case AdaptiveCards::Spacing::Small:
+            return spacingConfig.smallSpacing;
+        case AdaptiveCards::Spacing::Medium:
+            return spacingConfig.mediumSpacing;
+        case AdaptiveCards::Spacing::Large:
+            return spacingConfig.largeSpacing;
+        case AdaptiveCards::Spacing::ExtraLarge:
+            return spacingConfig.extraLargeSpacing;
+        case AdaptiveCards::Spacing::Padding:
+            return spacingConfig.paddingSpacing;
+        default:
+            return spacingConfig.defaultSpacing;
+        }
+    }
 } // namespace AdaptiveCardQmlEngine
 
 
