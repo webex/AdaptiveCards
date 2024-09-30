@@ -7,7 +7,6 @@
 DateInputModel::DateInputModel(std::shared_ptr<AdaptiveCards::DateInput> datrInput, QObject* parent) :
 	QObject(parent)
 {
- 
 }
 
 DateInputModel::~DateInputModel()

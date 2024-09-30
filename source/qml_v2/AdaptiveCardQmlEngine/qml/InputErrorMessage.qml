@@ -17,6 +17,8 @@ Rectangle {
     Button {
         id: errorIcon
         
+         property string isErrorMessage
+
         width: CardConstants.inputFieldConstants.errorIconWidth
         anchors.left: parent.left
         anchors.leftMargin: CardConstants.inputFieldConstants.errorIconLeftMargin
