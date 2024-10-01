@@ -10,10 +10,10 @@ namespace AdaptiveCardQmlEngine
     {
         // Enums Class (Declare all the enums here itself)
         qmlRegisterUncreatableMetaObject(AdaptiveCardEnums::staticMetaObject, "AdaptiveCardQmlEngine", 1, 0, "AdaptiveCardEnums", "Error: only enums");
-
+        
         // Controllers REGISTER ALPHABETICALLY
         qmlRegisterType<AdaptiveCardController>("AdaptiveCardQmlEngine", 1, 0, "AdaptiveCardController");
-
+        
         // Qml Files REGISTER ALPHABETICALLY
         qmlRegisterType(QUrl("qrc:qml/AdaptiveCard.qml"), "AdaptiveCardQmlEngine", 1, 0, "AdaptiveCard");
         qmlRegisterType(QUrl("qrc:qml/AdaptiveCardItem.qml"), "AdaptiveCardQmlEngine", 1, 0, "AdaptiveCardItem");
@@ -21,8 +21,11 @@ namespace AdaptiveCardQmlEngine
         qmlRegisterType(QUrl("qrc:qml/CollectionItemDelegate.qml"), "AdaptiveCardQmlEngine", 1, 0, "CollectionItemDelegate");
         qmlRegisterType(QUrl("qrc:qml/WCustomFocusItem.qml"), "AdaptiveCardQmlEngine", 1, 0, "WCustomFocusItem");
         qmlRegisterSingletonType(QUrl("qrc:qml/CardConstants.qml"), "AdaptiveCardQmlEngine", 1, 0, "CardConstants");
-
+        
         qmlRegisterType(QUrl("qrc:qml/TextBlockRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "TextBlockRender");
+        qmlRegisterType(QUrl("qrc:qml/DateInputRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "DateInputRender");
+        qmlRegisterType(QUrl("qrc:qml/DateInputTextField.qml"), "AdaptiveCardQmlEngine", 1, 0, "DateInputTextField");
+        qmlRegisterType(QUrl("qrc:qml/DateInputPopout.qml"), "AdaptiveCardQmlEngine", 1, 0, "DateInputPopout");
         qmlRegisterType(QUrl("qrc:qml/ImageRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "ImageRender");
         qmlRegisterType(QUrl("qrc:qml/RichTextBlockRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "RichTextBlockRender");
         qmlRegisterType(QUrl("qrc:qml/NumberInputRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "NumberInputRender");

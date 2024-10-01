@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.3
+import QtGraphicalEffects 1.15
 import QtQuick.Controls 2.15
 import AdaptiveCardQmlEngine 1.0
 import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
@@ -9,6 +10,8 @@ Rectangle {
 
     property string isErrorMessage
     
+    property string isErrorMessage
+    
     width: parent.width
     height: errorMessageLabel.implicitHeight
     color: 'transparent'
@@ -16,6 +19,8 @@ Rectangle {
     Button {
         id: errorIcon
         
+         property string isErrorMessage
+
         width: CardConstants.inputFieldConstants.errorIconWidth
         anchors.left: parent.left
         anchors.leftMargin: CardConstants.inputFieldConstants.errorIconLeftMargin

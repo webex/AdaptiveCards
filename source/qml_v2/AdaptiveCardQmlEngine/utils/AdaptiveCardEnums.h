@@ -10,6 +10,7 @@ namespace AdaptiveCardEnums
         TextBlock,
         Image,
         RichTextBlock,
+        DateInput,
         NumberInput,
         TextInput,
         TimeInput,

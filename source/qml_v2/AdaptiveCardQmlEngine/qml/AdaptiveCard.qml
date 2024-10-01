@@ -96,7 +96,7 @@ Rectangle {
     onCardThemeChanged: {
         adaptiveCardController.setCardTheme(cardTheme)
         adaptiveCardController.setCardJSON(cardJSON)
-        
+
         // Update the card theme
         if (cardTheme == 0) {
             CardConstants.isDarkTheme = true
