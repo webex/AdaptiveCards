@@ -8,6 +8,7 @@
 #include <TextInput.h>
 #include "RichTextBlock.h"
 #include <NumberInput.h>
+#include "TimeInput.h"
 #include "Enums.h"
 #include <RichTextBlock.h>
 
@@ -17,6 +18,7 @@ class RichTextBlockModel;
 class DateInputModel;
 class NumberInputModel;
 class TextInputModel;
+class TimeInputModel;
 
 class CollectionItemModel : public QAbstractListModel
 {
@@ -31,6 +33,7 @@ class CollectionItemModel : public QAbstractListModel
         DateInputRole,
         NumberInputRole,
         TextInputRole,
+        TimeInputRole,
         FillHeightRole
     };
 
@@ -56,4 +59,5 @@ private:
     void populateDateInputModel(std::shared_ptr<AdaptiveCards::DateInput> dateInput, RowContent& rowContent);
     void populateNumberInputModel(std::shared_ptr<AdaptiveCards::NumberInput> numberInput, RowContent& rowContent);
     void populateTextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, RowContent& rowContent);
+    void populateTimeInputModel(std::shared_ptr<AdaptiveCards::TimeInput> input, RowContent& rowContent);
 };
