@@ -23,5 +23,9 @@
         <file>qml/SingleLineTextInputRender.qml</file>
         <file>qml/TextInputRender.qml</file>
         <file>qml/MultiLineTextInputRender.qml</file>
+        <file>qml/TimeInputPopout.qml</file>
+        <file>qml/TimeInputRender.qml</file>
+        <file>qml/TimeInputTextField.qml</file>
+        <file>qml/TimePickerListView.qml</file>
     </qresource>
 </RCC>

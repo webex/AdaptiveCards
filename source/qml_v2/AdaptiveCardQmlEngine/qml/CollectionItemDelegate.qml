@@ -18,5 +18,7 @@ Loader {
             source = "NumberInputRender.qml";
         else if (model.delegateType == AdaptiveCardEnums.CardElementType.TextInput)
             source = "TextInputRender.qml"
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.TimeInput)
+            source = "TimeInputRender.qml"
     }
 }
