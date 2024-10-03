@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.h"
+#include "models\RenderEnums.h" 
 #include "HostConfig.h"
 #include "Formatter.h"
 #include <QString>
@@ -20,6 +21,9 @@ namespace AdaptiveCardQmlEngine
         
         static std::string getBackQuoteEscapedString(std::string str);
         static int getSpacing(const AdaptiveCards::SpacingConfig& spacingConfig, const AdaptiveCards::Spacing spacing);
+        static const bool isValidDate(const std::string& date);
+
+        static AdaptiveCardQmlEngine::DateFormat GetSystemDateFormat();
           
         template <class T, class U>
         static bool IsInstanceOfSmart(U u);
@@ -29,6 +33,7 @@ namespace AdaptiveCardQmlEngine
         
         private:
         Utils() {}
+        static std::string FetchSystemDateTime(const std::string& fetchFormat);
     };
     
     template <class T, class U>
@@ -53,5 +58,5 @@ namespace AdaptiveCardQmlEngine
         private:
         static std::regex mTextFunctionRegex;
     };
-    
+
 } // namespace AdaptiveCardQmlEngine

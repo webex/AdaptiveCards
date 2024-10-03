@@ -23,5 +23,8 @@
         <file>qml/SingleLineTextInputRender.qml</file>
         <file>qml/TextInputRender.qml</file>
         <file>qml/MultiLineTextInputRender.qml</file>
+        <file>qml/DateInputPopout.qml</file>
+        <file>qml/DateInputRender.qml</file>
+        <file>qml/DateInputTextField.qml</file>
     </qresource>
 </RCC>

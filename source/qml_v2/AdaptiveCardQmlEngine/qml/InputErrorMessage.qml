@@ -7,6 +7,8 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 Rectangle {
     id: errorMessage
     
+    property string isErrorMessage
+    
     width: parent.width
     height: errorMessageLabel.implicitHeight
     color: 'transparent'
@@ -42,6 +44,6 @@ Rectangle {
         anchors.left: errorIcon.right
         anchors.leftMargin: CardConstants.inputFieldConstants.errorIconLeftMargin
         anchors.right: parent.right
-        text: numberinputModel.escapedErrorString
+        text: isErrorMessage
     }
 }

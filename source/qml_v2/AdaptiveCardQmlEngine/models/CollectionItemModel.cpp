@@ -2,6 +2,7 @@
 #include "TextBlockModel.h"
 #include "ImageModel.h"
 #include "RichTextBlockModel.h"
+#include "DateInputModel.h"
 #include "NumberInputModel.h"
 #include "TextInputModel.h"
 #include "AdaptiveCardEnums.h"
@@ -45,6 +46,7 @@ QHash<int, QByteArray> CollectionItemModel::roleNames() const
     cardListModel[TextBlockRole] = "textBlockRole";
     cardListModel[ImageRole] = "imageRole";
     cardListModel[RichTextBlockRole] = "richTextBlockRole";
+    cardListModel[DateInputRole] = "dateInputRole";
     cardListModel[NumberInputRole] = "numberInputRole";
     cardListModel[TextInputRole] = "textInputRole";
     cardListModel[FillHeightRole] = "fillHeightRole";
@@ -67,6 +69,9 @@ void CollectionItemModel::populateRowData(std::shared_ptr<AdaptiveCards::BaseCar
         break;
     case AdaptiveCards::CardElementType::RichTextBlock:
         populateRichTextBlockModel(std::dynamic_pointer_cast<AdaptiveCards::RichTextBlock>(element), rowContent);
+        break;
+    case AdaptiveCards::CardElementType::DateInput:
+        populateDateInputModel(std::dynamic_pointer_cast<AdaptiveCards::DateInput>(element), rowContent);
         break;
     case AdaptiveCards::CardElementType::NumberInput:
         populateNumberInputModel(std::dynamic_pointer_cast<AdaptiveCards::NumberInput>(element), rowContent);
@@ -95,6 +100,11 @@ void CollectionItemModel::populateRichTextBlockModel(std::shared_ptr<AdaptiveCar
 {
     rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::RichTextBlock);
     rowContent[CollectionModelRole::RichTextBlockRole] = QVariant::fromValue(new RichTextBlockModel(richTextBlock, nullptr));
+}
+void CollectionItemModel::populateDateInputModel(std::shared_ptr<AdaptiveCards::DateInput> dateInput, RowContent& rowContent)
+{
+    rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::DateInput);
+    rowContent[CollectionModelRole::DateInputRole] = QVariant::fromValue(new DateInputModel(dateInput, nullptr));
 }
 void CollectionItemModel::populateNumberInputModel(std::shared_ptr<AdaptiveCards::NumberInput> numberInput, RowContent& rowContent)
 {
