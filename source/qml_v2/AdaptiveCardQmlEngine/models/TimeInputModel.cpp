@@ -8,7 +8,6 @@ TimeInputModel::TimeInputModel(std::shared_ptr<AdaptiveCards::TimeInput> input, 
     QObject(parent),
     mTimeInputConfig(AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getCardConfig()->getInputTimeConfig())
 {
-    const auto hostConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig();
     const auto rendererConfig = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getCardConfig();
 
     mLabel = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(input->GetLabel()));
