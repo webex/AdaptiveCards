@@ -245,6 +245,62 @@ namespace AdaptiveCardQmlEngine
             return spacingConfig.defaultSpacing;
         }
     }
+
+    std::string Utils::fetchSystemDateTime(const std::string& fetchFormat)
+    {
+        char dateTimeBuffer[50];
+        struct tm newtime;
+        time_t now = time(0);
+
+#ifdef _WIN32
+        localtime_s(&newtime, &now);
+#else
+        localtime_r(&now, &newtime);
+#endif
+
+        setlocale(LC_ALL, "");
+
+        strftime(dateTimeBuffer, 50, fetchFormat.c_str(), &newtime);
+        return dateTimeBuffer;
+    }
+
+    bool Utils::isSystemTime12Hour()
+    {
+        const std::string timeFormat = "%X";
+        const std::string timeBuffer = fetchSystemDateTime(timeFormat);
+
+        std::vector<std::string> time_split = Utils::splitString(timeBuffer, ' ');
+
+        // If time_split vector has two elements (time and am/pm) return true else false
+        if (time_split.size() == 1)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    const bool Utils::isValidTime(const std::string& time)
+    {
+        // 24 hour format check
+        try
+        {
+            std::vector<std::string> time_split = Utils::splitString(time, ':');
+            if (time_split.size() < 2)
+            {
+                return false;
+            }
+            if (stoi(time_split[0]) >= 0 && stoi(time_split[0]) <= 23)
+            {
+                if (stoi(time_split[1]) >= 0 && stoi(time_split[1]) <= 59)
+                    return true;
+            }
+            return false;
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
 } // namespace AdaptiveCardQmlEngine
 
 

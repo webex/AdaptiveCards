@@ -7,8 +7,6 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 
 Rectangle {
     id: errorMessage
-
-    property string isErrorMessage
     
     property string isErrorMessage
     
@@ -18,8 +16,6 @@ Rectangle {
     
     Button {
         id: errorIcon
-        
-         property string isErrorMessage
 
         width: CardConstants.inputFieldConstants.errorIconWidth
         anchors.left: parent.left

@@ -20,6 +20,9 @@ namespace AdaptiveCardQmlEngine
         
         static std::string getBackQuoteEscapedString(std::string str);
         static int getSpacing(const AdaptiveCards::SpacingConfig& spacingConfig, const AdaptiveCards::Spacing spacing);
+
+        static bool isSystemTime12Hour();
+        static const bool isValidTime(const std::string& time);
           
         template <class T, class U>
         static bool IsInstanceOfSmart(U u);
@@ -29,6 +32,7 @@ namespace AdaptiveCardQmlEngine
         
         private:
         Utils() {}
+        static std::string fetchSystemDateTime(const std::string& fetchFormat);
     };
     
     template <class T, class U>

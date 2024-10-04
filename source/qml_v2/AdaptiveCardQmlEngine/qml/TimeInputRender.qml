@@ -7,18 +7,76 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 Column {
     id: timeInput
     
+    property var timeInputModel: model.timeInputRole
+    
+    property int minHour: timeInputModel.minHour()
+    property int minMinute: timeInputModel.minMinute()
+    property int maxHour: timeInputModel.maxHour()
+    property int maxMinute: timeInputModel.maxMinute()
+    property int currHour: timeInputModel.currHour()
+    property int currMinute: timeInputModel.currMinute()
+    
+    property string submitValue: getSubmitValue()
+    property bool showErrorMessage: false
     property int minWidth: CardConstants.inputTimeConstants.timeInputMinWidth
     property var inputFieldConstants: CardConstants.inputFieldConstants
     property var inputTimeConstants: CardConstants.inputTimeConstants
+    property string emptyField: timeInputModel.is12hour ? ': ' : ':'
     
+    function colorChange(isPressed) {
+        if (isPressed && !showErrorMessage)
+            timeWrapper.color = inputFieldConstants.backgroundColorOnPressed;
+        else
+            timeWrapper.color = timeInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : timeInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
+    }
+    
+    function validate() {
+        let isValid = true;
+        if (isValid) {
+            if (currHour < minHour || (currHour === minHour && currMinute < minMinute))
+                isValid = false;
+            
+            if (currHour > maxHour || (currHour === maxHour && currMinute > maxMinute))
+                isValid = false;           
+        }
+        if (timeInputModel.validationRequired && !timeInputTextField.text.match(timeInputModel.regex))
+            isValid = true;
+        
+        if (showErrorMessage && isValid)
+            showErrorMessage = false;
+        
+        return !isValid;
+    }
+    
+    function getSubmitValue() {
+        if (!timeInputTextField.text.match(timeInputModel.regex))
+            return '';
+        
+        return currHour.toString().padStart(2, '0') + ':' + currMinute.toString().padStart(2, '0');
+    }
+    
+    onActiveFocusChanged: {
+        if (activeFocus)
+            timeInputTextField.forceActiveFocus();       
+    }
+    onCurrHourChanged: {
+        if (timeInputModel.isRequired || timeInputModel.validationRequired)
+            validate();       
+    }
+    onCurrMinuteChanged: {
+        if (timeInputModel.isRequired || timeInputModel.validationRequired)
+            validate();        
+    }
+    onShowErrorMessageChanged: colorChange(false)
     width: parent.width
     spacing: CardConstants.inputFieldConstants.columnSpacing
+    visible: timeInputModel.isVisible
     
     InputLabel {
         id: inputTimeLabel
         
-        label: "Time label"
-        required: true
+        label: timeInputModel.label
+        required: timeInputModel.isRequired
         visible: label.length
     }
     
@@ -29,7 +87,7 @@ Column {
         height: inputFieldConstants.height
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
-        border.color: true ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
+        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
         
         ComboBox {
@@ -56,7 +114,10 @@ Column {
             }
             
             background: TimeInputTextField {
-                id: timeInputTextField                
+                id: timeInputTextField
+                
+                timeInputElement: timeInput
+                timeInputPopout: timeInputPopout
             }
         }
         
@@ -100,10 +161,12 @@ Column {
             anchors.rightMargin: inputFieldConstants.clearIconHorizontalPadding
             anchors.verticalCenter: parent.verticalCenter
             Keys.onReturnPressed: onClicked()
-            
+            visible: (!timeInputTextField.focus && timeInputTextField.text !== "") || (timeInputTextField.focus && timeInputTextField.text !== emptyField)
             onClicked: {
                 timeInputTextField.forceActiveFocus();
                 timeInputTextField.clear();
+                currHour = -1;
+                currMinute = -1;
             }
         }
         
@@ -116,7 +179,7 @@ Column {
     InputErrorMessage {
         id: inputTimeErrorMessage
         
-        isErrorMessage: "Error"
-        visible: true
+        isErrorMessage: timeInputModel.errorMessage
+        visible: showErrorMessage
     }
 }
