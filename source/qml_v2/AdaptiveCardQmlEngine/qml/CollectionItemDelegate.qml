@@ -4,9 +4,9 @@ import AdaptiveCardQmlEngine 1.0
 
 Loader {
     id: delegateSource
-
+    
     property var parentCardItem
-
+    
     Component.onCompleted :{
         if (model.delegateType == AdaptiveCardEnums.CardElementType.TextBlock)
             source = "TextBlockRender.qml"
@@ -20,5 +20,7 @@ Loader {
             source = "NumberInputRender.qml";
         else if (model.delegateType == AdaptiveCardEnums.CardElementType.TextInput)
             source = "TextInputRender.qml"
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.TimeInput)
+            source = "TimeInputRender.qml"
     }
 }

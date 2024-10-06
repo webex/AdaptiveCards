@@ -22,14 +22,13 @@ Popup {
     }
     
     function getSelectedDate() {
-        let date = dateInputElement.currentDate ? dateInputElement.currentDate : AdaptiveCardUtils.getTodayDate();
+ 
+    const dateObject = new Date(dateInputModel.formattedDateString);
+    let date = dateInputElement.currentDate ? dateObject : AdaptiveCardUtils.getTodayDate();
         
         return date;
     }
-    Component.onCompleted: {
-        console.log("inputFieldConstants.columnSpacing");
-    } 
-    
+
     y: dateInputField.height + 2
     x: (-inputFieldConstants.clearIconSize - inputDateConstants.dateIconHorizontalPadding)
     width: inputDateConstants.calendarWidth

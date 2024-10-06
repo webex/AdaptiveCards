@@ -41,6 +41,9 @@ void DateInputModel::initialize()
 
         // Format to desired string
         mCurrentDate = dateTime.toString("dd/MMM/yyyy");
+        QString dateString = mCurrentDate;
+        QStringList dateParts = dateString.split("/");
+        mFormattedDateString = QString("%1 %2, %3").arg(dateParts[1]).arg(dateParts[0]).arg(dateParts[2]);
  
     }
 
@@ -78,30 +81,34 @@ void DateInputModel::addDateFormat()
     {
     case AdaptiveCardQmlEngine::DateFormat::ddmmyy:
     {
-        mDateFormat = QString::fromStdString(AdaptiveCardQmlEngine::Formatter() << "dd" << dateSeparator << "MMM" << dateSeparator << "yyyy");
+        mDateFormat =
+            QString::fromStdString(AdaptiveCardQmlEngine::Formatter() << "dd" << dateSeparator << "MMM" << dateSeparator << "yyyy");
         inputMask = AdaptiveCardQmlEngine::Formatter() << "xx" << dateSeparator << ">x<xx" << dateSeparator << "xxxx;-";
-        DateRegex = AdaptiveCardQmlEngine::Formatter() << "new RegExp(/^" << dayRegex << dateSeparator << monthRegex<< dateSeparator << yearRegex << "$/)";
+        DateRegex = AdaptiveCardQmlEngine::Formatter()<< "new RegExp(/^" << dayRegex << dateSeparator << monthRegex << dateSeparator << yearRegex << "$/)";
         break;
     }
     case AdaptiveCardQmlEngine::DateFormat::yymmdd:
     {
-        mDateFormat = QString::fromStdString(AdaptiveCardQmlEngine::Formatter() << "yyyy" << dateSeparator << "MMM" << dateSeparator << "dd");
+        mDateFormat = QString::fromStdString(
+            AdaptiveCardQmlEngine::Formatter() << "yyyy" << dateSeparator << "MMM" << dateSeparator << "dd");
         inputMask = AdaptiveCardQmlEngine::Formatter() << "xxxx" << dateSeparator << ">x<xx" << dateSeparator << "xx;-";
-        DateRegex = AdaptiveCardQmlEngine::Formatter() << "new RegExp(/^" << yearRegex << dateSeparator << monthRegex<< dateSeparator << dayRegex << "$/)";
+        DateRegex = AdaptiveCardQmlEngine::Formatter()<< "new RegExp(/^" << yearRegex << dateSeparator << monthRegex << dateSeparator << dayRegex << "$/)";
         break;
     }
     case AdaptiveCardQmlEngine::DateFormat::yyddmm:
     {
-        mDateFormat = QString::fromStdString(AdaptiveCardQmlEngine::Formatter() << "yyyy" << dateSeparator << "dd" << dateSeparator << "MMM");
+        mDateFormat = QString::fromStdString(
+            AdaptiveCardQmlEngine::Formatter() << "yyyy" << dateSeparator << "dd" << dateSeparator << "MMM");
         inputMask = AdaptiveCardQmlEngine::Formatter() << "xxxx" << dateSeparator << "xx" << dateSeparator << ">x<xx;-";
-        DateRegex = AdaptiveCardQmlEngine::Formatter() << "new RegExp(/^" << yearRegex << dateSeparator << dayRegex<< dateSeparator << monthRegex << "$/)";
+        DateRegex = AdaptiveCardQmlEngine::Formatter()<< "new RegExp(/^" << yearRegex << dateSeparator << dayRegex << dateSeparator << monthRegex << "$/)";
         break;
     }
     default:
     {
-        mDateFormat = QString::fromStdString(AdaptiveCardQmlEngine::Formatter() << "MMM" << dateSeparator << "dd" << dateSeparator << "yyyy");
+        mDateFormat =
+            QString::fromStdString(AdaptiveCardQmlEngine::Formatter() << "MMM" << dateSeparator << "dd" << dateSeparator << "yyyy");
         inputMask = AdaptiveCardQmlEngine::Formatter() << ">x<xx" << dateSeparator << "xx" << dateSeparator << "xxxx;-";
-        DateRegex = AdaptiveCardQmlEngine::Formatter() << "new RegExp(/^" << monthRegex << dateSeparator << dayRegex<< dateSeparator << yearRegex << "$/)";
+        DateRegex = AdaptiveCardQmlEngine::Formatter()<< "new RegExp(/^" << monthRegex << dateSeparator << dayRegex << dateSeparator << yearRegex << "$/)";
         break;
     }
     }
@@ -114,3 +121,4 @@ void DateInputModel::addDateFormat()
 DateInputModel::~DateInputModel()
 {
 }
+

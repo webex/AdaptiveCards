@@ -105,5 +105,5 @@ TextField {
     background: Rectangle {
         color: 'transparent'
     }
-    
+
 }

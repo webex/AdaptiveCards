@@ -13,6 +13,7 @@ namespace AdaptiveCardEnums
         DateInput,
         NumberInput,
         TextInput,
+        TimeInput,
         Container,
         Column,
         ColumnSet,

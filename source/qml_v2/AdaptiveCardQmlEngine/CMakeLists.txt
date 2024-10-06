@@ -60,8 +60,9 @@ file(GLOB_RECURSE SOURCES
      "RichTextBlockModel.cpp"
      "DateInputModel.cpp"
      "NumberInputModel.cpp"
-     "AdaptiveWarning.cpp"
      "TextInputModel.cpp"
+     "DateInputModel.cpp"
+     "TimeInputModel.cpp"
      
      "AdaptiveCardQmlTypes.h"
      "AdaptiveCardUtils.cpp"
@@ -83,12 +84,12 @@ file(GLOB_RECURSE SOURCES
      
      "TextBlockModel.h"
      "ImageModel.h"
-     "TextBlockModel.h"
      "RichTextBlockModel.h"
      "DateInputModel.h"
      "NumberInputModel.h"
-     "AdaptiveWarning.h"
      "TextInputModel.h"
+     "DateInputModel.h"
+     "TimeInputModel.h"
      )
 
 # Setup Library

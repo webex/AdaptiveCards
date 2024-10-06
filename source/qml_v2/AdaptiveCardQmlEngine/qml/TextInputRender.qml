@@ -118,7 +118,6 @@ Column {
     
     InputErrorMessage {
         id: inputtextErrorMessage
-        
         visible: showErrorMessage
     }
 }

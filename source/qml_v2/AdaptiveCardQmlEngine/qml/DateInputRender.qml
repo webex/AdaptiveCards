@@ -154,9 +154,4 @@ Column {
         
         visible: showErrorMessage
     }
-
-
-
-
- 
 }

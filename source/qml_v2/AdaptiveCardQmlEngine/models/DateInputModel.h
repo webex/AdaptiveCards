@@ -1,6 +1,7 @@
 #pragma once
 #include "AdaptiveCardContext.h"
 #include "DateInput.h"
+
 #include "OpenUrlAction.h"
 #include "ToggleVisibilityAction.h"
 #include "SubmitAction.h"
@@ -25,13 +26,14 @@ class DateInputModel : public QObject
     Q_PROPERTY(QString dateFormat MEMBER mDateFormat CONSTANT);
     Q_PROPERTY(QString InputMask MEMBER mInputMask CONSTANT);
     Q_PROPERTY(QString regex MEMBER mRegex CONSTANT);
+    Q_PROPERTY(QString formattedDateString MEMBER mFormattedDateString CONSTANT);
     
-
     Q_PROPERTY(bool visible MEMBER mVisible CONSTANT);
     Q_PROPERTY(bool isRequired MEMBER mIsRequired CONSTANT);
     Q_PROPERTY(bool validationRequired MEMBER mValidationRequired CONSTANT);
 
     Q_PROPERTY(int minWidth MEMBER mMinWidth CONSTANT);
+
 
 public:
     explicit DateInputModel(std::shared_ptr<AdaptiveCards::DateInput> dateInput, QObject* parent = nullptr);
@@ -56,10 +58,12 @@ private:
     QString mDateFormat;
     QString mInputMask;
     QString mRegex;
+    QString mFormattedDateString;
 
     bool mVisible;
     bool mIsRequired;
     bool mValidationRequired;
 
     int mMinWidth;
+
 };
