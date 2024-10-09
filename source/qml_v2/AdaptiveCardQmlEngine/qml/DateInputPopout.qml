@@ -4,30 +4,28 @@ import QtGraphicalEffects 1.15
 import QtQuick.Controls 2.15
 import AdaptiveCardQmlEngine 1.0
 import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
+
 Popup {
     id: dateInputPopout
-
+    
     property var dateInputElement
     property var dateInputField
     property var inputFieldConstants: CardConstants.inputFieldConstants
     property var inputDateConstants: CardConstants.inputDateConstants
-
+    
     function setGlobalDate() {
         if (calendarView.selectedDate) {
-            dateInputElement._currentDate = calendarView.selectedDate;
+            dateInputElement.currentDate= calendarView.selectedDate;
             dateInputField.setTextFromDate(calendarView.selectedDate);
         }
         dateInputField.forceActiveFocus();
     }
-
+    
     function getSelectedDate() {
-        let date = dateInputElement._currentDate ? dateInputElement._currentDate : AdaptiveCardUtils.getTodayDate();
-        if (date <= dateInputElement._minDate)
-            date = new Date(dateInputElement._minDate.getFullYear(), dateInputElement._minDate.getMonth(), dateInputElement._minDate.getDate() + 1);
-
-        if (date >= dateInputElement._maxDate)
-            date = new Date(dateInputElement._maxDate.getFullYear(), dateInputElement._maxDate.getMonth(), dateInputElement._maxDate.getDate() - 1);
-
+ 
+    const dateObject = new Date(dateInputModel.formattedDateString);
+    let date = dateInputElement.currentDate ? dateObject : AdaptiveCardUtils.getTodayDate();
+        
         return date;
     }
 
@@ -41,23 +39,23 @@ Popup {
     leftInset: 0
     onOpened: {
         calendarView.forceActiveFocus();
-        calendarView.selectedDate = getSelectedDate();
+        calendarView.selectedDate ;
         calendarView.setDate(calendarView.selectedDate);
     }
     onClosed: {
         dateInputField.forceActiveFocus();
     }
-
+    
     Rectangle {
         anchors.top: parent.top
         anchors.right: parent.right
         width: 2 * (inputDateConstants.arrowIconSize + inputDateConstants.monthButtonMargins)
         height: inputDateConstants.arrowIconSize
         color: inputDateConstants.calendarBackgroundColor
-
+        
         Button {
             id: prevMonthButton
-
+            
             width: icon.width
             anchors.right: nextMonthButton.left
             anchors.rightMargin: inputDateConstants.monthButtonMargins
@@ -80,23 +78,23 @@ Popup {
             }
             KeyNavigation.tab: nextMonthButton
             KeyNavigation.backtab: calendarView
-
+            
             background: Rectangle {
                 color: (prevMonthButton.hovered || prevMonthButton.activeFocus) ? inputDateConstants.dateElementColorOnHover : inputDateConstants.calendarBackgroundColor
                 radius: width / 2
-
+                
                 WCustomFocusItem {
                     visible: prevMonthButton.activeFocus
                     designatedParent: parent
                 }
-
+                
             }
-
+            
         }
-
+        
         Button {
             id: nextMonthButton
-
+            
             width: icon.width
             anchors.right: parent.right
             anchors.leftMargin: inputDateConstants.monthButtonMargins
@@ -119,41 +117,41 @@ Popup {
             }
             KeyNavigation.tab: calendarView
             KeyNavigation.backtab: prevMonthButton
-
+            
             background: Rectangle {
                 color: (nextMonthButton.hovered || nextMonthButton.activeFocus) ? inputDateConstants.dateElementColorOnHover : inputDateConstants.calendarBackgroundColor
                 radius: width / 2
-
+                
                 WCustomFocusItem {
                     visible: nextMonthButton.activeFocus
                     designatedParent: parent
                 }
-
+                
             }
-
+            
         }
-
+        
     }
-
+    
     background: Rectangle {
         radius: inputDateConstants.calendarBorderRadius
         border.color: inputDateConstants.calendarBorderColor
         color: inputDateConstants.calendarBackgroundColor
     }
-
+    
     contentItem: Rectangle {
         id: datePopoutContentItem
-
+        
         radius: inputDateConstants.calendarBorderRadius
         color: inputDateConstants.calendarBackgroundColor
-
+        
         ListView {
             id: calendarView
-
+            
             property date selectedDate: getSelectedDate()
             property string accessibilityPrefix: 'Date Picker. The current date is'
             property string dateForSR: ''
-
+            
             function setDate(clickedDate) {
                 selectedDate = clickedDate;
                 var curIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth();
@@ -161,7 +159,7 @@ Popup {
                 positionViewAtIndex(curIndex, ListView.Center);
                 getDateForSR(clickedDate);
             }
-
+            
             function getDateForSR(clickedDate) {
                 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                 var d = clickedDate.getDate();
@@ -169,15 +167,9 @@ Popup {
                 var y = clickedDate.getFullYear();
                 calendarView.dateForSR = m + ' ' + d + ' ' + y;
             }
-
+            
             anchors.fill: parent
-            Component.onCompleted: {
-                if (selectedDate < dateInputElement._minDate)
-                    selectedDate = dateInputElement._minDate;
-                else if (selectedDate > dateInputElement._maxDate)
-                    selectedDate = dateInputElement._maxDate;
-                setDate(selectedDate);
-            }
+            
             snapMode: ListView.SnapOneItem
             orientation: Qt.Horizontal
             clip: true
@@ -199,37 +191,33 @@ Popup {
                     prevMonthButton.forceActiveFocus();
                 else if (event.key === Qt.Key_Backtab)
                     nextMonthButton.forceActiveFocus();
-                if (date > dateInputElement._minDate && date < dateInputElement._maxDate) {
-                    selectedDate = new Date(date);
-                    currentIndex = (selectedDate.getFullYear()) * 12 + selectedDate.getMonth();
-                }
                 calendarView.accessibilityPrefix = '';
                 getDateForSR(selectedDate);
                 event.accepted = true;
             }
-
+            
             delegate: Item {
                 id: calendarViewDelegate
-
+                
                 property int year: Math.floor(index / 12)
                 property int month: index % 12
                 property int firstDay: (new Date(year, month, 1).getDay() - 1 < 0 ? 6 : new Date(year, month, 1).getDay() - 1)
-
+                
                 width: calendarView.width
                 height: calendarView.height
-
+                
                 Text {
                     id: calendarViewHeader
-
+                    
                     anchors.left: parent.left
                     color: inputFieldConstants.textColor
                     text: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][calendarViewDelegate.month] + ' ' + calendarViewDelegate.year
                     font.pixelSize: inputFieldConstants.pixelSize
                 }
-
+                
                 Grid {
                     id: monthView
-
+                    
                     anchors.top: calendarViewHeader.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
@@ -240,13 +228,13 @@ Popup {
                     rows: 7
                     padding: inputDateConstants.dateDelegateSpacing
                     spacing: inputDateConstants.dateDelegateSpacing
-
+                    
                     Repeater {
                         model: monthView.columns * monthView.rows
-
+                        
                         delegate: Rectangle {
                             id: monthViewDelegate
-
+                            
                             property date cellDate: new Date(year, month, date)
                             property bool datePickerFocusCheck: calendarView.activeFocus && cellDate.toDateString() === calendarView.selectedDate.toDateString()
                             property int day: index - 7
@@ -256,11 +244,11 @@ Popup {
                             property bool isToday: (AdaptiveCardUtils.getTodayDate().toDateString() === cellDate.toDateString())
                             property bool isFocussed: (isCurrentSelectedDate && calendarView.activeFocus && day > 0) ? true : false
                             property bool isInThisMonth: cellDate.getMonth() === month
-
+                            
                             onDatePickerFocusCheckChanged: {
                                 if (datePickerFocusCheck)
                                     forceActiveFocus();
-
+                                
                             }
                             Accessible.name: calendarView.accessibilityPrefix + calendarView.dateForSR
                             Accessible.role: Accessible.NoRole
@@ -271,15 +259,15 @@ Popup {
                             radius: 0.5 * width
                             border.color: inputDateConstants.calendarBorderColor
                             border.width: isToday ? 1 : 0
-
+                            
                             WCustomFocusItem {
                                 visible: isFocussed
                                 designatedParent: parent
                             }
-
+                            
                             Text {
                                 id: monthViewDelegateText
-
+                                
                                 anchors.centerIn: parent
                                 font.pixelSize: inputDateConstants.calendarDateTextSize
                                 color: {
@@ -300,12 +288,11 @@ Popup {
                                 }
                                 font.weight: day < 0 ? Font.Medium : cellDate.getMonth() === month ? Font.Normal : Font.Light
                             }
-
+                            
                             MouseArea {
                                 id: monthViewDelegateMouseArea
-
+                                
                                 anchors.fill: parent
-                                enabled: monthViewDelegateText.text && day >= 0 && (cellDate > dateInputElement._minDate) && (cellDate < dateInputElement._maxDate)
                                 hoverEnabled: true
                                 onReleased: {
                                     if (enabled) {
@@ -315,18 +302,17 @@ Popup {
                                     }
                                 }
                             }
-
+                            
                         }
-
+                        
                     }
-
+                    
                 }
-
+                
             }
-
+            
         }
-
+        
     }
-
+  
 }
-

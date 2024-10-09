@@ -7,6 +7,7 @@
 #include <DateInput.h>
 #include <TextInput.h>
 #include "RichTextBlock.h"
+#include <DateInput.h>
 #include <NumberInput.h>
 #include "TimeInput.h"
 #include "Enums.h"
@@ -55,7 +56,7 @@ private:
     void populateRowData(std::shared_ptr<AdaptiveCards::BaseCardElement> element);
     void populateTextBlockModel(std::shared_ptr<AdaptiveCards::TextBlock> textBlock, RowContent& rowContent);
     void populateImageModel(std::shared_ptr<AdaptiveCards::Image> image, RowContent& rowContent);
-    void populateRichTextBlockModel(std::shared_ptr<AdaptiveCards::RichTextBlock> richTextBlock, RowContent& rowContent);
+    void populateRichTextBlockModel(std::shared_ptr<AdaptiveCards::RichTextBlock> rightTextBlock, RowContent& rowContent);
     void populateDateInputModel(std::shared_ptr<AdaptiveCards::DateInput> dateInput, RowContent& rowContent);
     void populateNumberInputModel(std::shared_ptr<AdaptiveCards::NumberInput> numberInput, RowContent& rowContent);
     void populateTextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, RowContent& rowContent);
