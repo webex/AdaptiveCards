@@ -6,6 +6,7 @@
 #include "NumberInputModel.h"
 #include "TextInputModel.h"
 #include "TimeInputModel.h"
+#include "ToggleInputModel.h"
 #include "AdaptiveCardEnums.h"
 
 CollectionItemModel::CollectionItemModel(std::vector<std::shared_ptr<AdaptiveCards::BaseCardElement>> elements, QObject* parent) :
@@ -51,6 +52,7 @@ QHash<int, QByteArray> CollectionItemModel::roleNames() const
     cardListModel[NumberInputRole] = "numberInputRole";
     cardListModel[TextInputRole] = "textInputRole";
     cardListModel[TimeInputRole] = "timeInputRole";
+    cardListModel[ToggleInputRole] = "toggleInputRole";
     cardListModel[FillHeightRole] = "fillHeightRole";
 
     return cardListModel;
@@ -83,6 +85,9 @@ void CollectionItemModel::populateRowData(std::shared_ptr<AdaptiveCards::BaseCar
         break;
     case AdaptiveCards::CardElementType::TimeInput:
         populateTimeInputModel(std::dynamic_pointer_cast<AdaptiveCards::TimeInput>(element), rowContent);
+        break;
+    case AdaptiveCards::CardElementType::ToggleInput:
+        populateToggleInputModel(std::dynamic_pointer_cast<AdaptiveCards::ToggleInput>(element), rowContent);
         break;
     default:
         break;
@@ -125,4 +130,9 @@ void CollectionItemModel::populateTimeInputModel(std::shared_ptr<AdaptiveCards::
 {
     rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::TimeInput);
     rowContent[CollectionModelRole::TimeInputRole] = QVariant::fromValue(new TimeInputModel(input, nullptr));
+}
+void CollectionItemModel::populateToggleInputModel(std::shared_ptr<AdaptiveCards::ToggleInput> toggleInput, RowContent& rowContent)
+{
+    rowContent[CollectionModelRole::DelegateType] = QVariant::fromValue(AdaptiveCardEnums::CardElementType::ToggleInput);
+    rowContent[CollectionModelRole::ToggleInputRole] = QVariant::fromValue(new ToggleInputModel(toggleInput, nullptr));
 }

@@ -9,17 +9,13 @@ Rectangle {
     id: errorMessage
 
     property string isErrorMessage
-    
-    property string isErrorMessage
-    
+   
     width: parent.width
     height: errorMessageLabel.implicitHeight
     color: 'transparent'
     
     Button {
         id: errorIcon
-        
-         property string isErrorMessage
 
         width: CardConstants.inputFieldConstants.errorIconWidth
         anchors.left: parent.left

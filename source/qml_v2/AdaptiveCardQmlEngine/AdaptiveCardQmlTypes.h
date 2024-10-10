@@ -37,6 +37,9 @@ namespace AdaptiveCardQmlEngine
         qmlRegisterType(QUrl("qrc:qml/MultiLineTextInputRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "MultiLineTextInputRender");
         qmlRegisterType(QUrl("qrc:qml/TimeInputRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "TimeInputRender");
         qmlRegisterType(QUrl("qrc:qml/TimeInputPopout.qml"), "AdaptiveCardQmlEngine", 1, 0, "TimeInputPopout");
+        qmlRegisterType(QUrl("qrc:qml/ToggleInputRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "ToggleInputRender");
+        qmlRegisterType(QUrl("qrc:qml/CustomCheckBox.qml"), "AdaptiveCardQmlEngine", 1, 0, "CustomCheckBox");
+        qmlRegisterType(QUrl("qrc:qml/CardGenericTextElement.qml"), "AdaptiveCardQmlEngine", 1, 0, "CardGenericTextElement");
         qmlRegisterType(QUrl("qrc:qml/TimeInputTextField.qml"), "AdaptiveCardQmlEngine", 1, 0, "TimeInputTextField");
         qmlRegisterType(QUrl("qrc:qml/TimePickerListView.qml"), "AdaptiveCardQmlEngine", 1, 0, "TimePickerListView");
     }
