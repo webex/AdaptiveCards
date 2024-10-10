@@ -62,6 +62,7 @@ file(GLOB_RECURSE SOURCES
      "TextInputModel.cpp"
      "DateInputModel.cpp"
      "TimeInputModel.cpp"
+     "ToggleInputModel.cpp"
      
      "AdaptiveCardQmlTypes.h"
      "AdaptiveCardUtils.cpp"
@@ -87,6 +88,7 @@ file(GLOB_RECURSE SOURCES
      "TextInputModel.h"
      "DateInputModel.h"
      "TimeInputModel.h"
+     "ToggleInputModel.h"
      )
 
 # Setup Library

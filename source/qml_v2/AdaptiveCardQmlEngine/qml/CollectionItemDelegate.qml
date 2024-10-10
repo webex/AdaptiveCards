@@ -22,5 +22,7 @@ Loader {
             source = "TextInputRender.qml"
         else if (model.delegateType == AdaptiveCardEnums.CardElementType.TimeInput)
             source = "TimeInputRender.qml"
+        else if (model.delegateType == AdaptiveCardEnums.CardElementType.ToggleInput)
+            source = "ToggleInputRender.qml"
     }
 }
