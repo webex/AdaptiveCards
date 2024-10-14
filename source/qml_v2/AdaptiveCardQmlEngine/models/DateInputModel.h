@@ -2,10 +2,6 @@
 #include "AdaptiveCardContext.h"
 #include "DateInput.h"
 
-#include "OpenUrlAction.h"
-#include "ToggleVisibilityAction.h"
-#include "SubmitAction.h"
-
 #include <QObject>
 #include <QString>
 #include <QColor>
@@ -60,9 +56,9 @@ private:
     QString mRegex;
     QString mFormattedDateString;
 
-    bool mVisible;
-    bool mIsRequired;
-    bool mValidationRequired;
+    bool mVisible{false};
+    bool mIsRequired{false};
+    bool mValidationRequired{false};
 
     int mMinWidth;
 
