@@ -20,10 +20,8 @@ void ToggleInputModel::initialize()
 
     mEscapedLabelString =
         QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel()));
-    mEscapedErrorString =
-        QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mToggleInput->GetErrorMessage()));
-    mSpacing = AdaptiveCardQmlEngine::Utils::getSpacing(
-        AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig()->GetSpacing(), AdaptiveCards::Spacing::Small);
+    mEscapedErrorString = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mToggleInput->GetErrorMessage()));
+    mSpacing = AdaptiveCardQmlEngine::Utils::getSpacing(AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig()->GetSpacing(), AdaptiveCards::Spacing::Small);
     mVisible = mToggleInput->GetIsVisible();
 }
 
@@ -65,18 +63,15 @@ void ToggleInputModel::addInputLabel()
             AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(
                 AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getEstimatedTextHeight(mToggleInput->GetLabel()));
         }
-        const QString color = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getColor(
-            AdaptiveCards::ForegroundColor::Default, false, false);
+        const QString color = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getColor(AdaptiveCards::ForegroundColor::Default, false, false);
         mIsRequired = mToggleInput->GetIsRequired();
-        mEscapedLabelString =
-            QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel()));
-    }
+        mEscapedLabelString = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel()));
+    } 
     else
     {
         if (mToggleInput->GetIsRequired())
         {
-            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addWarning(AdaptiveCardQmlEngine::AdaptiveWarning(
-                AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without labels"));
+            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addWarning(AdaptiveCardQmlEngine::AdaptiveWarning(AdaptiveCardQmlEngine::Code::RenderException, "isRequired is not supported without labels"));
         }
     }
 }
