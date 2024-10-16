@@ -80,6 +80,6 @@ private:
 
     bool mIsVisible{false};
     bool mIsRequired{false};
-    bool mIs12hour;
-    bool mValidationRequired;
+    bool mIs12hour{false};
+    bool mValidationRequired{false};
 };

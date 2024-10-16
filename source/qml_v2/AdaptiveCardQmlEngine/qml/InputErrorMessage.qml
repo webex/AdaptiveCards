@@ -8,6 +8,8 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 Rectangle {
     id: errorMessage
     
+    property string isErrorMessage 
+
     width: parent.width
     height: errorMessageLabel.implicitHeight
     color: 'transparent'

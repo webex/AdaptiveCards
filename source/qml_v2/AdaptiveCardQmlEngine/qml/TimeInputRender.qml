@@ -179,6 +179,7 @@ Column {
     InputErrorMessage {
         id: inputTimeErrorMessage
         
+        isErrorMessage: timeInputModel.errorMessage
         visible: showErrorMessage
     }
 }
