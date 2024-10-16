@@ -24,6 +24,9 @@ namespace AdaptiveCardQmlEngine
         static const bool isValidDate(const std::string& date);
 
         static AdaptiveCardQmlEngine::DateFormat GetSystemDateFormat();
+
+        static bool isSystemTime12Hour();
+        static const bool isValidTime(const std::string& time);
           
         template <class T, class U>
         static bool IsInstanceOfSmart(U u);

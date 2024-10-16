@@ -298,6 +298,7 @@ const bool Utils::isValidDate(const std::string& date)
 
         return true;
     }
+
     catch (...)
     {
         return false;
@@ -321,6 +322,8 @@ std::string Utils::FetchSystemDateTime(const std::string& fetchFormat)
     strftime(dateTimeBuffer, 50, fetchFormat.c_str(), &newtime);
     return dateTimeBuffer;
 }
+
+
 
 AdaptiveCardQmlEngine::DateFormat Utils::GetSystemDateFormat()
 {
@@ -403,4 +406,44 @@ AdaptiveCardQmlEngine::DateFormat Utils::GetSystemDateFormat()
         return AdaptiveCardQmlEngine::DateFormat::mmddyy;
     }
 }
+
+    
+
+    bool Utils::isSystemTime12Hour()
+    {
+        const std::string timeFormat = "%X";
+        const std::string timeBuffer = FetchSystemDateTime(timeFormat);
+
+        std::vector<std::string> time_split = Utils::splitString(timeBuffer, ' ');
+
+        // If time_split vector has two elements (time and am/pm) return true else false
+        if (time_split.size() == 1)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    const bool Utils::isValidTime(const std::string& time)
+    {
+        // 24 hour format check
+        try
+        {
+            std::vector<std::string> time_split = Utils::splitString(time, ':');
+            if (time_split.size() < 2)
+            {
+                return false;
+            }
+            if (stoi(time_split[0]) >= 0 && stoi(time_split[0]) <= 23)
+            {
+                if (stoi(time_split[1]) >= 0 && stoi(time_split[1]) <= 59)
+                    return true;
+            }
+            return false;
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
 } // namespace AdaptiveCardQmlEngine
