@@ -9,7 +9,7 @@ Rectangle {
     id: errorMessage
 
     property string isErrorMessage
-   
+
     width: parent.width
     height: errorMessageLabel.implicitHeight
     color: 'transparent'
