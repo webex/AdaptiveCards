@@ -4,23 +4,52 @@ import QtGraphicalEffects 1.15
 import QtQuick.Controls 2.15
 import AdaptiveCardQmlEngine 1.0
 import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
+
 Column {
     id: dateInput
     
+    property var dateInputModel:model.dateInputRole    
+    
+    property var currentDate:dateInputModel.currentDate
+    property bool showErrorMessage: false
     property int minWidth: CardConstants.inputDateConstants.dateInputMinWidth
     property var inputFieldConstants: CardConstants.inputFieldConstants
     property var inputDateConstants: CardConstants.inputDateConstants
     
+    function colorChange(isPressed) {
+        if (isPressed && !showErrorMessage)
+            dateWrapper.color = inputFieldConstants.backgroundColorOnPressed;
+        else
+            dateWrapper.color = dateInputTextField.activeFocus ? inputFieldConstants.backgroundColorOnPressed : dateInputTextField.hovered ? inputFieldConstants.backgroundColorOnHovered : inputFieldConstants.backgroundColorNormal;
+    }
+    
+    
+    function getSubmitValue() {
+        if (!dateInputTextField.text.match(dateInputModel.regex))
+            return '';
+        
+        if (dateInputModel.currentDate && Number(dateInputModel.currentDate))
+            return dateInputModel.currentDate.toLocaleString(Qt.locale('en_US'), 'yyyy-MM-dd');
+        
+        return '';
+    }
+    
+    onActiveFocusChanged: {
+        if (activeFocus)
+            dateInputTextField.forceActiveFocus();
+    }
+    
     width: parent.width
-    spacing:CardConstants.inputFieldConstants.columnSpacing
+    spacing: CardConstants.inputFieldConstants.columnSpacing
+    
     InputLabel {
         id: inputDateLabel
         
-        label: "this is a label"
-        required: true
+        label: dateInputModel.escapedLabelString
+        required: dateInputModel.isRequired
         visible: label.length
     }
-    
+    visible: dateInputModel.visible
     Rectangle {
         id: dateWrapper
         
@@ -28,7 +57,7 @@ Column {
         height: inputFieldConstants.height
         radius: inputFieldConstants.borderRadius
         color: inputFieldConstants.backgroundColorNormal
-        border.color: true ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
+        border.color: showErrorMessage ? inputFieldConstants.borderColorOnError : inputFieldConstants.borderColorNormal
         border.width: inputFieldConstants.borderWidth
         
         ComboBox {
@@ -37,6 +66,7 @@ Column {
             anchors.left: dateInputIcon.right
             anchors.right: dateInputClearIcon.left
             focusPolicy: Qt.NoFocus
+            onActiveFocusChanged: colorChange(false)
             Accessible.ignored: true
             Keys.onReturnPressed: {
                 setFocusBackOnClose(dateInputCombobox);
@@ -56,6 +86,8 @@ Column {
             background: DateInputTextField {
                 id: dateInputTextField
                 
+                dateInputElement: dateInput
+                dateInputPopout: dateInputPopout
             }
             
         }
@@ -64,7 +96,7 @@ Column {
             id: dateInputIcon
             
             width: inputDateConstants.dateIconButtonSize
-            height:inputDateConstants.dateIconButtonSize
+            height: inputDateConstants.dateIconButtonSize
             horizontalPadding: 0
             verticalPadding: 0
             icon.width: inputDateConstants.dateIconSize
@@ -92,6 +124,7 @@ Column {
                 }
                 
             }
+            
         }
         
         InputFieldClearIcon {
@@ -105,7 +138,7 @@ Column {
             onClicked: {
                 nextItemInFocusChain().forceActiveFocus();
                 dateInputTextField.clear();
-                _currentDate = null;
+                dateInputModel.currentDate;
             }
         }
         
@@ -113,12 +146,12 @@ Column {
             isRectangle: true
             visible: dateInputTextField.activeFocus
         }
+        
     }
     
     InputErrorMessage {
         id: inputDateErrorMessage
         
-        isErrorMessage: "error"
-        visible: true
+        visible: showErrorMessage
     }
 }

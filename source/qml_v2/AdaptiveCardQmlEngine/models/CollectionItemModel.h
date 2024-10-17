@@ -7,6 +7,7 @@
 #include <DateInput.h>
 #include <TextInput.h>
 #include "RichTextBlock.h"
+#include <DateInput.h>
 #include <NumberInput.h>
 #include "TimeInput.h"
 #include "Enums.h"
