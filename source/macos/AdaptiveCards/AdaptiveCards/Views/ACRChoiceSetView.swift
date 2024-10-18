@@ -1,5 +1,6 @@
 import AdaptiveCards_bridge
 import AppKit
+import Carbon.HIToolbox
 
 // MARK: ACRChoiceSetView
 class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
@@ -47,6 +48,46 @@ class ACRChoiceSetView: NSView, InputHandlingViewProtocol {
     
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        switch Int(event.keyCode) {
+        case kVK_DownArrow:
+            focusNextChoice()
+            return
+        case kVK_UpArrow:
+            focusPreviousChoice()
+            return
+        default:
+            break
+        }
+        super.keyDown(with: event)
+    }
+    
+    private func focusNextChoice() {
+        if let currentResponder = self.window?.firstResponder as? NSButton {
+            let arrayViews = stackview.arrangedSubviews
+            let currIndex = arrayViews.firstIndex { view in
+                guard let choiceButton = view as? ACRChoiceButton else { return false }
+                return choiceButton.button == currentResponder
+            } ?? 0
+            let nextIndex = (currIndex + 1) % arrayViews.count
+            let nextResponder = (arrayViews[nextIndex] as? ACRChoiceButton)?.button
+            self.window?.makeFirstResponder(nextResponder)
+        }
+    }
+    
+    private func focusPreviousChoice() {
+        if let currentResponder = self.window?.firstResponder as? NSButton {
+            let arrayViews = stackview.arrangedSubviews
+            let currIndex = arrayViews.firstIndex { view in
+                guard let choiceButton = view as? ACRChoiceButton else { return false }
+                return choiceButton.button == currentResponder
+            } ?? 1
+            let prevIndex = (currIndex - 1 + arrayViews.count) % arrayViews.count
+            let prevResponder = (arrayViews[prevIndex] as? ACRChoiceButton)?.button
+            self.window?.makeFirstResponder(prevResponder)
+        }
     }
     
     private func setupView() {
