@@ -18,8 +18,7 @@ ToggleInputModel::~ToggleInputModel()
 void ToggleInputModel::initialize()
 {
 
-    mEscapedLabelString =
-        QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel()));
+    mEscapedLabelString = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mToggleInput->GetLabel()));
     mEscapedErrorString = QString::fromStdString(AdaptiveCardQmlEngine::Utils::getBackQuoteEscapedString(mToggleInput->GetErrorMessage()));
     mSpacing = AdaptiveCardQmlEngine::Utils::getSpacing(AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getHostConfig()->GetSpacing(), AdaptiveCards::Spacing::Small);
     mVisible = mToggleInput->GetIsVisible();
@@ -34,8 +33,7 @@ void ToggleInputModel::addCheckBox()
     const bool isChecked = mToggleInput->GetValue().compare(valueOn) == 0 ? true : false;
     if (mToggleInput->GetIsVisible())
     {
-        AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(
-            rendererConfig->getToggleButtonConfig().rowHeight);
+        AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(rendererConfig->getToggleButtonConfig().rowHeight);
     }
     const AdaptiveCardQmlEngine::Checkbox mCheckBox = AdaptiveCardQmlEngine::Checkbox(
         mToggleInput->GetId() + "inputToggle",

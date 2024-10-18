@@ -45,8 +45,8 @@ private:
      QString mCbTitle;
      QString mCbisWrap;
 
-     bool mCbIsChecked;
-     bool mVisible;
-     bool mIsRequired;
+     bool mCbIsChecked{false};
+     bool mVisible{false};
+     bool mIsRequired{false};
 
 };
