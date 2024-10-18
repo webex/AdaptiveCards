@@ -5,6 +5,7 @@
 #include <TextBlock.h>
 #include <Image.h>
 #include <DateInput.h>
+#include<ToggleInput.h>
 #include <TextInput.h>
 #include "RichTextBlock.h"
 #include <DateInput.h>
@@ -20,6 +21,7 @@ class DateInputModel;
 class NumberInputModel;
 class TextInputModel;
 class TimeInputModel;
+class ToggleInputModel;
 
 class CollectionItemModel : public QAbstractListModel
 {
@@ -35,6 +37,7 @@ class CollectionItemModel : public QAbstractListModel
         NumberInputRole,
         TextInputRole,
         TimeInputRole,
+        ToggleInputRole,
         FillHeightRole
     };
 
@@ -61,4 +64,5 @@ private:
     void populateNumberInputModel(std::shared_ptr<AdaptiveCards::NumberInput> numberInput, RowContent& rowContent);
     void populateTextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, RowContent& rowContent);
     void populateTimeInputModel(std::shared_ptr<AdaptiveCards::TimeInput> input, RowContent& rowContent);
+    void populateToggleInputModel(std::shared_ptr<AdaptiveCards::ToggleInput> toggleInput, RowContent& rowContent);
 };

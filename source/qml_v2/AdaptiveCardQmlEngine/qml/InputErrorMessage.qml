@@ -7,8 +7,8 @@ import "JSUtils/AdaptiveCardUtils.js" as AdaptiveCardUtils
 
 Rectangle {
     id: errorMessage
-    
-    property string isErrorMessage 
+
+    property string isErrorMessage
 
     width: parent.width
     height: errorMessageLabel.implicitHeight

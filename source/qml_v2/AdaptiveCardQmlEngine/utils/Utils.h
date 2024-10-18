@@ -61,5 +61,46 @@ namespace AdaptiveCardQmlEngine
         private:
         static std::regex mTextFunctionRegex;
     };
+    enum CheckBoxType
+    {
+        Toggle,
+        RadioButton,
+        CheckBox,
+        ComboBox,
+        Filtered
+    };
+    struct Checkbox
+    {
+        const std::string id;
+        CheckBoxType type = CheckBoxType::Toggle;
+        const std::string text;
+        const std::string value;
+        const std::string valueOn;
+        const std::string valueOff;
+        const bool isWrap;
+        const bool isVisible;
+        const bool isChecked;
 
+        Checkbox(
+            std::string id,
+            CheckBoxType type,
+            const std::string text,
+            const std::string value,
+            const std::string valueOn,
+            const std::string valueOff,
+            const bool isWrap,
+            const bool isVisible,
+            const bool isChecked) :
+            id(id),
+            type(type), text(text), value(value), valueOn(valueOn), valueOff(valueOff), isWrap(isWrap),
+            isVisible(isVisible), isChecked(isChecked)
+        {
+        }
+
+        Checkbox(std::string id, CheckBoxType type, const std::string text, const std::string value, const bool isWrap, const bool isVisible, const bool isChecked) :
+            id(id), type(type), text(text), value(value), isWrap(isWrap), isVisible(isVisible), isChecked(isChecked)
+        {
+        }
+    };
+  
 } // namespace AdaptiveCardQmlEngine
