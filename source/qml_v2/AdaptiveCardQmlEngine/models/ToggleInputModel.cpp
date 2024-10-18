@@ -58,8 +58,7 @@ void ToggleInputModel::addInputLabel()
     {
         if (mToggleInput->GetIsVisible())
         {
-            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(
-                AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getEstimatedTextHeight(mToggleInput->GetLabel()));
+            AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().addHeightEstimate(AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getEstimatedTextHeight(mToggleInput->GetLabel()));
         }
         const QString color = AdaptiveCardQmlEngine::AdaptiveCardContext::getInstance().getColor(AdaptiveCards::ForegroundColor::Default, false, false);
         mIsRequired = mToggleInput->GetIsRequired();
