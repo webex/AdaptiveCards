@@ -30,5 +30,8 @@
         <file>qml/TimeInputRender.qml</file>
         <file>qml/TimeInputTextField.qml</file>
         <file>qml/TimePickerListView.qml</file>
+        <file>qml/ToggleInputRender.qml</file>
+        <file>qml/CardGenericTextElement.qml</file>
+        <file>qml/CustomCheckBox.qml</file>
     </qresource>
 </RCC>
