@@ -192,7 +192,6 @@ class ACRDateField: NSView {
     private func setupPopover() {
         datePickerCalendar.dateValue = Date()
         datePickerTextfield.dateValue = Date()
-        datePickerCalendar.setAccessibilityRole(.none)
     }
     
     private func setupAccessibility() {
