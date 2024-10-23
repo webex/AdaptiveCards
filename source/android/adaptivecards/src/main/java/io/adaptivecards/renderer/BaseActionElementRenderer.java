@@ -349,6 +349,14 @@ public abstract class BaseActionElementRenderer implements IBaseActionElementRen
             {
                 handleInlineShowCardAction(view);
                 view.requestFocus();
+                if(m_invisibleCard.getVisibility() == View.VISIBLE)
+                {
+                    view.setStateDescription("Expanded");
+                }
+                else
+                {
+                    view.setStateDescription("Collapsed");
+                }
             }
             else if (m_action.GetElementType() == ActionType.ToggleVisibility)
             {

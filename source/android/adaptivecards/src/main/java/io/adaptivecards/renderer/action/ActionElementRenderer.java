@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -110,7 +111,10 @@ public class ActionElementRenderer extends BaseActionElementRenderer
 
         Button button = getButtonForStyle(context, baseActionElement.GetStyle(), hostConfig);
         button.setEnabled(baseActionElement.GetIsEnabled());
-
+        if (baseActionElement.GetElementType() == ActionType.ShowCard)
+        {
+            button.setStateDescription("Collapsed");
+        }
         if (Util.isOfType(baseActionElement, ExecuteAction.class) || Util.isOfType(baseActionElement, SubmitAction.class))
         {
             long actionId = Util.getViewId(button);
