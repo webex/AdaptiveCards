@@ -10,22 +10,15 @@ CheckBox {
     
     property var adaptiveCard
     property var consumer
-    property string cbValueOn: toggleInputModel.escapedValueOn
-    property string cbValueOff: toggleInputModel.escapedValueOff
-    property bool cbisWrap: toggleInputModel.cbisWrap
-    property bool cbIsChecked: toggleInputModel.cbIsChecked
+    property string cbValueOn:"" 
+    property string cbValueOff: ""
+    property bool cbisWrap 
+    property bool cbIsChecked 
+    property string cbTitle
     property string value: checked ? cbValueOn : cbValueOff
     property var indicatorItem: customCheckBoxButton
     
     signal selectionChanged()
-    
-    function onButtonClicked() {
-        checked = !checked;
-    }
-    
-    function getContentText() {
-        return customCheckBoxTitle.getText(0, customCheckBoxTitle.length);
-    }
     
     function colorChange(item, isPressed) {
         if (isPressed)
@@ -44,17 +37,6 @@ CheckBox {
     onPressed: customCheckBox.colorChange(customCheckBox, true)
     onReleased: customCheckBox.colorChange(customCheckBox, false)
     onHoveredChanged: customCheckBox.colorChange(customCheckBox, false)
-    onCheckedChanged: {
-        customCheckBox.colorChange(customCheckBox, false);
-        value = checked ? cbValueOn : cbValueOff;
-        selectionChanged();
-    }
-    onActiveFocusChanged: {
-        customCheckBox.colorChange(customCheckBox, false);
-        if (activeFocus && consumer)
-            Accessible.name = consumer.getAccessibleName() + getContentText();
-        
-    }
     Component.onCompleted: {
         customCheckBox.colorChange(customCheckBox, false);
     }
@@ -91,30 +73,26 @@ CheckBox {
                 
                 background: Rectangle {
                     color: 'transparent'
-                }
-                
+                }  
             }
             
             WCustomFocusItem {
                 visible: customCheckBox.activeFocus
                 designatedParent: parent
                 isRectangle: true
-            }
-            
+            } 
         }
         
         CardGenericTextElement {
             id: customCheckBoxTitle
             
-            text: toggleInputModel.text
+            text: cbTitle
             adaptiveCard: customCheckBox.adaptiveCard
             wrapMode: cbisWrap ? Text.Wrap : Text.NoWrap
             Layout.fillWidth: true
             Component.onCompleted: {
                 onTextElementClicked.connect(customCheckBox.onButtonClicked);
             }
-        }
-        
-    }
-    
+        }  
+    } 
 }

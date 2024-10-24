@@ -33,5 +33,8 @@
         <file>qml/ToggleInputRender.qml</file>
         <file>qml/CardGenericTextElement.qml</file>
         <file>qml/CustomCheckBox.qml</file>
+        <file>qml/ChoiceSetRender.qml</file>
+        <file>qml/ComboboxRender.qml</file>
+        <file>qml/CustomRadioButton.qml</file>
     </qresource>
 </RCC>

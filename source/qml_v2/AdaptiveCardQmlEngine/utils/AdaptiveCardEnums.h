@@ -18,6 +18,7 @@ namespace AdaptiveCardEnums
         Column,
         ColumnSet,
         ToggleInput,
+        ChoiceSetInput,
         ActionSet
     };
     Q_ENUM_NS(CardElementType)

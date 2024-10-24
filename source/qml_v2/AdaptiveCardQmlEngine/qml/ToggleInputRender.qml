@@ -38,7 +38,12 @@ Column {
         
         adaptiveCard: toggleInput.adaptiveCard
         consumer: toggleInput
-    }
+        cbValueOn:toggleInputModel.escapedValueOn
+        cbValueOff:toggleInputModel.escapedValueOff
+        cbisWrap :toggleInputModel.cbisWrap
+        cbIsChecked :toggleInputModel.cbIsChecked
+        cbTitle:toggleInputModel.text
+   }
     
     InputErrorMessage {
         id: inputToggleErrorMessage
