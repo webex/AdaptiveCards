@@ -10,9 +10,9 @@
 #include "RichTextBlock.h"
 #include <DateInput.h>
 #include <NumberInput.h>
+#include <ChoiceSetInput.h>
 #include "TimeInput.h"
 #include "Enums.h"
-#include <RichTextBlock.h>
 
 class TextBlockModel;
 class ImageModel;
@@ -22,6 +22,7 @@ class NumberInputModel;
 class TextInputModel;
 class TimeInputModel;
 class ToggleInputModel;
+class ChoiceSetInputModel;
 
 class CollectionItemModel : public QAbstractListModel
 {
@@ -38,6 +39,7 @@ class CollectionItemModel : public QAbstractListModel
         TextInputRole,
         TimeInputRole,
         ToggleInputRole,
+        ChoiceSetInputRole,
         FillHeightRole
     };
 
@@ -65,4 +67,5 @@ private:
     void populateTextInputModel(std::shared_ptr<AdaptiveCards::TextInput> input, RowContent& rowContent);
     void populateTimeInputModel(std::shared_ptr<AdaptiveCards::TimeInput> input, RowContent& rowContent);
     void populateToggleInputModel(std::shared_ptr<AdaptiveCards::ToggleInput> toggleInput, RowContent& rowContent);
+    void populateChoiceSetInputModel(std::shared_ptr<AdaptiveCards::ChoiceSetInput> choiceSetInput, RowContent& rowContent);
 };

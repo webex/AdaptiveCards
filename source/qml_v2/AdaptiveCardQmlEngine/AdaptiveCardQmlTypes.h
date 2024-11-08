@@ -45,5 +45,8 @@ namespace AdaptiveCardQmlEngine
         qmlRegisterType(QUrl("qrc:qml/CardGenericTextElement.qml"), "AdaptiveCardQmlEngine", 1, 0, "CardGenericTextElement");
         qmlRegisterType(QUrl("qrc:qml/TimeInputTextField.qml"), "AdaptiveCardQmlEngine", 1, 0, "TimeInputTextField");
         qmlRegisterType(QUrl("qrc:qml/TimePickerListView.qml"), "AdaptiveCardQmlEngine", 1, 0, "TimePickerListView");
+        qmlRegisterType(QUrl("qrc:qml/ChoiceSetRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "ChoiceSetRender");
+        qmlRegisterType(QUrl("qrc:qml/ComboboxRender.qml"), "AdaptiveCardQmlEngine", 1, 0, "ComboboxRender");
+        qmlRegisterType(QUrl("qrc:qml/CustomRadioButton.qml"), "AdaptiveCardQmlEngine", 1, 0, "CustomRadioButton");
     }
 } // namespace RendererQml
