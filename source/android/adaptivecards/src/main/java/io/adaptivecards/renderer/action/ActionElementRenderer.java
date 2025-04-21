@@ -5,6 +5,7 @@ package io.adaptivecards.renderer.action;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
@@ -113,7 +114,10 @@ public class ActionElementRenderer extends BaseActionElementRenderer
         button.setEnabled(baseActionElement.GetIsEnabled());
         if (baseActionElement.GetElementType() == ActionType.ShowCard)
         {
-            button.setStateDescription("Collapsed");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) // API level 30
+            {
+                button.setStateDescription("Collapsed");
+            }
         }
         if (Util.isOfType(baseActionElement, ExecuteAction.class) || Util.isOfType(baseActionElement, SubmitAction.class))
         {
