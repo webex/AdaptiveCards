@@ -5,6 +5,7 @@ package io.adaptivecards.renderer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -349,13 +350,16 @@ public abstract class BaseActionElementRenderer implements IBaseActionElementRen
             {
                 handleInlineShowCardAction(view);
                 view.requestFocus();
-                if(m_invisibleCard.getVisibility() == View.VISIBLE)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) // API level 30
                 {
-                    view.setStateDescription("Expanded");
-                }
-                else
-                {
-                    view.setStateDescription("Collapsed");
+                    if(m_invisibleCard.getVisibility() == View.VISIBLE)
+                    {
+                        view.setStateDescription("Expanded");
+                    }
+                    else
+                    {
+                        view.setStateDescription("Collapsed");
+                    }
                 }
             }
             else if (m_action.GetElementType() == ActionType.ToggleVisibility)
