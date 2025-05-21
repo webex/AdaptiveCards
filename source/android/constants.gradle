@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 project.ext {
-    compileSdkVersion = 32
-    minSdkVersion = 21
+    compileSdkVersion = 35
+    minSdkVersion = 30
     // From sdk version 21 multidex is enabled by default
-    uiTestAppMinSdkVersion = 21
-    targetSdkVersion = 30
-    appTargetSdkVersion = 29
+    uiTestAppMinSdkVersion = 30
+    targetSdkVersion = 35
+    appTargetSdkVersion = 35
     
     // Upgrading this requires [Internal ref: b/193254928] to be fixed, or some
     // additional robolectric config.
