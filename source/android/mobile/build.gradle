@@ -36,7 +36,8 @@ android {
             }
         }
     }
-    lintOptions {
+    namespace 'io.adaptivecards.adaptivecardssample'
+    lint {
         abortOnError false
     }
 }

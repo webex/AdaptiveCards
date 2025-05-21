@@ -20,7 +20,9 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++14 -fexceptions -frtti -DNO_LOCALE_SUPPORT"
-                arguments "-DANDROID_STL=c++_shared"
+                arguments "-DANDROID_STL=c++_shared",
+                          "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+
             }
         }
     }
@@ -39,15 +41,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    ndkVersion '24.0.8215888'
-    lintOptions {
+    ndkVersion '27.2.12479018'
+    namespace 'io.adaptivecards'
+    lint {
         abortOnError false
     }
 }
 
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier "sources"
+    archiveClassifier.set("sources")
 }
 
 def projectInfo = {
